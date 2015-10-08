@@ -1,0 +1,28 @@
+{
+  "name": "dna-components",
+  "version": "0.0.1",
+  "authors": [
+    "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)"
+  ],
+  "repository" : {
+      "type" : "git",
+      "url" : "https://gitlab.com/dna-components/dna-components"
+  },
+  "description": "A set of Custom Elements written using <template>, ES2015 and Sass.",
+  "main": "dist/dna-components.html",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "**/*.map"
+  ],
+  "dependencies": {
+    "webcomponentsjs": "webcomponents.js#~0.7.14"
+  }
+}
