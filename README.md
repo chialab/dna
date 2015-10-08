@@ -20,7 +20,6 @@ See a complete example [here](https://gitlab.com/dna-components/seed-component).
 *seed-component.next.js*
 
 ```js
-
 export class SeedComponent extends DNABaseComponent {
 
     created() {
@@ -39,13 +38,11 @@ export class SeedComponent extends DNABaseComponent {
 
 // Register the component
 SeedComponent.init();
-
 ```
 
 *seed-component.scss*
 
 ```scss
-
 .seed-component {
     span {
         color: red;
