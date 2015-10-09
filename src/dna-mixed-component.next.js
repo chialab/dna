@@ -2,81 +2,130 @@
 
 import { DNABaseElement } from 'dna-base-component.next.js'
 
+/**
+ * This is another model to use to create DNA Custom Components mixing a list of prototypes.
+ * Implement a get method for the `behaviors` property which returns a list of Prototypes.
+ */
 export class DNAMixedComponent extends DNABaseComponent {
-
+	/**
+	 * Attach behaviors' static and class methods and properties to the current class.
+	 * Trigger all `init` static methods of the implemented behaviors.
+	 */
 	static init(...args) {
 		DNABaseComponent.init.apply(this, args);
 		var behaviors = this['behaviors'] || [];
-		DNAMixedComponent.iterateBehaviors(this, behaviors);
-		DNAMixedComponent.triggerCallbacks(this, 'init', args);
+		DNAMixedComponent.__iterateBehaviors(behaviors);
+		DNAMixedComponent.__triggerCallbacks(this, 'init', args);
 	}
-
+	/**
+	 * Trigger all `created` methods of the implemented behaviors.
+	 * @private
+	 */
 	createdCallback(...args) {
 		DNABaseComponent.prototype.createdCallback.apply(this, args);
-		DNAMixedComponent.triggerCallbacks(this, 'created', args);
+		DNAMixedComponent.__triggerCallbacks(this, 'created', args);
 	}
-
+	/**
+	 * Trigger all `attached` methods of the implemented behaviors.
+	 * @private
+	 */
 	attachedCallback(...args) {
 		DNABaseComponent.prototype.attachedCallback.apply(this, args);
-		DNAMixedComponent.triggerCallbacks(this, 'attached', args);
+		DNAMixedComponent.__triggerCallbacks(this, 'attached', args);
 	}
-
-	attributeChangedCallback(...args) {
-		DNABaseComponent.prototype.attributeChangedCallback.apply(this, args);
-		DNAMixedComponent.triggerCallbacks(this, 'attributeChanged', args);
+	/**
+	 * Trigger all `attributeChanged` methods of the implemented behaviors.
+	 * @private
+	 * @param {String} attrName The changed attribute name.
+     * @param {*} oldVal The value of the attribute before the change.
+     * @param {*} newVal The value of the attribute after the change.
+     */
+    attributeChangedCallback(attrName, oldVal, newVal) {
+		DNABaseComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
+		DNAMixedComponent.__triggerCallbacks(this, 'attributeChanged', [attrName, oldVal, newVal]);
 	}
-
-	static triggerCallbacks(ctx, callback, args) {
-		var callbacks = ctx[DNAMixedComponent.getCallbackKey(callback)];
+	/**
+	 * Iterate and fire a list of callbacks.
+	 * @private
+	 * @param {DNABaseComponent} ctx The context to apply.
+	 * @param {String} callbackKey The key to use to retrieve the right callback list.
+	 * @param {Array} args A list of arguments to apply to the callback.
+	 */
+	static __triggerCallbacks(ctx, callbackKey, args) {
+		var callbacks = ctx[DNAMixedComponent.__getCallbackKey(callbackKey)];
 		if (callbacks && Array.isArray(callbacks)) {
 			for (let i = 0, len = callbacks.length; i < len; i++) {
 				callbacks[i].apply(ctx, ...args);
 			}
 		}
 	}
-
-	static iterateBehaviors(ctx, behaviors) {
-		if (Array.isArray(behaviors)) {
-			for (var i = 0; i < behaviors.length; i++) {
-				DNAMixedComponent.iterateBehaviors(ctx, behaviors[i]);
+	/**
+	 * Iterate and attach behaviors to the class.
+	 * @private
+	 * @param {Array} behavior A list of classes.
+	 */
+	static __iterateBehaviors(behavior) {
+		var ctx = this;
+		if (Array.isArray(behavior)) {
+			// if the provided behavior is complex (a list of other behaviors), iterate it.
+			for (var i = 0; i < behavior.length; i++) {
+				DNAMixedComponent.__iterateBehaviors(ctx, behavior[i]);
 			}
 		} else {
-			var callbacks = DNAMixedComponent.componentCallbacks,
-				keys = Object.getOwnPropertyNames(behaviors);
+			// check if the behavior is already attached to the class.
+			ctx.__attachedBehaviors = ctx.__attachedBehaviors || [];
+			if (ctx.__attachedBehaviors.indexOf(behavior.name) !== -1) {
+				return;
+			}
+			// iterate and attach static methods and priorities.
+			var callbacks = DNAMixedComponent.__componentCallbacks,
+				keys = Object.getOwnPropertyNames(behavior);
 			for (let k in keys) {
 				let key = keys[k];
 				if (!(key in DNABaseComponent)) {
-					ctx[key] = behaviors[key];
+					ctx[key] = behavior[key];
 				}
 				if (callbacks.indexOf(key) !== -1) {
-					let callbackKey = DNAMixedComponent.getCallbackKey(key);
+					let callbackKey = DNAMixedComponent.__getCallbackKey(key);
 					ctx[callbackKey] = ctx[callbackKey] || [];
-					ctx[callbackKey].push(behaviors[key]);
+					ctx[callbackKey].push(behavior[key]);
 				} else if (!(key in DNABaseComponent)) {
-					ctx[key] = behaviors[key];
+					ctx[key] = behavior[key];
 				}
 			}
-			if (behaviors.prototype) {
-				keys = Object.getOwnPropertyNames(behaviors.prototype);
+			// iterate and attach prototype methods and priorities.
+			if (behavior.prototype) {
+				keys = Object.getOwnPropertyNames(behavior.prototype);
 				for (let k in keys) {
 					let key = keys[k];
 					if (callbacks.indexOf(key) !== -1) {
-						let callbackKey = DNAMixedComponent.getCallbackKey(key);
+						let callbackKey = DNAMixedComponent.__getCallbackKey(key);
 						ctx.prototype[callbackKey] = ctx.prototype[callbackKey] || [];
-						ctx.prototype[callbackKey].push(behaviors.prototype[key]);
+						ctx.prototype[callbackKey].push(behavior.prototype[key]);
 					} else if (!(key in DNABaseComponent.prototype)) {
-						ctx.prototype[key] = behaviors.prototype[key];
+						ctx.prototype[key] = behavior.prototype[key];
 					}
 				}
 			}
+			// add the callback to the attached list
+			ctx.__attachedBehaviors.push(behavior.name);
 		}
 	}
-
-	static getCallbackKey(callback) {
-		return '__' + callback + 'Callbacks';
+	/**
+	 * Retrieve the key to use to register a callback.
+	 * @private
+	 * @param {String} callbackName The type of the callback to register.
+	 * @return {String} The key string.
+	 */
+	static __getCallbackKey(callbackName) {
+		return '__' + callbackName + 'Callbacks';
 	}
-
-	static get componentCallbacks() {
+	/**
+	 * Retrieve a list of callbacks that should not be overridden but concatenated.
+	 * @private
+	 * @return {Array} The list.
+	 */
+	static get __componentCallbacks() {
 		return ['init', 'created', 'attached', 'attributeChanged'];
 	}
 }
