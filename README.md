@@ -15,7 +15,7 @@ This is a base model for custom components. Use and extend `DNABaseComponent` fo
 
 ### Example
 
-See a complete example [here](https://gitlab.com/dna-components/seed-component).
+See a complete example [here](https://gitlab.com/dna-components/dna-seed-component).
 
 *seed-component.next.js*
 
