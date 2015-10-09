@@ -67,24 +67,4 @@ SeedComponent.init();
 
 ## Build
 
-* Install [Node.js](https://nodejs.org)
-* Install [Grunt](http://gruntjs.com/):
-
-        (sudo) npm install grunt -g
-
-* Install [Babel](https://babeljs.io/):
-
-        (sudo) npm install babel -g
-
-
-* Locate the project:
-
-        cd /path/to/project
-
-* Install Node dependencies:
-
-        npm install
-
-* Build:
-
-        npm run build
+Have a look [here](https://gitlab.com/dna-components/dna-docs/blob/master/tutorials/build.md).
