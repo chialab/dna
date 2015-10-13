@@ -4,16 +4,20 @@
 
 A set of Custom Elements written using `<template>`, [ES2015](https://github.com/lukehoban/es6features) and [Sass](http://sass-lang.com/).
 
-## DNABaseComponent
+* [Base Component](#DNABaseComponent)
+* [Event Component](#DNAEventComponent)
+* [Mixed Component](#DNAMixedComponent)
+
+### DNABaseComponent
 
 This is a base model for custom components. Use and extend `DNABaseComponent` for all `DNA` elements.
 
-### Interface
+** Interface **
 * `created`: a callback triggered when the component is created.
 * `attached`: a callback triggered when the component is attached to the DOM tree.
 * `attributeChanged`: a callback triggered when the component's attribute changed.
 
-### Example
+** Example **
 
 See a complete example [here](https://gitlab.com/dna-components/dna-seed-component).
 
@@ -21,6 +25,10 @@ See a complete example [here](https://gitlab.com/dna-components/dna-seed-compone
 
 ```js
 export class SeedComponent extends DNABaseComponent {
+
+    get tagName() {
+        return 'seed-component'
+    }
 
     created() {
         //
@@ -64,6 +72,64 @@ SeedComponent.init();
 </template>
 <script type="text/javascript" src="seed-component.next.js"></script>
 ```
+
+### DNAEventComponent
+Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
+
+** Interface **
+* `trigger`: trigger an Event with some custom data.
+
+** Example **
+
+```js
+export class SeedComponent extends DNAEventComponent {
+
+    get tagName() {
+        return 'seed-component'
+    }
+
+}
+
+// Register the component
+SeedComponent.init();
+
+// --------
+
+let seed = document.createElement('seed-component');
+seed.addEventListener('sprout', function (ev) {
+    console.log(ev.detail.owner + '\'s seed is growing!');
+});
+seed.trigger('sprout', { owner: 'Gustavo' });
+```
+
+This script will prompt: `Gustavo's seed is growing!`
+
+### DNAMixedComponent
+This is another model to use to create DNA Custom Components mixing a list of prototypes.
+
+Add some some prototype to the `behaviors` property of the Class:
+
+** Interface **
+* `get behaviors`: a list of prototypes to mixin.
+
+** Example **
+
+```js
+export class SeedComponent extends DNAMixedComponent {
+
+    get behaviors() {
+        return [DNAEventComponent];
+    }
+
+}
+
+// Register the component
+SeedComponent.init();
+```
+
+After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!
+
+---
 
 ## Build
 
