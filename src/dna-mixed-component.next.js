@@ -14,7 +14,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 	static init(...args) {
 		DNABaseComponent.init.apply(this, args);
 		var behaviors = this['behaviors'] || [];
-		DNAMixedComponent.__iterateBehaviors(behaviors);
+		DNAMixedComponent.__iterateBehaviors(this, behaviors);
 		DNAMixedComponent.__triggerCallbacks(this, 'init', args);
 	}
 	/**
@@ -64,12 +64,11 @@ export class DNAMixedComponent extends DNABaseComponent {
 	 * @private
 	 * @param {Array} behavior A list of classes.
 	 */
-	static __iterateBehaviors(behavior) {
-		var ctx = this;
+	static __iterateBehaviors(ctx, behavior) {
 		if (Array.isArray(behavior)) {
 			// if the provided behavior is complex (a list of other behaviors), iterate it.
 			for (var i = 0; i < behavior.length; i++) {
-				DNAMixedComponent.__iterateBehaviors(ctx, behavior[i]);
+				ctx.__iterateBehaviors(ctx, behavior[i]);
 			}
 		} else {
 			// check if the behavior is already attached to the class.
@@ -83,14 +82,18 @@ export class DNAMixedComponent extends DNABaseComponent {
 			for (let k in keys) {
 				let key = keys[k];
 				if (!(key in DNABaseComponent)) {
-					ctx[key] = behavior[key];
+					if (key !== '__componentCallbacks') {
+						ctx[key] = behavior[key];
+					}
 				}
 				if (callbacks.indexOf(key) !== -1) {
 					let callbackKey = DNAMixedComponent.__getCallbackKey(key);
 					ctx[callbackKey] = ctx[callbackKey] || [];
 					ctx[callbackKey].push(behavior[key]);
 				} else if (!(key in DNABaseComponent)) {
-					ctx[key] = behavior[key];
+					if (key !== '__componentCallbacks') {
+						ctx[key] = behavior[key];
+					}
 				}
 			}
 			// iterate and attach prototype methods and priorities.

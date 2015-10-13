@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A set of Custom Elements written using <template>, ES2015 and Sass.",
   "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
   "license": "MIT",
