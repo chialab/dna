@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "authors": [
     "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)"
   ],
@@ -20,7 +20,7 @@
     "bower_components",
     "test",
     "tests",
-    "src/**/*",
+    "src",
     "**/*.map"
   ],
   "dependencies": {
