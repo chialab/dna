@@ -21,6 +21,7 @@
     "test",
     "tests",
     "src",
+    "Gruntfile.js",
     "**/*.map"
   ],
   "dependencies": {
