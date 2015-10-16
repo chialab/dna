@@ -31,7 +31,7 @@ var DNAAttributesComponent = (function (_DNABaseComponent) {
 			var attributes = this.attributes || [];
 			for (var i = 0, len = attributes.length; i < len; i++) {
 				var attr = attributes[i];
-				this.attributeChanged(attr.name, undefined, attr.value);
+				this.attributeChangedCallback(attr.name, undefined, attr.value);
 			}
 		}
 
@@ -47,7 +47,7 @@ var DNAAttributesComponent = (function (_DNABaseComponent) {
 		value: function attributeChanged(attr, oldVal, newVal) {
 			var cl = this.constructor;
 			if (cl && cl.attributes && Array.isArray(cl.attributes)) {
-				if (cl.attributes.indexOf(attr)) {
+				if (cl.attributes.indexOf(attr) !== -1) {
 					this[attr] = newVal;
 				}
 			}

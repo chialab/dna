@@ -55,7 +55,8 @@ export class DNAMixedComponent extends DNABaseComponent {
 		var callbacks = ctx[DNAMixedComponent.__getCallbackKey(callbackKey)];
 		if (callbacks && Array.isArray(callbacks)) {
 			for (let i = 0, len = callbacks.length; i < len; i++) {
-				callbacks[i].apply(ctx, ...args);
+				var callback = callbacks[i];
+				callback.apply(ctx, args);
 			}
 		}
 	}
