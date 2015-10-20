@@ -41,7 +41,7 @@ class DNAComponent extends HTMLElement {
      */
     static init(ext = false) {
         if (this.register(this, ext)) {
-            fn.template = this.getTemplate();
+            this.template = this.getTemplate();
         }
     }
     static register(fn, ext, tagName) {

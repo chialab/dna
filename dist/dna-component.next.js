@@ -72,7 +72,7 @@ var DNAComponent = (function (_HTMLElement) {
             var ext = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
             if (this.register(this, ext)) {
-                fn.template = this.getTemplate();
+                this.template = this.getTemplate();
             }
         }
     }, {
