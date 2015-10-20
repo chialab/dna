@@ -35,7 +35,7 @@ var DNAMixedComponent = (function (_DNAComponent) {
 			}
 
 			DNAComponent.prototype.createdCallback.apply(this, args);
-			DNAMixedComponent.__triggerCallbacks(this, 'created', args);
+			DNAMixedComponent.__triggerCallbacks(this, 'createdCallback', args);
 		}
 
 		/**
@@ -50,7 +50,7 @@ var DNAMixedComponent = (function (_DNAComponent) {
 			}
 
 			DNAComponent.prototype.attachedCallback.apply(this, args);
-			DNAMixedComponent.__triggerCallbacks(this, 'attached', args);
+			DNAMixedComponent.__triggerCallbacks(this, 'attachedCallback', args);
 		}
 
 		/**
@@ -64,7 +64,7 @@ var DNAMixedComponent = (function (_DNAComponent) {
 		key: 'attributeChangedCallback',
 		value: function attributeChangedCallback(attrName, oldVal, newVal) {
 			DNAComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
-			DNAMixedComponent.__triggerCallbacks(this, 'attributeChanged', [attrName, oldVal, newVal]);
+			DNAMixedComponent.__triggerCallbacks(this, 'attributeChangedCallback', [attrName, oldVal, newVal]);
 		}
 
 		/**

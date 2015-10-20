@@ -29,5 +29,4 @@ export class DNABaseComponent extends DNAMixedComponent {
 	static get behaviors() {
 		return [DNAEventComponent, DNAAttributesComponent]
 	}
-
 }

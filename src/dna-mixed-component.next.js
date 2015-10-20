@@ -23,7 +23,7 @@ export class DNAMixedComponent extends DNAComponent {
 	 */
 	createdCallback(...args) {
 		DNAComponent.prototype.createdCallback.apply(this, args);
-		DNAMixedComponent.__triggerCallbacks(this, 'created', args);
+		DNAMixedComponent.__triggerCallbacks(this, 'createdCallback', args);
 	}
 	/**
 	 * Trigger all `attached` methods of the implemented behaviors.
@@ -31,7 +31,7 @@ export class DNAMixedComponent extends DNAComponent {
 	 */
 	attachedCallback(...args) {
 		DNAComponent.prototype.attachedCallback.apply(this, args);
-		DNAMixedComponent.__triggerCallbacks(this, 'attached', args);
+		DNAMixedComponent.__triggerCallbacks(this, 'attachedCallback', args);
 	}
 	/**
 	 * Trigger all `attributeChanged` methods of the implemented behaviors.
@@ -42,7 +42,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     attributeChangedCallback(attrName, oldVal, newVal) {
 		DNAComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
-		DNAMixedComponent.__triggerCallbacks(this, 'attributeChanged', [attrName, oldVal, newVal]);
+		DNAMixedComponent.__triggerCallbacks(this, 'attributeChangedCallback', [attrName, oldVal, newVal]);
 	}
 	/**
 	 * Iterate and fire a list of callbacks.
