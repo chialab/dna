@@ -26,23 +26,14 @@ var DNAComponent = (function (_HTMLElement) {
 
         /**
          * Fires when an instance of the element is created.
-         * @private
          */
-        value: function createdCallback() {
-            // Add scope style class
-            if (this.constructor.tagName) {
-                this.classList.add(this.constructor.tagName);
-            }
-            // Render the template
-            if (this.constructor.template) {
-                this.innerHTML = this.constructor.template.innerHTML || '';
-            }
-        }
+        value: function createdCallback() {}
+        //
 
         /**
          * Fires when an instance was inserted into the document.
-         * @private
          */
+
     }, {
         key: 'attachedCallback',
         value: function attachedCallback() {}
@@ -50,7 +41,6 @@ var DNAComponent = (function (_HTMLElement) {
 
         /**
          * Fires when an attribute was added, removed, or updated.
-         * @private
          * @param {String} attrName The changed attribute name.
          * @param {*} oldVal The value of the attribute before the change.
          * @param {*} newVal The value of the attribute after the change.
@@ -62,12 +52,17 @@ var DNAComponent = (function (_HTMLElement) {
         //
 
         /**
-         * Register the custom element.
-         * @param {String} ext The name of an Element to extend (optional).
+         * The tag name of the custom element.
+         * @type {String}
          */
 
     }], [{
         key: 'init',
+
+        /**
+         * Register the custom element.
+         * @param {String} ext The name of an Element to extend (optional).
+         */
         value: function init() {
             var ext = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
@@ -130,6 +125,16 @@ var DNAComponent = (function (_HTMLElement) {
             return fn.name.replace(/[A-Z]/g, function (match) {
                 return '-' + match.toLowerCase();
             }).replace(/^\-/, '');
+        }
+    }, {
+        key: 'tagName',
+        get: function get() {
+            return this._tagName || DNAComponent.classToElement(this);
+        },
+        set: function set(tag) {
+            if (typeof tag == 'string') {
+                this._tagName = tag;
+            }
         }
     }]);
 

@@ -6,34 +6,36 @@
 class DNAComponent extends HTMLElement {
     /**
      * Fires when an instance of the element is created.
-     * @private
      */
     createdCallback(...args) {
-        // Add scope style class
-        if (this.constructor.tagName) {
-            this.classList.add(this.constructor.tagName);
-        }
-        // Render the template
-        if (this.constructor.template) {
-            this.innerHTML = this.constructor.template.innerHTML || '';
-        }
+        //
     }
     /**
      * Fires when an instance was inserted into the document.
-     * @private
      */
     attachedCallback(...args) {
         //
     }
     /**
      * Fires when an attribute was added, removed, or updated.
-     * @private
      * @param {String} attrName The changed attribute name.
      * @param {*} oldVal The value of the attribute before the change.
      * @param {*} newVal The value of the attribute after the change.
      */
     attributeChangedCallback(attrName, oldVal, newVal) {
         //
+    }
+    /**
+     * The tag name of the custom element.
+     * @type {String}
+     */
+    static get tagName() {
+        return this._tagName || DNAComponent.classToElement(this);
+    }
+    static set tagName(tag) {
+        if (typeof tag == 'string') {
+            this._tagName = tag;
+        }
     }
     /**
      * Register the custom element.
