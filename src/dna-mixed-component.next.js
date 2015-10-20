@@ -130,6 +130,6 @@ export class DNAMixedComponent extends DNAComponent {
 	 * @return {Array} The list.
 	 */
 	static get __componentCallbacks() {
-		return ['init', 'created', 'attached', 'attributeChanged'];
+		return ['init', 'createdCallback', 'attachedCallback', 'attributeChangedCallback'];
 	}
 }

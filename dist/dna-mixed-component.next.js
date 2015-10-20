@@ -181,7 +181,7 @@ var DNAMixedComponent = (function (_DNAComponent) {
 	}, {
 		key: '__componentCallbacks',
 		get: function get() {
-			return ['init', 'created', 'attached', 'attributeChanged'];
+			return ['init', 'createdCallback', 'attachedCallback', 'attributeChangedCallback'];
 		}
 	}]);
 

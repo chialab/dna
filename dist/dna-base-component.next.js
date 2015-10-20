@@ -13,21 +13,43 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
  */
 
 var DNABaseComponent = (function (_DNAMixedComponent) {
-	_inherits(DNABaseComponent, _DNAMixedComponent);
+    _inherits(DNABaseComponent, _DNAMixedComponent);
 
-	function DNABaseComponent() {
-		_classCallCheck(this, DNABaseComponent);
+    function DNABaseComponent() {
+        _classCallCheck(this, DNABaseComponent);
 
-		_get(Object.getPrototypeOf(DNABaseComponent.prototype), 'constructor', this).apply(this, arguments);
-	}
+        _get(Object.getPrototypeOf(DNABaseComponent.prototype), 'constructor', this).apply(this, arguments);
+    }
 
-	_createClass(DNABaseComponent, null, [{
-		key: 'attributes',
-		get: function get() {
-			return [DNAEventComponent];
-		}
-	}]);
+    _createClass(DNABaseComponent, [{
+        key: 'createdCallback',
 
-	return DNABaseComponent;
+        /**
+            * Fires when an instance of the element is created.
+            */
+        value: function createdCallback() {
+            DNAMixedComponent.prototype.createdCallback.call(this);
+            // Add scope style class
+            if (this.constructor.tagName) {
+                this.classList.add(this.constructor.tagName);
+            }
+            // Render the template
+            if (this.constructor.template) {
+                this.innerHTML = this.constructor.template.innerHTML || '';
+            }
+        }
+
+        /**
+            * A list of mixins.
+            * @type {Array}
+            */
+    }], [{
+        key: 'behaviors',
+        get: function get() {
+            return [DNAEventComponent, DNAAttributesComponent];
+        }
+    }]);
+
+    return DNABaseComponent;
 })(DNAMixedComponent);
 //# sourceMappingURL=dna-base-component.next.js.map
