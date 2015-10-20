@@ -1,18 +1,18 @@
 'use strict';
 
-import { DNABaseElement } from 'dna-base-component.next.js'
+import DNAComponent from 'dna-component.next.js'
 
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
  * Implement a get method for the `behaviors` property which returns a list of Prototypes.
  */
-export class DNAMixedComponent extends DNABaseComponent {
+export class DNAMixedComponent extends DNAComponent {
 	/**
 	 * Attach behaviors' static and class methods and properties to the current class.
 	 * Trigger all `init` static methods of the implemented behaviors.
 	 */
 	static init(...args) {
-		DNABaseComponent.init.apply(this, args);
+		DNAComponent.init.apply(this, args);
 		var behaviors = this['behaviors'] || [];
 		DNAMixedComponent.__iterateBehaviors(this, behaviors);
 		DNAMixedComponent.__triggerCallbacks(this, 'init', args);
@@ -22,7 +22,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 	 * @private
 	 */
 	createdCallback(...args) {
-		DNABaseComponent.prototype.createdCallback.apply(this, args);
+		DNAComponent.prototype.createdCallback.apply(this, args);
 		DNAMixedComponent.__triggerCallbacks(this, 'created', args);
 	}
 	/**
@@ -30,7 +30,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 	 * @private
 	 */
 	attachedCallback(...args) {
-		DNABaseComponent.prototype.attachedCallback.apply(this, args);
+		DNAComponent.prototype.attachedCallback.apply(this, args);
 		DNAMixedComponent.__triggerCallbacks(this, 'attached', args);
 	}
 	/**
@@ -41,13 +41,13 @@ export class DNAMixedComponent extends DNABaseComponent {
      * @param {*} newVal The value of the attribute after the change.
      */
     attributeChangedCallback(attrName, oldVal, newVal) {
-		DNABaseComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
+		DNAComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
 		DNAMixedComponent.__triggerCallbacks(this, 'attributeChanged', [attrName, oldVal, newVal]);
 	}
 	/**
 	 * Iterate and fire a list of callbacks.
 	 * @private
-	 * @param {DNABaseComponent} ctx The context to apply.
+	 * @param {DNAComponent} ctx The context to apply.
 	 * @param {String} callbackKey The key to use to retrieve the right callback list.
 	 * @param {Array} args A list of arguments to apply to the callback.
 	 */
@@ -82,7 +82,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 				keys = Object.getOwnPropertyNames(behavior);
 			for (let k in keys) {
 				let key = keys[k];
-				if (!(key in DNABaseComponent)) {
+				if (!(key in DNAComponent)) {
 					if (key !== '__componentCallbacks') {
 						ctx[key] = behavior[key];
 					}
@@ -91,7 +91,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 					let callbackKey = DNAMixedComponent.__getCallbackKey(key);
 					ctx[callbackKey] = ctx[callbackKey] || [];
 					ctx[callbackKey].push(behavior[key]);
-				} else if (!(key in DNABaseComponent)) {
+				} else if (!(key in DNAComponent)) {
 					if (key !== '__componentCallbacks') {
 						ctx[key] = behavior[key];
 					}
@@ -106,7 +106,7 @@ export class DNAMixedComponent extends DNABaseComponent {
 						let callbackKey = DNAMixedComponent.__getCallbackKey(key);
 						ctx.prototype[callbackKey] = ctx.prototype[callbackKey] || [];
 						ctx.prototype[callbackKey].push(behavior.prototype[key]);
-					} else if (!(key in DNABaseComponent.prototype)) {
+					} else if (!(key in DNAComponent.prototype)) {
 						ctx.prototype[key] = behavior.prototype[key];
 					}
 				}

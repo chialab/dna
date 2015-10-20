@@ -12,8 +12,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
  * Simple Custom Component with attributes watching and reflecting.
  */
 
-var DNAAttributesComponent = (function (_DNABaseComponent) {
-	_inherits(DNAAttributesComponent, _DNABaseComponent);
+var DNAAttributesComponent = (function (_DNAComponent) {
+	_inherits(DNAAttributesComponent, _DNAComponent);
 
 	function DNAAttributesComponent() {
 		_classCallCheck(this, DNAAttributesComponent);
@@ -22,12 +22,13 @@ var DNAAttributesComponent = (function (_DNABaseComponent) {
 	}
 
 	_createClass(DNAAttributesComponent, [{
-		key: 'created',
+		key: 'createdCallback',
 
 		/**
    * On `created` callback, sync attributes with properties.
    */
-		value: function created() {
+		value: function createdCallback() {
+			DNAComponent.prototype.createdCallback.call(this);
 			var attributes = this.attributes || [];
 			for (var i = 0, len = attributes.length; i < len; i++) {
 				var attr = attributes[i];
@@ -43,8 +44,9 @@ var DNAAttributesComponent = (function (_DNABaseComponent) {
       * @param {*} newVal The value of the attribute after the change.
    */
 	}, {
-		key: 'attributeChanged',
-		value: function attributeChanged(attr, oldVal, newVal) {
+		key: 'attributeChangedCallback',
+		value: function attributeChangedCallback(attr, oldVal, newVal) {
+			DNAComponent.prototype.attributeChangedCallback.call(this);
 			var cl = this.constructor;
 			if (cl && cl.attributes && Array.isArray(cl.attributes)) {
 				if (cl.attributes.indexOf(attr) !== -1) {
@@ -55,5 +57,5 @@ var DNAAttributesComponent = (function (_DNABaseComponent) {
 	}]);
 
 	return DNAAttributesComponent;
-})(DNABaseComponent);
+})(DNAComponent);
 //# sourceMappingURL=dna-attributes-component.next.js.map

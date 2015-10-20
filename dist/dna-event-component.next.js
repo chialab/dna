@@ -12,8 +12,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
  * Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
  */
 
-var DNAEventComponent = (function (_DNABaseComponent) {
-	_inherits(DNAEventComponent, _DNABaseComponent);
+var DNAEventComponent = (function (_DNAComponent) {
+	_inherits(DNAEventComponent, _DNAComponent);
 
 	function DNAEventComponent() {
 		_classCallCheck(this, DNAEventComponent);
@@ -83,5 +83,5 @@ var DNAEventComponent = (function (_DNABaseComponent) {
 	}]);
 
 	return DNAEventComponent;
-})(DNABaseComponent);
+})(DNAComponent);
 //# sourceMappingURL=dna-event-component.next.js.map

@@ -13,8 +13,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
  * Implement a get method for the `behaviors` property which returns a list of Prototypes.
  */
 
-var DNAMixedComponent = (function (_DNABaseComponent) {
-	_inherits(DNAMixedComponent, _DNABaseComponent);
+var DNAMixedComponent = (function (_DNAComponent) {
+	_inherits(DNAMixedComponent, _DNAComponent);
 
 	function DNAMixedComponent() {
 		_classCallCheck(this, DNAMixedComponent);
@@ -34,7 +34,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 				args[_key] = arguments[_key];
 			}
 
-			DNABaseComponent.prototype.createdCallback.apply(this, args);
+			DNAComponent.prototype.createdCallback.apply(this, args);
 			DNAMixedComponent.__triggerCallbacks(this, 'created', args);
 		}
 
@@ -49,7 +49,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 				args[_key2] = arguments[_key2];
 			}
 
-			DNABaseComponent.prototype.attachedCallback.apply(this, args);
+			DNAComponent.prototype.attachedCallback.apply(this, args);
 			DNAMixedComponent.__triggerCallbacks(this, 'attached', args);
 		}
 
@@ -63,14 +63,14 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 	}, {
 		key: 'attributeChangedCallback',
 		value: function attributeChangedCallback(attrName, oldVal, newVal) {
-			DNABaseComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
+			DNAComponent.prototype.attributeChangedCallback.apply(this, [attrName, oldVal, newVal]);
 			DNAMixedComponent.__triggerCallbacks(this, 'attributeChanged', [attrName, oldVal, newVal]);
 		}
 
 		/**
    * Iterate and fire a list of callbacks.
    * @private
-   * @param {DNABaseComponent} ctx The context to apply.
+   * @param {DNAComponent} ctx The context to apply.
    * @param {String} callbackKey The key to use to retrieve the right callback list.
    * @param {Array} args A list of arguments to apply to the callback.
    */
@@ -86,7 +86,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 				args[_key3] = arguments[_key3];
 			}
 
-			DNABaseComponent.init.apply(this, args);
+			DNAComponent.init.apply(this, args);
 			var behaviors = this['behaviors'] || [];
 			DNAMixedComponent.__iterateBehaviors(this, behaviors);
 			DNAMixedComponent.__triggerCallbacks(this, 'init', args);
@@ -127,7 +127,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 				    keys = Object.getOwnPropertyNames(behavior);
 				for (var k in keys) {
 					var key = keys[k];
-					if (!(key in DNABaseComponent)) {
+					if (!(key in DNAComponent)) {
 						if (key !== '__componentCallbacks') {
 							ctx[key] = behavior[key];
 						}
@@ -136,7 +136,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 						var callbackKey = DNAMixedComponent.__getCallbackKey(key);
 						ctx[callbackKey] = ctx[callbackKey] || [];
 						ctx[callbackKey].push(behavior[key]);
-					} else if (!(key in DNABaseComponent)) {
+					} else if (!(key in DNAComponent)) {
 						if (key !== '__componentCallbacks') {
 							ctx[key] = behavior[key];
 						}
@@ -151,7 +151,7 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 							var callbackKey = DNAMixedComponent.__getCallbackKey(key);
 							ctx.prototype[callbackKey] = ctx.prototype[callbackKey] || [];
 							ctx.prototype[callbackKey].push(behavior.prototype[key]);
-						} else if (!(key in DNABaseComponent.prototype)) {
+						} else if (!(key in DNAComponent.prototype)) {
 							ctx.prototype[key] = behavior.prototype[key];
 						}
 					}
@@ -186,5 +186,5 @@ var DNAMixedComponent = (function (_DNABaseComponent) {
 	}]);
 
 	return DNAMixedComponent;
-})(DNABaseComponent);
+})(DNAComponent);
 //# sourceMappingURL=dna-mixed-component.next.js.map

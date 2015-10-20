@@ -1,11 +1,11 @@
 'use strict';
 
-import { DNABaseElement } from 'dna-base-component.next.js'
+import DNAComponent from 'dna-component.next.js'
 
 /**
  * Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
  */
-export class DNAEventComponent extends DNABaseComponent {
+export class DNAEventComponent extends DNAComponent {
 	/**
 	 * `Node.prototype.addEventListener` polyfill.
 	 * @param {String} evName The name of the event to listen.

@@ -4,18 +4,14 @@
 
 A set of Custom Elements written using `<template>`, [ES2015](https://github.com/lukehoban/es6features) and [Sass](http://sass-lang.com/).
 
-* [Base Component](#DNABaseComponent)
+* [DNA Component](#DNAComponent)
 * [Event Component](#DNAEventComponent)
 * [Mixed Component](#DNAMixedComponent)
+* [Base Component](#DNABaseComponent)
 
-### DNABaseComponent
+### DNAComponent
 
-This is a base model for custom components. Use and extend `DNABaseComponent` for all `DNA` elements.
-
-** Interface **
-* `created`: a callback triggered when the component is created.
-* `attached`: a callback triggered when the component is attached to the DOM tree.
-* `attributeChanged`: a callback triggered when the component's attribute changed.
+This is a base model for custom components. Use and extend `DNAComponent` for all `DNA` elements.
 
 ** Example **
 
@@ -24,17 +20,17 @@ See a complete example [here](https://gitlab.com/dna-components/dna-seed-compone
 *seed-component.next.js*
 
 ```js
-export class SeedComponent extends DNABaseComponent {
+export class SeedComponent extends DNAComponent {
 
-    get tagName() {
+    static get tagName() {
         return 'seed-component'
     }
 
-    created() {
+    createdCallback() {
         //
     }
 
-    attached() {
+    attachedCallback() {
         //
     }
 
@@ -128,6 +124,10 @@ SeedComponent.init();
 ```
 
 After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!
+
+### DNABaseComponent
+
+This is a base model which extends `DNAMixedComponent` and automatically add `DNAEventComponent` as behavior.
 
 ---
 

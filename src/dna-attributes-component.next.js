@@ -1,15 +1,16 @@
 'use strict';
 
-import { DNABaseElement } from 'dna-base-component.next.js'
+import DNAComponent from 'dna-component.next.js'
 
 /**
  * Simple Custom Component with attributes watching and reflecting.
  */
-export class DNAAttributesComponent extends DNABaseComponent {
+export class DNAAttributesComponent extends DNAComponent {
 	/**
 	 * On `created` callback, sync attributes with properties.
 	 */
-	created() {
+	createdCallback() {
+		DNAComponent.prototype.createdCallback.call(this);
 		var attributes = this.attributes || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
@@ -23,7 +24,8 @@ export class DNAAttributesComponent extends DNABaseComponent {
      * @param {*} oldVal The value of the attribute before the change.
      * @param {*} newVal The value of the attribute after the change.
 	 */
-	attributeChanged(attr, oldVal, newVal) {
+	attributeChangedCallback(attr, oldVal, newVal) {
+		DNAComponent.prototype.attributeChangedCallback.call(this);
 		var cl = this.constructor;
 		if (cl && cl.attributes && Array.isArray(cl.attributes)) {
 			if (cl.attributes.indexOf(attr) !== -1) {
