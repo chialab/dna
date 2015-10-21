@@ -92,6 +92,8 @@ SeedComponent.init();
 // --------
 
 let seed = document.createElement('seed-component');
+// or
+let seed = new SeedComponent();
 seed.addEventListener('sprout', function (ev) {
     console.log(ev.detail.owner + '\'s seed is growing!');
 });

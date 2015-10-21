@@ -1,8 +1,8 @@
 'use strict';
 
-/**
- * This is the model to use to create DNA Custom Components.
- */
+// shim for Safari
+// https://github.com/babel/babel/issues/1548
+// https://bugs.webkit.org/show_bug.cgi?id=114457
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -12,8 +12,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DNAComponent = (function (_HTMLElement) {
-    _inherits(DNAComponent, _HTMLElement);
+if (typeof HTMLElement !== 'function') {
+    var _HTMLElement = function _HTMLElement() {};
+    _HTMLElement.prototype = HTMLElement.prototype;
+    HTMLElement = _HTMLElement;
+}
+
+/**
+ * This is the model to use to create DNA Custom Components.
+ */
+
+var DNAComponent = (function (_HTMLElement2) {
+    _inherits(DNAComponent, _HTMLElement2);
 
     function DNAComponent() {
         _classCallCheck(this, DNAComponent);
@@ -82,7 +92,8 @@ var DNAComponent = (function (_HTMLElement) {
             }
             // Retrieve the Custom Element tag name.
             try {
-                document.registerElement(tagName, options);
+                var ctr = window[DNAComponent.elementToClass(tagName)] = document.registerElement(tagName, options);
+                ctr.tagName = tagName;
             } catch (ex) {
                 return false;
             } finally {
@@ -115,7 +126,7 @@ var DNAComponent = (function (_HTMLElement) {
         }
 
         /**
-         * Convert a Class name to HTML tag.
+         * Convert a Class name into HTML tag.
          * @param {Class} fn Grab the tag name from this class.
          * @return {String} The tag name for the Custom Element.
          */
@@ -125,6 +136,20 @@ var DNAComponent = (function (_HTMLElement) {
             return fn.name.replace(/[A-Z]/g, function (match) {
                 return '-' + match.toLowerCase();
             }).replace(/^\-/, '');
+        }
+
+        /**
+         * Convert a HTML tag into a Class name.
+         * @param {Class} fn Grab the class name from this tag.
+         * @return {String} The class name for the Custom Element.
+         */
+    }, {
+        key: 'elementToClass',
+        value: function elementToClass(tag) {
+            return tag.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+                if (+match === 0) return '';
+                return match.toUpperCase();
+            }).replace(/[\-|\_]/g, '');
         }
     }, {
         key: 'tagName',
