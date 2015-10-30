@@ -34,6 +34,13 @@ export class DNAMixedComponent extends DNAComponent {
 		DNAMixedComponent.__triggerCallbacks(this, 'attachedCallback', args);
 	}
 	/**
+     * Fires when an instance was detached from the document.
+     */
+    detachedCallback(...args) {
+		DNAComponent.prototype.detachedCallback.apply(this, args);
+		DNAMixedComponent.__triggerCallbacks(this, 'detachedCallback', args);
+	}
+	/**
 	 * Trigger all `attributeChanged` methods of the implemented behaviors.
 	 * @private
 	 * @param {String} attrName The changed attribute name.
@@ -130,6 +137,6 @@ export class DNAMixedComponent extends DNAComponent {
 	 * @return {Array} The list.
 	 */
 	static get __componentCallbacks() {
-		return ['init', 'createdCallback', 'attachedCallback', 'attributeChangedCallback'];
+		return ['init', 'createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'];
 	}
 }
