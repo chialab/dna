@@ -1,14 +1,15 @@
 {
   "name": "dna-components",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "authors": [
-    "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)"
+    "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
+    "Channelweb s.r.l. <info@channelweb.it> (http://www.channelweb.it)"
   ],
   "repository" : {
-      "type" : "git",
-      "url" : "https://gitlab.com/dna-components/dna-components"
+    "type" : "git",
+    "url" : "https://gitlab.com/dna-components/dna-components"
   },
-  "description": "A set of Custom Elements written using <template>, ES2015 and Sass.",
+  "description": "Write your set of Web Components using <template>, ES2015 and (optionally) Sass.",
   "main": "dist/dna-components.html",
   "moduleType": [],
   "license": "MIT",

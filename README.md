@@ -2,7 +2,7 @@
 
 # DNA Components
 
-A set of Custom Elements written using `<template>`, [ES2015](https://github.com/lukehoban/es6features) and [Sass](http://sass-lang.com/).
+Write your set of Web Components using `<template>`, [ES2015](https://github.com/lukehoban/es6features) and [Sass](http://sass-lang.com/).
 
 * [DNA Component](#DNAComponent)
 * [Event Component](#DNAEventComponent)
