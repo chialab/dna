@@ -12,10 +12,11 @@ export class DNAMixedComponent extends DNAComponent {
 	 * Trigger all `init` static methods of the implemented behaviors.
 	 */
 	static init(...args) {
-		DNAComponent.init.apply(this, args);
-		var behaviors = this['behaviors'] || [];
+		let ctr = DNAComponent.init.apply(this, args);
+		let behaviors = this['behaviors'] || [];
 		DNAMixedComponent.__iterateBehaviors(this, behaviors);
 		DNAMixedComponent.__triggerCallbacks(this, 'init', args);
+		return ctr;
 	}
 	/**
 	 * Trigger all `created` methods of the implemented behaviors.

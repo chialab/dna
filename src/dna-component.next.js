@@ -4,7 +4,7 @@
 // https://github.com/babel/babel/issues/1548
 // https://bugs.webkit.org/show_bug.cgi?id=114457
 if (typeof HTMLElement !== 'function') {
-    var _HTMLElement = function() {};
+    let _HTMLElement = function() {};
     _HTMLElement.prototype = HTMLElement.prototype;
     HTMLElement = _HTMLElement;
 }
@@ -45,30 +45,29 @@ class DNAComponent extends HTMLElement {
         }
     }
     /**
-     * Register the custom element.
-     * @param {String} ext The name of an Element to extend (optional).
+     * Init and register the custom element.
      */
-    static init(ext = false) {
-        if (this.register(this, ext)) {
+    static init() {
+        let res = this.register(this);
+        if (res) {
             this.template = this.getTemplate();
         }
+        return res;
     }
-    static register(fn, ext, tagName) {
-        tagName = tagName || fn.tagName || DNAComponent.classToElement(fn);
-        let options = {
-            prototype: fn.prototype,
-        };
-        if (ext) {
-            options.extends = ext;
-        }
+    /**
+     * Register the custom element.
+     */
+    static register(fn, options = {}) {
+        let ctr;
+        let tagName = options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAComponent.classToElement(fn);
+        options.prototype = fn.prototype;
+        options.extends = options.extends || fn.extends;
         // Retrieve the Custom Element tag name.
         try {
-            var ctr = window[DNAComponent.elementToClass(tagName)] = document.registerElement(tagName, options);
-            ctr.tagName = tagName;
+            return document.registerElement(tagName, options);
         } catch (ex) {
+            console.error(ex);
             return false;
-        } finally {
-            return true;
         }
     }
     /**
