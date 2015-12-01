@@ -4,8 +4,7 @@ require('load-grunt-tasks')(grunt);
 
 grunt.initConfig({
     clean: {
-        dist: ['dist/**/*'],
-        standalone: ['dist/**/*.js']
+        dist: ['dist/**/*']
     },
     copy: {
         dist: {
@@ -19,11 +18,32 @@ grunt.initConfig({
     },
     babel: {
         options: {
-            modules: 'ignore'
+            plugins: [
+                'check-es2015-constants',
+                'transform-es2015-arrow-functions',
+                'transform-es2015-block-scoped-functions',
+                'transform-es2015-block-scoping',
+                'transform-es2015-classes',
+                'transform-es2015-computed-properties',
+                'transform-es2015-destructuring',
+                'transform-es2015-for-of',
+                'transform-es2015-function-name',
+                'transform-es2015-literals',
+                'transform-es2015-object-super',
+                'transform-es2015-parameters',
+                'transform-es2015-shorthand-properties',
+                'transform-es2015-spread',
+                'transform-es2015-sticky-regex',
+                'transform-es2015-template-literals',
+                'transform-es2015-typeof-symbol',
+                'transform-es2015-unicode-regex',
+                'transform-regenerator',
+                'transform-proto-to-assign'
+            ]
         },
         dist: {
             options: {
-                sourceMap: false,
+                sourceMaps: false,
             },
             files: [{
                 'dist/dna-components.js': 'dist/dna-components.js'
@@ -40,17 +60,12 @@ grunt.initConfig({
             files: {
                 'dist/dna-components.html': 'src/dna-components.html'
             },
-        },
-        standalone: {
-            files: {
-                'dist/dna-components.html': 'dist/dna-components.html'
-            },
         }
     },
     uglify: {
         standalone: {
             options: {
-                mangle: false,
+                mangle: true,
                 sourceMap: false
             },
             files: {
@@ -74,6 +89,9 @@ grunt.initConfig({
                 patterns: [{
                     match: /import[^;|\n]+[;|\n]?/g,
                     replacement: ''
+                }, {
+                    match: /export\sclass/g,
+                    replacement: 'class'
                 }]
             },
             files: {
@@ -83,4 +101,4 @@ grunt.initConfig({
     }
 });
 
-grunt.registerTask('build', ['clean', 'vulcanize:dist', 'crisper', 'replace', 'babel', 'uglify', 'vulcanize:standalone', 'clean:standalone']);
+grunt.registerTask('build', ['clean', 'vulcanize', 'crisper', 'replace', 'babel', 'uglify']);

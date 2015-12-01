@@ -41,7 +41,7 @@ export class SeedComponent extends DNAComponent {
 }
 
 // Register the component
-SeedComponent.init();
+SeedComponent.register();
 ```
 
 *seed-component.scss*
@@ -61,6 +61,7 @@ SeedComponent.init();
 *seed-component.html*
 
 ```html
+<link rel="import" href="../../dna-polyfills/dist/dna-polyfills.min.js">
 <link rel="import" href="../../dna-components/dist/dna-components.html">
 <link rel="stylesheet" href="seed-component.css" type="text/css">
 <template>
@@ -87,7 +88,7 @@ export class SeedComponent extends DNAEventComponent {
 }
 
 // Register the component
-SeedComponent.init();
+SeedComponent.register();
 
 // --------
 
@@ -122,7 +123,7 @@ export class SeedComponent extends DNAMixedComponent {
 }
 
 // Register the component
-SeedComponent.init();
+SeedComponent.register();
 ```
 
 After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!

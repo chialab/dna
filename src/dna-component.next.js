@@ -12,7 +12,11 @@ if (typeof HTMLElement !== 'function') {
 /**
  * This is the model to use to create DNA Custom Components.
  */
-class DNAComponent extends HTMLElement {
+export class DNAComponent extends HTMLElement {
+    /**
+     * Fires when an the element is registered.
+     */
+    static onRegister() {}
     /**
      * Fires when an instance of the element is created.
      */
@@ -43,74 +47,5 @@ class DNAComponent extends HTMLElement {
         if (typeof tag == 'string') {
             this._tagName = tag;
         }
-    }
-    /**
-     * Init and register the custom element.
-     */
-    static init() {
-        let res = this.register(this);
-        if (res) {
-            this.template = this.getTemplate();
-        }
-        return res;
-    }
-    /**
-     * Register the custom element.
-     */
-    static register(fn, options = {}) {
-        let ctr;
-        let tagName = options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAComponent.classToElement(fn);
-        options.prototype = fn.prototype;
-        options.extends = options.extends || fn.extends;
-        // Retrieve the Custom Element tag name.
-        try {
-            return document.registerElement(tagName, options);
-        } catch (ex) {
-            console.error(ex);
-            return false;
-        }
-    }
-    /**
-     * Instantiate an element.
-     * This is a sort of constructor.
-     */
-    static instantiate() {
-        var tag = this.tagName || this.classToElement(this);
-        return document.createElement(tag);
-    }
-    /**
-     * Get current component template.
-     * Uses `document.currentScript`, so use only on initialization!
-     * @return {HTMLTemplateElement} The template element of the component.
-     */
-    static getTemplate() {
-        if (document.currentScript && document.currentScript.parentNode) {
-            return document.currentScript.parentNode.querySelector('template');
-        }
-    }
-    /**
-     * Convert a Class name into HTML tag.
-     * @param {Class} fn Grab the tag name from this class.
-     * @return {String} The tag name for the Custom Element.
-     */
-    static classToElement(fn) {
-        return fn.name
-            .replace(/[A-Z]/g, function(match) {
-                return '-' + match.toLowerCase();
-            })
-            .replace(/^\-/, '');
-    }
-    /**
-     * Convert a HTML tag into a Class name.
-     * @param {Class} fn Grab the class name from this tag.
-     * @return {String} The class name for the Custom Element.
-     */
-    static elementToClass(tag) {
-        return tag
-            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
-                if (+match === 0) return '';
-                return match.toUpperCase();
-            })
-            .replace(/[\-|\_]/g, '');
     }
 }

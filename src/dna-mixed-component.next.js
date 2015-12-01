@@ -1,6 +1,6 @@
 'use strict';
 
-import DNAComponent from 'dna-component.next.js'
+import { DNAComponent } from 'dna-component.next.js'
 
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
@@ -11,11 +11,11 @@ export class DNAMixedComponent extends DNAComponent {
 	 * Attach behaviors' static and class methods and properties to the current class.
 	 * Trigger all `init` static methods of the implemented behaviors.
 	 */
-	static init(...args) {
-		let ctr = DNAComponent.init.apply(this, args);
+	static onRegister(...args) {
+		let ctr = DNAComponent.onRegister.apply(this, args);
 		let behaviors = this['behaviors'] || [];
 		DNAMixedComponent.__iterateBehaviors(this, behaviors);
-		DNAMixedComponent.__triggerCallbacks(this, 'init', args);
+		DNAMixedComponent.__triggerCallbacks(this, 'onRegister', args);
 		return ctr;
 	}
 	/**

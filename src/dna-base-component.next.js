@@ -1,8 +1,8 @@
 'use strict';
 
-import DNAMixedComponent from 'dna-mixed-component.next.js';
-import DNAEventComponent from 'dna-event-component.next.js';
-import DNAAttributesComponent from 'dna-attributes-component.next.js';
+import { DNAMixedComponent } from 'dna-mixed-component.next.js';
+import { DNAEventComponent } from 'dna-event-component.next.js';
+import { DNAAttributesComponent } from 'dna-attributes-component.next.js';
 
 /**
  * Simple Custom Component with attributes and behaviors.
@@ -14,12 +14,12 @@ export class DNABaseComponent extends DNAMixedComponent {
 	createdCallback() {
 		DNAMixedComponent.prototype.createdCallback.call(this);
 		// Add scope style class
-        if (this.constructor.tagName) {
-            this.classList.add(this.constructor.tagName);
+        if (this.is) {
+            this.classList.add(this.is);
         }
         // Render the template
-        if (this.constructor.template) {
-            this.innerHTML = this.constructor.template.innerHTML || '';
+        if (this._template) {
+            this.innerHTML = this._template.innerHTML || '';
         }
 	}
 	/**
