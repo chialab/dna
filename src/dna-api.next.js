@@ -34,8 +34,15 @@ export class DNAComponents {
      * @return {HTMLTemplateElement} The template element of the component.
      */
     static getTemplate() {
-        if (document.currentScript && document.currentScript.parentNode) {
-            return document.currentScript.parentNode.querySelector('template');
+        if (document.currentScript) {
+            var doc = document.currentScript.ownerDocument;
+            if (!doc) {
+                doc = document.currentScript.parentNode;
+                while (doc && doc.tagName !== 'HTML') doc = doc.parentNode;
+            }
+            if (doc) {
+                return doc.querySelector('template');
+            }
         }
     }
     /**
