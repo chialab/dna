@@ -1,4 +1,10 @@
 export class DNAComponents {
+    /**
+     * Register the Custom Element.
+     * @param {Function|String} fn The definition or the tag name of the Custom Element.
+     * @param {Object} options A set of options for the registration of the Custom Element.
+     * @return {Function} The Custom Element constructor.
+     */
     static register(fn, options = {}) {
         let tagName, res;
         if (typeof fn == 'function') {
