@@ -22,6 +22,7 @@
     "babel-plugin-transform-es2015-for-of": "^6.1.18",
     "babel-plugin-transform-es2015-function-name": "^6.1.18",
     "babel-plugin-transform-es2015-literals": "^6.1.18",
+    "babel-plugin-transform-es2015-modules-systemjs": "^6.3.13",
     "babel-plugin-transform-es2015-object-super": "^6.1.18",
     "babel-plugin-transform-es2015-parameters": "^6.1.18",
     "babel-plugin-transform-es2015-shorthand-properties": "^6.1.18",
