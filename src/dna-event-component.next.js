@@ -1,6 +1,6 @@
 'use strict';
 
-import { DNAComponent } from 'dna-component.next.js'
+import { DNAComponent } from './dna-component.next.js'
 
 /**
  * Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.

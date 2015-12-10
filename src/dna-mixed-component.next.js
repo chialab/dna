@@ -1,6 +1,6 @@
 'use strict';
 
-import { DNAComponent } from 'dna-component.next.js'
+import { DNAComponent } from './dna-component.next.js'
 
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.

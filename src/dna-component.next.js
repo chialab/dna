@@ -1,5 +1,7 @@
 'use strict';
 
+import { DNAComponents } from './dna-components.next.js'
+
 // shim for Safari
 // https://github.com/babel/babel/issues/1548
 // https://bugs.webkit.org/show_bug.cgi?id=114457
@@ -41,7 +43,7 @@ export class DNAComponent extends HTMLElement {
      * @type {String}
      */
     static get tagName() {
-        return this._tagName || DNAComponent.classToElement(this);
+        return this._tagName || DNAComponents.classToElement(this);
     }
     static set tagName(tag) {
         if (typeof tag == 'string') {
