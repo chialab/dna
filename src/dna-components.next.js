@@ -1,10 +1,3 @@
-/**
- * Copyright (c) 2015 Chialab s.r.l. & Channelweb s.r.l.
- * All rights reserved.
- *
- * Write your set of Web Components using <template>, ES2015 and (optionally) Sass.
- */
-
 import '../node_modules/dna-polyfills/src/index.next.js';
 
 export class DNAComponents {
@@ -20,7 +13,7 @@ export class DNAComponents {
             if (typeof fn['onRegister'] == 'function') {
                 fn['onRegister'].call(fn);
             }
-            tagName = options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAComponent.classToElement(fn);
+            tagName = options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAComponents.classToElement(fn);
             options.prototype = fn.prototype;
             if (!options.extends && typeof fn.extends == 'string') {
                 options.extends = fn.extends;
@@ -49,6 +42,10 @@ export class DNAComponents {
      * @return {String} The tag name for the Custom Element.
      */
     static classToElement(fn) {
+        var name = fn.name || fn.toString().match(/^function\s*([^\s(]+)/)[1];
+        if (!name) {
+            return undefined;
+        }
         return fn.name
             .replace(/[A-Z]/g, function(match) {
                 return '-' + match.toLowerCase();

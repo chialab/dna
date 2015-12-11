@@ -9,16 +9,27 @@ grunt.initConfig({
     systemjs: {
         options: {
             sfx: true,
-            baseURL: '.',
-            configFile: './system.config.js',
             minify: true,
             build: {
                 mangle: true
+            },
+            // systemjs config
+            builder: {
+                baseURL: '.',
+                transpiler: 'babel',
+                meta: {
+                    './node_modules/babel/*': {
+                        format: 'cjs'
+                    },
+                    '*.next.js': {
+                        format: 'esm'
+                    }
+                }
             }
         },
         dist: {
             files: [{
-                src: 'src/dna-components.next.js',
+                src: 'src/index.next.js',
                 dest: 'dist/dna-components.min.js'
             }]
         }
