@@ -5,10 +5,9 @@
  * Write your set of Web Components using <template>, ES2015 and (optionally) Sass.
  */
 
-import { DNAComponents as API } from './dna-components.next.js';
-import { DNAComponent as MODEL } from './dna-component.next.js';
-import { DNABaseComponent as BASE } from './dna-base-component.next.js';
+import '../node_modules/dna-polyfills/src/index.next.js';
+import { DNAComponents } from './dna-components.next.js';
+import { DNAComponent } from './dna-component.next.js';
+import { DNABaseComponent } from './dna-base-component.next.js';
 
-export var DNAComponents = API;
-export var DNAComponent = MODEL;
-export var DNABaseComponent = BASE;
+export { DNAComponents, DNAComponent, DNABaseComponent };

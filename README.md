@@ -55,7 +55,6 @@ SeedComponent.register();
         font-size: 2em;
     }
 }
-
 ```
 
 *seed-component.html*

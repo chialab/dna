@@ -8,10 +8,10 @@ grunt.initConfig({
     },
     systemjs: {
         options: {
-            sfx: true,
-            minify: true,
+            sfx: false,
+            minify: false,
             build: {
-                mangle: true
+                mangle: false
             },
             // systemjs config
             builder: {
@@ -30,7 +30,7 @@ grunt.initConfig({
         dist: {
             files: [{
                 src: 'src/index.next.js',
-                dest: 'dist/dna-components.min.js'
+                dest: 'dist/dna-components.bundle.js'
             }]
         }
     }
