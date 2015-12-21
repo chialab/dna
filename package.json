@@ -20,6 +20,6 @@
     "load-grunt-tasks": "^3.3.0"
   },
   "dependencies": {
-    "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git#module-systemjs"
+    "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git"
   }
 }
