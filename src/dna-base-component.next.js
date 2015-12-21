@@ -32,16 +32,23 @@ export class DNABaseComponent extends DNAMixedComponent {
 	 * @return {HTMLStyleElement} the style tag created.
      */
 	static addCss(css) {
-		let style = document.createElement('style');
+		let id = 'style-' + this.tagName;
+		let style = document.getElementById(id) || document.createElement('style');
 		style.type = 'text/css';
-		style.setAttribute('id', this.tagName + '-' + Date.now());
+		style.setAttribute('id', id);
 		if (style.styleSheet) {
 		    style.styleSheet.cssText = css;
 		} else {
 		    style.appendChild(document.createTextNode(css));
 		}
-		let head = document.head || document.getElementsByTagName('head')[0];
-		head.appendChild(style);
+		if (!style.parentNode) {
+			let head = document.head || document.getElementsByTagName('head')[0];
+			if (head.firstElementChild) {
+				head.insertBefore(style, head.firstElementChild)
+			} else {
+				head.appendChild(style);
+			}
+		}
 		return style;
 	}
 	/**
