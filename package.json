@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Write your set of Web Components using <template>, ES2015 and (optionally) Sass.",
   "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
   "license": "MIT",
