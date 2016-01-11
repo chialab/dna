@@ -8,15 +8,16 @@ grunt.initConfig({
     },
     systemjs: {
         options: {
-            sfx: false,
-            minify: false,
+            sfx: true,
+            minify: true,
             build: {
-                mangle: false
+                mangle: true
             },
             // systemjs config
             builder: {
                 baseURL: '.',
                 transpiler: 'babel',
+                defaultJSExtensions: true,
                 meta: {
                     './node_modules/babel/*': {
                         format: 'cjs'
