@@ -2,6 +2,7 @@
 
 import { DNAMixedComponent } from './dna-mixed-component.next.js';
 import { DNAEventComponent } from './dna-event-component.next.js';
+import { DNATemplateComponent } from './dna-template-component.next.js';
 import { DNAAttributesComponent } from './dna-attributes-component.next.js';
 
 /**
@@ -16,14 +17,6 @@ export class DNABaseComponent extends DNAMixedComponent {
 		// Add scope style class
         if (this.is) {
             this.classList.add(this.is);
-        }
-        // Render the template
-        if (this._template) {
-			if (typeof this._template === 'string') {
-				this.innerHTML = this._template;
-			} else {
-            	this.innerHTML = this._template.innerHTML;
-			}
         }
 	}
 	/**
@@ -56,6 +49,6 @@ export class DNABaseComponent extends DNAMixedComponent {
      * @type {Array}
      */
 	static get behaviors() {
-		return [DNAEventComponent, DNAAttributesComponent]
+		return [DNATemplateComponent, DNAEventComponent, DNAAttributesComponent]
 	}
 }

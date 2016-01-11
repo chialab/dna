@@ -1,6 +1,6 @@
 'use strict';
 
-import { DNAComponent } from './dna-component.next.js'
+import { DNAComponent } from './dna-component.next.js';
 
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
@@ -138,6 +138,6 @@ export class DNAMixedComponent extends DNAComponent {
 	 * @return {Array} The list.
 	 */
 	static get __componentCallbacks() {
-		return ['init', 'createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'];
+		return ['onRegister', 'createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'];
 	}
 }

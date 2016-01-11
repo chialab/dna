@@ -1,3 +1,5 @@
+'use strict';
+
 import '../node_modules/dna-polyfills/src/index.next.js';
 
 export class DNAComponents {
@@ -22,13 +24,21 @@ export class DNAComponents {
             tagName = fn;
         }
         try {
-            res = document.registerElement(tagName, options);
+            if (typeof document.registerElement === 'function') {
+                res = document.registerElement(tagName, options);
+            } else {
+                res = function() {
+                    var el = document.createElement(tagName);
+                    Object.setPrototypeOf(el, fn.prototype);
+                    setTimeout(function () {
+                        el.createdCallback();
+                    }, 0);
+                    return el;
+                }
+            }
             res.prototype.is = tagName;
             if (typeof fn == 'function') {
                 res.prototype.constructor = fn;
-            }
-            if (fn.template) {
-                res.prototype._template = fn.template;
             }
             return res;
         } catch (ex) {
