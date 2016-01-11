@@ -1,11 +1,31 @@
 'use strict';
 
-import { DNAComponent } from './dna-component.next.js'
+import Delegate from '../node_modules/dom-delegate/lib/index.js';
+import { DNAComponent } from './dna-component.next.js';
 
 /**
  * Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
  */
 export class DNAEventComponent extends DNAComponent {
+	/**
+     * Fires when an instance of the element is created.
+     */
+    createdCallback() {
+        // bind events
+        if (this.bindEvents) {
+			var delegate = new Delegate(this);
+			for (let k in this.bindEvents) {
+				let callback = this[this.bindEvents[k]];
+				if (callback && typeof callback === 'function') {
+					let evName = k.split(' ').shift(),
+						selector = k.split(' ').slice(1).join(' ');
+
+					delegate.on(evName, selector, callback.bind(this));
+				}
+			}
+		}
+        DNAComponent.prototype.createdCallback.call(this);
+    }
 	/**
 	 * `Node.prototype.addEventListener` polyfill.
 	 * @param {String} evName The name of the event to listen.

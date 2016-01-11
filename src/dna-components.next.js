@@ -4,7 +4,7 @@ import '../node_modules/dna-polyfills/src/index.next.js';
 
 export class DNAComponents {
     /**
-     * Register the Custom Element.
+     * Trigger `onRegister` callbacks and register the Custom Element (if the `skipWebComponent` option !== true).
      * @param {Function|String} fn The definition or the tag name of the Custom Element.
      * @param {Object} options A set of options for the registration of the Custom Element.
      * @return {Function} The Custom Element constructor.
@@ -24,7 +24,7 @@ export class DNAComponents {
             tagName = fn;
         }
         try {
-            if (typeof document.registerElement === 'function') {
+            if (typeof document.registerElement === 'function' && options.skipWebComponent !== true) {
                 res = document.registerElement(tagName, options);
             } else {
                 res = function() {

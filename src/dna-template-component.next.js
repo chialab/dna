@@ -57,30 +57,30 @@ export class DNATemplateComponent {
      * Fires when an the element is registered.
      */
     static onRegister(...args) {
-            // Create render function
-            let ctr = this;
-            if (this.template) {
-                if (typeof ctr.template === 'function') {
-                    ctr.prototype.render = ctr.template.bind(this);
-                } else if (typeof ctr.template == 'string') {
-                    let template = ctr.template;
-                    ctr.prototype.render = (function(scope) {
-                        return function() {
-                            try {
-                                return eval('render`' + template + '`');
-                            } catch(ex) {
-                                console.error(ex);
-                            }
+        // Create render function
+        let ctr = this;
+        if (this.template) {
+            if (typeof ctr.template === 'function') {
+                ctr.prototype.render = ctr.template.bind(this);
+            } else if (typeof ctr.template == 'string') {
+                let template = ctr.template;
+                ctr.prototype.render = (function(scope) {
+                    return function() {
+                        try {
+                            return eval('render`' + template + '`');
+                        } catch(ex) {
+                            console.error(ex);
                         }
-                    })(this);
-                } else if (ctr.template instanceof Node && ctr.template.tagName == 'TEMPLATE') {
-                    ctr.prototype.render = () => document.importNode(ctr.template.content, true);
-                }
+                    }
+                })(this);
+            } else if (ctr.template instanceof Node && ctr.template.tagName == 'TEMPLATE') {
+                ctr.prototype.render = () => document.importNode(ctr.template.content, true);
             }
         }
-        /**
-         * Fires when an instance of the element is created.
-         */
+    }
+    /**
+     * Fires when an instance of the element is created.
+     */
     createdCallback() {
         // Render the template
         var nodes = this.render();

@@ -20,6 +20,7 @@
     "load-grunt-tasks": "^3.3.0"
   },
   "dependencies": {
-    "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git"
+    "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",
+    "dom-delegate": "^2.0.3"
   }
 }
