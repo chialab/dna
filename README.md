@@ -96,7 +96,7 @@ var Seed = DNAComponents.register(SeedComponent);
 After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!
 
 ## DNABaseComponent
-This is a base model which extends `DNAMixedComponent` and automatically add `DNAEventComponent`, `DNAAttributesComponent` and `DNATemplateComponent` as behavior.
+This is a base model which extends `DNAMixedComponent` and automatically add `DNAEventComponent`, `DNAAttributesComponent`, `DNAStyleComponent` and `DNATemplateComponent` as behaviors.
 
 **Example**
 
