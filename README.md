@@ -6,6 +6,7 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 - [Event Component](#DNAEventComponent)
 - [Attributes Component](#DNAAttributesComponent)
 - [Template Component](#DNATemplateComponent)
+- [Style Component](#DNAStyleComponent)
 - [Mixed Component](#DNAMixedComponent)
 - [Base Component](#DNABaseComponent)
 
@@ -58,6 +59,10 @@ TODO
 
 TODO
 
+## DNAStyleComponent
+
+TODO
+
 ## DNAMixedComponent
 This is another model to use to create DNA Custom Components mixing a list of prototypes.
 
@@ -99,7 +104,8 @@ seed-component.next.js
 
 ```js
 import { DNABaseComponent, DNAComponents } from 'dna/components';
-import template from './seed-component.html!text';
+import template from './seed-component.html';
+import css from './seed-component.scss';
 
 export class SeedComponent extends DNABaseComponent {
     static get tagName() {
@@ -110,11 +116,17 @@ export class SeedComponent extends DNABaseComponent {
         return template;
     }
 
+    static get css() {
+        return css;
+    }
+
     createdCallback() {
+        DNABaseComponent.prototype.createdCallback.apply(this, arguments);
         this.classList.add('seed-component-scope');
     }
 
     attachedCallback() {
+        DNABaseComponent.prototype.attachedCallback.apply(this, arguments);
         this.style.width = this.parentNode.offsetWidth + 'px';
     }
 
@@ -122,12 +134,14 @@ export class SeedComponent extends DNABaseComponent {
         return 5 * 5;
     }
 }
+
 ```
 
 seed-component.scss
 
 ```scss
 .seed-component {
+    font-family: sans-serif;
     span {
         color: red;
     }
@@ -148,9 +162,10 @@ app.next.js
 
 ```js
 import { DNAComponents } from 'dna/components';
-import { SeedComponent } from './components/seed-component.next.js';
+import { SeedComponent } from './components/seed/seed-component.next.js';
 // Register the component
 var Seed = DNAComponents.register(SeedComponent);
+document.body.appendChild(new Seed());
 ```
 
 --------------------------------------------------------------------------------
