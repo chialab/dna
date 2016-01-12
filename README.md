@@ -15,10 +15,10 @@ This is a base model for custom components. Use and extend `DNAComponent` for al
 ## DNAEventComponent
 Simple Custom Component with `addEventListener` polyfill, a `dispatchEvent` wrapper named `trigger` and children event delagation.
 
-** Interface **
+**Interface**
 - `trigger`: trigger an Event with some custom data.
 
-** Example **
+**Example**
 
 seed-component.next.js
 
@@ -63,10 +63,10 @@ This is another model to use to create DNA Custom Components mixing a list of pr
 
 Add some some prototype to the `behaviors` property of the Class:
 
-** Interface **
+**Interface**
 - `get behaviors`: a list of prototypes to mixin.
 
-** Example **
+**Example**
 
 seed-component.next.js
 
