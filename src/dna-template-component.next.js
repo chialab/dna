@@ -1,5 +1,4 @@
 /**
- *
  * @see http://www.2ality.com/2015/01/template-strings-html.html
  */
 

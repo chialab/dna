@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Chialab s.r.l. & Channelweb s.r.l.
  * All rights reserved.
  *
- * Write your set of Web Components using <template>, ES2015 and (optionally) Sass.
+ * Write your set of (Web) Components using ES2015, templates and (optionally) Sass.
  */
 
 import { DNAComponents } from './dna-components.next.js';

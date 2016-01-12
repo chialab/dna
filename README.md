@@ -1,50 +1,130 @@
 ![Logo](https://gitlab.com/dna-components/dna-design/raw/master/logos/logo-raster-128.png)
 
 # DNA Components
+Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/es6features), [templates](http://www.2ality.com/2015/01/template-strings-html.html) and (optionally) [Sass](http://sass-lang.com/).
+- [DNA Component](#DNAComponent)
+- [Event Component](#DNAEventComponent)
+- [Attributes Component](#DNAAttributesComponent)
+- [Template Component](#DNATemplateComponent)
+- [Mixed Component](#DNAMixedComponent)
+- [Base Component](#DNABaseComponent)
 
-Write your set of Web Components using `<template>`, [ES2015](https://github.com/lukehoban/es6features) and [Sass](http://sass-lang.com/).
-
-* [DNA Component](#DNAComponent)
-* [Event Component](#DNAEventComponent)
-* [Mixed Component](#DNAMixedComponent)
-* [Base Component](#DNABaseComponent)
-
-### DNAComponent
-
+## DNAComponent
 This is a base model for custom components. Use and extend `DNAComponent` for all `DNA` elements.
+
+## DNAEventComponent
+Simple Custom Component with `addEventListener` polyfill, a `dispatchEvent` wrapper named `trigger` and children event delagation.
+
+** Interface **
+- `trigger`: trigger an Event with some custom data.
 
 ** Example **
 
-See a complete example [here](https://gitlab.com/dna-components/dna-seed-component).
-
-*seed-component.next.js*
+seed-component.next.js
 
 ```js
-export class SeedComponent extends DNAComponent {
+import { DNAEventComponent } from 'dna/components';
+export class SeedComponent extends DNAEventComponent {
+    get tagName() {
+        return 'seed-component'
+    }
+}
+```
 
+app.next.js
+
+```js
+import { DNAComponents } from 'dna/components';
+import { SeedComponent } from './components/seed-component.next.js';
+// Register the component
+var Seed = DNAComponents.register(SeedComponent);
+// Instantiate a new Seed
+let seed = new Seed();
+// Attach event
+seed.addEventListener('sprout', function (ev) {
+    console.log(ev.detail.owner + '\'s seed is growing!');
+});
+// Dispatch event
+seed.trigger('sprout', { owner: 'Gustavo' });
+```
+
+This script will prompt: `Gustavo's seed is growing!`.
+
+## DNAAttributesComponent
+
+TODO
+
+## DNATemplateComponent
+
+TODO
+
+## DNAMixedComponent
+This is another model to use to create DNA Custom Components mixing a list of prototypes.
+
+Add some some prototype to the `behaviors` property of the Class:
+
+** Interface **
+- `get behaviors`: a list of prototypes to mixin.
+
+** Example **
+
+seed-component.next.js
+
+```js
+import { DNAMixedComponent, DNAEventComponent } from 'dna/components';
+export class SeedComponent extends DNAMixedComponent {
+    get behaviors() {
+        return [DNAEventComponent];
+    }
+}
+```
+
+app.next.js
+
+```js
+import { DNAComponents } from 'dna/components';
+import { SeedComponent } from './components/seed-component.next.js';
+// Register the component
+var Seed = DNAComponents.register(SeedComponent);
+```
+
+After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!
+
+## DNABaseComponent
+This is a base model which extends `DNAMixedComponent` and automatically add `DNAEventComponent`, `DNAAttributesComponent` and `DNATemplateComponent` as behavior.
+
+**Example**
+
+seed-component.next.js
+
+```js
+import { DNABaseComponent, DNAComponents } from 'dna/components';
+import template from './seed-component.html!text';
+
+export class SeedComponent extends DNABaseComponent {
     static get tagName() {
         return 'seed-component'
     }
 
+    static get template() {
+        return template;
+    }
+
     createdCallback() {
-        //
+        this.classList.add('seed-component-scope');
     }
 
     attachedCallback() {
-        //
+        this.style.width = this.parentNode.offsetWidth + 'px';
     }
 
     myCustomMethod() {
         return 5 * 5;
     }
-
 }
-
-// Register the component
-SeedComponent.register();
 ```
 
-*seed-component.scss*
+seed-component.scss
 
 ```scss
 .seed-component {
@@ -57,82 +137,23 @@ SeedComponent.register();
 }
 ```
 
-*seed-component.html*
+seed-component.html
 
 ```html
-<link rel="import" href="../../dna-polyfills/dist/dna-polyfills.min.js">
-<link rel="import" href="../../dna-components/dist/dna-components.html">
-<link rel="stylesheet" href="seed-component.css" type="text/css">
-<template>
-	<span>Seed component :)</span>
-</template>
-<script type="text/javascript" src="seed-component.next.js"></script>
+<h1>Seed component :)</h1>
+<span>${this.myCustomMethod()}</span>
 ```
 
-### DNAEventComponent
-Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
-
-** Interface **
-* `trigger`: trigger an Event with some custom data.
-
-** Example **
+app.next.js
 
 ```js
-export class SeedComponent extends DNAEventComponent {
-
-    get tagName() {
-        return 'seed-component'
-    }
-
-}
-
+import { DNAComponents } from 'dna/components';
+import { SeedComponent } from './components/seed-component.next.js';
 // Register the component
-SeedComponent.register();
-
-// --------
-
-let seed = document.createElement('seed-component');
-// or
-let seed = new SeedComponent();
-seed.addEventListener('sprout', function (ev) {
-    console.log(ev.detail.owner + '\'s seed is growing!');
-});
-seed.trigger('sprout', { owner: 'Gustavo' });
+var Seed = DNAComponents.register(SeedComponent);
 ```
 
-This script will prompt: `Gustavo's seed is growing!`
-
-### DNAMixedComponent
-This is another model to use to create DNA Custom Components mixing a list of prototypes.
-
-Add some some prototype to the `behaviors` property of the Class:
-
-** Interface **
-* `get behaviors`: a list of prototypes to mixin.
-
-** Example **
-
-```js
-export class SeedComponent extends DNAMixedComponent {
-
-    get behaviors() {
-        return [DNAEventComponent];
-    }
-
-}
-
-// Register the component
-SeedComponent.register();
-```
-
-After the initialization, the `SeedComponent` prototype incorporates the `DNAEventComponent.trigger` method!
-
-### DNABaseComponent
-
-This is a base model which extends `DNAMixedComponent` and automatically add `DNAEventComponent` as behavior.
-
----
+--------------------------------------------------------------------------------
 
 ## Build
-
 Have a look [here](https://gitlab.com/dna-components/dna-docs/blob/master/tutorials/build.md).
