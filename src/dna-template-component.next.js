@@ -4,7 +4,7 @@
 
 'use strict';
 
-import { DNAComponent } from './dna-component.next.js'
+import { DNAComponent } from './dna-component.next.js';
 
 function htmlEscape(str) {
     return str.replace(/&/g, '&amp;') // first!
@@ -51,7 +51,7 @@ function render(literalSections, ...substs) {
     return result;
 }
 
-export class DNATemplateComponent {
+export class DNATemplateComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
      */

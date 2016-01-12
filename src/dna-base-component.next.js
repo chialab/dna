@@ -3,6 +3,7 @@
 import { DNAMixedComponent } from './dna-mixed-component.next.js';
 import { DNAEventComponent } from './dna-event-component.next.js';
 import { DNATemplateComponent } from './dna-template-component.next.js';
+import { DNAStyleComponent } from './dna-style-component.next.js';
 import { DNAAttributesComponent } from './dna-attributes-component.next.js';
 
 /**
@@ -20,35 +21,10 @@ export class DNABaseComponent extends DNAMixedComponent {
         }
 	}
 	/**
-     * Add <style> tag for the component.
-     * @param {String} css The CSS content.
-	 * @return {HTMLStyleElement} the style tag created.
-     */
-	static addCss(css) {
-		let id = 'style-' + this.tagName;
-		let style = document.getElementById(id) || document.createElement('style');
-		style.type = 'text/css';
-		style.setAttribute('id', id);
-		if (style.styleSheet) {
-		    style.styleSheet.cssText = css;
-		} else {
-		    style.appendChild(document.createTextNode(css));
-		}
-		if (!style.parentNode) {
-			let head = document.head || document.getElementsByTagName('head')[0];
-			if (head.firstElementChild) {
-				head.insertBefore(style, head.firstElementChild)
-			} else {
-				head.appendChild(style);
-			}
-		}
-		return style;
-	}
-	/**
      * A list of mixins.
      * @type {Array}
      */
 	static get behaviors() {
-		return [DNATemplateComponent, DNAEventComponent, DNAAttributesComponent]
+		return [DNATemplateComponent, DNAStyleComponent, DNAEventComponent, DNAAttributesComponent]
 	}
 }
