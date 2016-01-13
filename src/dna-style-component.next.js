@@ -18,6 +18,9 @@ export class DNAStyleComponent extends DNAComponent {
 	 * @return {HTMLStyleElement} the style tag created.
      */
 	static addCss(css) {
+        if (typeof css == 'function') {
+            css = css();
+        }
 		let id = 'style-' + this.tagName;
 		let style = document.getElementById(id) || document.createElement('style');
 		style.type = 'text/css';

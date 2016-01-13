@@ -24,6 +24,7 @@ export class DNAComponents {
             tagName = fn;
         }
         try {
+            fn.prototype.is = tagName;
             if (typeof document.registerElement === 'function' && options.skipWebComponent !== true) {
                 res = document.registerElement(tagName, options);
             } else {

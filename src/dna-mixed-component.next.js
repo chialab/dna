@@ -60,11 +60,11 @@ export class DNAMixedComponent extends DNAComponent {
 	 * @param {Array} args A list of arguments to apply to the callback.
 	 */
 	static __triggerCallbacks(ctx, callbackKey, args) {
-		var callbacks = ctx[DNAMixedComponent.__getCallbackKey(callbackKey)];
+		let secretKey = DNAMixedComponent.__getCallbackKey(callbackKey),
+		 	callbacks = ctx[secretKey] || (ctx.__proto__ && ctx.__proto__[secretKey]);
 		if (callbacks && Array.isArray(callbacks)) {
 			for (let i = 0, len = callbacks.length; i < len; i++) {
-				var callback = callbacks[i];
-				callback.apply(ctx, args);
+				callbacks[i].apply(ctx, args);
 			}
 		}
 	}
