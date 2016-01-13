@@ -15,6 +15,24 @@ if (typeof HTMLElement !== 'function') {
  * This is the model to use to create DNA Custom Components.
  * @class DNAComponent
  * @extends HTMLElement
+ *
+ * @example
+ * my-component.next.js
+ * ```js
+ * import { DNAComponent } from 'dna/component';
+ * export class MyComponent extends DNAComponent {
+ *   get createdCallback() {
+ *     console.log('Created a MyComponent instance!!!');
+ *   }
+ * }
+ * ```
+ * app.next.js
+ * ```js
+ * import { DNAComponents } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.next.js';
+ * var MyElement = DNAComponents.register(MyComponent);
+ * var element = new MyElement(); // logs "Created a MyComponent instance!!!"
+ * ```
  */
 export class DNAComponent extends HTMLElement {
     /**

@@ -16,6 +16,32 @@
 ### `new DNAEventComponent()`
 Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
 
+**Example**  
+my-component.next.js
+```js
+import { DNAEventComponent } from 'dna/component';
+export class MyComponent extends DNAEventComponent {
+  get bindEvents() {
+    return {
+      'click button': 'onButtonClick'
+    }
+  }
+  onButtonClick() {
+    console.log('button clicked');
+  }
+}
+```
+app.next.js
+```js
+import { DNAComponents } from 'dna/component';
+import { MyComponent } from './components/my-component/my-component.next.js';
+var MyElement = DNAComponents.register(MyComponent);
+var element = new MyElement();
+var button = document.createElement('button');
+button.innerText = 'Click me';
+element.appendChild(button);
+button.click(); // logs "button clicked"
+```
 <a name="DNAEventComponent+createdCallback"></a>
 ### `dnaEventComponent.createdCallback()`
 Fires when an instance of the element is created.

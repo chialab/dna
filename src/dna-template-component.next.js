@@ -10,6 +10,28 @@ import { DNAComponent } from './dna-component.next.js';
  * Simple Custom Component with template handling using the `template` property.
  * @class DNATemplateComponent
  * @extends DNAComponent
+ *
+ * @example
+ * my-component.next.js
+ * ```js
+ * import { DNATemplateComponent } from 'dna/component';
+ * export class MyComponent extends DNATemplateComponent {
+ *   static get template() {
+ *     return `<h1>${this.name}</h1>`
+ *   }
+ *   get name() {
+ *     return 'Newton'
+ *   }
+ * }
+ * ```
+ * app.next.js
+ * ```js
+ * import { DNAComponents } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.next.js';
+ * var MyElement = DNAComponents.register(MyComponent);
+ * var element = new MyElement();
+ * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
+ * ```
  */
 export class DNATemplateComponent extends DNAComponent {
     /**

@@ -6,6 +6,26 @@ import { DNAComponent } from './dna-component.next.js'
  * Simple Custom Component with attributes watching and reflecting.
  * @class DNAAttributesComponent
  * @extends DNAComponent
+ *
+ * @example
+ * my-component.next.js
+ * ```js
+ * import { DNAAttributesComponent } from 'dna/component';
+ * export class MyComponent extends DNAAttributesComponent {
+ *   get attributes() {
+ *     return ['name'];
+ *   }
+ * }
+ * ```
+ * app.next.js
+ * ```js
+ * import { DNAComponents } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.next.js';
+ * var MyElement = DNAComponents.register(MyComponent);
+ * var element = new MyElement();
+ * element.setAttribute('name', 'Newton');
+ * console.log(element.name); // logs "Newton"
+ * ```
  */
 export class DNAAttributesComponent extends DNAComponent {
 	/**

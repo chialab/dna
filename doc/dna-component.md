@@ -18,6 +18,23 @@
 ### `new DNAComponent()`
 This is the model to use to create DNA Custom Components.
 
+**Example**  
+my-component.next.js
+```js
+import { DNAComponent } from 'dna/component';
+export class MyComponent extends DNAComponent {
+  get createdCallback() {
+    console.log('Created a MyComponent instance!!!');
+  }
+}
+```
+app.next.js
+```js
+import { DNAComponents } from 'dna/component';
+import { MyComponent } from './components/my-component/my-component.next.js';
+var MyElement = DNAComponents.register(MyComponent);
+var element = new MyElement(); // logs "Created a MyComponent instance!!!"
+```
 <a name="DNAComponent+createdCallback"></a>
 ### `dnaComponent.createdCallback()`
 Fires when an instance of the element is created.

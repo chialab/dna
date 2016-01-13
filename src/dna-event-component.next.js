@@ -7,6 +7,33 @@ import { DNAComponent } from './dna-component.next.js';
  * Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
  * @class DNAEventComponent
  * @extends DNAComponent
+ *
+ * @example
+ * my-component.next.js
+ * ```js
+ * import { DNAEventComponent } from 'dna/component';
+ * export class MyComponent extends DNAEventComponent {
+ *   get bindEvents() {
+ *     return {
+ *       'click button': 'onButtonClick'
+ *     }
+ *   }
+ *   onButtonClick() {
+ *     console.log('button clicked');
+ *   }
+ * }
+ * ```
+ * app.next.js
+ * ```js
+ * import { DNAComponents } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.next.js';
+ * var MyElement = DNAComponents.register(MyComponent);
+ * var element = new MyElement();
+ * var button = document.createElement('button');
+ * button.innerText = 'Click me';
+ * element.appendChild(button);
+ * button.click(); // logs "button clicked"
+ * ```
  */
 export class DNAEventComponent extends DNAComponent {
 	/**

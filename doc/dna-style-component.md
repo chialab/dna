@@ -12,6 +12,26 @@
 ### `new DNAStyleComponent()`
 Simple Custom Component with css style handling using the `css` property.
 
+**Example**  
+my-component.next.js
+```js
+import { DNAStyleComponent } from 'dna/component';
+export class MyComponent extends DNAStyleComponent {
+  static get css() {
+    return '.my-component p { color: red; }'
+  }
+}
+```
+app.next.js
+```js
+import { DNAComponents } from 'dna/component';
+import { MyComponent } from './components/my-component/my-component.next.js';
+var MyElement = DNAComponents.register(MyComponent);
+var element = new MyElement();
+var p = document.createElement('p');
+p.innerText = 'Paragraph';
+element.appendChild(p); // text inside `p` gets the red color
+```
 <a name="DNAStyleComponent.onRegister"></a>
 ### `DNAStyleComponent.onRegister()`
 Fires when an the element is registered.
