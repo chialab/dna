@@ -1,0 +1,25 @@
+.seed-component {
+    font-family: sans-serif;
+}
+
+.seed-component button {
+    margin: 4px;
+}
+
+.seed__states {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.seed__states li {
+    display: inline-block;
+    margin: 4px;
+    color: #666;
+}
+
+.seed__state {
+    color: red;
+    font-size: 2em;
+}

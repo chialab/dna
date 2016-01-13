@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Demo DNAComponents</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser-polyfill.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.14/system.js"></script>
+    <script>
+        System.config({
+            transpiler: 'babel',
+            presets: ['es2015'],
+            meta: {
+                '*.html': {
+                    loader: 'plugin-template'
+                },
+                '*.css': {
+                    loader: 'plugin-css'
+                },
+                '*.sass': {
+                    loader: 'plugin-sass'
+                },
+                '*.scss': {
+                    loader: 'plugin-sass'
+                },
+            },
+            packages: {
+                'dna/components': {
+                    main: '../../../src/index.next.js',
+                    format: 'esm'
+                }
+            },
+            map: {
+                'babel': 'http://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js',
+                'plugin-template': '../loaders/template.js',
+                'plugin-sass': '../loaders/sass.js',
+                'plugin-css': '../loaders/css.js'
+            }
+        });
+        System.import('app.next.js').then(function () {
+            console.log('Fire!');
+        }, function (er) {
+            console.log(er);
+            console.log('Ohoh!');
+        });
+    </script>
+
+</head>
+
+<body>
+
+</body>
+
+</html>
