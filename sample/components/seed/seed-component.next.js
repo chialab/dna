@@ -1,4 +1,4 @@
-import { DNABaseComponent, DNAComponents } from 'dna/components';
+import { DNABaseComponent } from 'dna/components';
 import template from './seed-component.html';
 import css from './seed-component.css';
 

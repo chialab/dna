@@ -1,6 +1,6 @@
 'use strict';
 
-import { DNAComponents } from './dna-components.next.js'
+import { DNAHelper } from './dna-helper.next.js'
 
 // shim for Safari
 // https://github.com/babel/babel/issues/1548
@@ -28,9 +28,9 @@ if (typeof HTMLElement !== 'function') {
  * ```
  * app.next.js
  * ```js
- * import { DNAComponents } from 'dna/component';
+ * import { Register } from 'dna/component';
  * import { MyComponent } from './components/my-component/my-component.next.js';
- * var MyElement = DNAComponents.register(MyComponent);
+ * var MyElement = Register(MyComponent);
  * var element = new MyElement(); // logs "Created a MyComponent instance!!!"
  * ```
  */

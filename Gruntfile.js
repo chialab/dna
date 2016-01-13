@@ -12,7 +12,8 @@ grunt.initConfig({
             sfx: true,
             minify: true,
             build: {
-                mangle: true
+                mangle: true,
+                globalName: 'DNAComponents'
             },
             // systemjs config
             builder: {
@@ -32,7 +33,7 @@ grunt.initConfig({
         dist: {
             files: [{
                 src: 'src/index.next.js',
-                dest: 'dist/dna-components.bundle.js'
+                dest: 'dist/dna-components.js'
             }]
         }
     },

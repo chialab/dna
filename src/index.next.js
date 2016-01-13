@@ -5,8 +5,33 @@
  * Write your set of (Web) Components using ES2015, templates and (optionally) Sass.
  */
 
-import { DNAComponents } from './dna-components.next.js';
+import { DNAHelper } from './dna-helper.next.js';
 import { DNAComponent } from './dna-component.next.js';
 import { DNABaseComponent } from './dna-base-component.next.js';
 
-export { DNAComponents, DNAComponent, DNABaseComponent };
+export function Create(options = {}) {
+    let proto = options.prototype || {};
+    if (typeof options.tagName !== 'string') {
+        throw 'Missing or bad typed `tagName` property';
+    }
+    let scope = function () {};
+    scope.prototype = Object.create(DNABaseComponent.prototype, {
+        constructor: {
+            value: scope,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+    Object.setPrototypeOf(scope, DNABaseComponent);
+    for (var k in proto) {
+        scope.prototype[k] = proto[k];
+    }
+    return this.register(scope, { tagName: options.tagName });
+}
+
+export function Register(...args) {
+    return DNAHelper.register(...args);
+}
+
+export { DNAComponent, DNABaseComponent };

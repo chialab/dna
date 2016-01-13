@@ -26,9 +26,9 @@ import { DNAComponent } from './dna-component.next.js';
  * ```
  * app.next.js
  * ```js
- * import { DNAComponents } from 'dna/component';
+ * import { Register } from 'dna/component';
  * import { MyComponent } from './components/my-component/my-component.next.js';
- * var MyElement = DNAComponents.register(MyComponent);
+ * var MyElement = Register(MyComponent);
  * var element = new MyElement();
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
  * ```
@@ -62,15 +62,17 @@ export class DNATemplateComponent extends DNAComponent {
      */
     createdCallback() {
         // Render the template
-        let nodes = this.render();
-        if (typeof nodes === 'string') {
-            this.innerHTML = nodes;
-        } else if (nodes instanceof NodeList) {
-            for (let i = 0, len = nodes.length; i < len; i++) {
-                this.appendChild(nodes[i]);
+        if (typeof this.render === 'function') {
+            let nodes = this.render();
+            if (typeof nodes === 'string') {
+                this.innerHTML = nodes;
+            } else if (nodes instanceof NodeList) {
+                for (let i = 0, len = nodes.length; i < len; i++) {
+                    this.appendChild(nodes[i]);
+                }
+            } else if (nodes instanceof Node) {
+                this.appendChild(nodes);
             }
-        } else if (nodes instanceof Node) {
-            this.appendChild(nodes);
         }
         DNAComponent.prototype.createdCallback.call(this);
     }
