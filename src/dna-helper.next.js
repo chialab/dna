@@ -1,7 +1,5 @@
 'use strict';
 
-import '../node_modules/dna-polyfills/src/index.next.js';
-
 /**
  * Helper class
  * @class DNAHelper

@@ -27,6 +27,10 @@ grunt.initConfig({
                     '*.next.js': {
                         format: 'esm'
                     }
+                },
+                paths: {
+                    'dna/polyfills': './node_modules/dna-polyfills/src/index.next.js',
+                    'dna/delegate': './node_modules/dom-delegate/lib/index.js'
                 }
             }
         },

@@ -5,6 +5,8 @@
  * Write your set of (Web) Components using ES2015, templates and (optionally) Sass.
  */
 
+import 'dna/polyfills';
+
 import { DNAHelper } from './dna-helper.next.js';
 export * from './dna-component.next.js';
 export * from './dna-attributes-component.next.js';
