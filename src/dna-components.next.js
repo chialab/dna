@@ -1,12 +1,13 @@
 'use strict';
 
 import '../node_modules/dna-polyfills/src/index.next.js';
+import { DNABaseComponent } from './dna-base-component.next.js';
 
 /**
  * Helper class
  * @class DNAComponents
  */
-export class DNAComponents {
+class DNAComponents {
     /**
      * Trigger `onRegister` callbacks and register the Custom Element (if the `skipWebComponent` option !== true).
      * @param {Function|String} fn The definition or the tag name of the Custom Element.
@@ -29,7 +30,7 @@ export class DNAComponents {
         }
         try {
             fn.prototype.is = tagName;
-            if (typeof document.registerElement === 'function' && options.skipWebComponent !== true) {
+            if (DNAComponents.config.useWebComponents) {
                 res = document.registerElement(tagName, options);
             } else {
                 res = function() {
@@ -80,4 +81,35 @@ export class DNAComponents {
             })
             .replace(/[\-|\_]/g, '');
     }
+
+    static Create(options = {}) {
+        let proto = options.prototype || {};
+        if (typeof options.tagName !== 'string') {
+            throw 'Missing or bad typed `tagName` property';
+        }
+        let scope = function () {};
+        scope.prototype = Object.create(DNABaseComponent.prototype, {
+            constructor: {
+                value: scope,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        Object.setPrototypeOf(scope, DNABaseComponent);
+        for (var k in proto) {
+            scope.prototype[k] = proto[k];
+        }
+        return this.register(scope, { tagName: options.tagName });
+    }
+
+    get BaseComponent() {
+        return DNABaseComponent;
+    }
 }
+
+DNAComponents.config = {
+    useWebComponents: (typeof window !== 'undefined' && typeof window.WebComponents !== 'undefined')
+};
+
+export { DNAComponents }
