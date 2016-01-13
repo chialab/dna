@@ -12,29 +12,24 @@
             presets: ['es2015'],
             meta: {
                 '*.html': {
-                    loader: 'plugin-template'
+                    loader: 'dna/loaders/template'
                 },
                 '*.css': {
-                    loader: 'plugin-css'
+                    loader: 'dna/loaders/css'
                 },
                 '*.sass': {
-                    loader: 'plugin-sass'
+                    loader: 'dna/loaders/sass'
                 },
                 '*.scss': {
-                    loader: 'plugin-sass'
+                    loader: 'dna/loaders/sass'
                 },
             },
-            packages: {
-                'dna/components': {
-                    main: '../../../src/index.next.js',
-                    format: 'esm'
-                }
+            paths: {
+                'dna/components': '../src/index.next.js',
+                'dna/loaders/*': '../loaders/*.js',
             },
             map: {
                 'babel': 'http://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js',
-                'plugin-template': '../loaders/template.js',
-                'plugin-sass': '../loaders/sass.js',
-                'plugin-css': '../loaders/css.js'
             }
         });
         System.import('app.next.js').then(function () {
