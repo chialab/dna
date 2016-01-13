@@ -6,6 +6,11 @@
 
 import { DNAComponent } from './dna-component.next.js';
 
+/**
+ * Simple Custom Component with template handling using the `template` property.
+ * @class DNATemplateComponent
+ * @extends DNAComponent
+ */
 export class DNATemplateComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.

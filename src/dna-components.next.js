@@ -2,6 +2,10 @@
 
 import '../node_modules/dna-polyfills/src/index.next.js';
 
+/**
+ * Helper class
+ * @class DNAComponents
+ */
 export class DNAComponents {
     /**
      * Trigger `onRegister` callbacks and register the Custom Element (if the `skipWebComponent` option !== true).

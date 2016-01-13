@@ -2,6 +2,11 @@
 
 import { DNAComponent } from './dna-component.next.js';
 
+/**
+ * Simple Custom Component with css style handling using the `css` property.
+ * @class DNAStyleComponent
+ * @extends DNAComponent
+ */
 export class DNAStyleComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
@@ -13,7 +18,7 @@ export class DNAStyleComponent extends DNAComponent {
         }
     }
     /**
-     * Add <style> tag for the component.
+     * Add `<style>` tag for the component.
      * @param {String} css The CSS content.
 	 * @return {HTMLStyleElement} the style tag created.
      */

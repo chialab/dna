@@ -13,6 +13,8 @@ if (typeof HTMLElement !== 'function') {
 
 /**
  * This is the model to use to create DNA Custom Components.
+ * @class DNAComponent
+ * @extends HTMLElement
  */
 export class DNAComponent extends HTMLElement {
     /**

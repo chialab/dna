@@ -7,7 +7,9 @@ import { DNAStyleComponent } from './dna-style-component.next.js';
 import { DNAAttributesComponent } from './dna-attributes-component.next.js';
 
 /**
- * Simple Custom Component with attributes and behaviors.
+ * Simple Custom Component with some behaviors.
+ * @class DNABaseComponent
+ * @extends DNAMixedComponent
  */
 export class DNABaseComponent extends DNAMixedComponent {
 	/**

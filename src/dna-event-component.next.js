@@ -4,7 +4,9 @@ import Delegate from '../node_modules/dom-delegate/lib/index.js';
 import { DNAComponent } from './dna-component.next.js';
 
 /**
- * Simple Custom Component with `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
+ * Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
+ * @class DNAEventComponent
+ * @extends DNAComponent
  */
 export class DNAEventComponent extends DNAComponent {
 	/**

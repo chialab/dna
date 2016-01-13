@@ -4,6 +4,8 @@ import { DNAComponent } from './dna-component.next.js'
 
 /**
  * Simple Custom Component with attributes watching and reflecting.
+ * @class DNAAttributesComponent
+ * @extends DNAComponent
  */
 export class DNAAttributesComponent extends DNAComponent {
 	/**

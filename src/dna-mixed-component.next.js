@@ -5,6 +5,8 @@ import { DNAComponent } from './dna-component.next.js';
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
  * Implement a get method for the `behaviors` property which returns a list of Prototypes.
+ * @class DNAMixedComponent
+ * @extends DNAComponent
  */
 export class DNAMixedComponent extends DNAComponent {
 	/**
