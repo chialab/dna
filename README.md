@@ -14,7 +14,6 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 
 ## TODO
 
-- ES5 library
 - Optional DOM update using [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
 - Quickstart guide
 - Tests

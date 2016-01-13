@@ -23,9 +23,9 @@ export class MyComponent extends DNAAttributesComponent {
 ```
 app.next.js
 ```js
-import { DNAComponents } from 'dna/component';
+import { Register } from 'dna/component';
 import { MyComponent } from './components/my-component/my-component.next.js';
-var MyElement = DNAComponents.register(MyComponent);
+var MyElement = Register(MyComponent);
 var element = new MyElement();
 element.setAttribute('name', 'Newton');
 console.log(element.name); // logs "Newton"

@@ -6,7 +6,12 @@
  */
 
 import { DNAHelper } from './dna-helper.next.js';
-import { DNAComponent } from './dna-component.next.js';
+export * from './dna-component.next.js';
+export * from './dna-attributes-component.next.js';
+export * from './dna-event-component.next.js';
+export * from './dna-mixed-component.next.js';
+export * from './dna-style-component.next.js';
+export * from './dna-template-component.next.js';
 import { DNABaseComponent } from './dna-base-component.next.js';
 
 export function Create(options = {}) {
@@ -34,4 +39,4 @@ export function Register(...args) {
     return DNAHelper.register(...args);
 }
 
-export { DNAComponent, DNABaseComponent };
+export { DNABaseComponent };
