@@ -15,6 +15,7 @@ export * from './dna-mixed-component.next.js';
 export * from './dna-style-component.next.js';
 export * from './dna-template-component.next.js';
 import { DNABaseComponent } from './dna-base-component.next.js';
+import { DNAConfig as Config } from './dna-config.next.js';
 
 export function Create(options = {}) {
     let proto = options.prototype || {};
@@ -41,4 +42,4 @@ export function Register(...args) {
     return DNAHelper.register(...args);
 }
 
-export { DNABaseComponent };
+export { Config, DNABaseComponent };

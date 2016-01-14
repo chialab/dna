@@ -1,5 +1,7 @@
 'use strict';
 
+import { DNAConfig } from './dna-config.next.js';
+
 /**
  * Helper class
  * @class DNAHelper
@@ -27,7 +29,7 @@ class DNAHelper {
         }
         try {
             fn.prototype.is = tagName;
-            if (DNAHelper.config.useWebComponents) {
+            if (DNAConfig.useWebComponents) {
                 res = document.registerElement(tagName, options);
             } else {
                 res = function() {
@@ -79,9 +81,5 @@ class DNAHelper {
             .replace(/[\-|\_]/g, '');
     }
 }
-
-DNAHelper.config = {
-    useWebComponents: (typeof window !== 'undefined' && typeof window.WebComponents !== 'undefined')
-};
 
 export { DNAHelper }
