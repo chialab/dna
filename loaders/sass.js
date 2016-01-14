@@ -1,4 +1,5 @@
-var sass;
+var sass,
+    cssLoader = require('./css.js');
 
 if (typeof window !== 'undefined') {
     var head = document.getElementsByTagName('head')[0];
@@ -33,11 +34,9 @@ if (typeof window !== 'undefined') {
             return loadStyle(load.address);
         });
     }
-
-    exports.translate = function (load) {
-        return 'export default function css() { return `' + load.source + '`; }';
-    }
 }
+
+exports.translate = cssLoader.translate;
 
 function fetchText(url) {
     return new Promise(function(resolve, reject) {
