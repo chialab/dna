@@ -30,11 +30,13 @@ Prototypes:
 - [DNABaseComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-base-component.md)
 
 Helpers:
-- [DNAComponents](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-components.md)
+- [DNAConfig](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-config.md)
+- [DNAHelper](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-helper.md)
 
-## Sample
+## Examples
 
-See the [sample in the repository](https://gitlab.com/dna-components/dna-components/blob/master/sample/components/seed/seed-component.next.js).
+- [Example 1](https://gitlab.com/dna-components/dna-components/blob/master/sample/es6/components/seed/seed-component.next.js): using ES2015 + Babel + external template and css
+- [Example 2](https://gitlab.com/dna-components/dna-components/blob/master/sample/es5/components/seed/seed-component.next.js): using DNAComponents Library (ES5 compatibile)
 
 ## Build
 Have a look [here](https://gitlab.com/dna-components/dna-docs/blob/master/tutorials/build.md).

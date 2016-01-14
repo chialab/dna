@@ -1,7 +1,3 @@
-/**
- * @see http://www.2ality.com/2015/01/template-strings-html.html
- */
-
 'use strict';
 
 import { DNAComponent } from './dna-component.next.js';

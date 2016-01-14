@@ -17,13 +17,20 @@ export * from './dna-template-component.next.js';
 import { DNABaseComponent } from './dna-base-component.next.js';
 import { DNAConfig as Config } from './dna-config.next.js';
 
-export function Create(options = {}) {
-    let proto = options.prototype || {};
-    if (typeof options.tagName !== 'string') {
+export function Create(tagName, options = {}) {
+    if (typeof tagName !== 'string') {
         throw 'Missing or bad typed `tagName` property';
     }
-    let scope = function () {};
-    scope.prototype = Object.create(DNABaseComponent.prototype, {
+    let scope = options.prototype;
+    if (typeof scope === 'undefined') {
+        throw 'Missing prototype';
+    } else if (typeof scope !== 'function') {
+        let newScope = function () {}
+        newScope.prototype = scope;
+        scope = newScope;
+    }
+
+    let inheritPrototype = Object.create(DNABaseComponent.prototype, {
         constructor: {
             value: scope,
             enumerable: false,
@@ -31,11 +38,43 @@ export function Create(options = {}) {
             configurable: true
         }
     });
-    Object.setPrototypeOf(scope, DNABaseComponent);
-    for (var k in proto) {
-        scope.prototype[k] = proto[k];
+
+    function bindFN(proto, k) {
+        return function() {
+            proto[k].apply(this, arguments);
+            DNABaseComponent.prototype[k].apply(this, arguments);
+        }
     }
-    return this.register(scope, { tagName: options.tagName });
+
+    let proto = scope.prototype;
+    Object.setPrototypeOf(scope, DNABaseComponent);
+    scope.prototype = inheritPrototype;
+    for (var k in proto) {
+        if (['createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'].indexOf(k) !== -1) {
+            scope.prototype[k] = bindFN(proto, k);
+        } else if (typeof k !== 'function') {
+            let descriptor = Object.getOwnPropertyDescriptor(proto, k);
+            if (descriptor.get) {
+                Object.defineProperty(scope.prototype, k, {
+                    get: descriptor.get,
+                    set: descriptor.set,
+                    configurable: true
+                });
+            } else {
+                scope.prototype[k] = proto[k];
+            }
+        } else {
+            scope.prototype[k] = proto[k];
+        }
+    }
+
+    Object.defineProperty(scope, 'tagName', {
+        get: function () {
+            return tagName
+        }
+    });
+
+    return this.Register(scope, { tagName: tagName });
 }
 
 export function Register(...args) {
