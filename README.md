@@ -35,8 +35,8 @@ Helpers:
 
 ## Examples
 
-- [Example 1](https://gitlab.com/dna-components/dna-components/blob/master/sample/es6/components/seed/seed-component.next.js): using ES2015 + Babel + external template and css
-- [Example 2](https://gitlab.com/dna-components/dna-components/blob/master/sample/es5/components/seed/seed-component.next.js): using DNAComponents Library (ES5 compatibile)
+- [Example 1](https://gitlab.com/dna-components/dna-components/blob/master/samples/es6/components/seed/seed-component.next.js): using ES2015 + Babel + external template and css
+- [Example 2](https://gitlab.com/dna-components/dna-components/blob/master/samples/es5/components/seed/seed-component.js): using DNAComponents Library (ES5 compatibile)
 
 ## Build
 Have a look [here](https://gitlab.com/dna-components/dna-docs/blob/master/tutorials/build.md).
