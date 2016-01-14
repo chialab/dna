@@ -18,6 +18,7 @@ export class DNAMixedComponent extends DNAComponent {
 		let behaviors = this['behaviors'] || [];
 		DNAMixedComponent.__iterateBehaviors(this, behaviors);
 		DNAMixedComponent.__triggerCallbacks(this, 'onRegister', args);
+		delete this.__attachedBehaviors;
 		return ctr;
 	}
 	/**
@@ -84,7 +85,7 @@ export class DNAMixedComponent extends DNAComponent {
 		} else {
 			// check if the behavior is already attached to the class.
 			ctx.__attachedBehaviors = ctx.__attachedBehaviors || [];
-			if (ctx.__attachedBehaviors.indexOf(behavior.name) !== -1) {
+			if (ctx.__attachedBehaviors.indexOf(behavior) !== -1) {
 				return;
 			}
 			// iterate and attach static methods and priorities.
@@ -122,7 +123,7 @@ export class DNAMixedComponent extends DNAComponent {
 				}
 			}
 			// add the callback to the attached list
-			ctx.__attachedBehaviors.push(behavior.name);
+			ctx.__attachedBehaviors.push(behavior);
 		}
 	}
 	/**

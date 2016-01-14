@@ -69,7 +69,7 @@
             if (this.growth < this.states.length - 1) {
                 this.growth++;
             }
-            this.innerHTML = this.render();
+            this.updateViewContent();
         },
 
         isDead: function() {
@@ -84,7 +84,6 @@
             return this.states[this.growth];
         }
     }
-
 
     scope.Seed = DNAComponents.Create('seed-component', {
 

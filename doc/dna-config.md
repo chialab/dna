@@ -5,6 +5,7 @@
 * [DNAConfig](#DNAConfig)
     * [`new DNAConfig()`](#new_DNAConfig_new)
     * [`.useWebComponents`](#DNAConfig.useWebComponents)
+    * [`.useVirtualDOM`](#DNAConfig.useVirtualDOM)
 
 <a name="new_DNAConfig_new"></a>
 ### `new DNAConfig()`
@@ -18,4 +19,13 @@ Config class
 | Name | Type | Description |
 | --- | --- | --- |
 | useWebComponents | <code>Boolean</code> | Should register components as WebComponents. |
+
+<a name="DNAConfig.useVirtualDOM"></a>
+### `DNAConfig.useVirtualDOM`
+**Kind**: static property of <code>[DNAConfig](#DNAConfig)</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| useVirtualDOM | <code>Boolean</code> | Should use [`virtual-dom`](https://github.com/Matt-Esch/virtual-dom) for template render. |
 

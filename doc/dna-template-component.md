@@ -7,6 +7,7 @@
     * [`new DNATemplateComponent()`](#new_DNATemplateComponent_new)
     * _instance_
         * [`.createdCallback()`](#DNATemplateComponent+createdCallback)
+        * [`.updateViewContent()`](#DNATemplateComponent+updateViewContent)
     * _static_
         * [`.onRegister()`](#DNATemplateComponent.onRegister)
 
@@ -38,6 +39,11 @@ console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 <a name="DNATemplateComponent+createdCallback"></a>
 ### `dnaTemplateComponent.createdCallback()`
 Fires when an instance of the element is created.
+
+**Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
+<a name="DNATemplateComponent+updateViewContent"></a>
+### `dnaTemplateComponent.updateViewContent()`
+Update Component child nodes.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 <a name="DNATemplateComponent.onRegister"></a>
