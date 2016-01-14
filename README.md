@@ -20,6 +20,8 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 
 ## Built-in
 
+[ES5 Library](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-library.md)
+
 Prototypes:
 - [DNAComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-component.md)
 - [DNAEventComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-event-component.md)
