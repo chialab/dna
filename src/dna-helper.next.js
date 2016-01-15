@@ -26,6 +26,7 @@ class DNAHelper {
             }
         } else {
             tagName = fn;
+            fn = options.prototype;
         }
         try {
             fn.prototype.is = tagName;
