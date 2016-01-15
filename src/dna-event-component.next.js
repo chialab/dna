@@ -50,7 +50,11 @@ export class DNAEventComponent extends DNAComponent {
 					let evName = k.split(' ').shift(),
 						selector = k.split(' ').slice(1).join(' ');
 
-					delegate.on(evName, selector, callback.bind(this));
+                    if (selector) {
+	                    delegate.on(evName, selector, callback.bind(this));
+                    } else {
+                        delegate.on(evName, callback.bind(this));
+                    }
 				}
 			}
 		}

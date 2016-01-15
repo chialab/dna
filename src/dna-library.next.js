@@ -45,8 +45,8 @@ export function Create(tagName, config = {}) {
     for (var k in proto) {
         if (['createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'].indexOf(k) !== -1) {
             scope.prototype[k] = bindFN(proto, k);
-        } else if (typeof k !== 'function') {
-            let descriptor = Object.getOwnPropertyDescriptor(proto, k);
+        } else if (typeof proto[k] !== 'function') {
+            let descriptor = Object.getOwnPropertyDescriptor(proto, k) || {};
             if (descriptor.get) {
                 Object.defineProperty(scope.prototype, k, {
                     get: descriptor.get,
@@ -67,7 +67,9 @@ export function Create(tagName, config = {}) {
         }
     });
 
-    return this.Register(scope, { tagName: tagName });
+    config.tagName = tagName;
+
+    return this.Register(scope, config);
 }
 
 /**
