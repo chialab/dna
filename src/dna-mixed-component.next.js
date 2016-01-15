@@ -63,8 +63,12 @@ export class DNAMixedComponent extends DNAComponent {
 	 * @param {Array} args A list of arguments to apply to the callback.
 	 */
 	static __triggerCallbacks(ctx, callbackKey, args) {
+		let ctr = ctx;
+		if (typeof ctr !== 'function' && ctr.constructor) {
+			ctr = ctr.constructor;
+		}
 		let secretKey = DNAMixedComponent.__getCallbackKey(callbackKey),
-		 	callbacks = ctx[secretKey] || (ctx.__proto__ && ctx.__proto__[secretKey]);
+		 	callbacks = ctr[secretKey] || (ctr.__proto__ && ctr.__proto__[secretKey]);
 		if (callbacks && Array.isArray(callbacks)) {
 			for (let i = 0, len = callbacks.length; i < len; i++) {
 				callbacks[i].apply(ctx, args);
@@ -115,8 +119,8 @@ export class DNAMixedComponent extends DNAComponent {
 					let key = keys[k];
 					if (callbacks.indexOf(key) !== -1) {
 						let callbackKey = DNAMixedComponent.__getCallbackKey(key);
-						ctx.prototype[callbackKey] = ctx.prototype[callbackKey] || [];
-						ctx.prototype[callbackKey].push(behavior.prototype[key]);
+						ctx[callbackKey] = ctx[callbackKey] || [];
+						ctx[callbackKey].push(behavior.prototype[key]);
 					} else if (!(key in DNAComponent.prototype)) {
 						ctx.prototype[key] = behavior.prototype[key];
 					}
