@@ -13,7 +13,7 @@ import { DNAComponent } from './dna-component.next.js';
  * ```js
  * import { DNAEventComponent } from 'dna/component';
  * export class MyComponent extends DNAEventComponent {
- *   get bindEvents() {
+ *   static get bindEvents() {
  *     return {
  *       'click button': 'onButtonClick'
  *     }
@@ -41,10 +41,11 @@ export class DNAEventComponent extends DNAComponent {
      */
     createdCallback() {
         // bind events
-        if (this.bindEvents) {
+        let events = this.constructor.bindEvents;
+        if (events) {
 			var delegate = new Delegate(this);
-			for (let k in this.bindEvents) {
-				let callback = this[this.bindEvents[k]];
+			for (let k in events) {
+				let callback = this[events[k]];
 				if (callback && typeof callback === 'function') {
 					let evName = k.split(' ').shift(),
 						selector = k.split(' ').slice(1).join(' ');
