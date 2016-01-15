@@ -16,4 +16,9 @@ DNAConfig.useWebComponents = (typeof window !== 'undefined' && typeof window.Web
  */
 DNAConfig.useVirtualDOM = (typeof window !== 'undefined' && typeof window.virtualDom !== 'undefined');
 
+/**
+ * @property {Boolean} autoUpdateView Should the Component auto update own view.
+ */
+DNAConfig.autoUpdateView = true;
+
 export { DNAConfig }

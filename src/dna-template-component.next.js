@@ -53,6 +53,34 @@ export class DNATemplateComponent extends DNAComponent {
             } else if (ctr.template instanceof Node && ctr.template.tagName == 'TEMPLATE') {
                 ctr.prototype.render = () => document.importNode(ctr.template.content, true);
             }
+            if (DNAConfig.autoUpdateView) {
+                let currentProto = this.prototype;
+                Object.getOwnPropertyNames(currentProto).forEach((prop) => {
+                    if (typeof currentProto[prop] !== 'function') {
+                        let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
+                        Object.defineProperty(this.prototype, prop, {
+                            configurable: true,
+                            get: function() {
+                                if (descriptor.get) {
+                                    return descriptor.get.call(this);
+                                } else {
+                                    return this['__' + prop];
+                                }
+                            },
+                            set: function(value) {
+                                let res;
+                                if (descriptor.set) {
+                                    res = descriptor.set.call(this, value);
+                                } else {
+                                    res = (this['__' + prop] = value);
+                                }
+                                this.updateViewContent();
+                                return res;
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
     /**
