@@ -33,7 +33,7 @@ export class DNAStyleComponent extends DNAComponent {
      * Fires when an the element is registered.
      */
     static onRegister(...args) {
-        // Create render function
+        // Create css function
         if (this.css) {
             this.addCss(this.css);
         }
