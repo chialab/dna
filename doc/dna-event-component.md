@@ -21,7 +21,7 @@ my-component.next.js
 ```js
 import { DNAEventComponent } from 'dna/component';
 export class MyComponent extends DNAEventComponent {
-  get bindEvents() {
+  static get bindEvents() {
     return {
       'click button': 'onButtonClick'
     }

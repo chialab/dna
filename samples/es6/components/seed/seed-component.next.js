@@ -15,14 +15,33 @@ export class SeedComponent extends DNABaseComponent {
         return css;
     }
 
-    get bindEvents() {
+    static get attributes() {
+        return ['owner', 'type'];
+    }
+
+    static get bindEvents() {
         return {
             'click button': 'grow'
         }
     }
 
+    get type() {
+        return this.__type || 'Opium';
+    }
+
+    set type(t) {
+        return this.__type = t;
+    }
+
+    get growth() {
+        return this.__growth || 0;
+    }
+
+    set growth(val) {
+        return this.__growth = val;
+    }
+
     createdCallback() {
-        this.growth = 0;
         DNABaseComponent.prototype.createdCallback.apply(this, arguments);
     }
 
@@ -35,7 +54,6 @@ export class SeedComponent extends DNABaseComponent {
         if (this.growth < this.states.length - 1) {
             this.growth++;
         }
-        this.innerHTML = this.render();
     }
 
     isDead() {

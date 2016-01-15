@@ -50,16 +50,13 @@
         `;
     }
 
-    SeedComponent.prototype = {
-        get bindEvents() {
-            return {
-                'click button': 'grow'
-            }
-        },
+    SeedComponent.bindEvents = {
+        'click button': 'grow'
+    }
 
-        createdCallback: function () {
-            this.growth = 0;
-        },
+    SeedComponent.attributes = ['owner', 'type'];
+
+    SeedComponent.prototype = {
 
         attachedCallback: function() {
             this.style.width = this.parentNode.offsetWidth + 'px';
@@ -69,11 +66,18 @@
             if (this.growth < this.states.length - 1) {
                 this.growth++;
             }
-            this.updateViewContent();
         },
 
         isDead: function() {
             return this.state === 'dead :(';
+        },
+
+        get growth() {
+            return this['__growth'] || 0;
+        },
+
+        set growth(val) {
+            return this['__growth'] = val;
         },
 
         get states() {
