@@ -27,7 +27,11 @@ class DNAHelper {
         }
         if (typeof fn === 'function') {
             tagName = tagName || options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAHelper.classToElement(fn);
-            fn['tagName'] = tagName;
+            Object.defineProperty(fn, 'tagName', {
+                get: function () {
+                    return tagName;
+                }
+            });
             if (typeof fn['onRegister'] == 'function') {
                 fn['onRegister'].call(fn);
             }
