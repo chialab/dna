@@ -15,18 +15,28 @@ class DNAHelper {
      */
     static register(fn, options = {}) {
         let tagName, res;
-        if (typeof fn == 'function') {
+
+        if (typeof fn === 'string') {
+            tagName = fn;
+            if (typeof options === 'function') {
+                fn = options;
+                options = {};
+            } else if (typeof options.prototype !== 'undefined') {
+                fn = options.prototype;
+            }
+        }
+        if (typeof fn === 'function') {
+            tagName = tagName || options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAHelper.classToElement(fn);
+            fn['tagName'] = tagName;
             if (typeof fn['onRegister'] == 'function') {
                 fn['onRegister'].call(fn);
             }
-            tagName = options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAHelper.classToElement(fn);
             options.prototype = fn.prototype;
             if (!options.extends && typeof fn.extends == 'string') {
                 options.extends = fn.extends;
             }
         } else {
-            tagName = fn;
-            fn = options.prototype;
+            options.prototype = fn;
         }
         try {
             fn.prototype.is = tagName;

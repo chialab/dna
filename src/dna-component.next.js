@@ -63,7 +63,7 @@ export class DNAComponent extends HTMLElement {
      * @type {String}
      */
     static get tagName() {
-        return this._tagName || DNAComponents.classToElement(this);
+        return this._tagName || DNAHelper.classToElement(this);
     }
     static set tagName(tag) {
         if (typeof tag == 'string') {
