@@ -7,6 +7,7 @@
             '*.sass': { loader: 'dna/loaders/sass' },
             '*.scss': { loader: 'dna/loaders/sass' },
             'dna/delegate': { format: 'cjs' },
+            'dna/components': { build: false }
         },
         paths: {
             'dna/delegate': 'node_modules/dom-delegate/lib/delegate.js',
