@@ -1,24 +1,25 @@
 {
   "name": "dna-components",
   "version": "0.11.3",
+  "build": {
+    "bundleName": "dna-components.js",
+    "globalName": "DNAComponents"
+  },
   "description": "Write your set of (Web) Components using ES2015, templates and (optionally) Sass.",
   "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
   "license": "MIT",
   "main": "src/index.next.js",
   "scripts": {
-    "build": "grunt build"
+    "build": "node ./node_modules/es6-workflow/scripts/build.js",
+    "doc": "node ./node_modules/es6-workflow/scripts/doc.js",
+    "test": "node ./node_modules/es6-workflow/scripts/test.js"
   },
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/dna-components/dna-components"
   },
   "devDependencies": {
-    "babel-core": "^5.8.34",
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.7.0",
-    "grunt-jsdoc-to-markdown": "^1.2.0",
-    "grunt-systemjs-builder": "^0.2.5",
-    "load-grunt-tasks": "^3.3.0"
+    "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git"
   },
   "dependencies": {
     "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",

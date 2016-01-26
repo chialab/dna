@@ -5,37 +5,26 @@
     <meta charset="utf-8">
     <title>Demo DNAComponents</title>
     <script type="text/javascript" src="https://rawgit.com/Matt-Esch/virtual-dom/master/dist/virtual-dom.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser-polyfill.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.14/system.js"></script>
-    <script>
+    <script type="text/javascript" src="../../node_modules/systemjs/dist/system.js"></script>
+    <script type="text/javascript">
         System.config({
-            transpiler: 'babel',
-            presets: ['es2015'],
-            meta: {
-                '*.html': {
-                    loader: 'dna/loaders/template'
-                },
-                '*.css': {
-                    loader: 'dna/loaders/css'
-                },
-                '*.sass': {
-                    loader: 'dna/loaders/sass'
-                },
-                '*.scss': {
-                    loader: 'dna/loaders/sass'
-                },
-            },
+            baseURL: '../..',
             paths: {
-                'dna/components': '../../src/index.next.js',
-                'dna/loaders/*': '../../loaders/*.js',
-                'dna/polyfills': '../../node_modules/dna-polyfills/src/index.next.js',
-                'dna/delegate': '../../node_modules/dom-delegate/lib/index.js'
-            },
-            map: {
-                'babel': 'http://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js',
+                'app': 'samples/es6/app.next.js'
             }
         });
-        System.import('app.next.js').then(function () {
+    </script>
+    <script type="text/javascript" src="../../node_modules/es6-workflow/config/system.conf.js"></script>
+    <script type="text/javascript" src="../../system.conf.js"></script>
+    <script>
+        System.config({
+            defaultJSExtensions: false,
+            paths: {
+                'dna/components': 'src/index.next.js',
+                'dna/loaders/*': 'loaders/*.js'
+            }
+        });
+        System.import('app').then(function () {
             console.log('Fire!');
         }, function (er) {
             console.log(er);

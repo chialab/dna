@@ -18,7 +18,7 @@ export function Create(tagName, config = {}) {
     if (typeof scope === 'undefined') {
         throw 'Missing prototype';
     } else if (typeof scope !== 'function') {
-        let newScope = function () {}
+        let newScope = function() {}
         newScope.prototype = scope;
         scope = newScope;
     }
@@ -30,7 +30,7 @@ export function Create(tagName, config = {}) {
     }
     Object.defineProperty(newScope, 'tagName', {
         configurable: true,
-        get: function () {
+        get: function() {
             return tagName
         }
     });
@@ -39,15 +39,19 @@ export function Create(tagName, config = {}) {
 
     var ctr = Register(newScope, config);
 
-    ctr.Extend = function (ctr2 = {}) {
-        let scope2 = (typeof ctr2 === 'function') ? ctr2 : (function(proto) { let fn = function() {}; fn.prototype = proto; return fn })(ctr2);
+    ctr.Extend = function(ctr2 = {}) {
+        let scope2 = (typeof ctr2 === 'function') ? ctr2 : (function(proto) {
+            let fn = function() {};
+            fn.prototype = proto;
+            return fn
+        })(ctr2);
         return extend(scope2, scope);
     }
 
     return ctr;
 }
 
-function getMethods (prototype) {
+function getMethods(prototype) {
     let res = [];
     let added = ['name', 'length', 'prototype'];
 
@@ -88,11 +92,11 @@ function getMethods (prototype) {
     return res;
 }
 
-function extend (newClass, superClass) {
-    function ctr () {
-        babelHelpers.get(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
+function extend(newClass, superClass) {
+    function ctr() {
+        getProtoProp(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
     }
-    babelHelpers.inherits(ctr, superClass);
+    inherits(ctr, superClass);
     for (var k in superClass.prototype) {
         let descriptor = Object.getOwnPropertyDescriptor(superClass.prototype, k) || {};
         if (descriptor.get) {
@@ -103,7 +107,7 @@ function extend (newClass, superClass) {
             });
         }
     }
-    return babelHelpers.createClass(ctr, getMethods(newClass.prototype), getMethods(newClass));
+    return createClass(ctr, getMethods(newClass.prototype), getMethods(newClass));
 }
 
 function bindFN(protoFn, superFn) {
@@ -112,6 +116,65 @@ function bindFN(protoFn, superFn) {
         superFn.apply(this, arguments);
     }
 }
+
+var createClass = (function() {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ("value" in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+
+    return function(Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) defineProperties(Constructor, staticProps);
+        return Constructor;
+    };
+})();
+
+var inherits = function(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var getProtoProp = function get(object, property, receiver) {
+    if (object === null) object = Function.prototype;
+    var desc = Object.getOwnPropertyDescriptor(object, property);
+
+    if (desc === undefined) {
+        var parent = Object.getPrototypeOf(object);
+
+        if (parent === null) {
+            return undefined;
+        } else {
+            return get(parent, property, receiver);
+        }
+    } else if ("value" in desc) {
+        return desc.value;
+    } else {
+        var getter = desc.get;
+
+        if (getter === undefined) {
+            return undefined;
+        }
+
+        return getter.call(receiver);
+    }
+};
 
 /**
  * Wrap the [`DNAHelper.register`]{@link DNAHelper#register} method.

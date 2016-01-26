@@ -1,2 +1,3 @@
 // Wrap virtual-dom
-module.exports = window.virtualDom;
+// module.exports = window.virtualDom;
+export default virtualDom = window.virtualDom;

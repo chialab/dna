@@ -1,6 +1,6 @@
 'use strict';
 
-import Delegate from 'dna/delegate';
+import Delegate from './libs/dom-delegate.js';
 import { DNAComponent } from './dna-component.next.js';
 
 /**

@@ -32,12 +32,8 @@ if (typeof window !== 'undefined') {
             request.send();
         });
     }
+}
 
-    exports.translate = function(load) {
-        return 'export default function css() { return "' + escapeCSS(load.source) + '"; }';
-    }
-} else {
-    exports.translate = function(load) {
-        return 'def' + 'ine(function css() { return "' + escapeCSS(load.source) + '"; })';
-    }
+exports.translate = function(load) {
+    return 'export default function css() { return "' + escapeCSS(load.source) + '"; }';
 }
