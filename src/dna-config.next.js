@@ -9,7 +9,7 @@ class DNAConfig {}
 /**
  * @property {Boolean} useWebComponents Should register components as WebComponents.
  */
-DNAConfig.useWebComponents = (typeof window !== 'undefined' && typeof window.WebComponents !== 'undefined');
+DNAConfig.useWebComponents = (typeof window !== 'undefined' && (typeof window.WebComponents !== 'undefined' || typeof window.CustomElements !== 'undefined'));
 
 /**
  * @property {Boolean} useVirtualDOM Should use [`virtual-dom`](https://github.com/Matt-Esch/virtual-dom) for template render.
