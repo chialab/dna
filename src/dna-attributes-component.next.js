@@ -27,6 +27,48 @@ import { DNAComponent } from './dna-component.next.js'
  * console.log(element.name); // logs "Newton"
  * ```
  */
+
+function getDescriptor(ctr, attr) {
+    let res;
+    if (ctr) {
+        res = Object.getOwnPropertyDescriptor(ctr, attr);
+        if (!res && ctr.__proto__) {
+            res = getDescriptor(ctr.__proto__, attr);
+        }
+    }
+    return res;
+}
+
+function wrapDescriptorSet(attr, descriptor) {
+    if (descriptor && descriptor.set && descriptor.set.wrapped) {
+        return descriptor.set;
+    }
+    let setter = function (value) {
+        let res;
+        if (descriptor.set) {
+            res = descriptor.set.call(this, value);
+        } else {
+            res = (this['__' + attr] = value);
+        }
+        if (value !== null && value !== undefined) {
+            if (typeof value == 'string' || typeof value == 'number') {
+                this.setAttribute(attr, value);
+            }
+        } else {
+            this.removeAttribute(attr);
+        }
+        return res;
+    }
+    setter.wrapped = true;
+    return setter;
+}
+
+function wrapDescriptorGet(attr, descriptor) {
+    return descriptor.get || function () {
+        return this['__' + attr];
+    }
+}
+
 export class DNAAttributesComponent extends DNAComponent {
 	/**
      * Fires when an the element is registered.
@@ -34,28 +76,11 @@ export class DNAAttributesComponent extends DNAComponent {
     static onRegister(...args) {
         let attributesToWatch = this.attributes || [];
 		attributesToWatch.forEach((attr) => {
-			let descriptor = Object.getOwnPropertyDescriptor(this.prototype, attr) || {};
+			let descriptor = getDescriptor(this.prototype, attr) || {};
 			Object.defineProperty(this.prototype, attr, {
 				configurable: true,
-				get: descriptor.get || function () {
-					return this['__' + attr];
-				},
-				set: (function(descriptor) {
-					return function (value) {
-						let res;
-						if (descriptor.set) {
-							res = descriptor.set.call(this, value);
-						} else {
-							res = (this['__' + attr] = value);
-						}
-						if (value !== null && value !== undefined) {
-							this.setAttribute(attr, value);
-						} else {
-							this.removeAttribute(attr);
-						}
-						return res;
-					}
-				})(descriptor)
+				get: wrapDescriptorGet(attr, descriptor),
+				set: wrapDescriptorSet(attr, descriptor)
 			});
 		});
     }

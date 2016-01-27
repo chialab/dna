@@ -2,6 +2,8 @@
 
 import { DNAComponent } from './dna-component.next.js';
 
+var register = {};
+
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
  * Implement a get method for the `behaviors` property which returns a list of Prototypes.
@@ -14,11 +16,15 @@ export class DNAMixedComponent extends DNAComponent {
 	 * Trigger all `init` static methods of the implemented behaviors.
 	 */
 	static onRegister(...args) {
-		let ctr = DNAComponent.onRegister.apply(this, args);
-		let behaviors = this['behaviors'] || [];
-		DNAMixedComponent.__iterateBehaviors(this, behaviors);
-		DNAMixedComponent.__triggerCallbacks(this, 'onRegister', args);
-		delete this.__attachedBehaviors;
+		let ctr = this;
+		if (!register[this.tagName]) {
+			DNAComponent.onRegister.apply(this, args);
+			let behaviors = this['behaviors'] || [];
+			DNAMixedComponent.__iterateBehaviors(this, behaviors);
+			DNAMixedComponent.__triggerCallbacks(this, 'onRegister', args);
+			delete this.__attachedBehaviors;
+			register[this.tagName] = true;
+		}
 		return ctr;
 	}
 	/**

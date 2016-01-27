@@ -6,7 +6,7 @@ import { DNAConfig } from './dna-config.next.js';
  * Helper class
  * @class DNAHelper
  */
-class DNAHelper {
+export class DNAHelper {
     /**
      * Trigger `onRegister` callbacks and register the Custom Element (if the `skipWebComponent` option !== true).
      * @param {Function|String} fn The definition or the tag name of the Custom Element.
@@ -96,5 +96,3 @@ class DNAHelper {
             .replace(/[\-|\_]/g, '');
     }
 }
-
-export { DNAHelper }
