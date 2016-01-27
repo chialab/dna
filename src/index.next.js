@@ -5,8 +5,14 @@
  * Write your set of (Web) Components using ES2015, templates and (optionally) Sass.
  */
 
-import * as Polyfills from 'dna/polyfills';
-console.log(Polyfills);
+// import all dependencies
+// https://github.com/systemjs/builder/issues/476
+import 'dna/delegate';
+import 'dna/polyfills/src/array/foreach.js';
+import 'dna/polyfills/src/array/from.js';
+import 'dna/polyfills/src/array/is-array.js';
+import 'dna/polyfills/src/object/set-prototype-of.js';
+import 'dna/polyfills/src/dom/class-list.js';
 
 export * from './dna-component.next.js';
 export * from './dna-attributes-component.next.js';

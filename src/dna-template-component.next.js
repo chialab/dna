@@ -2,7 +2,7 @@
 
 import { DNAConfig } from './dna-config.next.js';
 import { DNAComponent } from './dna-component.next.js';
-import VDOM from './libs/virtual-dom.js';
+import VDOM from './libs/virtual-dom.next.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
