@@ -1,9 +1,10 @@
 {
   "name": "dna-components",
-  "version": "0.11.5",
+  "version": "0.11.6",
   "build": {
     "bundleName": "dna-components.js",
-    "globalName": "DNAComponents"
+    "globalName": "DNAComponents",
+    "rollup": false
   },
   "description": "Write your set of (Web) Components using ES2015, templates and (optionally) Sass.",
   "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
