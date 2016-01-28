@@ -44,14 +44,14 @@ function wrapDescriptorSet(attr, descriptor) {
         return descriptor.set;
     }
     let setter = function (value) {
-        let res;
         if (descriptor.set) {
-            res = descriptor.set.call(this, value);
+            descriptor.set.call(this, value);
         } else {
-            res = (this['__' + attr] = value);
+            (this['__' + attr] = value);
         }
+        let res = this[attr];
         if (res !== null && res !== undefined) {
-            if (typeof res == 'string' || typeof res == 'number') {
+            if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
                 this.setAttribute(attr, res);
             }
         } else {
