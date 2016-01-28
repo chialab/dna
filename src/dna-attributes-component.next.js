@@ -50,9 +50,9 @@ function wrapDescriptorSet(attr, descriptor) {
         } else {
             res = (this['__' + attr] = value);
         }
-        if (value !== null && value !== undefined) {
-            if (typeof value == 'string' || typeof value == 'number') {
-                this.setAttribute(attr, value);
+        if (res !== null && res !== undefined) {
+            if (typeof res == 'string' || typeof res == 'number') {
+                this.setAttribute(attr, res);
             }
         } else {
             this.removeAttribute(attr);
