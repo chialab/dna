@@ -1,7 +1,7 @@
 'use strict';
 
 import { DNAMixedComponent } from './dna-mixed-component.next.js';
-import { DNAEventComponent } from './dna-event-component.next.js';
+import { DNAEventsComponent } from './dna-events-component.next.js';
 import { DNATemplateComponent } from './dna-template-component.next.js';
 import { DNAStyleComponent } from './dna-style-component.next.js';
 import { DNAAttributesComponent } from './dna-attributes-component.next.js';
@@ -27,6 +27,6 @@ export class DNABaseComponent extends DNAMixedComponent {
      * @type {Array}
      */
 	static get behaviors() {
-		return [DNAStyleComponent, DNAEventComponent, DNAAttributesComponent, DNATemplateComponent]
+		return [DNAStyleComponent, DNAEventsComponent, DNAAttributesComponent, DNATemplateComponent]
 	}
 }
