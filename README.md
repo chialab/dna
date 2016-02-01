@@ -24,7 +24,7 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 
 Prototypes:
 - [DNAComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-component.md)
-- [DNAEventComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-event-component.md)
+- [DNAEventsComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-events-component.md)
 - [DNAAttributesComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-attributes-component.md)
 - [DNATemplateComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-template-component.md)
 - [DNAStyleComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-style-component.md)
