@@ -20,20 +20,20 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 
 ## Built-in
 
-[ES5 Library](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-library.md)
+[ES5 Library](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-library.md)
 
 Prototypes:
-- [DNAComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-component.md)
-- [DNAEventComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-event-component.md)
-- [DNAAttributesComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-attributes-component.md)
-- [DNATemplateComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-template-component.md)
-- [DNAStyleComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-style-component.md)
-- [DNAMixedComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-mixed-component.md)
-- [DNABaseComponent](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-base-component.md)
+- [DNAComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-component.md)
+- [DNAEventComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-event-component.md)
+- [DNAAttributesComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-attributes-component.md)
+- [DNATemplateComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-template-component.md)
+- [DNAStyleComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-style-component.md)
+- [DNAMixedComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-mixed-component.md)
+- [DNABaseComponent](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-base-component.md)
 
 Helpers:
-- [DNAConfig](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-config.md)
-- [DNAHelper](https://gitlab.com/dna-components/dna-components/blob/master/doc/dna-helper.md)
+- [DNAConfig](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-config.md)
+- [DNAHelper](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-helper.md)
 
 ## Examples
 
@@ -41,4 +41,6 @@ Helpers:
 - [Example 2](https://gitlab.com/dna-components/dna-components/blob/master/samples/es5/components/seed/seed-component.js): using DNAComponents Library (ES5 compatibile)
 
 ## Build
-Have a look [here](https://gitlab.com/dna-components/dna-docs/blob/master/tutorials/build.md).
+
+* Install [NodeJS](https://nodejs.org)
+* Navigate to the project path and run: `npm install && npm run build`
