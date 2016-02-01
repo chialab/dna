@@ -1,6 +1,6 @@
 'use strict';
 
-import { DNAComponent } from './dna-component.next.js'
+import { DNAComponent } from './dna-component.next.js';
 
 /**
  * Simple Custom Component with attributes watching and reflecting.
@@ -27,6 +27,55 @@ import { DNAComponent } from './dna-component.next.js'
  * console.log(element.name); // logs "Newton"
  * ```
  */
+export class DNAAttributesComponent extends DNAComponent {
+    /**
+     * Fires when an the element is registered.
+     */
+    static onRegister(...args) {
+        let attributesToWatch = this.attributes || [];
+        attributesToWatch.forEach((attr) => {
+            let descriptor = getDescriptor(this.prototype, attr) || {};
+            Object.defineProperty(this.prototype, attr, {
+                configurable: true,
+                get: wrapDescriptorGet(attr, descriptor),
+                set: wrapDescriptorSet(attr, descriptor)
+            });
+        });
+    }
+    /**
+     * On `created` callback, sync attributes with properties.
+     */
+    createdCallback() {
+        DNAComponent.prototype.createdCallback.call(this);
+        let attributes = this.attributes || [];
+        for (let i = 0, len = attributes.length; i < len; i++) {
+            let attr = attributes[i];
+            this.attributeChangedCallback(attr.name, undefined, attr.value);
+        }
+        let ctrAttributes = this.constructor.attributes || [];
+        ctrAttributes.forEach((attr) => {
+            if (this[attr] !== null && this[attr] !== undefined && this[attr] !== false) {
+                this.setAttribute(attr, this[attr]);
+            }
+        });
+    }
+    /**
+     * On `attributeChanged` callback, sync attributes with properties.
+     * @private
+     * @param {String} attrName The changed attribute name.
+     * @param {*} oldVal The value of the attribute before the change.
+     * @param {*} newVal The value of the attribute after the change.
+     */
+    attributeChangedCallback(attr, oldVal, newVal) {
+        DNAComponent.prototype.attributeChangedCallback.call(this);
+        let cl = this.constructor;
+        if (cl && cl.attributes && Array.isArray(cl.attributes)) {
+            if (cl.attributes.indexOf(attr) !== -1) {
+                this[attr] = newVal;
+            }
+        }
+    }
+}
 
 function getDescriptor(ctr, attr) {
     let res;
@@ -43,16 +92,18 @@ function wrapDescriptorSet(attr, descriptor) {
     if (descriptor && descriptor.set && descriptor.set.wrapped) {
         return descriptor.set;
     }
-    let setter = function (value) {
+    let setter = function(value) {
         if (descriptor.set) {
             descriptor.set.call(this, value);
         } else {
             (this['__' + attr] = value);
         }
         let res = this[attr];
-        if (res !== null && res !== undefined) {
+        if (res !== null && res !== undefined && res !== false) {
             if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
                 this.setAttribute(attr, res);
+            } else if (typeof res == 'boolean') {
+                this.setAttribute(attr, attr);
             }
         } else {
             this.removeAttribute(attr);
@@ -64,57 +115,7 @@ function wrapDescriptorSet(attr, descriptor) {
 }
 
 function wrapDescriptorGet(attr, descriptor) {
-    return descriptor.get || function () {
+    return descriptor.get || function() {
         return this['__' + attr];
-    }
-}
-
-export class DNAAttributesComponent extends DNAComponent {
-	/**
-     * Fires when an the element is registered.
-     */
-    static onRegister(...args) {
-        let attributesToWatch = this.attributes || [];
-		attributesToWatch.forEach((attr) => {
-			let descriptor = getDescriptor(this.prototype, attr) || {};
-			Object.defineProperty(this.prototype, attr, {
-				configurable: true,
-				get: wrapDescriptorGet(attr, descriptor),
-				set: wrapDescriptorSet(attr, descriptor)
-			});
-		});
-    }
-	/**
-	 * On `created` callback, sync attributes with properties.
-	 */
-	createdCallback() {
-		DNAComponent.prototype.createdCallback.call(this);
-		let attributes = this.attributes || [];
-        for (let i = 0, len = attributes.length; i < len; i++) {
-            let attr = attributes[i];
-            this.attributeChangedCallback(attr.name, undefined, attr.value);
-        }
-		let ctrAttributes = this.constructor.attributes || [];
-		ctrAttributes.forEach((attr) => {
-			if (this[attr] !== null && this[attr] !== undefined) {
-				this.setAttribute(attr, this[attr]);
-			}
-		});
-	}
-	/**
-	 * On `attributeChanged` callback, sync attributes with properties.
-	 * @private
-	 * @param {String} attrName The changed attribute name.
-     * @param {*} oldVal The value of the attribute before the change.
-     * @param {*} newVal The value of the attribute after the change.
-	 */
-	attributeChangedCallback(attr, oldVal, newVal) {
-		DNAComponent.prototype.attributeChangedCallback.call(this);
-		let cl = this.constructor;
-		if (cl && cl.attributes && Array.isArray(cl.attributes)) {
-			if (cl.attributes.indexOf(attr) !== -1) {
-				this[attr] = newVal;
-			}
-		}
     }
 }
