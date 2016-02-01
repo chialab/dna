@@ -1,27 +1,27 @@
-<a name="DNAEventComponent"></a>
-## DNAEventComponent ⇐ <code>DNAComponent</code>
+<a name="DNAEventsComponent"></a>
+## DNAEventsComponent ⇐ <code>DNAComponent</code>
 **Kind**: global class  
 **Extends:** <code>DNAComponent</code>  
 
-* [DNAEventComponent](#DNAEventComponent) ⇐ <code>DNAComponent</code>
-    * [`new DNAEventComponent()`](#new_DNAEventComponent_new)
+* [DNAEventsComponent](#DNAEventsComponent) ⇐ <code>DNAComponent</code>
+    * [`new DNAEventsComponent()`](#new_DNAEventsComponent_new)
     * _instance_
-        * [`.createdCallback()`](#DNAEventComponent+createdCallback)
-        * [`.addEventListener(evName, callback)`](#DNAEventComponent+addEventListener)
-        * [`.trigger(evName, data, bubbles, cancelable)`](#DNAEventComponent+trigger)
+        * [`.createdCallback()`](#DNAEventsComponent+createdCallback)
+        * [`.addEventListener(evName, callback)`](#DNAEventsComponent+addEventListener)
+        * [`.trigger(evName, data, bubbles, cancelable)`](#DNAEventsComponent+trigger)
     * _static_
-        * [`.createEvent(type)`](#DNAEventComponent.createEvent) ⇒ <code>Event</code>
+        * [`.createEvent(type)`](#DNAEventsComponent.createEvent) ⇒ <code>Event</code>
 
-<a name="new_DNAEventComponent_new"></a>
-### `new DNAEventComponent()`
+<a name="new_DNAEventsComponent_new"></a>
+### `new DNAEventsComponent()`
 Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
 
 **Example**  
 my-component.next.js
 ```js
-import { DNAEventComponent } from 'dna/component';
-export class MyComponent extends DNAEventComponent {
-  static get bindEvents() {
+import { DNAEventsComponent } from 'dna/component';
+export class MyComponent extends DNAEventsComponent {
+  static get events() {
     return {
       'click button': 'onButtonClick'
     }
@@ -42,27 +42,27 @@ button.innerText = 'Click me';
 element.appendChild(button);
 button.click(); // logs "button clicked"
 ```
-<a name="DNAEventComponent+createdCallback"></a>
-### `dnaEventComponent.createdCallback()`
+<a name="DNAEventsComponent+createdCallback"></a>
+### `dnaEventsComponent.createdCallback()`
 Fires when an instance of the element is created.
 
-**Kind**: instance method of <code>[DNAEventComponent](#DNAEventComponent)</code>  
-<a name="DNAEventComponent+addEventListener"></a>
-### `dnaEventComponent.addEventListener(evName, callback)`
+**Kind**: instance method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
+<a name="DNAEventsComponent+addEventListener"></a>
+### `dnaEventsComponent.addEventListener(evName, callback)`
 `Node.prototype.addEventListener` polyfill.
 
-**Kind**: instance method of <code>[DNAEventComponent](#DNAEventComponent)</code>  
+**Kind**: instance method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | evName | <code>String</code> | The name of the event to listen. |
 | callback | <code>function</code> | The callback for the event. |
 
-<a name="DNAEventComponent+trigger"></a>
-### `dnaEventComponent.trigger(evName, data, bubbles, cancelable)`
+<a name="DNAEventsComponent+trigger"></a>
+### `dnaEventsComponent.trigger(evName, data, bubbles, cancelable)`
 `Node.prototype.dispatchEvent` wrapper.
 
-**Kind**: instance method of <code>[DNAEventComponent](#DNAEventComponent)</code>  
+**Kind**: instance method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -71,11 +71,11 @@ Fires when an instance of the element is created.
 | bubbles | <code>Boolean</code> | Should the event bubble throw the DOM tree. |
 | cancelable | <code>Boolean</code> | Can be the event cancel by a callback. |
 
-<a name="DNAEventComponent.createEvent"></a>
-### `DNAEventComponent.createEvent(type)` ⇒ <code>Event</code>
+<a name="DNAEventsComponent.createEvent"></a>
+### `DNAEventsComponent.createEvent(type)` ⇒ <code>Event</code>
 Create an Event instance.
 
-**Kind**: static method of <code>[DNAEventComponent](#DNAEventComponent)</code>  
+**Kind**: static method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
 **Returns**: <code>Event</code> - The created event.  
 
 | Param | Type | Description |
