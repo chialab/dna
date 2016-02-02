@@ -33,13 +33,15 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     static onRegister(...args) {
         let attributesToWatch = this.attributes || [];
-        attributesToWatch.forEach((attr) => {
+        this.normalizedAttributes = attributesToWatch.map((attr) => {
+            attr = dashToCamel(attr);
             let descriptor = getDescriptor(this.prototype, attr) || {};
             Object.defineProperty(this.prototype, attr, {
                 configurable: true,
                 get: wrapDescriptorGet(attr, descriptor),
                 set: wrapDescriptorSet(attr, descriptor)
             });
+            return attr;
         });
     }
     /**
@@ -52,10 +54,10 @@ export class DNAAttributesComponent extends DNAComponent {
             let attr = attributes[i];
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
-        let ctrAttributes = this.constructor.attributes || [];
+        let ctrAttributes = this.constructor.normalizedAttributes || [];
         ctrAttributes.forEach((attr) => {
             if (this[attr] !== null && this[attr] !== undefined && this[attr] !== false) {
-                this.setAttribute(attr, this[attr]);
+                this.setAttribute(camelToDash(attr), this[attr]);
             }
         });
     }
@@ -69,8 +71,9 @@ export class DNAAttributesComponent extends DNAComponent {
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
         let cl = this.constructor;
-        if (cl && cl.attributes && Array.isArray(cl.attributes)) {
-            if (cl.attributes.indexOf(attr) !== -1) {
+        if (cl && cl.normalizedAttributes && Array.isArray(cl.normalizedAttributes)) {
+            attr = dashToCamel(attr);
+            if (cl.normalizedAttributes.indexOf(attr) !== -1) {
                 this[attr] = newVal;
             }
         }
@@ -101,12 +104,12 @@ function wrapDescriptorSet(attr, descriptor) {
         let res = this[attr];
         if (res !== null && res !== undefined && res !== false) {
             if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
-                this.setAttribute(attr, res);
+                this.setAttribute(camelToDash(attr), res);
             } else if (typeof res == 'boolean') {
-                this.setAttribute(attr, attr);
+                this.setAttribute(camelToDash(attr), attr);
             }
         } else {
-            this.removeAttribute(attr);
+            this.removeAttribute(camelToDash(attr));
         }
         return res;
     }
@@ -118,4 +121,14 @@ function wrapDescriptorGet(attr, descriptor) {
     return descriptor.get || function() {
         return this['__' + attr];
     }
+}
+
+function camelToDash(str) {
+    return str.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2');
+}
+
+function dashToCamel(str) {
+    return str.replace(/\W+(.)/g, function (x, chr) {
+        return chr.toUpperCase();
+    });
 }
