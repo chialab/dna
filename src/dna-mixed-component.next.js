@@ -32,7 +32,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     createdCallback() {
         super.createdCallback();
-        __triggerCallbacks(this, 'createdCallback', args);
+        __triggerCallbacks(this, 'createdCallback');
     }
     /**
      * Trigger all `attachedCallback` methods of the implemented behaviors.
@@ -40,7 +40,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     attachedCallback() {
         super.attachedCallback();
-        __triggerCallbacks(this, 'attachedCallback', args);
+        __triggerCallbacks(this, 'attachedCallback');
     }
     /**
      * Trigger all `detachedCallback` methods of the implemented behaviors.
@@ -48,7 +48,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     detachedCallback() {
         super.detachedCallback();
-        __triggerCallbacks(this, 'detachedCallback', args);
+        __triggerCallbacks(this, 'detachedCallback');
     }
     /**
      * Trigger all `attributeChanged` methods of the implemented behaviors.
