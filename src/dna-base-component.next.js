@@ -12,21 +12,21 @@ import { DNAAttributesComponent } from './dna-attributes-component.next.js';
  * @extends DNAMixedComponent
  */
 export class DNABaseComponent extends DNAMixedComponent {
-	/**
+    /**
      * Fires when an instance of the element is created.
      */
-	createdCallback() {
-		DNAMixedComponent.prototype.createdCallback.call(this);
-		// Add scope style class
+    createdCallback() {
+        super.createdCallback();
+        // Add scope style class
         if (this.is) {
             this.classList.add(this.is);
         }
-	}
-	/**
+    }
+    /**
      * A list of mixins.
      * @type {Array}
      */
-	static get behaviors() {
-		return [DNAStyleComponent, DNAEventsComponent, DNAAttributesComponent, DNATemplateComponent]
-	}
+    static get behaviors() {
+        return [DNAStyleComponent, DNAEventsComponent, DNAAttributesComponent, DNATemplateComponent]
+    }
 }

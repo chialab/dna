@@ -46,7 +46,7 @@ export class DNAAttributesComponent extends DNAComponent {
      * On `created` callback, sync attributes with properties.
      */
     createdCallback() {
-        DNAComponent.prototype.createdCallback.call(this);
+        super.createdCallback();
         let attributes = this.attributes || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
@@ -67,7 +67,7 @@ export class DNAAttributesComponent extends DNAComponent {
      * @param {*} newVal The value of the attribute after the change.
      */
     attributeChangedCallback(attr, oldVal, newVal) {
-        DNAComponent.prototype.attributeChangedCallback.call(this);
+        super.attributeChangedCallback(attr, oldVal, newVal);
         let cl = this.constructor;
         if (cl && cl.attributes && Array.isArray(cl.attributes)) {
             if (cl.attributes.indexOf(attr) !== -1) {

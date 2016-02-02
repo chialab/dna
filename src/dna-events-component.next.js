@@ -1,8 +1,7 @@
 'use strict';
 
 import Delegate from './libs/dom-delegate.next.js';
-import { DNAComponent }
-from './dna-component.next.js';
+import { DNAComponent } from './dna-component.next.js';
 
 /**
  * Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
@@ -64,7 +63,7 @@ export class DNAEventsComponent extends DNAComponent {
                 }
             }
         }
-        DNAComponent.prototype.createdCallback.call(this);
+        super.createdCallback();
     }
     /**
      * `Node.prototype.addEventListener` polyfill.

@@ -88,7 +88,7 @@ export class DNATemplateComponent extends DNAComponent {
      */
     createdCallback() {
         this.updateViewContent();
-        DNAComponent.prototype.createdCallback.call(this);
+        super.createdCallback();
     }
     /**
      * Update Component child nodes.
