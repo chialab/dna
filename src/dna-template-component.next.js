@@ -125,10 +125,27 @@ export class DNATemplateComponent extends DNAComponent {
     }
 }
 
+function cssToObj (css) {
+    var result = {},
+        attributes = css.split(';');
+
+    for (var i = 0; i < attributes.length; i++) {
+        var entry = attributes[i].split(':');
+        result[entry.splice(0,1)[0]] = entry.join(':');
+    }
+    return result;
+}
+
 function attributesToProp (node) {
     var res = {};
     Array.prototype.forEach.call(node.attributes || [], function (attr) {
-        res[attr.name === 'class' ? 'className' : attr.name] = attr.value;
+        if (attr.name == 'class') {
+            res['className'] = attr.value;
+        } else if (attr.name == 'style') {
+            res['style'] = cssToObj(attr.value);
+        } else {
+            res[attr.name] = attr.value;
+        }
     });
     return res;
 }
@@ -139,4 +156,4 @@ function nodeToVDOM (node) {
     } else {
         return new VDOM.VNode(node.tagName, attributesToProp(node), Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
     }
-};
+}
