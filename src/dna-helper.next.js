@@ -41,6 +41,8 @@ export class DNAHelper {
             }
         } else {
             options.prototype = fn;
+            fn = function () { options.prototype.constructor.apply(this, arguments) };
+            fn.prototype = options.prototype;
         }
         try {
             fn.prototype.is = tagName;
