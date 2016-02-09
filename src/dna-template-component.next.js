@@ -139,13 +139,7 @@ function cssToObj (css) {
 function attributesToProp (node) {
     var res = {};
     Array.prototype.forEach.call(node.attributes || [], function (attr) {
-        if (attr.name == 'class') {
-            res['className'] = attr.value;
-        } else if (attr.name == 'style') {
-            res['style'] = cssToObj(attr.value);
-        } else {
-            res[attr.name] = attr.value;
-        }
+        res[attr.name] = attr.value;
     });
     return res;
 }
@@ -154,6 +148,8 @@ function nodeToVDOM (node) {
     if (node.nodeType === Node.TEXT_NODE) {
         return new VDOM.VText(node.textContent);
     } else {
-        return new VDOM.VNode(node.tagName, attributesToProp(node), Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
+        return new VDOM.VNode(node.tagName, {
+            attributes: attributesToProp(node)
+        }, Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
     }
 }
