@@ -126,11 +126,11 @@ export class DNATemplateComponent extends DNAComponent {
 }
 
 function cssToObj (css) {
-    var result = {},
-        attributes = css.split(';');
+    let result = {};
+    let attributes = css.split(';');
 
-    for (var i = 0; i < attributes.length; i++) {
-        var entry = attributes[i].split(':');
+    for (let i = 0; i < attributes.length; i++) {
+        let entry = attributes[i].split(':');
         result[entry.splice(0,1)[0]] = entry.join(':');
     }
     return result;

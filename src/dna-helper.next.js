@@ -74,7 +74,7 @@ export class DNAHelper {
      * @return {String} The tag name for the Custom Element.
      */
     static classToElement(fn) {
-        var name = fn.name || fn.toString().match(/^function\s*([^\s(]+)/)[1];
+        let name = fn.name || fn.toString().match(/^function\s*([^\s(]+)/)[1];
         if (!name) {
             return undefined;
         }

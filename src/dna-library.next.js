@@ -18,12 +18,12 @@ export function Create(tagName, config = {}) {
     if (typeof scope === 'undefined') {
         throw 'Missing prototype';
     } else if (typeof scope !== 'function') {
-        let newScope = function() {}
+        let newScope = function() {};
         newScope.prototype = scope;
         scope = newScope;
     }
     let newScope = extend(scope, DNABaseComponent);
-    for (var k in scope.prototype) {
+    for (let k in scope.prototype) {
         if (['createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'].indexOf(k) !== -1) {
             newScope.prototype[k] = bindFN(newScope.prototype[k], DNABaseComponent.prototype[k]);
         }
@@ -37,7 +37,7 @@ export function Create(tagName, config = {}) {
 
     config.tagName = tagName;
 
-    var ctr = Register(newScope, config);
+    let ctr = Register(newScope, config);
 
     ctr.Extend = function(ctr2 = {}) {
         let scope2 = (typeof ctr2 === 'function') ? ctr2 : (function(proto) {
@@ -71,7 +71,7 @@ function getMethods(prototype) {
                     prop['value'] = prototype[key];
                 }
             }
-            added.push(key)
+            added.push(key);
             return prop;
         }
     }
@@ -92,8 +92,8 @@ function getMethods(prototype) {
     return res;
 }
 
-function extend(newClass, superClass) {
-    function ctr() {
+var extend = function(newClass, superClass) {
+    let ctr = function() {
         getProtoProp(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
     }
     inherits(ctr, superClass);
@@ -110,6 +110,28 @@ function extend(newClass, superClass) {
     return createClass(ctr, getMethods(newClass.prototype), getMethods(newClass));
 }
 
+function defineProperties(target, props) {
+    for (let i = 0; i < props.length; i++) {
+        let descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ('value' in descriptor) {
+            descriptor.writable = true;
+        }
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+
+function createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) {
+        defineProperties(Constructor.prototype, protoProps);
+    }
+    if (staticProps) {
+        defineProperties(Constructor, staticProps);
+    }
+    return Constructor;
+}
+
 function bindFN(protoFn, superFn) {
     return function() {
         protoFn.apply(this, arguments);
@@ -117,27 +139,9 @@ function bindFN(protoFn, superFn) {
     }
 }
 
-var createClass = (function() {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];
-            descriptor.enumerable = descriptor.enumerable || false;
-            descriptor.configurable = true;
-            if ("value" in descriptor) descriptor.writable = true;
-            Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }
-
-    return function(Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);
-        if (staticProps) defineProperties(Constructor, staticProps);
-        return Constructor;
-    };
-})();
-
-var inherits = function(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+function inherits(subClass, superClass) {
+    if (typeof superClass !== 'function' && superClass !== null) {
+        throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
     }
 
     subClass.prototype = Object.create(superClass && superClass.prototype, {
@@ -148,30 +152,34 @@ var inherits = function(subClass, superClass) {
             configurable: true
         }
     });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    if (superClass) {
+        if (Object.setPrototypeOf) {
+            Object.setPrototypeOf(subClass, superClass)
+        } else {
+            subClass.__proto__ = superClass;
+        }
+    }
 }
 
-var getProtoProp = function get(object, property, receiver) {
-    if (object === null) object = Function.prototype;
-    var desc = Object.getOwnPropertyDescriptor(object, property);
-
+function getProtoProp(object, property, receiver) {
+    if (object === null) {
+        object = Function.prototype;
+    }
+    let desc = Object.getOwnPropertyDescriptor(object, property);
     if (desc === undefined) {
-        var parent = Object.getPrototypeOf(object);
-
+        let parent = Object.getPrototypeOf(object);
         if (parent === null) {
             return undefined;
         } else {
             return get(parent, property, receiver);
         }
-    } else if ("value" in desc) {
+    } else if ('value' in desc) {
         return desc.value;
     } else {
-        var getter = desc.get;
-
+        let getter = desc.get;
         if (getter === undefined) {
             return undefined;
         }
-
         return getter.call(receiver);
     }
 };
