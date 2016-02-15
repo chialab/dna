@@ -52,6 +52,13 @@ export class DNAAttributesComponent extends DNAComponent {
         let attributes = this.attributes || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
+            if (attr.value == '') {
+                // boolean attributes
+                if (this.getAttribute(attr.name) !== null) {
+                    this.attributeChangedCallback(attr.name, undefined, true);
+                }
+                continue;
+            }
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
         let ctrAttributes = this.constructor.normalizedAttributes || [];
