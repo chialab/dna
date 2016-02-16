@@ -1,29 +1,31 @@
 {
-    "name": "dna-components",
-    "version": "0.11.15",
-    "build": {
-        "bundleName": "dna-components.js",
-        "globalName": "DNAComponents",
-        "rollup": false
-    },
-    "description": "Write your set of (Web) Components using ES2015, templates and (optionally) Sass.",
-    "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
-    "license": "MIT",
-    "main": "src/index.next.js",
-    "scripts": {
-        "build": "node ./node_modules/es6-workflow/scripts/build.js",
-        "doc": "node ./node_modules/es6-workflow/scripts/doc.js",
-        "test": "node ./node_modules/es6-workflow/scripts/test.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://gitlab.com/dna-components/dna-components"
-    },
-    "devDependencies": {
-        "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git"
-    },
-    "dependencies": {
-        "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",
-        "dom-delegate": "^2.0.3"
-    }
+  "name": "dna-components",
+  "version": "0.11.15",
+  "build": {
+    "bundleName": "dna-components.js",
+    "globalName": "DNAComponents",
+    "rollup": true
+  },
+  "description": "Write your set of (Web) Components using ES2015, templates and (optionally) Sass.",
+  "author": "Chialab s.r.l. <dev@chialab.it> (http://www.chialab.com)",
+  "license": "MIT",
+  "main": "src/index.next.js",
+  "scripts": {
+    "build": "node ./node_modules/es6-workflow/scripts/build.js && node ./scripts/dist.js",
+    "doc": "node ./node_modules/es6-workflow/scripts/doc.js",
+    "test": "node ./node_modules/es6-workflow/scripts/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/dna-components/dna-components"
+  },
+  "devDependencies": {
+    "concat-with-sourcemaps": "^1.0.4",
+    "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git"
+  },
+  "dependencies": {
+    "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",
+    "dom-delegate": "^2.0.3",
+    "virtual-dom": "^2.1.1"
+  }
 }
