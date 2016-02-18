@@ -54,32 +54,7 @@ export class DNATemplateComponent extends DNAComponent {
                 ctr.prototype.render = () => document.importNode(ctr.template.content, true);
             }
             if (DNAConfig.autoUpdateView) {
-                let currentProto = this.prototype;
-                Object.getOwnPropertyNames(currentProto).forEach((prop) => {
-                    if (typeof currentProto[prop] !== 'function') {
-                        let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
-                        Object.defineProperty(this.prototype, prop, {
-                            configurable: true,
-                            get: function() {
-                                if (descriptor.get) {
-                                    return descriptor.get.call(this);
-                                } else {
-                                    return this['__' + prop];
-                                }
-                            },
-                            set: function(value) {
-                                let res;
-                                if (descriptor.set) {
-                                    res = descriptor.set.call(this, value);
-                                } else {
-                                    res = (this['__' + prop] = value);
-                                }
-                                this.updateViewContent();
-                                return res;
-                            }
-                        });
-                    }
-                });
+                wrapPrototype(this.prototype || this.__proto__, this.prototype || this.__proto__);
             }
         }
     }
@@ -122,6 +97,39 @@ export class DNATemplateComponent extends DNAComponent {
                 this.innerHTML = html;
             }
         }
+    }
+}
+
+function wrapPrototype (main, currentProto = {}, handled = []) {
+    Object.getOwnPropertyNames(currentProto).forEach((prop) => {
+        if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) == -1) {
+            handled.push(prop);
+            let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
+            Object.defineProperty(main, prop, {
+                configurable: true,
+                get: function() {
+                    if (descriptor.get) {
+                        return descriptor.get.call(this);
+                    } else {
+                        return this['__' + prop];
+                    }
+                },
+                set: function(value) {
+                    let res;
+                    if (descriptor.set) {
+                        res = descriptor.set.call(this, value);
+                    } else {
+                        res = (this['__' + prop] = value);
+                    }
+                    this.updateViewContent();
+                    return res;
+                }
+            });
+        }
+    });
+    let nextProto = currentProto.prototype || currentProto.__proto__;
+    if (nextProto && nextProto !== HTMLElement.prototype) {
+        wrapPrototype(main, nextProto, handled);
     }
 }
 
