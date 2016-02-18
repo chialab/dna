@@ -5,8 +5,11 @@
 
 * [DNAStyleComponent](#DNAStyleComponent) ⇐ <code>DNAComponent</code>
     * [`new DNAStyleComponent()`](#new_DNAStyleComponent_new)
-    * [`.onRegister()`](#DNAStyleComponent.onRegister)
-    * [`.addCss(css)`](#DNAStyleComponent.addCss) ⇒ <code>HTMLStyleElement</code>
+    * _instance_
+        * [`.createdCallback()`](#DNAStyleComponent+createdCallback)
+    * _static_
+        * [`.onRegister()`](#DNAStyleComponent.onRegister)
+        * [`.addCss(css)`](#DNAStyleComponent.addCss) ⇒ <code>HTMLStyleElement</code>
 
 <a name="new_DNAStyleComponent_new"></a>
 ### `new DNAStyleComponent()`
@@ -32,6 +35,11 @@ var p = document.createElement('p');
 p.innerText = 'Paragraph';
 element.appendChild(p); // text inside `p` gets the red color
 ```
+<a name="DNAStyleComponent+createdCallback"></a>
+### `dnaStyleComponent.createdCallback()`
+Fires when an instance of the element is created.
+
+**Kind**: instance method of <code>[DNAStyleComponent](#DNAStyleComponent)</code>  
 <a name="DNAStyleComponent.onRegister"></a>
 ### `DNAStyleComponent.onRegister()`
 Fires when an the element is registered.

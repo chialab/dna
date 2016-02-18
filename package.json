@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "0.11.15",
+  "version": "0.12.0",
   "build": {
     "bundleName": "dna-components.js",
     "globalName": "DNAComponents",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "concat-with-sourcemaps": "^1.0.4",
-    "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git"
+    "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git#karma-systemjs"
   },
   "dependencies": {
     "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",

@@ -9,5 +9,4 @@ concat.add('virtual-dom.js', fs.readFileSync(path.join(cwd, 'node_modules/virtua
 concat.add('dna-custom-elements.js', fs.readFileSync(path.join(cwd, 'node_modules/dna-polyfills/src/extra/custom-elements.js'), 'utf8'));
 concat.add('dna-components.js', fs.readFileSync(path.join(cwd, 'dist/dna-components.js'), 'utf8'), fs.readFileSync(path.join(cwd, 'dist/dna-components.js.map'), 'utf8'));
 
-
 fs.writeFileSync(path.join(cwd, 'dist/dna-components.full.js'), concat.content);
