@@ -1,5 +1,5 @@
 (function () {
-    describe('Unit: DNAStylesComponent', function() {
+    describe('Unit: DNAStyleComponent', function() {
         var elem1, elem2, elem3;
 
         before(function (done) {
