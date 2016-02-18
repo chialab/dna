@@ -113,7 +113,7 @@ function wrapDescriptorSet(attr, descriptor) {
             if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
                 this.setAttribute(camelToDash(attr), res);
             } else if (typeof res == 'boolean') {
-                this.setAttribute(camelToDash(attr), attr);
+                this.setAttribute(camelToDash(attr), camelToDash(attr));
             }
         } else {
             this.removeAttribute(camelToDash(attr));
@@ -131,7 +131,7 @@ function wrapDescriptorGet(attr, descriptor) {
 }
 
 function camelToDash(str) {
-    return str.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2');
+    return str.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
 function dashToCamel(str) {
