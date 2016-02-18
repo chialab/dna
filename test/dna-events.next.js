@@ -41,6 +41,6 @@ export class TestComponent extends DNAEventsComponent {
     }
 }
 
-export var Test = Register('test-component', {
+export var Test = Register('test-events-component', {
     prototype: TestComponent
 });
