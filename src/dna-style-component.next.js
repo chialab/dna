@@ -67,4 +67,14 @@ export class DNAStyleComponent extends DNAComponent {
         }
         return style;
     }
+    /**
+     * Fires when an instance of the element is created.
+     */
+    createdCallback() {
+        super.createdCallback();
+        // Add scope style class
+        if (this.is) {
+            this.classList.add(this.is);
+        }
+    }
 }

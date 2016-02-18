@@ -13,16 +13,6 @@ import { DNAAttributesComponent } from './dna-attributes-component.next.js';
  */
 export class DNABaseComponent extends DNAMixedComponent {
     /**
-     * Fires when an instance of the element is created.
-     */
-    createdCallback() {
-        super.createdCallback();
-        // Add scope style class
-        if (this.is) {
-            this.classList.add(this.is);
-        }
-    }
-    /**
      * A list of mixins.
      * @type {Array}
      */
