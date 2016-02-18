@@ -11,12 +11,11 @@ Write your set of (Web) Components using [ES2015](https://github.com/lukehoban/e
 * Optional [virtual-dom](https://github.com/Matt-Esch/virtual-dom) support.
 * [Polymer](polymer-project.org)-like behaviors for prototype mixins.
 * [WebComponents](http://webcomponents.org/) support.
-* Browsers support (IE9+, Chrome, Firefox, Opera, Safari, Android 4.1+)
+* Browsers support (IE9+, Chrome, Firefox, Opera, Safari, Android 4.1+).
 
 ## TODO
 
 * Quickstart guide
-* Tests
 
 ## Built-in
 
