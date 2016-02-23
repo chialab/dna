@@ -8,8 +8,7 @@
             '*.scss': { loader: 'dna/loaders/sass' },
             'dna/delegate': {
                 format: 'cjs'
-            },
-            'dna/components': { build: false }
+            }
         },
         packages: {
             'node_modules/dna-polyfills': {
