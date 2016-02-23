@@ -39,20 +39,17 @@ export class DNATemplateComponent extends DNAComponent {
         // Create render function
         let ctr = this;
         if (this.template) {
-            if (typeof ctr.template === 'function') {
-                ctr.prototype.render = function() {
-                    return ctr.template.call(this);
-                }
-            } else if (typeof ctr.template == 'string') {
-                let template = ctr.template;
-                ctr.prototype.render = (function(scope) {
+            ctr.prototype.render = ((template) => {
+                if (typeof template === 'function') {
                     return function() {
-                        return template;
+                        return template.call(this);
                     }
-                })(this);
-            } else if (ctr.template instanceof Node && ctr.template.tagName == 'TEMPLATE') {
-                ctr.prototype.render = () => document.importNode(ctr.template.content, true);
-            }
+                } else if (typeof template == 'string') {
+                    return () => template;
+                } else if (template instanceof Node && template.tagName == 'TEMPLATE') {
+                    return () => document.importNode(template.content, true);
+                }
+            })(ctr.template);
             if (DNAConfig.autoUpdateView) {
                 wrapPrototype(this.prototype || this.__proto__, this.prototype || this.__proto__);
             }
