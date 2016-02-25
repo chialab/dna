@@ -111,14 +111,17 @@ var extend = function(newClass, superClass) {
 }
 
 function defineProperties(target, props) {
+    let blacklistProps = ['arguments', 'caller'];
     for (let i = 0; i < props.length; i++) {
         let descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ('value' in descriptor) {
-            descriptor.writable = true;
+        if (blacklistProps.indexOf(descriptor.key) === -1) {
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ('value' in descriptor) {
+                descriptor.writable = true;
+            }
+            Object.defineProperty(target, descriptor.key, descriptor);
         }
-        Object.defineProperty(target, descriptor.key, descriptor);
     }
 }
 
