@@ -1,4 +1,4 @@
-(function (scope, DNAComponents) {
+(function (scope, DNA) {
 
     var SeedComponent = function SeedComponent() {};
 
@@ -89,10 +89,10 @@
         }
     }
 
-    scope.Seed = DNAComponents.Create('seed-component', {
+    scope.Seed = DNA.Create('seed-component', {
 
         prototype: SeedComponent
 
     });
 
-})(this, DNAComponents);
+})(this, DNA);
