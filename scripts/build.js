@@ -29,9 +29,7 @@ myBuilder.run(packageJSON).then(function () {
         path.join(cwd, 'node_modules/dna-polyfills/src/dom/class-list.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/object/set-prototype-of.js'),
         path.join(cwd, 'dist/dna.lite.js')
-    ], {
-        outSourceMap: 'dna.js.map',
-    });
+    ]);
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.js'), content.code);
 
@@ -40,9 +38,7 @@ myBuilder.run(packageJSON).then(function () {
         path.join(cwd, 'node_modules/virtual-dom/dist/virtual-dom.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/extra/custom-elements.js'),
         path.join(cwd, 'dist/dna.js')
-    ], {
-        outSourceMap: 'dna.full.js.map'
-    });
+    ]);
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.full.js'), content.code);
 
