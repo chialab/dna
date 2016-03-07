@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2015 Chialab s.r.l. & Channelweb s.r.l.
- * All rights reserved.
+ * DNA
+ * (c) 2015-2016 Chialab (http://chialab.io) <dev@chialab.io>
+ * http://dna.chialab.io
  *
- * Write your set of (Web) Components using ES2015, templates and (optionally) Sass.
+ * A component pattern for Web artisans.
  */
 export * from './dna-component.next.js';
 export * from './dna-attributes-component.next.js';
@@ -13,3 +14,4 @@ export * from './dna-template-component.next.js';
 export * from './dna-base-component.next.js';
 export * from './dna-library.next.js';
 export { DNAConfig as Config } from './dna-config.next.js';
+export var Version = __DNA__VERSION__;

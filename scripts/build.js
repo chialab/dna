@@ -6,6 +6,7 @@ var fs = require('fs'),
 var cwd = process.cwd();
 var packageJSON = require('../package.json');
 var content = {};
+var version = packageJSON.version;
 
 packageJSON.build = {
     bundleName: 'dna.lite.js',
@@ -13,7 +14,13 @@ packageJSON.build = {
     rollup: true
 };
 
+// generate lite
 myBuilder.run(packageJSON).then(function () {
+    var code = fs.readFileSync(path.join(cwd, 'dist/dna.lite.js'), 'utf8');
+    code = code.replace('__DNA__VERSION__', "'" + version + "'");
+    fs.writeFileSync(path.join(cwd, 'dist/dna.lite.js'), code);
+
+    // generate standard
     content = UglifyJS.minify([
         path.join(cwd, 'node_modules/dna-polyfills/src/array/foreach.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/array/from.js'),
@@ -22,12 +29,13 @@ myBuilder.run(packageJSON).then(function () {
         path.join(cwd, 'node_modules/dna-polyfills/src/object/set-prototype-of.js'),
         path.join(cwd, 'dist/dna.lite.js')
     ], {
-        outSourceMap: 'dna.js.map'
+        outSourceMap: 'dna.js.map',
     });
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.js'), content.code);
     fs.writeFileSync(path.join(cwd, 'dist/dna.js.map'), content.map);
 
+    // generate full
     content = UglifyJS.minify([
         path.join(cwd, 'node_modules/virtual-dom/dist/virtual-dom.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/extra/custom-elements.js'),
