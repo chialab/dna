@@ -11,7 +11,8 @@ var version = packageJSON.version;
 packageJSON.build = {
     bundleName: 'dna.lite.js',
     globalName: 'DNA',
-    rollup: true
+    rollup: true,
+    sourceMaps: false
 };
 
 // generate lite
@@ -33,7 +34,6 @@ myBuilder.run(packageJSON).then(function () {
     });
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.js'), content.code);
-    fs.writeFileSync(path.join(cwd, 'dist/dna.js.map'), content.map);
 
     // generate full
     content = UglifyJS.minify([
@@ -45,7 +45,6 @@ myBuilder.run(packageJSON).then(function () {
     });
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.full.js'), content.code);
-    fs.writeFileSync(path.join(cwd, 'dist/dna.full.js.map'), content.map);
 
     console.log('DNA generated!');
 });
