@@ -2,6 +2,7 @@
 
 import { DNAConfig } from './dna-config.next.js';
 import { DNAComponent } from './dna-component.next.js';
+import { DNAHelper } from './dna-helper.next.js';
 import VDOM from './libs/virtual-dom.next.js';
 
 /**
@@ -104,23 +105,10 @@ function wrapPrototype (main, currentProto = {}, handled = []) {
             let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
             Object.defineProperty(main, prop, {
                 configurable: true,
-                get: function() {
-                    if (descriptor.get) {
-                        return descriptor.get.call(this);
-                    } else {
-                        return this['__' + prop];
-                    }
-                },
-                set: function(value) {
-                    let res;
-                    if (descriptor.set) {
-                        res = descriptor.set.call(this, value);
-                    } else {
-                        res = (this['__' + prop] = value);
-                    }
+                get: DNAHelper.wrapDescriptorGet(prop, descriptor),
+                set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
                     this.updateViewContent();
-                    return res;
-                }
+                })
             });
         }
     });

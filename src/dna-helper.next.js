@@ -97,4 +97,70 @@ export class DNAHelper {
             })
             .replace(/[\-|\_]/g, '');
     }
+    /**
+     * Get an element's property descriptor.
+     * @param {Function} ctr The element constructor.
+     * @param {string} prop The property to analyze.
+     * @return {object} The descriptor of the property.
+     */
+    static getDescriptor(ctr, prop) {
+        let res;
+        if (ctr) {
+            res = Object.getOwnPropertyDescriptor(ctr, prop);
+            if (!res && ctr.__proto__) {
+                res = DNAHelper.getDescriptor(ctr.__proto__, prop);
+            }
+        }
+        return res;
+    }
+    /**
+     * Wrap a property descriptor get function.
+     * @param {string} prop The property to wrap.
+     * @param {object} descriptor The property descriptor.
+     * @return {Function} The descriptor get function wrapped.
+     */
+    static wrapDescriptorGet(prop, descriptor) {
+        return function() {
+            let res;
+            if (typeof descriptor.get === 'function') {
+                try {
+                    res = descriptor.get.call(this);
+                } catch(ex) {
+                    res = this['__' + prop];
+                }
+            } else {
+                res = this['__' + prop];
+            }
+            return res;
+        }
+    }
+    /**
+     * Wrap a property descriptor set function.
+     * @param {string} prop The property to wrap.
+     * @param {object} descriptor The property descriptor.
+     * @return {Function} The descriptor set function wrapped.
+     */
+    static wrapDescriptorSet(prop, descriptor, callback) {
+        if (descriptor && descriptor.set && descriptor.set.wrapped) {
+            return descriptor.set;
+        }
+        let setter = function(value) {
+            if (descriptor.set) {
+                try {
+                    descriptor.set.call(this, value);
+                } catch(ex) {
+                    this['__' + prop] = value;
+                }
+            } else {
+                this['__' + prop] = value;
+            }
+            let res = this[prop];
+            if (typeof callback === 'function') {
+                callback.call(this, prop, res);
+            }
+            return res;
+        }
+        setter.wrapped = true;
+        return setter;
+    }
 }

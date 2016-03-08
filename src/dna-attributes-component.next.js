@@ -1,6 +1,7 @@
 'use strict';
 
 import { DNAComponent } from './dna-component.next.js';
+import { DNAHelper } from './dna-helper.next.js';
 
 /**
  * Simple Custom Component with attributes watching and reflecting.
@@ -35,11 +36,22 @@ export class DNAAttributesComponent extends DNAComponent {
         let attributesToWatch = this.attributes || [];
         this.normalizedAttributes = attributesToWatch.map((attr) => {
             attr = dashToCamel(attr);
-            let descriptor = getDescriptor(this.prototype, attr) || {};
+            let descriptor = DNAHelper.getDescriptor(this.prototype, attr) || {};
             Object.defineProperty(this.prototype, attr, {
                 configurable: true,
-                get: wrapDescriptorGet(attr, descriptor),
-                set: wrapDescriptorSet(attr, descriptor)
+                get: DNAHelper.wrapDescriptorGet(attr, descriptor),
+                set: DNAHelper.wrapDescriptorSet(attr, descriptor, function (prop, res) {
+                    let dashed = camelToDash(prop);
+                    if (res !== null && res !== undefined && res !== false) {
+                        if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(prop) !== res) {
+                            this.setAttribute(dashed, res);
+                        } else if (typeof res == 'boolean') {
+                            this.setAttribute(dashed, dashed);
+                        }
+                    } else if (this.getAttribute(dashed)) {
+                        this.removeAttribute(dashed);
+                    }
+                })
             });
             return attr;
         });
@@ -84,64 +96,6 @@ export class DNAAttributesComponent extends DNAComponent {
                 this[attr] = newVal;
             }
         }
-    }
-}
-
-function getDescriptor(ctr, attr) {
-    let res;
-    if (ctr) {
-        res = Object.getOwnPropertyDescriptor(ctr, attr);
-        if (!res && ctr.__proto__) {
-            res = getDescriptor(ctr.__proto__, attr);
-        }
-    }
-    return res;
-}
-
-function wrapDescriptorSet(attr, descriptor) {
-    if (descriptor && descriptor.set && descriptor.set.wrapped) {
-        return descriptor.set;
-    }
-    let setter = function(value) {
-        if (descriptor.set) {
-            try {
-                descriptor.set.call(this, value);
-            } catch(ex) {
-                this['__' + attr] = value;
-            }
-        } else {
-            this['__' + attr] = value;
-        }
-        let res = this[attr];
-        let dashed = camelToDash(attr);
-        if (res !== null && res !== undefined && res !== false) {
-            if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
-                this.setAttribute(dashed, res);
-            } else if (typeof res == 'boolean') {
-                this.setAttribute(dashed, dashed);
-            }
-        } else if (this.getAttribute(dashed)) {
-            this.removeAttribute(dashed);
-        }
-        return res;
-    }
-    setter.wrapped = true;
-    return setter;
-}
-
-function wrapDescriptorGet(attr, descriptor) {
-    return function() {
-        let res;
-        if (typeof descriptor.get === 'function') {
-            try {
-                res = descriptor.get.call(this);
-            } catch(ex) {
-                res = this['__' + attr];
-            }
-        } else {
-            res = this['__' + attr];
-        }
-        return res;
     }
 }
 
