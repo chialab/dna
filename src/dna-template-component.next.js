@@ -51,6 +51,15 @@ export class DNATemplateComponent extends DNAComponent {
                     return () => document.importNode(template.content, true);
                 }
             })(ctr.template);
+            let propertiesToWatch = this.properties || [];
+            propertiesToWatch.forEach((prop) => {
+                let descriptor = DNAHelper.getDescriptor(this.prototype, prop) || {};
+                Object.defineProperty(this.prototype, prop, {
+                    configurable: true,
+                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
+                    set: DNAHelper.wrapDescriptorSet(prop, descriptor)
+                });
+            });
             if (DNAConfig.autoUpdateView) {
                 wrapPrototype(this.prototype || this.__proto__, this.prototype || this.__proto__);
             }
