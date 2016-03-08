@@ -104,19 +104,24 @@ function wrapDescriptorSet(attr, descriptor) {
     }
     let setter = function(value) {
         if (descriptor.set) {
-            descriptor.set.call(this, value);
-        } else {
-            (this['__' + attr] = value);
-        }
-        let res = this[attr];
-        if (res !== null && res !== undefined && res !== false) {
-            if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
-                this.setAttribute(camelToDash(attr), res);
-            } else if (typeof res == 'boolean') {
-                this.setAttribute(camelToDash(attr), camelToDash(attr));
+            try {
+                descriptor.set.call(this, value);
+            } catch(ex) {
+                this['__' + attr] = value;
             }
         } else {
-            this.removeAttribute(camelToDash(attr));
+            this['__' + attr] = value;
+        }
+        let res = this[attr];
+        let dashed = camelToDash(attr);
+        if (res !== null && res !== undefined && res !== false) {
+            if ((typeof res == 'string' || typeof res == 'number') && this.getAttribute(attr) !== res) {
+                this.setAttribute(dashed, res);
+            } else if (typeof res == 'boolean') {
+                this.setAttribute(dashed, dashed);
+            }
+        } else if (this.getAttribute(dashed)) {
+            this.removeAttribute(dashed);
         }
         return res;
     }
@@ -125,8 +130,18 @@ function wrapDescriptorSet(attr, descriptor) {
 }
 
 function wrapDescriptorGet(attr, descriptor) {
-    return descriptor.get || function() {
-        return this['__' + attr];
+    return function() {
+        let res;
+        if (typeof descriptor.get === 'function') {
+            try {
+                res = descriptor.get.call(this);
+            } catch(ex) {
+                res = this['__' + attr];
+            }
+        } else {
+            res = this['__' + attr];
+        }
+        return res;
     }
 }
 
