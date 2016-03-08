@@ -64,12 +64,12 @@ Fires when an instance of the element is created.
 
 **Kind**: instance method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| evName | <code>String</code> | The name of the event to fire. |
-| data | <code>Object</code> | A set of custom data to pass to the event. |
-| bubbles | <code>Boolean</code> | Should the event bubble throw the DOM tree. |
-| cancelable | <code>Boolean</code> | Can be the event cancel by a callback. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| evName | <code>String</code> |  | The name of the event to fire. |
+| data | <code>Object</code> |  | A set of custom data to pass to the event. |
+| bubbles | <code>Boolean</code> | <code>true</code> | Should the event bubble throw the DOM tree. |
+| cancelable | <code>Boolean</code> | <code>true</code> | Can be the event cancel by a callback. |
 
 <a name="DNAEventsComponent.createEvent"></a>
 ### `DNAEventsComponent.createEvent(type)` ⇒ <code>Event</code>
@@ -78,7 +78,7 @@ Create an Event instance.
 **Kind**: static method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
 **Returns**: <code>Event</code> - The created event.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| type | <code>String</code> | The event type. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| type | <code>String</code> | <code>Event</code> | The event type. |
 

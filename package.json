@@ -1,6 +1,6 @@
 {
     "name": "dna-components",
-    "version": "0.14.1",
+    "version": "0.15.0",
     "description": "A component pattern for Web artisans.",
     "author": "Chialab <dev@chialab.io> (http://chialab.io)",
     "license": "MIT",
@@ -15,7 +15,7 @@
         "url": "https://gitlab.com/dna-components/dna-components"
     },
     "devDependencies": {
-        "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git#karma-systemjs",
+        "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git",
         "uglify-js": "^2.6.2"
     },
     "dependencies": {
