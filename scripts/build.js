@@ -42,5 +42,12 @@ myBuilder.run(packageJSON).then(function () {
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.full.js'), content.code);
 
+    // dist plugins
+    [
+        'plugins/dna.angular.js'
+    ].forEach(function (plugin) {
+        fs.writeFileSync(path.join(cwd, 'dist/' + plugin), UglifyJS.minify(path.join(cwd, 'src/' + plugin)).code);
+    });
+
     console.log('DNA generated!');
 });
