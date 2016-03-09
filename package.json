@@ -19,7 +19,7 @@
         "uglify-js": "^2.6.2"
     },
     "dependencies": {
-        "dna-polyfills": "git+ssh://git@gitlab.com/dna-components/dna-polyfills.git",
+        "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
         "dom-delegate": "^2.0.3",
         "virtual-dom": "^2.1.1"
     }
