@@ -1,0 +1,21 @@
+image: node:4.2.2
+
+before_script:
+  - npm install
+
+stages:
+  - test
+  - deploy
+
+exec_test:
+  stage: test
+  script:
+    - npm run test
+
+exec_deploy:
+  stage: deploy
+  only:
+    - master
+    - tags
+  script:
+    - ./scripts/deploy.sh
