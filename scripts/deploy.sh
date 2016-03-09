@@ -4,8 +4,7 @@ TAG=$(git describe --abbrev=0 --tags)
 BUILD_DIR="./dist"
 REPO_DIR="./deploy"
 DIST_DIR="${REPO_DIR}/lib"
-REPO_URL="https://gitlab.com/dna-components/dna-library.git"
-PACKAGE="dna-components"
+REPO_URL="git@gitlab.com:dna-components/dna-library.git"
 
 # build distribution scripts
 npm run build
