@@ -141,7 +141,8 @@ export class DNAHelper {
      * @return {Function} The descriptor set function wrapped.
      */
     static wrapDescriptorSet(prop, descriptor, callback) {
-        if (descriptor && descriptor.set && descriptor.set.wrapped) {
+        if (descriptor && descriptor.set && descriptor.set.callbacks) {
+            descriptor.set.callbacks.push(callback);
             return descriptor.set;
         }
         let setter = function(value) {
@@ -155,12 +156,14 @@ export class DNAHelper {
                 this['__' + prop] = value;
             }
             let res = this[prop];
-            if (typeof callback === 'function') {
-                callback.call(this, prop, res);
-            }
+            setter.callbacks.forEach((callback) => {
+                if (typeof callback === 'function') {
+                    callback.call(this, prop, res);
+                }
+            });
             return res;
         }
-        setter.wrapped = true;
+        setter.callbacks = [callback];
         return setter;
     }
 }
