@@ -16,7 +16,6 @@ stages:
 exec_deploy:
   stage: deploy
   only:
-    - master
     - tags
   script:
     - ./scripts/deploy.sh
@@ -24,7 +23,6 @@ exec_deploy:
 generate_doc:
   stage: doc
   only:
-    - master
     - tags
   script:
     - ./scripts/doc.sh
