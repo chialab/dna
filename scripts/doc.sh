@@ -1,14 +1,14 @@
 #!/bin/bash
 
 TAG=$(git describe --abbrev=0 --tags)
-BUILD_DIR="./dist"
-REPO_DIR="./deploy"
-DIST_DIR="${REPO_DIR}/lib"
-REPO_URL="https://gitlab.com/dna-components/dna-library.git"
+BUILD_DIR="./docs"
+REPO_DIR="./docs-deploy"
+DIST_DIR="${REPO_DIR}/contents/api"
+REPO_URL="https://gitlab.com/dna-components/dna-docs.git"
 PACKAGE="dna-components"
 
 # build distribution scripts
-npm run build
+npm run doc
 # clone distribution repo
 rm -rf $REPO_DIR
 git clone $REPO_URL $REPO_DIR
@@ -18,8 +18,6 @@ rm -rf $DIST_DIR
 cp -R $BUILD_DIR $DIST_DIR
 # update distribution project
 cd $REPO_DIR
-sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json
-sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json
 git add .
 git commit -m "release: ${TAG}"
 git tag -a ${TAG} -m "release: ${TAG}"

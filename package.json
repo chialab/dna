@@ -7,7 +7,7 @@
     "main": "src/dna.next.js",
     "scripts": {
         "build": "node ./scripts/build.js",
-        "doc": "node ./node_modules/es6-workflow/scripts/doc.js",
+        "doc": "node ./scripts/doc.js",
         "test": "node ./node_modules/es6-workflow/scripts/test.js"
     },
     "repository": {

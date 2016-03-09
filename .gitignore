@@ -1,5 +1,7 @@
-/deploy
 /dist
+/docs
+/deploy
+/docs-deploy
 /node_modules
 /bower_components
 .tmp
