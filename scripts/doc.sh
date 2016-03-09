@@ -4,7 +4,7 @@ TAG=$(git describe --abbrev=0 --tags)
 BUILD_DIR="./docs"
 REPO_DIR="./docs-deploy"
 DIST_DIR="${REPO_DIR}/contents/api"
-REPO_URL="git@gitlab.com:dna-components/dna-docs.git"
+REPO_URL="https://gitlab-ci-token:${GIT_CI_TOKEN}@gitlab.com/dna-components/dna-docs.git"
 
 # build distribution scripts
 npm run doc
