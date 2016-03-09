@@ -1,21 +1,11 @@
 import { DNATemplateComponent } from '../src/dna-template-component.next.js';
 import { Register } from '../src/dna-library.next.js';
 
+
+
 class TestComponent extends DNATemplateComponent {
-    get name() {
-        return this.__name;
-    }
-
-    set name(n) {
-        return this.__name = n;
-    }
-
-    get surname() {
-        return this.__surname;
-    }
-
-    set surname(n) {
-        return this.__surname = n;
+    static get properties() {
+        return ['name', 'surname']
     }
 
     get fullname() {
