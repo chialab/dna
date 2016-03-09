@@ -1,7 +1,9 @@
-![Logo](https://gitlab.com/dna-components/dna-design/raw/master/logos/logo-raster-128.png)
+[![Logo](https://gitlab.com/dna-components/dna-design/raw/master/logos/logo-raster-128.png)](http://dna.chialab.io)
 
-# DNA Components
+# DNA
 A component pattern for Web artisans.
+
+[Documentation](http://dna.chialab.io/docs) | [Samples](http://dna.chialab.io/samples)
 
 ## Features
 
@@ -12,10 +14,6 @@ A component pattern for Web artisans.
 * [Polymer](polymer-project.org)-like behaviors for prototype mixins.
 * [WebComponents](http://webcomponents.org/) support.
 * Browsers support (IE9+, Chrome, Firefox, Opera, Safari, Android 4.1+).
-
-## TODO
-
-* Quickstart guide
 
 ## Built-in
 
@@ -33,11 +31,6 @@ Prototypes:
 Helpers:
 * [DNAConfig](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-config.md)
 * [DNAHelper](https://gitlab.com/dna-components/dna-components/blob/master/docs/dna-helper.md)
-
-## Examples
-
-* [Example 1](https://gitlab.com/dna-components/dna-components/blob/master/samples/es6/components/seed/seed-component.next.js): using ES2015 + Babel + external template and css
-* [Example 2](https://gitlab.com/dna-components/dna-components/blob/master/samples/es5/components/seed/seed-component.js): using DNA Library (ES5 compatibile)
 
 ## Build
 
