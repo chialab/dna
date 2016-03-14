@@ -45,7 +45,12 @@ export class DNAHelper {
             fn.prototype = options.prototype;
         }
         try {
-            fn.prototype.is = tagName;
+            Object.defineProperty(fn.prototype, 'is', {
+                get: function () {
+                    return tagName;
+                },
+                configurable: false
+            });
             if (DNAConfig.useWebComponents) {
                 res = document.registerElement(tagName, options);
             } else {
@@ -58,7 +63,6 @@ export class DNAHelper {
                     return el;
                 }
             }
-            res.prototype.is = tagName;
             if (typeof fn == 'function') {
                 res.prototype.constructor = fn;
             }

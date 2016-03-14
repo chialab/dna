@@ -112,13 +112,15 @@ function wrapPrototype (main, currentProto = {}, handled = []) {
         if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) == -1) {
             handled.push(prop);
             let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
-            Object.defineProperty(main, prop, {
-                configurable: true,
-                get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
-                    this.updateViewContent();
-                })
-            });
+            if (descriptor.configurable !== false) {
+                Object.defineProperty(main, prop, {
+                    configurable: true,
+                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
+                    set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
+                        this.updateViewContent();
+                    })
+                });
+            }
         }
     });
     let nextProto = currentProto.prototype || currentProto.__proto__;
