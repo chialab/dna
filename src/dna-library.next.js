@@ -31,24 +31,31 @@ export function Create(tagName, config = {}) {
     Object.defineProperty(newScope, 'tagName', {
         configurable: true,
         get: function() {
-            return tagName
+            return tagName;
         }
     });
 
     config.tagName = tagName;
 
-    let ctr = Register(newScope, config);
+    return Register(newScope, config);
+}
 
-    ctr.Extend = function(ctr2 = {}) {
-        let scope2 = (typeof ctr2 === 'function') ? ctr2 : (function(proto) {
-            let fn = function() {};
-            fn.prototype = proto;
-            return fn
-        })(ctr2);
-        return extend(scope2, scope);
-    }
+/**
+ * Extend a component prototype.
+ * @param {function|class|object} superScope The function or the prototype to extend.
+ * @param {function|class|object} subScope The function or the prototype to merge.
+ * @return {function} A new extended class.
+ */
+export function Extend(superScope, subScope) {
+    superScope = (typeof superScope !== 'function') ? createClass(superScope) : superScope;
+    subScope = (typeof subScope !== 'function') ? createClass(subScope) : subScope;
+    return extend(subScope, superScope);
+}
 
-    return ctr;
+function createClass(prototype) {
+    let fn = function() {};
+    fn.prototype = prototype;
+    return fn;
 }
 
 function getMethods(prototype) {
@@ -92,7 +99,7 @@ function getMethods(prototype) {
     return res;
 }
 
-var extend = function(newClass, superClass) {
+function extend(newClass, superClass) {
     let ctr = function() {
         getProtoProp(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
     }
