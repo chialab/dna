@@ -1,26 +1,29 @@
 {
-    "name": "dna-components",
-    "version": "0.16.0",
-    "description": "A component pattern for Web artisans.",
-    "author": "Chialab <dev@chialab.io> (http://chialab.io)",
-    "license": "MIT",
-    "main": "src/dna.next.js",
-    "scripts": {
-        "build": "node ./scripts/build.js",
-        "doc": "node ./scripts/doc.js",
-        "test": "node ./node_modules/es6-workflow/scripts/test.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://gitlab.com/dna-components/dna-components"
-    },
-    "devDependencies": {
-        "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git",
-        "uglify-js": "^2.6.2"
-    },
-    "dependencies": {
-        "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
-        "dom-delegate": "^2.0.3",
-        "virtual-dom": "^2.1.1"
-    }
+  "name": "dna-components",
+  "version": "0.16.0",
+  "description": "A component pattern for Web artisans.",
+  "author": "Chialab <dev@chialab.io> (http://chialab.io)",
+  "license": "MIT",
+  "main": "src/dna.next.js",
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "doc": "node ./scripts/doc.js",
+    "test": "node ./node_modules/es6-workflow/scripts/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/dna-components/dna-components"
+  },
+  "devDependencies": {
+    "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git",
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "eslint-plugin-react": "^4.2.3",
+    "uglify-js": "^2.6.2"
+  },
+  "dependencies": {
+    "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
+    "dom-delegate": "^2.0.3",
+    "virtual-dom": "^2.1.1"
+  }
 }
