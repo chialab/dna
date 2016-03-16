@@ -2,7 +2,10 @@ image: node:4.2.2
 
 before_script:
   # Install Node dependencies
-  - npm install
+  - npm install --silent
+  - git config --global user.email "dev@chialab.io"
+  - git config --global user.name "GitLab CI"
+  - git config --global push.default simple
 
 stages:
   # - test
