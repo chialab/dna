@@ -17,10 +17,6 @@ export function Create(tagName, config = {}) {
     let scope = config.prototype;
     if (typeof scope === 'undefined') {
         throw 'Missing prototype';
-    } else if (typeof scope !== 'function') {
-        let newScope = function() {};
-        newScope.prototype = scope;
-        scope = newScope;
     }
     let newScope = extend(scope, DNABaseComponent);
     for (let k in scope.prototype) {
@@ -28,16 +24,8 @@ export function Create(tagName, config = {}) {
             newScope.prototype[k] = bindFN(newScope.prototype[k], DNABaseComponent.prototype[k]);
         }
     }
-    Object.defineProperty(newScope, 'tagName', {
-        configurable: true,
-        get: function() {
-            return tagName;
-        }
-    });
-
-    config.tagName = tagName;
-
-    return Register(newScope, config);
+    config.prototype = newScope;
+    return Register(tagName, config);
 }
 
 /**
@@ -47,8 +35,6 @@ export function Create(tagName, config = {}) {
  * @return {function} A new extended class.
  */
 export function Extend(superScope, subScope) {
-    superScope = (typeof superScope !== 'function') ? createClass(superScope) : superScope;
-    subScope = (typeof subScope !== 'function') ? createClass(subScope) : subScope;
     return extend(subScope, superScope);
 }
 
@@ -100,6 +86,8 @@ function getMethods(prototype) {
 }
 
 function extend(newClass, superClass) {
+    superClass = (typeof superClass !== 'function') ? createClass(superClass) : superClass;
+    newClass = (typeof newClass !== 'function') ? createClass(newClass) : newClass;
     let ctr = function() {
         getProtoProp(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
     }

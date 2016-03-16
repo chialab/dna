@@ -14,7 +14,8 @@ export class DNAHelper {
      * @return {Function} The Custom Element constructor.
      */
     static register(fn, options = {}) {
-        let tagName, res;
+        let tagName;
+        let res;
 
         if (typeof fn === 'string') {
             tagName = fn;
@@ -27,11 +28,6 @@ export class DNAHelper {
         }
         if (typeof fn === 'function') {
             tagName = tagName || options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAHelper.classToElement(fn);
-            Object.defineProperty(fn, 'tagName', {
-                get: function () {
-                    return tagName;
-                }
-            });
             if (typeof fn['onRegister'] == 'function') {
                 fn['onRegister'].call(fn);
             }
@@ -45,11 +41,17 @@ export class DNAHelper {
             fn.prototype = options.prototype;
         }
         try {
-            Object.defineProperty(fn.prototype, 'is', {
+            Object.defineProperty(fn, 'tagName', {
+                configurable: true,
                 get: function () {
                     return tagName;
-                },
-                configurable: false
+                }
+            });
+            Object.defineProperty(fn.prototype, 'is', {
+                configurable: false,
+                get: function () {
+                    return tagName;
+                }
             });
             if (DNAConfig.useWebComponents) {
                 res = document.registerElement(tagName, options);
