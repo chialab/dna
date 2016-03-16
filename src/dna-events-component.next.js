@@ -1,10 +1,9 @@
-'use strict';
-
 import Delegate from './libs/dom-delegate.next.js';
 import { DNAComponent } from './dna-component.next.js';
 
 /**
- * Simple Custom Component with events delegation, `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
+ * Simple Custom Component with events delegation,
+ * `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
  * @class DNAEventsComponent
  * @extends DNAComponent
  *
@@ -43,22 +42,24 @@ export class DNAEventsComponent extends DNAComponent {
         // bind events
         let events = this.constructor.events || this.constructor.bindEvents;
         if (events) {
-            var delegate = new Delegate(this);
+            let delegate = new Delegate(this);
             for (let k in events) {
-                let callback = (typeof events[k] === 'string') ? this[events[k]] : events[k];
-                if (callback && typeof callback === 'function') {
-                    let evName = k.split(' ').shift(),
-                        selector = k.split(' ').slice(1).join(' ');
+                if (Object.hasOwnProperty.call(events, k)) {
+                    let callback = (typeof events[k] === 'string') ? this[events[k]] : events[k];
+                    if (callback && typeof callback === 'function') {
+                        let evName = k.split(' ').shift();
+                        let selector = k.split(' ').slice(1).join(' ');
 
-                    let clb = callback.bind(this);
-                    if (selector) {
-                        delegate.on(evName, selector, function(ev) {
-                            clb(ev, this);
-                        });
-                    } else {
-                        delegate.on(evName, function(ev) {
-                            clb(ev, this);
-                        });
+                        let clb = callback.bind(this);
+                        if (selector) {
+                            delegate.on(evName, selector, function(ev) {
+                                clb(ev, this);
+                            });
+                        } else {
+                            delegate.on(evName, function(ev) {
+                                clb(ev, this);
+                            });
+                        }
                     }
                 }
             }
@@ -71,11 +72,10 @@ export class DNAEventsComponent extends DNAComponent {
      * @param {Function} callback The callback for the event.
      */
     addEventListener(evName, callback) {
-        if (typeof Node.prototype.addEventListener !== 'undefined') {
-            return Node.prototype.addEventListener.call(this, evName, callback);
-        } else if (typeof Node.prototype.attachEvent !== 'undefined') {
-            return Node.prototype.attachEvent.call(this, 'on' + evName, callback);
+        if (typeof Node.prototype.attachEvent !== 'undefined') {
+            return Node.prototype.attachEvent.call(this, `on${evName}`, callback);
         }
+        return Node.prototype.addEventListener.call(this, evName, callback);
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.
@@ -86,17 +86,17 @@ export class DNAEventsComponent extends DNAComponent {
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
         let ev = DNAEventsComponent.createEvent();
-        if (ev) {
-            if (typeof ev.initEvent !== 'undefined') {
-                ev.initEvent(evName, bubbles, cancelable);
-            }
-            ev.detail = data;
-            if (typeof Node.prototype.dispatchEvent !== 'undefined') {
-                return Node.prototype.dispatchEvent.call(this, ev);
-            } else if (typeof Node.prototype.fireEvent !== 'undefined') {
-                return Node.prototype.fireEvent.call(this, 'on' + evName, ev);
-            }
+        if (!ev) {
+            throw new Error('Event name is undefined');
         }
+        if (typeof ev.initEvent !== 'undefined') {
+            ev.initEvent(evName, bubbles, cancelable);
+        }
+        ev.detail = data;
+        if (typeof Node.prototype.fireEvent !== 'undefined') {
+            return Node.prototype.fireEvent.call(this, `on${evName}`, ev);
+        }
+        return Node.prototype.dispatchEvent.call(this, ev);
     }
     /**
      * Create an Event instance.
@@ -104,10 +104,9 @@ export class DNAEventsComponent extends DNAComponent {
      * @return {Event} The created event.
      */
     static createEvent(type = 'Event') {
-        if (typeof document.createEvent !== 'undefined') {
-            return document.createEvent(type);
-        } else if (typeof document.createEventObject !== 'undefined') {
+        if (typeof document.createEventObject !== 'undefined') {
             return document.createEventObject();
         }
+        return document.createEvent(type);
     }
 }

@@ -5,6 +5,7 @@
  *
  * A component pattern for Web artisans.
  */
+
 export * from './dna-component.next.js';
 export * from './dna-attributes-component.next.js';
 export * from './dna-events-component.next.js';
@@ -14,4 +15,6 @@ export * from './dna-template-component.next.js';
 export * from './dna-base-component.next.js';
 export * from './dna-library.next.js';
 export { DNAConfig as Config } from './dna-config.next.js';
-export var Version = __DNA__VERSION__;
+
+/* globals __DNA__VERSION__:'X.X.X' */
+export const Version = __DNA__VERSION__;

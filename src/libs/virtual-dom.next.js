@@ -1,3 +1,3 @@
 // Wrap virtual-dom
-var virtualDom = window.virtualDom
+let virtualDom = window.virtualDom;
 export default virtualDom;

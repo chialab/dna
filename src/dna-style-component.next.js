@@ -1,5 +1,3 @@
-'use strict';
-
 import { DNAComponent } from './dna-component.next.js';
 
 /**
@@ -32,7 +30,7 @@ export class DNAStyleComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
      */
-    static onRegister(...args) {
+    static onRegister() {
         // Create css function
         if (this.css) {
             this.addCss(this.css);
@@ -40,32 +38,33 @@ export class DNAStyleComponent extends DNAComponent {
     }
     /**
      * Add `<style>` tag for the component.
-     * @param {String} css The CSS content.
+     * @param {String} style The CSS content.
      * @return {HTMLStyleElement} the style tag created.
      */
-    static addCss(css) {
-        if (typeof css == 'function') {
-            css = css();
+    static addCss(style) {
+        let css = style;
+        if (typeof style === 'function') {
+            css = style();
         }
-        let id = 'style-' + this.tagName;
-        let style = document.getElementById(id) || document.createElement('style');
-        style.type = 'text/css';
-        style.setAttribute('id', id);
-        if (style.styleSheet) {
-            style.styleSheet.cssText = css;
+        let id = `style-${this.tagName}`;
+        let styleElem = document.getElementById(id) || document.createElement('style');
+        styleElem.type = 'text/css';
+        styleElem.setAttribute('id', id);
+        if (styleElem.styleSheet) {
+            styleElem.styleSheet.cssText = css;
         } else {
-            style.innerHTML = '';
-            style.appendChild(document.createTextNode(css));
+            styleElem.innerHTML = '';
+            styleElem.appendChild(document.createTextNode(css));
         }
-        if (!style.parentNode) {
+        if (!styleElem.parentNode) {
             let head = document.head || document.getElementsByTagName('head')[0];
             if (head.firstElementChild) {
-                head.insertBefore(style, head.firstElementChild)
+                head.insertBefore(styleElem, head.firstElementChild);
             } else {
-                head.appendChild(style);
+                head.appendChild(styleElem);
             }
         }
-        return style;
+        return styleElem;
     }
     /**
      * Fires when an instance of the element is created.

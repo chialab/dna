@@ -1,7 +1,7 @@
-var fs = require('fs'),
-    path = require('path'),
-    UglifyJS = require('uglify-js'),
-    myBuilder = require('../node_modules/es6-workflow/lib/builder.js');
+var fs = require('fs');
+var path = require('path');
+var UglifyJS = require('uglify-js');
+var myBuilder = require('../node_modules/es6-workflow/lib/builder.js');
 
 var cwd = process.cwd();
 var packageJSON = require('../package.json');
@@ -12,11 +12,11 @@ packageJSON.build = {
     bundleName: 'dna.lite.js',
     globalName: 'DNA',
     rollup: true,
-    sourceMaps: false
+    sourceMaps: false,
 };
 
 // generate lite
-myBuilder.run(packageJSON).then(function () {
+myBuilder.run(packageJSON).then(function() {
     var code = fs.readFileSync(path.join(cwd, 'dist/dna.lite.js'), 'utf8');
     code = code.replace('__DNA__VERSION__', "'" + version + "'");
     fs.writeFileSync(path.join(cwd, 'dist/dna.lite.js'), code);
@@ -28,7 +28,7 @@ myBuilder.run(packageJSON).then(function () {
         path.join(cwd, 'node_modules/dna-polyfills/src/array/is-array.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/dom/class-list.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/object/set-prototype-of.js'),
-        path.join(cwd, 'dist/dna.lite.js')
+        path.join(cwd, 'dist/dna.lite.js'),
     ]);
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.js'), content.code);
@@ -37,7 +37,7 @@ myBuilder.run(packageJSON).then(function () {
     content = UglifyJS.minify([
         path.join(cwd, 'node_modules/virtual-dom/dist/virtual-dom.js'),
         path.join(cwd, 'node_modules/dna-polyfills/src/extra/custom-elements.js'),
-        path.join(cwd, 'dist/dna.js')
+        path.join(cwd, 'dist/dna.js'),
     ]);
 
     fs.writeFileSync(path.join(cwd, 'dist/dna.full.js'), content.code);
@@ -50,8 +50,8 @@ myBuilder.run(packageJSON).then(function () {
     }
 
     [
-        'dna.angular.js'
-    ].forEach(function (plugin) {
+        'dna.angular.js',
+    ].forEach(function(plugin) {
         fs.writeFileSync(path.join(plugindDir, plugin), UglifyJS.minify(path.join(cwd, 'src/plugins/' + plugin)).code);
     });
 

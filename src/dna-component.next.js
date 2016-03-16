@@ -1,6 +1,4 @@
-'use strict';
-
-import { DNAHelper } from './dna-helper.next.js'
+import { DNAHelper } from './dna-helper.next.js';
 
 // shim for Safari
 // https://github.com/babel/babel/issues/1548
@@ -8,6 +6,7 @@ import { DNAHelper } from './dna-helper.next.js'
 if (typeof HTMLElement !== 'function') {
     let _HTMLElement = function() {};
     _HTMLElement.prototype = HTMLElement.prototype;
+    //eslint-disable-next-line
     HTMLElement = _HTMLElement;
 }
 
@@ -42,22 +41,22 @@ export class DNAComponent extends HTMLElement {
     /**
      * Fires when an instance of the element is created.
      */
-    createdCallback(...args) {}
+    createdCallback() {}
     /**
      * Fires when an instance was inserted into the document.
      */
-    attachedCallback(...args) {}
+    attachedCallback() {}
     /**
      * Fires when an instance was detached from the document.
      */
-    detachedCallback(...args) {}
+    detachedCallback() {}
     /**
      * Fires when an attribute was added, removed, or updated.
      * @param {String} attrName The changed attribute name.
      * @param {*} oldVal The value of the attribute before the change.
      * @param {*} newVal The value of the attribute after the change.
      */
-    attributeChangedCallback(attrName, oldVal, newVal) {}
+    attributeChangedCallback() {}
     /**
      * The tag name of the custom element.
      * @type {String}
@@ -66,7 +65,7 @@ export class DNAComponent extends HTMLElement {
         return this._tagName || DNAHelper.classToElement(this);
     }
     static set tagName(tag) {
-        if (typeof tag == 'string') {
+        if (typeof tag === 'string') {
             this._tagName = tag;
         }
     }

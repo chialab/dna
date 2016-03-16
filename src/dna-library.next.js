@@ -1,108 +1,10 @@
-'use strict';
-
 import { DNAHelper } from './dna-helper.next.js';
 import { DNABaseComponent } from './dna-base-component.next.js';
 
-/**
- * Create and register a (Web) Component.
- * `document.registerElement`-like interface.
- * @param {string} tagName The tag to use for the custom element. (required)
- * @param {object} config A configuration object. (`prototype` key is required)
- * @return {function} The Component constructor.
- */
-export function Create(tagName, config = {}) {
-    if (typeof tagName !== 'string') {
-        throw 'Missing or bad typed `tagName` property';
-    }
-    let scope = config.prototype;
-    if (typeof scope === 'undefined') {
-        throw 'Missing prototype';
-    }
-    let newScope = extend(scope, DNABaseComponent);
-    for (let k in scope.prototype) {
-        if (['createdCallback', 'attachedCallback', 'detachedCallback', 'attributeChangedCallback'].indexOf(k) !== -1) {
-            newScope.prototype[k] = bindFN(newScope.prototype[k], DNABaseComponent.prototype[k]);
-        }
-    }
-    config.prototype = newScope;
-    return Register(tagName, config);
-}
-
-/**
- * Extend a component prototype.
- * @param {function|class|object} superScope The function or the prototype to extend.
- * @param {function|class|object} subScope The function or the prototype to merge.
- * @return {function} A new extended class.
- */
-export function Extend(superScope, subScope) {
-    return extend(subScope, superScope);
-}
-
-function createClass(prototype) {
+function createFunctionClass(prototype) {
     let fn = function() {};
     fn.prototype = prototype;
     return fn;
-}
-
-function getMethods(prototype) {
-    let res = [];
-    let added = ['name', 'length', 'prototype'];
-
-    function createProp(key) {
-        if (added.indexOf(key) === -1) {
-            let prop = {
-                key: key
-            }
-            if (typeof prototype[key] === 'function') {
-                prop['value'] = prototype[key];
-            } else {
-                let descriptor = Object.getOwnPropertyDescriptor(prototype, key) || {};
-                if (descriptor.get) {
-                    prop['get'] = descriptor.get;
-                    prop['set'] = descriptor.set;
-                } else {
-                    prop['value'] = prototype[key];
-                }
-            }
-            added.push(key);
-            return prop;
-        }
-    }
-
-    for (let key in prototype) {
-        let prop = createProp(key);
-        if (prop) {
-            res.push(prop);
-        }
-    }
-    let keys = Object.getOwnPropertyNames(prototype);
-    for (let k in keys) {
-        let prop = createProp(keys[k]);
-        if (prop) {
-            res.push(prop);
-        }
-    }
-    return res;
-}
-
-function extend(newClass, superClass) {
-    superClass = (typeof superClass !== 'function') ? createClass(superClass) : superClass;
-    newClass = (typeof newClass !== 'function') ? createClass(newClass) : newClass;
-    let ctr = function() {
-        getProtoProp(Object.getPrototypeOf(ctr.prototype), 'constructor', newClass).apply(newClass, arguments)
-    }
-    inherits(ctr, superClass);
-    for (var k in superClass.prototype) {
-        let descriptor = Object.getOwnPropertyDescriptor(superClass.prototype, k) || {};
-        if (descriptor.get) {
-            Object.defineProperty(ctr.prototype, k, {
-                get: descriptor.get,
-                set: descriptor.set,
-                configurable: true
-            });
-        }
-    }
-    return createClass(ctr, getMethods(newClass.prototype), getMethods(newClass));
 }
 
 function defineProperties(target, props) {
@@ -130,16 +32,40 @@ function createClass(Constructor, protoProps, staticProps) {
     return Constructor;
 }
 
-function bindFN(protoFn, superFn) {
-    return function() {
-        protoFn.apply(this, arguments);
-        superFn.apply(this, arguments);
+function getProtoProp(object, property, receiver) {
+    let obj = object;
+    if (obj === null) {
+        obj = Function.prototype;
     }
+    let desc = Object.getOwnPropertyDescriptor(obj, property);
+    if (desc === undefined) {
+        let parent = Object.getPrototypeOf(obj);
+        if (parent === null) {
+            return undefined;
+        }
+        return getProtoProp(parent, property, receiver);
+    } else if ('value' in desc) {
+        return desc.value;
+    }
+    let getter = desc.get;
+    if (getter === undefined) {
+        return undefined;
+    }
+    return getter.call(receiver);
+}
+
+function bindFN(protoFn, superFn) {
+    return function(...args) {
+        protoFn.apply(this, args);
+        superFn.apply(this, args);
+    };
 }
 
 function inherits(subClass, superClass) {
     if (typeof superClass !== 'function' && superClass !== null) {
-        throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+        throw new TypeError(
+            `Super expression must either be null or a function, not ${typeof superClass}`
+        );
     }
 
     subClass.prototype = Object.create(superClass && superClass.prototype, {
@@ -147,40 +73,133 @@ function inherits(subClass, superClass) {
             value: subClass,
             enumerable: false,
             writable: true,
-            configurable: true
-        }
+            configurable: true,
+        },
     });
     if (superClass) {
-        if (Object.setPrototypeOf) {
-            Object.setPrototypeOf(subClass, superClass)
-        } else {
-            subClass.__proto__ = superClass;
-        }
+        Object.setPrototypeOf(subClass, superClass);
     }
 }
 
-function getProtoProp(object, property, receiver) {
-    if (object === null) {
-        object = Function.prototype;
-    }
-    let desc = Object.getOwnPropertyDescriptor(object, property);
-    if (desc === undefined) {
-        let parent = Object.getPrototypeOf(object);
-        if (parent === null) {
-            return undefined;
-        } else {
-            return get(parent, property, receiver);
+function getMethods(prototype) {
+    let res = [];
+    let added = ['name', 'length', 'prototype'];
+    function createProp(propKey) {
+        if (added.indexOf(propKey) === -1) {
+            let prop = {
+                key: propKey,
+            };
+            if (typeof prototype[propKey] === 'function') {
+                prop.value = prototype[propKey];
+            } else {
+                let descriptor = Object.getOwnPropertyDescriptor(prototype, propKey) || {};
+                if (descriptor.get) {
+                    prop.get = descriptor.get;
+                    prop.set = descriptor.set;
+                } else {
+                    prop.value = prototype[propKey];
+                }
+            }
+            added.push(propKey);
+            return prop;
         }
-    } else if ('value' in desc) {
-        return desc.value;
-    } else {
-        let getter = desc.get;
-        if (getter === undefined) {
-            return undefined;
-        }
-        return getter.call(receiver);
+        return false;
     }
-};
+    for (let key in prototype) {
+        if (Object.hasOwnProperty.call(prototype, key)) {
+            let prop = createProp(key);
+            if (prop) {
+                res.push(prop);
+            }
+        }
+    }
+    let keys = Object.getOwnPropertyNames(prototype);
+    for (let k in keys) {
+        if (Object.hasOwnProperty.call(keys, k)) {
+            let prop = createProp(keys[k]);
+            if (prop) {
+                res.push(prop);
+            }
+        }
+    }
+    return res;
+}
+
+function extend(newClass, superClass) {
+    let _superClass = (typeof superClass !== 'function') ?
+        createFunctionClass(superClass) :
+        superClass;
+    let _newClass = (typeof newClass !== 'function') ?
+        createFunctionClass(newClass) :
+        newClass;
+    let ctr = function(...args) {
+        getProtoProp(
+            Object.getPrototypeOf(ctr.prototype),
+            'constructor',
+            _newClass
+        ).apply(_newClass, args);
+    };
+    inherits(ctr, _superClass);
+    for (let k in _superClass.prototype) {
+        if (Object.hasOwnProperty.call(superClass.prototype, k)) {
+            let descriptor = Object.getOwnPropertyDescriptor(_superClass.prototype, k) || {};
+            if (descriptor.get) {
+                Object.defineProperty(ctr.prototype, k, {
+                    get: descriptor.get,
+                    set: descriptor.set,
+                    configurable: true,
+                });
+            }
+        }
+    }
+    return createClass(ctr, getMethods(_newClass.prototype), getMethods(newClass));
+}
+
+/**
+ * Create and register a (Web) Component.
+ * `document.registerElement`-like interface.
+ * @param {string} tagName The tag to use for the custom element. (required)
+ * @param {object} config A configuration object. (`prototype` key is required)
+ * @return {function} The Component constructor.
+ */
+export function Create(tagName, config = {}) {
+    if (typeof tagName !== 'string') {
+        throw new Error('Missing or bad typed `tagName` property');
+    }
+    let scope = config.prototype;
+    if (typeof scope === 'undefined') {
+        throw new Error('Missing prototype');
+    }
+    let newScope = extend(scope, DNABaseComponent);
+    for (let k in scope.prototype) {
+        if (Object.hasOwnProperty.call(scope.prototype, k)) {
+            let callbacks = [
+                'createdCallback',
+                'attachedCallback',
+                'detachedCallback',
+                'attributeChangedCallback',
+            ];
+            if (callbacks.indexOf(k) !== -1) {
+                newScope.prototype[k] = bindFN(
+                    newScope.prototype[k],
+                    DNABaseComponent.prototype[k]
+                );
+            }
+        }
+    }
+    config.prototype = newScope;
+    return DNAHelper.register(tagName, config);
+}
+
+/**
+ * Extend a component prototype.
+ * @param {function|class|object} superScope The function or the prototype to extend.
+ * @param {function|class|object} subScope The function or the prototype to merge.
+ * @return {function} A new extended class.
+ */
+export function Extend(superScope, subScope) {
+    return extend(subScope, superScope);
+}
 
 /**
  * Wrap the [`DNAHelper.register`]{@link DNAHelper#register} method.

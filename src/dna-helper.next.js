@@ -1,5 +1,3 @@
-'use strict';
-
 import { DNAConfig } from './dna-config.next.js';
 
 /**
@@ -8,71 +6,70 @@ import { DNAConfig } from './dna-config.next.js';
  */
 export class DNAHelper {
     /**
-     * Trigger `onRegister` callbacks and register the Custom Element (if the `skipWebComponent` option !== true).
+     * Trigger `onRegister` callbacks and register the Custom Element
+     * (if the `skipWebComponent` option !== true).
      * @param {Function|String} fn The definition or the tag name of the Custom Element.
      * @param {Object} options A set of options for the registration of the Custom Element.
      * @return {Function} The Custom Element constructor.
      */
     static register(fn, options = {}) {
+        let scope = fn;
+        let config = options;
         let tagName;
         let res;
 
         if (typeof fn === 'string') {
             tagName = fn;
-            if (typeof options === 'function') {
-                fn = options;
-                options = {};
-            } else if (typeof options.prototype !== 'undefined') {
-                fn = options.prototype;
+            if (typeof config === 'function') {
+                scope = config;
+                config = {};
+            } else if (typeof config.prototype !== 'undefined') {
+                scope = config.prototype;
             }
         }
-        if (typeof fn === 'function') {
-            tagName = tagName || options.tagName || (fn.hasOwnProperty('tagName') && fn.tagName) || DNAHelper.classToElement(fn);
-            if (typeof fn['onRegister'] == 'function') {
-                fn['onRegister'].call(fn);
+        if (typeof scope === 'function') {
+            tagName = (
+                tagName ||
+                config.tagName ||
+                (scope.hasOwnProperty('tagName') && scope.tagName) ||
+                DNAHelper.classToElement(scope)
+            );
+            if (typeof scope.onRegister === 'function') {
+                scope.onRegister.call(scope);
             }
-            options.prototype = fn.prototype;
-            if (!options.extends && typeof fn.extends == 'string') {
-                options.extends = fn.extends;
+            config.prototype = scope.prototype;
+            if (!config.extends && typeof scope.extends === 'string') {
+                config.extends = scope.extends;
             }
         } else {
-            options.prototype = fn;
-            fn = function () { options.prototype.constructor.apply(this, arguments) };
-            fn.prototype = options.prototype;
+            config.prototype = scope;
+            scope = function(...args) {
+                config.prototype.constructor.apply(this, args);
+            };
+            scope.prototype = config.prototype;
         }
-        try {
-            Object.defineProperty(fn, 'tagName', {
-                configurable: true,
-                get: function () {
-                    return tagName;
-                }
-            });
-            Object.defineProperty(fn.prototype, 'is', {
-                configurable: false,
-                get: function () {
-                    return tagName;
-                }
-            });
-            if (DNAConfig.useWebComponents) {
-                res = document.registerElement(tagName, options);
-            } else {
-                res = function() {
-                    var el = document.createElement(tagName);
-                    Object.setPrototypeOf(el, fn.prototype);
-                    setTimeout(function () {
-                        el.createdCallback();
-                    }, 0);
-                    return el;
-                }
-            }
-            if (typeof fn == 'function') {
-                res.prototype.constructor = fn;
-            }
-            return res;
-        } catch (ex) {
-            console.error(ex);
-            return false;
+        Object.defineProperty(scope, 'tagName', {
+            configurable: true,
+            get: () => tagName,
+        });
+        Object.defineProperty(scope.prototype, 'is', {
+            configurable: false,
+            get: () => tagName,
+        });
+        if (DNAConfig.useWebComponents) {
+            res = document.registerElement(tagName, config);
+        } else {
+            res = function() {
+                let el = document.createElement(tagName);
+                Object.setPrototypeOf(el, scope.prototype);
+                setTimeout(() => el.createdCallback(), 0);
+                return el;
+            };
         }
+        if (typeof scope === 'function') {
+            res.prototype.constructor = scope;
+        }
+        return res;
     }
     /**
      * Convert a Class name into HTML tag.
@@ -85,9 +82,7 @@ export class DNAHelper {
             return undefined;
         }
         return fn.name
-            .replace(/[A-Z]/g, function(match) {
-                return '-' + match.toLowerCase();
-            })
+            .replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
             .replace(/^\-/, '');
     }
     /**
@@ -97,7 +92,7 @@ export class DNAHelper {
      */
     static elementToClass(tag) {
         return tag
-            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match) => {
                 if (+match === 0) return '';
                 return match.toUpperCase();
             })
@@ -113,8 +108,9 @@ export class DNAHelper {
         let res;
         if (ctr) {
             res = Object.getOwnPropertyDescriptor(ctr, prop);
-            if (!res && ctr.__proto__) {
-                res = DNAHelper.getDescriptor(ctr.__proto__, prop);
+            let proto = Object.getPrototypeOf(ctr);
+            if (!res && proto) {
+                res = DNAHelper.getDescriptor(proto, prop);
             }
         }
         return res;
@@ -131,14 +127,14 @@ export class DNAHelper {
             if (typeof descriptor.get === 'function') {
                 try {
                     res = descriptor.get.call(this);
-                } catch(ex) {
-                    res = this['__' + prop];
+                } catch (ex) {
+                    res = this[`__${prop}`];
                 }
             } else {
-                res = this['__' + prop];
+                res = this[`__${prop}`];
             }
             return res;
-        }
+        };
     }
     /**
      * Wrap a property descriptor set function.
@@ -155,20 +151,20 @@ export class DNAHelper {
             if (descriptor.set) {
                 try {
                     descriptor.set.call(this, value);
-                } catch(ex) {
-                    this['__' + prop] = value;
+                } catch (ex) {
+                    this[`__${prop}`] = value;
                 }
             } else {
-                this['__' + prop] = value;
+                this[`__${prop}`] = value;
             }
             let res = this[prop];
-            setter.callbacks.forEach((callback) => {
-                if (typeof callback === 'function') {
-                    callback.call(this, prop, res);
+            setter.callbacks.forEach((clb) => {
+                if (typeof clb === 'function') {
+                    clb.call(this, prop, res);
                 }
             });
             return res;
-        }
+        };
         setter.callbacks = [callback];
         return setter;
     }

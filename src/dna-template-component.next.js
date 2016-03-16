@@ -1,9 +1,46 @@
-'use strict';
-
 import { DNAConfig } from './dna-config.next.js';
 import { DNAComponent } from './dna-component.next.js';
 import { DNAHelper } from './dna-helper.next.js';
 import VDOM from './libs/virtual-dom.next.js';
+
+function wrapPrototype(main, currentProto = {}, handled = []) {
+    Object.getOwnPropertyNames(currentProto).forEach((prop) => {
+        if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) === -1) {
+            handled.push(prop);
+            let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
+            if (descriptor.configurable !== false) {
+                Object.defineProperty(main, prop, {
+                    configurable: true,
+                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
+                    set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
+                        this.updateViewContent();
+                    }),
+                });
+            }
+        }
+    });
+    let nextProto = currentProto.prototype || Object.getPrototypeOf(currentProto);
+    if (nextProto && nextProto !== HTMLElement.prototype) {
+        wrapPrototype(main, nextProto, handled);
+    }
+}
+
+function attributesToProp(node) {
+    let res = {};
+    Array.prototype.forEach.call(node.attributes || [], (attr) => {
+        res[attr.name] = attr.value;
+    });
+    return res;
+}
+
+function nodeToVDOM(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+        return new VDOM.VText(node.textContent);
+    }
+    return new VDOM.VNode(node.tagName, {
+        attributes: attributesToProp(node),
+    }, Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
+}
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -36,7 +73,7 @@ export class DNATemplateComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
      */
-    static onRegister(...args) {
+    static onRegister() {
         // Create render function
         let ctr = this;
         if (this.template) {
@@ -44,12 +81,13 @@ export class DNATemplateComponent extends DNAComponent {
                 if (typeof template === 'function') {
                     return function() {
                         return template.call(this);
-                    }
-                } else if (typeof template == 'string') {
+                    };
+                } else if (typeof template === 'string') {
                     return () => template;
-                } else if (template instanceof Node && template.tagName == 'TEMPLATE') {
+                } else if (template instanceof Node && template.tagName === 'TEMPLATE') {
                     return () => document.importNode(template.content, true);
                 }
+                return '';
             })(ctr.template);
             let propertiesToWatch = this.properties || [];
             propertiesToWatch.forEach((prop) => {
@@ -57,11 +95,12 @@ export class DNATemplateComponent extends DNAComponent {
                 Object.defineProperty(this.prototype, prop, {
                     configurable: true,
                     get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                    set: DNAHelper.wrapDescriptorSet(prop, descriptor)
+                    set: DNAHelper.wrapDescriptorSet(prop, descriptor),
                 });
             });
             if (DNAConfig.autoUpdateView) {
-                wrapPrototype(this.prototype || this.__proto__, this.prototype || this.__proto__);
+                let proto = this.prototype || Object.getPrototypeOf(this);
+                wrapPrototype(proto, proto);
             }
         }
     }
@@ -104,56 +143,5 @@ export class DNATemplateComponent extends DNAComponent {
                 this.innerHTML = html;
             }
         }
-    }
-}
-
-function wrapPrototype (main, currentProto = {}, handled = []) {
-    Object.getOwnPropertyNames(currentProto).forEach((prop) => {
-        if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) == -1) {
-            handled.push(prop);
-            let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
-            if (descriptor.configurable !== false) {
-                Object.defineProperty(main, prop, {
-                    configurable: true,
-                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                    set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
-                        this.updateViewContent();
-                    })
-                });
-            }
-        }
-    });
-    let nextProto = currentProto.prototype || currentProto.__proto__;
-    if (nextProto && nextProto !== HTMLElement.prototype) {
-        wrapPrototype(main, nextProto, handled);
-    }
-}
-
-function cssToObj (css) {
-    let result = {};
-    let attributes = css.split(';');
-
-    for (let i = 0; i < attributes.length; i++) {
-        let entry = attributes[i].split(':');
-        result[entry.splice(0,1)[0]] = entry.join(':');
-    }
-    return result;
-}
-
-function attributesToProp (node) {
-    var res = {};
-    Array.prototype.forEach.call(node.attributes || [], function (attr) {
-        res[attr.name] = attr.value;
-    });
-    return res;
-}
-
-function nodeToVDOM (node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-        return new VDOM.VText(node.textContent);
-    } else {
-        return new VDOM.VNode(node.tagName, {
-            attributes: attributesToProp(node)
-        }, Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
     }
 }
