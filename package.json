@@ -1,6 +1,6 @@
 {
     "name": "dna-components",
-    "version": "0.15.3",
+    "version": "0.16.0",
     "description": "A component pattern for Web artisans.",
     "author": "Chialab <dev@chialab.io> (http://chialab.io)",
     "license": "MIT",
