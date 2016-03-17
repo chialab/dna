@@ -35,7 +35,7 @@
 
         it('check sync between invented composed property and attribute', function() {
             elem.myVar = true;
-            assert.equal(elem.getAttribute('my-var'), 'my-var');
+            assert.equal(elem.getAttribute('my-var'), '');
         });
 
         it('check sync between invented composed attribute and property', function() {

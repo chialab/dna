@@ -9,6 +9,21 @@ function dashToCamel(str) {
     return str.replace(/\W+(.)/g, (x, chr) => chr.toUpperCase());
 }
 
+function setValue(context, attr, value) {
+    let currentAttrValue = context.getAttribute(attr);
+    if (value !== null && value !== undefined && value !== false) {
+        if (
+            (typeof value === 'string' || typeof value === 'number')
+            && currentAttrValue !== value) {
+            context.setAttribute(attr, value);
+        } else if (typeof value === 'boolean' && currentAttrValue !== '') {
+            context.setAttribute(attr, '');
+        }
+    } else if (currentAttrValue) {
+        context.removeAttribute(attr);
+    }
+}
+
 /**
  * Simple Custom Component with attributes watching and reflecting.
  * @class DNAAttributesComponent
@@ -48,17 +63,7 @@ export class DNAAttributesComponent extends DNAComponent {
                 get: DNAHelper.wrapDescriptorGet(camelAttr, descriptor),
                 set: DNAHelper.wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
                     let dashed = camelToDash(prop);
-                    if (res !== null && res !== undefined && res !== false) {
-                        if (
-                            (typeof res === 'string' || typeof res === 'number')
-                            && this.getAttribute(prop) !== res) {
-                            this.setAttribute(dashed, res);
-                        } else if (typeof res === 'boolean') {
-                            this.setAttribute(dashed, dashed);
-                        }
-                    } else if (this.getAttribute(dashed)) {
-                        this.removeAttribute(dashed);
-                    }
+                    setValue(this, dashed, res);
                 }),
             });
             return camelAttr;
@@ -83,9 +88,7 @@ export class DNAAttributesComponent extends DNAComponent {
         }
         let ctrAttributes = this.constructor.normalizedAttributes || [];
         ctrAttributes.forEach((attr) => {
-            if (this[attr] !== null && this[attr] !== undefined && this[attr] !== false) {
-                this.setAttribute(camelToDash(attr), this[attr]);
-            }
+            setValue(this, camelToDash(attr), this[attr]);
         });
     }
     /**
