@@ -15,7 +15,7 @@ var files = [
     'dna-mixed-component.next.js',
     'dna-style-component.next.js',
     'dna-template-component.next.js',
-].map(function (f) {
-    return path.join(cwd, 'src', f)
+].map(function(f) {
+    return path.join(cwd, 'src', f);
 });
 generator(files);
