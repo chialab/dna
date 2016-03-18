@@ -1,13 +1,13 @@
 import { DNAEventsComponent } from '../src/dna-events-component.next.js';
-import { Register } from '../src/dna-library.next.js';
+import { DNAHelper } from '../src/dna-helper.next.js';
 
 export class TestComponent extends DNAEventsComponent {
     static get events() {
         return {
             'click button': 'onClick',
             'change input': 'onInputChange',
-            'customEvent': 'onCustomEvent'
-        }
+            'customEvent': 'onCustomEvent',
+        };
     }
 
     createdCallback() {
@@ -21,7 +21,7 @@ export class TestComponent extends DNAEventsComponent {
     attachedCallback() {
         super.attachedCallback();
         this.trigger('customEvent', {
-            data: 1234
+            data: 1234,
         });
     }
 
@@ -41,6 +41,6 @@ export class TestComponent extends DNAEventsComponent {
     }
 }
 
-export var Test = Register('test-events-component', {
-    prototype: TestComponent
+export const Test = DNAHelper.register('test-events-component', {
+    prototype: TestComponent,
 });

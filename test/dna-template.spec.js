@@ -18,7 +18,7 @@
             document.body.appendChild(elem1);
             assert.equal(elem1.innerHTML, 'Hello, ');
             elem1.name = 'Alan';
-            elem1.surname = 'Turing';
+            elem1.lastName = 'Turing';
             assert.equal(elem1.innerHTML, 'Hello, Alan Turing');
         });
 

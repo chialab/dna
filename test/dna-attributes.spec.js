@@ -1,4 +1,4 @@
-(function () {
+(function() {
     describe('Unit: DNAAttributesComponent', function() {
         var elem;
 
@@ -49,4 +49,4 @@
         });
 
     });
-})();
+}());

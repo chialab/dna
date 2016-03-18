@@ -1,5 +1,5 @@
 import { DNAAttributesComponent } from '../src/dna-attributes-component.next.js';
-import { Register } from '../src/dna-library.next.js';
+import { DNAHelper } from '../src/dna-helper.next.js';
 
 export class TestComponent extends DNAAttributesComponent {
     static get attributes() {
@@ -17,6 +17,6 @@ export class TestComponent extends DNAAttributesComponent {
     }
 }
 
-export var Test = Register('test-attributes-component', {
-    prototype: TestComponent
+export const Test = DNAHelper.register('test-attributes-component', {
+    prototype: TestComponent,
 });

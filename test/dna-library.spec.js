@@ -1,40 +1,40 @@
-(function () {
+(function() {
     describe('Unit: DNALibrary', function() {
         var DNALibrary, DNABaseComponent;
 
-        before(function (done) {
+        before(function(done) {
             System.transpiler = 'plugin-babel';
-            System.import('./src/dna-library.next.js').then(function (module) {
+            System.import('./src/dna-library.next.js').then(function(module) {
                 DNALibrary = module;
-                System.import('./src/dna-base-component.next.js').then(function (module) {
+                System.import('./src/dna-base-component.next.js').then(function(module) {
                     DNABaseComponent = module.DNABaseComponent;
                     done();
-                }, function (err) {
+                }, function(err) {
                     done();
                 });
-            }, function (err) {
+            }, function(err) {
                 done();
             });
         });
 
         it('should extend a prototype', function() {
-            var superClass = function () {};
+            var superClass = function() {};
             superClass.attributes = ['name', 'lastName'];
             superClass.prototype = {
-                createdCallback: function () {
+                createdCallback: function() {
                     this.name = 'Alan';
                     this.lastName = 'Turing';
                 },
                 get fullName() {
                     return this.name + ' ' + this.lastName;
                 },
-                reverseName: function () {
+                reverseName: function() {
                     return this.fullName.split('').reverse().join('');
                 }
             }
-            var subClass = function () {};
+            var subClass = function() {};
             subClass.prototype = {
-                createdCallback: function () {
+                createdCallback: function() {
                     this.age = '43';
                     return superClass.prototype.createdCallback.call(this);
                 },
@@ -47,8 +47,8 @@
             }
             var superComponent = DNALibrary.Extend(DNABaseComponent, superClass);
             var subComponent = DNALibrary.Extend(superComponent, subClass);
-            var ctr = DNALibrary.Register('tets-library-component', {
-                prototype: subComponent
+            var ctr = DNALibrary.Register('test-library-component', {
+                prototype: subComponent,
             });
             var instance = new ctr();
             assert.equal(instance.name, 'Alan');
@@ -59,4 +59,4 @@
         });
 
     });
-})();
+}());
