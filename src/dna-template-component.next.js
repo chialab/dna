@@ -13,7 +13,9 @@ function wrapPrototype(main, currentProto = {}, handled = []) {
                     configurable: true,
                     get: DNAHelper.wrapDescriptorGet(prop, descriptor),
                     set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
-                        this.updateViewContent();
+                        if (this.templateReady) {
+                            this.updateViewContent();
+                        }
                     }),
                 });
             }
@@ -89,15 +91,6 @@ export class DNATemplateComponent extends DNAComponent {
                 }
                 return '';
             })(ctr.template);
-            let propertiesToWatch = this.properties || [];
-            propertiesToWatch.forEach((prop) => {
-                let descriptor = DNAHelper.getDescriptor(this.prototype, prop) || {};
-                Object.defineProperty(this.prototype, prop, {
-                    configurable: true,
-                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                    set: DNAHelper.wrapDescriptorSet(prop, descriptor),
-                });
-            });
             if (DNAConfig.autoUpdateView) {
                 let proto = this.prototype || Object.getPrototypeOf(this);
                 wrapPrototype(proto, proto);
@@ -108,6 +101,7 @@ export class DNATemplateComponent extends DNAComponent {
      * Fires when an instance of the element is created.
      */
     createdCallback() {
+        this.templateReady = true;
         this.updateViewContent();
         super.createdCallback();
     }

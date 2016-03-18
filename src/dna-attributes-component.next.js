@@ -1,14 +1,6 @@
 import { DNAComponent } from './dna-component.next.js';
 import { DNAHelper } from './dna-helper.next.js';
 
-function camelToDash(str) {
-    return str.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase();
-}
-
-function dashToCamel(str) {
-    return str.replace(/\W+(.)/g, (x, chr) => chr.toUpperCase());
-}
-
 function setValue(context, attr, value) {
     let currentAttrValue = context.getAttribute(attr);
     if (value !== null && value !== undefined && value !== false) {
@@ -56,13 +48,13 @@ export class DNAAttributesComponent extends DNAComponent {
     static onRegister() {
         let attributesToWatch = this.attributes || [];
         this.normalizedAttributes = attributesToWatch.map((attr) => {
-            let camelAttr = dashToCamel(attr);
+            let camelAttr = DNAHelper.dashToCamel(attr);
             let descriptor = DNAHelper.getDescriptor(this.prototype, camelAttr) || {};
             Object.defineProperty(this.prototype, camelAttr, {
                 configurable: true,
                 get: DNAHelper.wrapDescriptorGet(camelAttr, descriptor),
                 set: DNAHelper.wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
-                    let dashed = camelToDash(prop);
+                    let dashed = DNAHelper.camelToDash(prop);
                     setValue(this, dashed, res);
                 }),
             });
@@ -88,7 +80,7 @@ export class DNAAttributesComponent extends DNAComponent {
         }
         let ctrAttributes = this.constructor.normalizedAttributes || [];
         ctrAttributes.forEach((attr) => {
-            setValue(this, camelToDash(attr), this[attr]);
+            setValue(this, DNAHelper.camelToDash(attr), this[attr]);
         });
     }
     /**
@@ -102,7 +94,7 @@ export class DNAAttributesComponent extends DNAComponent {
         super.attributeChangedCallback(attr, oldVal, newVal);
         let cl = this.constructor;
         if (cl && cl.normalizedAttributes && Array.isArray(cl.normalizedAttributes)) {
-            let camelAttr = dashToCamel(attr);
+            let camelAttr = DNAHelper.dashToCamel(attr);
             if (cl.normalizedAttributes.indexOf(camelAttr) !== -1) {
                 this[camelAttr] = newVal;
             }

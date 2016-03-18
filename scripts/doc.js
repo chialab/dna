@@ -1,5 +1,3 @@
-'use strict';
-
 var cwd = process.cwd();
 var path = require('path');
 var generator = require('../node_modules/es6-workflow/lib/gendoc.js').generate;
@@ -13,6 +11,7 @@ var files = [
     'dna-helper.next.js',
     'dna-library.next.js',
     'dna-mixed-component.next.js',
+    'dna-properties-component.next.js',
     'dna-style-component.next.js',
     'dna-template-component.next.js',
 ].map(function(f) {

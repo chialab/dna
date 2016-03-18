@@ -7,6 +7,7 @@
  */
 
 export * from './dna-component.next.js';
+export * from './dna-properties-component.next.js';
 export * from './dna-attributes-component.next.js';
 export * from './dna-events-component.next.js';
 export * from './dna-mixed-component.next.js';
