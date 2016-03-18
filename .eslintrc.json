@@ -1,17 +1,20 @@
 {
-    "extends": "airbnb",
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "rules": {
-        "quotes": [1, "single"],
-        "semi": [1, "always"],
-        "indent": [1, 4],
-        "func-names": [0],
-        "prefer-const": [0],
-        "space-before-function-paren": [1, "never"],
-        "no-proto": [1],
-        "no-param-reassign": [2, {"props": false}]
-    }
+  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "quotes": [1, "single"],
+    "semi": [1, "always"],
+    "indent": [1, 4],
+    "func-names": [0],
+    "prefer-const": [0],
+    "space-before-function-paren": [1, "never"],
+    "no-proto": [1],
+    "no-param-reassign": [2, {
+      "props": false
+    }],
+    "quote-props": [1]
+  }
 }
