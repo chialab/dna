@@ -48,7 +48,7 @@ export class DNAPropertiesComponent extends DNAComponent {
     createdCallback() {
         super.createdCallback();
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
-        let properties = this.constructor.properties;
+        let properties = this.constructor.properties || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
             let key = DNAHelper.dashToCamel(attr.name);
