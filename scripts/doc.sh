@@ -4,7 +4,7 @@ TAG=$(git describe --abbrev=0 --tags)
 BUILD_DIR="./docs"
 REPO_DIR="./docs-deploy"
 DIST_DIR="${REPO_DIR}/contents/api"
-REPO_URL="https://chialab-bot:${DOC_CI_TOKEN}@gitlab.com/dna-components/dna-docs.git"
+REPO_URL="gitlab.com:dna-components/dna-docs.git"
 
 # build distribution scripts
 npm run doc
@@ -20,6 +20,6 @@ cd $REPO_DIR
 git add .
 git commit -m "release: ${TAG}"
 git tag -a ${TAG} -m "release: ${TAG}"
-git push origin
+git push
 cd ..
 rm -rf $REPO_DIR

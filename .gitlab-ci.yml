@@ -3,9 +3,7 @@ image: node:4.2.2
 before_script:
   # Install Node dependencies
   - npm install --silent
-  - git config --global user.email "bot@chialab.io"
-  - git config --global user.name "Chialab BOT"
-  - git config --global push.default simple
+  - ./scripts/config.sh
 
 stages:
   # - test

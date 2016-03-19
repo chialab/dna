@@ -4,7 +4,7 @@ TAG=$(git describe --abbrev=0 --tags)
 BUILD_DIR="./dist"
 REPO_DIR="./deploy"
 DIST_DIR="${REPO_DIR}/lib"
-REPO_URL="https://chialab-bot:${LIBRARY_CI_TOKEN}@gitlab.com/dna-components/dna-library.git"
+REPO_URL="gitlab.com:dna-components/dna-library.git"
 
 # build distribution scripts
 npm run build
@@ -22,6 +22,6 @@ sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json
 git add .
 git commit -m "release: ${TAG}"
 git tag -a ${TAG} -m "release: ${TAG}"
-git push origin
+git push
 cd ..
 rm -rf $REPO_DIR
