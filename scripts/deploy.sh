@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 TAG=$(git describe --abbrev=0 --tags)
 BUILD_DIR="./dist"
 REPO_DIR="./deploy"
@@ -16,12 +18,14 @@ rm -rf $DIST_DIR
 # copy distribution files
 cp -R $BUILD_DIR $DIST_DIR
 # update distribution project
-cd $REPO_DIR
-sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json
-sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json
-git add .
-git commit -m "release: ${TAG}"
-git tag -a ${TAG} -m "release: ${TAG}"
-git push
-cd ..
-rm -rf $REPO_DIR
+if [ -d "$REPO_DIR" ]; then
+    cd $REPO_DIR
+    sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json
+    sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json
+    git add .
+    git commit -m "release: ${TAG}"
+    git tag -a ${TAG} -m "release: ${TAG}"
+    git push
+    cd ..
+    rm -rf $REPO_DIR
+fi
