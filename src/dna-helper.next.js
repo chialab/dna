@@ -34,9 +34,6 @@ export class DNAHelper {
                 (scope.hasOwnProperty('tagName') && scope.tagName) ||
                 DNAHelper.classToElement(scope)
             );
-            if (typeof scope.onRegister === 'function') {
-                scope.onRegister.call(scope);
-            }
             config.prototype = scope.prototype;
             if (!config.extends && typeof scope.extends === 'string') {
                 config.extends = scope.extends;
@@ -56,6 +53,9 @@ export class DNAHelper {
             configurable: false,
             get: () => tagName,
         });
+        if (typeof scope.onRegister === 'function') {
+            scope.onRegister.call(scope);
+        }
         if (DNAConfig.useWebComponents) {
             res = document.registerElement(tagName, config);
         } else {
