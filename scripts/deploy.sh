@@ -21,8 +21,8 @@ if [ -d "$BUILD_DIR" ]; then
     # update distribution project
     if [ -d "$REPO_DIR" ]; then
         cd $REPO_DIR
-        sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json
-        sed -i "" "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json
+        sed "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json | diff -p package.json /dev/stdin | patch
+        sed "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json | diff -p bower.json /dev/stdin | patch
         git add .
         git commit -m "release: ${TAG}"
         git tag -a ${TAG} -m "release: ${TAG}"
