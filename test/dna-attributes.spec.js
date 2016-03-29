@@ -1,14 +1,15 @@
 (function() {
+    /* globals describe, before, it, assert */
     describe('Unit: DNAAttributesComponent', function() {
         var elem;
 
-        before(function (done) {
+        before(function(done) {
             System.transpiler = 'plugin-babel';
-            System.import('./test/dna-attributes.next.js').then(function (mod) {
+            System.import('./test/dna-attributes.next.js').then(function(mod) {
                 elem = new mod.Test();
                 document.body.appendChild(elem);
                 done();
-            }, function (err) {
+            }, function() {
                 done();
             });
         });
@@ -19,7 +20,7 @@
         });
 
         it('check sync between attribute and property', function() {
-            elem.setAttribute('alt', 'DNA Test 2')
+            elem.setAttribute('alt', 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
 
@@ -29,7 +30,7 @@
         });
 
         it('check sync between invented attribute and property', function() {
-            elem.setAttribute('mine', '1234')
+            elem.setAttribute('mine', '1234');
             assert.equal(elem.mine, '1234');
         });
 
@@ -39,7 +40,7 @@
         });
 
         it('check sync between invented composed attribute and property', function() {
-            elem.setAttribute('my-var2', 'true')
+            elem.setAttribute('my-var2', 'true');
             assert.equal(elem.myVar2, 'true');
         });
 
@@ -47,6 +48,5 @@
             elem.myVar3 = true;
             assert.equal(elem.getAttribute('my-var3'), 'DNA Test');
         });
-
     });
 }());

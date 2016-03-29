@@ -1,15 +1,18 @@
-(function () {
+(function() {
+    /* globals describe, before, it, assert */
     describe('Unit: DNAStyleComponent', function() {
-        var elem1, elem2, elem3;
+        var elem1;
+        var elem2;
+        var elem3;
 
-        before(function (done) {
+        before(function(done) {
             System.transpiler = 'plugin-babel';
-            System.import('./test/dna-style.next.js').then(function (mod) {
+            System.import('./test/dna-style.next.js').then(function(mod) {
                 elem1 = new mod.Test1();
                 elem2 = new mod.Test2();
                 elem3 = new mod.Test3();
                 done();
-            }, function (err) {
+            }, function() {
                 done();
             });
         });
@@ -31,6 +34,5 @@
             var style = window.getComputedStyle(elem3.querySelector('h1'));
             assert.equal(style.color, 'rgb(95, 158, 160)');
         });
-
     });
-})();
+}());

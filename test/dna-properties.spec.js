@@ -1,4 +1,5 @@
 (function() {
+    /* globals describe, before, it, assert */
     describe('Unit: DNAPropertiesComponent', function() {
         var elem;
 
@@ -12,7 +13,7 @@
                     elem = temp.firstElementChild;
                     done();
                 }, 1000);
-            }, function(err) {
+            }, function() {
                 done();
             });
         });

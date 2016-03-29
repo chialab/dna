@@ -4,9 +4,9 @@ import { DNAHelper } from '../src/dna-helper.next.js';
 export class TestComponent extends DNAEventsComponent {
     static get events() {
         return {
+            customEvent: 'onCustomEvent',
             'click button': 'onClick',
             'change input': 'onInputChange',
-            'customEvent': 'onCustomEvent',
         };
     }
 

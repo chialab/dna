@@ -1,14 +1,15 @@
-(function () {
+(function() {
+    /* globals describe, before, it, assert */
     describe('Unit: DNAEventsComponent', function() {
         var elem;
 
-        before(function (done) {
+        before(function(done) {
             System.transpiler = 'plugin-babel';
-            System.import('./test/dna-events.next.js').then(function (mod) {
+            System.import('./test/dna-events.next.js').then(function(mod) {
                 elem = new mod.Test();
                 document.body.appendChild(elem);
                 done();
-            }, function (err) {
+            }, function() {
                 done();
             });
         });
@@ -35,6 +36,5 @@
             assert.equal(elem.changed instanceof Event, true);
             assert.equal(elem.changed.type, 'change');
         });
-
     });
-})();
+}());
