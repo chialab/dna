@@ -1,4 +1,5 @@
-SSH_DIR="$HOME/.ssh"
+# GIT config
+SSH_DIR="${HOME}/.ssh"
 KEY_NAME="id_rsa"
 GITLAB_URL="gitlab.com"
 
@@ -34,3 +35,16 @@ chmod 700 "${SSH_DIR}/${KEY_NAME}"
 chmod 700 "${SSH_DIR}/${KEY_NAME}.pub"
 
 ssh-keyscan -H $GITLAB_URL >> "${SSH_DIR}/known_hosts"
+
+# NPM config
+NPM_RC="${HOME}/.npmrc"
+NPM_AUTHOR_NAME="Chialab"
+NPM_AUTHOR_EMAIL="dev@chialab.io"
+NPM_AUTHOR_SITE="http://chialab.io"
+
+{
+    echo "init.author.name=${NPM_AUTHOR_NAME}"
+    echo "init.author.email=${NPM_AUTHOR_EMAIL}"
+    echo "init.author.url=${NPM_AUTHOR_SITE}"
+    echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
+} > "${NPM_RC}"

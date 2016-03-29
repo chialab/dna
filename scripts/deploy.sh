@@ -26,6 +26,7 @@ if [ -d "$REPO_DIR" ]; then
     git commit -m "release: ${TAG}"
     git tag -a ${TAG} -m "release: ${TAG}"
     git push
+    npm publish
     cd ..
     rm -rf $REPO_DIR
 fi
