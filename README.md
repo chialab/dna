@@ -1,14 +1,10 @@
-<p align="center">
 [![DNA](https://gitlab.com/dna-components/dna-design/raw/master/logos/logo-raster-128.png)](http://dna.chialab.io)
-</p>
-<p align="center">
-    A component pattern for Web artisans.
-</p>
-<p align="center">
+
+A component pattern for Web artisans.
+
 ![NPM version](https://img.shields.io/npm/v/dna-components.svg)
 ![Bower version](https://img.shields.io/bower/v/dna-components.svg)
 [![Documentation](https://img.shields.io/badge/docs-coming%20soon-red.svg)](http://dna.chialab.io/docs)
-</p>
 
 ### Build
 
