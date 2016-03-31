@@ -140,6 +140,7 @@ export class DNAHelper {
      * Wrap a property descriptor set function.
      * @param {string} prop The property to wrap.
      * @param {object} descriptor The property descriptor.
+     * @param {Function} callback An optional callback to trigger on set.
      * @return {Function} The descriptor set function wrapped.
      */
     static wrapDescriptorSet(prop, descriptor, callback) {
