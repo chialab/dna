@@ -16,9 +16,6 @@
   },
   "devDependencies": {
     "es6-workflow": "git+https://github.com/Chialab/es6-workflow.git",
-    "eslint": "^2.4.0",
-    "eslint-config-airbnb": "^6.1.0",
-    "eslint-plugin-react": "^4.2.3",
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
