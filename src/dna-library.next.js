@@ -83,7 +83,7 @@ function inherits(subClass, superClass) {
 
 function getMethods(prototype) {
     let res = [];
-    let added = ['name', 'length', 'prototype'];
+    let added = ['name', 'length', 'prototype', 'arguments', 'caller'];
     function createProp(propKey) {
         if (added.indexOf(propKey) === -1) {
             let prop = {
