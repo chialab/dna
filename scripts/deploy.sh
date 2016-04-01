@@ -26,6 +26,7 @@ if [ -d "$BUILD_DIR" ]; then
         git add .
         git commit -m "release: ${TAG}"
         git tag -a ${TAG} -m "release: ${TAG}"
+        git push
         git push origin $TAG
         npm publish
         cd ..
