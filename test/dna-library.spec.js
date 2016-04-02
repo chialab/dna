@@ -1,63 +1,47 @@
-(function() {
-    /* globals describe, before, it, assert */
-    describe('Unit: DNALibrary', function() {
-        var DNALibrary;
-        var DNABaseComponent;
+import * as DNALibrary from '../src/dna-library.next.js';
+import { DNABaseComponent } from '../src/dna-base-component.next.js';
 
-        before(function(done) {
-            System.transpiler = 'plugin-babel';
-            System.import('./src/dna-library.next.js').then(function(module) {
-                DNALibrary = module;
-                System.import('./src/dna-base-component.next.js').then(function(module2) {
-                    DNABaseComponent = module2.DNABaseComponent;
-                    done();
-                }, function() {
-                    done();
-                });
-            }, function() {
-                done();
-            });
+/* globals describe, before, it, assert */
+describe('Unit: DNALibrary', () => {
+    it('should extend a prototype', () => {
+        let SuperClass = function() {};
+        SuperClass.attributes = ['name', 'lastName'];
+        SuperClass.prototype = {
+            createdCallback() {
+                this.name = 'Alan';
+                this.lastName = 'Turing';
+            },
+            get fullName() {
+                return `${this.name} ${this.lastName}`;
+            },
+            reverseName() {
+                return this.fullName.split('').reverse().join('');
+            },
+        };
+        let SubClass = function() {};
+        SubClass.prototype = {
+            createdCallback() {
+                this.age = '43';
+                return SuperClass.prototype.createdCallback.call(this);
+            },
+            get age() {
+                return this.__age;
+            },
+            set age(a) {
+                this.__age = parseInt(`${a}`);
+                return this.__age;
+            },
+        };
+        let superComponent = DNALibrary.Extend(DNABaseComponent, SuperClass);
+        let subComponent = DNALibrary.Extend(superComponent, SubClass);
+        let Ctr = DNALibrary.Register('test-library-component', {
+            prototype: subComponent,
         });
-
-        it('should extend a prototype', function() {
-            var superClass = function() {};
-            superClass.attributes = ['name', 'lastName'];
-            superClass.prototype = {
-                createdCallback: function() {
-                    this.name = 'Alan';
-                    this.lastName = 'Turing';
-                },
-                get fullName() {
-                    return this.name + ' ' + this.lastName;
-                },
-                reverseName: function() {
-                    return this.fullName.split('').reverse().join('');
-                },
-            };
-            var subClass = function() {};
-            subClass.prototype = {
-                createdCallback: function() {
-                    this.age = '43';
-                    return superClass.prototype.createdCallback.call(this);
-                },
-                get age() {
-                    return this.__age;
-                },
-                set age(a) {
-                    return this.__age = parseInt(a + '');
-                },
-            };
-            var superComponent = DNALibrary.Extend(DNABaseComponent, superClass);
-            var subComponent = DNALibrary.Extend(superComponent, subClass);
-            var ctr = DNALibrary.Register('test-library-component', {
-                prototype: subComponent,
-            });
-            var instance = new ctr();
-            assert.equal(instance.name, 'Alan');
-            assert.equal(instance.lastName, 'Turing');
-            assert.equal(instance.fullName, 'Alan Turing');
-            assert.equal(instance.reverseName(), 'gniruT nalA');
-            assert.equal(instance.age, 43);
-        });
+        let instance = new Ctr();
+        assert.equal(instance.name, 'Alan');
+        assert.equal(instance.lastName, 'Turing');
+        assert.equal(instance.fullName, 'Alan Turing');
+        assert.equal(instance.reverseName(), 'gniruT nalA');
+        assert.equal(instance.age, 43);
     });
-}());
+});

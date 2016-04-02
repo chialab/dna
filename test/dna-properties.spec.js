@@ -1,26 +1,25 @@
-(function() {
-    /* globals describe, before, it, assert */
-    describe('Unit: DNAPropertiesComponent', function() {
-        var elem;
+import './dna-properties.next.js';
 
-        before(function(done) {
-            System.transpiler = 'plugin-babel';
-            System.import('./test/dna-properties.next.js').then(function(mod) {
-                var temp = document.createElement('div');
-                temp.innerHTML = '<test-properties-component name="Alan" last-name="Turing"></test-properties-component>';
-                document.body.appendChild(temp);
-                setTimeout(function() {
-                    elem = temp.firstElementChild;
-                    done();
-                }, 1000);
-            }, function() {
-                done();
-            });
-        });
+/* globals describe, before, it, assert */
+describe('Unit: DNAPropertiesComponent', () => {
+    let elem;
 
-        it('init element\'s properties', function() {
-            assert.equal(elem.name, 'Alan');
-            assert.equal(elem.lastName, 'Turing');
-        });
+    before((done) => {
+        let temp = document.createElement('div');
+        temp.innerHTML = `
+            <test-properties-component
+                name="Alan"
+                last-name="Turing">
+            </test-properties-component>`;
+        document.body.appendChild(temp);
+        setTimeout(() => {
+            elem = temp.firstElementChild;
+            done();
+        }, 1000);
     });
-}());
+
+    it('init element\'s properties', () => {
+        assert.equal(elem.name, 'Alan');
+        assert.equal(elem.lastName, 'Turing');
+    });
+});
