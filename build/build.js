@@ -20,7 +20,7 @@ packageJSON.build = {
 // generate lite
 myBuilder.run(packageJSON).then(() => {
     let code = fs.readFileSync(path.join(cwd, 'dist/dna.lite.js'), 'utf8');
-    code = code.replace('__DNA__VERSION__', `'${version}'`);
+    code = code.replace('this.__DNA__VERSION__', `'${version}'`);
     fs.writeFileSync(path.join(cwd, 'dist/dna.lite.js'), code);
 
     // generate standard

@@ -1,4 +1,17 @@
-import { Test1, Test2, Test3 } from './dna-template.next.js';
+import { DNAHelper } from '../src/dna-helper.next.js';
+import { TestComponent1, TestComponent2, TestComponent3 } from './dna-template.next.js';
+
+const Test1 = DNAHelper.register('test1-template-component', {
+    prototype: TestComponent1,
+});
+
+const Test2 = DNAHelper.register('test2-template-component', {
+    prototype: TestComponent2,
+});
+
+const Test3 = DNAHelper.register('test3-template-component', {
+    prototype: TestComponent3,
+});
 
 /* globals describe, before, it, assert */
 describe('Unit: DNATemplateComponent', () => {

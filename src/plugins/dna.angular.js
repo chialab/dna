@@ -1,11 +1,14 @@
 /* eslint-disable vars-on-top, no-var, prefer-arrow-callback, prefer-rest-params */
 /* global DNA:{} */
 
-(function(scope, DNA) {
-    if (typeof DNA === 'undefined') {
-        throw new Error('Cannot find DNA library.');
+(function(scope) {
+    if (typeof scope.DNA === 'undefined') {
+        // eslint-disable-next-line
+        console.error('dna-angular-plugin: cannot find DNA library.');
+        return;
     }
 
+    var DNA = scope.DNA;
     var Config = DNA.Config;
 
     function bindAttribute(element, $attrs, key) {
@@ -54,4 +57,4 @@
         };
     }
     DNA.ngCreate = ngCreate;
-}(this, DNA));
+}(this));

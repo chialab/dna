@@ -1,4 +1,9 @@
-import './dna-properties.next.js';
+import { DNAHelper } from '../src/dna-helper.next.js';
+import { TestComponent } from './dna-properties.next.js';
+
+DNAHelper.register('test-properties-component', {
+    prototype: TestComponent,
+});
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAPropertiesComponent', () => {

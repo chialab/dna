@@ -1,8 +1,8 @@
-/dist
-/docs
-/deploy
-/docs-deploy
-/node_modules
-/bower_components
 .tmp
 npm-debug.log
+/bower_components
+/coverage
+/deploy
+/dist
+/docs
+/node_modules

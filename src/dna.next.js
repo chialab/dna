@@ -17,5 +17,4 @@ export * from './dna-base-component.next.js';
 export * from './dna-library.next.js';
 export { DNAConfig as Config } from './dna-config.next.js';
 
-/* globals __DNA__VERSION__:'X.X.X' */
-export const Version = __DNA__VERSION__;
+export const Version = this.__DNA__VERSION__ || 'dev';

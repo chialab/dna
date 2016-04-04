@@ -1,5 +1,4 @@
 import { DNAEventsComponent } from '../src/dna-events-component.next.js';
-import { DNAHelper } from '../src/dna-helper.next.js';
 
 export class TestComponent extends DNAEventsComponent {
     static get events() {
@@ -40,7 +39,3 @@ export class TestComponent extends DNAEventsComponent {
         this.customElement = element;
     }
 }
-
-export const Test = DNAHelper.register('test-events-component', {
-    prototype: TestComponent,
-});
