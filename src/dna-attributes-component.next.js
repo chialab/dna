@@ -11,7 +11,7 @@ function setValue(context, attr, value) {
         } else if (typeof value === 'boolean' && currentAttrValue !== '') {
             context.setAttribute(attr, '');
         }
-    } else if (currentAttrValue) {
+    } else if (currentAttrValue || currentAttrValue === '') {
         context.removeAttribute(attr);
     }
 }
@@ -69,13 +69,6 @@ export class DNAAttributesComponent extends DNAComponent {
         let attributes = this.attributes || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
-            if (attr.value === '') {
-                // boolean attributes
-                if (this.getAttribute(attr.name) !== null) {
-                    this.attributeChangedCallback(attr.name, undefined, true);
-                }
-                continue;
-            }
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
         let ctrAttributes = this.constructor.normalizedAttributes || [];
@@ -96,7 +89,12 @@ export class DNAAttributesComponent extends DNAComponent {
         if (cl && cl.normalizedAttributes && Array.isArray(cl.normalizedAttributes)) {
             let camelAttr = DNAHelper.dashToCamel(attr);
             if (cl.normalizedAttributes.indexOf(camelAttr) !== -1) {
-                this[camelAttr] = newVal;
+                if (newVal === '') {
+                    newVal = true;
+                }
+                if (newVal !== this[camelAttr]) {
+                    this[camelAttr] = newVal;
+                }
             }
         }
     }
