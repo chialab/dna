@@ -6,12 +6,15 @@ export class TestComponent extends DNAAttributesComponent {
     }
 
     get myVar3() {
-        return this.__var3 || 0;
+        return this.__var3 || false;
     }
 
     set myVar3(val) {
-        if (val === true) {
+        if (val) {
             this.__var3 = 'DNA Test';
+        } else {
+            this.__var3 = false;
         }
+        return this.__var3;
     }
 }

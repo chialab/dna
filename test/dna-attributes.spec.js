@@ -5,9 +5,23 @@ const Test = DNAHelper.register('test-attributes-component', {
     prototype: TestComponent,
 });
 
-/* globals describe, before, it, assert */
+/* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNAAttributesComponent', () => {
-    let elem = new Test();
+    let elem;
+    beforeEach((done) => {
+        elem = new Test();
+        done();
+    });
+
+    it('check sync between attribute and property on creation', () => {
+        elem.setAttribute('alt', 'DNA Test 2');
+        elem.setAttribute('var', '1234');
+        elem.setAttribute('my-var3', '');
+        let clone = elem.cloneNode(true);
+        assert.equal(clone.alt, 'DNA Test 2');
+        assert.equal(clone.var, 1234);
+        assert.equal(clone.myVar3, 'DNA Test');
+    });
 
     it('check sync between property and attribute', () => {
         elem.title = 'DNA Test';
@@ -32,6 +46,8 @@ describe('Unit: DNAAttributesComponent', () => {
     it('check sync between invented composed property and attribute', () => {
         elem.myVar = true;
         assert.equal(elem.getAttribute('my-var'), '');
+        elem.myVar = false;
+        assert.equal(elem.getAttribute('my-var'), null);
     });
 
     it('check sync between invented composed attribute and property', () => {
