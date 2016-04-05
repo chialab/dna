@@ -3,7 +3,7 @@ import { DNAComponent } from './dna-component.next.js';
 import { DNAHelper } from './dna-helper.next.js';
 import VDOM from './libs/virtual-dom.next.js';
 
-function wrapPrototype(main, currentProto = {}, handled = []) {
+function wrapPrototype(main, currentProto, handled = []) {
     Object.getOwnPropertyNames(currentProto).forEach((prop) => {
         if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) === -1) {
             handled.push(prop);
@@ -113,13 +113,10 @@ export class DNATemplateComponent extends DNAComponent {
         if (typeof this.render === 'function') {
             let nodes = this.render();
             let html = nodes;
-            if (nodes instanceof NodeList) {
-                html = '';
-                for (let i = 0, len = nodes.length; i < len; i++) {
-                    html += nodes[i].outerHTML;
-                }
-            } else if (nodes instanceof Node) {
-                html = nodes.outerHTML;
+            if (nodes instanceof Node || nodes instanceof DocumentFragment) {
+                let box = document.createElement('div');
+                box.appendChild(nodes);
+                html = box.innerHTML;
             }
             html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
             if (DNAConfig.useVirtualDOM) {
