@@ -24,10 +24,34 @@ export class TestComponent1 extends TestComponent {
 
 export class TestComponent2 extends TestComponent {
     static get template() {
-        return '<span>Hello DNA!</span>';
+        return '<span class="dna-test">Hello DNA!</span>';
     }
 }
 
-export class TestComponent3 extends TestComponent {}
+export class TestComponent3 extends TestComponent {
+    static get template() {
+        return '<span class="dna-test">Hello DNA!</span>';
+    }
+}
 
-TestComponent3.template = '<span>Hello DNA!</span>';
+export class TestComponent4 extends TestComponent {
+    static get template() {
+        let elem = document.createElement('template');
+        elem.innerHTML = '<span class="dna-test">Hello DNA!</span>';
+        return elem;
+    }
+}
+
+export class TestComponent5 extends TestComponent {
+    static get template() {
+        let elem = document.createElement('template');
+        elem.innerHTML = '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>';
+        return elem;
+    }
+}
+
+export class TestComponent6 extends TestComponent {
+    static get template() {
+        return 4;
+    }
+}

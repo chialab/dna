@@ -9,36 +9,36 @@ import {
     TestComponent6,
 } from './dna-template.next.js';
 
-Config.useVirtualDOM = false;
+Config.useVirtualDOM = true;
 
-const Test1 = DNAHelper.register('test1-template-component', {
+const Test1 = DNAHelper.register('test1-vdom-template-component', {
     prototype: TestComponent1,
 });
 
-const Test2 = DNAHelper.register('test2-template-component', {
+const Test2 = DNAHelper.register('test2-vdom-template-component', {
     prototype: TestComponent2,
 });
 
-const Test3 = DNAHelper.register('test3-template-component', {
+const Test3 = DNAHelper.register('test3-vdom-template-component', {
     prototype: TestComponent3,
 });
 
-const Test4 = DNAHelper.register('test4-template-component', {
+const Test4 = DNAHelper.register('test4-vdom-template-component', {
     prototype: TestComponent4,
 });
 
-const Test5 = DNAHelper.register('test5-template-component', {
+const Test5 = DNAHelper.register('test5-vdom-template-component', {
     prototype: TestComponent5,
 });
 
-const Test6 = DNAHelper.register('test6-template-component', {
+const Test6 = DNAHelper.register('test6-vdom-template-component', {
     prototype: TestComponent6,
 });
 
 /* globals describe, before, beforeEach, it, assert */
-describe('Unit: DNATemplateComponent', () => {
+describe('Unit: DNATemplateComponent with virtualDom', () => {
     beforeEach((done) => {
-        Config.useVirtualDOM = false;
+        Config.useVirtualDOM = true;
         done();
     });
 

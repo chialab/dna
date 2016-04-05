@@ -4,6 +4,9 @@
             'dna/delegate': {
                 format: 'cjs',
             },
+            'node_modules/virtual-dom/dist/virtual-dom.js': {
+                format: 'global',
+            },
         },
         packages: {
             'node_modules/dna-polyfills': {
