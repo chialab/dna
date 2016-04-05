@@ -52,14 +52,10 @@ export class DNAStyleComponent extends DNAComponent {
         let styleElem = document.getElementById(id) || document.createElement('style');
         styleElem.type = 'text/css';
         styleElem.setAttribute('id', id);
-        if (styleElem.styleSheet) {
-            styleElem.styleSheet.cssText = css;
-        } else {
-            styleElem.innerHTML = '';
-            styleElem.appendChild(document.createTextNode(css));
-        }
+        styleElem.innerHTML = '';
+        styleElem.appendChild(document.createTextNode(css));
         if (!styleElem.parentNode) {
-            let head = document.head || document.getElementsByTagName('head')[0];
+            let head = document.head;
             if (head.firstElementChild) {
                 head.insertBefore(styleElem, head.firstElementChild);
             } else {
