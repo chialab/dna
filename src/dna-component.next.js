@@ -1,5 +1,3 @@
-import { DNAHelper } from './dna-helper.next.js';
-
 // shim for Safari
 // https://github.com/babel/babel/issues/1548
 // https://bugs.webkit.org/show_bug.cgi?id=114457
@@ -57,16 +55,4 @@ export class DNAComponent extends HTMLElement {
      * @param {*} newVal The value of the attribute after the change.
      */
     attributeChangedCallback() {}
-    /**
-     * The tag name of the custom element.
-     * @type {String}
-     */
-    static get tagName() {
-        return this._tagName || DNAHelper.classToElement(this);
-    }
-    static set tagName(tag) {
-        if (typeof tag === 'string') {
-            this._tagName = tag;
-        }
-    }
 }
