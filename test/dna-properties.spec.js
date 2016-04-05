@@ -14,7 +14,8 @@ describe('Unit: DNAPropertiesComponent', () => {
         temp.innerHTML = `
             <test-properties-component
                 name="Alan"
-                last-name="Turing">
+                last-name="Turing"
+                married>
             </test-properties-component>`;
         document.body.appendChild(temp);
         setTimeout(() => {
@@ -26,5 +27,6 @@ describe('Unit: DNAPropertiesComponent', () => {
     it('init element\'s properties', () => {
         assert.equal(elem.name, 'Alan');
         assert.equal(elem.lastName, 'Turing');
+        assert.equal(elem.married, true);
     });
 });
