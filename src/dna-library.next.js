@@ -40,12 +40,6 @@ function bindFN(protoFn, superFn) {
 }
 
 function inherits(subClass, superClass) {
-    if (typeof superClass !== 'function' && superClass !== null) {
-        throw new TypeError(
-            `Super expression must either be null or a function, not ${typeof superClass}`
-        );
-    }
-
     subClass.prototype = Object.create(superClass && superClass.prototype, {
         constructor: {
             value: subClass,
@@ -110,6 +104,11 @@ function extend(newClass, superClass) {
     let _newClass = (typeof newClass !== 'function') ?
         createFunctionClass(newClass) :
         newClass;
+    if (typeof superClass !== 'function' && superClass !== null) {
+        throw new TypeError(
+            `Super expression must either be null or a function, not ${typeof superClass}`
+        );
+    }
     let ctr = function() {};
     inherits(ctr, _superClass);
     for (let k in _superClass.prototype) {
