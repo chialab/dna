@@ -45,16 +45,9 @@ export class DNAHelper {
             };
             scope.prototype = config.prototype;
         }
-        Object.defineProperty(scope, 'tagName', {
-            configurable: true,
-            get: () => tagName,
-        });
-        Object.defineProperty(scope.prototype, 'is', {
-            configurable: false,
-            get: () => tagName,
-        });
+        config.prototype = Object.create(config.prototype);
         if (typeof scope.onRegister === 'function') {
-            scope.onRegister.call(scope);
+            scope.onRegister.call(scope, tagName);
         }
         if (DNAConfig.useWebComponents) {
             res = document.registerElement(tagName, config);
@@ -66,6 +59,14 @@ export class DNAHelper {
                 return el;
             };
         }
+        Object.defineProperty(res, 'tagName', {
+            configurable: true,
+            get: () => tagName,
+        });
+        Object.defineProperty(res.prototype, 'is', {
+            configurable: false,
+            get: () => tagName,
+        });
         if (typeof scope === 'function') {
             res.prototype.constructor = scope;
         }

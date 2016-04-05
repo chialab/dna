@@ -29,24 +29,26 @@ import { DNAComponent } from './dna-component.next.js';
 export class DNAStyleComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
+     * @param {String} id The element definition name.
      */
-    static onRegister() {
+    static onRegister(id) {
         // Create css function
         if (this.css) {
-            this.addCss(this.css);
+            this.addCss(id, this.css);
         }
     }
     /**
      * Add `<style>` tag for the component.
+     * @param {String} id The CSS element unique id.
      * @param {String} style The CSS content.
      * @return {HTMLStyleElement} the style tag created.
      */
-    static addCss(style) {
+    static addCss(id, style) {
         let css = style;
         if (typeof style === 'function') {
             css = style();
         }
-        let id = `style-${this.tagName}`;
+        id = `style-${id}`;
         let styleElem = document.getElementById(id) || document.createElement('style');
         styleElem.type = 'text/css';
         styleElem.setAttribute('id', id);

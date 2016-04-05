@@ -34,6 +34,7 @@ if (typeof HTMLElement !== 'function') {
 export class DNAComponent extends HTMLElement {
     /**
      * Fires when an the element is registered.
+     * @param {String} id The element definition name.
      */
     static onRegister() {}
     /**
