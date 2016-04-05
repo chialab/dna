@@ -116,7 +116,7 @@ export class DNAHelper {
         return res;
     }
     /**
-     * Wrap a property descriptor get function.
+     * Wrap a property descriptor get function or create a new one.
      * @param {string} prop The property to wrap.
      * @param {object} descriptor The property descriptor.
      * @return {Function} The descriptor get function wrapped.
@@ -125,11 +125,7 @@ export class DNAHelper {
         return function() {
             let res;
             if (typeof descriptor.get === 'function') {
-                try {
-                    res = descriptor.get.call(this);
-                } catch (ex) {
-                    res = this[`__${prop}`];
-                }
+                res = descriptor.get.call(this);
             } else {
                 res = this[`__${prop}`];
             }
@@ -137,7 +133,7 @@ export class DNAHelper {
         };
     }
     /**
-     * Wrap a property descriptor set function.
+     * Wrap a property descriptor set function or create a new one.
      * @param {string} prop The property to wrap.
      * @param {object} descriptor The property descriptor.
      * @param {Function} callback An optional callback to trigger on set.
@@ -150,11 +146,7 @@ export class DNAHelper {
         }
         let setter = function(value) {
             if (descriptor.set) {
-                try {
-                    descriptor.set.call(this, value);
-                } catch (ex) {
-                    this[`__${prop}`] = value;
-                }
+                descriptor.set.call(this, value);
             } else {
                 this[`__${prop}`] = value;
             }
