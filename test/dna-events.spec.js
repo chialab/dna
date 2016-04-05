@@ -21,6 +21,14 @@ describe('Unit: DNAEventsComponent', () => {
         assert.equal(elem.custom.detail.data, 1234);
     });
 
+    it('should trigger a function callback', () => {
+        let span = elem.querySelector('span');
+        span.click();
+        assert.equal(elem.clickedSpan, span);
+        assert.equal(elem.clickedSpanEvent instanceof Event, true);
+        assert.equal(elem.clickedSpanEvent.type, 'click');
+    });
+
     it('should track click on button element', () => {
         let button = elem.querySelector('button');
         button.click();
@@ -36,5 +44,12 @@ describe('Unit: DNAEventsComponent', () => {
         assert.equal(elem.changedElement, input);
         assert.equal(elem.changed instanceof Event, true);
         assert.equal(elem.changed.type, 'change');
+    });
+
+    it('should throw when event name is not defined in trigger', () => {
+        let wrapper = () => {
+            elem.trigger();
+        };
+        assert.throws(wrapper, Error, 'Event name is undefined');
     });
 });

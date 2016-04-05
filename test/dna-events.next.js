@@ -5,6 +5,10 @@ export class TestComponent extends DNAEventsComponent {
         return {
             customEvent: 'onCustomEvent',
             'click button': 'onClick',
+            'click span': function(ev, span) {
+                this.clickedSpan = span;
+                this.clickedSpanEvent = ev;
+            },
             'change input': 'onInputChange',
         };
     }
@@ -13,7 +17,8 @@ export class TestComponent extends DNAEventsComponent {
         super.createdCallback();
         this.innerHTML = `
             <button id="button">Click</button>
-            <input type="text" id="input" value="Test">
+            <input type="text" id="input" value="Test" />
+            <span>Hold me</span>
         `;
     }
 
