@@ -32,28 +32,6 @@ function createClass(Constructor, protoProps, staticProps) {
     return Constructor;
 }
 
-function getProtoProp(object, property, receiver) {
-    let obj = object;
-    if (obj === null) {
-        obj = Function.prototype;
-    }
-    let desc = Object.getOwnPropertyDescriptor(obj, property);
-    if (desc === undefined) {
-        let parent = Object.getPrototypeOf(obj);
-        if (parent === null) {
-            return undefined;
-        }
-        return getProtoProp(parent, property, receiver);
-    } else if ('value' in desc) {
-        return desc.value;
-    }
-    let getter = desc.get;
-    if (getter === undefined) {
-        return undefined;
-    }
-    return getter.call(receiver);
-}
-
 function bindFN(protoFn, superFn) {
     return function(...args) {
         protoFn.apply(this, args);
@@ -132,13 +110,7 @@ function extend(newClass, superClass) {
     let _newClass = (typeof newClass !== 'function') ?
         createFunctionClass(newClass) :
         newClass;
-    let ctr = function(...args) {
-        getProtoProp(
-            Object.getPrototypeOf(ctr.prototype),
-            'constructor',
-            _newClass
-        ).apply(_newClass, args);
-    };
+    let ctr = function() {};
     inherits(ctr, _superClass);
     for (let k in _superClass.prototype) {
         if (Object.hasOwnProperty.call(superClass.prototype, k)) {
