@@ -3,7 +3,7 @@ import { DNAComponent } from './dna-component.next.js';
 
 /**
  * Simple Custom Component with events delegation,
- * `addEventListener` polyfill and a `dispatchEvent` wrapper named `trigger`.
+ * It also implement a `dispatchEvent` wrapper named `trigger`.
  * @class DNAEventsComponent
  * @extends DNAComponent
  *
@@ -67,17 +67,6 @@ export class DNAEventsComponent extends DNAComponent {
         super.createdCallback();
     }
     /**
-     * `Node.prototype.addEventListener` polyfill.
-     * @param {String} evName The name of the event to listen.
-     * @param {Function} callback The callback for the event.
-     */
-    addEventListener(evName, callback) {
-        if (typeof Node.prototype.attachEvent !== 'undefined') {
-            return Node.prototype.attachEvent.call(this, `on${evName}`, callback);
-        }
-        return Node.prototype.addEventListener.call(this, evName, callback);
-    }
-    /**
      * `Node.prototype.dispatchEvent` wrapper.
      * @param {String} evName The name of the event to fire.
      * @param {Object} data A set of custom data to pass to the event.
@@ -93,9 +82,6 @@ export class DNAEventsComponent extends DNAComponent {
             ev.initEvent(evName, bubbles, cancelable);
         }
         ev.detail = data;
-        if (typeof Node.prototype.fireEvent !== 'undefined') {
-            return Node.prototype.fireEvent.call(this, `on${evName}`, ev);
-        }
         return Node.prototype.dispatchEvent.call(this, ev);
     }
     /**
