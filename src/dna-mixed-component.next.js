@@ -62,6 +62,9 @@ function iterateBehaviors(ctx, behavior) {
         if (ctx.__attachedBehaviors.indexOf(behavior) !== -1) {
             return;
         }
+        if (Array.isArray(behavior.behaviors)) {
+            iterateBehaviors(ctx, behavior.behaviors);
+        }
         // iterate and attach static methods and priorities.
         let callbacks = componentCallbacks;
         let keys = Object.getOwnPropertyNames(behavior);
@@ -80,7 +83,7 @@ function iterateBehaviors(ctx, behavior) {
                 }
             }
         }
-        // iterate and attach prototype methods and priorities.
+        // iterate and attach prototype methods and properties.
         if (behavior.prototype) {
             keys = Object.getOwnPropertyNames(behavior.prototype);
             for (let k in keys) {
