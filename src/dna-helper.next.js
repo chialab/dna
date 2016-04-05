@@ -77,7 +77,13 @@ export class DNAHelper {
      * @return {String} The tag name for the Custom Element.
      */
     static classToElement(fn) {
-        let name = fn.name || fn.toString().match(/^function\s*([^\s(]+)/)[1];
+        let name = fn.name || (function() {
+            let match = fn.toString().match(/^function\s*([^\s(]+)/);
+            if (match) {
+                return match[1];
+            }
+            return undefined;
+        }());
         if (!name) {
             return undefined;
         }
@@ -92,10 +98,10 @@ export class DNAHelper {
      */
     static elementToClass(tag) {
         return tag
-            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match) => {
-                if (+match === 0) return '';
-                return match.toUpperCase();
-            })
+            .toLowerCase()
+            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match) =>
+                match.toUpperCase()
+            )
             .replace(/[\-|\_]/g, '');
     }
     /**
