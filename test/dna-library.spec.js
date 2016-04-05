@@ -1,4 +1,4 @@
-import * as DNALibrary from '../src/dna-library.next.js';
+import { Extend as extend, Register as register } from '../src/dna-library.next.js';
 import { DNABaseComponent } from '../src/dna-base-component.next.js';
 
 /* globals describe, before, it, assert */
@@ -32,9 +32,9 @@ describe('Unit: DNALibrary', () => {
                 return this.__age;
             },
         };
-        let superComponent = DNALibrary.Extend(DNABaseComponent, SuperClass);
-        let subComponent = DNALibrary.Extend(superComponent, SubClass);
-        let Ctr = DNALibrary.Register('test-library-component', {
+        let superComponent = extend(DNABaseComponent, SuperClass);
+        let subComponent = extend(superComponent, SubClass);
+        let Ctr = register('test-library-component', {
             prototype: subComponent,
         });
         let instance = new Ctr();
