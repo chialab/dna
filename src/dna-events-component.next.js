@@ -40,7 +40,7 @@ export class DNAEventsComponent extends DNAComponent {
      */
     createdCallback() {
         // bind events
-        let events = this.constructor.events || this.constructor.bindEvents;
+        let events = this.constructor.events;
         if (events) {
             let delegate = new Delegate(this);
             for (let k in events) {
@@ -74,25 +74,16 @@ export class DNAEventsComponent extends DNAComponent {
      * @param {Boolean} cancelable Can be the event cancel by a callback.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
-        let ev = DNAEventsComponent.createEvent();
-        if (!ev) {
+        if (!evName) {
             throw new Error('Event name is undefined');
         }
+        let ev = document.createEvent('Event');
         if (typeof ev.initEvent !== 'undefined') {
             ev.initEvent(evName, bubbles, cancelable);
         }
-        ev.detail = data;
-        return Node.prototype.dispatchEvent.call(this, ev);
-    }
-    /**
-     * Create an Event instance.
-     * @param {String} type The event type.
-     * @return {Event} The created event.
-     */
-    static createEvent(type = 'Event') {
-        if (typeof document.createEventObject !== 'undefined') {
-            return document.createEventObject();
+        if (data) {
+            ev.detail = data;
         }
-        return document.createEvent(type);
+        return this.dispatchEvent(ev);
     }
 }
