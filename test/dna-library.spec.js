@@ -1,14 +1,18 @@
-import { Create as create, Extend as extend, Register as register } from '../src/dna-library.next.js';
+import {
+    Create as create,
+    Extend as extend,
+    Register as register,
+} from '../src/dna-library.next.js';
 import { DNABaseComponent } from '../src/dna-base-component.next.js';
 
 /* globals describe, before, it, assert */
 describe('Unit: DNALibrary', () => {
     it('should throws exception for missing param in extend method', () => {
         let wrapper = () => {
-            extend({
-                createdCallback() {}
+            extend(undefined, {
+                createdCallback() {},
             });
-        }
+        };
         assert.throws(wrapper, TypeError);
     });
 
@@ -97,23 +101,23 @@ describe('Unit: DNALibrary', () => {
         let wrapper = () => {
             create({
                 prototype: {
-                    createdCallback() {}
+                    createdCallback() {},
                 },
             });
-        }
+        };
         assert.throws(wrapper, Error, 'Missing or bad typed `tagName` property');
     });
 
     it('should throws exception for missing tagName param during creation', () => {
         let wrapper = () => {
             create('test3-library-component');
-        }
+        };
         let wrapper2 = () => {
             create('test3-library-component', {});
-        }
+        };
         let wrapper3 = () => {
             create('test3-library-component', 10);
-        }
+        };
         assert.throws(wrapper, Error, 'Missing prototype');
         assert.throws(wrapper2, Error, 'Missing prototype');
         assert.throws(wrapper3, Error, 'Missing prototype');
@@ -140,7 +144,7 @@ describe('Unit: DNALibrary', () => {
                 reverseName() {
                     return this.fullName.split('').reverse().join('');
                 },
-            }
+            },
         });
         let instance = new Test();
         assert.equal(instance.name, 'Alan');

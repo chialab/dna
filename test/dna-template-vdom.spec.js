@@ -72,7 +72,10 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
     it('should handle `template` property as HTMLTemplateElement with multiple nodes', () => {
         let elem = new Test5();
         document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>');
+        assert.equal(
+            elem.innerHTML,
+            '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>'
+        );
     });
 
     it('should handle invalid `template`', () => {
