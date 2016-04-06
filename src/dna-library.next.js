@@ -12,12 +12,16 @@ function defineProperties(target, props) {
     for (let i = 0; i < props.length; i++) {
         let descriptor = props[i];
         if (blacklistProps.indexOf(descriptor.key) === -1) {
-            descriptor.enumerable = descriptor.enumerable || false;
-            descriptor.configurable = true;
-            if ('value' in descriptor) {
-                descriptor.writable = true;
+            if (typeof descriptor.value === 'function') {
+                target[descriptor.key] = descriptor.value;
+            } else {
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ('value' in descriptor) {
+                    descriptor.writable = true;
+                }
+                Object.defineProperty(target, descriptor.key, descriptor);
             }
-            Object.defineProperty(target, descriptor.key, descriptor);
         }
     }
 }
@@ -86,43 +90,29 @@ function getMethods(prototype) {
         }
     }
     let keys = Object.getOwnPropertyNames(prototype);
-    for (let k in keys) {
-        if (Object.hasOwnProperty.call(keys, k)) {
-            let prop = createProp(keys[k]);
-            if (prop) {
-                res.push(prop);
-            }
+    keys.forEach((key) => {
+        let prop = createProp(key);
+        if (prop) {
+            res.push(prop);
         }
-    }
+    });
     return res;
 }
 
-function extend(newClass, superClass) {
+function extend(superClass, newClass) {
+    if (typeof superClass !== 'function' && typeof superClass !== 'object') {
+        throw new TypeError(
+            `Super expression must be a function or an object, not ${typeof superClass}`
+        );
+    }
     let _superClass = (typeof superClass !== 'function') ?
         createFunctionClass(superClass) :
         superClass;
     let _newClass = (typeof newClass !== 'function') ?
         createFunctionClass(newClass) :
         newClass;
-    if (typeof superClass !== 'function' && superClass !== null) {
-        throw new TypeError(
-            `Super expression must either be null or a function, not ${typeof superClass}`
-        );
-    }
-    let ctr = function() {};
+    let ctr = createFunctionClass({});
     inherits(ctr, _superClass);
-    for (let k in _superClass.prototype) {
-        if (Object.hasOwnProperty.call(superClass.prototype, k)) {
-            let descriptor = Object.getOwnPropertyDescriptor(_superClass.prototype, k) || {};
-            if (descriptor.get) {
-                Object.defineProperty(ctr.prototype, k, {
-                    get: descriptor.get,
-                    set: descriptor.set,
-                    configurable: true,
-                });
-            }
-        }
-    }
     return createClass(ctr, getMethods(_newClass.prototype), getMethods(newClass));
 }
 
@@ -141,9 +131,9 @@ export function Create(tagName, config = {}) {
     if (typeof scope === 'undefined') {
         throw new Error('Missing prototype');
     }
-    let newScope = extend(scope, DNABaseComponent);
-    for (let k in scope.prototype) {
-        if (Object.hasOwnProperty.call(scope.prototype, k)) {
+    let newScope = extend(DNABaseComponent, scope);
+    for (let k in newScope.prototype) {
+        if (Object.hasOwnProperty.call(newScope.prototype, k)) {
             let callbacks = [
                 'createdCallback',
                 'attachedCallback',
@@ -169,7 +159,7 @@ export function Create(tagName, config = {}) {
  * @return {function} A new extended class.
  */
 export function Extend(superScope, subScope) {
-    return extend(subScope, superScope);
+    return extend(superScope, subScope);
 }
 
 /**
