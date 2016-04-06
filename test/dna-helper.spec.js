@@ -103,8 +103,9 @@ describe('Unit: DNAHelper', () => {
     describe('Unit: DNAHelper > classToElement', () => {
         it('should transform function name to element tag', () => {
             assert.equal(DNAHelper.classToElement(
-                // eslint-disable-next-line
-                function namedFunction() {}),
+                    // eslint-disable-next-line
+                    function namedFunction() {}
+                ),
                 'named-function'
             );
         });
@@ -147,6 +148,80 @@ describe('Unit: DNAHelper', () => {
             assert.equal(DNAHelper.dashToCamel('simple'), 'simple');
             assert.equal(DNAHelper.dashToCamel('simple-string'), 'simpleString');
             assert.equal(DNAHelper.dashToCamel('simple-long-string'), 'simpleLongString');
+        });
+    });
+
+    describe('Unit: DNAHelper > register', () => {
+        class TestComponent extends HTMLElement {
+            static get tagName() {
+                return 'test1-helper-component';
+            }
+
+            createdCallback() {
+                this.name = 'Alan';
+                this.lastName = 'Turing';
+            }
+        }
+
+        class Test2Component extends TestComponent {
+            static get extends() {
+                return 'div';
+            }
+        }
+
+        describe('Unit: DNAHelper > register simple element', () => {
+            const Test1 = DNAHelper.register(TestComponent);
+
+            const Test2 = DNAHelper.register('test2-helper-component', {
+                prototype: TestComponent,
+            });
+
+            const Test3 = DNAHelper.register('test3-helper-component', TestComponent);
+
+            const Test4 = DNAHelper.register('test4-helper-component', {
+                prototype: TestComponent.prototype,
+            });
+
+            it('should register a custom element', () => {
+                let elem1 = new Test1();
+                let elem2 = new Test2();
+                let elem3 = new Test3();
+                let elem4 = new Test4();
+                assert.equal(elem1.tagName.toLowerCase(), 'test1-helper-component');
+                assert.equal(elem1.name, 'Alan');
+                assert.equal(elem1.lastName, 'Turing');
+                assert.equal(elem2.tagName.toLowerCase(), 'test2-helper-component');
+                assert.equal(elem2.name, 'Alan');
+                assert.equal(elem2.lastName, 'Turing');
+                assert.equal(elem3.tagName.toLowerCase(), 'test3-helper-component');
+                assert.equal(elem3.name, 'Alan');
+                assert.equal(elem3.lastName, 'Turing');
+                assert.equal(elem4.tagName.toLowerCase(), 'test4-helper-component');
+                assert.equal(elem4.name, 'Alan');
+                assert.equal(elem4.lastName, 'Turing');
+            });
+        });
+
+        describe('Unit: DNAHelper > register with extends field', () => {
+            const Test1 = DNAHelper.register('test1-helper-register-component', {
+                prototype: Test2Component,
+                extends: 'div',
+            });
+
+            const Test2 = DNAHelper.register('test2-helper-register-component', {
+                prototype: Test2Component,
+            });
+
+            it('should register a custom element with extends field', () => {
+                let elem1 = new Test1();
+                let elem2 = new Test2();
+                assert.equal(elem1.tagName.toLowerCase(), 'div');
+                assert.equal(elem1.name, 'Alan');
+                assert.equal(elem1.lastName, 'Turing');
+                assert.equal(elem2.tagName.toLowerCase(), 'div');
+                assert.equal(elem2.name, 'Alan');
+                assert.equal(elem2.lastName, 'Turing');
+            });
         });
     });
 });
