@@ -59,10 +59,6 @@ export class DNAHelper {
                 return el;
             };
         }
-        Object.defineProperty(res, 'tagName', {
-            configurable: true,
-            get: () => tagName,
-        });
         Object.defineProperty(res.prototype, 'is', {
             configurable: false,
             get: () => tagName,
