@@ -4,8 +4,7 @@
 (function(scope) {
     if (typeof scope.DNA === 'undefined') {
         // eslint-disable-next-line
-        console.error('dna-angular-plugin: cannot find DNA library.');
-        return;
+        throw new Error('dna-angular-plugin: cannot find DNA library.');
     }
 
     var DNA = scope.DNA;
