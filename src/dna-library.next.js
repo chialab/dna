@@ -179,6 +179,13 @@ export const Extend = extend;
 /**
  * Wrap the [`DNAHelper.register`]{@link DNAHelper#register} method.
  */
-export function Register(...args) {
+export function register(...args) {
     return DNAHelper.register(...args);
 }
+
+/**
+ * Alias to [`DNALibrary.register`]{@link DNALibrary#register}.
+ * @deprecated
+ * @ignore
+ */
+export const Register = register;
