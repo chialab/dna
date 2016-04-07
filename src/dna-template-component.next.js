@@ -87,7 +87,13 @@ export class DNATemplateComponent extends DNAComponent {
                 } else if (typeof template === 'string') {
                     return () => template;
                 } else if (template instanceof Node && template.tagName === 'TEMPLATE') {
-                    return () => document.importNode(template.content, true);
+                    return () => {
+                        if (typeof document.importNode !== 'function' ||
+                            typeof HTMLTemplateElement === 'undefined') {
+                            throw new Error('Template element is not supported by the browser');
+                        }
+                        return document.importNode(template.content, true);
+                    };
                 }
                 return '';
             })(ctr.template);
