@@ -3,7 +3,7 @@ import { DNAComponent } from '../src/dna-component.next.js';
 export class TestComponent extends DNAComponent {
     static onRegister() {
         this.registered = true;
-        super.onRegister();
+        DNAComponent.onRegister();
     }
 
     createdCallback() {

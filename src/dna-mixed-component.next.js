@@ -117,7 +117,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     static onRegister(...args) {
         let ctr = this;
-        super.onRegister(...args);
+        DNAComponent.onRegister.apply(this, args);
         componentCallbacks.forEach((key) => {
             let callbackKey = getCallbackKey(key);
             this[callbackKey] = [];
