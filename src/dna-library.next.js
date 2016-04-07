@@ -99,7 +99,7 @@ function getMethods(prototype) {
     return res;
 }
 
-function extend(superClass, newClass) {
+function extendClass(superClass, newClass) {
     if (typeof superClass !== 'function' && typeof superClass !== 'object') {
         throw new TypeError(
             `Super expression must be a function or an object, not ${typeof superClass}`
@@ -131,7 +131,7 @@ export function Create(tagName, config = {}) {
     if (typeof scope === 'undefined') {
         throw new Error('Missing prototype');
     }
-    let newScope = extend(DNABaseComponent, scope);
+    let newScope = extendClass(DNABaseComponent, scope);
     for (let k in newScope.prototype) {
         if (Object.hasOwnProperty.call(newScope.prototype, k)) {
             let callbacks = [
@@ -158,9 +158,16 @@ export function Create(tagName, config = {}) {
  * @param {function|class|object} subScope The function or the prototype to merge.
  * @return {function} A new extended class.
  */
-export function Extend(superScope, subScope) {
-    return extend(superScope, subScope);
+export function extend(superScope, subScope) {
+    return extendClass(superScope, subScope);
 }
+
+/**
+ * Alias to [`DNALibrary.extend`]{@link DNALibrary#extend}.
+ * @deprecated
+ * @ignore
+ */
+export const Extend = extend;
 
 /**
  * Wrap the [`DNAHelper.register`]{@link DNAHelper#register} method.
