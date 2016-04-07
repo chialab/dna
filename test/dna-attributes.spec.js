@@ -10,7 +10,9 @@ describe('Unit: DNAAttributesComponent', () => {
     let elem;
     beforeEach((done) => {
         elem = new Test();
-        done();
+        setTimeout(() => {
+            done();
+        }, 250);
     });
 
     it('check sync between attribute and property on creation', () => {

@@ -15,24 +15,33 @@ const Test3 = DNAHelper.register('test3-style-component', {
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAStyleComponent', () => {
-    let elem1 = new Test1();
-    let elem2 = new Test2();
-    let elem3 = new Test3();
+    let elem1;
+    let elem2;
+    let elem3;
+
+    before((done) => {
+        elem1 = new Test1();
+        elem2 = new Test2();
+        elem3 = new Test3();
+        document.body.appendChild(elem1);
+        document.body.appendChild(elem2);
+        document.body.appendChild(elem3);
+        setTimeout(() => {
+            done();
+        }, 250);
+    });
 
     it('should handle `css` getter property as function', () => {
-        document.body.appendChild(elem1);
         let style = window.getComputedStyle(elem1.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
     });
 
     it('should handle `css` getter property as string', () => {
-        document.body.appendChild(elem2);
         let style = window.getComputedStyle(elem2.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
     });
 
     it('should handle `css` property as string', () => {
-        document.body.appendChild(elem3);
         let style = window.getComputedStyle(elem3.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
     });
