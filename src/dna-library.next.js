@@ -148,6 +148,19 @@ export function create(tagName, config = {}) {
             }
         }
     }
+    for (let k in newScope) {
+        if (newScope.hasOwnProperty(k)) {
+            let callbacks = [
+                'onRegister',
+            ];
+            if (callbacks.indexOf(k) !== -1) {
+                newScope[k] = bindFN(
+                    newScope[k],
+                    DNABaseComponent[k]
+                );
+            }
+        }
+    }
     config.prototype = newScope;
     return DNAHelper.register(tagName, config);
 }
