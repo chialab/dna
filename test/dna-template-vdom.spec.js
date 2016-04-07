@@ -35,6 +35,9 @@ const Test6 = DNAHelper.register('test6-vdom-template-component', {
     prototype: TestComponent6,
 });
 
+const hasTemplate = (typeof document.importNode === 'function' &&
+    typeof HTMLTemplateElement !== 'undefined');
+
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent with virtualDom', () => {
     beforeEach((done) => {
@@ -63,20 +66,22 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
-    it('should handle `template` property as HTMLTemplateElement', () => {
-        let elem = new Test4();
-        document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
-    });
+    if (hasTemplate) {
+        it('should handle `template` property as HTMLTemplateElement', () => {
+            let elem = new Test4();
+            document.body.appendChild(elem);
+            assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        });
 
-    it('should handle `template` property as HTMLTemplateElement with multiple nodes', () => {
-        let elem = new Test5();
-        document.body.appendChild(elem);
-        assert.equal(
-            elem.innerHTML,
-            '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>'
-        );
-    });
+        it('should handle `template` property as HTMLTemplateElement with multiple nodes', () => {
+            let elem = new Test5();
+            document.body.appendChild(elem);
+            assert.equal(
+                elem.innerHTML,
+                '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>'
+            );
+        });
+    }
 
     it('should handle invalid `template`', () => {
         let elem = new Test6();
