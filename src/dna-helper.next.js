@@ -84,7 +84,7 @@ export class DNAHelper {
         if (!name) {
             return undefined;
         }
-        return fn.name
+        return name
             .replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
             .replace(/^\-/, '');
     }
