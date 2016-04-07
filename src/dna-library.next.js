@@ -82,7 +82,7 @@ function getMethods(prototype) {
         return false;
     }
     for (let key in prototype) {
-        if (Object.hasOwnProperty.call(prototype, key)) {
+        if (prototype.hasOwnProperty(key)) {
             let prop = createProp(key);
             if (prop) {
                 res.push(prop);
@@ -133,7 +133,7 @@ export function create(tagName, config = {}) {
     }
     let newScope = extendClass(DNABaseComponent, scope);
     for (let k in newScope.prototype) {
-        if (Object.hasOwnProperty.call(newScope.prototype, k)) {
+        if (newScope.prototype.hasOwnProperty(k)) {
             let callbacks = [
                 'createdCallback',
                 'attachedCallback',
