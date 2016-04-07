@@ -123,7 +123,7 @@ function extendClass(superClass, newClass) {
  * @param {object} config A configuration object. (`prototype` key is required)
  * @return {function} The Component constructor.
  */
-export function Create(tagName, config = {}) {
+export function create(tagName, config = {}) {
     if (typeof tagName !== 'string') {
         throw new Error('Missing or bad typed `tagName` property');
     }
@@ -151,6 +151,13 @@ export function Create(tagName, config = {}) {
     config.prototype = newScope;
     return DNAHelper.register(tagName, config);
 }
+
+/**
+ * Alias to [`DNALibrary.create`]{@link DNALibrary#create}.
+ * @deprecated
+ * @ignore
+ */
+export const Create = create;
 
 /**
  * Extend a component prototype.
