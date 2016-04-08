@@ -1,6 +1,6 @@
 {
   "name": "dna-core",
-  "version": "0.17.4",
+  "version": "1.0.0",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://chialab.io)",
   "license": "MIT",
