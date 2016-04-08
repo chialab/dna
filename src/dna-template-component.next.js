@@ -5,9 +5,11 @@ import VDOM from './libs/virtual-dom.next.js';
 
 function wrapPrototype(main, currentProto, handled = []) {
     Object.getOwnPropertyNames(currentProto).forEach((prop) => {
-        if (typeof currentProto[prop] !== 'function' && handled.indexOf(prop) === -1) {
+        let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
+        if (
+            (typeof descriptor.value === 'undefined' || typeof descriptor.value !== 'function') &&
+            handled.indexOf(prop) === -1) {
             handled.push(prop);
-            let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
             if (descriptor.configurable !== false) {
                 Object.defineProperty(main, prop, {
                     configurable: true,
