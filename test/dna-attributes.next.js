@@ -2,7 +2,7 @@ import { DNAAttributesComponent } from '../src/dna-attributes-component.next.js'
 
 export class TestComponent extends DNAAttributesComponent {
     static get attributes() {
-        return ['title', 'alt', 'var', 'mine', 'myVar', 'myVar2', 'myVar3'];
+        return ['title', 'id', 'alt', 'var', 'mine', 'myVar', 'myVar2', 'myVar3'];
     }
 
     get myVar3() {

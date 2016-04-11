@@ -47,11 +47,12 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
 
     it('should handle `template` getter property as function with interpolation', () => {
         let elem = new Test1();
-        document.body.appendChild(elem);
+        // document.body.appendChild(elem);
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
-        assert.equal(elem.innerHTML, 'Hello, Alan Turing');
+        elem.title = 'Title';
+        assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
     it('should handle `template` getter property as string', () => {

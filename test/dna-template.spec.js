@@ -51,7 +51,8 @@ describe('Unit: DNATemplateComponent', () => {
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
-        assert.equal(elem.innerHTML, 'Hello, Alan Turing');
+        elem.title = 'Title';
+        assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
     it('should handle `template` getter property as string', () => {

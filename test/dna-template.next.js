@@ -7,7 +7,7 @@ class TestComponent extends DNAMixedComponent {
         return [DNAPropertiesComponent, DNATemplateComponent];
     }
     static get properties() {
-        return ['name', 'lastName'];
+        return ['name', 'lastName', 'title'];
     }
     get fullname() {
         return `${this.name ? `${this.name} ` : ''}${this.lastName || ''}`;
@@ -17,7 +17,7 @@ class TestComponent extends DNAMixedComponent {
 export class TestComponent1 extends TestComponent {
     static get template() {
         return function() {
-            return `Hello, ${this.fullname}`;
+            return `${this.title ? `<h1>${this.title}</h1><br>` : ''}Hello, ${this.fullname}`;
         };
     }
 }
