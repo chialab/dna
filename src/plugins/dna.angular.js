@@ -20,7 +20,7 @@
         // save original `useWebComponents` conf
         var _useWebComponents = Config.useWebComponents;
         // get the constructor
-        var ctr = DNA.Create.apply(DNA, arguments);
+        var ctr = DNA.create.apply(DNA, arguments);
         var descriptor = ctr.prototype.constructor;
         var ngDescriptor = {
             restrict: 'E',
@@ -33,6 +33,7 @@
             function($scope, $element, $attrs) {
                 var element = $element[0];
                 Object.setPrototypeOf(element, descriptor.prototype);
+                element.is = ctr.prototype.is;
                 element.$scope = $scope;
                 element.$element = $element;
                 element.$attrs = $attrs;
