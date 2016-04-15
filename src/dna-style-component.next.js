@@ -70,8 +70,9 @@ export class DNAStyleComponent extends DNAComponent {
     createdCallback() {
         super.createdCallback();
         // Add scope style class
-        if (this.is) {
-            this.classList.add(this.is);
+        let is = this.is || this.getAttribute('is') || this.tagName.toLowerCase();
+        if (is) {
+            this.classList.add(is);
         }
     }
 }
