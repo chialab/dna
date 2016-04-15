@@ -44,13 +44,14 @@ export class DNAEventsComponent extends DNAComponent {
         if (events) {
             let delegate = new Delegate(this);
             for (let k in events) {
-                if (Object.hasOwnProperty.call(events, k)) {
+                if (events.hasOwnProperty(k)) {
                     let callback = (typeof events[k] === 'string') ?
                         this[events[k]] :
                         events[k];
                     if (callback && typeof callback === 'function') {
-                        let evName = k.split(' ').shift();
-                        let selector = k.split(' ').slice(1).join(' ');
+                        let rule = k.split(' ');
+                        let evName = rule.shift();
+                        let selector = rule.join(' ');
                         let self = this;
                         if (selector) {
                             delegate.on(evName, selector, function(ev) {

@@ -69,7 +69,7 @@ function iterateBehaviors(ctx, behavior) {
         let callbacks = componentCallbacks;
         let keys = Object.getOwnPropertyNames(behavior);
         for (let k in keys) {
-            if (Object.hasOwnProperty.call(keys, k)) {
+            if (keys.hasOwnProperty(k)) {
                 let key = keys[k];
                 if (!(key in DNAComponent)) {
                     ctx[key] = behavior[key];
@@ -87,7 +87,7 @@ function iterateBehaviors(ctx, behavior) {
         if (behavior.prototype) {
             keys = Object.getOwnPropertyNames(behavior.prototype);
             for (let k in keys) {
-                if (Object.hasOwnProperty.call(keys, k)) {
+                if (keys.hasOwnProperty(k)) {
                     let key = keys[k];
                     if (callbacks.indexOf(key) !== -1) {
                         let callbackKey = getCallbackKey(key);

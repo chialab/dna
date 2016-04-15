@@ -47,7 +47,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     static onRegister() {
         let attributesToWatch = this.attributes || [];
-        this.normalizedAttributes = attributesToWatch.map((attr) => {
+        this.__normalizedAttributes = attributesToWatch.map((attr) => {
             let camelAttr = DNAHelper.dashToCamel(attr);
             let descriptor = DNAHelper.getDescriptor(this.prototype, camelAttr) || {};
             Object.defineProperty(this.prototype, camelAttr, {
@@ -71,7 +71,7 @@ export class DNAAttributesComponent extends DNAComponent {
             let attr = attributes[i];
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
-        let ctrAttributes = this.constructor.normalizedAttributes || [];
+        let ctrAttributes = this.constructor.__normalizedAttributes || [];
         ctrAttributes.forEach((attr) => {
             setValue(this, DNAHelper.camelToDash(attr), this[attr]);
         });
@@ -85,10 +85,11 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let cl = this.constructor;
-        if (cl && cl.normalizedAttributes && Array.isArray(cl.normalizedAttributes)) {
+        let ctr = this.constructor;
+        let attrs = ctr && ctr.__normalizedAttributes;
+        if (attrs && Array.isArray(attrs)) {
             let camelAttr = DNAHelper.dashToCamel(attr);
-            if (cl.normalizedAttributes.indexOf(camelAttr) !== -1) {
+            if (attrs.indexOf(camelAttr) !== -1) {
                 if (newVal === '') {
                     newVal = true;
                 }
