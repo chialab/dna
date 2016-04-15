@@ -1,1 +1,2 @@
-test/*.spec.js
+/node_modules
+/test
