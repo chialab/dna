@@ -1,4 +1,5 @@
 import { DNAComponent } from './dna-component.next.js';
+import { DNAHelper } from './dna-helper.next.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.
@@ -46,6 +47,24 @@ function triggerCallbacks(ctx, callbackKey, args) {
 }
 
 /**
+ * Check if a key is already defined in a prototype.
+ * @private
+ * @param {string} key The key to search.
+ * @param {Object} proto Function prototype.
+ * @return {boolean}
+ */
+function hasDefinition(key, proto) {
+    while (proto) {
+        let desc = DNAHelper.getDescriptor(proto, key);
+        if (desc) {
+            return true;
+        }
+        proto = proto.prototype;
+    }
+    return false;
+}
+
+/**
  * Iterate and attach behaviors to the class.
  * @private
  * @param {Array} behavior A list of classes.
@@ -71,14 +90,11 @@ function iterateBehaviors(ctx, behavior) {
         for (let k in keys) {
             if (keys.hasOwnProperty(k)) {
                 let key = keys[k];
-                if (!(key in DNAComponent)) {
-                    ctx[key] = behavior[key];
-                }
                 if (callbacks.indexOf(key) !== -1) {
                     let callbackKey = getCallbackKey(key);
                     ctx[callbackKey] = ctx[callbackKey] || [];
                     ctx[callbackKey].push(behavior[key]);
-                } else if (!(key in DNAComponent)) {
+                } else if (!(key in ctx)) {
                     ctx[key] = behavior[key];
                 }
             }
@@ -93,7 +109,7 @@ function iterateBehaviors(ctx, behavior) {
                         let callbackKey = getCallbackKey(key);
                         ctx[callbackKey] = ctx[callbackKey] || [];
                         ctx[callbackKey].push(behavior.prototype[key]);
-                    } else if (!(key in DNAComponent.prototype)) {
+                    } else if (!hasDefinition(key, ctx.prototype)) {
                         ctx.prototype[key] = behavior.prototype[key];
                     }
                 }
