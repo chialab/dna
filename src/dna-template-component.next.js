@@ -37,13 +37,28 @@ function attributesToProp(node) {
     return res;
 }
 
-function nodeToVDOM(node) {
+function nodeToVDOM(node, parentOptions) {
     if (node.nodeType === Node.TEXT_NODE) {
         return new VDOM.VText(node.textContent);
     }
-    return new VDOM.VNode(node.tagName, {
-        attributes: attributesToProp(node),
-    }, Array.prototype.map.call(node.childNodes || [], nodeToVDOM));
+    let options = {};
+    for (let k in parentOptions) {
+        if (parentOptions.hasOwnProperty(k)) {
+            options[k] = parentOptions[k];
+        }
+    }
+    if (node.tagName.toLowerCase() === 'svg') {
+        options.namespace = 'http://www.w3.org/2000/svg';
+    }
+    return new VDOM.VNode(
+        node.tagName,
+        {
+            attributes: attributesToProp(node),
+        },
+        Array.prototype.map.call(node.childNodes || [], (n) => nodeToVDOM(n, options)),
+        undefined,
+        options.namespace
+    );
 }
 
 /**
@@ -80,7 +95,7 @@ export class DNATemplateComponent extends DNAComponent {
     static onRegister() {
         // Create render function
         let ctr = this;
-        if (this.template) {
+        if (this.template && typeof ctr.prototype.render !== 'function') {
             ctr.prototype.render = ((template) => {
                 if (typeof template === 'function') {
                     return function() {
