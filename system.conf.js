@@ -7,6 +7,9 @@
             'node_modules/virtual-dom/dist/virtual-dom.js': {
                 format: 'global',
             },
+            'src/plugins/*': {
+                format: 'esm',
+            },
         },
         packages: {
             'node_modules/dna-polyfills': {

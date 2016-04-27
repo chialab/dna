@@ -1,4 +1,5 @@
 import { digest, create as _create } from '../dna-helper.next.js';
+import 'dna/polyfills/src/extra/custom-elements.js';
 
 export * from '../dna.next.js';
 

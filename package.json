@@ -1,13 +1,12 @@
 {
   "name": "dna-core",
-  "version": "1.0.4",
+  "version": "1.1.0-beta1",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://chialab.io)",
   "license": "MIT",
   "main": "src/dna.next.js",
   "scripts": {
     "build": "node ./build/build.js",
-    "nbuild": "./node_modules/rollup/bin/rollup -c",
     "doc": "node ./build/doc.js",
     "test": "node ./node_modules/es6-workflow/scripts/test.js"
   },
@@ -20,7 +19,6 @@
     "karma-cordova-launcher": "0.0.9",
     "karma-ie-launcher": "^0.2.0",
     "karma-safari-launcher": "^0.1.1",
-    "uglify-js": "^2.6.2"
   },
   "dependencies": {
     "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
