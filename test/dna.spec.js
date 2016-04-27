@@ -1,4 +1,4 @@
-import { create, extend, register } from '../src/dna-library.next.js';
+import { create, extend, register } from '../src/plugins/dna.webcomponents.js';
 import { DNABaseComponent } from '../src/dna-base-component.next.js';
 
 /* globals describe, before, it, assert */

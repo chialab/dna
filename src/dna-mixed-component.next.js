@@ -1,5 +1,5 @@
 import { DNAComponent } from './dna-component.next.js';
-import { DNAHelper } from './dna-helper.next.js';
+import { getDescriptor } from './dna-helper.next.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.
@@ -55,7 +55,7 @@ function triggerCallbacks(ctx, callbackKey, args) {
  */
 function hasDefinition(key, proto) {
     while (proto) {
-        let desc = DNAHelper.getDescriptor(proto, key);
+        let desc = getDescriptor(proto, key);
         if (desc) {
             return true;
         }

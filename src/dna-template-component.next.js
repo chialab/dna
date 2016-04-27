@@ -1,6 +1,6 @@
-import { DNAConfig } from './dna-config.next.js';
+import * as Config from './dna-config.next.js';
 import { DNAComponent } from './dna-component.next.js';
-import { DNAHelper } from './dna-helper.next.js';
+import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.next.js';
 import VDOM from './libs/virtual-dom.next.js';
 
 function wrapPrototype(main, currentProto, handled = []) {
@@ -13,8 +13,8 @@ function wrapPrototype(main, currentProto, handled = []) {
             if (descriptor.configurable !== false) {
                 Object.defineProperty(main, prop, {
                     configurable: true,
-                    get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                    set: DNAHelper.wrapDescriptorSet(prop, descriptor, function() {
+                    get: wrapDescriptorGet(prop, descriptor),
+                    set: wrapDescriptorSet(prop, descriptor, function() {
                         if (this.templateReady) {
                             this.updateViewContent();
                         }
@@ -114,11 +114,17 @@ export class DNATemplateComponent extends DNAComponent {
                 }
                 return '';
             })(ctr.template);
-            if (DNAConfig.autoUpdateView) {
+            if (ctr.autoUpdateView) {
                 let proto = this.prototype || Object.getPrototypeOf(this);
                 wrapPrototype(proto, proto);
             }
         }
+    }
+    /**
+     * Default `autoUpdateView` conf.
+     */
+    static autoUpdateView() {
+        return Config.autoUpdateView;
     }
     /**
      * Fires when an instance of the element is created.

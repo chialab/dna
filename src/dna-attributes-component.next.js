@@ -1,5 +1,11 @@
 import { DNAComponent } from './dna-component.next.js';
-import { DNAHelper } from './dna-helper.next.js';
+import {
+    dashToCamel,
+    camelToDash,
+    getDescriptor,
+    wrapDescriptorGet,
+    wrapDescriptorSet,
+} from './dna-helper.next.js';
 
 function setValue(context, attr, value) {
     let currentAttrValue = context.getAttribute(attr);
@@ -48,13 +54,13 @@ export class DNAAttributesComponent extends DNAComponent {
     static onRegister() {
         let attributesToWatch = this.attributes || [];
         this.__normalizedAttributes = attributesToWatch.map((attr) => {
-            let camelAttr = DNAHelper.dashToCamel(attr);
-            let descriptor = DNAHelper.getDescriptor(this.prototype, camelAttr) || {};
+            let camelAttr = dashToCamel(attr);
+            let descriptor = getDescriptor(this.prototype, camelAttr) || {};
             Object.defineProperty(this.prototype, camelAttr, {
                 configurable: true,
-                get: DNAHelper.wrapDescriptorGet(camelAttr, descriptor),
-                set: DNAHelper.wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
-                    let dashed = DNAHelper.camelToDash(prop);
+                get: wrapDescriptorGet(camelAttr, descriptor),
+                set: wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
+                    let dashed = camelToDash(prop);
                     setValue(this, dashed, res);
                 }),
             });
@@ -73,7 +79,7 @@ export class DNAAttributesComponent extends DNAComponent {
         }
         let ctrAttributes = this.constructor.__normalizedAttributes || [];
         ctrAttributes.forEach((attr) => {
-            setValue(this, DNAHelper.camelToDash(attr), this[attr]);
+            setValue(this, camelToDash(attr), this[attr]);
         });
     }
     /**
@@ -88,7 +94,7 @@ export class DNAAttributesComponent extends DNAComponent {
         let ctr = this.constructor;
         let attrs = ctr && ctr.__normalizedAttributes;
         if (attrs && Array.isArray(attrs)) {
-            let camelAttr = DNAHelper.dashToCamel(attr);
+            let camelAttr = dashToCamel(attr);
             if (attrs.indexOf(camelAttr) !== -1) {
                 if (newVal === '') {
                     newVal = true;

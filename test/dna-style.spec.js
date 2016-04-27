@@ -1,4 +1,4 @@
-import { DNAHelper } from '../src/dna-helper.next.js';
+import { register } from '../src/plugins/dna.webcomponents.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './dna-style.next.js';
 
 document.body.innerHTML += `
@@ -7,15 +7,15 @@ document.body.innerHTML += `
     <test3-style-component></test3-style-component>
 `;
 
-const Test1 = DNAHelper.register('test1-style-component', {
+const Test1 = register('test1-style-component', {
     prototype: TestComponent1,
 });
 
-const Test2 = DNAHelper.register('test2-style-component', {
+const Test2 = register('test2-style-component', {
     prototype: TestComponent2,
 });
 
-const Test3 = DNAHelper.register('test3-style-component', {
+const Test3 = register('test3-style-component', {
     prototype: TestComponent3,
 });
 

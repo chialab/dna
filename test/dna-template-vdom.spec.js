@@ -1,5 +1,5 @@
 import { DNAConfig as Config } from '../src/dna-config.next.js';
-import { DNAHelper } from '../src/dna-helper.next.js';
+import { register } from '../src/plugins/dna.webcomponents.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -11,27 +11,27 @@ import {
 
 Config.useVirtualDOM = true;
 
-const Test1 = DNAHelper.register('test1-vdom-template-component', {
+const Test1 = register('test1-vdom-template-component', {
     prototype: TestComponent1,
 });
 
-const Test2 = DNAHelper.register('test2-vdom-template-component', {
+const Test2 = register('test2-vdom-template-component', {
     prototype: TestComponent2,
 });
 
-const Test3 = DNAHelper.register('test3-vdom-template-component', {
+const Test3 = register('test3-vdom-template-component', {
     prototype: TestComponent3,
 });
 
-const Test4 = DNAHelper.register('test4-vdom-template-component', {
+const Test4 = register('test4-vdom-template-component', {
     prototype: TestComponent4,
 });
 
-const Test5 = DNAHelper.register('test5-vdom-template-component', {
+const Test5 = register('test5-vdom-template-component', {
     prototype: TestComponent5,
 });
 
-const Test6 = DNAHelper.register('test6-vdom-template-component', {
+const Test6 = register('test6-vdom-template-component', {
     prototype: TestComponent6,
 });
 

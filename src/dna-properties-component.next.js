@@ -1,5 +1,10 @@
 import { DNAComponent } from './dna-component.next.js';
-import { DNAHelper } from './dna-helper.next.js';
+import {
+    dashToCamel,
+    getDescriptor,
+    wrapDescriptorGet,
+    wrapDescriptorSet,
+} from './dna-helper.next.js';
 
 /**
  * Simple Custom Component for properties initialization via attributes.
@@ -34,11 +39,11 @@ export class DNAPropertiesComponent extends DNAComponent {
     static onRegister() {
         let propertiesToWatch = this.properties || [];
         propertiesToWatch.forEach((prop) => {
-            let descriptor = DNAHelper.getDescriptor(this.prototype, prop) || {};
+            let descriptor = getDescriptor(this.prototype, prop) || {};
             Object.defineProperty(this.prototype, prop, {
                 configurable: true,
-                get: DNAHelper.wrapDescriptorGet(prop, descriptor),
-                set: DNAHelper.wrapDescriptorSet(prop, descriptor),
+                get: wrapDescriptorGet(prop, descriptor),
+                set: wrapDescriptorSet(prop, descriptor),
             });
         });
     }
@@ -51,7 +56,7 @@ export class DNAPropertiesComponent extends DNAComponent {
         let properties = this.constructor.properties || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
-            let key = DNAHelper.dashToCamel(attr.name);
+            let key = dashToCamel(attr.name);
             if (properties.indexOf(key) !== -1) {
                 let value = attr.value;
                 this.removeAttribute(attr.name);

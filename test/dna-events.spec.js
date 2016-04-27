@@ -1,7 +1,7 @@
-import { DNAHelper } from '../src/dna-helper.next.js';
+import { register } from '../src/plugins/dna.webcomponents.js';
 import { TestComponent } from './dna-events.next.js';
 
-const Test = DNAHelper.register('test-events-component', {
+const Test = register('test-events-component', {
     prototype: TestComponent,
 });
 
