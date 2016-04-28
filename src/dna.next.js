@@ -10,6 +10,7 @@ import 'dna/polyfills/src/array/from.js';
 import 'dna/polyfills/src/array/is-array.js';
 import 'dna/polyfills/src/dom/class-list.js';
 import 'dna/polyfills/src/object/set-prototype-of.js';
+import 'dna/polyfills/src/function/name.js';
 
 import * as config from './dna-config.next.js';
 
