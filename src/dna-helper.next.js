@@ -103,32 +103,13 @@ function bindFN(protoFn, superFn) {
  * @return {String} The tag name for the Custom Element.
  */
 export function classToElement(fn) {
-    let name = fn.name || (function() {
-        let match = fn.toString().match(/^function\s*([^\s(]+)/);
-        if (match) {
-            return match[1];
-        }
-        return undefined;
-    }());
-    if (!name) {
-        return undefined;
+    let name;
+    if (fn.name) {
+        name = fn.name
+            .replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
+            .replace(/^\-/, '');
     }
-    return name
-        .replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
-        .replace(/^\-/, '');
-}
-/**
- * Convert a HTML tag into a Class name.
- * @param {Class} fn Grab the class name from this tag.
- * @return {String} The class name for the Custom Element.
- */
-export function elementToClass(tag) {
-    return tag
-        .toLowerCase()
-        .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match) =>
-            match.toUpperCase()
-        )
-        .replace(/[\-|\_]/g, '');
+    return name;
 }
 /**
  * Get an element's property descriptor.
@@ -234,20 +215,31 @@ export function extend(superScope, subScope) {
 /**
  * Normalize the `register` method arguments.
  * @param {Function|String} fn The definition or the tag name of the Custom Element.
- * @param {Object} options A set of options for the registration of the Custom Element.
+ * @param {Object|Function} options A set of options or the Component class
+                                    for the registration of the Custom Element.
  * @return {Object} A descriptor of the component with `tagName`, `config` and `scope` keys.
  */
 export function digest(fn, options = {}) {
-    let scope = fn;
-    let config = options;
+    let scope;
+    let config = {};
     let tagName;
     if (typeof fn === 'string') {
         tagName = fn;
-        if (typeof config === 'function') {
-            scope = config;
+        if (typeof options === 'function') {
+            scope = options;
             config = {};
-        } else if (typeof config.prototype !== 'undefined') {
-            scope = config.prototype;
+        } else {
+            if (typeof options === 'object') {
+                config = options;
+            }
+            if (typeof config.prototype !== 'undefined') {
+                scope = config.prototype;
+            }
+        }
+    } else {
+        scope = fn;
+        if (typeof options === 'object') {
+            config = options;
         }
     }
     if (typeof scope === 'function') {
@@ -261,14 +253,16 @@ export function digest(fn, options = {}) {
         if (!config.extends && typeof scope.extends === 'string') {
             config.extends = scope.extends;
         }
-    } else {
+    } else if (typeof scope === 'object') {
         config.prototype = scope;
         scope = function(...args) {
             config.prototype.constructor.apply(this, args);
         };
         scope.prototype = config.prototype;
     }
-    config.prototype = Object.create(config.prototype);
+    if (config.prototype) {
+        config.prototype = Object.create(config.prototype);
+    }
     return {
         tagName,
         config,
@@ -277,7 +271,7 @@ export function digest(fn, options = {}) {
 }
 /**
  * Trigger `onRegister` callbacks.
- * @param {Function|String} fn The definition or the tag name of the Custom Element.
+ * @param {Function|String} tagName The definition or the tag name of the Custom Element.
  * @param {Object} options A set of options for the registration of the Custom Element.
  * @return {Function} The Component constructor.
  */
@@ -292,16 +286,19 @@ export function register(fn, options = {}) {
 }
 /**
  * Create and register a component.
- * @param {string} tagName The tag to use for the custom element. (required)
- * @param {object} config A configuration object. (`prototype` key is required)
+ * @param {string} fn The tag to use for the custom element. (required)
+ * @param {object} options A configuration object. (`prototype` key is required)
  * @param {function} registerFn The component register function (optional)
  * @return {function} The Component constructor.
  */
-export function create(tagName, config = {}, registerFn = register) {
+export function create(fn, options = {}, registerFn = register) {
+    let pre = digest(fn, options);
+    let tagName = pre.tagName;
+    let config = pre.config;
+    let scope = pre.scope;
     if (typeof tagName !== 'string') {
         throw new Error('Missing or bad typed `tagName` property');
     }
-    let scope = config.prototype;
     if (typeof scope === 'undefined') {
         throw new Error('Missing prototype');
     }
