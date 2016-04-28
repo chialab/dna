@@ -30,6 +30,12 @@ export function register(fn, options = {}) {
     return res;
 }
 
+/**
+ * Create and register a Custom Element.
+ * @param {string} tagName The tag to use for the custom element. (required)
+ * @param {object} config A configuration object. (`prototype` key is required)
+ * @return {function} The Component constructor.
+ */
 export function create(fn, options = {}) {
     return _create(fn, options, register);
 }
