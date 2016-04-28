@@ -1,5 +1,5 @@
-import { DNAConfig as Config } from '../src/dna-config.next.js';
-import { register } from '../src/plugins/dna.webcomponents.js';
+import * as Config from '../src/dna-config.next.js';
+import { register } from '../src/plugins/dna.vdom-webcomponents.js';
 import {
     TestComponent1,
     TestComponent2,
