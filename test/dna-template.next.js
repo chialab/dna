@@ -55,3 +55,18 @@ export class TestComponent6 extends TestComponent {
         return 4;
     }
 }
+
+export class TestComponent7 extends TestComponent {
+    static get properties() {
+        return ['radius'];
+    }
+    static get template() {
+        return function() {
+            return `
+                <svg>
+                    <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" />
+                </svg>
+            `;
+        };
+    }
+}

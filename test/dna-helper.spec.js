@@ -120,20 +120,6 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > elementToClass', () => {
-        it('should transform simple tag element to camel case function', () => {
-            assert.equal(DNAHelper.elementToClass('simple'), 'Simple');
-            assert.equal(DNAHelper.elementToClass('Simple'), 'Simple');
-            assert.equal(DNAHelper.elementToClass('SIMPLE'), 'Simple');
-        });
-
-        it('should transform complex tag element to camel case function', () => {
-            assert.equal(DNAHelper.elementToClass('simple-fn'), 'SimpleFn');
-            assert.equal(DNAHelper.elementToClass('SIMPLE-fn'), 'SimpleFn');
-            assert.equal(DNAHelper.elementToClass('SIMPLE-FN'), 'SimpleFn');
-        });
-    });
-
     describe('Unit: DNAHelper > camelToDash', () => {
         it('should transform transform a camel case string to dashed case', () => {
             assert.equal(DNAHelper.camelToDash('simple'), 'simple');

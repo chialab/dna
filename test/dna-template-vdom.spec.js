@@ -7,6 +7,7 @@ import {
     TestComponent4,
     TestComponent5,
     TestComponent6,
+    TestComponent7,
 } from './dna-template.next.js';
 
 Config.useVirtualDOM = true;
@@ -35,6 +36,10 @@ const Test6 = register('test6-vdom-template-component', {
     prototype: TestComponent6,
 });
 
+const Test7 = register('test7-vdom-template-component', {
+    prototype: TestComponent7,
+});
+
 const hasTemplate = (typeof document.importNode === 'function' &&
     typeof HTMLTemplateElement !== 'undefined');
 
@@ -47,7 +52,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
 
     it('should handle `template` getter property as function with interpolation', () => {
         let elem = new Test1();
-        // document.body.appendChild(elem);
+        document.body.appendChild(elem);
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
@@ -88,5 +93,15 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
         let elem = new Test6();
         document.body.appendChild(elem);
         assert.equal(elem.innerHTML, '');
+    });
+
+    it('should handle templates with <svg>', () => {
+        let elem = new Test7();
+        document.body.appendChild(elem);
+        elem.radius = 40;
+        let svg = elem.firstElementChild;
+        let circle = svg.querySelector('circle');
+        assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
+        assert.equal(circle.getAttribute('r'), '40');
     });
 });
