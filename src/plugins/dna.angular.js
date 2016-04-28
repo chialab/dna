@@ -1,4 +1,4 @@
-import { digest, create as _create } from '../dna-helper.next.js';
+import { digest, create as _create, dashToCamel } from '../dna-helper.next.js';
 
 export * from '../dna.next.js';
 
@@ -30,8 +30,8 @@ export function register(fn, options = {}) {
         '$scope', '$element', '$attrs',
         function($scope, $element, $attrs) {
             let element = $element[0];
-            Object.setPrototypeOf(element, descriptor.prototype);
-            element.is = config.prototype.is;
+            Object.setPrototypeOf(element, scope.prototype);
+            element.is = scope.prototype.is;
             element.$scope = $scope;
             element.$element = $element;
             element.$attrs = $attrs;
@@ -40,15 +40,15 @@ export function register(fn, options = {}) {
             $scope.$on('$destroy', () => {
                 element.detachedCallback();
             });
-            if (typeof descriptor.attributes !== 'undefined' &&
-                Array.isArray(descriptor.attributes)) {
-                descriptor.attributes.forEach((attrName) => {
+            if (typeof scope.attributes !== 'undefined' &&
+                Array.isArray(scope.attributes)) {
+                scope.attributes.forEach((attrName) => {
                     bindAttribute(element, $attrs, attrName);
                 });
             }
         },
     ];
-    return module.directive(descriptor);
+    return module.directive(dashToCamel(tagName), () => ngDescriptor);
 }
 
 export function create(fn, options = {}) {
