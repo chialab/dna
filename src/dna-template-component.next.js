@@ -148,7 +148,7 @@ export class DNATemplateComponent extends DNAComponent {
                 html = box.innerHTML;
             }
             html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
-            if (DNAConfig.useVirtualDOM) {
+            if (Config.useVirtualDOM) {
                 let tmp = document.createElement('div');
                 tmp.innerHTML = html;
                 let tree = nodeToVDOM(tmp);
