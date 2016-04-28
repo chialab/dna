@@ -11,7 +11,6 @@ let files = [
     'dna-config.next.js',
     'dna-events-component.next.js',
     'dna-helper.next.js',
-    'dna-library.next.js',
     'dna-mixed-component.next.js',
     'dna-properties-component.next.js',
     'dna-style-component.next.js',
