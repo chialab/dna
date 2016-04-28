@@ -15,7 +15,7 @@ packageJSON.build = {
 };
 
 function build(file) {
-    let base = path.basename(file);
+    let base = path.basename(file).replace('.next.js', '.js');
     packageJSON.build.main = file;
     packageJSON.build.bundleName = base;
     return myBuilder.run(packageJSON).then(() => {
@@ -29,9 +29,11 @@ Promise.all([
     'src/dna.next.js',
     'src/plugins/dna.angular.js',
     'src/plugins/dna.webcomponents.js',
+    'src/plugins/dna.vdom-webcomponents.js',
 ].map(build)).then(() => {
     // eslint-disable-next-line
     console.log('DNA generated!');
 }, (err) => {
+    // eslint-disable-next-line
     console.error(err);
 });
