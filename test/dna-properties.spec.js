@@ -1,5 +1,5 @@
 import { register } from '../src/plugins/dna.webcomponents.js';
-import { TestComponent } from './dna-properties.js';
+import { TestComponent } from './components/dna-properties.js';
 
 register('test-properties-component', {
     prototype: TestComponent,

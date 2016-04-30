@@ -8,7 +8,7 @@ import {
     TestComponent5,
     TestComponent6,
     TestComponent7,
-} from './dna-template.js';
+} from './components/dna-template.js';
 
 Config.useVirtualDOM = true;
 

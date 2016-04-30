@@ -1,9 +1,19 @@
-import { DNAComponent } from '../src/dna-component.js';
+import { DNABaseComponent } from '../../src/dna-base-component.js';
 
-export class TestComponent extends DNAComponent {
+class BehaviorComponent extends DNABaseComponent {
+    createdCallback() {
+        this.behaviors = true;
+    }
+}
+
+export class TestComponent extends DNABaseComponent {
+    static get behaviors() {
+        return DNABaseComponent.behaviors.concat([BehaviorComponent]);
+    }
+
     static onRegister() {
         this.registered = true;
-        DNAComponent.onRegister();
+        DNABaseComponent.onRegister.call(this);
     }
 
     createdCallback() {
