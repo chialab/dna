@@ -1,5 +1,5 @@
 import { create, extend, register } from '../src/plugins/dna.webcomponents.js';
-import { DNABaseComponent } from '../src/dna-base-component.next.js';
+import { DNABaseComponent } from '../src/dna-base-component.js';
 
 /* globals describe, before, it, assert */
 describe('Unit: DNALibrary', () => {

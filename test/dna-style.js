@@ -1,4 +1,4 @@
-import { DNAStyleComponent } from '../src/dna-style-component.next.js';
+import { DNAStyleComponent } from '../src/dna-style-component.js';
 
 class TestComponent extends DNAStyleComponent {
     createdCallback() {

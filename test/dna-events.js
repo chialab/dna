@@ -1,4 +1,4 @@
-import { DNAEventsComponent } from '../src/dna-events-component.next.js';
+import { DNAEventsComponent } from '../src/dna-events-component.js';
 
 export class TestComponent extends DNAEventsComponent {
     static get events() {

@@ -15,7 +15,7 @@ packageJSON.build = {
 };
 
 function build(file) {
-    let base = path.basename(file).replace('.next.js', '.js');
+    let base = path.basename(file);
     packageJSON.build.main = file;
     packageJSON.build.bundleName = base;
     return myBuilder.run(packageJSON).then(() => {
@@ -26,7 +26,7 @@ function build(file) {
 }
 
 Promise.all([
-    'src/dna.next.js',
+    'src/dna.js',
     'src/plugins/dna.angular.js',
     'src/plugins/dna.webcomponents.js',
     'src/plugins/dna.vdom-webcomponents.js',

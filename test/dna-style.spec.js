@@ -1,5 +1,5 @@
 import { register } from '../src/plugins/dna.webcomponents.js';
-import { TestComponent1, TestComponent2, TestComponent3 } from './dna-style.next.js';
+import { TestComponent1, TestComponent2, TestComponent3 } from './dna-style.js';
 
 document.body.innerHTML += `
     <test1-style-component></test1-style-component>

@@ -1,6 +1,6 @@
-import { digest, create as _create, dashToCamel } from '../dna-helper.next.js';
+import { digest, create as _create, dashToCamel } from '../dna-helper.js';
 
-export * from '../dna.next.js';
+export * from '../dna.js';
 
 const module = window.angular.module('dna-components', []);
 

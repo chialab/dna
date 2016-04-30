@@ -1,4 +1,4 @@
-import { DNAAttributesComponent } from '../src/dna-attributes-component.next.js';
+import { DNAAttributesComponent } from '../src/dna-attributes-component.js';
 
 export class TestComponent extends DNAAttributesComponent {
     static get attributes() {

@@ -1,5 +1,5 @@
 import { register } from '../src/plugins/dna.webcomponents.js';
-import { TestComponent } from './dna-attributes.next.js';
+import { TestComponent } from './dna-attributes.js';
 
 const Test = register('test-attributes-component', {
     prototype: TestComponent,

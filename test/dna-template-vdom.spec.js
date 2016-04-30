@@ -1,4 +1,4 @@
-import * as Config from '../src/dna-config.next.js';
+import * as Config from '../src/dna-config.js';
 import { register } from '../src/plugins/dna.vdom-webcomponents.js';
 import {
     TestComponent1,
@@ -8,7 +8,7 @@ import {
     TestComponent5,
     TestComponent6,
     TestComponent7,
-} from './dna-template.next.js';
+} from './dna-template.js';
 
 Config.useVirtualDOM = true;
 

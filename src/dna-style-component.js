@@ -1,4 +1,4 @@
-import { DNAComponent } from './dna-component.next.js';
+import { DNAComponent } from './dna-component.js';
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
@@ -6,7 +6,7 @@ import { DNAComponent } from './dna-component.next.js';
  * @extends DNAComponent
  *
  * @example
- * my-component.next.js
+ * my-component.js
  * ```js
  * import { DNAStyleComponent } from 'dna/component';
  * export class MyComponent extends DNAStyleComponent {
@@ -15,10 +15,10 @@ import { DNAComponent } from './dna-component.next.js';
  *   }
  * }
  * ```
- * app.next.js
+ * app.js
  * ```js
  * import { Register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.next.js';
+ * import { MyComponent } from './components/my-component/my-component.js';
  * var MyElement = Register(MyComponent);
  * var element = new MyElement();
  * var p = document.createElement('p');

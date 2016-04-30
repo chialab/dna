@@ -1,7 +1,7 @@
-import { digest, create as _create } from '../dna-helper.next.js';
+import { digest, create as _create } from '../dna-helper.js';
 import 'dna/polyfills/src/extra/custom-elements.js';
 
-export * from '../dna.next.js';
+export * from '../dna.js';
 
 /**
  * Register a Custom Element.

@@ -1,10 +1,10 @@
-import { DNAComponent } from './dna-component.next.js';
+import { DNAComponent } from './dna-component.js';
 import {
     dashToCamel,
     getDescriptor,
     wrapDescriptorGet,
     wrapDescriptorSet,
-} from './dna-helper.next.js';
+} from './dna-helper.js';
 
 /**
  * Simple Custom Component for properties initialization via attributes.
@@ -12,7 +12,7 @@ import {
  * @extends DNAComponent
  *
  * @example
- * my-component.next.js
+ * my-component.js
  * ```js
  * import { DNAPropertiesComponent } from 'dna/component';
  * export class MyComponent extends DNAPropertiesComponent {
@@ -21,10 +21,10 @@ import {
  *   }
  * }
  * ```
- * app.next.js
+ * app.js
  * ```js
  * import { Register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.next.js';
+ * import { MyComponent } from './components/my-component/my-component.js';
  * var MyElement = Register('my-component', { prototype: MyComponent });
  * var temp = document.createElement('div');
  * temp.innerHTML = '<my-component name="Albert"></my-component>';

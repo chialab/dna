@@ -1,9 +1,9 @@
-import { DNAMixedComponent } from './dna-mixed-component.next.js';
-import { DNAStyleComponent } from './dna-style-component.next.js';
-import { DNAEventsComponent } from './dna-events-component.next.js';
-import { DNAPropertiesComponent } from './dna-properties-component.next.js';
-import { DNAAttributesComponent } from './dna-attributes-component.next.js';
-import { DNATemplateComponent } from './dna-template-component.next.js';
+import { DNAMixedComponent } from './dna-mixed-component.js';
+import { DNAStyleComponent } from './dna-style-component.js';
+import { DNAEventsComponent } from './dna-events-component.js';
+import { DNAPropertiesComponent } from './dna-properties-component.js';
+import { DNAAttributesComponent } from './dna-attributes-component.js';
+import { DNATemplateComponent } from './dna-template-component.js';
 
 /**
  * Simple Custom Component with some behaviors.

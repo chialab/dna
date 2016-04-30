@@ -1,4 +1,4 @@
-import { DNAHelper } from '../src/dna-helper.next.js';
+import { DNAHelper } from '../src/dna-helper.js';
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAHelper', () => {

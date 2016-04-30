@@ -1,5 +1,5 @@
-import { DNAComponent } from './dna-component.next.js';
-import { getDescriptor } from './dna-helper.next.js';
+import { DNAComponent } from './dna-component.js';
+import { getDescriptor } from './dna-helper.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.

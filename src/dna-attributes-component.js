@@ -1,11 +1,11 @@
-import { DNAComponent } from './dna-component.next.js';
+import { DNAComponent } from './dna-component.js';
 import {
     dashToCamel,
     camelToDash,
     getDescriptor,
     wrapDescriptorGet,
     wrapDescriptorSet,
-} from './dna-helper.next.js';
+} from './dna-helper.js';
 
 function setValue(context, attr, value) {
     let currentAttrValue = context.getAttribute(attr);
@@ -28,7 +28,7 @@ function setValue(context, attr, value) {
  * @extends DNAComponent
  *
  * @example
- * my-component.next.js
+ * my-component.js
  * ```js
  * import { DNAAttributesComponent } from 'dna/component';
  * export class MyComponent extends DNAAttributesComponent {
@@ -37,10 +37,10 @@ function setValue(context, attr, value) {
  *   }
  * }
  * ```
- * app.next.js
+ * app.js
  * ```js
  * import { Register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.next.js';
+ * import { MyComponent } from './components/my-component/my-component.js';
  * var MyElement = Register(MyComponent);
  * var element = new MyElement();
  * element.setAttribute('name', 'Newton');

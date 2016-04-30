@@ -12,16 +12,16 @@ import 'dna/polyfills/src/dom/class-list.js';
 import 'dna/polyfills/src/object/set-prototype-of.js';
 import 'dna/polyfills/src/function/name.js';
 
-import * as config from './dna-config.next.js';
+import * as config from './dna-config.js';
 
-export * from './dna-component.next.js';
-export * from './dna-properties-component.next.js';
-export * from './dna-attributes-component.next.js';
-export * from './dna-events-component.next.js';
-export * from './dna-mixed-component.next.js';
-export * from './dna-style-component.next.js';
-export * from './dna-template-component.next.js';
-export * from './dna-base-component.next.js';
-export { extend, create, register } from './dna-helper.next.js';
+export * from './dna-component.js';
+export * from './dna-properties-component.js';
+export * from './dna-attributes-component.js';
+export * from './dna-events-component.js';
+export * from './dna-mixed-component.js';
+export * from './dna-style-component.js';
+export * from './dna-template-component.js';
+export * from './dna-base-component.js';
+export { extend, create, register } from './dna-helper.js';
 export const Config = config;
 export const Version = this.__DNA__VERSION__ || 'dev';

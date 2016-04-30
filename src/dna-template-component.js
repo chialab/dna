@@ -1,7 +1,7 @@
-import * as Config from './dna-config.next.js';
-import { DNAComponent } from './dna-component.next.js';
-import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.next.js';
-import VDOM from './libs/virtual-dom.next.js';
+import * as Config from './dna-config.js';
+import { DNAComponent } from './dna-component.js';
+import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.js';
+import VDOM from './libs/virtual-dom.js';
 
 const TEMPLATE_CACHE = {};
 
@@ -69,22 +69,22 @@ function nodeToVDOM(node, parentOptions) {
  * @extends DNAComponent
  *
  * @example
- * my-component.next.js
+ * my-component.js
  * ```js
  * import { DNATemplateComponent } from 'dna/component';
  * export class MyComponent extends DNATemplateComponent {
  *   static get template() {
- *     return `<h1>${this.name}</h1>`
+ *     return `<h1>${this.name}</h1>`;
  *   }
  *   get name() {
- *     return 'Newton'
+ *     return 'Newton';
  *   }
  * }
  * ```
- * app.next.js
+ * app.js
  * ```js
  * import { Register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.next.js';
+ * import { MyComponent } from './components/my-component/my-component.js';
  * var MyElement = Register(MyComponent);
  * var element = new MyElement();
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"

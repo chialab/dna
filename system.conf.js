@@ -17,9 +17,6 @@
                     '*.js': {
                         format: 'global',
                     },
-                    '*.next.js': {
-                        format: 'esm',
-                    },
                 },
             },
         },

@@ -14,7 +14,7 @@ if (typeof HTMLElement !== 'function') {
  * @extends HTMLElement
  *
  * @example
- * my-component.next.js
+ * my-component.js
  * ```js
  * import { DNAComponent } from 'dna/component';
  * export class MyComponent extends DNAComponent {
@@ -23,10 +23,10 @@ if (typeof HTMLElement !== 'function') {
  *   }
  * }
  * ```
- * app.next.js
+ * app.js
  * ```js
  * import { Register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.next.js';
+ * import { MyComponent } from './components/my-component/my-component.js';
  * var MyElement = Register(MyComponent);
  * var element = new MyElement(); // logs "Created a MyComponent instance!!!"
  * ```

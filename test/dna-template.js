@@ -1,6 +1,6 @@
-import { DNAMixedComponent } from '../src/dna-mixed-component.next.js';
-import { DNAPropertiesComponent } from '../src/dna-properties-component.next.js';
-import { DNATemplateComponent } from '../src/dna-template-component.next.js';
+import { DNAMixedComponent } from '../src/dna-mixed-component.js';
+import { DNAPropertiesComponent } from '../src/dna-properties-component.js';
+import { DNATemplateComponent } from '../src/dna-template-component.js';
 
 class TestComponent extends DNAMixedComponent {
     static get behaviors() {

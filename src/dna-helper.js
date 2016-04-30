@@ -1,4 +1,4 @@
-import { DNABaseComponent } from './dna-base-component.next.js';
+import { DNABaseComponent } from './dna-base-component.js';
 
 function createFunctionClass(prototype) {
     let fn = function() {};
