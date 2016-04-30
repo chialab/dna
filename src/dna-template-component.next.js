@@ -3,6 +3,8 @@ import { DNAComponent } from './dna-component.next.js';
 import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.next.js';
 import VDOM from './libs/virtual-dom.next.js';
 
+const TEMPLATE_CACHE = {};
+
 function wrapPrototype(main, currentProto, handled = []) {
     Object.getOwnPropertyNames(currentProto).forEach((prop) => {
         let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
@@ -91,33 +93,15 @@ function nodeToVDOM(node, parentOptions) {
 export class DNATemplateComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
+     * @param {String} id The element definition name.
      */
-    static onRegister() {
-        // Create render function
-        let ctr = this;
-        if (this.template && typeof ctr.prototype.render !== 'function') {
-            ctr.prototype.render = ((template) => {
-                if (typeof template === 'function') {
-                    return function() {
-                        return template.call(this);
-                    };
-                } else if (typeof template === 'string') {
-                    return () => template;
-                } else if (template instanceof Node && template.tagName === 'TEMPLATE') {
-                    return () => {
-                        if (typeof document.importNode !== 'function' ||
-                            typeof HTMLTemplateElement === 'undefined') {
-                            throw new Error('Template element is not supported by the browser');
-                        }
-                        return document.importNode(template.content, true);
-                    };
-                }
-                return '';
-            })(ctr.template);
-            if (ctr.autoUpdateView) {
-                let proto = this.prototype || Object.getPrototypeOf(this);
-                wrapPrototype(proto, proto);
-            }
+    static onRegister(is) {
+        if (this.hasOwnProperty('template')) {
+            TEMPLATE_CACHE[is] = this.template;
+        }
+        if (this.autoUpdateView) {
+            let proto = this.prototype || Object.getPrototypeOf(this);
+            wrapPrototype(proto, proto);
         }
     }
     /**
@@ -140,28 +124,48 @@ export class DNATemplateComponent extends DNAComponent {
     updateViewContent() {
         // Render the template
         if (typeof this.render === 'function') {
-            let nodes = this.render();
-            let html = nodes;
-            if (nodes instanceof Node || nodes instanceof DocumentFragment) {
-                let box = document.createElement('div');
-                box.appendChild(nodes);
-                html = box.innerHTML;
-            }
-            html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
-            if (Config.useVirtualDOM) {
-                let tmp = document.createElement('div');
-                tmp.innerHTML = html;
-                let tree = nodeToVDOM(tmp);
-                if (!this._vtree) {
-                    this.innerHTML = html;
-                } else {
-                    let diff = VDOM.diff(this._vtree, tree);
-                    VDOM.patch(this, diff);
+            let html = this.render();
+            if (html !== null) {
+                if (html instanceof Node || html instanceof DocumentFragment) {
+                    let box = document.createElement('div');
+                    box.appendChild(html);
+                    html = box.innerHTML;
                 }
-                this._vtree = tree;
-            } else {
-                this.innerHTML = html;
+                html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
+                if (Config.useVirtualDOM) {
+                    let tmp = document.createElement('div');
+                    tmp.innerHTML = html;
+                    let tree = nodeToVDOM(tmp);
+                    if (!this._vtree) {
+                        this.innerHTML = html;
+                    } else {
+                        let diff = VDOM.diff(this._vtree, tree);
+                        VDOM.patch(this, diff);
+                    }
+                    this._vtree = tree;
+                } else {
+                    this.innerHTML = html;
+                }
             }
         }
+    }
+    /**
+     * Generate HTML or Nodes.
+     * @return {String|Node|DocumentFragment} The generated content.
+     */
+    render() {
+        let template = TEMPLATE_CACHE[this.is];
+        if (typeof template === 'function') {
+            return template.call(this);
+        } else if (typeof template === 'string') {
+            return template;
+        } else if (template instanceof Node && template.tagName === 'TEMPLATE') {
+            if (typeof document.importNode !== 'function' ||
+                typeof HTMLTemplateElement === 'undefined') {
+                throw new Error('Template element is not supported by the browser');
+            }
+            return document.importNode(template.content, true);
+        }
+        return null;
     }
 }
