@@ -1,4 +1,4 @@
-import Delegate from './libs/dom-delegate.js';
+import Delegate from 'dna/delegate';
 import { DNAComponent } from './dna-component.js';
 
 /**
