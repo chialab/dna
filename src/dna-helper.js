@@ -1,5 +1,14 @@
 import { DNABaseComponent } from './dna-base-component.js';
 
+export const EXCLUDE_ON_EXTEND = [
+    'name',
+    'length',
+    'prototype',
+    'arguments',
+    'caller',
+    'constructor',
+];
+
 function createFunctionClass(prototype) {
     let fn = function() {};
     fn.prototype = prototype;
@@ -7,7 +16,7 @@ function createFunctionClass(prototype) {
 }
 
 function defineProperties(target, props) {
-    let blacklistProps = ['arguments', 'caller'];
+    let blacklistProps = EXCLUDE_ON_EXTEND.slice(0);
     for (let i = 0; i < props.length; i++) {
         let descriptor = props[i];
         if (blacklistProps.indexOf(descriptor.key) === -1) {
@@ -51,7 +60,7 @@ function inherits(subClass, superClass) {
 
 function getMethods(prototype) {
     let res = [];
-    let added = ['name', 'length', 'prototype', 'arguments', 'caller'];
+    let added = EXCLUDE_ON_EXTEND.slice(0);
     function createProp(propKey) {
         if (added.indexOf(propKey) === -1) {
             let prop = {

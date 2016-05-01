@@ -1,5 +1,5 @@
 import { DNAComponent } from './dna-component.js';
-import { getDescriptor } from './dna-helper.js';
+import { EXCLUDE_ON_EXTEND, getDescriptor } from './dna-helper.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.
@@ -86,34 +86,46 @@ function iterateBehaviors(ctx, behavior) {
         }
         // iterate and attach static methods and priorities.
         let callbacks = componentCallbacks;
-        let keys = Object.getOwnPropertyNames(behavior);
-        for (let k in keys) {
-            if (keys.hasOwnProperty(k)) {
-                let key = keys[k];
+        let staticKeys = [];
+        let _behavior = behavior;
+        while (_behavior && _behavior !== DNAComponent) {
+            Object.getOwnPropertyNames(_behavior).forEach((key) => {
+                if (staticKeys.indexOf(key) === -1 && EXCLUDE_ON_EXTEND.indexOf(key) === -1) {
+                    staticKeys.push(key);
+                }
+            });
+            _behavior = Object.getPrototypeOf(_behavior);
+        }
+        staticKeys.forEach((key) => {
+            if (callbacks.indexOf(key) !== -1) {
+                let callbackKey = getCallbackKey(key);
+                ctx[callbackKey] = ctx[callbackKey] || [];
+                ctx[callbackKey].push(behavior[key]);
+            } else if (!(key in ctx)) {
+                ctx[key] = behavior[key];
+            }
+        });
+        // iterate and attach prototype methods and properties.
+        if (behavior.prototype) {
+            let protoKeys = [];
+            let _proto = behavior.prototype || Object.getPrototypeOf(behavior);
+            while (_proto && _proto !== DNAComponent.prototype) {
+                Object.getOwnPropertyNames(_proto).forEach((key) => {
+                    if (protoKeys.indexOf(key) === -1) {
+                        protoKeys.push(key);
+                    }
+                });
+                _proto = _proto.prototype || Object.getPrototypeOf(_proto);
+            }
+            protoKeys.forEach((key) => {
                 if (callbacks.indexOf(key) !== -1) {
                     let callbackKey = getCallbackKey(key);
                     ctx[callbackKey] = ctx[callbackKey] || [];
-                    ctx[callbackKey].push(behavior[key]);
-                } else if (!(key in ctx)) {
-                    ctx[key] = behavior[key];
+                    ctx[callbackKey].push(behavior.prototype[key]);
+                } else if (!hasDefinition(key, ctx.prototype)) {
+                    ctx.prototype[key] = behavior.prototype[key];
                 }
-            }
-        }
-        // iterate and attach prototype methods and properties.
-        if (behavior.prototype) {
-            keys = Object.getOwnPropertyNames(behavior.prototype);
-            for (let k in keys) {
-                if (keys.hasOwnProperty(k)) {
-                    let key = keys[k];
-                    if (callbacks.indexOf(key) !== -1) {
-                        let callbackKey = getCallbackKey(key);
-                        ctx[callbackKey] = ctx[callbackKey] || [];
-                        ctx[callbackKey].push(behavior.prototype[key]);
-                    } else if (!hasDefinition(key, ctx.prototype)) {
-                        ctx.prototype[key] = behavior.prototype[key];
-                    }
-                }
-            }
+            });
         }
         // add the callback to the attached list
         ctx.__attachedBehaviors.push(behavior);
