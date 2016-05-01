@@ -1,4 +1,4 @@
-import { register } from '../src/plugins/dna.vdom-webcomponents.js';
+import { register } from '../src/plugins/dna.vdom-elements.js';
 import {
     TestComponent1,
     TestComponent2,

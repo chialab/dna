@@ -297,21 +297,23 @@ export function register(fn, options = {}) {
  * Create and register a component.
  * @param {string} fn The tag to use for the custom element. (required)
  * @param {object} options A configuration object. (`prototype` key is required)
- * @param {function} registerFn The component register function (optional)
+ * @param {object} pluginOptions Some  generic replacements (optional)
  * @return {function} The Component constructor.
  */
-export function create(fn, options = {}, registerFn = register) {
+export function create(fn, options = {}, pluginOptions = {}) {
     let pre = digest(fn, options);
     let tagName = pre.tagName;
     let config = pre.config;
     let scope = pre.scope;
+    let registerFn = pluginOptions.register || register;
+    let baseComponent = pluginOptions.base || DNABaseComponent;
     if (typeof tagName !== 'string') {
         throw new Error('Missing or bad typed `tagName` property');
     }
     if (typeof scope === 'undefined') {
         throw new Error('Missing prototype');
     }
-    let newScope = extend(DNABaseComponent, scope);
+    let newScope = extend(baseComponent, scope);
     for (let k in newScope.prototype) {
         if (newScope.prototype.hasOwnProperty(k)) {
             let callbacks = [
@@ -323,7 +325,7 @@ export function create(fn, options = {}, registerFn = register) {
             if (callbacks.indexOf(k) !== -1) {
                 newScope.prototype[k] = bindFN(
                     newScope.prototype[k],
-                    DNABaseComponent.prototype[k]
+                    baseComponent.prototype[k]
                 );
             }
         }
@@ -336,7 +338,7 @@ export function create(fn, options = {}, registerFn = register) {
             if (callbacks.indexOf(k) !== -1) {
                 newScope[k] = bindFN(
                     newScope[k],
-                    DNABaseComponent[k]
+                    baseComponent[k]
                 );
             }
         }

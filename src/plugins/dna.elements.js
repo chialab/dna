@@ -37,5 +37,7 @@ export function register(fn, options = {}) {
  * @return {function} The Component constructor.
  */
 export function create(fn, options = {}) {
-    return _create(fn, options, register);
+    return _create(fn, options, {
+        register,
+    });
 }

@@ -1,4 +1,4 @@
-import { register } from '../src/plugins/dna.webcomponents.js';
+import { register } from '../src/plugins/dna.elements.js';
 import { TestComponent } from './components/dna-base.js';
 
 const Test = register('test-base-component', {

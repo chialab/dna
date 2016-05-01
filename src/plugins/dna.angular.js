@@ -52,5 +52,7 @@ export function register(fn, options = {}) {
 }
 
 export function create(fn, options = {}) {
-    return _create(fn, options, register);
+    return _create(fn, options, {
+        register,
+    });
 }

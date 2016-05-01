@@ -5,16 +5,16 @@ const path = require('path');
 const generator = require('../node_modules/es6-workflow/lib/gendoc.js').generate;
 
 let files = [
-    'dna-attributes-component.next.js',
-    'dna-base-component.next.js',
-    'dna-component.next.js',
-    'dna-config.next.js',
-    'dna-events-component.next.js',
-    'dna-helper.next.js',
-    'dna-mixed-component.next.js',
-    'dna-properties-component.next.js',
-    'dna-style-component.next.js',
-    'dna-template-component.next.js',
+    'dna-attributes-component.js',
+    'dna-base-component.js',
+    'dna-component.js',
+    'dna-config.js',
+    'dna-events-component.js',
+    'dna-helper.js',
+    'dna-mixed-component.js',
+    'dna-properties-component.js',
+    'dna-style-component.js',
+    'dna-template-component.js',
 ].map((f) => path.join(cwd, 'src', f));
 
 generator(files);

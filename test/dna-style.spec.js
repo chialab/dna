@@ -1,4 +1,4 @@
-import { register } from '../src/plugins/dna.webcomponents.js';
+import { register } from '../src/plugins/dna.elements.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './components/dna-style.js';
 
 document.body.innerHTML += `
