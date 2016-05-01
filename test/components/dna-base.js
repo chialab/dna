@@ -1,6 +1,7 @@
+import { DNAComponent } from '../../src/dna-component.js';
 import { DNABaseComponent } from '../../src/dna-base-component.js';
 
-class BehaviorComponent extends DNABaseComponent {
+class BehaviorComponent extends DNAComponent {
     createdCallback() {
         this.behaviors = true;
     }

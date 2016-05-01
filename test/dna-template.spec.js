@@ -1,4 +1,3 @@
-import * as Config from '../src/dna-config.js';
 import { register } from '../src/plugins/dna.webcomponents.js';
 import {
     TestComponent1,
@@ -9,8 +8,6 @@ import {
     TestComponent6,
     TestComponent7,
 } from './components/dna-template.js';
-
-Config.useVirtualDOM = false;
 
 const Test1 = register('test1-template-component', {
     prototype: TestComponent1,
@@ -45,11 +42,6 @@ const hasTemplate = (typeof document.importNode === 'function' &&
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
-    beforeEach((done) => {
-        Config.useVirtualDOM = false;
-        done();
-    });
-
     it('should handle `template` getter property as function with interpolation', () => {
         let elem = new Test1();
         document.body.appendChild(elem);

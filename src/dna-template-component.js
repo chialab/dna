@@ -1,7 +1,6 @@
 import * as Config from './dna-config.js';
 import { DNAComponent } from './dna-component.js';
 import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.js';
-import VDOM from './libs/virtual-dom.js';
 
 const TEMPLATE_CACHE = {};
 
@@ -29,38 +28,6 @@ function wrapPrototype(main, currentProto, handled = []) {
     if (nextProto && nextProto !== HTMLElement.prototype) {
         wrapPrototype(main, nextProto, handled);
     }
-}
-
-function attributesToProp(node) {
-    let res = {};
-    Array.prototype.forEach.call(node.attributes || [], (attr) => {
-        res[attr.name] = attr.value;
-    });
-    return res;
-}
-
-function nodeToVDOM(node, parentOptions) {
-    if (node.nodeType === Node.TEXT_NODE) {
-        return new VDOM.VText(node.textContent);
-    }
-    let options = {};
-    for (let k in parentOptions) {
-        if (parentOptions.hasOwnProperty(k)) {
-            options[k] = parentOptions[k];
-        }
-    }
-    if (node.tagName.toLowerCase() === 'svg') {
-        options.namespace = 'http://www.w3.org/2000/svg';
-    }
-    return new VDOM.VNode(
-        node.tagName,
-        {
-            attributes: attributesToProp(node),
-        },
-        Array.prototype.map.call(node.childNodes || [], (n) => nodeToVDOM(n, options)),
-        undefined,
-        options.namespace
-    );
 }
 
 /**
@@ -119,12 +86,12 @@ export class DNATemplateComponent extends DNAComponent {
         super.createdCallback();
     }
     /**
-     * Update Component child nodes.
+     * Generate view HTML content.
      */
-    updateViewContent() {
-        // Render the template
+    getViewContent() {
+        let html = null;
         if (typeof this.render === 'function') {
-            let html = this.render();
+            html = this.render();
             if (html !== null) {
                 if (html instanceof Node || html instanceof DocumentFragment) {
                     let box = document.createElement('div');
@@ -132,21 +99,18 @@ export class DNATemplateComponent extends DNAComponent {
                     html = box.innerHTML;
                 }
                 html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
-                if (Config.useVirtualDOM) {
-                    let tmp = document.createElement('div');
-                    tmp.innerHTML = html;
-                    let tree = nodeToVDOM(tmp);
-                    if (!this._vtree) {
-                        this.innerHTML = html;
-                    } else {
-                        let diff = VDOM.diff(this._vtree, tree);
-                        VDOM.patch(this, diff);
-                    }
-                    this._vtree = tree;
-                } else {
-                    this.innerHTML = html;
-                }
             }
+        }
+        return html;
+    }
+    /**
+     * Update Component child nodes.
+     */
+    updateViewContent() {
+        // Render the template
+        let html = this.getViewContent();
+        if (html !== null) {
+            this.innerHTML = html;
         }
     }
     /**
