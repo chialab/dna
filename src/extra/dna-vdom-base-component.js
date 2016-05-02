@@ -1,4 +1,8 @@
 import { DNABaseComponent } from '../dna-base-component.js';
+import { DNAStyleComponent } from '../dna-style-component.js';
+import { DNAEventsComponent } from '../dna-events-component.js';
+import { DNAPropertiesComponent } from '../dna-properties-component.js';
+import { DNAAttributesComponent } from '../dna-attributes-component.js';
 import { DNAVDomComponent } from './dna-vdom-component.js';
 
 /**
@@ -39,11 +43,12 @@ export class DNAVDomBaseComponent extends DNABaseComponent {
      * @type {Array}
      */
     static get behaviors() {
-        return DNABaseComponent.behaviors.map((behavior) => {
-            if (behavior.name === 'DNATemplateComponent') {
-                return DNAVDomComponent;
-            }
-            return behavior;
-        });
+        return [
+            DNAStyleComponent,
+            DNAEventsComponent,
+            DNAPropertiesComponent,
+            DNAAttributesComponent,
+            DNAVDomComponent,
+        ];
     }
 }
