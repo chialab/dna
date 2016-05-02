@@ -38,7 +38,7 @@ export function register(fn, options = {}) {
         function($scope, $element, $attrs) {
             let element = $element[0];
             Object.setPrototypeOf(element, scope.prototype);
-            element.is = scope.prototype.is;
+            element.is = tagName;
             element.$scope = $scope;
             element.$element = $element;
             element.$attrs = $attrs;
