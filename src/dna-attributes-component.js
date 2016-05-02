@@ -84,7 +84,6 @@ export class DNAAttributesComponent extends DNAComponent {
     }
     /**
      * On `attributeChanged` callback, sync attributes with properties.
-     * @private
      * @param {String} attrName The changed attribute name.
      * @param {*} oldVal The value of the attribute before the change.
      * @param {*} newVal The value of the attribute after the change.

@@ -1,6 +1,12 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
 
+/**
+ * Extract node's attributes.
+ * @private
+ * @param {Node} node The node to parse.
+ * @return {Object} A key => value object with node's attributes.
+ */
 function attributesToProp(node) {
     let res = {};
     Array.prototype.forEach.call(node.attributes || [], (attr) => {
@@ -9,6 +15,13 @@ function attributesToProp(node) {
     return res;
 }
 
+/**
+ * Convert a Node to a VDOM Node.
+ * @private
+ * @param {Node} node The node to convert.
+ * @param {Object} parentOptions The node's parent options (optional).
+ * @return {Object} A VDOM Node.
+ */
 function nodeToVDOM(node, parentOptions) {
     if (node.nodeType === Node.TEXT_NODE) {
         return new virtualDom.VText(node.textContent);
@@ -33,9 +46,37 @@ function nodeToVDOM(node, parentOptions) {
     );
 }
 
+/**
+ * Same as DNATemplateComponent, but with VDOM support.
+ * This component is available only including /dna\.vdom(\-?.*)\.js/ libraries.
+ * @class DNAVDomComponent
+ * @extends DNATemplateComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNAVDomComponent } from 'dna/component';
+ * export class MyComponent extends DNAVDomComponent {
+ *   static get template() {
+ *     return `<h1>${this.name}</h1>`;
+ *   }
+ *   get name() {
+ *     return 'Newton';
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { Register } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * var MyElement = Register(MyComponent);
+ * var element = new MyElement();
+ * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
+ * ```
+ */
 export class DNAVDomComponent extends DNATemplateComponent {
     /**
-     * Update Component child nodes.
+     * Update Component child nodes using VDOM trees.
      */
     updateViewContent() {
         // Render the template

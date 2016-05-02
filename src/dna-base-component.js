@@ -9,10 +9,35 @@ import { DNATemplateComponent } from './dna-template-component.js';
  * Simple Custom Component with some behaviors.
  * @class DNABaseComponent
  * @extends DNAMixedComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNABaseComponent } from 'dna/component';
+ * export class MyComponent extends DNABaseComponent {
+ *   get template() {
+ *     return `...`;
+ *   }
+ *   get style() {
+ *     return '...';
+ *   }
+ *   get attributes() {
+ *     return ['...', '...'];
+ *   }
+ *   get properties() {
+ *     return ['...', '...'];
+ *   }
+ *   get events() {
+ *     return {
+ *       '...': '...'
+ *     };
+ *   }
+ * }
  */
 export class DNABaseComponent extends DNAMixedComponent {
     /**
-     * A list of mixins.
+     * A list of mixins, including: DNAStyleComponent, DNAEventsComponent,
+     * DNAPropertiesComponent, DNAAttributesComponent and DNATemplateComponent.
      * @type {Array}
      */
     static get behaviors() {

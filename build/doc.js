@@ -15,6 +15,8 @@ let files = [
     'dna-properties-component.js',
     'dna-style-component.js',
     'dna-template-component.js',
+    'extra/dna-vdom-component.js',
+    'extra/dna-vdom-base-component.js',
 ].map((f) => path.join(cwd, 'src', f));
 
 generator(files);
