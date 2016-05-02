@@ -3,6 +3,8 @@ import { create as _create } from '../dna-helper.js';
 import { register as _register } from './dna.elements.js';
 
 export * from '../dna.js';
+export * from '../extra/dna-vdom-component.js';
+export { DNAVDomBaseComponent };
 
 export const register = _register;
 

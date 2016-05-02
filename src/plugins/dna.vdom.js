@@ -2,6 +2,8 @@ import { DNAVDomBaseComponent } from '../extra/dna-vdom-base-component.js';
 import { create as _create } from '../dna-helper.js';
 
 export * from '../dna.js';
+export * from '../extra/dna-vdom-component.js';
+export { DNAVDomBaseComponent };
 
 /**
  * Create and register a component using DNAVDomBaseComponent.
