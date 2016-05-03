@@ -7,13 +7,18 @@ BUILD_DIR="./dist"
 REPO_DIR="./deploy"
 DIST_DIR="${REPO_DIR}/lib"
 REPO_URL="gitlab.com:dna-components/dna-library.git"
+BRANCH="master"
+if [ $1 == "--beta" ]; then
+    BRANCH="beta"
+    TAG="${TAG}-beta"
+fi
 
 # build distribution scripts
 npm run build
 if [ -d "$BUILD_DIR" ]; then
     # clone distribution repo
     rm -rf $REPO_DIR
-    git clone $REPO_URL $REPO_DIR
+    git clone -b $BRANCH $REPO_URL $REPO_DIR
     # empty lib dir
     rm -rf $DIST_DIR
     # copy distribution files
@@ -25,10 +30,15 @@ if [ -d "$BUILD_DIR" ]; then
         sed "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json | diff -p bower.json /dev/stdin | patch
         git add .
         git commit -m "release: ${TAG}"
-        git tag -a ${TAG} -m "release: ${TAG}"
         git push
-        git push origin $TAG
-        npm publish
+        if [ $1 == "--beta" ]; then
+            git status
+            npm publish --tag beta
+        else
+            git tag -a ${TAG} -m "release: ${TAG}"
+            git push origin $TAG
+            npm publish
+        fi
         cd ..
         rm -rf $REPO_DIR
     fi
