@@ -291,7 +291,11 @@ export function register(fn, options = {}) {
     if (typeof scope.onRegister === 'function') {
         scope.onRegister.call(scope, tagName);
     }
-    return scope;
+    return function(element) {
+        Object.setPrototypeOf(element, scope.prototype);
+        element.is = tagName;
+        element.createdCallback();
+    };
 }
 /**
  * Create and register a component.
