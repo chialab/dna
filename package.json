@@ -15,14 +15,12 @@
     "url": "https://gitlab.com/dna-components/dna-components"
   },
   "devDependencies": {
+    "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
+    "dom-delegate": "^2.0.3",
     "es6-workflow": "latest",
     "karma-cordova-launcher": "0.0.9",
     "karma-ie-launcher": "^0.2.0",
-    "karma-safari-launcher": "^0.1.1"
-  },
-  "dependencies": {
-    "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
-    "dom-delegate": "^2.0.3",
+    "karma-safari-launcher": "^0.1.1",
     "virtual-dom": "^2.1.1"
   }
 }
