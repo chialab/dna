@@ -288,13 +288,16 @@ export function register(fn, options = {}) {
     let pre = digest(fn, options);
     let scope = pre.scope;
     let tagName = pre.tagName;
+    let config = pre.config;
     if (typeof scope.onRegister === 'function') {
         scope.onRegister.call(scope, tagName);
     }
     return function(element) {
+        element = element || document.createElement(config.extends ? config.extends : tagName);
         Object.setPrototypeOf(element, scope.prototype);
         element.is = tagName;
         element.createdCallback();
+        return element;
     };
 }
 /**
