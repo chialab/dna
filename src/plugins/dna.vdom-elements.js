@@ -2,10 +2,19 @@ import { DNAVDomBaseComponent } from '../extra/dna-vdom-base-component.js';
 import { create as _create } from '../dna-helper.js';
 import { register as _register } from './dna.elements.js';
 
+// export library
 export * from '../dna.js';
-export * from '../extra/dna-vdom-component.js';
-export { DNAVDomBaseComponent };
 
+// export extras
+export * from '../extra/dna-vdom-component.js';
+class DNAVDomElementsBaseComponent extends DNAVDomBaseComponent {
+    static get useVirtualDomHooks() {
+        return false;
+    }
+}
+export { DNAVDomBaseComponent, DNAVDomElementsBaseComponent };
+
+// override `register` and `create` methods
 export const register = _register;
 
 /**
@@ -16,7 +25,7 @@ export const register = _register;
  */
 export function create(fn, options = {}) {
     return _create(fn, options, {
-        base: DNAVDomBaseComponent,
+        base: DNAVDomElementsBaseComponent,
         register: _register,
     });
 }

@@ -1,4 +1,4 @@
-import { digest, create as _create } from '../dna-helper.js';
+import { digest, create as _create, registry } from '../dna-helper.js';
 import 'dna/polyfills/src/extra/custom-elements.js';
 
 export * from '../dna.js';
@@ -10,8 +10,8 @@ export * from '../dna.js';
  * @param {object} config A configuration object. (`prototype` key is required)
  * @return {function} The Component constructor.
  */
-export function register(fn, options = {}) {
-    let pre = digest(fn, options);
+export function register(...args) {
+    let pre = digest(...args);
     let scope = pre.scope;
     let config = pre.config;
     let tagName = pre.tagName;
@@ -27,6 +27,7 @@ export function register(fn, options = {}) {
     if (typeof scope === 'function') {
         res.prototype.constructor = scope;
     }
+    registry(tagName, res);
     return res;
 }
 

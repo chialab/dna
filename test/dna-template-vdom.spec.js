@@ -1,4 +1,4 @@
-import { register } from '../src/plugins/dna.vdom-elements.js';
+import { Config, register } from '../src/plugins/dna.vdom.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -7,6 +7,8 @@ import {
     TestComponent5,
     TestComponent6,
     TestComponent7,
+    TestComponent8,
+    TestPlaceholder,
 } from './components/dna-vdom.js';
 
 const Test1 = register('test1-vdom-template-component', {
@@ -37,12 +39,19 @@ const Test7 = register('test7-vdom-template-component', {
     prototype: TestComponent7,
 });
 
+const Test8 = register('test8-vdom-template-component', {
+    prototype: TestComponent8,
+});
+
+register('test-vdom-placeholder', {
+    prototype: TestPlaceholder,
+});
+
 const hasTemplate = (typeof document.importNode === 'function' &&
     typeof HTMLTemplateElement !== 'undefined');
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent with virtualDom', () => {
-
     it('should handle `template` getter property as function with interpolation', () => {
         let elem = new Test1();
         document.body.appendChild(elem);
@@ -96,5 +105,11 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');
+    });
+
+    it('should handle sub components', () => {
+        let elem = new Test8();
+        document.body.appendChild(elem);
+        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span><test-vdom-placeholder value="6"></test-vdom-placeholder>');
     });
 });

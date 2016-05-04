@@ -278,10 +278,26 @@ export function digest(fn, options = {}) {
         scope,
     };
 }
+
+/**
+ * A list of registered DNA components.
+ * @type {Object}.
+ */
+export const REGISTRY = {};
+
+/**
+ * Add an entry to the DNA registry.
+ * @param {String} tagName The tag name of the Component.
+ * @param {Function} constructor The Component constructor.
+ */
+export function registry(tagName, constructor) {
+    REGISTRY[tagName.toLowerCase()] = constructor;
+}
+
 /**
  * Trigger `onRegister` callbacks.
- * @param {Function|String} tagName The definition or the tag name of the Custom Element.
- * @param {Object} options A set of options for the registration of the Custom Element.
+ * @param {Function|String} tagName The definition or the tag name of the Component.
+ * @param {Object} options A set of options for the registration of the Component.
  * @return {Function} The Component constructor.
  */
 export function register(fn, options = {}) {
@@ -292,13 +308,15 @@ export function register(fn, options = {}) {
     if (typeof scope.onRegister === 'function') {
         scope.onRegister.call(scope, tagName);
     }
-    return function(element) {
+    let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
         Object.setPrototypeOf(element, scope.prototype);
         element.is = tagName;
         element.createdCallback();
         return element;
     };
+    registry(tagName, res);
+    return res;
 }
 /**
  * Create and register a component.
