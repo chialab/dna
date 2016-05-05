@@ -1,5 +1,28 @@
-import Delegate from 'dna/delegate';
 import { DNAComponent } from './dna-component.js';
+
+function matches(element, selector) {
+    let f = element.matches ||
+        element.webkitMatchesSelector ||
+        element.mozMatchesSelector ||
+        element.msMatchesSelector ||
+        function(s) {
+            return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
+        };
+    return f.call(element, selector);
+}
+
+function delegate(element, evName, selector, callback) {
+    element.addEventListener(evName, (event) => {
+        let target = event.target;
+        while (target && target !== element) {
+            if (matches(target, selector)) {
+                callback.call(element, event, target);
+                return;
+            }
+            target = target.parentNode;
+        }
+    });
+}
 
 /**
  * Simple Custom Component with events delegation,
@@ -42,7 +65,6 @@ export class DNAEventsComponent extends DNAComponent {
         // bind events
         let events = this.constructor.events;
         if (events) {
-            let delegate = new Delegate(this);
             for (let k in events) {
                 if (events.hasOwnProperty(k)) {
                     let callback = (typeof events[k] === 'string') ?
@@ -52,14 +74,13 @@ export class DNAEventsComponent extends DNAComponent {
                         let rule = k.split(' ');
                         let evName = rule.shift();
                         let selector = rule.join(' ');
-                        let self = this;
                         if (selector) {
-                            delegate.on(evName, selector, function(ev) {
-                                callback.call(self, ev, this);
+                            delegate(this, evName, selector, (ev, target) => {
+                                callback.call(this, ev, target);
                             });
                         } else {
-                            delegate.on(evName, function(ev) {
-                                callback.call(self, ev, this);
+                            this.addEventListener(evName, (ev) => {
+                                callback.call(this, ev, this);
                             });
                         }
                     }
