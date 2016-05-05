@@ -2,7 +2,7 @@
 
 set -e
 
-TAG=$(git describe --abbrev=0 --tags)
+TAG=$(node -p "require('./package.json').version")
 BUILD_DIR="./dist"
 REPO_DIR="./deploy"
 DIST_DIR="${REPO_DIR}/lib"
