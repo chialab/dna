@@ -1,6 +1,6 @@
 {
   "name": "dna-core",
-  "version": "1.2.0-beta0",
+  "version": "1.2.0-beta1",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://chialab.io)",
   "main": "src/dna.next.js",

@@ -10,7 +10,6 @@ REPO_URL="gitlab.com:dna-components/dna-library.git"
 BRANCH="master"
 if [ $1 == "--beta" ]; then
     BRANCH="beta"
-    TAG="${TAG}-beta"
 fi
 
 # build distribution scripts
@@ -26,8 +25,8 @@ if [ -d "$BUILD_DIR" ]; then
     # update distribution project
     if [ -d "$REPO_DIR" ]; then
         cd $REPO_DIR
-        sed "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" package.json | diff -p package.json /dev/stdin | patch
-        sed "s/\"version\": \".*\"/\"version\": \"${TAG:1}\"/" bower.json | diff -p bower.json /dev/stdin | patch
+        sed "s/\"version\": \".*\"/\"version\": \"${TAG}\"/" package.json | diff -p package.json /dev/stdin | patch
+        sed "s/\"version\": \".*\"/\"version\": \"${TAG}\"/" bower.json | diff -p bower.json /dev/stdin | patch
         git add .
         git commit -m "release: ${TAG}"
         git push
