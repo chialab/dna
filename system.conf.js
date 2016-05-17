@@ -1,9 +1,6 @@
 (function() {
     System.config({
         meta: {
-            'dna/delegate': {
-                format: 'cjs',
-            },
             'node_modules/virtual-dom/dist/virtual-dom.js': {
                 format: 'global',
             },

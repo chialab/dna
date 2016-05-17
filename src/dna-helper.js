@@ -310,6 +310,11 @@ export function register(fn, options = {}) {
     }
     let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
+        Object.defineProperty(element, 'constructor', {
+            get() {
+                return scope;
+            },
+        });
         Object.setPrototypeOf(element, scope.prototype);
         element.is = tagName;
         element.createdCallback();
