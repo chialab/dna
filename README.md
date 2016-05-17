@@ -1,19 +1,22 @@
-[![DNA](https://gitlab.com/dna-components/dna-design/raw/master/logos/logo-full-raster-128.png)](http://dna.chialab.io)
+[![DNA](https://raw.githubusercontent.com/Chialab/dna-design/master/logos/logo-full-raster-128.png)](http://dna.chialab.io)
 
-A component pattern for Web artisans.
+A component pattern for Web artisans. [![Documentation](https://img.shields.io/badge/Documentation-draft-red.svg)](http://dna.chialab.io/docs)
 
-![NPM version](https://img.shields.io/npm/v/dna-components.svg)
-![Bower version](https://img.shields.io/bower/v/dna-components.svg)
-[![Documentation](https://img.shields.io/badge/docs-draft-red.svg)](http://dna.chialab.io/docs)
+## Install
 
----
+[![NPM](https://img.shields.io/npm/v/dna-components.svg)](https://www.npmjs.com/package/dna-components)
+```
+$ npm i dna-components --save
+```
+[![Bower](https://img.shields.io/bower/v/dna-components.svg)](https://github.com/chialab/dna)
+```
+$ bower i dna-components --save
+```
 
-### Build
+## Dev
 
-* Install [NodeJS](https://nodejs.org)
-* Navigate to the project path and run: `npm install && npm run build`
+[![Chialab es6-workflow](https://img.shields.io/badge/project-es6--workflow-lightgrey.svg)](https://github.com/Chialab/es6-workflow)
+[![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
+[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
 
-### Tests
-
-* Install [NodeJS](https://nodejs.org)
-* Navigate to the project path and run: `npm install && npm run test`
+![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)

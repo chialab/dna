@@ -1,8 +1,5 @@
 .tmp
 npm-debug.log
 /bower_components
-/coverage
-/deploy
-/dist
-/docs
 /node_modules
+/coverage

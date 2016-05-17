@@ -1,20 +1,26 @@
 {
-  "name": "dna-core",
+  "name": "dna-components",
   "version": "1.2.0",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://chialab.io)",
-  "main": "src/dna.next.js",
+  "main": "src/dna.js",
   "scripts": {
     "build": "node ./build/build.js",
     "doc": "node ./build/doc.js",
-    "test": "node ./node_modules/es6-workflow/scripts/test.js"
+    "test": "node ./node_modules/es6-workflow/scripts/test.js",
+    "add-editorconfig": "node ./node_modules/es6-workflow/scripts/add-editorconfig.js",
+    "add-eslint": "node ./node_modules/es6-workflow/scripts/add-eslint.js",
+    "add-travis": "node ./node_modules/es6-workflow/scripts/add-travis.js",
+    "codecov": "node ./node_modules/es6-workflow/scripts/codecov.js",
+    "test-ci": "node ./node_modules/es6-workflow/scripts/test-ci.js"
   },
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/dna-components/dna-components"
   },
+  "license": "MIT",
   "devDependencies": {
-    "dna-polyfills": "git+https://gitlab.com/dna-components/dna-polyfills.git",
+    "dna-polyfills": "^0.6.0",
     "es6-workflow": "latest",
     "karma-cordova-launcher": "0.0.9",
     "karma-ie-launcher": "^0.2.0",
