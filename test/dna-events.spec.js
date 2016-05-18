@@ -23,7 +23,7 @@ describe('Unit: DNAEventsComponent', () => {
 
     it('should trigger a function callback', () => {
         let span = elem.querySelector('span');
-        span.click();
+        elem.trigger.call(span, 'click');
         assert.equal(elem.clickedSpan, span);
         assert.equal(elem.clickedSpanEvent instanceof Event, true);
         assert.equal(elem.clickedSpanEvent.type, 'click');
@@ -31,7 +31,7 @@ describe('Unit: DNAEventsComponent', () => {
 
     it('should track click on button element', () => {
         let button = elem.querySelector('button');
-        button.click();
+        elem.trigger.call(button, 'click');
         assert.equal(elem.clickedElement, button);
         assert.equal(elem.clicked instanceof Event, true);
         assert.equal(elem.clicked.type, 'click');

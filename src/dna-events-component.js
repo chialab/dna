@@ -1,5 +1,7 @@
 import { DNAComponent } from './dna-component.js';
 
+const EVENTS_CACHE = {};
+
 function matches(element, selector) {
     let f = element.matches ||
         element.webkitMatchesSelector ||
@@ -59,11 +61,18 @@ function delegate(element, evName, selector, callback) {
  */
 export class DNAEventsComponent extends DNAComponent {
     /**
+     * Fires when an the element is registered.
+     * @param {String} id The element definition name.
+     */
+    static onRegister(is) {
+        EVENTS_CACHE[is] = this.events;
+    }
+    /**
      * Fires when an instance of the element is created.
      */
     createdCallback() {
         // bind events
-        let events = this.constructor.events;
+        let events = EVENTS_CACHE[this.is];
         if (events) {
             for (let k in events) {
                 if (events.hasOwnProperty(k)) {
