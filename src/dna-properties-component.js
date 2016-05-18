@@ -6,6 +6,8 @@ import {
     wrapDescriptorSet,
 } from './dna-helper.js';
 
+const PROPERTIES_CACHE = {};
+
 /**
  * Simple Custom Component for properties initialization via attributes.
  * @class DNAPropertiesComponent
@@ -35,9 +37,11 @@ import {
 export class DNAPropertiesComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
+     * @param {String} id The element definition name.
      */
-    static onRegister() {
+    static onRegister(is) {
         let propertiesToWatch = this.properties || [];
+        PROPERTIES_CACHE[is] = propertiesToWatch;
         propertiesToWatch.forEach((prop) => {
             let descriptor = getDescriptor(this.prototype, prop) || {};
             Object.defineProperty(this.prototype, prop, {
@@ -53,7 +57,7 @@ export class DNAPropertiesComponent extends DNAComponent {
     createdCallback() {
         super.createdCallback();
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
-        let properties = this.constructor.properties || [];
+        let properties = PROPERTIES_CACHE[this.is] || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
             let key = dashToCamel(attr.name);
