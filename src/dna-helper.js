@@ -141,18 +141,25 @@ export function getDescriptor(ctr, prop) {
  * Wrap a property descriptor get function or create a new one.
  * @param {string} prop The property to wrap.
  * @param {object} descriptor The property descriptor.
+ * @param {*} value The initial value.
  * @return {Function} The descriptor get function wrapped.
  */
-export function wrapDescriptorGet(prop, descriptor) {
-    return function() {
+export function wrapDescriptorGet(prop, descriptor, value) {
+    let hasGetter = typeof descriptor.get === 'function';
+    let propName = `__${prop}`;
+    let getter = function() {
         let res;
-        if (typeof descriptor.get === 'function') {
+        if (hasGetter) {
             res = descriptor.get.call(this);
         } else {
-            res = this[`__${prop}`];
+            res = (typeof this[propName] !== 'undefined') ? this[propName] : value;
         }
         return res;
     };
+    if (!hasGetter) {
+        getter.bind = propName;
+    }
+    return getter;
 }
 /**
  * Wrap a property descriptor set function or create a new one.
@@ -280,6 +287,39 @@ export function digest(fn, options = {}) {
 }
 
 /**
+ * Wrap prototype properties in top-level element.
+ * @param {Object} main The top-level element which needs the prototype properties.
+ * @param {Object} currentProto The current prototype to analyze.
+ * @param {Function} callback A setter callback for the property (optional).
+ */
+export function wrapPrototype(main, currentProto, callback, handled = []) {
+    Object.getOwnPropertyNames(currentProto)
+        .filter((prop) =>
+            EXCLUDE_ON_EXTEND.indexOf(prop) === -1
+        )
+        .forEach((prop) => {
+            let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
+            if (
+                (typeof descriptor.value === 'undefined' ||
+                typeof descriptor.value !== 'function') &&
+                handled.indexOf(prop) === -1) {
+                handled.push(prop);
+                if (descriptor.configurable !== false) {
+                    Object.defineProperty(main, prop, {
+                        configurable: true,
+                        get: wrapDescriptorGet(prop, descriptor, descriptor.value),
+                        set: wrapDescriptorSet(prop, descriptor, callback),
+                    });
+                }
+            }
+        });
+    let nextProto = currentProto.prototype || Object.getPrototypeOf(currentProto);
+    if (nextProto && nextProto !== HTMLElement.prototype) {
+        wrapPrototype(main, nextProto, callback, handled);
+    }
+}
+
+/**
  * A list of registered DNA components.
  * @type {Object}.
  */
@@ -310,13 +350,18 @@ export function register(fn, options = {}) {
     }
     let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
+        Object.setPrototypeOf(element, scope.prototype);
         Object.defineProperty(element, 'constructor', {
             get() {
                 return scope;
             },
         });
-        Object.setPrototypeOf(element, scope.prototype);
-        element.is = tagName;
+        Object.defineProperty(element, 'is', {
+            get() {
+                return tagName;
+            },
+        });
+        wrapPrototype(element, scope.prototype);
         element.createdCallback();
         return element;
     };

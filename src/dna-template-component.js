@@ -1,34 +1,8 @@
 import * as Config from './dna-config.js';
 import { DNAComponent } from './dna-component.js';
-import { wrapDescriptorGet, wrapDescriptorSet } from './dna-helper.js';
+import { wrapPrototype } from './dna-helper.js';
 
 const TEMPLATE_CACHE = {};
-
-function wrapPrototype(main, currentProto, handled = []) {
-    Object.getOwnPropertyNames(currentProto).forEach((prop) => {
-        let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
-        if (
-            (typeof descriptor.value === 'undefined' || typeof descriptor.value !== 'function') &&
-            handled.indexOf(prop) === -1) {
-            handled.push(prop);
-            if (descriptor.configurable !== false) {
-                Object.defineProperty(main, prop, {
-                    configurable: true,
-                    get: wrapDescriptorGet(prop, descriptor),
-                    set: wrapDescriptorSet(prop, descriptor, function() {
-                        if (this.templateReady) {
-                            this.updateViewContent();
-                        }
-                    }),
-                });
-            }
-        }
-    });
-    let nextProto = currentProto.prototype || Object.getPrototypeOf(currentProto);
-    if (nextProto && nextProto !== HTMLElement.prototype) {
-        wrapPrototype(main, nextProto, handled);
-    }
-}
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -68,7 +42,11 @@ export class DNATemplateComponent extends DNAComponent {
         }
         if (this.autoUpdateView) {
             let proto = this.prototype || Object.getPrototypeOf(this);
-            wrapPrototype(proto, proto);
+            wrapPrototype(proto, proto, function() {
+                if (this.templateReady) {
+                    this.updateViewContent();
+                }
+            });
         }
     }
     /**
@@ -81,6 +59,7 @@ export class DNATemplateComponent extends DNAComponent {
      * Fires when an instance of the element is created.
      */
     createdCallback() {
+        wrapPrototype(this, this.constructor.prototype);
         this.templateReady = true;
         this.updateViewContent();
         super.createdCallback();
