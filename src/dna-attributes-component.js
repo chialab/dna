@@ -7,6 +7,8 @@ import {
     wrapDescriptorSet,
 } from './dna-helper.js';
 
+const ATTRIBUTES_CACHE = {};
+
 function setValue(context, attr, value) {
     let currentAttrValue = context.getAttribute(attr);
     if (value !== null && value !== undefined && value !== false) {
@@ -50,10 +52,11 @@ function setValue(context, attr, value) {
 export class DNAAttributesComponent extends DNAComponent {
     /**
      * Fires when an the element is registered.
+     * @param {String} id The element definition name.
      */
-    static onRegister() {
+    static onRegister(is) {
         let attributesToWatch = this.attributes || [];
-        this.__normalizedAttributes = attributesToWatch.map((attr) => {
+        ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => {
             let camelAttr = dashToCamel(attr);
             let descriptor = getDescriptor(this.prototype, camelAttr) || {};
             Object.defineProperty(this.prototype, camelAttr, {
@@ -77,7 +80,7 @@ export class DNAAttributesComponent extends DNAComponent {
             let attr = attributes[i];
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
-        let ctrAttributes = this.constructor.__normalizedAttributes || [];
+        let ctrAttributes = ATTRIBUTES_CACHE[this.is] || [];
         ctrAttributes.forEach((attr) => {
             setValue(this, camelToDash(attr), this[attr]);
         });
@@ -90,8 +93,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let ctr = this.constructor;
-        let attrs = ctr && ctr.__normalizedAttributes;
+        let attrs = ATTRIBUTES_CACHE[this.is];
         if (attrs && Array.isArray(attrs)) {
             let camelAttr = dashToCamel(attr);
             if (attrs.indexOf(camelAttr) !== -1) {
