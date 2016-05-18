@@ -1,4 +1,5 @@
 import { DNAMixedComponent } from '../../src/dna-mixed-component.js';
+import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
 import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
 import { DNAVDomComponent } from '../../src/extra/dna-vdom-component.js';
 import { DNAVDomBaseComponent } from '../../src/extra/dna-vdom-base-component.js';
@@ -78,12 +79,13 @@ export class TestComponent8 extends TestComponent {
     }
 }
 
-export class TestPlaceholder extends DNAVDomBaseComponent {
+export class TestPlaceholder extends DNAAttributesComponent {
     static get attributes() {
         return ['value'];
     }
 
     createdCallback() {
+        super.createdCallback();
         this.value = 6;
     }
 }

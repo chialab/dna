@@ -12,9 +12,9 @@ export class TestComponent extends DNABaseComponent {
         return DNABaseComponent.behaviors.concat([BehaviorComponent]);
     }
 
-    static onRegister() {
+    static onRegister(is) {
         this.registered = true;
-        DNABaseComponent.onRegister.call(this);
+        DNABaseComponent.onRegister.call(this, is);
     }
 
     createdCallback() {
