@@ -42,56 +42,73 @@ const hasTemplate = (typeof document.importNode === 'function' &&
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
+    let elem1;
+    let elem2;
+    let elem3;
+    let elem4;
+    let elem5;
+    let elem6;
+    let elem7;
+    before((done) => {
+        elem1 = new Test1();
+        elem2 = new Test2();
+        elem3 = new Test3();
+        if (hasTemplate) {
+            elem4 = new Test4();
+            elem5 = new Test5();
+        }
+        elem6 = new Test6();
+        elem7 = new Test7();
+        document.body.appendChild(elem1);
+        document.body.appendChild(elem2);
+        document.body.appendChild(elem3);
+        if (hasTemplate) {
+            document.body.appendChild(elem4);
+            document.body.appendChild(elem5);
+        }
+        document.body.appendChild(elem6);
+        document.body.appendChild(elem7);
+        setTimeout(() => {
+            done();
+        }, 250);
+    });
+
     it('should handle `template` getter property as function with interpolation', () => {
-        let elem = new Test1();
-        document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, 'Hello, ');
-        elem.name = 'Alan';
-        elem.lastName = 'Turing';
-        elem.title = 'Title';
-        assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
+        assert.equal(elem1.innerHTML, 'Hello, ');
+        elem1.name = 'Alan';
+        elem1.lastName = 'Turing';
+        elem1.title = 'Title';
+        assert.equal(elem1.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
     it('should handle `template` getter property as string', () => {
-        let elem = new Test2();
-        document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        assert.equal(elem2.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should handle `template` property as string', () => {
-        let elem = new Test3();
-        document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        assert.equal(elem3.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     if (hasTemplate) {
         it('should handle `template` property as HTMLTemplateElement', () => {
-            let elem = new Test4();
-            document.body.appendChild(elem);
-            assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+            assert.equal(elem4.innerHTML, '<span class="dna-test">Hello DNA!</span>');
         });
 
         it('should handle `template` property as HTMLTemplateElement with multiple nodes', () => {
-            let elem = new Test5();
-            document.body.appendChild(elem);
             assert.equal(
-                elem.innerHTML,
+                elem5.innerHTML,
                 '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>'
             );
         });
     }
 
     it('should handle invalid `template`', () => {
-        let elem = new Test6();
-        document.body.appendChild(elem);
-        assert.equal(elem.innerHTML, '');
+        assert.equal(elem6.innerHTML, '');
     });
 
     it('should handle templates with <svg>', () => {
-        let elem = new Test7();
-        document.body.appendChild(elem);
-        elem.radius = 40;
-        let svg = elem.firstElementChild;
+        elem7.radius = 40;
+        let svg = elem7.firstElementChild;
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');

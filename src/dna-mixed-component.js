@@ -1,5 +1,5 @@
 import { DNAComponent } from './dna-component.js';
-import { EXCLUDE_ON_EXTEND, getDescriptor } from './dna-helper.js';
+import { EXCLUDE_ON_EXTEND, getDescriptor, registry } from './dna-helper.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.
@@ -33,8 +33,11 @@ function getCallbackKey(callbackName) {
  */
 function triggerCallbacks(ctx, callbackKey, args) {
     let ctr = ctx;
-    if (typeof ctr !== 'function' && ctr.constructor) {
-        ctr = ctr.constructor;
+    if (typeof ctr !== 'function') {
+        ctr = registry(ctx.is).prototype.constructor;
+    }
+    if (!ctr) {
+        return false;
     }
     let secretKey = getCallbackKey(callbackKey);
     let proto = Object.getPrototypeOf(ctr);
@@ -44,6 +47,7 @@ function triggerCallbacks(ctx, callbackKey, args) {
             callbacks[i].apply(ctx, args);
         }
     }
+    return true;
 }
 
 /**

@@ -1,9 +1,9 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
-import { REGISTRY } from '../dna-helper.js';
+import { registry } from '../dna-helper.js';
 
 function getCtr(node) {
-    return REGISTRY[node.tagName.toLowerCase()] || REGISTRY[node.getAttribute('is')];
+    return registry(node.getAttribute('is')) || registry(node.tagName);
 }
 
 /**
@@ -120,7 +120,7 @@ function nodeToVDOM(node, parentOptions = {}) {
             options[k] = parentOptions[k];
         }
     }
-    if (node.tagName.toLowerCase() === 'svg') {
+    if (node.tagName && node.tagName.toLowerCase() === 'svg') {
         options.namespace = 'http://www.w3.org/2000/svg';
     }
     let Ctr = getCtr(node);
@@ -133,10 +133,13 @@ function nodeToVDOM(node, parentOptions = {}) {
             attributes: properties,
         };
     }
+    let childNodes = Array.prototype.filter.call(node.childNodes || [], (n) =>
+        n && n instanceof Node && n.nodeType !== Node.COMMENT_NODE
+    );
     return new virtualDom.VNode(
         node.tagName,
         properties,
-        Array.prototype.map.call(node.childNodes || [], (n) => nodeToVDOM(n, options)),
+        childNodes.map((n) => nodeToVDOM(n, options)),
         undefined,
         options.namespace
     );
@@ -189,7 +192,7 @@ export class DNAVDomComponent extends DNATemplateComponent {
             this._vtree = this._vtree || nodeToVDOM(tmp);
             tmp.innerHTML = html;
             let tree = nodeToVDOM(tmp, {
-                hooks: this.constructor.useVirtualDomHooks,
+                hooks: registry(this.is).prototype.constructor.useVirtualDomHooks,
             });
             let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
             virtualDom.patch(this, diff);

@@ -24,9 +24,10 @@ export function register(...args) {
         configurable: false,
         get: () => tagName,
     });
-    if (typeof scope === 'function') {
-        res.prototype.constructor = scope;
-    }
+    Object.defineProperty(res.prototype, 'constructor', {
+        configurable: false,
+        get: () => scope,
+    });
     registry(tagName, res);
     return res;
 }

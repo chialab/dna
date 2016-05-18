@@ -290,32 +290,36 @@ export function digest(fn, options = {}) {
  * Wrap prototype properties in top-level element.
  * @param {Object} main The top-level element which needs the prototype properties.
  * @param {Object} currentProto The current prototype to analyze.
+ * @param {Boolean} includeFunctions Should deine methods too.
  * @param {Function} callback A setter callback for the property (optional).
  */
-export function wrapPrototype(main, currentProto, callback, handled = []) {
+export function wrapPrototype(main, currentProto, includeFunctions = true, callback, handled = []) {
     Object.getOwnPropertyNames(currentProto)
         .filter((prop) =>
             EXCLUDE_ON_EXTEND.indexOf(prop) === -1
         )
         .forEach((prop) => {
             let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
-            if (
-                (typeof descriptor.value === 'undefined' ||
-                typeof descriptor.value !== 'function') &&
-                handled.indexOf(prop) === -1) {
-                handled.push(prop);
-                if (descriptor.configurable !== false) {
-                    Object.defineProperty(main, prop, {
-                        configurable: true,
-                        get: wrapDescriptorGet(prop, descriptor, descriptor.value),
-                        set: wrapDescriptorSet(prop, descriptor, callback),
-                    });
+            let isFunction = typeof descriptor.value === 'function';
+            if (handled.indexOf(prop) === -1) {
+                if (typeof descriptor.value === 'undefined' || !isFunction) {
+                    handled.push(prop);
+                    if (descriptor.configurable !== false) {
+                        Object.defineProperty(main, prop, {
+                            configurable: true,
+                            get: wrapDescriptorGet(prop, descriptor, descriptor.value),
+                            set: wrapDescriptorSet(prop, descriptor, callback),
+                        });
+                    }
+                } else if (isFunction && includeFunctions) {
+                    handled.push(prop);
+                    Object.defineProperty(main, prop, descriptor);
                 }
             }
         });
     let nextProto = currentProto.prototype || Object.getPrototypeOf(currentProto);
     if (nextProto && nextProto !== HTMLElement.prototype) {
-        wrapPrototype(main, nextProto, callback, handled);
+        wrapPrototype(main, nextProto, includeFunctions, callback, handled);
     }
 }
 
@@ -331,7 +335,14 @@ export const REGISTRY = {};
  * @param {Function} constructor The Component constructor.
  */
 export function registry(tagName, constructor) {
-    REGISTRY[tagName.toLowerCase()] = constructor;
+    if (tagName) {
+        let lower = tagName.toLowerCase();
+        if (constructor) {
+            REGISTRY[lower] = constructor;
+        }
+        return REGISTRY[lower];
+    }
+    return null;
 }
 
 /**
@@ -350,21 +361,18 @@ export function register(fn, options = {}) {
     }
     let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
-        Object.setPrototypeOf(element, scope.prototype);
-        Object.defineProperty(element, 'constructor', {
-            get() {
-                return scope;
-            },
-        });
-        Object.defineProperty(element, 'is', {
-            get() {
-                return tagName;
-            },
-        });
         wrapPrototype(element, scope.prototype);
+        Object.defineProperty(element, 'is', {
+            configurable: false,
+            get: () => tagName,
+        });
         element.createdCallback();
         return element;
     };
+    Object.defineProperty(res.prototype, 'constructor', {
+        configurable: false,
+        get: () => scope,
+    });
     registry(tagName, res);
     return res;
 }
