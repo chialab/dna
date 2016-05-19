@@ -14,5 +14,5 @@ script:
   - npm run test-ci
 
 after_success:
-  - coveralls
   - npm run codecov
+  - npm run coveralls

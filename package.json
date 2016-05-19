@@ -12,7 +12,8 @@
     "add-eslint": "node ./node_modules/es6-workflow/scripts/add-eslint.js",
     "add-travis": "node ./node_modules/es6-workflow/scripts/add-travis.js",
     "codecov": "node ./node_modules/es6-workflow/scripts/codecov.js",
-    "test-ci": "node ./node_modules/es6-workflow/scripts/test-ci.js"
+    "test-ci": "node ./node_modules/es6-workflow/scripts/test-ci.js",
+    "coveralls": "node ./node_modules/es6-workflow/scripts/coveralls.js"
   },
   "repository": {
     "type": "git",
