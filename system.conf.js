@@ -21,6 +21,7 @@
             'dna/polyfills/*': 'node_modules/dna-polyfills/*',
             'dna/components': 'node_modules/dna-components/dist/dna.js',
             'vdom': 'node_modules/virtual-dom/dist/virtual-dom.js',
+            'es6-classes/*': 'node_modules/es6-classes/*',
         },
     });
 }());

@@ -1,4 +1,5 @@
-import { digest, create as _create, dashToCamel } from '../dna-helper.js';
+import { digest, dashToCamel } from '../dna-helper.js';
+import { create as _create } from '../dna-create.js';
 
 export * from '../dna.js';
 

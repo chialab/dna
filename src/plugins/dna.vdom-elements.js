@@ -1,5 +1,5 @@
 import { DNAVDomBaseComponent } from '../extra/dna-vdom-base-component.js';
-import { create as _create } from '../dna-helper.js';
+import { create as _create } from '../dna-create.js';
 import { register as _register } from './dna.elements.js';
 
 // export library

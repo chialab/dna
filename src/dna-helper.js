@@ -1,5 +1,3 @@
-import { DNABaseComponent } from './dna-base-component.js';
-
 export const EXCLUDE_ON_EXTEND = [
     'name',
     'length',
@@ -9,103 +7,6 @@ export const EXCLUDE_ON_EXTEND = [
     'constructor',
 ];
 
-function createFunctionClass(prototype) {
-    let fn = function() {};
-    fn.prototype = prototype;
-    return fn;
-}
-
-function defineProperties(target, props) {
-    let blacklistProps = EXCLUDE_ON_EXTEND.slice(0);
-    for (let i = 0; i < props.length; i++) {
-        let descriptor = props[i];
-        if (blacklistProps.indexOf(descriptor.key) === -1) {
-            if (typeof descriptor.value === 'function') {
-                target[descriptor.key] = descriptor.value;
-            } else {
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ('value' in descriptor) {
-                    descriptor.writable = true;
-                }
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-    }
-}
-
-function createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) {
-        defineProperties(Constructor.prototype, protoProps);
-    }
-    if (staticProps) {
-        defineProperties(Constructor, staticProps);
-    }
-    return Constructor;
-}
-
-function inherits(subClass, superClass) {
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            enumerable: false,
-            writable: true,
-            configurable: true,
-        },
-    });
-    if (superClass) {
-        Object.setPrototypeOf(subClass, superClass);
-    }
-}
-
-function getMethods(prototype) {
-    let res = [];
-    let added = EXCLUDE_ON_EXTEND.slice(0);
-    function createProp(propKey) {
-        if (added.indexOf(propKey) === -1) {
-            let prop = {
-                key: propKey,
-            };
-            if (typeof prototype[propKey] === 'function') {
-                prop.value = prototype[propKey];
-            } else {
-                let descriptor = Object.getOwnPropertyDescriptor(prototype, propKey) || {};
-                if (descriptor.get) {
-                    prop.get = descriptor.get;
-                    prop.set = descriptor.set;
-                } else {
-                    prop.value = prototype[propKey];
-                }
-            }
-            added.push(propKey);
-            return prop;
-        }
-        return false;
-    }
-    for (let key in prototype) {
-        if (prototype.hasOwnProperty(key)) {
-            let prop = createProp(key);
-            if (prop) {
-                res.push(prop);
-            }
-        }
-    }
-    let keys = Object.getOwnPropertyNames(prototype);
-    keys.forEach((key) => {
-        let prop = createProp(key);
-        if (prop) {
-            res.push(prop);
-        }
-    });
-    return res;
-}
-
-function bindFN(protoFn, superFn) {
-    return function(...args) {
-        protoFn.apply(this, args);
-        superFn.apply(this, args);
-    };
-}
 /**
  * Convert a Class name into HTML tag.
  * @param {Class} fn Grab the tag name from this class.
@@ -205,28 +106,6 @@ export function camelToDash(str) {
  */
 export function dashToCamel(str) {
     return str.replace(/\W+(.)/g, (x, chr) => chr.toUpperCase());
-}
-/**
- * Extend a component prototype.
- * @param {function|class|object} superScope The function or the prototype to extend.
- * @param {function|class|object} subScope The function or the prototype to merge.
- * @return {function} A new extended class.
- */
-export function extend(superScope, subScope) {
-    if (typeof superScope !== 'function' && typeof superScope !== 'object') {
-        throw new TypeError(
-            `Super expression must be a function or an object, not ${typeof superScope}`
-        );
-    }
-    let _superScope = (typeof superScope !== 'function') ?
-        createFunctionClass(superScope) :
-        superScope;
-    let _subScope = (typeof subScope !== 'function') ?
-        createFunctionClass(subScope) :
-        subScope;
-    let ctr = createFunctionClass({});
-    inherits(ctr, _superScope);
-    return createClass(ctr, getMethods(_subScope.prototype), getMethods(subScope));
 }
 /**
  * Normalize the `register` method arguments.
@@ -375,57 +254,4 @@ export function register(fn, options = {}) {
     });
     registry(tagName, res);
     return res;
-}
-/**
- * Create and register a component.
- * @param {string} fn The tag to use for the custom element. (required)
- * @param {object} options A configuration object. (`prototype` key is required)
- * @param {object} pluginOptions Some  generic replacements (optional)
- * @return {function} The Component constructor.
- */
-export function create(fn, options = {}, pluginOptions = {}) {
-    let pre = digest(fn, options);
-    let tagName = pre.tagName;
-    let config = pre.config;
-    let scope = pre.scope;
-    let registerFn = pluginOptions.register || register;
-    let baseComponent = pluginOptions.base || DNABaseComponent;
-    if (typeof tagName !== 'string') {
-        throw new Error('Missing or bad typed `tagName` property');
-    }
-    if (typeof scope === 'undefined') {
-        throw new Error('Missing prototype');
-    }
-    let newScope = extend(baseComponent, scope);
-    for (let k in newScope.prototype) {
-        if (newScope.prototype.hasOwnProperty(k)) {
-            let callbacks = [
-                'createdCallback',
-                'attachedCallback',
-                'detachedCallback',
-                'attributeChangedCallback',
-            ];
-            if (callbacks.indexOf(k) !== -1) {
-                newScope.prototype[k] = bindFN(
-                    newScope.prototype[k],
-                    baseComponent.prototype[k]
-                );
-            }
-        }
-    }
-    for (let k in newScope) {
-        if (newScope.hasOwnProperty(k)) {
-            let callbacks = [
-                'onRegister',
-            ];
-            if (callbacks.indexOf(k) !== -1) {
-                newScope[k] = bindFN(
-                    newScope[k],
-                    baseComponent[k]
-                );
-            }
-        }
-    }
-    config.prototype = newScope;
-    return registerFn(tagName, config);
 }
