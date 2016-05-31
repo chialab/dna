@@ -35,10 +35,19 @@ function extend(superScope, subScope) {
     let _subScope = (typeof subScope !== 'function') ?
         createFunctionClass(subScope) :
         subScope;
-    let Ctr = createFunctionClass({});
+    let Ctr = function() {};
     inherit(Ctr, _superScope);
-    define(Ctr, _subScope.prototype);
-    _subScope.prototype = Ctr.prototype;
+    define(
+        Ctr,
+        _subScope.prototype,
+        Object.getOwnPropertyNames(_subScope)
+            .map((key) => {
+                let desc = Object.getOwnPropertyDescriptor(_subScope, key);
+                desc.key = key;
+                return desc;
+            })
+    );
+    return Ctr;
 }
 
 /**
@@ -68,7 +77,7 @@ See https://github.com/Chialab/dna/wiki/Deprecating-%60DNA.create%60.`
     if (typeof scope === 'undefined') {
         throw new Error('Missing prototype');
     }
-    extend(baseComponent, scope);
+    scope = extend(baseComponent, scope);
     for (let k in scope.prototype) {
         if (scope.prototype.hasOwnProperty(k)) {
             let callbacks = [
