@@ -1,7 +1,7 @@
 {
   "name": "dna-components",
   "description": "A component pattern for Web artisans.",
-  "main": "dist/dna.js",
+  "main": "lib/dna.js",
   "authors": [
     "Chialab <dev@chialab.io> (http://www.chialab.com)"
   ],
