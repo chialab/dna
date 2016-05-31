@@ -27,6 +27,7 @@ function build(file) {
 
 Promise.all([
     'src/dna.js',
+    'src/dna-next.js',
     'src/plugins/dna.angular.js',
     'src/plugins/dna.elements.js',
     'src/plugins/dna.vdom.js',
