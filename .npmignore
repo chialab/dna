@@ -1,0 +1,15 @@
+docs/
+samples/
+coverage/
+test/
+build/
+
+.npmignore
+npm-debug.log
+.git*
+.eslintrc.yml
+.eslintignore
+.editorconfig
+.travis.yml
+karma-ci.conf.js
+karma.conf.js
