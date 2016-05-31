@@ -111,7 +111,9 @@ function attributesToProp(node, options = {}, hooks = true) {
  * @return {Object} A VDOM Node.
  */
 function nodeToVDOM(node, parentOptions = {}) {
-    if (node.nodeType === Node.TEXT_NODE) {
+    if (typeof node === 'undefined' || node.nodeType === Node.COMMENT_NODE) {
+        return false;
+    } else if (node.nodeType === Node.TEXT_NODE) {
         return new virtualDom.VText(node.textContent);
     }
     let options = {};
