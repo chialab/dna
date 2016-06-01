@@ -1,6 +1,36 @@
 import { create, register } from '../src/plugins/dna.elements.js';
 import { DNABaseComponent } from '../src/dna-base-component.js';
 
+function createComponent() {
+    let Component = function () {};
+    Component.registered = false;
+    Component.onRegister = function() {
+        Component.registered = true;
+    }
+    Component.properties = ['name', 'lastName', 'age'];
+    Component.prototype = {
+        createdCallback() {
+            this.name = 'Alan';
+            this.lastName = 'Turing';
+            this.age = '43';
+        },
+        get age() {
+            return this.__age;
+        },
+        set age(a) {
+            this.__age = parseInt(`${a}`);
+            return this.__age;
+        },
+        get fullName() {
+            return `${this.name} ${this.lastName}`;
+        },
+        reverseName() {
+            return this.fullName.split('').reverse().join('');
+        },
+    };
+    return Component;
+}
+
 /* globals describe, before, it, assert */
 describe('Unit: DNALibrary', () => {
     it('should throws exception for missing tagName param during creation', () => {
@@ -28,36 +58,6 @@ describe('Unit: DNALibrary', () => {
         assert.throws(wrapper2, Error, 'Missing prototype');
         assert.throws(wrapper3, Error, 'Missing prototype');
     });
-
-    function createComponent() {
-        let Component = function () {};
-        Component.registered = false;
-        Component.onRegister = function() {
-            Component.registered = true;
-        }
-        Component.properties = ['name', 'lastName', 'age'];
-        Component.prototype = {
-            createdCallback() {
-                this.name = 'Alan';
-                this.lastName = 'Turing';
-                this.age = '43';
-            },
-            get age() {
-                return this.__age;
-            },
-            set age(a) {
-                this.__age = parseInt(`${a}`);
-                return this.__age;
-            },
-            get fullName() {
-                return `${this.name} ${this.lastName}`;
-            },
-            reverseName() {
-                return this.fullName.split('').reverse().join('');
-            },
-        };
-        return Component;
-    }
 
     it('should create an element with tagName and config', () => {
         let Component = createComponent();

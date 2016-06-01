@@ -2,6 +2,15 @@ language: node_js
 node_js:
   - "6"
 
+env:
+  matrix:
+    - "CI_BUILD_TYPE=minimum"
+    - "CI_BUILD_TYPE=all"
+
+matrix:
+  allow_failures:
+    - env: "CI_BUILD_TYPE=all"
+
 before_install:
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
@@ -11,7 +20,8 @@ addons:
   sauce_connect: true
 
 script:
-  - npm run test-ci
+  - if [ "$CI_BUILD_TYPE" = 'minimum' ]; then npm run test-ci; fi
+  - if [ "$CI_BUILD_TYPE" = 'all' ]; then npm run test-ci; fi
 
 after_success:
   - npm run codecov
