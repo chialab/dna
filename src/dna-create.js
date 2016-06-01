@@ -50,6 +50,21 @@ function extend(superScope, subScope) {
     return Ctr;
 }
 
+function deprecated(message) {
+    /* eslint-disable no-console */
+    try {
+        if (typeof self.console !== 'undefined') {
+            if (typeof console.warn !== 'undefined') {
+                console.warn(message);
+            } else if (typeof console.log !== 'undefined') {
+                console.log(message);
+            }
+        }
+    } catch (ex) {
+        //
+    }
+}
+
 /**
  * Create and register a component.
  * @deprecated
@@ -60,8 +75,7 @@ function extend(superScope, subScope) {
  * @return {function} The Component constructor.
  */
 export function create(fn, options = {}, pluginOptions = {}) {
-    // eslint-disable-next-line
-    console.warn(
+    deprecated(
         `DNA.create has been deprecated since 1.3.0. Use Chialab/es6-classes.
 See https://github.com/Chialab/dna/wiki/Deprecating-%60DNA.create%60.`
     );
