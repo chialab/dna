@@ -54,9 +54,9 @@ function deprecated(message) {
     /* eslint-disable no-console */
     try {
         if (typeof self.console !== 'undefined') {
-            if (typeof console.warn !== 'undefined') {
+            if (typeof console.warn === 'function') {
                 console.warn(message);
-            } else if (typeof console.log !== 'undefined') {
+            } else if (typeof console.log === 'function') {
                 console.log(message);
             }
         }

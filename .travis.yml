@@ -4,12 +4,12 @@ node_js:
 
 env:
   matrix:
-    - "CI_BUILD_TYPE=minimum"
-    - "CI_BUILD_TYPE=all"
+    - "CI_BUILD_TYPE=default"
+    - "CI_BUILD_TYPE=saucelabs"
 
 matrix:
   allow_failures:
-    - env: "CI_BUILD_TYPE=all"
+    - env: "CI_BUILD_TYPE=saucelabs"
 
 before_install:
   - export CHROME_BIN=chromium-browser
@@ -24,5 +24,5 @@ script:
   - if [ "$CI_BUILD_TYPE" = 'all' ]; then npm run test-ci; fi
 
 after_success:
-  - npm run codecov
-  - npm run coveralls
+  - if [ "$CI_BUILD_TYPE" = 'minimum' ]; npm run codecov; fi
+  - if [ "$CI_BUILD_TYPE" = 'minimum' ]; npm run coveralls; fi
