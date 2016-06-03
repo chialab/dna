@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "dna-polyfills": "^0.6.1",
+    "dna-polyfills": "^0.6.3",
     "es6-classes": "^0.2.0",
     "es6-workflow": "latest",
     "karma-cordova-launcher": "0.0.9",
