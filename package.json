@@ -19,6 +19,13 @@
     "type": "git",
     "url": "https://gitlab.com/dna-components/dna-components"
   },
+  "keywords": [
+    "DNA",
+    "components",
+    "Chialab",
+    "webcomponents",
+    "virtualdom"
+  ],
   "license": "MIT",
   "devDependencies": {
     "dna-polyfills": "^0.6.3",
