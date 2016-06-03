@@ -19,4 +19,4 @@ $ bower i dna-components --save
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
 [![Code coverage](https://codecov.io/gh/Chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
 
-![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)
+[![Sauce Test Status](https://saucelabs.com/buildstatus/chialab-sl-003)](https://saucelabs.com/u/chialab-sl-003)
