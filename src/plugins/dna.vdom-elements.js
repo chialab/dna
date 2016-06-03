@@ -14,6 +14,9 @@ class DNAVDomElementsBaseComponent extends DNAVDomBaseComponent {
 }
 export { DNAVDomBaseComponent, DNAVDomElementsBaseComponent };
 
+// override deault base component
+export let BaseComponent = DNAVDomElementsBaseComponent;
+
 // override `register` and `create` methods
 export const register = _register;
 
