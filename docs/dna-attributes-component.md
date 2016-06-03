@@ -10,7 +10,7 @@
         * [`.createdCallback()`](#DNAAttributesComponent+createdCallback)
         * [`.attributeChangedCallback(attrName, oldVal, newVal)`](#DNAAttributesComponent+attributeChangedCallback)
     * _static_
-        * [`.onRegister()`](#DNAAttributesComponent.onRegister)
+        * [`.onRegister(id)`](#DNAAttributesComponent.onRegister)
 
 <a name="new_DNAAttributesComponent_new"></a>
 
@@ -57,7 +57,12 @@ On `attributeChanged` callback, sync attributes with properties.
 
 <a name="DNAAttributesComponent.onRegister"></a>
 
-### `DNAAttributesComponent.onRegister()`
+### `DNAAttributesComponent.onRegister(id)`
 Fires when an the element is registered.
 
 **Kind**: static method of <code>[DNAAttributesComponent](#DNAAttributesComponent)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | The element definition name. |
+

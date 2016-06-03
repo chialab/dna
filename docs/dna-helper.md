@@ -15,7 +15,7 @@
 <dt><a href="#getDescriptor">`getDescriptor(ctr, prop)`</a> ⇒ <code>object</code></dt>
 <dd><p>Get an element&#39;s property descriptor.</p>
 </dd>
-<dt><a href="#wrapDescriptorGet">`wrapDescriptorGet(prop, descriptor)`</a> ⇒ <code>function</code></dt>
+<dt><a href="#wrapDescriptorGet">`wrapDescriptorGet(prop, descriptor, value)`</a> ⇒ <code>function</code></dt>
 <dd><p>Wrap a property descriptor get function or create a new one.</p>
 </dd>
 <dt><a href="#wrapDescriptorSet">`wrapDescriptorSet(prop, descriptor, callback)`</a> ⇒ <code>function</code></dt>
@@ -27,20 +27,17 @@
 <dt><a href="#dashToCamel">`dashToCamel(str)`</a> ⇒ <code>string</code></dt>
 <dd><p>Convert a string from dash-case to camelCase.</p>
 </dd>
-<dt><a href="#extend">`extend(superScope, subScope)`</a> ⇒ <code>function</code></dt>
-<dd><p>Extend a component prototype.</p>
-</dd>
 <dt><a href="#digest">`digest(fn, options)`</a> ⇒ <code>Object</code></dt>
 <dd><p>Normalize the <code>register</code> method arguments.</p>
+</dd>
+<dt><a href="#wrapPrototype">`wrapPrototype(main, currentProto, includeFunctions, callback)`</a></dt>
+<dd><p>Wrap prototype properties in top-level element.</p>
 </dd>
 <dt><a href="#registry">`registry(tagName, constructor)`</a></dt>
 <dd><p>Add an entry to the DNA registry.</p>
 </dd>
 <dt><a href="#register">`register(tagName, options)`</a> ⇒ <code>function</code></dt>
 <dd><p>Trigger <code>onRegister</code> callbacks.</p>
-</dd>
-<dt><a href="#create">`create(fn, options, pluginOptions)`</a> ⇒ <code>function</code></dt>
-<dd><p>Create and register a component.</p>
 </dd>
 </dl>
 
@@ -77,7 +74,7 @@ Get an element's property descriptor.
 
 <a name="wrapDescriptorGet"></a>
 
-## `wrapDescriptorGet(prop, descriptor)` ⇒ <code>function</code>
+## `wrapDescriptorGet(prop, descriptor, value)` ⇒ <code>function</code>
 Wrap a property descriptor get function or create a new one.
 
 **Kind**: global function  
@@ -87,6 +84,7 @@ Wrap a property descriptor get function or create a new one.
 | --- | --- | --- |
 | prop | <code>string</code> | The property to wrap. |
 | descriptor | <code>object</code> | The property descriptor. |
+| value | <code>\*</code> | The initial value. |
 
 <a name="wrapDescriptorSet"></a>
 
@@ -126,19 +124,6 @@ Convert a string from dash-case to camelCase.
 | --- | --- | --- |
 | str | <code>string</code> | The string to convert. |
 
-<a name="extend"></a>
-
-## `extend(superScope, subScope)` ⇒ <code>function</code>
-Extend a component prototype.
-
-**Kind**: global function  
-**Returns**: <code>function</code> - A new extended class.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| superScope | <code>function</code> &#124; <code>class</code> &#124; <code>object</code> | The function or the prototype to extend. |
-| subScope | <code>function</code> &#124; <code>class</code> &#124; <code>object</code> | The function or the prototype to merge. |
-
 <a name="digest"></a>
 
 ## `digest(fn, options)` ⇒ <code>Object</code>
@@ -151,6 +136,20 @@ Normalize the `register` method arguments.
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> | The definition or the tag name of the Custom Element. |
 | options | <code>Object</code> &#124; <code>function</code> | A set of options or the Component class                                     for the registration of the Custom Element. |
+
+<a name="wrapPrototype"></a>
+
+## `wrapPrototype(main, currentProto, includeFunctions, callback)`
+Wrap prototype properties in top-level element.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| main | <code>Object</code> | The top-level element which needs the prototype properties. |
+| currentProto | <code>Object</code> | The current prototype to analyze. |
+| includeFunctions | <code>Boolean</code> | Should deine methods too. |
+| callback | <code>function</code> | A setter callback for the property (optional). |
 
 <a name="registry"></a>
 
@@ -176,18 +175,4 @@ Trigger `onRegister` callbacks.
 | --- | --- | --- |
 | tagName | <code>function</code> &#124; <code>String</code> | The definition or the tag name of the Component. |
 | options | <code>Object</code> | A set of options for the registration of the Component. |
-
-<a name="create"></a>
-
-## `create(fn, options, pluginOptions)` ⇒ <code>function</code>
-Create and register a component.
-
-**Kind**: global function  
-**Returns**: <code>function</code> - The Component constructor.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| fn | <code>string</code> | The tag to use for the custom element. (required) |
-| options | <code>object</code> | A configuration object. (`prototype` key is required) |
-| pluginOptions | <code>object</code> | Some  generic replacements (optional) |
 

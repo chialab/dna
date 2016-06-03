@@ -6,8 +6,11 @@
 
 * [DNAEventsComponent](#DNAEventsComponent) ⇐ <code>DNAComponent</code>
     * [`new DNAEventsComponent()`](#new_DNAEventsComponent_new)
-    * [`.createdCallback()`](#DNAEventsComponent+createdCallback)
-    * [`.trigger(evName, data, bubbles, cancelable)`](#DNAEventsComponent+trigger)
+    * _instance_
+        * [`.createdCallback()`](#DNAEventsComponent+createdCallback)
+        * [`.trigger(evName, data, bubbles, cancelable)`](#DNAEventsComponent+trigger)
+    * _static_
+        * [`.onRegister(id)`](#DNAEventsComponent.onRegister)
 
 <a name="new_DNAEventsComponent_new"></a>
 
@@ -60,4 +63,15 @@ Fires when an instance of the element is created.
 | data | <code>Object</code> |  | A set of custom data to pass to the event. |
 | bubbles | <code>Boolean</code> | <code>true</code> | Should the event bubble throw the DOM tree. |
 | cancelable | <code>Boolean</code> | <code>true</code> | Can be the event cancel by a callback. |
+
+<a name="DNAEventsComponent.onRegister"></a>
+
+### `DNAEventsComponent.onRegister(id)`
+Fires when an the element is registered.
+
+**Kind**: static method of <code>[DNAEventsComponent](#DNAEventsComponent)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | The element definition name. |
 

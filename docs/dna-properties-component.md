@@ -9,7 +9,7 @@
     * _instance_
         * [`.createdCallback()`](#DNAPropertiesComponent+createdCallback)
     * _static_
-        * [`.onRegister()`](#DNAPropertiesComponent.onRegister)
+        * [`.onRegister(id)`](#DNAPropertiesComponent.onRegister)
 
 <a name="new_DNAPropertiesComponent_new"></a>
 
@@ -44,7 +44,12 @@ On `created` callback, apply attributes to properties.
 **Kind**: instance method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
 <a name="DNAPropertiesComponent.onRegister"></a>
 
-### `DNAPropertiesComponent.onRegister()`
+### `DNAPropertiesComponent.onRegister(id)`
 Fires when an the element is registered.
 
 **Kind**: static method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> | The element definition name. |
+
