@@ -24,6 +24,6 @@
     "tests",
     "karma-ci.conf.js",
     "karma.conf.js",
-    "system.conf.js",
+    "system.conf.js"
   ]
 }
