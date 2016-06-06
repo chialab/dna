@@ -1,3 +1,5 @@
+import { DNAComponent } from './dna-component.js';
+
 export const EXCLUDE_ON_EXTEND = [
     'name',
     'length',
@@ -174,9 +176,6 @@ export function digest(fn, options = {}) {
  */
 export function wrapPrototype(main, currentProto, includeFunctions = true, callback, handled = []) {
     Object.getOwnPropertyNames(currentProto)
-        .filter((prop) =>
-            EXCLUDE_ON_EXTEND.indexOf(prop) === -1
-        )
         .forEach((prop) => {
             let descriptor = Object.getOwnPropertyDescriptor(currentProto, prop) || {};
             let isFunction = typeof descriptor.value === 'function';
@@ -209,9 +208,10 @@ export function wrapPrototype(main, currentProto, includeFunctions = true, callb
 export const REGISTRY = {};
 
 /**
- * Add an entry to the DNA registry.
+ * Add/retrieve an entry to/from the DNA registry.
  * @param {String} tagName The tag name of the Component.
  * @param {Function} constructor The Component constructor.
+ * @return {Function} The Component constructor.
  */
 export function registry(tagName, constructor) {
     if (tagName) {
@@ -220,6 +220,43 @@ export function registry(tagName, constructor) {
             REGISTRY[lower] = constructor;
         }
         return REGISTRY[lower];
+    }
+    return null;
+}
+
+/**
+ * Check if a class extends another.
+ * @private
+ * @param {Function} subScope The class to check.
+ * @param {Function} superScope The prototype class.
+ * @return {Boolean}.
+ */
+export function isSubClass(subScope, superScope) {
+    let proto = Object.getPrototypeOf(subScope);
+    while (proto && proto !== Function) {
+        if (proto === superScope) {
+            return true;
+        }
+        proto = Object.getPrototypeOf(proto);
+    }
+    return false;
+}
+
+/**
+ * Get the component's class definition.
+ * @param {String} tagName The tag name of the Component.
+ * @param {Function} constructor The Component class.
+ * @return {Function} The Component class.
+ */
+export function getComponentClass(tagName) {
+    let Ctr = registry(tagName);
+    if (Ctr && Ctr.prototype) {
+        if (isSubClass(Ctr, DNAComponent)) {
+            return Ctr;
+        } else if (Ctr.prototype.constructor &&
+            isSubClass(Ctr.prototype.constructor, DNAComponent)) {
+            return Ctr.prototype.constructor;
+        }
     }
     return null;
 }
