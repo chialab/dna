@@ -12,8 +12,8 @@
         * [`.updateViewContent()`](#DNATemplateComponent+updateViewContent)
         * [`.render()`](#DNATemplateComponent+render) ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
     * _static_
+        * [`.autoUpdateView`](#DNATemplateComponent.autoUpdateView)
         * [`.onRegister(id)`](#DNATemplateComponent.onRegister)
-        * [`.autoUpdateView()`](#DNATemplateComponent.autoUpdateView)
 
 <a name="new_DNATemplateComponent_new"></a>
 
@@ -66,6 +66,12 @@ Generate HTML or Nodes.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 **Returns**: <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code> - The generated content.  
+<a name="DNATemplateComponent.autoUpdateView"></a>
+
+### `DNATemplateComponent.autoUpdateView`
+Default `autoUpdateView` conf.
+
+**Kind**: static property of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 <a name="DNATemplateComponent.onRegister"></a>
 
 ### `DNATemplateComponent.onRegister(id)`
@@ -77,9 +83,3 @@ Fires when an the element is registered.
 | --- | --- | --- |
 | id | <code>String</code> | The element definition name. |
 
-<a name="DNATemplateComponent.autoUpdateView"></a>
-
-### `DNATemplateComponent.autoUpdateView()`
-Default `autoUpdateView` conf.
-
-**Kind**: static method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  

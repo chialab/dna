@@ -33,8 +33,8 @@
 <dt><a href="#wrapPrototype">`wrapPrototype(main, currentProto, includeFunctions, callback)`</a></dt>
 <dd><p>Wrap prototype properties in top-level element.</p>
 </dd>
-<dt><a href="#registry">`registry(tagName, constructor)`</a></dt>
-<dd><p>Add an entry to the DNA registry.</p>
+<dt><a href="#registry">`registry(tagName, constructor)`</a> ⇒ <code>function</code></dt>
+<dd><p>Add/retrieve an entry to/from the DNA registry.</p>
 </dd>
 <dt><a href="#register">`register(tagName, options)`</a> ⇒ <code>function</code></dt>
 <dd><p>Trigger <code>onRegister</code> callbacks.</p>
@@ -153,10 +153,11 @@ Wrap prototype properties in top-level element.
 
 <a name="registry"></a>
 
-## `registry(tagName, constructor)`
-Add an entry to the DNA registry.
+## `registry(tagName, constructor)` ⇒ <code>function</code>
+Add/retrieve an entry to/from the DNA registry.
 
 **Kind**: global function  
+**Returns**: <code>function</code> - The Component constructor.  
 
 | Param | Type | Description |
 | --- | --- | --- |
