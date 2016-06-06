@@ -20,11 +20,11 @@ export function register(...args) {
     if (typeof scope.onRegister === 'function') {
         scope.onRegister.call(scope, tagName);
     }
-    let res = document.registerElement(tagName, config);
-    Object.defineProperty(res.prototype, 'is', {
+    Object.defineProperty(config.prototype, 'is', {
         configurable: false,
         get: () => tagName,
     });
+    let res = document.registerElement(tagName, config);
     Object.defineProperty(res.prototype, 'constructor', {
         configurable: false,
         get: () => scope,
