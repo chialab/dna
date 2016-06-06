@@ -44,7 +44,7 @@ export class DNATemplateComponent extends DNAComponent {
     /**
      * Default `autoUpdateView` conf.
      */
-    static autoUpdateView() {
+    static get autoUpdateView() {
         return Config.autoUpdateView;
     }
     /**
