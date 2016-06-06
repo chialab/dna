@@ -1,12 +1,13 @@
 import { DNAComponent } from './dna-component.js';
-import { EXCLUDE_ON_EXTEND, getDescriptor, registry } from './dna-helper.js';
+import { getDescriptor, registry } from './dna-helper.js';
+import { EXCLUDE_ON_EXTEND } from 'es6-classes/src/excludes.js';
 
 /**
  * Retrieve a list of callbacks that should not be overridden but concatenated.
  * @private
  * @return {Array} The list.
  */
-let componentCallbacks = [
+const COMPONENT_CALLBACKS = [
     'onRegister',
     'createdCallback',
     'attachedCallback',
@@ -34,14 +35,13 @@ function getCallbackKey(callbackName) {
 function triggerCallbacks(ctx, callbackKey, args) {
     let ctr = ctx;
     if (typeof ctr !== 'function') {
-        ctr = registry(ctx.is).prototype.constructor;
+        ctr = registry(ctx.is);
     }
     if (!ctr) {
         return false;
     }
     let secretKey = getCallbackKey(callbackKey);
-    let proto = Object.getPrototypeOf(ctr);
-    let callbacks = ctr[secretKey] || (proto && proto[secretKey]);
+    let callbacks = ctr[secretKey];
     if (callbacks && Array.isArray(callbacks)) {
         for (let i = 0, len = callbacks.length; i < len; i++) {
             callbacks[i].apply(ctx, args);
@@ -89,7 +89,6 @@ function iterateBehaviors(ctx, behavior) {
             iterateBehaviors(ctx, behavior.behaviors);
         }
         // iterate and attach static methods and priorities.
-        let callbacks = componentCallbacks;
         let staticKeys = [];
         let _behavior = behavior;
         while (_behavior && _behavior !== DNAComponent) {
@@ -101,7 +100,7 @@ function iterateBehaviors(ctx, behavior) {
             _behavior = Object.getPrototypeOf(_behavior);
         }
         staticKeys.forEach((key) => {
-            if (callbacks.indexOf(key) !== -1) {
+            if (COMPONENT_CALLBACKS.indexOf(key) !== -1) {
                 let callbackKey = getCallbackKey(key);
                 ctx[callbackKey] = ctx[callbackKey] || [];
                 ctx[callbackKey].push(behavior[key]);
@@ -122,7 +121,7 @@ function iterateBehaviors(ctx, behavior) {
                 _proto = _proto.prototype || Object.getPrototypeOf(_proto);
             }
             protoKeys.forEach((key) => {
-                if (callbacks.indexOf(key) !== -1) {
+                if (COMPONENT_CALLBACKS.indexOf(key) !== -1) {
                     let callbackKey = getCallbackKey(key);
                     ctx[callbackKey] = ctx[callbackKey] || [];
                     ctx[callbackKey].push(behavior.prototype[key]);
@@ -150,7 +149,7 @@ export class DNAMixedComponent extends DNAComponent {
     static onRegister(...args) {
         let ctr = this;
         DNAComponent.onRegister.apply(this, args);
-        componentCallbacks.forEach((key) => {
+        COMPONENT_CALLBACKS.forEach((key) => {
             let callbackKey = getCallbackKey(key);
             this[callbackKey] = [];
         });

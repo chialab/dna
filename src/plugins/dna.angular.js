@@ -1,4 +1,4 @@
-import { digest, dashToCamel } from '../dna-helper.js';
+import { digest, registry, dashToCamel } from '../dna-helper.js';
 import { create as _create } from '../dna-create.js';
 
 export * from '../dna.js';
@@ -56,6 +56,7 @@ export function register(fn, options = {}) {
             }
         },
     ];
+    registry(tagName, scope);
     return module.directive(dashToCamel(tagName), () => ngDescriptor);
 }
 

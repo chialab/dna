@@ -1,14 +1,3 @@
-import { DNAComponent } from './dna-component.js';
-
-export const EXCLUDE_ON_EXTEND = [
-    'name',
-    'length',
-    'prototype',
-    'arguments',
-    'caller',
-    'constructor',
-];
-
 /**
  * Convert a Class name into HTML tag.
  * @param {Class} fn Grab the tag name from this class.
@@ -225,43 +214,6 @@ export function registry(tagName, constructor) {
 }
 
 /**
- * Check if a class extends another.
- * @private
- * @param {Function} subScope The class to check.
- * @param {Function} superScope The prototype class.
- * @return {Boolean}.
- */
-export function isSubClass(subScope, superScope) {
-    let proto = Object.getPrototypeOf(subScope);
-    while (proto && proto !== Function) {
-        if (proto === superScope) {
-            return true;
-        }
-        proto = Object.getPrototypeOf(proto);
-    }
-    return false;
-}
-
-/**
- * Get the component's class definition.
- * @param {String} tagName The tag name of the Component.
- * @param {Function} constructor The Component class.
- * @return {Function} The Component class.
- */
-export function getComponentClass(tagName) {
-    let Ctr = registry(tagName);
-    if (Ctr && Ctr.prototype) {
-        if (isSubClass(Ctr, DNAComponent)) {
-            return Ctr;
-        } else if (Ctr.prototype.constructor &&
-            isSubClass(Ctr.prototype.constructor, DNAComponent)) {
-            return Ctr.prototype.constructor;
-        }
-    }
-    return null;
-}
-
-/**
  * Trigger `onRegister` callbacks.
  * @param {Function|String} tagName The definition or the tag name of the Component.
  * @param {Object} options A set of options for the registration of the Component.
@@ -289,6 +241,6 @@ export function register(fn, options = {}) {
         configurable: false,
         get: () => scope,
     });
-    registry(tagName, res);
+    registry(tagName, scope);
     return res;
 }

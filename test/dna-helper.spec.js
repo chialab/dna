@@ -1,8 +1,8 @@
-import { DNAHelper } from '../src/dna-helper.js';
+import DNAHelper from '../src/dna-helper.js';
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAHelper', () => {
-    describe('Unit: DNAHelper > getDescriptor', () => {
+    describe('getDescriptor', () => {
         let obj = {
             get prop() {
                 return true;
@@ -20,7 +20,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > wrapDescriptorGet', () => {
+    describe('wrapDescriptorGet', () => {
         it('should create a getter for a property', () => {
             let obj = {
                 __prop: true,
@@ -42,7 +42,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > wrapDescriptorSet', () => {
+    describe('wrapDescriptorSet', () => {
         it('should create a setter for a property', () => {
             let obj = {};
             let descriptor = DNAHelper.getDescriptor(obj, 'prop') || {};
@@ -100,7 +100,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > classToElement', () => {
+    describe('classToElement', () => {
         it('should transform function name to element tag', () => {
             assert.equal(DNAHelper.classToElement(
                     // eslint-disable-next-line
@@ -120,7 +120,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > camelToDash', () => {
+    describe('camelToDash', () => {
         it('should transform transform a camel case string to dashed case', () => {
             assert.equal(DNAHelper.camelToDash('simple'), 'simple');
             assert.equal(DNAHelper.camelToDash('Simple'), 'simple');
@@ -129,7 +129,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > dashToCamel', () => {
+    describe('dashToCamel', () => {
         it('should transform transform a dashed case string to camel case', () => {
             assert.equal(DNAHelper.dashToCamel('simple'), 'simple');
             assert.equal(DNAHelper.dashToCamel('simple-string'), 'simpleString');
@@ -137,7 +137,7 @@ describe('Unit: DNAHelper', () => {
         });
     });
 
-    describe('Unit: DNAHelper > register', () => {
+    describe('register', () => {
         class TestComponent extends HTMLElement {
             static get tagName() {
                 return 'test1-helper-component';
@@ -155,7 +155,7 @@ describe('Unit: DNAHelper', () => {
             }
         }
 
-        describe('Unit: DNAHelper > register simple element', () => {
+        describe('register simple element', () => {
             const Test1 = DNAHelper.register(TestComponent);
 
             const Test2 = DNAHelper.register('test2-helper-component', {
@@ -188,7 +188,7 @@ describe('Unit: DNAHelper', () => {
             });
         });
 
-        describe('Unit: DNAHelper > register with extends field', () => {
+        describe('register with extends field', () => {
             const Test1 = DNAHelper.register('test1-helper-register-component', {
                 prototype: Test2Component,
                 extends: 'div',

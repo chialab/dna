@@ -194,7 +194,7 @@ export class DNAVDomComponent extends DNATemplateComponent {
             this._vtree = this._vtree || nodeToVDOM(tmp);
             tmp.innerHTML = html;
             let tree = nodeToVDOM(tmp, {
-                hooks: registry(this.is).prototype.constructor.useVirtualDomHooks,
+                hooks: registry(this.is).useVirtualDomHooks,
             });
             let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
             virtualDom.patch(this, diff);
