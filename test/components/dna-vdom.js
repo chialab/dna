@@ -75,7 +75,7 @@ export class TestComponent7 extends TestComponent {
 
 export class TestComponent8 extends TestComponent {
     static get template() {
-        return '<span class="dna-test">Hello DNA!</span><test-vdom-placeholder></test-vdom-placeholder>';
+        return '<span class="dna-test">Hello DNA!</span><test-vdom-placeholder></test-vdom-placeholder><figure is="test2-vdom-placeholder"></figure>';
     }
 }
 
@@ -87,5 +87,16 @@ export class TestPlaceholder extends DNAAttributesComponent {
     createdCallback() {
         super.createdCallback();
         this.value = 6;
+    }
+}
+
+export class Test2Placeholder extends DNAAttributesComponent {
+    static get attributes() {
+        return ['value'];
+    }
+
+    createdCallback() {
+        super.createdCallback();
+        this.value = 11;
     }
 }

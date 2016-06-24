@@ -9,6 +9,7 @@ import {
     TestComponent7,
     TestComponent8,
     TestPlaceholder,
+    Test2Placeholder,
 } from './components/dna-vdom.js';
 
 const Test1 = register('test1-vdom-template-component', {
@@ -45,6 +46,11 @@ const Test8 = register('test8-vdom-template-component', {
 
 register('test-vdom-placeholder', {
     prototype: TestPlaceholder,
+});
+
+register('test2-vdom-placeholder', {
+    prototype: Test2Placeholder,
+    extends: 'figure',
 });
 
 const hasTemplate = (typeof document.importNode === 'function' &&
@@ -128,6 +134,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
     });
 
     it('should handle sub components', () => {
-        assert.equal(elem8.innerHTML, '<span class="dna-test">Hello DNA!</span><test-vdom-placeholder value="6"></test-vdom-placeholder>');
+        assert.equal(elem8.querySelector('test-vdom-placeholder').value, 6);
+        assert.equal(elem8.querySelector('figure').value, 11);
     });
 });

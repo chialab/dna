@@ -13,14 +13,9 @@ function getCtr(node) {
  */
 class DNALifeCycleHook {
     hook(node) {
-        let Ctr = getCtr(node);
         if (node.__virtualDomCreated !== true) {
             this.define(node, '__virtualDomCreated', true, false);
-            if (typeof node.createdCallback !== 'function') {
-                node = new Ctr(node);
-            } else {
-                this.trigger('createdCallback');
-            }
+            this.trigger('createdCallback');
         }
         this.isAttached(node);
     }
@@ -94,7 +89,7 @@ class DNAAttributeHook {
 function attributesToProp(node, options = {}, hooks = true) {
     let res = {};
     Array.prototype.forEach.call(node.attributes || [], (attr) => {
-        if (hooks) {
+        if (hooks && attr.name !== 'is') {
             res[attr.name] = new DNAAttributeHook(attr.value, options.namespace);
         } else {
             res[attr.name] = attr.value;
