@@ -23,4 +23,4 @@ export { register, registry, REGISTRY } from './dna-helper.js';
 export { create } from './dna-create.js';
 export { DNABaseComponent as BaseComponent } from './dna-base-component.js';
 export const Config = config;
-export const Version = this.__DNA__VERSION__ || 'dev';
+export const Version = self.__DNA__VERSION__ || 'dev';

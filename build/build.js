@@ -21,7 +21,7 @@ function build(file) {
     packageJSON.build.bundleName = base;
     return myBuilder.run(packageJSON).then(() => {
         let code = fs.readFileSync(path.join(cwd, `lib/${base}`), 'utf8');
-        code = code.replace('this.__DNA__VERSION__', `'${version}'`);
+        code = code.replace('self.__DNA__VERSION__', `'${version}'`);
         fs.writeFileSync(path.join(cwd, `lib/${base}`), code);
     });
 }
