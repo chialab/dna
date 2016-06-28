@@ -2,10 +2,7 @@
 
 A component pattern for Web artisans.
 
-* [Documentation](http://dna.chialab.io/docs)
-* [Issue tracker](https://github.com/Chialab/dna/issues)
-* [Project home page](http://dna.chialab.io)
-* [Author home page](http://www.chialab.com)
+[Documentation](http://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](http://dna.chialab.io) | [Author home page](http://www.chialab.com)
 
 ## Install
 
