@@ -18,9 +18,8 @@ $ npm i dna-components --save
 $ bower i dna-components --save
 ```
 
-## Dev
+## Dev [![Chialab es6-workflow](https://img.shields.io/badge/project-es6--workflow-lightgrey.svg)](https://github.com/Chialab/es6-workflow)
 
-[![Chialab es6-workflow](https://img.shields.io/badge/project-es6--workflow-lightgrey.svg)](https://github.com/Chialab/es6-workflow)
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
 [![Code coverage](https://codecov.io/gh/Chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
 
