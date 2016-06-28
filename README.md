@@ -1,4 +1,4 @@
-[![DNA](https://raw.githubusercontent.com/Chialab/dna-design/master/logos/logo-full-raster-128.png)](http://dna.chialab.io)
+<a href="http://dna.chialab.io" target="_blank"><img src="https://cdn.rawgit.com/Chialab/dna-design/master/logos/logo-full.svg" alt="DNA Components" width="128"></a>
 
 A component pattern for Web artisans.
 
