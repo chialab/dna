@@ -7,6 +7,7 @@
  */
 import 'dna/polyfills/src/dom/class-list.js';
 import 'dna/polyfills/src/object/set-prototype-of.js';
+import 'dna/polyfills/src/extra/dom-parser.js';
 import 'dna/polyfills/src/function/name.js';
 
 import * as config from './dna-config.js';
