@@ -65,13 +65,12 @@ export class DNATemplateComponent extends DNAComponent {
         this.updateViewContent();
     }
     /**
-     * Generate view HTML content.
+     * Generate view content.
      */
-    getViewContent() {
-        let html = null;
+    getViewContent(html) {
         if (typeof this.render === 'function') {
-            html = this.render();
-            if (html !== null) {
+            html = html || this.render();
+            if (html !== null && html !== undefined) {
                 if (html instanceof Node || html instanceof DocumentFragment) {
                     let box = document.createElement('div');
                     box.appendChild(html);
@@ -80,7 +79,7 @@ export class DNATemplateComponent extends DNAComponent {
                 html = html.replace(/[\n\r\t]/g, '').replace(/\s+/g, ' ');
             }
         }
-        return html;
+        return html || null;
     }
     /**
      * Update Component child nodes.

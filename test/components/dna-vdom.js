@@ -3,6 +3,7 @@ import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
 import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
 import { DNAVDomComponent } from '../../src/extra/dna-vdom-component.js';
 import { DNAVDomBaseComponent } from '../../src/extra/dna-vdom-base-component.js';
+import { virtualDom } from 'vdom';
 
 class TestComponent extends DNAMixedComponent {
     static get behaviors() {
@@ -98,5 +99,18 @@ export class Test2Placeholder extends DNAAttributesComponent {
     createdCallback() {
         super.createdCallback();
         this.value = 11;
+    }
+}
+
+export class TestComponent9 extends TestComponent {
+    static get template() {
+        return () => {
+            return new virtualDom.VNode('span', {
+                className: 'dna-test',
+            }, [
+                new virtualDom.VText('Hello DNA!'),
+                new virtualDom.VNode('test-vdom-placeholder')
+            ])
+        };
     }
 }

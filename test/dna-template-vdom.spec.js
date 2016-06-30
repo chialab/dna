@@ -8,6 +8,7 @@ import {
     TestComponent6,
     TestComponent7,
     TestComponent8,
+    TestComponent9,
     TestPlaceholder,
     Test2Placeholder,
 } from './components/dna-vdom.js';
@@ -44,6 +45,10 @@ const Test8 = register('test8-vdom-template-component', {
     prototype: TestComponent8,
 });
 
+const Test9 = register('test9-vdom-template-component', {
+    prototype: TestComponent8,
+});
+
 register('test-vdom-placeholder', {
     prototype: TestPlaceholder,
 });
@@ -66,6 +71,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
     let elem6;
     let elem7;
     let elem8;
+    let elem9;
     before((done) => {
         elem1 = new Test1();
         elem2 = new Test2();
@@ -77,6 +83,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
         elem6 = new Test6();
         elem7 = new Test7();
         elem8 = new Test8();
+        elem9 = new Test9();
         document.body.appendChild(elem1);
         document.body.appendChild(elem2);
         document.body.appendChild(elem3);
@@ -87,6 +94,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
         document.body.appendChild(elem6);
         document.body.appendChild(elem7);
         document.body.appendChild(elem8);
+        document.body.appendChild(elem9);
         setTimeout(() => {
             done();
         }, 250);
@@ -136,5 +144,10 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
     it('should handle sub components', () => {
         assert.equal(elem8.querySelector('test-vdom-placeholder').value, 6);
         assert.equal(elem8.querySelector('figure').value, 11);
+    });
+
+    it('should handle virtual-hyperscript template', () => {
+        assert.equal(elem9.querySelector('span').textContent, 'Hello DNA!');
+        assert.equal(elem9.querySelector('test-vdom-placeholder').value, 6);
     });
 });

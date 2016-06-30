@@ -177,7 +177,16 @@ export class DNAVDomComponent extends DNATemplateComponent {
     static get useVirtualDomHooks() {
         return true;
     }
-
+    /**
+     * Generate view content.
+     */
+    getViewContent() {
+        let html = this.render();
+        if (html instanceof virtualDom.VNode) {
+            return html;
+        }
+        return super.getViewContent(html);
+    }
     /**
      * Update Component child nodes using VDOM trees.
      */
@@ -187,20 +196,26 @@ export class DNAVDomComponent extends DNATemplateComponent {
         if (html !== null) {
             let tree = new virtualDom.VNode(this.tagName);
             this._vtree = this._vtree || tree;
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(
-                `<${this.tagName}>${html}</${this.tagName}>`,
-                'text/html'
-            );
-            let tmp = doc.body && doc.body.firstChild;
-            if (tmp) {
-                tree = nodeToVDOM(tmp, {
-                    hooks: registry(this.is).useVirtualDomHooks,
-                });
+            if (typeof html === 'string') {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(
+                    `<${this.tagName}>${html}</${this.tagName}>`,
+                    'text/html'
+                );
+                let tmp = doc.body && doc.body.firstChild;
+                if (tmp) {
+                    tree = nodeToVDOM(tmp, {
+                        hooks: registry(this.is).useVirtualDomHooks,
+                    });
+                }
+            } else if (html instanceof virtualDom.VNode) {
+                tree = html;
             }
-            let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
-            virtualDom.patch(this, diff);
-            this._vtree = tree;
+            if (tree instanceof virtualDom.VNode) {
+                let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
+                virtualDom.patch(this, diff);
+                this._vtree = tree;
+            }
         }
     }
 }
