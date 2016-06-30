@@ -185,12 +185,19 @@ export class DNAVDomComponent extends DNATemplateComponent {
         // Render the template
         let html = this.getViewContent();
         if (html !== null) {
-            let tmp = document.createElement('div');
-            this._vtree = this._vtree || nodeToVDOM(tmp);
-            tmp.innerHTML = html;
-            let tree = nodeToVDOM(tmp, {
-                hooks: registry(this.is).useVirtualDomHooks,
-            });
+            let tree = new virtualDom.VNode(this.tagName);
+            this._vtree = this._vtree || tree;
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(
+                `<${this.tagName}>${html}</${this.tagName}>`,
+                'text/html'
+            );
+            let tmp = doc.body && doc.body.firstChild;
+            if (tmp) {
+                tree = nodeToVDOM(tmp, {
+                    hooks: registry(this.is).useVirtualDomHooks,
+                });
+            }
             let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
             virtualDom.patch(this, diff);
             this._vtree = tree;
