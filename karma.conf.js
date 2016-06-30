@@ -16,6 +16,7 @@ module.exports = function(karma) {
         'node_modules/dna-polyfills/src/object/set-prototype-of.js',
         'node_modules/dna-polyfills/src/function/name.js',
         'node_modules/dna-polyfills/src/extra/custom-elements.js',
+        'node_modules/dna-polyfills/src/extra/dom-parser.js',
         'node_modules/virtual-dom/dist/virtual-dom.js',
         'node_modules/es6-classes/src/create.js',
         'node_modules/es6-classes/src/define-properties.js',
