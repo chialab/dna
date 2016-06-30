@@ -66,6 +66,8 @@ export class DNATemplateComponent extends DNAComponent {
     }
     /**
      * Generate view content.
+     * @param {*} html Optional result of a `getViewContent` of an extended class.
+     * @return {*} The view content.
      */
     getViewContent(html) {
         if (typeof this.render === 'function') {

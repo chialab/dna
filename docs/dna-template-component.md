@@ -8,7 +8,7 @@
     * [`new DNATemplateComponent()`](#new_DNATemplateComponent_new)
     * _instance_
         * [`.createdCallback()`](#DNATemplateComponent+createdCallback)
-        * [`.getViewContent()`](#DNATemplateComponent+getViewContent)
+        * [`.getViewContent(html)`](#DNATemplateComponent+getViewContent) ⇒ <code>\*</code>
         * [`.updateViewContent()`](#DNATemplateComponent+updateViewContent)
         * [`.render()`](#DNATemplateComponent+render) ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
     * _static_
@@ -49,10 +49,16 @@ Fires when an instance of the element is created.
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 <a name="DNATemplateComponent+getViewContent"></a>
 
-### `dnaTemplateComponent.getViewContent()`
-Generate view HTML content.
+### `dnaTemplateComponent.getViewContent(html)` ⇒ <code>\*</code>
+Generate view content.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
+**Returns**: <code>\*</code> - The view content.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| html | <code>\*</code> | Optional result of a `getViewContent` of an extended class. |
+
 <a name="DNATemplateComponent+updateViewContent"></a>
 
 ### `dnaTemplateComponent.updateViewContent()`

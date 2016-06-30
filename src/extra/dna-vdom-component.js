@@ -179,9 +179,11 @@ export class DNAVDomComponent extends DNATemplateComponent {
     }
     /**
      * Generate view content.
+     * @param {*} html Optional result of a `getViewContent` of an extended class.
+     * @return {*} The view content.
      */
-    getViewContent() {
-        let html = this.render();
+    getViewContent(html) {
+        html = html || this.render();
         if (html instanceof virtualDom.VNode) {
             return html;
         }

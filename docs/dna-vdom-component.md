@@ -7,6 +7,7 @@
 * [DNAVDomComponent](#DNAVDomComponent) ⇐ <code>DNATemplateComponent</code>
     * [`new DNAVDomComponent()`](#new_DNAVDomComponent_new)
     * _instance_
+        * [`.getViewContent(html)`](#DNAVDomComponent+getViewContent) ⇒ <code>\*</code>
         * [`.updateViewContent()`](#DNAVDomComponent+updateViewContent)
     * _static_
         * [`.useVirtualDomHooks`](#DNAVDomComponent.useVirtualDomHooks)
@@ -38,6 +39,18 @@ var MyElement = Register(MyComponent);
 var element = new MyElement();
 console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 ```
+<a name="DNAVDomComponent+getViewContent"></a>
+
+### `dnavDomComponent.getViewContent(html)` ⇒ <code>\*</code>
+Generate view content.
+
+**Kind**: instance method of <code>[DNAVDomComponent](#DNAVDomComponent)</code>  
+**Returns**: <code>\*</code> - The view content.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| html | <code>\*</code> | Optional result of a `getViewContent` of an extended class. |
+
 <a name="DNAVDomComponent+updateViewContent"></a>
 
 ### `dnavDomComponent.updateViewContent()`
