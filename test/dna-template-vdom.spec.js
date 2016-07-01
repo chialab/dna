@@ -147,6 +147,7 @@ describe('Unit: DNATemplateComponent with virtualDom', () => {
     });
 
     it('should handle virtual-hyperscript template', () => {
+        elem9.content = 'Hello DNA!';
         assert.equal(elem9.querySelector('span').textContent, 'Hello DNA!');
         assert.equal(elem9.querySelector('test-vdom-placeholder').value, 6);
     });

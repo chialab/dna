@@ -103,12 +103,15 @@ export class Test2Placeholder extends DNAAttributesComponent {
 }
 
 export class TestComponent9 extends TestComponent {
+    static get properties() {
+        return ['content'];
+    }
     static get template() {
         return () => {
             return new virtualDom.VNode('span', {
                 className: 'dna-test',
             }, [
-                new virtualDom.VText('Hello DNA!'),
+                new virtualDom.VText(this.content),
                 new virtualDom.VNode('test-vdom-placeholder')
             ])
         };

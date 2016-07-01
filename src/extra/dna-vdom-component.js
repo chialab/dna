@@ -211,7 +211,7 @@ export class DNAVDomComponent extends DNATemplateComponent {
                     });
                 }
             } else if (html instanceof virtualDom.VNode) {
-                tree = html;
+                tree = new virtualDom.VNode(this.tagName, {}, [html]);
             }
             if (tree instanceof virtualDom.VNode) {
                 let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
