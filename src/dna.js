@@ -1,6 +1,6 @@
 /**
  * DNA
- * (c) 2015-2016 Chialab (http://chialab.io) <dev@chialab.io>
+ * (c) 2015-2016 Chialab (http://www.chialab.com) <dev@chialab.io>
  * http://dna.chialab.io
  *
  * A component pattern for Web artisans.

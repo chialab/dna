@@ -1,6 +1,6 @@
 /**
  * DNA
- * (c) 2015-2016 Chialab (http://chialab.io) <dev@chialab.io>
+ * (c) 2015-2016 Chialab (http://www.chialab.com) <dev@chialab.io>
  * http://dna.chialab.io
  *
  * A component pattern for Web artisans.
@@ -17,4 +17,4 @@ export * from './dna-template-component.js';
 export * from './dna-base-component.js';
 export { register, registry, REGISTRY } from './dna-helper.js';
 export const Config = config;
-export const Version = this.__DNA__VERSION__ || 'dev';
+export const Version = self.__DNA__VERSION__ || 'dev';
