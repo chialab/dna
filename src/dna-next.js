@@ -15,6 +15,6 @@ export * from './dna-mixed-component.js';
 export * from './dna-style-component.js';
 export * from './dna-template-component.js';
 export * from './dna-base-component.js';
-export { register, registry, REGISTRY } from './dna-helper.js';
+export { DNAProperty, register, registry, REGISTRY } from './dna-helper.js';
 export const Config = config;
 export const Version = self.__DNA__VERSION__ || 'dev';

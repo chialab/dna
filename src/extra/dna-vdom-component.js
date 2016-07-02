@@ -1,6 +1,6 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
-import { registry } from '../dna-helper.js';
+import { DNAProperty, registry } from '../dna-helper.js';
 
 function getCtr(node) {
     return registry(node.getAttribute('is')) || registry(node.tagName);
@@ -12,20 +12,29 @@ function getCtr(node) {
  * @class DNALifeCycleHook
  */
 class DNALifeCycleHook {
+    static get CREATED_PROP() {
+        return '__virtualDomCreated';
+    }
+
+    static get ATTACHED_PROP() {
+        return '__virtualDomAttached';
+    }
+
     hook(node) {
-        if (node.__virtualDomCreated !== true) {
-            this.define(node, '__virtualDomCreated', true, false);
-            this.trigger('createdCallback');
+        let created = DNAProperty.get(node, DNALifeCycleHook.CREATED_PROP);
+        if (!created) {
+            DNAProperty.set(node, DNALifeCycleHook.CREATED_PROP, true, false);
         }
         this.isAttached(node);
     }
 
     isAttached(node) {
-        if (this.parentNode && node.__virtualDomAttached !== true) {
-            this.define(node, '__virtualDomAttached', true);
+        let attached = DNAProperty.get(node, DNALifeCycleHook.ATTACHED_PROP);
+        if (this.parentNode && !attached) {
+            DNAProperty.set(node, DNALifeCycleHook.ATTACHED_PROP, true, false);
             this.trigger('attachedCallback');
-        } else if (!this.parentNode && node.__virtualDomAttached === true) {
-            this.define(node, '__virtualDomAttached', false);
+        } else if (!this.parentNode && attached) {
+            DNAProperty.set(node, DNALifeCycleHook.ATTACHED_PROP, false, false);
             this.trigger('detachedCallback');
         }
     }
@@ -34,13 +43,6 @@ class DNALifeCycleHook {
         if (typeof this[name] === 'function') {
             this[name].apply(this, args);
         }
-    }
-
-    define(node, prop, value, writable = true) {
-        Object.defineProperty(node, prop, {
-            configurable: writable,
-            value,
-        });
     }
 }
 

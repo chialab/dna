@@ -2,6 +2,7 @@ import { DNAComponent } from './dna-component.js';
 import {
     dashToCamel,
     getDescriptor,
+    DNAProperty,
     wrapDescriptorGet,
     wrapDescriptorSet,
 } from './dna-helper.js';
@@ -18,7 +19,7 @@ const PROPERTIES_CACHE = {};
  * ```js
  * import { DNAPropertiesComponent } from 'dna/component';
  * export class MyComponent extends DNAPropertiesComponent {
- *   get properties() {
+ *   static get observedProperties() {
  *     return ['name'];
  *   }
  * }
@@ -40,14 +41,16 @@ export class DNAPropertiesComponent extends DNAComponent {
      * @param {String} id The element definition name.
      */
     static onRegister(is) {
-        let propertiesToWatch = this.properties || [];
+        let propertiesToWatch = this.observedProperties || this.properties || [];
         PROPERTIES_CACHE[is] = propertiesToWatch;
         propertiesToWatch.forEach((prop) => {
             let descriptor = getDescriptor(this.prototype, prop) || {};
             Object.defineProperty(this.prototype, prop, {
                 configurable: true,
                 get: wrapDescriptorGet(prop, descriptor),
-                set: wrapDescriptorSet(prop, descriptor),
+                set: wrapDescriptorSet(prop, descriptor, function(propKey, value) {
+                    DNAProperty.set(this, propKey, value);
+                }),
             });
         });
     }
@@ -75,5 +78,22 @@ export class DNAPropertiesComponent extends DNAComponent {
                 }
             }
         }
+    }
+    /**
+     * Create a listener for node's property changes.
+     * @param {string} propName The property name to observe.
+     * @param {Function} callback The callback to fire.
+     * @return {Object} An object with `cancel` method.
+     */
+    observeProperty(propName, callback) {
+        return DNAProperty.observe(this, propName, callback);
+    }
+    /**
+     * Create a listener for node's properties changes.
+     * @param {Function} callback The callback to fire.
+     * @return {Object} An object with `cancel` method.
+     */
+    observeProperties(callback) {
+        return DNAProperty.observe(this, callback);
     }
 }

@@ -20,7 +20,7 @@ export * from './dna-mixed-component.js';
 export * from './dna-style-component.js';
 export * from './dna-template-component.js';
 export * from './dna-base-component.js';
-export { register, registry, REGISTRY } from './dna-helper.js';
+export { DNAProperty, register, registry, REGISTRY } from './dna-helper.js';
 export { create } from './dna-create.js';
 export { DNABaseComponent as BaseComponent } from './dna-base-component.js';
 export const Config = config;

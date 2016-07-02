@@ -29,4 +29,18 @@ describe('Unit: DNAPropertiesComponent', () => {
         assert.equal(elem.lastName, 'Turing');
         assert.equal(elem.married, true);
     });
+
+    it('observe properties changes', () => {
+        let changedSingle = false;
+        let changedAll = false;
+        elem.observeProperty('age', () => {
+            changedSingle = true;
+        });
+        elem.observeProperties(() => {
+            changedAll = true;
+        });
+        elem.age = 41;
+        assert(changedSingle);
+        assert(changedAll);
+    });
 });

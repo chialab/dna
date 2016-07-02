@@ -1,6 +1,6 @@
 import * as Config from './dna-config.js';
 import { DNAComponent } from './dna-component.js';
-import { wrapPrototype, registry } from './dna-helper.js';
+import { DNAProperty, registry } from './dna-helper.js';
 
 const TEMPLATE_CACHE = {};
 
@@ -53,8 +53,7 @@ export class DNATemplateComponent extends DNAComponent {
     createdCallback() {
         let ctr = registry(this.is);
         if (ctr && ctr.autoUpdateView) {
-            let proto = ctr.prototype;
-            wrapPrototype(this, proto, false, function() {
+            DNAProperty.observe(this, function() {
                 if (this.templateReady) {
                     this.updateViewContent();
                 }

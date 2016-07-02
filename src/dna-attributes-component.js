@@ -34,7 +34,7 @@ function setValue(context, attr, value) {
  * ```js
  * import { DNAAttributesComponent } from 'dna/component';
  * export class MyComponent extends DNAAttributesComponent {
- *   get attributes() {
+ *   static get observedAttributes() {
  *     return ['name'];
  *   }
  * }
@@ -55,7 +55,7 @@ export class DNAAttributesComponent extends DNAComponent {
      * @param {String} id The element definition name.
      */
     static onRegister(is) {
-        let attributesToWatch = this.attributes || [];
+        let attributesToWatch = this.observedAttributes || this.attributes || [];
         ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => {
             let camelAttr = dashToCamel(attr);
             let descriptor = getDescriptor(this.prototype, camelAttr) || {};

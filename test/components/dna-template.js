@@ -6,7 +6,7 @@ class TestComponent extends DNAMixedComponent {
     static get behaviors() {
         return [DNAPropertiesComponent, DNATemplateComponent];
     }
-    static get properties() {
+    static get observedProperties() {
         return ['name', 'lastName', 'title'];
     }
     get fullname() {
@@ -57,7 +57,7 @@ export class TestComponent6 extends TestComponent {
 }
 
 export class TestComponent7 extends TestComponent {
-    static get properties() {
+    static get observedProperties() {
         return ['radius'];
     }
     static get template() {

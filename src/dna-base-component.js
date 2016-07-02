@@ -42,9 +42,9 @@ export class DNABaseComponent extends DNAMixedComponent {
      */
     static get behaviors() {
         return [
+            DNAPropertiesComponent,
             DNAStyleComponent,
             DNAEventsComponent,
-            DNAPropertiesComponent,
             DNAAttributesComponent,
             DNATemplateComponent,
         ];
