@@ -44,9 +44,9 @@ export class DNAVDomBaseComponent extends DNABaseComponent {
      */
     static get behaviors() {
         return [
+            DNAPropertiesComponent,
             DNAStyleComponent,
             DNAEventsComponent,
-            DNAPropertiesComponent,
             DNAAttributesComponent,
             DNAVDomComponent,
         ];

@@ -1,5 +1,6 @@
 import { DNAComponent } from './dna-component.js';
 import {
+    registry,
     dashToCamel,
     camelToDash,
     getDescriptor,
@@ -56,10 +57,18 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     static onRegister(is) {
         let attributesToWatch = this.observedAttributes || this.attributes || [];
-        ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => {
-            let camelAttr = dashToCamel(attr);
-            let descriptor = getDescriptor(this.prototype, camelAttr) || {};
-            Object.defineProperty(this.prototype, camelAttr, {
+        ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => dashToCamel(attr));
+    }
+    /**
+     * On `created` callback, sync attributes with properties.
+     */
+    createdCallback() {
+        super.createdCallback();
+        let Ctr = registry(this.is);
+        let ctrAttributes = ATTRIBUTES_CACHE[this.is] || [];
+        ctrAttributes.forEach((camelAttr) => {
+            let descriptor = getDescriptor(Ctr.prototype, camelAttr) || {};
+            Object.defineProperty(this, camelAttr, {
                 configurable: true,
                 get: wrapDescriptorGet(camelAttr, descriptor),
                 set: wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
@@ -67,20 +76,12 @@ export class DNAAttributesComponent extends DNAComponent {
                     setValue(this, dashed, res);
                 }),
             });
-            return camelAttr;
         });
-    }
-    /**
-     * On `created` callback, sync attributes with properties.
-     */
-    createdCallback() {
-        super.createdCallback();
         let attributes = this.attributes || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
-        let ctrAttributes = ATTRIBUTES_CACHE[this.is] || [];
         ctrAttributes.forEach((attr) => {
             setValue(this, camelToDash(attr), this[attr]);
         });

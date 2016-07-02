@@ -9,10 +9,10 @@ function createFunctionClass(prototype) {
     return fn;
 }
 
-function bindFN(protoFn, superFn) {
+function bindFN(superFn, protoFn) {
     return function(...args) {
-        protoFn.apply(this, args);
         superFn.apply(this, args);
+        protoFn.apply(this, args);
     };
 }
 /**
@@ -102,8 +102,8 @@ See https://github.com/Chialab/dna/wiki/Deprecating-%60DNA.create%60.`
             ];
             if (callbacks.indexOf(k) !== -1) {
                 scope.prototype[k] = bindFN(
-                    scope.prototype[k],
-                    baseComponent.prototype[k]
+                    baseComponent.prototype[k],
+                    scope.prototype[k]
                 );
             }
         }
@@ -115,8 +115,8 @@ See https://github.com/Chialab/dna/wiki/Deprecating-%60DNA.create%60.`
             ];
             if (callbacks.indexOf(k) !== -1) {
                 scope[k] = bindFN(
-                    scope[k],
-                    baseComponent[k]
+                    baseComponent[k],
+                    scope[k]
                 );
             }
         }

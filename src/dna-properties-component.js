@@ -1,13 +1,12 @@
 import { DNAComponent } from './dna-component.js';
 import {
+    registry,
     dashToCamel,
     getDescriptor,
     DNAProperty,
     wrapDescriptorGet,
     wrapDescriptorSet,
 } from './dna-helper.js';
-
-const PROPERTIES_CACHE = {};
 
 /**
  * Simple Custom Component for properties initialization via attributes.
@@ -37,30 +36,23 @@ const PROPERTIES_CACHE = {};
  */
 export class DNAPropertiesComponent extends DNAComponent {
     /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister(is) {
-        let propertiesToWatch = this.observedProperties || this.properties || [];
-        PROPERTIES_CACHE[is] = propertiesToWatch;
-        propertiesToWatch.forEach((prop) => {
-            let descriptor = getDescriptor(this.prototype, prop) || {};
-            Object.defineProperty(this.prototype, prop, {
-                configurable: true,
-                get: wrapDescriptorGet(prop, descriptor),
-                set: wrapDescriptorSet(prop, descriptor, function(propKey, value) {
-                    DNAProperty.set(this, propKey, value);
-                }),
-            });
-        });
-    }
-    /**
      * On `created` callback, apply attributes to properties.
      */
     createdCallback() {
         super.createdCallback();
+        let Ctr = registry(this.is);
+        let properties = Ctr.observedProperties || Ctr.properties || [];
+        properties.forEach((prop) => {
+            let descriptor = getDescriptor(Ctr.prototype, prop) || {};
+            Object.defineProperty(this, prop, {
+                configurable: true,
+                get: wrapDescriptorGet(prop, descriptor),
+                set: wrapDescriptorSet(prop, descriptor, (propKey, value) => {
+                    DNAProperty.set(this, propKey, value);
+                }),
+            });
+        });
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
-        let properties = PROPERTIES_CACHE[this.is] || [];
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
             let key = dashToCamel(attr.name);

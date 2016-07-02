@@ -7,7 +7,7 @@ function createComponent() {
     Component.onRegister = function() {
         Component.registered = true;
     }
-    Component.properties = ['name', 'lastName', 'age'];
+    Component.observedProperties = ['name', 'lastName', 'age'];
     Component.prototype = {
         createdCallback() {
             this.name = 'Alan';
