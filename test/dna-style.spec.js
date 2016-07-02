@@ -70,7 +70,9 @@ describe('Unit: DNAStyleComponent', () => {
     });
 
     it('should handle `css` property as string', () => {
-        let style = window.getComputedStyle(elem6.querySelector('h1'));
-        assert.equal(style.color, 'rgb(95, 158, 160)');
+        let style = window.getComputedStyle(elem6);
+        assert.equal(style.display, 'block');
+        let styleTitle = window.getComputedStyle(elem6.querySelector('h1'));
+        assert.equal(styleTitle.color, 'rgb(95, 158, 160)');
     });
 });

@@ -48,7 +48,17 @@ export class DNAStyleComponent extends DNAComponent {
         if (typeof style === 'function') {
             css = style();
         }
-        css = css.replace(/\:host/g, `.${id}`);
+        css = css.replace(/\:host[^\{]*/g, (fullRule) =>
+            fullRule.split(',').map((rule) => {
+                rule = rule.trim();
+                if (rule.match(/\:host\(/)) {
+                    rule = rule.replace(/\:host[^\s]*/, (hostRule) =>
+                        hostRule.trim().replace(':host(', ':host').replace(/\)$/, '')
+                    );
+                }
+                return rule.replace(/\:host/, `.${id}`);
+            }).join(', ')
+        );
         id = `style-${id}`;
         let styleElem = document.getElementById(id) || document.createElement('style');
         styleElem.type = 'text/css';
