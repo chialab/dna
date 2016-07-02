@@ -48,6 +48,7 @@ export class DNAStyleComponent extends DNAComponent {
         if (typeof style === 'function') {
             css = style();
         }
+        css = css.replace(/\:host/g, `.${id}`);
         id = `style-${id}`;
         let styleElem = document.getElementById(id) || document.createElement('style');
         styleElem.type = 'text/css';
