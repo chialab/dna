@@ -40,25 +40,31 @@ export class DNAStyleComponent extends DNAComponent {
     /**
      * Add `<style>` tag for the component.
      * @param {String} id The CSS element unique id.
-     * @param {String} style The CSS content.
+     * @param {Array|Function|String}
+     * style An array of styles or a css generator function or a CSS string.
      * @return {HTMLStyleElement} the style tag created.
      */
-    static addCss(id, style) {
-        let css = style;
-        if (typeof style === 'function') {
-            css = style();
+    static addCss(id, styles) {
+        let css = '';
+        if (!Array.isArray(styles)) {
+            styles = [styles];
         }
-        css = css.replace(/\:host[^\{]*/g, (fullRule) =>
-            fullRule.split(',').map((rule) => {
-                rule = rule.trim();
-                if (rule.match(/\:host\(/)) {
-                    rule = rule.replace(/\:host[^\s]*/, (hostRule) =>
-                        hostRule.trim().replace(':host(', ':host').replace(/\)$/, '')
-                    );
-                }
-                return rule.replace(/\:host/, `.${id}`);
-            }).join(', ')
-        );
+        styles.forEach((style) => {
+            if (typeof style === 'function') {
+                style = style();
+            }
+            css += style.replace(/\:host[^\{]*/g, (fullRule) =>
+                fullRule.split(',').map((rule) => {
+                    rule = rule.trim();
+                    if (rule.match(/\:host\(/)) {
+                        rule = rule.replace(/\:host[^\s]*/, (hostRule) =>
+                            hostRule.trim().replace(':host(', ':host').replace(/\)$/, '')
+                        );
+                    }
+                    return rule.replace(/\:host/, `.${id}`);
+                }).join(', ')
+            );
+        });
         id = `style-${id}`;
         let styleElem = document.getElementById(id) || document.createElement('style');
         styleElem.type = 'text/css';
