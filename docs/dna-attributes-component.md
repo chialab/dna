@@ -22,7 +22,7 @@ my-component.js
 ```js
 import { DNAAttributesComponent } from 'dna/component';
 export class MyComponent extends DNAAttributesComponent {
-  get attributes() {
+  static get observedAttributes() {
     return ['name'];
   }
 }

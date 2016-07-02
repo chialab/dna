@@ -6,10 +6,9 @@
 
 * [DNAPropertiesComponent](#DNAPropertiesComponent) ⇐ <code>DNAComponent</code>
     * [`new DNAPropertiesComponent()`](#new_DNAPropertiesComponent_new)
-    * _instance_
-        * [`.createdCallback()`](#DNAPropertiesComponent+createdCallback)
-    * _static_
-        * [`.onRegister(id)`](#DNAPropertiesComponent.onRegister)
+    * [`.createdCallback()`](#DNAPropertiesComponent+createdCallback)
+    * [`.observeProperty(propName, callback)`](#DNAPropertiesComponent+observeProperty) ⇒ <code>Object</code>
+    * [`.observeProperties(callback)`](#DNAPropertiesComponent+observeProperties) ⇒ <code>Object</code>
 
 <a name="new_DNAPropertiesComponent_new"></a>
 
@@ -21,7 +20,7 @@ my-component.js
 ```js
 import { DNAPropertiesComponent } from 'dna/component';
 export class MyComponent extends DNAPropertiesComponent {
-  get properties() {
+  static get observedProperties() {
     return ['name'];
   }
 }
@@ -42,14 +41,28 @@ console.log(element.name); // logs "Albert"
 On `created` callback, apply attributes to properties.
 
 **Kind**: instance method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
-<a name="DNAPropertiesComponent.onRegister"></a>
+<a name="DNAPropertiesComponent+observeProperty"></a>
 
-### `DNAPropertiesComponent.onRegister(id)`
-Fires when an the element is registered.
+### `dnaPropertiesComponent.observeProperty(propName, callback)` ⇒ <code>Object</code>
+Create a listener for node's property changes.
 
-**Kind**: static method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
+**Kind**: instance method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
+**Returns**: <code>Object</code> - An object with `cancel` method.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| id | <code>String</code> | The element definition name. |
+| propName | <code>string</code> | The property name to observe. |
+| callback | <code>function</code> | The callback to fire. |
+
+<a name="DNAPropertiesComponent+observeProperties"></a>
+
+### `dnaPropertiesComponent.observeProperties(callback)` ⇒ <code>Object</code>
+Create a listener for node's properties changes.
+
+**Kind**: instance method of <code>[DNAPropertiesComponent](#DNAPropertiesComponent)</code>  
+**Returns**: <code>Object</code> - An object with `cancel` method.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | The callback to fire. |
 

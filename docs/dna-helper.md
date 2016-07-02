@@ -1,3 +1,10 @@
+## Classes
+
+<dl>
+<dt><a href="#DNAProperty">DNAProperty</a></dt>
+<dd></dd>
+</dl>
+
 ## Constants
 
 <dl>
@@ -40,6 +47,101 @@
 <dd><p>Trigger <code>onRegister</code> callbacks.</p>
 </dd>
 </dl>
+
+<a name="DNAProperty"></a>
+
+## DNAProperty
+**Kind**: global class  
+
+* [DNAProperty](#DNAProperty)
+    * [`new DNAProperty()`](#new_DNAProperty_new)
+    * [`.get(obj, key)`](#DNAProperty.get) ⇒ <code>\*</code>
+    * [`.set(obj, key, value, trigger)`](#DNAProperty.set) ⇒ <code>\*</code>
+    * [`.delete(obj, key, trigger)`](#DNAProperty.delete)
+    * [`.observe(obj, key, callback)`](#DNAProperty.observe) ⇒ <code>Object</code>
+    * [`.changed(obj, key, oldValue, newValue)`](#DNAProperty.changed)
+
+<a name="new_DNAProperty_new"></a>
+
+### `new DNAProperty()`
+Handle objects private properties using a WeakMap.
+
+**Example**  
+```js
+let node = document.getElementById('main');
+DNAProperty.observe(node, 'firstName', () => { console.log('property changed!!!') });
+DNAProperty.set(node, 'firstName', 'Alan'); // logs 'property changed!!!'
+DNAProperty.get(node, 'firstName'); // 'Alan'
+node.firstName // undefined
+```
+<a name="DNAProperty.get"></a>
+
+### `DNAProperty.get(obj, key)` ⇒ <code>\*</code>
+Retrieve object property.
+
+**Kind**: static method of <code>[DNAProperty](#DNAProperty)</code>  
+**Returns**: <code>\*</code> - the property value.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>\*</code> | The property scope. |
+| key | <code>string</code> | The property name. |
+
+<a name="DNAProperty.set"></a>
+
+### `DNAProperty.set(obj, key, value, trigger)` ⇒ <code>\*</code>
+Set object property.
+
+**Kind**: static method of <code>[DNAProperty](#DNAProperty)</code>  
+**Returns**: <code>\*</code> - The property value.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| obj | <code>\*</code> |  | The property scope. |
+| key | <code>string</code> |  | The property name. |
+| value | <code>\*</code> |  | The new property value. |
+| trigger | <code>boolean</code> | <code>true</code> | Should trigger changed callbacks. |
+
+<a name="DNAProperty.delete"></a>
+
+### `DNAProperty.delete(obj, key, trigger)`
+Remove object property.
+
+**Kind**: static method of <code>[DNAProperty](#DNAProperty)</code>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| obj | <code>\*</code> |  | The property scope. |
+| key | <code>string</code> |  | The property name. |
+| trigger | <code>boolean</code> | <code>true</code> | Should trigger changed callbacks. |
+
+<a name="DNAProperty.observe"></a>
+
+### `DNAProperty.observe(obj, key, callback)` ⇒ <code>Object</code>
+Create a listener for the property or for the object.
+
+**Kind**: static method of <code>[DNAProperty](#DNAProperty)</code>  
+**Returns**: <code>Object</code> - An object with `cancel` method.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>\*</code> | The property scope. |
+| key | <code>string</code> | The property name. |
+| callback | <code>function</code> | The callback to fire. |
+
+<a name="DNAProperty.changed"></a>
+
+### `DNAProperty.changed(obj, key, oldValue, newValue)`
+Trigger object callbaks.
+
+**Kind**: static method of <code>[DNAProperty](#DNAProperty)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>\*</code> | The property scope. |
+| key | <code>string</code> | The property name. |
+| oldValue | <code>\*</code> | The previous property value. |
+| newValue | <code>\*</code> | The current property value. |
 
 <a name="REGISTRY"></a>
 

@@ -65,5 +65,5 @@ Add `<style>` tag for the component.
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>String</code> | The CSS element unique id. |
-| style | <code>String</code> | The CSS content. |
+| style | <code>Array</code> &#124; <code>function</code> &#124; <code>String</code> | An array of styles or a css generator function or a CSS string. |
 
