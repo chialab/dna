@@ -86,7 +86,7 @@ export class DNATemplateComponent extends DNAComponent {
                 typeof HTMLTemplateElement === 'undefined') {
                 throw new Error('Template element is not supported by the browser');
             }
-            let doc = new DocumentFragment();
+            let doc = document.createDocumentFragment();
             let nodes = document.importNode(template.content, true);
             doc.appendChild(nodes);
             return doc.childNodes;
