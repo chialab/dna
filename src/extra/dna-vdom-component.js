@@ -156,7 +156,7 @@ function nodeToVDOM(node, parentOptions = {}) {
  * import { DNAVDomComponent } from 'dna/component';
  * export class MyComponent extends DNAVDomComponent {
  *   static get template() {
- *     return `<h1>${this.name}</h1>`;
+ *     return new virtualDom.VNode('h1', {}, this.name);
  *   }
  *   get name() {
  *     return 'Newton';
@@ -180,45 +180,41 @@ export class DNAVDomComponent extends DNATemplateComponent {
         return true;
     }
     /**
-     * Generate view content.
-     * @param {*} html Optional result of a `getViewContent` of an extended class.
-     * @return {*} The view content.
-     */
-    getViewContent(html) {
-        html = html || this.render();
-        if (html instanceof virtualDom.VNode) {
-            return html;
-        }
-        return super.getViewContent(html);
-    }
-    /**
      * Update Component child nodes using VDOM trees.
+     * @param {*} content Optional result of a `render` of an extended class.
      */
-    updateViewContent() {
+    updateViewContent(content) {
         // Render the template
-        let html = this.getViewContent();
-        if (html !== null) {
+        content = content || this.render();
+        if (content !== null && content !== undefined) {
             let tree = new virtualDom.VNode(this.tagName);
-            this._vtree = this._vtree || tree;
-            if (typeof html === 'string') {
+            let vtree = DNAProperty.get(this, '__vtree') || tree;
+            if (typeof content === 'string') {
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(
-                    `<${this.tagName}>${html}</${this.tagName}>`,
+                    content,
                     'text/html'
                 );
-                let tmp = doc.body && doc.body.firstChild;
-                if (tmp) {
-                    tree = nodeToVDOM(tmp, {
-                        hooks: registry(this.is).useVirtualDomHooks,
-                    });
-                }
-            } else if (html instanceof virtualDom.VNode) {
-                tree = new virtualDom.VNode(this.tagName, {}, [html]);
+                content = doc.body && doc.body.childNodes;
+            }
+            if (content instanceof Node) {
+                content = [content];
+            } else if (content instanceof NodeList) {
+                content = Array.prototype.slice.call(content, 0);
+            }
+            if (Array.isArray(content)) {
+                let useHooks = registry(this.is).useVirtualDomHooks;
+                content = content.map((contentChild) =>
+                    nodeToVDOM(contentChild, {
+                        hooks: useHooks,
+                    })
+                );
+                tree = new virtualDom.VNode(this.tagName, {}, content);
             }
             if (tree instanceof virtualDom.VNode) {
-                let diff = virtualDom.diff(this._vtree || nodeToVDOM(), tree);
+                let diff = virtualDom.diff(vtree || nodeToVDOM(), tree);
                 virtualDom.patch(this, diff);
-                this._vtree = tree;
+                DNAProperty.set(this, '__vtree', tree, false);
             }
         }
     }
