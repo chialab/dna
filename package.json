@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "src/dna.js",
@@ -13,7 +13,9 @@
     "add-travis": "node ./node_modules/es6-workflow/scripts/add-travis.js",
     "codecov": "node ./node_modules/es6-workflow/scripts/codecov.js",
     "test-ci": "node ./node_modules/es6-workflow/scripts/test-ci.js",
-    "coveralls": "node ./node_modules/es6-workflow/scripts/coveralls.js"
+    "coveralls": "node ./node_modules/es6-workflow/scripts/coveralls.js",
+    "start": "git checkout master && npm install && npm update",
+    "dist": "npm test && npm run doc && npm run build"
   },
   "repository": {
     "type": "git",
@@ -32,5 +34,8 @@
     "es6-classes": "^0.5.0",
     "es6-workflow": "latest",
     "virtual-dom": "Chialab/virtual-dom#master"
+  },
+  "dependencies": {
+    "chialab-ajax": "^1.2.0"
   }
 }

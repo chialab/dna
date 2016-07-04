@@ -8,9 +8,8 @@
     * [`new DNATemplateComponent()`](#new_DNATemplateComponent_new)
     * _instance_
         * [`.createdCallback()`](#DNATemplateComponent+createdCallback)
-        * [`.getViewContent(html)`](#DNATemplateComponent+getViewContent) ⇒ <code>\*</code>
-        * [`.updateViewContent()`](#DNATemplateComponent+updateViewContent)
         * [`.render()`](#DNATemplateComponent+render) ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
+        * [`.updateViewContent(content)`](#DNATemplateComponent+updateViewContent)
     * _static_
         * [`.autoUpdateView`](#DNATemplateComponent.autoUpdateView)
         * [`.onRegister(id)`](#DNATemplateComponent.onRegister)
@@ -47,24 +46,6 @@ console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 Fires when an instance of the element is created.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
-<a name="DNATemplateComponent+getViewContent"></a>
-
-### `dnaTemplateComponent.getViewContent(html)` ⇒ <code>\*</code>
-Generate view content.
-
-**Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
-**Returns**: <code>\*</code> - The view content.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| html | <code>\*</code> | Optional result of a `getViewContent` of an extended class. |
-
-<a name="DNATemplateComponent+updateViewContent"></a>
-
-### `dnaTemplateComponent.updateViewContent()`
-Update Component child nodes.
-
-**Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 <a name="DNATemplateComponent+render"></a>
 
 ### `dnaTemplateComponent.render()` ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
@@ -72,6 +53,17 @@ Generate HTML or Nodes.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 **Returns**: <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code> - The generated content.  
+<a name="DNATemplateComponent+updateViewContent"></a>
+
+### `dnaTemplateComponent.updateViewContent(content)`
+Update Component child nodes.
+
+**Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>\*</code> | Optional result of a `render` of an extended class. |
+
 <a name="DNATemplateComponent.autoUpdateView"></a>
 
 ### `DNATemplateComponent.autoUpdateView`

@@ -7,8 +7,7 @@
 * [DNAVDomComponent](#DNAVDomComponent) ⇐ <code>DNATemplateComponent</code>
     * [`new DNAVDomComponent()`](#new_DNAVDomComponent_new)
     * _instance_
-        * [`.getViewContent(html)`](#DNAVDomComponent+getViewContent) ⇒ <code>\*</code>
-        * [`.updateViewContent()`](#DNAVDomComponent+updateViewContent)
+        * [`.updateViewContent(content)`](#DNAVDomComponent+updateViewContent)
     * _static_
         * [`.useVirtualDomHooks`](#DNAVDomComponent.useVirtualDomHooks)
 
@@ -24,7 +23,7 @@ my-component.js
 import { DNAVDomComponent } from 'dna/component';
 export class MyComponent extends DNAVDomComponent {
   static get template() {
-    return `<h1>${this.name}</h1>`;
+    return new virtualDom.VNode('h1', {}, this.name);
   }
   get name() {
     return 'Newton';
@@ -39,24 +38,17 @@ var MyElement = Register(MyComponent);
 var element = new MyElement();
 console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 ```
-<a name="DNAVDomComponent+getViewContent"></a>
-
-### `dnavDomComponent.getViewContent(html)` ⇒ <code>\*</code>
-Generate view content.
-
-**Kind**: instance method of <code>[DNAVDomComponent](#DNAVDomComponent)</code>  
-**Returns**: <code>\*</code> - The view content.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| html | <code>\*</code> | Optional result of a `getViewContent` of an extended class. |
-
 <a name="DNAVDomComponent+updateViewContent"></a>
 
-### `dnavDomComponent.updateViewContent()`
+### `dnavDomComponent.updateViewContent(content)`
 Update Component child nodes using VDOM trees.
 
 **Kind**: instance method of <code>[DNAVDomComponent](#DNAVDomComponent)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>\*</code> | Optional result of a `render` of an extended class. |
+
 <a name="DNAVDomComponent.useVirtualDomHooks"></a>
 
 ### `DNAVDomComponent.useVirtualDomHooks`
