@@ -43,9 +43,10 @@ export function register(fn, options = {}) {
             $scope.$on('$destroy', () => {
                 element.detachedCallback();
             });
-            if (typeof scope.attributes !== 'undefined' &&
-                Array.isArray(scope.attributes)) {
-                scope.attributes.forEach((attrName) => {
+            let attributes = scope.observedAttributes || scope.attributes;
+            if (typeof attributes !== 'undefined' &&
+                Array.isArray(attributes)) {
+                attributes.forEach((attrName) => {
                     bindAttribute(element, $attrs, attrName);
                 });
             }
