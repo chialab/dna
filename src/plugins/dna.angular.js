@@ -21,19 +21,14 @@ function bindAttribute(element, $attrs, key) {
 export function register(fn, options = {}) {
     let pre = digest(fn, options);
     let scope = pre.scope;
-    let config = pre.config;
     let tagName = pre.tagName;
 
     if (typeof scope.onRegister === 'function') {
         scope.onRegister.call(scope, tagName);
     }
-    let descriptor = config.prototype;
     let ngDescriptor = {
         restrict: 'E',
     };
-    if (typeof descriptor.templateUrl === 'string') {
-        ngDescriptor.templateUrl = descriptor.templateUrl;
-    }
     ngDescriptor.controller = [
         '$scope', '$element', '$attrs',
         function($scope, $element, $attrs) {
