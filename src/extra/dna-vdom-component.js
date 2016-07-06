@@ -1,6 +1,6 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
-import { DNAProperty, registry } from '../dna-helper.js';
+import { DNAProperty, registry, templateToNodes, templateRegistry } from '../dna-helper.js';
 
 function getCtr(node) {
     return registry(node.getAttribute('is')) || registry(node.tagName);
@@ -182,26 +182,14 @@ export class DNAVDomComponent extends DNATemplateComponent {
     /**
      * Update Component child nodes using VDOM trees.
      * @param {*} content Optional result of a `render` of an extended class.
+     * @return Promise The render promise.
      */
-    updateViewContent(content) {
-        // Render the template
-        content = content || this.render();
+    render(content) {
+        content = content || templateRegistry(this.is);
+        content = templateToNodes(this, content);
         if (content !== null && content !== undefined) {
             let tree = new virtualDom.VNode(this.tagName);
             let vtree = DNAProperty.get(this, '__vtree') || tree;
-            if (typeof content === 'string') {
-                let parser = new DOMParser();
-                let doc = parser.parseFromString(
-                    content,
-                    'text/html'
-                );
-                content = doc.body && doc.body.childNodes;
-            }
-            if (content instanceof Node) {
-                content = [content];
-            } else if (content instanceof NodeList) {
-                content = Array.prototype.slice.call(content, 0);
-            }
             if (Array.isArray(content)) {
                 let useHooks = registry(this.is).useVirtualDomHooks;
                 content = content.map((contentChild) =>
@@ -216,6 +204,8 @@ export class DNAVDomComponent extends DNATemplateComponent {
                 virtualDom.patch(this, diff);
                 DNAProperty.set(this, '__vtree', tree, false);
             }
+            return Promise.resolve();
         }
+        return Promise.reject();
     }
 }
