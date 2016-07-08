@@ -1,6 +1,6 @@
 import { polyfillElement } from './helpers/polyfill-element.js';
 
-polyfillElement(HTMLElement);
+polyfillElement('HTMLElement');
 
 /**
  * This is the model to use to create DNA Custom Components.
