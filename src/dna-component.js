@@ -1,12 +1,6 @@
-// shim for Safari
-// https://github.com/babel/babel/issues/1548
-// https://bugs.webkit.org/show_bug.cgi?id=114457
-if (typeof HTMLElement !== 'function') {
-    let _HTMLElement = function() {};
-    _HTMLElement.prototype = HTMLElement.prototype;
-    //eslint-disable-next-line
-    HTMLElement = _HTMLElement;
-}
+import { polyfillElement } from './helpers/polyfill-element.js';
+
+polyfillElement(HTMLElement);
 
 /**
  * This is the model to use to create DNA Custom Components.
