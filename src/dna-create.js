@@ -1,4 +1,5 @@
-import { digest, register } from './dna-helper.js';
+import { digest } from './helpers/digest.js';
+import { register } from './helpers/register.js';
 import { DNABaseComponent } from './dna-base-component.js';
 import { inherit } from 'es6-classes/src/inherit.js';
 import { define } from 'es6-classes/src/define.js';

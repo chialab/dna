@@ -1,12 +1,9 @@
 import { DNAComponent } from './dna-component.js';
+import { registry } from './helpers/registry.js';
+import { dashToCamel, camelToDash } from './helpers/strings.js';
 import {
-    registry,
-    dashToCamel,
-    camelToDash,
-    getDescriptor,
-    wrapDescriptorGet,
-    wrapDescriptorSet,
-} from './dna-helper.js';
+    getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
+} from './helpers/descriptor.js';
 
 const ATTRIBUTES_CACHE = {};
 

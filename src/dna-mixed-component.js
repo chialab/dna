@@ -1,5 +1,6 @@
 import { DNAComponent } from './dna-component.js';
-import { getDescriptor, registry } from './dna-helper.js';
+import { getDescriptor } from './helpers/descriptor.js';
+import { registry } from './helpers/registry.js';
 import { EXCLUDE_ON_EXTEND } from 'es6-classes/src/excludes.js';
 
 /**

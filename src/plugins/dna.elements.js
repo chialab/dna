@@ -1,4 +1,5 @@
-import { digest, registry } from '../dna-helper.js';
+import { digest } from '../helpers/digest.js';
+import { registry } from '../helpers/registry.js';
 import { create as _create } from '../dna-create.js';
 import 'dna/polyfills/src/extra/custom-elements.js';
 

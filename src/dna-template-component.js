@@ -1,6 +1,9 @@
 import * as Config from './dna-config.js';
 import { DNAComponent } from './dna-component.js';
-import { DNAProperty, registry, templateRegistry, templateToNodes } from './dna-helper.js';
+import { DNAProperty } from './helpers/dna-property.js';
+import { registry } from './helpers/registry.js';
+import { templateRegistry, templateToNodes } from './helpers/template.js';
+
 
 /**
  * Simple Custom Component with template handling using the `template` property.

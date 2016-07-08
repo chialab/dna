@@ -1,12 +1,10 @@
 import { DNAComponent } from './dna-component.js';
+import { DNAProperty } from './helpers/dna-property.js';
+import { registry } from './helpers/registry.js';
+import { dashToCamel } from './helpers/strings.js';
 import {
-    registry,
-    dashToCamel,
-    getDescriptor,
-    DNAProperty,
-    wrapDescriptorGet,
-    wrapDescriptorSet,
-} from './dna-helper.js';
+    getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
+} from './helpers/descriptor.js';
 
 /**
  * Simple Custom Component for properties initialization via attributes.

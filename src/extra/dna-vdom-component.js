@@ -1,6 +1,8 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
-import { DNAProperty, registry, templateToNodes, templateRegistry } from '../dna-helper.js';
+import { DNAProperty } from '../helpers/dna-property.js';
+import { registry } from '../helpers/registry.js';
+import { templateRegistry, templateToNodes } from '../helpers/template.js';
 
 function getCtr(node) {
     return registry(node.getAttribute('is')) || registry(node.tagName);
