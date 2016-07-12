@@ -2,14 +2,13 @@ import { DNAMixedComponent } from '../../src/dna-mixed-component.js';
 import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
 import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
 import { DNAVDomComponent } from '../../src/extra/dna-vdom-component.js';
-import { DNAVDomBaseComponent } from '../../src/extra/dna-vdom-base-component.js';
 import { virtualDom } from 'vdom';
 
 class TestComponent extends DNAMixedComponent {
     static get behaviors() {
         return [DNAPropertiesComponent, DNAVDomComponent];
     }
-    static get properties() {
+    static get observedProperties() {
         return ['name', 'lastName', 'title'];
     }
     get fullname() {
@@ -60,7 +59,7 @@ export class TestComponent6 extends TestComponent {
 }
 
 export class TestComponent7 extends TestComponent {
-    static get properties() {
+    static get observedProperties() {
         return ['radius'];
     }
     static get template() {
@@ -81,7 +80,7 @@ export class TestComponent8 extends TestComponent {
 }
 
 export class TestPlaceholder extends DNAAttributesComponent {
-    static get attributes() {
+    static get observedAttributes() {
         return ['value'];
     }
 
@@ -92,7 +91,7 @@ export class TestPlaceholder extends DNAAttributesComponent {
 }
 
 export class Test2Placeholder extends DNAAttributesComponent {
-    static get attributes() {
+    static get observedAttributes() {
         return ['value'];
     }
 
@@ -103,7 +102,7 @@ export class Test2Placeholder extends DNAAttributesComponent {
 }
 
 export class TestComponent9 extends TestComponent {
-    static get properties() {
+    static get observedProperties() {
         return ['content'];
     }
     static get template() {
