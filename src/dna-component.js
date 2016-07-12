@@ -27,11 +27,6 @@ polyfillElement('HTMLElement');
  */
 export class DNAComponent extends HTMLElement {
     /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister() {}
-    /**
      * Fires when an instance of the element is created.
      */
     createdCallback() {}

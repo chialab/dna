@@ -1,30 +1,6 @@
 import { DNAComponent } from './dna-component.js';
-
-const EVENTS_CACHE = {};
-
-function matches(element, selector) {
-    let f = element.matches ||
-        element.webkitMatchesSelector ||
-        element.mozMatchesSelector ||
-        element.msMatchesSelector ||
-        function(s) {
-            return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
-        };
-    return f.call(element, selector);
-}
-
-function delegate(element, evName, selector, callback) {
-    element.addEventListener(evName, (event) => {
-        let target = event.target;
-        while (target && target !== element) {
-            if (matches(target, selector)) {
-                callback.call(element, event, target);
-                return;
-            }
-            target = target.parentNode;
-        }
-    });
-}
+import { delegate } from './helpers/delegate.js';
+import { registry } from './helpers/registry.js';
 
 /**
  * Simple Custom Component with events delegation,
@@ -61,18 +37,11 @@ function delegate(element, evName, selector, callback) {
  */
 export class DNAEventsComponent extends DNAComponent {
     /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister(is) {
-        EVENTS_CACHE[is] = this.events;
-    }
-    /**
      * Fires when an instance of the element is created.
      */
     createdCallback() {
         // bind events
-        let events = EVENTS_CACHE[this.is];
+        let events = registry(this.is).events;
         if (events) {
             for (let k in events) {
                 if (events.hasOwnProperty(k)) {

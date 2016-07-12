@@ -1,4 +1,6 @@
 import { DNAComponent } from './dna-component.js';
+import { registry } from './helpers/registry.js';
+import { importStyle } from './helpers/style.js';
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
@@ -27,69 +29,31 @@ import { DNAComponent } from './dna-component.js';
  * ```
  */
 export class DNAStyleComponent extends DNAComponent {
-    /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister(id) {
-        // Create css function
-        if (this.css) {
-            this.addCss(id, this.css);
-        }
-    }
+
     /**
      * Add `<style>` tag for the component.
+     * @deprecated
      * @param {String} id The CSS element unique id.
      * @param {Array|Function|String}
      * style An array of styles or a css generator function or a CSS string.
      * @return {HTMLStyleElement} the style tag created.
      */
-    static addCss(id, styles) {
-        let css = '';
-        if (!Array.isArray(styles)) {
-            styles = [styles];
-        }
-        styles.forEach((style) => {
-            if (typeof style === 'function') {
-                style = style();
-            }
-            css += style.replace(/\:host[^\{]*/g, (fullRule) =>
-                fullRule.split(',').map((rule) => {
-                    rule = rule.trim();
-                    if (rule.match(/\:host\(/)) {
-                        rule = rule.replace(/\:host[^\s]*/, (hostRule) =>
-                            hostRule.trim().replace(':host(', ':host').replace(/\)$/, '')
-                        );
-                    }
-                    return rule.replace(/\:host/, `.${id}`);
-                }).join(', ')
-            );
-        });
-        id = `style-${id}`;
-        let styleElem = document.getElementById(id) || document.createElement('style');
-        styleElem.type = 'text/css';
-        styleElem.setAttribute('id', id);
-        styleElem.innerHTML = '';
-        styleElem.appendChild(document.createTextNode(css));
-        if (!styleElem.parentNode) {
-            let head = document.head;
-            if (head.firstElementChild) {
-                head.insertBefore(styleElem, head.firstElementChild);
-            } else {
-                head.appendChild(styleElem);
-            }
-        }
-        return styleElem;
+    static addCss(...args) {
+        return importStyle(...args);
     }
     /**
      * Fires when an instance of the element is created.
      */
     createdCallback() {
         super.createdCallback();
-        // Add scope style class
-        let is = this.is || this.getAttribute('is') || this.tagName.toLowerCase();
-        if (is) {
-            this.classList.add(is);
+        if (this.is) {
+            // Add <style>
+            let style = registry(this.is).css;
+            if (style) {
+                importStyle(this.is, style);
+            }
+            // Add scope style class
+            this.classList.add(this.is);
         }
     }
 }

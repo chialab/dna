@@ -34,15 +34,6 @@ import { templateRegistry, templateToNodes } from './helpers/template.js';
  */
 export class DNATemplateComponent extends DNAComponent {
     /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister(is) {
-        if (this.hasOwnProperty('template')) {
-            templateRegistry(is, this.template);
-        }
-    }
-    /**
      * Default `autoUpdateView` conf.
      */
     static get autoUpdateView() {
@@ -53,6 +44,9 @@ export class DNATemplateComponent extends DNAComponent {
      */
     createdCallback() {
         let ctr = registry(this.is);
+        if (ctr.hasOwnProperty('template')) {
+            templateRegistry(this.is, ctr.template);
+        }
         if (ctr && ctr.autoUpdateView) {
             DNAProperty.observe(this, function() {
                 if (this.templateReady) {

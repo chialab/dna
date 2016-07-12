@@ -4,22 +4,11 @@ import { dashToCamel, camelToDash } from './helpers/strings.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
 } from './helpers/descriptor.js';
+import { setAttribute } from './helpers/set-attribute.js';
 
-const ATTRIBUTES_CACHE = {};
-
-function setValue(context, attr, value) {
-    let currentAttrValue = context.getAttribute(attr);
-    if (value !== null && value !== undefined && value !== false) {
-        if (
-            (typeof value === 'string' || typeof value === 'number')
-            && currentAttrValue !== value) {
-            context.setAttribute(attr, value);
-        } else if (typeof value === 'boolean' && currentAttrValue !== '') {
-            context.setAttribute(attr, '');
-        }
-    } else if (currentAttrValue || currentAttrValue === '') {
-        context.removeAttribute(attr);
-    }
+function getAttributes(Ctr) {
+    return (Ctr.observedAttributes || Ctr.attributes || [])
+        .map((attr) => dashToCamel(attr));
 }
 
 /**
@@ -49,20 +38,12 @@ function setValue(context, attr, value) {
  */
 export class DNAAttributesComponent extends DNAComponent {
     /**
-     * Fires when an the element is registered.
-     * @param {String} id The element definition name.
-     */
-    static onRegister(is) {
-        let attributesToWatch = this.observedAttributes || this.attributes || [];
-        ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => dashToCamel(attr));
-    }
-    /**
      * On `created` callback, sync attributes with properties.
      */
     createdCallback() {
         super.createdCallback();
         let Ctr = registry(this.is);
-        let ctrAttributes = ATTRIBUTES_CACHE[this.is] || [];
+        let ctrAttributes = getAttributes(Ctr);
         ctrAttributes.forEach((camelAttr) => {
             let descriptor = getDescriptor(Ctr.prototype, camelAttr) || {};
             Object.defineProperty(this, camelAttr, {
@@ -70,7 +51,7 @@ export class DNAAttributesComponent extends DNAComponent {
                 get: wrapDescriptorGet(camelAttr, descriptor),
                 set: wrapDescriptorSet(camelAttr, descriptor, function(prop, res) {
                     let dashed = camelToDash(prop);
-                    setValue(this, dashed, res);
+                    setAttribute(this, dashed, res);
                 }),
             });
         });
@@ -80,7 +61,7 @@ export class DNAAttributesComponent extends DNAComponent {
             this.attributeChangedCallback(attr.name, undefined, attr.value);
         }
         ctrAttributes.forEach((attr) => {
-            setValue(this, camelToDash(attr), this[attr]);
+            setAttribute(this, camelToDash(attr), this[attr]);
         });
     }
     /**
@@ -91,7 +72,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let attrs = ATTRIBUTES_CACHE[this.is];
+        let attrs = getAttributes(registry(this.is));
         if (attrs && Array.isArray(attrs)) {
             let camelAttr = dashToCamel(attr);
             if (attrs.indexOf(camelAttr) !== -1) {
