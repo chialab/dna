@@ -34,19 +34,12 @@ import {
  */
 export class DNAPropertiesComponent extends DNAComponent {
     /**
-     * @private
-     * Alias to old `properties` property.
-     */
-    static get observedProperties() {
-        return this.properties;
-    }
-    /**
      * On `created` callback, apply attributes to properties.
      */
     createdCallback() {
         super.createdCallback();
         let Ctr = registry(this.is);
-        let properties = Ctr.observedProperties || [];
+        let properties = Ctr.observedProperties || Ctr.properties || [];
         properties.forEach((prop) => {
             let descriptor = getDescriptor(Ctr.prototype, prop) || {};
             Object.defineProperty(this, prop, {
