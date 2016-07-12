@@ -9,12 +9,6 @@ const Test = register('test-base-component', {
 describe('Unit: DNABaseComponent', () => {
     let elem = new Test();
 
-    describe('Unit: DNABaseComponent > registration', () => {
-        it('check if element is correctly registered', () => {
-            assert.equal(TestComponent.registered, true);
-        });
-    });
-
     describe('Unit: DNABaseComponent > created', () => {
         it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);

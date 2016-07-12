@@ -1,11 +1,6 @@
 import { DNAComponent } from '../../src/dna-component.js';
 
 export class TestComponent extends DNAComponent {
-    static onRegister() {
-        this.registered = true;
-        DNAComponent.onRegister();
-    }
-
     createdCallback() {
         this.created = true;
         super.createdCallback();

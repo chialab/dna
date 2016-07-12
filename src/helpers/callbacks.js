@@ -3,7 +3,6 @@
  * @return {Array} The list.
  */
 export const COMPONENT_CALLBACKS = [
-    'onRegister',
     'createdCallback',
     'attachedCallback',
     'detachedCallback',

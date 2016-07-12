@@ -45,6 +45,7 @@ export class DNATemplateComponent extends DNAComponent {
     createdCallback() {
         let ctr = registry(this.is);
         if (ctr.hasOwnProperty('template')) {
+            // @TODO
             templateRegistry(this.is, ctr.template);
         }
         if (ctr && ctr.autoUpdateView) {
@@ -57,15 +58,6 @@ export class DNATemplateComponent extends DNAComponent {
         super.createdCallback();
         this.templateReady = true;
         this.render();
-    }
-    /**
-     * Get the component content.
-     * @deprecated
-     * @private
-     */
-    getViewContent() {
-        this.render();
-        return this.innerHTML;
     }
     /**
      * Update Component child nodes.
@@ -100,14 +92,5 @@ export class DNATemplateComponent extends DNAComponent {
             return Promise.resolve();
         }
         return Promise.reject();
-    }
-    /**
-     * Update Component child nodes.
-     * @deprecated
-     * @private
-     * @param {*} content Optional result of a `render` of an extended class.
-     */
-    updateViewContent(content) {
-        return this.render(content);
     }
 }

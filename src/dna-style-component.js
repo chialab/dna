@@ -50,6 +50,7 @@ export class DNAStyleComponent extends DNAComponent {
             // Add <style>
             let style = registry(this.is).css;
             if (style) {
+                // @TODO
                 importStyle(this.is, style);
             }
             // Add scope style class

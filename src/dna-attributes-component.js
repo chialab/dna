@@ -5,11 +5,7 @@ import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
 } from './helpers/descriptor.js';
 import { setAttribute } from './helpers/set-attribute.js';
-
-function getAttributes(Ctr) {
-    return (Ctr.observedAttributes || Ctr.attributes || [])
-        .map((attr) => dashToCamel(attr));
-}
+import { getNormalizedAttributes } from './helpers/get-normalized-attributes.js';
 
 /**
  * Simple Custom Component with attributes watching and reflecting.
@@ -43,7 +39,7 @@ export class DNAAttributesComponent extends DNAComponent {
     createdCallback() {
         super.createdCallback();
         let Ctr = registry(this.is);
-        let ctrAttributes = getAttributes(Ctr);
+        let ctrAttributes = getNormalizedAttributes(Ctr);
         ctrAttributes.forEach((camelAttr) => {
             let descriptor = getDescriptor(Ctr.prototype, camelAttr) || {};
             Object.defineProperty(this, camelAttr, {
@@ -72,7 +68,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let attrs = getAttributes(registry(this.is));
+        let attrs = getNormalizedAttributes(registry(this.is));
         if (attrs && Array.isArray(attrs)) {
             let camelAttr = dashToCamel(attr);
             if (attrs.indexOf(camelAttr) !== -1) {

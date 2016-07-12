@@ -1,5 +1,4 @@
 import { DNAVDomBaseComponent } from '../extra/dna-vdom-base-component.js';
-import { create as _create } from '../dna-create.js';
 import { register as _register } from './dna.elements.js';
 
 // export library
@@ -19,16 +18,3 @@ export let BaseComponent = DNAVDomElementsBaseComponent;
 
 // override `register` and `create` methods
 export const register = _register;
-
-/**
- * Create and register a Custom Element.
- * @param {string} tagName The tag to use for the custom element. (required)
- * @param {object} config A configuration object. (`prototype` key is required)
- * @return {function} The Component constructor.
- */
-export function create(fn, options = {}) {
-    return _create(fn, options, {
-        base: DNAVDomElementsBaseComponent,
-        register: _register,
-    });
-}

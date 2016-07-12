@@ -1,7 +1,6 @@
 import { digest } from '../helpers/digest.js';
 import { registry } from '../helpers/registry.js';
 import { dashToCamel } from '../helpers/strings.js';
-import { create as _create } from '../dna-create.js';
 
 export * from '../dna.js';
 
@@ -24,10 +23,7 @@ export function register(fn, options = {}) {
     let pre = digest(fn, options);
     let scope = pre.scope;
     let tagName = pre.tagName;
-
-    if (typeof scope.onRegister === 'function') {
-        scope.onRegister.call(scope, tagName);
-    }
+    registry(tagName, scope);
     let ngDescriptor = {
         restrict: 'E',
     };
@@ -53,18 +49,5 @@ export function register(fn, options = {}) {
             }
         },
     ];
-    registry(tagName, scope);
     return module.directive(dashToCamel(tagName), () => ngDescriptor);
-}
-
-/**
- * Create and register an Angular directive.
- * @param {string} tagName The tag to use for the custom element. (required)
- * @param {object} config A configuration object. (`prototype` key is required)
- * @return {function} The Component constructor.
- */
-export function create(fn, options = {}) {
-    return _create(fn, options, {
-        register,
-    });
 }

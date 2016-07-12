@@ -15,10 +15,6 @@ export class TestComponent1 extends TestComponent {
             return `:host ${css}`;
         };
     }
-
-    createdCallback() {
-        super.createdCallback();
-    }
 }
 
 export class TestComponent2 extends TestComponent {
