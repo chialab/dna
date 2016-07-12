@@ -31,6 +31,7 @@ Promise.all([
     'src/dna-next.js',
     'src/plugins/dna.angular.js',
     'src/plugins/dna.elements.js',
+    'src/plugins/dna.react.js',
     'src/plugins/dna.vdom.js',
     'src/plugins/dna.vdom-elements.js',
 ].map(build)).then(() => {
