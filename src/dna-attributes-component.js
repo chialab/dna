@@ -53,8 +53,15 @@ export class DNAAttributesComponent extends DNAComponent {
      * @param {String} id The element definition name.
      */
     static onRegister(is) {
-        let attributesToWatch = this.observedAttributes || this.attributes || [];
+        let attributesToWatch = this.observedAttributes || [];
         ATTRIBUTES_CACHE[is] = attributesToWatch.map((attr) => dashToCamel(attr));
+    }
+    /**
+     * @private
+     * Alias to old `attributes` property.
+     */
+    static get observedAttributes() {
+        return this.attributes;
     }
     /**
      * On `created` callback, sync attributes with properties.
