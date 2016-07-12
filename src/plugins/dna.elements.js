@@ -1,5 +1,4 @@
 import { digest } from '../helpers/digest.js';
-import 'dna/polyfills/src/extra/custom-elements.js';
 
 export * from '../dna.js';
 

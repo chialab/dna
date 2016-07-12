@@ -12,7 +12,7 @@ packageJSON.build = {
     globalName: 'DNA',
     rollup: true,
     sourceMaps: false,
-    dest: 'lib',
+    dest: 'dist',
 };
 
 function build(file) {
@@ -20,15 +20,14 @@ function build(file) {
     packageJSON.build.main = file;
     packageJSON.build.bundleName = base;
     return myBuilder.run(packageJSON).then(() => {
-        let code = fs.readFileSync(path.join(cwd, `lib/${base}`), 'utf8');
+        let code = fs.readFileSync(path.join(cwd, `dist/${base}`), 'utf8');
         code = code.replace('self.__DNA__VERSION__', `'${version}'`);
-        fs.writeFileSync(path.join(cwd, `lib/${base}`), code);
+        fs.writeFileSync(path.join(cwd, `dist/${base}`), code);
     });
 }
 
 Promise.all([
     'src/dna.js',
-    'src/dna-next.js',
     'src/plugins/dna.angular.js',
     'src/plugins/dna.elements.js',
     'src/plugins/dna.react.js',

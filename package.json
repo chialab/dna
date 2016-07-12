@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "1.5.0",
+  "version": "2.0.0-beta1",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "src/dna.js",

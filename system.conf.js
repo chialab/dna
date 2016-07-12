@@ -2,6 +2,7 @@
     System.config({
         meta: {
             'node_modules/virtual-dom/dist/virtual-dom.js': {
+                build: false,
                 format: 'global',
             },
             'src/plugins/*': {
