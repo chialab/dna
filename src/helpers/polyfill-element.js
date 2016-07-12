@@ -13,5 +13,6 @@ export function polyfillElement(elemCtrName) {
             window[elemCtrName] = class {};
             window[elemCtrName].prototype = elemCtr.protoype;
         }
+        return window[elemCtrName];
     }
 }
