@@ -7,7 +7,7 @@
 * [DNAVDomComponent](#DNAVDomComponent) ⇐ <code>DNATemplateComponent</code>
     * [`new DNAVDomComponent()`](#new_DNAVDomComponent_new)
     * _instance_
-        * [`.updateViewContent(content)`](#DNAVDomComponent+updateViewContent)
+        * [`.render(content)`](#DNAVDomComponent+render) ⇒
     * _static_
         * [`.useVirtualDomHooks`](#DNAVDomComponent.useVirtualDomHooks)
 
@@ -32,18 +32,19 @@ export class MyComponent extends DNAVDomComponent {
 ```
 app.js
 ```js
-import { Register } from 'dna/component';
+import { register } from 'dna/component';
 import { MyComponent } from './components/my-component/my-component.js';
-var MyElement = Register(MyComponent);
+var MyElement = register('my-component', MyComponent);
 var element = new MyElement();
 console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 ```
-<a name="DNAVDomComponent+updateViewContent"></a>
+<a name="DNAVDomComponent+render"></a>
 
-### `dnavDomComponent.updateViewContent(content)`
+### `dnavDomComponent.render(content)` ⇒
 Update Component child nodes using VDOM trees.
 
 **Kind**: instance method of <code>[DNAVDomComponent](#DNAVDomComponent)</code>  
+**Returns**: Promise The render promise.  
 
 | Param | Type | Description |
 | --- | --- | --- |

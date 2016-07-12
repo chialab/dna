@@ -29,9 +29,9 @@ export class MyComponent extends DNAStyleComponent {
 ```
 app.js
 ```js
-import { Register } from 'dna/component';
+import { register } from 'dna/component';
 import { MyComponent } from './components/my-component/my-component.js';
-var MyElement = Register(MyComponent);
+var MyElement = register('my-component', MyComponent);
 var element = new MyElement();
 var p = document.createElement('p');
 p.innerText = 'Paragraph';

@@ -8,8 +8,7 @@
     * [`new DNATemplateComponent()`](#new_DNATemplateComponent_new)
     * _instance_
         * [`.createdCallback()`](#DNATemplateComponent+createdCallback)
-        * [`.render()`](#DNATemplateComponent+render) ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
-        * [`.updateViewContent(content)`](#DNATemplateComponent+updateViewContent)
+        * [`.render(content)`](#DNATemplateComponent+render) ⇒
     * _static_
         * [`.autoUpdateView`](#DNATemplateComponent.autoUpdateView)
         * [`.onRegister(id)`](#DNATemplateComponent.onRegister)
@@ -34,9 +33,9 @@ export class MyComponent extends DNATemplateComponent {
 ```
 app.js
 ```js
-import { Register } from 'dna/component';
+import { register } from 'dna/component';
 import { MyComponent } from './components/my-component/my-component.js';
-var MyElement = Register(MyComponent);
+var MyElement = register('my-component', MyComponent);
 var element = new MyElement();
 console.log(element.innerHTML); // logs "<h1>Newton</h1>"
 ```
@@ -48,17 +47,11 @@ Fires when an instance of the element is created.
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
 <a name="DNATemplateComponent+render"></a>
 
-### `dnaTemplateComponent.render()` ⇒ <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code>
-Generate HTML or Nodes.
-
-**Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
-**Returns**: <code>String</code> &#124; <code>Node</code> &#124; <code>DocumentFragment</code> - The generated content.  
-<a name="DNATemplateComponent+updateViewContent"></a>
-
-### `dnaTemplateComponent.updateViewContent(content)`
+### `dnaTemplateComponent.render(content)` ⇒
 Update Component child nodes.
 
 **Kind**: instance method of <code>[DNATemplateComponent](#DNATemplateComponent)</code>  
+**Returns**: Promise The render promise.  
 
 | Param | Type | Description |
 | --- | --- | --- |

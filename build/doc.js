@@ -10,7 +10,6 @@ let files = [
     'dna-component.js',
     'dna-config.js',
     'dna-events-component.js',
-    'dna-helper.js',
     'dna-mixed-component.js',
     'dna-properties-component.js',
     'dna-style-component.js',
