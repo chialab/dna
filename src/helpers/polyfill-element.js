@@ -10,9 +10,11 @@ export function polyfillElement(elemCtrName) {
     if (typeof window !== 'undefined') {
         let elemCtr = window[elemCtrName];
         if (typeof elemCtr === 'object' && elemCtr.hasOwnProperty('prototype')) {
-            window[elemCtrName] = class {};
-            window[elemCtrName].prototype = elemCtr.protoype;
+            let _Element = function() {};
+            _Element.prototype = elemCtr.prototype;
+            window[elemCtrName] = _Element;
         }
         return window[elemCtrName];
     }
+    return;
 }
