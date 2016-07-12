@@ -1,4 +1,3 @@
-import { registry } from './registry.js';
 import { digest } from './digest.js';
 import { wrapPrototype } from './wrap-prototype.js';
 
@@ -13,7 +12,6 @@ export function register(fn, options = {}) {
     let scope = pre.scope;
     let tagName = pre.tagName;
     let config = pre.config;
-    registry(tagName, scope);
     let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
         wrapPrototype(element, scope.prototype);

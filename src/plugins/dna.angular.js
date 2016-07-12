@@ -1,5 +1,4 @@
 import { digest } from '../helpers/digest.js';
-import { registry } from '../helpers/registry.js';
 import { dashToCamel } from '../helpers/strings.js';
 
 export * from '../dna.js';
@@ -23,7 +22,6 @@ export function register(fn, options = {}) {
     let pre = digest(fn, options);
     let scope = pre.scope;
     let tagName = pre.tagName;
-    registry(tagName, scope);
     let ngDescriptor = {
         restrict: 'E',
     };

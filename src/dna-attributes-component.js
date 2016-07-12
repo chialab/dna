@@ -1,5 +1,4 @@
 import { DNAComponent } from './dna-component.js';
-import { registry } from './helpers/registry.js';
 import { dashToCamel, camelToDash } from './helpers/strings.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
@@ -38,7 +37,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     createdCallback() {
         super.createdCallback();
-        let Ctr = registry(this.is);
+        let Ctr = this.constructor;
         let ctrAttributes = getNormalizedAttributes(Ctr);
         ctrAttributes.forEach((camelAttr) => {
             let descriptor = getDescriptor(Ctr.prototype, camelAttr) || {};
@@ -68,7 +67,7 @@ export class DNAAttributesComponent extends DNAComponent {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let attrs = getNormalizedAttributes(registry(this.is));
+        let attrs = getNormalizedAttributes(this.constructor);
         if (attrs && Array.isArray(attrs)) {
             let camelAttr = dashToCamel(attr);
             if (attrs.indexOf(camelAttr) !== -1) {

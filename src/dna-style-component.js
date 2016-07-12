@@ -1,5 +1,4 @@
 import { DNAComponent } from './dna-component.js';
-import { registry } from './helpers/registry.js';
 import { importStyle } from './helpers/style.js';
 
 /**
@@ -48,7 +47,7 @@ export class DNAStyleComponent extends DNAComponent {
         super.createdCallback();
         if (this.is) {
             // Add <style>
-            let style = registry(this.is).css;
+            let style = this.constructor.css;
             if (style) {
                 // @TODO
                 importStyle(this.is, style);

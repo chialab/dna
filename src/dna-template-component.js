@@ -1,9 +1,12 @@
-import * as Config from './dna-config.js';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
-import { registry } from './helpers/registry.js';
 import { templateRegistry, templateToNodes } from './helpers/template.js';
 
+/**
+ * @property {Boolean} autoUpdateView Should the Component auto update own view.
+ * @private
+ */
+const AUTO_UPDATE_VIEW = true;
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -37,15 +40,14 @@ export class DNATemplateComponent extends DNAComponent {
      * Default `autoUpdateView` conf.
      */
     static get autoUpdateView() {
-        return Config.autoUpdateView;
+        return AUTO_UPDATE_VIEW;
     }
     /**
      * Fires when an instance of the element is created.
      */
     createdCallback() {
-        let ctr = registry(this.is);
+        let ctr = this.constructor;
         if (ctr.hasOwnProperty('template')) {
-            // @TODO
             templateRegistry(this.is, ctr.template);
         }
         if (ctr && ctr.autoUpdateView) {

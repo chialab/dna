@@ -1,6 +1,5 @@
 import { DNAComponent } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
-import { registry } from './helpers/registry.js';
 
 /**
  * Simple Custom Component with events delegation,
@@ -41,7 +40,7 @@ export class DNAEventsComponent extends DNAComponent {
      */
     createdCallback() {
         // bind events
-        let events = registry(this.is).events;
+        let events = this.constructor.events;
         if (events) {
             for (let k in events) {
                 if (events.hasOwnProperty(k)) {

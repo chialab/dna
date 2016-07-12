@@ -1,12 +1,7 @@
 import { virtualDom } from 'vdom';
 import { DNATemplateComponent } from '../dna-template-component.js';
 import { DNAProperty } from '../helpers/dna-property.js';
-import { registry } from '../helpers/registry.js';
 import { templateRegistry, templateToNodes } from '../helpers/template.js';
-
-function getCtr(node) {
-    return registry(node.getAttribute('is')) || registry(node.tagName);
-}
 
 /**
  * A virtualDom hook for life cycle handling.
@@ -124,7 +119,7 @@ function nodeToVDOM(node, parentOptions = {}) {
     if (node.tagName && node.tagName.toLowerCase() === 'svg') {
         options.namespace = 'http://www.w3.org/2000/svg';
     }
-    let Ctr = getCtr(node);
+    let Ctr = node.constructor;
     let useHooks = options.hooks && typeof Ctr === 'function';
     let properties = attributesToProp(node, options, useHooks);
     if (useHooks) {
@@ -193,7 +188,7 @@ export class DNAVDomComponent extends DNATemplateComponent {
             let tree = new virtualDom.VNode(this.tagName);
             let vtree = DNAProperty.get(this, '__vtree') || tree;
             if (Array.isArray(content)) {
-                let useHooks = registry(this.is).useVirtualDomHooks;
+                let useHooks = this.constructor.useVirtualDomHooks;
                 content = content.map((contentChild) =>
                     nodeToVDOM(contentChild, {
                         hooks: useHooks,

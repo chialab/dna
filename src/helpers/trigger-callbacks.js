@@ -1,4 +1,3 @@
-import { registry } from './registry.js';
 import { DNACallbacks } from './callbacks.js';
 
 /**
@@ -11,7 +10,7 @@ import { DNACallbacks } from './callbacks.js';
 export function triggerCallbacks(ctx, callbackKey, args) {
     let ctr = ctx;
     if (typeof ctr !== 'function') {
-        ctr = registry(ctx.is);
+        ctr = ctr.constructor;
     }
     if (!ctr) {
         return false;

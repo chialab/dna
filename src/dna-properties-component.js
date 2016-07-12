@@ -1,6 +1,5 @@
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
-import { registry } from './helpers/registry.js';
 import { dashToCamel } from './helpers/strings.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
@@ -38,8 +37,8 @@ export class DNAPropertiesComponent extends DNAComponent {
      */
     createdCallback() {
         super.createdCallback();
-        let Ctr = registry(this.is);
-        let properties = Ctr.observedProperties || Ctr.properties || [];
+        let Ctr = this.constructor;
+        let properties = Ctr.observedProperties || [];
         properties.forEach((prop) => {
             let descriptor = getDescriptor(Ctr.prototype, prop) || {};
             Object.defineProperty(this, prop, {

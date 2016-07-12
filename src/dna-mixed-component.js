@@ -1,5 +1,4 @@
 import { DNAComponent } from './dna-component.js';
-import { registry } from './helpers/registry.js';
 import { triggerCallbacks } from './helpers/trigger-callbacks.js';
 import { mix } from './helpers/mixin.js';
 
@@ -18,7 +17,7 @@ export class DNAMixedComponent extends DNAComponent {
      */
     createdCallback() {
         super.createdCallback();
-        let Ctr = registry(this.is);
+        let Ctr = this.constructor;
         if (!CREATED_MAP.get(Ctr)) {
             mix(Ctr, Ctr.behaviors || []);
             delete Ctr.__attachedBehaviors;

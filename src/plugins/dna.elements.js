@@ -1,5 +1,4 @@
 import { digest } from '../helpers/digest.js';
-import { registry } from '../helpers/registry.js';
 import 'dna/polyfills/src/extra/custom-elements.js';
 
 export * from '../dna.js';
@@ -16,7 +15,6 @@ export function register(...args) {
     let scope = pre.scope;
     let config = pre.config;
     let tagName = pre.tagName;
-    registry(tagName, scope);
     config.prototype = Object.create(config.prototype, {
         is: {
             configurable: false,
