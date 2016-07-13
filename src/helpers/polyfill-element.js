@@ -7,14 +7,15 @@
  * of the Element constructor to polyfill.
  */
 export function polyfillElement(elemCtrName) {
-    if (typeof window !== 'undefined') {
-        let elemCtr = window[elemCtrName];
-        if (typeof elemCtr === 'object' && elemCtr.hasOwnProperty('prototype')) {
-            let _Element = function() {};
-            _Element.prototype = elemCtr.prototype;
-            window[elemCtrName] = _Element;
-        }
-        return window[elemCtrName];
-    }
-    return null;
+    let origHTMLElement = window[elemCtrName];
+    window[elemCtrName] = function() {
+        // prefer new.target for elements that call super() constructors or
+        // Reflect.construct directly
+        let newTarget = new.target || this.constructor;
+        return Reflect.construct(origHTMLElement, [], newTarget);
+    };
+    HTMLElement.prototype = Object.create(origHTMLElement);
+    Object.defineProperty(HTMLElement.prototype, 'constructor', {
+        value: window[elemCtrName],
+    });
 }

@@ -35,8 +35,8 @@ export class DNAPropertiesComponent extends DNAComponent {
     /**
      * On `created` callback, apply attributes to properties.
      */
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         let Ctr = this.constructor;
         let properties = Ctr.observedProperties || [];
         properties.forEach((prop) => {

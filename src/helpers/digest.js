@@ -35,19 +35,14 @@ export function digest(fn, options = {}) {
             config.tagName ||
             (scope.hasOwnProperty('tagName') && scope.tagName) ||
             classToElement(scope);
-        config.prototype = scope.prototype;
         if (!config.extends && typeof scope.extends === 'string') {
             config.extends = scope.extends;
         }
     } else if (typeof scope === 'object') {
-        config.prototype = scope;
         scope = function(...args) {
             config.prototype.constructor.apply(this, args);
         };
         scope.prototype = config.prototype;
-    }
-    if (config.prototype) {
-        config.prototype = Object.create(config.prototype);
     }
     return {
         tagName,

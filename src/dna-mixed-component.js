@@ -2,8 +2,6 @@ import { DNAComponent } from './dna-component.js';
 import { triggerCallbacks } from './helpers/trigger-callbacks.js';
 import { mix } from './helpers/mixin.js';
 
-const CREATED_MAP = new WeakMap();
-
 /**
  * This is another model to use to create DNA Custom Components mixing a list of prototypes.
  * Implement a get method for the `behaviors` property which returns a list of Prototypes.
@@ -12,34 +10,30 @@ const CREATED_MAP = new WeakMap();
  */
 export class DNAMixedComponent extends DNAComponent {
     /**
-     * Trigger all `createdCallback` methods of the implemented behaviors.
+     * Trigger all `constructor` methods of the implemented behaviors.
      * @private
      */
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         let Ctr = this.constructor;
-        if (!CREATED_MAP.get(Ctr)) {
-            mix(Ctr, Ctr.behaviors || []);
-            delete Ctr.__attachedBehaviors;
-            CREATED_MAP.set(Ctr, true);
-        }
-        triggerCallbacks(this, 'createdCallback');
+        mix(this, Ctr.behaviors || []);
+        triggerCallbacks(this, 'constructor');
     }
     /**
-     * Trigger all `attachedCallback` methods of the implemented behaviors.
+     * Trigger all `connectedCallback` methods of the implemented behaviors.
      * @private
      */
-    attachedCallback() {
-        super.attachedCallback();
-        triggerCallbacks(this, 'attachedCallback');
+    connectedCallback() {
+        super.connectedCallback();
+        triggerCallbacks(this, 'connectedCallback');
     }
     /**
-     * Trigger all `detachedCallback` methods of the implemented behaviors.
+     * Trigger all `disconnectedCallback` methods of the implemented behaviors.
      * @private
      */
-    detachedCallback() {
-        super.detachedCallback();
-        triggerCallbacks(this, 'detachedCallback');
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        triggerCallbacks(this, 'disconnectedCallback');
     }
     /**
      * Trigger all `attributeChanged` methods of the implemented behaviors.

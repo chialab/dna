@@ -1,9 +1,7 @@
 import { register } from '../src/plugins/dna.elements.js';
 import { TestComponent } from './components/dna-base.js';
 
-const Test = register('test-base-component', {
-    prototype: TestComponent,
-});
+const Test = register('test-base-component', TestComponent);
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNABaseComponent', () => {

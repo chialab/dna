@@ -35,8 +35,8 @@ export class DNAAttributesComponent extends DNAComponent {
     /**
      * On `created` callback, sync attributes with properties.
      */
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         let Ctr = this.constructor;
         let ctrAttributes = getNormalizedAttributes(Ctr);
         ctrAttributes.forEach((camelAttr) => {

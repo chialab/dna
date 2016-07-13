@@ -1,7 +1,3 @@
-import { polyfillElement } from './helpers/polyfill-element.js';
-
-polyfillElement('HTMLElement');
-
 /**
  * This is the model to use to create DNA Custom Components.
  * @class DNAComponent
@@ -12,7 +8,7 @@ polyfillElement('HTMLElement');
  * ```js
  * import { DNAComponent } from 'dna/component';
  * export class MyComponent extends DNAComponent {
- *   get createdCallback() {
+ *   get constructor() {
  *     console.log('Created a MyComponent instance!!!');
  *   }
  * }
@@ -27,17 +23,13 @@ polyfillElement('HTMLElement');
  */
 export class DNAComponent extends HTMLElement {
     /**
-     * Fires when an instance of the element is created.
-     */
-    createdCallback() {}
-    /**
      * Fires when an instance was inserted into the document.
      */
-    attachedCallback() {}
+    connectedCallback() {}
     /**
      * Fires when an instance was detached from the document.
      */
-    detachedCallback() {}
+    disconnectedCallback() {}
     /**
      * Fires when an attribute was added, removed, or updated.
      * @param {String} attrName The changed attribute name.

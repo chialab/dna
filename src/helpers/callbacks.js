@@ -3,9 +3,9 @@
  * @return {Array} The list.
  */
 export const COMPONENT_CALLBACKS = [
-    'createdCallback',
-    'attachedCallback',
-    'detachedCallback',
+    'constructor',
+    'connectedCallback',
+    'disconnectedCallback',
     'attributeChangedCallback',
 ];
 
@@ -24,13 +24,19 @@ export class DNACallbacks {
         return map.set(proto, value);
     }
 
+    static normalizeKey(key) {
+        return (key === 'constructor') ? '_constructor' : key;
+    }
+
     static getCallbacks(proto, key) {
         let allCallbacks = this.get(proto);
+        key = this.normalizeKey(key);
         return allCallbacks[key] || [];
     }
 
     static setCallbacks(proto, key, clbs) {
         let allCallbacks = this.get(proto);
+        key = this.normalizeKey(key);
         allCallbacks[key] = clbs;
         this.set(proto, allCallbacks);
     }

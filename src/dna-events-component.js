@@ -38,7 +38,8 @@ export class DNAEventsComponent extends DNAComponent {
     /**
      * Fires when an instance of the element is created.
      */
-    createdCallback() {
+    constructor() {
+        super();
         // bind events
         let events = this.constructor.events;
         if (events) {
@@ -64,7 +65,6 @@ export class DNAEventsComponent extends DNAComponent {
                 }
             }
         }
-        super.createdCallback();
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.

@@ -1,7 +1,7 @@
 import { register } from '../src/plugins/dna.elements.js';
 import { TestComponent } from './components/dna-component.js';
 
-const Test = register(TestComponent);
+const Test = register('test-component', TestComponent);
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNAComponent', () => {
@@ -25,6 +25,13 @@ describe('Unit: DNAComponent', () => {
         });
     });
 
+    describe('Unit: DNAComponent > attributeChanged', () => {
+        it('check if element is correctly trigger attributeChangedCallback', () => {
+            elem.setAttribute('name', 'Alan');
+            assert.equal(elem.name, 'Alan');
+        });
+    });
+
     describe('Unit: DNAComponent > detached', () => {
         before((done) => {
             document.body.removeChild(elem);
@@ -34,13 +41,6 @@ describe('Unit: DNAComponent', () => {
         });
         it('check if element is correctly detached from the tree', () => {
             assert.equal(elem.attached, false);
-        });
-    });
-
-    describe('Unit: DNAComponent > attributeChanged', () => {
-        it('check if element is correctly trigger attributeChangedCallback', () => {
-            elem.setAttribute('name', 'Alan');
-            assert.equal(elem.name, 'Alan');
         });
     });
 });

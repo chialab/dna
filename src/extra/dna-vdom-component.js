@@ -29,10 +29,10 @@ class DNALifeCycleHook {
         let attached = DNAProperty.get(node, DNALifeCycleHook.ATTACHED_PROP);
         if (this.parentNode && !attached) {
             DNAProperty.set(node, DNALifeCycleHook.ATTACHED_PROP, true, false);
-            this.trigger('attachedCallback');
+            this.trigger('connectedCallback');
         } else if (!this.parentNode && attached) {
             DNAProperty.set(node, DNALifeCycleHook.ATTACHED_PROP, false, false);
-            this.trigger('detachedCallback');
+            this.trigger('disconnectedCallback');
         }
     }
 

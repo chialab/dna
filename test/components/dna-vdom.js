@@ -75,7 +75,12 @@ export class TestComponent7 extends TestComponent {
 
 export class TestComponent8 extends TestComponent {
     static get template() {
-        return '<span class="dna-test">Hello DNA!</span><test-vdom-placeholder></test-vdom-placeholder><figure is="test2-vdom-placeholder"></figure>';
+        return `
+        <span class="dna-test">
+            Hello DNA!
+        </span>
+        <test-vdom-placeholder></test-vdom-placeholder>
+        <figure is="test2-vdom-placeholder"></figure>`;
     }
 }
 
@@ -84,8 +89,8 @@ export class TestPlaceholder extends DNAAttributesComponent {
         return ['value'];
     }
 
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.value = 6;
     }
 }
@@ -95,8 +100,8 @@ export class Test2Placeholder extends DNAAttributesComponent {
         return ['value'];
     }
 
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.value = 11;
     }
 }
@@ -106,13 +111,12 @@ export class TestComponent9 extends TestComponent {
         return ['content'];
     }
     static get template() {
-        return () => {
-            return new virtualDom.VNode('span', {
+        return () =>
+            new virtualDom.VNode('span', {
                 className: 'dna-test',
             }, [
                 new virtualDom.VText(this.content),
-                new virtualDom.VNode('test-vdom-placeholder')
-            ])
-        };
+                new virtualDom.VNode('test-vdom-placeholder'),
+            ]);
     }
 }

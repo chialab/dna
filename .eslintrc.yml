@@ -18,7 +18,7 @@ rules:
   space-before-function-paren:
     - 1
     - never
-  no-proto: 1
+  no-proto: 0
   no-param-reassign: 0
   quote-props: 1
   radix: 0

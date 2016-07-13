@@ -1,23 +1,27 @@
 import { DNAComponent } from '../../src/dna-component.js';
 
 export class TestComponent extends DNAComponent {
-    createdCallback() {
+    static get observedAttributes() {
+        return ['name'];
+    }
+
+    constructor() {
+        super();
         this.created = true;
-        super.createdCallback();
     }
 
-    attachedCallback() {
+    connectedCallback() {
+        super.connectedCallback();
         this.attached = true;
-        super.attachedCallback();
     }
 
-    detachedCallback() {
+    disconnectedCallback() {
+        super.disconnectedCallback();
         this.attached = false;
-        super.detachedCallback();
     }
 
     attributeChangedCallback(attr, oldVal, newVal) {
-        this[attr] = newVal;
         super.attributeChangedCallback(attr, oldVal, newVal);
+        this[attr] = newVal;
     }
 }

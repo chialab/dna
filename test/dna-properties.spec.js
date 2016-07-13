@@ -1,9 +1,7 @@
 import { register } from '../src/plugins/dna.elements.js';
 import { TestComponent } from './components/dna-properties.js';
 
-register('test-properties-component', {
-    prototype: TestComponent,
-});
+register('test-properties-component', TestComponent);
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAPropertiesComponent', () => {

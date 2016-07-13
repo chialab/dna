@@ -34,10 +34,10 @@ export function register(fn, options = {}) {
             element.$scope = $scope;
             element.$element = $element;
             element.$attrs = $attrs;
-            element.createdCallback();
-            element.attachedCallback();
+            element.constructor();
+            element.connectedCallback();
             $scope.$on('$destroy', () => {
-                element.detachedCallback();
+                element.disconnectedCallback();
             });
             let attributes = scope.observedAttributes || [];
             if (Array.isArray(attributes)) {

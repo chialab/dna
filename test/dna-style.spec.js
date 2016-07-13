@@ -7,16 +7,9 @@ document.body.innerHTML += `
     <div is="test3-style-component"></div>
 `;
 
-const Test1 = register('test1-style-component', {
-    prototype: TestComponent1,
-});
-
-const Test2 = register('test2-style-component', {
-    prototype: TestComponent2,
-});
-
-const Test3 = register('test3-style-component', {
-    prototype: TestComponent3,
+const Test1 = register('test1-style-component', TestComponent1);
+const Test2 = register('test2-style-component', TestComponent2);
+const Test3 = register('test3-style-component', TestComponent3, {
     extends: 'div',
 });
 
@@ -30,9 +23,6 @@ describe('Unit: DNAStyleComponent', () => {
     let elem6;
 
     before((done) => {
-        elem1 = document.querySelector('.test1-style-component');
-        elem2 = document.querySelector('.test2-style-component');
-        elem3 = document.querySelector('.test3-style-component');
         elem4 = new Test1();
         elem5 = new Test2();
         elem6 = new Test3();
@@ -40,6 +30,9 @@ describe('Unit: DNAStyleComponent', () => {
         document.body.appendChild(elem5);
         document.body.appendChild(elem6);
         setTimeout(() => {
+            elem1 = document.querySelector('.test1-style-component');
+            elem2 = document.querySelector('.test2-style-component');
+            elem3 = document.querySelector('.test3-style-component');
             done();
         }, 250);
     });

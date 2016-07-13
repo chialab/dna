@@ -45,7 +45,7 @@ export class DNATemplateComponent extends DNAComponent {
     /**
      * Fires when an instance of the element is created.
      */
-    createdCallback() {
+    connectedCallback() {
         let ctr = this.constructor;
         if (ctr.hasOwnProperty('template')) {
             templateRegistry(this.is, ctr.template);
@@ -57,9 +57,9 @@ export class DNATemplateComponent extends DNAComponent {
                 }
             });
         }
-        super.createdCallback();
         this.templateReady = true;
         this.render();
+        super.connectedCallback();
     }
     /**
      * Update Component child nodes.

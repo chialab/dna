@@ -13,8 +13,8 @@ export class TestComponent extends DNAEventsComponent {
         };
     }
 
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.innerHTML = `
             <button id="button">Click</button>
             <input type="text" id="input" value="Test" />
@@ -22,8 +22,8 @@ export class TestComponent extends DNAEventsComponent {
         `;
     }
 
-    attachedCallback() {
-        super.attachedCallback();
+    connectedCallback() {
+        super.connectedCallback();
         this.trigger('customEvent', {
             data: 1234,
         });

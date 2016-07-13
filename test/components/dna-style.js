@@ -1,8 +1,8 @@
 import { DNAStyleComponent } from '../../src/dna-style-component.js';
 
 class TestComponent extends DNAStyleComponent {
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.innerHTML = '<h1>DNA TESTS</h1>';
     }
 }
@@ -22,15 +22,15 @@ export class TestComponent2 extends TestComponent {
         return `:host(.active) ${css}`;
     }
 
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.classList.add('active');
     }
 }
 
 export class TestComponent3 extends TestComponent {
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         this.classList.add('disabled');
     }
 }

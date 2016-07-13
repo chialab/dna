@@ -2,9 +2,10 @@ import { getDescriptor, wrapDescriptorGet, wrapDescriptorSet } from '../src/help
 import { classToElement } from '../src/helpers/class-to-element.js';
 import { camelToDash, dashToCamel } from '../src/helpers/strings.js';
 import { register } from '../src/helpers/register.js';
+import { DNAComponent } from '../src/dna-component.js';
 
 /* globals describe, before, it, assert */
-describe('Unit: DNAHelper', () => {
+describe('Unit: Helpers', () => {
     describe('getDescriptor', () => {
         let obj = {
             get prop() {
@@ -139,75 +140,35 @@ describe('Unit: DNAHelper', () => {
     });
 
     describe('register', () => {
-        class TestComponent extends HTMLElement {
-            static get tagName() {
-                return 'test1-helper-component';
-            }
-
-            createdCallback() {
+        class TestComponent extends DNAComponent {
+            constructor() {
+                super();
                 this.name = 'Alan';
                 this.lastName = 'Turing';
             }
         }
 
-        class Test2Component extends TestComponent {
-            static get extends() {
-                return 'div';
-            }
-        }
-
-        describe('register simple element', () => {
-            const Test1 = register(TestComponent);
-
-            const Test2 = register('test2-helper-component', {
-                prototype: TestComponent,
-            });
-
-            const Test3 = register('test3-helper-component', TestComponent);
-
-            const Test4 = register('test4-helper-component', {
-                prototype: TestComponent.prototype,
-            });
+        describe('a simple element', () => {
+            const Test = register('test1-helper-component', TestComponent);
 
             it('should register a custom element', () => {
-                let elem1 = new Test1();
-                let elem2 = new Test2();
-                let elem3 = new Test3();
-                let elem4 = new Test4();
-                assert.equal(elem1.tagName.toLowerCase(), 'test1-helper-component');
-                assert.equal(elem1.name, 'Alan');
-                assert.equal(elem1.lastName, 'Turing');
-                assert.equal(elem2.tagName.toLowerCase(), 'test2-helper-component');
-                assert.equal(elem2.name, 'Alan');
-                assert.equal(elem2.lastName, 'Turing');
-                assert.equal(elem3.tagName.toLowerCase(), 'test3-helper-component');
-                assert.equal(elem3.name, 'Alan');
-                assert.equal(elem3.lastName, 'Turing');
-                assert.equal(elem4.tagName.toLowerCase(), 'test4-helper-component');
-                assert.equal(elem4.name, 'Alan');
-                assert.equal(elem4.lastName, 'Turing');
+                let elem = new Test();
+                assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
+                assert.equal(elem.name, 'Alan');
+                assert.equal(elem.lastName, 'Turing');
             });
         });
 
-        describe('register with extends field', () => {
-            const Test1 = register('test1-helper-register-component', {
-                prototype: Test2Component,
+        describe('a with extends field', () => {
+            const Test = register('test1-helper-register-component', TestComponent, {
                 extends: 'div',
             });
 
-            const Test2 = register('test2-helper-register-component', {
-                prototype: Test2Component,
-            });
-
             it('should register a custom element with extends field', () => {
-                let elem1 = new Test1();
-                let elem2 = new Test2();
-                assert.equal(elem1.tagName.toLowerCase(), 'div');
-                assert.equal(elem1.name, 'Alan');
-                assert.equal(elem1.lastName, 'Turing');
-                assert.equal(elem2.tagName.toLowerCase(), 'div');
-                assert.equal(elem2.name, 'Alan');
-                assert.equal(elem2.lastName, 'Turing');
+                let elem = new Test();
+                assert.equal(elem.tagName.toLowerCase(), 'div');
+                assert.equal(elem.name, 'Alan');
+                assert.equal(elem.lastName, 'Turing');
             });
         });
     });

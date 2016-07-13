@@ -9,33 +9,13 @@ import {
     TestComponent7,
 } from './components/dna-template.js';
 
-const Test1 = register('test1-template-component', {
-    prototype: TestComponent1,
-});
-
-const Test2 = register('test2-template-component', {
-    prototype: TestComponent2,
-});
-
-const Test3 = register('test3-template-component', {
-    prototype: TestComponent3,
-});
-
-const Test4 = register('test4-template-component', {
-    prototype: TestComponent4,
-});
-
-const Test5 = register('test5-template-component', {
-    prototype: TestComponent5,
-});
-
-const Test6 = register('test6-template-component', {
-    prototype: TestComponent6,
-});
-
-const Test7 = register('test7-template-component', {
-    prototype: TestComponent7,
-});
+const Test1 = register('test1-template-component', TestComponent1);
+const Test2 = register('test2-template-component', TestComponent2);
+const Test3 = register('test3-template-component', TestComponent3);
+const Test4 = register('test4-template-component', TestComponent4);
+const Test5 = register('test5-template-component', TestComponent5);
+const Test6 = register('test6-template-component', TestComponent6);
+const Test7 = register('test7-template-component', TestComponent7);
 
 const hasTemplate = (typeof document.importNode === 'function' &&
     typeof HTMLTemplateElement !== 'undefined');

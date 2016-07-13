@@ -43,8 +43,8 @@ export class DNAStyleComponent extends DNAComponent {
     /**
      * Fires when an instance of the element is created.
      */
-    createdCallback() {
-        super.createdCallback();
+    constructor() {
+        super();
         if (this.is) {
             // Add <style>
             let style = this.constructor.css;
