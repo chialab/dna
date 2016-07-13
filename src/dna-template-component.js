@@ -61,8 +61,10 @@ export class DNATemplateComponent extends DNAComponent {
             });
         }
         super.createdCallback();
-        this.templateReady = true;
-        this.render();
+        this.templateReady = ctr.hasOwnProperty('template');
+        if (this.templateReady) {
+            this.render();
+        }
     }
     /**
      * Get the component content.
