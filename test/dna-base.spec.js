@@ -38,8 +38,13 @@ describe('Unit: DNABaseComponent', () => {
     });
 
     describe('Unit: DNABaseComponent > attributeChanged', () => {
-        it('check if element is correctly trigger attributeChangedCallback', () => {
+        before((done) => {
             elem.setAttribute('name', 'Alan');
+            setTimeout(() => {
+                done();
+            }, 250);
+        });
+        it('check if element is correctly trigger attributeChangedCallback', () => {
             assert.equal(elem.name, 'Alan');
         });
     });

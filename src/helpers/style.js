@@ -1,17 +1,3 @@
-export function hostReplace(style, replace) {
-    return style.replace(/\:host[^\{]*/g, (fullRule) =>
-        fullRule.split(',').map((rule) => {
-            rule = rule.trim();
-            if (rule.match(/\:host\(/)) {
-                rule = rule.replace(/\:host[^\s]*/, (hostRule) =>
-                    hostRule.trim().replace(':host(', ':host').replace(/\)$/, '')
-                );
-            }
-            return rule.replace(/\:host/, `.${replace}`);
-        }).join(', ')
-    );
-}
-
 /**
  * Add `<style>` tag for the component.
  * @param {String} id The CSS element unique id.
@@ -28,7 +14,7 @@ export function importStyle(id, styles) {
         if (typeof style === 'function') {
             style = style();
         }
-        css += hostReplace(style, id);
+        css += style;
     });
     id = `style-${id}`;
     let styleElem = document.getElementById(id) || document.createElement('style');

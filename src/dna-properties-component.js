@@ -1,3 +1,4 @@
+import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
 import { dashToCamel } from './helpers/strings.js';
@@ -5,33 +6,7 @@ import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
 } from './helpers/descriptor.js';
 
-/**
- * Simple Custom Component for properties initialization via attributes.
- * @class DNAPropertiesComponent
- * @extends DNAComponent
- *
- * @example
- * my-component.js
- * ```js
- * import { DNAPropertiesComponent } from 'dna/component';
- * export class MyComponent extends DNAPropertiesComponent {
- *   static get observedProperties() {
- *     return ['name'];
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var temp = document.createElement('div');
- * temp.innerHTML = '<my-component name="Albert"></my-component>';
- * var element = temp.firstChild;
- * console.log(element.name); // logs "Albert"
- * ```
- */
-export class DNAPropertiesComponent extends DNAComponent {
+export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
     /**
      * On `created` callback, apply attributes to properties.
      */
@@ -85,4 +60,32 @@ export class DNAPropertiesComponent extends DNAComponent {
     observeProperties(callback) {
         return DNAProperty.observe(this, callback);
     }
-}
+};
+
+/**
+ * Simple Custom Component for properties initialization via attributes.
+ * @class DNAPropertiesComponent
+ * @extends DNAComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNAPropertiesComponent } from 'dna/component';
+ * export class MyComponent extends DNAPropertiesComponent {
+ *   static get observedProperties() {
+ *     return ['name'];
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { register } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * var MyElement = register('my-component', MyComponent);
+ * var temp = document.createElement('div');
+ * temp.innerHTML = '<my-component name="Albert"></my-component>';
+ * var element = temp.firstChild;
+ * console.log(element.name); // logs "Albert"
+ * ```
+ */
+export class DNAPropertiesComponent extends mix(DNAComponent).with(DNAPropertiesMixin) {}

@@ -1,4 +1,3 @@
-import { digest } from '../helpers/digest.js';
 import { dashToCamel } from '../helpers/strings.js';
 
 export * from '../dna.js';
@@ -13,15 +12,12 @@ function bindAttribute(element, $attrs, key) {
 
 /**
  * Register an Angular directive to the `dna-components` module.
- * `document.registerElement`-like interface.
- * @param {string} tagName The tag to use for the custom element. (required)
- * @param {object} config A configuration object. (`prototype` key is required)
- * @return {function} The Component constructor.
+ * @param {String} tagName The nickname of the Component.
+ * @param {Function} Component The definition of the Component.
+ * @param {Object} config A set of options for the registration of the Component.
+ * @return {Function} The Component constructor.
  */
-export function register(fn, options = {}) {
-    let pre = digest(fn, options);
-    let scope = pre.scope;
-    let tagName = pre.tagName;
+export function register(tagName, Component) {
     let ngDescriptor = {
         restrict: 'E',
     };
@@ -29,7 +25,7 @@ export function register(fn, options = {}) {
         '$scope', '$element', '$attrs',
         function($scope, $element, $attrs) {
             let element = $element[0];
-            Object.setPrototypeOf(element, scope.prototype);
+            Object.setPrototypeOf(element, Component.prototype);
             element.is = tagName;
             element.$scope = $scope;
             element.$element = $element;
@@ -39,7 +35,7 @@ export function register(fn, options = {}) {
             $scope.$on('$destroy', () => {
                 element.disconnectedCallback();
             });
-            let attributes = scope.observedAttributes || [];
+            let attributes = Component.observedAttributes || [];
             if (Array.isArray(attributes)) {
                 attributes.forEach((attrName) => {
                     bindAttribute(element, $attrs, attrName);

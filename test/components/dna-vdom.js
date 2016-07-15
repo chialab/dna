@@ -1,13 +1,11 @@
-import { DNAMixedComponent } from '../../src/dna-mixed-component.js';
+import { mix } from 'mixwith';
+import { DNAComponent } from '../../src/dna-component.js';
 import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
-import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
-import { DNAVDomComponent } from '../../src/extra/dna-vdom-component.js';
+import { DNAPropertiesMixin } from '../../src/dna-properties-component.js';
+import { DNAVDomMixin } from '../../src/extra/dna-vdom-component.js';
 import { virtualDom } from 'vdom';
 
-class TestComponent extends DNAMixedComponent {
-    static get behaviors() {
-        return [DNAPropertiesComponent, DNAVDomComponent];
-    }
+class TestComponent extends mix(DNAComponent).with(DNAPropertiesMixin, DNAVDomMixin) {
     static get observedProperties() {
         return ['name', 'lastName', 'title'];
     }
@@ -23,6 +21,7 @@ export class TestComponent1 extends TestComponent {
         };
     }
 }
+
 
 export class TestComponent2 extends TestComponent {
     static get template() {
@@ -111,12 +110,13 @@ export class TestComponent9 extends TestComponent {
         return ['content'];
     }
     static get template() {
-        return () =>
-            new virtualDom.VNode('span', {
+        return function() {
+            return new virtualDom.VNode('span', {
                 className: 'dna-test',
             }, [
                 new virtualDom.VText(this.content),
                 new virtualDom.VNode('test-vdom-placeholder'),
             ]);
+        };
     }
 }

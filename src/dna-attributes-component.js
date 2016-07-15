@@ -1,3 +1,4 @@
+import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { dashToCamel, camelToDash } from './helpers/strings.js';
 import {
@@ -6,32 +7,7 @@ import {
 import { setAttribute } from './helpers/set-attribute.js';
 import { getNormalizedAttributes } from './helpers/get-normalized-attributes.js';
 
-/**
- * Simple Custom Component with attributes watching and reflecting.
- * @class DNAAttributesComponent
- * @extends DNAComponent
- *
- * @example
- * my-component.js
- * ```js
- * import { DNAAttributesComponent } from 'dna/component';
- * export class MyComponent extends DNAAttributesComponent {
- *   static get observedAttributes() {
- *     return ['name'];
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement();
- * element.setAttribute('name', 'Newton');
- * console.log(element.name); // logs "Newton"
- * ```
- */
-export class DNAAttributesComponent extends DNAComponent {
+export const DNAAttributesMixin = (SuperClass) => class extends SuperClass {
     /**
      * On `created` callback, sync attributes with properties.
      */
@@ -80,4 +56,31 @@ export class DNAAttributesComponent extends DNAComponent {
             }
         }
     }
-}
+};
+
+/**
+ * Simple Custom Component with attributes watching and reflecting.
+ * @class DNAAttributesComponent
+ * @extends DNAComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNAAttributesComponent } from 'dna/component';
+ * export class MyComponent extends DNAAttributesComponent {
+ *   static get observedAttributes() {
+ *     return ['name'];
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { register } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * var MyElement = register('my-component', MyComponent);
+ * var element = new MyElement();
+ * element.setAttribute('name', 'Newton');
+ * console.log(element.name); // logs "Newton"
+ * ```
+ */
+export class DNAAttributesComponent extends mix(DNAComponent).with(DNAAttributesMixin) {}

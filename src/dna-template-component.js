@@ -1,3 +1,4 @@
+import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
 import { templateRegistry, templateToNodes } from './helpers/template.js';
@@ -8,34 +9,7 @@ import { templateRegistry, templateToNodes } from './helpers/template.js';
  */
 const AUTO_UPDATE_VIEW = true;
 
-/**
- * Simple Custom Component with template handling using the `template` property.
- * @class DNATemplateComponent
- * @extends DNAComponent
- *
- * @example
- * my-component.js
- * ```js
- * import { DNATemplateComponent } from 'dna/component';
- * export class MyComponent extends DNATemplateComponent {
- *   static get template() {
- *     return `<h1>${this.name}</h1>`;
- *   }
- *   get name() {
- *     return 'Newton';
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement();
- * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
- * ```
- */
-export class DNATemplateComponent extends DNAComponent {
+export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
     /**
      * Default `autoUpdateView` conf.
      */
@@ -47,18 +21,18 @@ export class DNATemplateComponent extends DNAComponent {
      */
     connectedCallback() {
         let ctr = this.constructor;
-        if (ctr.hasOwnProperty('template')) {
+        if (ctr && ctr.hasOwnProperty('template')) {
+            if (ctr.autoUpdateView) {
+                DNAProperty.observe(this, () => {
+                    if (this.templateReady) {
+                        this.render();
+                    }
+                });
+            }
             templateRegistry(this.is, ctr.template);
+            this.templateReady = true;
+            this.render();
         }
-        if (ctr && ctr.autoUpdateView) {
-            DNAProperty.observe(this, function() {
-                if (this.templateReady) {
-                    this.render();
-                }
-            });
-        }
-        this.templateReady = true;
-        this.render();
         super.connectedCallback();
     }
     /**
@@ -95,4 +69,33 @@ export class DNATemplateComponent extends DNAComponent {
         }
         return Promise.reject();
     }
-}
+};
+
+/**
+ * Simple Custom Component with template handling using the `template` property.
+ * @class DNATemplateComponent
+ * @extends DNAComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNATemplateComponent } from 'dna/component';
+ * export class MyComponent extends DNATemplateComponent {
+ *   static get template() {
+ *     return `<h1>${this.name}</h1>`;
+ *   }
+ *   get name() {
+ *     return 'Newton';
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { register } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * var MyElement = register('my-component', MyComponent);
+ * var element = new MyElement();
+ * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
+ * ```
+ */
+export class DNATemplateComponent extends mix(DNAComponent).with(DNATemplateMixin) {}

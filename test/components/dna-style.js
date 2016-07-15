@@ -12,14 +12,14 @@ let css = 'h1 { color: #5F9EA0; }';
 export class TestComponent1 extends TestComponent {
     static get css() {
         return function() {
-            return `:host ${css}`;
+            return `.test1-style-component ${css}`;
         };
     }
 }
 
 export class TestComponent2 extends TestComponent {
     static get css() {
-        return `:host(.active) ${css}`;
+        return `.test2-style-component.active ${css}`;
     }
 
     constructor() {
@@ -35,4 +35,7 @@ export class TestComponent3 extends TestComponent {
     }
 }
 
-TestComponent3.css = `:host { display: block; } :host(.disabled) ${css}`;
+TestComponent3.css = `
+    .test3-style-component { display: block; }
+    .test3-style-component.disabled ${css}
+`;

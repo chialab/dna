@@ -1,9 +1,10 @@
-import { DNABaseComponent } from '../dna-base-component.js';
-import { DNAStyleComponent } from '../dna-style-component.js';
-import { DNAEventsComponent } from '../dna-events-component.js';
-import { DNAPropertiesComponent } from '../dna-properties-component.js';
-import { DNAAttributesComponent } from '../dna-attributes-component.js';
-import { DNAVDomComponent } from './dna-vdom-component.js';
+import { mix } from 'mixwith';
+import { DNAComponent } from '../dna-component.js';
+import { DNAStyleMixin } from '../dna-style-component.js';
+import { DNAEventsMixin } from '../dna-events-component.js';
+import { DNAPropertiesMixin } from '../dna-properties-component.js';
+import { DNAAttributesMixin } from '../dna-attributes-component.js';
+import { DNAVDomMixin } from './dna-vdom-component.js';
 
 /**
  * Same as DNABaseComponent, with DNAVDomComponent behavior instead of DNATemplateComponent.
@@ -36,19 +37,12 @@ import { DNAVDomComponent } from './dna-vdom-component.js';
  * }
  * ```
  */
-export class DNAVDomBaseComponent extends DNABaseComponent {
-    /**
-     * Same DNABaseComponent's list of mixins,
-     * with DNAVDomComponent behavior instead of DNATemplateComponent.
-     * @type {Array}
-     */
-    static get behaviors() {
-        return [
-            DNAPropertiesComponent,
-            DNAStyleComponent,
-            DNAEventsComponent,
-            DNAAttributesComponent,
-            DNAVDomComponent,
-        ];
-    }
-}
+const DNAVDomMixinComponent = mix(DNAComponent).with(
+    DNAPropertiesMixin,
+    DNAStyleMixin,
+    DNAEventsMixin,
+    DNAAttributesMixin,
+    DNAVDomMixin
+);
+
+export class DNAVDomBaseComponent extends DNAVDomMixinComponent {}

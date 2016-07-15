@@ -1,5 +1,7 @@
 import { virtualDom } from 'vdom';
-import { DNATemplateComponent } from '../dna-template-component.js';
+import { mix } from 'mixwith';
+import { DNAComponent } from '../dna-component.js';
+import { DNATemplateMixin } from '../dna-template-component.js';
 import { DNAProperty } from '../helpers/dna-property.js';
 import { templateRegistry, templateToNodes } from '../helpers/template.js';
 
@@ -141,6 +143,46 @@ function nodeToVDOM(node, parentOptions = {}) {
     );
 }
 
+export const DNAVDomMixin = (SuperClass) => class extends mix(SuperClass).with(DNATemplateMixin) {
+    /**
+     * Use virtualDom hooks for component life-cycle.
+     */
+    static get useVirtualDomHooks() {
+        return true;
+    }
+    /**
+     * Update Component child nodes using VDOM trees.
+     * @param {*} content Optional result of a `render` of an extended class.
+     * @return Promise The render promise.
+     */
+    render(content) {
+        content = content || templateRegistry(this.is);
+        content = templateToNodes(this, content);
+        if (content !== null && content !== undefined) {
+            let tree = new virtualDom.VNode(this.tagName);
+            let vtree = DNAProperty.get(this, '__vtree') || tree;
+            if (content instanceof virtualDom.VNode) {
+                tree = new virtualDom.VNode(this.tagName, {}, [content]);
+            } else if (Array.isArray(content)) {
+                let useHooks = this.constructor.useVirtualDomHooks;
+                content = content.map((contentChild) =>
+                    nodeToVDOM(contentChild, {
+                        hooks: useHooks,
+                    })
+                );
+                tree = new virtualDom.VNode(this.tagName, {}, content);
+            }
+            if (tree instanceof virtualDom.VNode) {
+                let diff = virtualDom.diff(vtree, tree);
+                virtualDom.patch(this, diff);
+                DNAProperty.set(this, '__vtree', tree, false);
+            }
+            return Promise.resolve();
+        }
+        return Promise.reject();
+    }
+};
+
 /**
  * Same as DNATemplateComponent, but with VDOM support.
  * This component is available only including /dna\.vdom(\-?.*)\.js/ libraries.
@@ -169,40 +211,4 @@ function nodeToVDOM(node, parentOptions = {}) {
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
  * ```
  */
-export class DNAVDomComponent extends DNATemplateComponent {
-    /**
-     * Use virtualDom hooks for component life-cycle.
-     */
-    static get useVirtualDomHooks() {
-        return true;
-    }
-    /**
-     * Update Component child nodes using VDOM trees.
-     * @param {*} content Optional result of a `render` of an extended class.
-     * @return Promise The render promise.
-     */
-    render(content) {
-        content = content || templateRegistry(this.is);
-        content = templateToNodes(this, content);
-        if (content !== null && content !== undefined) {
-            let tree = new virtualDom.VNode(this.tagName);
-            let vtree = DNAProperty.get(this, '__vtree') || tree;
-            if (Array.isArray(content)) {
-                let useHooks = this.constructor.useVirtualDomHooks;
-                content = content.map((contentChild) =>
-                    nodeToVDOM(contentChild, {
-                        hooks: useHooks,
-                    })
-                );
-                tree = new virtualDom.VNode(this.tagName, {}, content);
-            }
-            if (tree instanceof virtualDom.VNode) {
-                let diff = virtualDom.diff(vtree || nodeToVDOM(), tree);
-                virtualDom.patch(this, diff);
-                DNAProperty.set(this, '__vtree', tree, false);
-            }
-            return Promise.resolve();
-        }
-        return Promise.reject();
-    }
-}
+export class DNAVDomComponent extends mix(DNAComponent).with(DNAVDomMixin) {}

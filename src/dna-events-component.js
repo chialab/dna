@@ -1,40 +1,8 @@
+import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
 
-/**
- * Simple Custom Component with events delegation,
- * It also implement a `dispatchEvent` wrapper named `trigger`.
- * @class DNAEventsComponent
- * @extends DNAComponent
- *
- * @example
- * my-component.js
- * ```js
- * import { DNAEventsComponent } from 'dna/component';
- * export class MyComponent extends DNAEventsComponent {
- *   static get events() {
- *     return {
- *       'click button': 'onButtonClick'
- *     }
- *   }
- *   onButtonClick() {
- *     console.log('button clicked');
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement();
- * var button = document.createElement('button');
- * button.innerText = 'Click me';
- * element.appendChild(button);
- * button.click(); // logs "button clicked"
- * ```
- */
-export class DNAEventsComponent extends DNAComponent {
+export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
      */
@@ -86,4 +54,39 @@ export class DNAEventsComponent extends DNAComponent {
         }
         return this.dispatchEvent(ev);
     }
-}
+};
+
+/**
+ * Simple Custom Component with events delegation,
+ * It also implement a `dispatchEvent` wrapper named `trigger`.
+ * @class DNAEventsComponent
+ * @extends DNAComponent
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { DNAEventsComponent } from 'dna/component';
+ * export class MyComponent extends DNAEventsComponent {
+ *   static get events() {
+ *     return {
+ *       'click button': 'onButtonClick'
+ *     }
+ *   }
+ *   onButtonClick() {
+ *     console.log('button clicked');
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { register } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * var MyElement = register('my-component', MyComponent);
+ * var element = new MyElement();
+ * var button = document.createElement('button');
+ * button.innerText = 'Click me';
+ * element.appendChild(button);
+ * button.click(); // logs "button clicked"
+ * ```
+ */
+export class DNAEventsComponent extends mix(DNAComponent).with(DNAEventsMixin) {}

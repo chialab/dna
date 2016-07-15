@@ -8,20 +8,11 @@
                 format: 'esm',
             },
         },
-        packages: {
-            'node_modules/dna-polyfills': {
-                meta: {
-                    '*.js': {
-                        format: 'global',
-                    },
-                },
-            },
-        },
         paths: {
             'dna/polyfills/*': 'node_modules/dna-polyfills/*',
             'dna/components': 'node_modules/dna-components/lib/dna.js',
             'vdom': 'node_modules/virtual-dom/dist/virtual-dom.js',
-            'es6-classes/*': 'node_modules/es6-classes/*',
+            'mixwith': 'node_modules/mixwith/src/mixwith.js',
         },
     });
 }());

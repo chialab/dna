@@ -1,16 +1,8 @@
-import { DNAComponent } from '../../src/dna-component.js';
 import { DNABaseComponent } from '../../src/dna-base-component.js';
 
-class BehaviorComponent extends DNAComponent {
-    constructor() {
-        super();
-        this.behaviors = true;
-    }
-}
-
 export class TestComponent extends DNABaseComponent {
-    static get behaviors() {
-        return DNABaseComponent.behaviors.concat([BehaviorComponent]);
+    static get observedAttributes() {
+        return ['name'];
     }
 
     constructor() {

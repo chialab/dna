@@ -2,7 +2,7 @@ import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
 
 export class TestComponent extends DNAAttributesComponent {
     static get observedAttributes() {
-        return ['title', 'id', 'alt', 'var', 'mine', 'myVar', 'myVar2', 'myVar3'];
+        return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }
 
     get myVar3() {

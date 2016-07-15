@@ -8,6 +8,7 @@ import {
     TestComponent6,
     TestComponent7,
     TestComponent8,
+    TestComponent9,
     TestPlaceholder,
     Test2Placeholder,
 } from './components/dna-vdom.js';
@@ -20,16 +21,13 @@ const Test5 = register('test5-vdom-template-component', TestComponent5);
 const Test6 = register('test6-vdom-template-component', TestComponent6);
 const Test7 = register('test7-vdom-template-component', TestComponent7);
 const Test8 = register('test8-vdom-template-component', TestComponent8);
-const Test9 = register('test9-vdom-template-component', TestComponent8);
+const Test9 = register('test9-vdom-template-component', TestComponent9);
 
-register('test-vdom-placeholder', {
-    prototype: TestPlaceholder,
-});
-
-register('test2-vdom-placeholder', {
-    prototype: Test2Placeholder,
+register('test-vdom-placeholder', TestPlaceholder);
+register('test2-vdom-placeholder', Test2Placeholder, {
     extends: 'figure',
 });
+
 
 const hasTemplate = (typeof document.importNode === 'function' &&
     typeof HTMLTemplateElement !== 'undefined');
