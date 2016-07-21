@@ -66,19 +66,3 @@ export function wrapDescriptorSet(prop, descriptor, callback) {
     setter.callbacks = [callback];
     return setter;
 }
-/**
- * Check if a key is already defined in a prototype.
- * @param {string} key The key to search.
- * @param {Object} proto Function prototype.
- * @return {boolean}
- */
-export function hasDescriptor(key, proto) {
-    while (proto) {
-        let desc = getDescriptor(proto, key);
-        if (desc) {
-            return true;
-        }
-        proto = proto.prototype;
-    }
-    return false;
-}

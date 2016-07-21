@@ -2,8 +2,8 @@ import { mix } from 'mixwith';
 import { DNAComponent } from '../../src/dna-component.js';
 import { DNAAttributesComponent } from '../../src/dna-attributes-component.js';
 import { DNAPropertiesMixin } from '../../src/dna-properties-component.js';
-import { DNAVDomMixin } from '../../src/extra/dna-vdom-component.js';
-import { virtualDom } from 'vdom';
+import { DNAVDomMixin } from '../../src/vdom/dna-vdom-component.js';
+import * as virtualDom from '../../src/vdom/lib/vdom.js';
 
 class TestComponent extends mix(DNAComponent).with(DNAPropertiesMixin, DNAVDomMixin) {
     static get observedProperties() {

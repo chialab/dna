@@ -4,17 +4,6 @@ import { importStyle } from './helpers/style.js';
 
 export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
     /**
-     * Add `<style>` tag for the component.
-     * @deprecated
-     * @param {String} id The CSS element unique id.
-     * @param {Array|Function|String}
-     * style An array of styles or a css generator function or a CSS string.
-     * @return {HTMLStyleElement} the style tag created.
-     */
-    static addCss(...args) {
-        return importStyle(...args);
-    }
-    /**
      * Fires when an instance of the element is created.
      */
     constructor() {

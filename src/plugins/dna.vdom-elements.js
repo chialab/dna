@@ -1,11 +1,10 @@
-import { DNAVDomBaseComponent } from '../extra/dna-vdom-base-component.js';
+import { DNAVDomBaseComponent } from '../vdom/dna-vdom-base-component.js';
 import { register as _register } from './dna.elements.js';
 
 // export library
 export * from '../dna.js';
+export * from '../vdom/dna-vdom-component.js';
 
-// export extras
-export * from '../extra/dna-vdom-component.js';
 class DNAVDomElementsBaseComponent extends DNAVDomBaseComponent {
     static get useVirtualDomHooks() {
         return false;

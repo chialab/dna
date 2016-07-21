@@ -1,16 +1,3 @@
-/**
- * A list of template for DNA components.
- * @type {Object}.
- */
-const TEMPLATE_REGISTRY = {};
-
-export function templateRegistry(is, template) {
-    if (typeof template !== 'undefined') {
-        TEMPLATE_REGISTRY[is] = template;
-    }
-    return TEMPLATE_REGISTRY[is];
-}
-
 export function templateToNodes(scope, content) {
     if (typeof content === 'function') {
         content = content.call(scope);

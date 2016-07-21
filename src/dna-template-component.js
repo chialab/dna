@@ -1,35 +1,20 @@
 import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
-import { templateRegistry, templateToNodes } from './helpers/template.js';
-
-/**
- * @property {Boolean} autoUpdateView Should the Component auto update own view.
- * @private
- */
-const AUTO_UPDATE_VIEW = true;
+import { templateToNodes } from './helpers/template.js';
 
 export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * Default `autoUpdateView` conf.
-     */
-    static get autoUpdateView() {
-        return AUTO_UPDATE_VIEW;
-    }
     /**
      * Fires when an instance of the element is created.
      */
     connectedCallback() {
         let ctr = this.constructor;
         if (ctr && ctr.hasOwnProperty('template')) {
-            if (ctr.autoUpdateView) {
-                DNAProperty.observe(this, () => {
-                    if (this.templateReady) {
-                        this.render();
-                    }
-                });
-            }
-            templateRegistry(this.is, ctr.template);
+            DNAProperty.observe(this, () => {
+                if (this.templateReady) {
+                    this.render();
+                }
+            });
             this.templateReady = true;
             this.render();
         }
@@ -41,7 +26,7 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
      * @return Promise The render promise.
      */
     render(content) {
-        content = content || templateRegistry(this.is);
+        content = content || this.constructor.template;
         content = templateToNodes(this, content);
         if (content !== null && content !== undefined) {
             if (Array.isArray(content)) {

@@ -1,5 +1,4 @@
 import { getDescriptor, wrapDescriptorGet, wrapDescriptorSet } from '../src/helpers/descriptor.js';
-import { classToElement } from '../src/helpers/class-to-element.js';
 import { camelToDash, dashToCamel } from '../src/helpers/strings.js';
 import { register } from '../src/helpers/register.js';
 import { DNAComponent } from '../src/dna-component.js';
@@ -99,26 +98,6 @@ describe('Unit: Helpers', () => {
             obj.prop = 10;
             assert.equal(obj.prop, 20);
             assert.equal(check.prop, 100);
-        });
-    });
-
-    describe('classToElement', () => {
-        it('should transform function name to element tag', () => {
-            assert.equal(classToElement(
-                    // eslint-disable-next-line
-                    function namedFunction() {}
-                ),
-                'named-function'
-            );
-        });
-
-        it('should transform function variable name to element tag', () => {
-            let fn2 = () => {};
-            assert.equal(classToElement(fn2), 'fn2');
-        });
-
-        it('should return undefined element for anonymous function', () => {
-            assert.equal(classToElement(() => {}), undefined);
         });
     });
 
