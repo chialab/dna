@@ -41,13 +41,17 @@ export function patchObject(node, props, previous, propName, propValue) {
                         previousValue[attrName].split(' ')
                     ) || [];
                     newClasses.forEach((cl) => {
-                        if (oldClasses.indexOf(cl) === -1) {
-                            node.classList.add(cl);
+                        if (cl && cl.length) {
+                            if (oldClasses.indexOf(cl) === -1) {
+                                node.classList.add(cl);
+                            }
                         }
                     });
                     oldClasses.forEach((cl) => {
-                        if (newClasses.indexOf(cl) === -1) {
-                            node.classList.remove(cl);
+                        if (cl && cl.length) {
+                            if (newClasses.indexOf(cl) === -1) {
+                                node.classList.remove(cl);
+                            }
                         }
                     });
                 } else if (attrValue === undefined) {
