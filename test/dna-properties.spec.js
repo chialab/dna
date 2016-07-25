@@ -1,4 +1,4 @@
-import { register } from '../src/plugins/dna.elements.js';
+import { register } from '../src/libs/dna.elements.js';
 import { TestComponent } from './components/dna-properties.js';
 
 register('test-properties-component', TestComponent);

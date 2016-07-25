@@ -28,11 +28,11 @@ function build(file) {
 
 Promise.all([
     'src/dna.js',
-    'src/plugins/dna.angular.js',
-    'src/plugins/dna.elements.js',
-    'src/plugins/dna.react.js',
-    'src/plugins/dna.vdom.js',
-    'src/plugins/dna.vdom-elements.js',
+    'src/libs/dna.angular.js',
+    'src/libs/dna.elements.js',
+    'src/libs/dna.react.js',
+    'src/libs/dna.vdom.js',
+    'src/libs/dna.vdom-elements.js',
 ].map(build)).then(() => {
     // eslint-disable-next-line
     console.log('DNA generated!');
