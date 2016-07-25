@@ -1,5 +1,6 @@
 import * as virtualDom from './lib/vdom.js';
 import { mix } from 'mixwith';
+import { DNAComponent } from '../dna-component.js';
 import { DNATemplateMixin } from '../dna-template-component.js';
 import { DNAProperty } from '../helpers/dna-property.js';
 import { templateToNodes } from '../helpers/template.js';
@@ -75,4 +76,4 @@ export const DNAVDomMixin = (SuperClass) => class extends mix(SuperClass).with(D
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
  * ```
  */
-export class DNAVDomComponent extends mix(HTMLElement).with(DNAVDomMixin) {}
+export class DNAVDomComponent extends mix(DNAComponent).with(DNAVDomMixin) {}

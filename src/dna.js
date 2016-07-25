@@ -6,6 +6,7 @@
  * A component pattern for Web artisans.
  */
 export { mix } from 'mixwith';
+export * from './dna-component.js';
 export * from './dna-properties-component.js';
 export * from './dna-attributes-component.js';
 export * from './dna-events-component.js';

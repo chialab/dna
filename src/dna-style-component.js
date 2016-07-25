@@ -1,4 +1,5 @@
 import { mix } from 'mixwith';
+import { DNAComponent } from './dna-component.js';
 import { importStyle } from './helpers/style.js';
 
 export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
@@ -23,7 +24,7 @@ export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
 /**
  * Simple Custom Component with css style handling using the `css` property.
  * @class DNAStyleComponent
- * @extends HTMLElement
+ * @extends DNAComponent
  *
  * @example
  * my-component.js
@@ -46,4 +47,4 @@ export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
  * element.appendChild(p); // text inside `p` gets the red color
  * ```
  */
-export class DNAStyleComponent extends mix(HTMLElement).with(DNAStyleMixin) {}
+export class DNAStyleComponent extends mix(DNAComponent).with(DNAStyleMixin) {}
