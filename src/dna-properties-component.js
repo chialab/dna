@@ -1,5 +1,4 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
 import { dashToCamel } from './helpers/strings.js';
 import {
@@ -65,7 +64,7 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
 /**
  * Simple Custom Component for properties initialization via attributes.
  * @class DNAPropertiesComponent
- * @extends DNAComponent
+ * @extends HTMLElement
  *
  * @example
  * my-component.js
@@ -88,4 +87,4 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
  * console.log(element.name); // logs "Albert"
  * ```
  */
-export class DNAPropertiesComponent extends mix(DNAComponent).with(DNAPropertiesMixin) {}
+export class DNAPropertiesComponent extends mix(HTMLElement).with(DNAPropertiesMixin) {}

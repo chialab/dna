@@ -1,5 +1,4 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
 import { templateToNodes } from './helpers/template.js';
 
@@ -18,7 +17,6 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
             this.templateReady = true;
             this.render();
         }
-        super.connectedCallback();
     }
     /**
      * Update Component child nodes.
@@ -59,7 +57,7 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
 /**
  * Simple Custom Component with template handling using the `template` property.
  * @class DNATemplateComponent
- * @extends DNAComponent
+ * @extends HTMLElement
  *
  * @example
  * my-component.js
@@ -83,4 +81,4 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
  * ```
  */
-export class DNATemplateComponent extends mix(DNAComponent).with(DNATemplateMixin) {}
+export class DNATemplateComponent extends mix(HTMLElement).with(DNATemplateMixin) {}

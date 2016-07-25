@@ -1,5 +1,4 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
 import { DNAStyleMixin } from './dna-style-component.js';
 import { DNAEventsMixin } from './dna-events-component.js';
 import { DNAPropertiesMixin } from './dna-properties-component.js';
@@ -35,7 +34,7 @@ import { DNATemplateMixin } from './dna-template-component.js';
  *   }
  * }
  */
-const DNAMixinComponent = mix(DNAComponent).with(
+const DNAMixinComponent = mix(HTMLElement).with(
     DNAPropertiesMixin,
     DNAStyleMixin,
     DNAEventsMixin,

@@ -1,5 +1,4 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
 
 export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
@@ -60,7 +59,7 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
  * Simple Custom Component with events delegation,
  * It also implement a `dispatchEvent` wrapper named `trigger`.
  * @class DNAEventsComponent
- * @extends DNAComponent
+ * @extends HTMLElement
  *
  * @example
  * my-component.js
@@ -89,4 +88,4 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
  * button.click(); // logs "button clicked"
  * ```
  */
-export class DNAEventsComponent extends mix(DNAComponent).with(DNAEventsMixin) {}
+export class DNAEventsComponent extends mix(HTMLElement).with(DNAEventsMixin) {}

@@ -1,5 +1,4 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
 import { dashToCamel, camelToDash } from './helpers/strings.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
@@ -42,7 +41,6 @@ export const DNAAttributesMixin = (SuperClass) => class extends SuperClass {
      * @param {*} newVal The value of the attribute after the change.
      */
     attributeChangedCallback(attr, oldVal, newVal) {
-        super.attributeChangedCallback(attr, oldVal, newVal);
         let attrs = getNormalizedAttributes(this.constructor);
         if (attrs && Array.isArray(attrs)) {
             let camelAttr = dashToCamel(attr);
@@ -61,7 +59,7 @@ export const DNAAttributesMixin = (SuperClass) => class extends SuperClass {
 /**
  * Simple Custom Component with attributes watching and reflecting.
  * @class DNAAttributesComponent
- * @extends DNAComponent
+ * @extends HTMLElement
  *
  * @example
  * my-component.js
@@ -83,4 +81,4 @@ export const DNAAttributesMixin = (SuperClass) => class extends SuperClass {
  * console.log(element.name); // logs "Newton"
  * ```
  */
-export class DNAAttributesComponent extends mix(DNAComponent).with(DNAAttributesMixin) {}
+export class DNAAttributesComponent extends mix(HTMLElement).with(DNAAttributesMixin) {}

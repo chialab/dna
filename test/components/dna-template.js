@@ -1,9 +1,8 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from '../../src/dna-component.js';
 import { DNAPropertiesMixin } from '../../src/dna-properties-component.js';
 import { DNATemplateMixin } from '../../src/dna-template-component.js';
 
-class TestComponent extends mix(DNAComponent).with(DNAPropertiesMixin, DNATemplateMixin) {
+class TestComponent extends mix(HTMLElement).with(DNAPropertiesMixin, DNATemplateMixin) {
     static get observedProperties() {
         return ['name', 'lastName', 'title'];
     }
