@@ -9,26 +9,24 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         // bind events
-        let events = this.constructor.events;
-        if (events) {
-            for (let k in events) {
-                if (events.hasOwnProperty(k)) {
-                    let callback = (typeof events[k] === 'string') ?
-                        this[events[k]] :
-                        events[k];
-                    if (callback && typeof callback === 'function') {
-                        let rule = k.split(' ');
-                        let evName = rule.shift();
-                        let selector = rule.join(' ');
-                        if (selector) {
-                            delegate(this, evName, selector, (ev, target) => {
-                                callback.call(this, ev, target);
-                            });
-                        } else {
-                            this.addEventListener(evName, (ev) => {
-                                callback.call(this, ev, this);
-                            });
-                        }
+        let events = this.constructor.events || {};
+        for (let k in events) {
+            if (events.hasOwnProperty(k)) {
+                let callback = (typeof events[k] === 'string') ?
+                    this[events[k]] :
+                    events[k];
+                if (typeof callback === 'function') {
+                    let rule = k.match(/([^\s]+)(.*)?/);
+                    let evName = rule[1];
+                    let selector = (rule[2] || '').trim();
+                    if (selector) {
+                        delegate(this, evName, selector, (ev, target) => {
+                            callback.call(this, ev, target);
+                        });
+                    } else {
+                        this.addEventListener(evName, (ev) => {
+                            callback.call(this, ev, this);
+                        });
                     }
                 }
             }

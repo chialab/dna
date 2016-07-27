@@ -32,6 +32,7 @@
   "devDependencies": {
     "dna-polyfills": "github:chialab/dna-polyfills#next",
     "es6-workflow": "latest",
-    "mixwith": "^0.1.1"
+    "mixwith": "^0.1.1",
+    "snabbdom": "github:edoardocavazza/snabbdom"
   }
 }

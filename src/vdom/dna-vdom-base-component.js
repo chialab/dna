@@ -3,7 +3,6 @@ import { DNAComponent } from '../dna-component.js';
 import { DNAStyleMixin } from '../dna-style-component.js';
 import { DNAEventsMixin } from '../dna-events-component.js';
 import { DNAPropertiesMixin } from '../dna-properties-component.js';
-import { DNAAttributesMixin } from '../dna-attributes-component.js';
 import { DNAVDomMixin } from './dna-vdom-component.js';
 
 /**
@@ -41,7 +40,6 @@ const DNAVDomMixinComponent = mix(DNAComponent).with(
     DNAPropertiesMixin,
     DNAStyleMixin,
     DNAEventsMixin,
-    DNAAttributesMixin,
     DNAVDomMixin
 );
 

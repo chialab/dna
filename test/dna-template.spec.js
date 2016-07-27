@@ -1,24 +1,15 @@
-import { register } from '../src/libs/dna.vdom-elements.js';
+import { register } from '../src/libs/dna.elements.js';
 import {
     TestComponent1,
     TestComponent2,
     TestComponent3,
     TestComponent4,
-    TestComponent5,
-    TestComponent6,
-    TestComponent7,
 } from './components/dna-template.js';
 
 const Test1 = register('test1-template-component', TestComponent1);
 const Test2 = register('test2-template-component', TestComponent2);
 const Test3 = register('test3-template-component', TestComponent3);
 const Test4 = register('test4-template-component', TestComponent4);
-const Test5 = register('test5-template-component', TestComponent5);
-const Test6 = register('test6-template-component', TestComponent6);
-const Test7 = register('test7-template-component', TestComponent7);
-
-const hasTemplate = (typeof document.importNode === 'function' &&
-    typeof HTMLTemplateElement !== 'undefined');
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
@@ -26,28 +17,16 @@ describe('Unit: DNATemplateComponent', () => {
     let elem2;
     let elem3;
     let elem4;
-    let elem5;
-    let elem6;
-    let elem7;
     before((done) => {
         elem1 = new Test1();
         elem2 = new Test2();
         elem3 = new Test3();
-        if (hasTemplate) {
-            elem4 = new Test4();
-            elem5 = new Test5();
-        }
-        elem6 = new Test6();
-        elem7 = new Test7();
+        elem4 = new Test4();
         document.body.appendChild(elem1);
         document.body.appendChild(elem2);
         document.body.appendChild(elem3);
-        if (hasTemplate) {
-            document.body.appendChild(elem4);
-            document.body.appendChild(elem5);
-        }
-        document.body.appendChild(elem6);
-        document.body.appendChild(elem7);
+        document.body.appendChild(elem3);
+        document.body.appendChild(elem4);
         setTimeout(() => {
             done();
         }, 250);
@@ -65,30 +44,13 @@ describe('Unit: DNATemplateComponent', () => {
         assert.equal(elem2.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
-    it('should handle `template` property as string', () => {
-        assert.equal(elem3.innerHTML, '<span class="dna-test">Hello DNA!</span>');
-    });
-
-    if (hasTemplate) {
-        it('should handle `template` property as HTMLTemplateElement', () => {
-            assert.equal(elem4.innerHTML, '<span class="dna-test">Hello DNA!</span>');
-        });
-
-        it('should handle `template` property as HTMLTemplateElement with multiple nodes', () => {
-            assert.equal(
-                elem5.innerHTML,
-                '<span class="dna-test">Hello DNA!</span><span>Hello World!</span>'
-            );
-        });
-    }
-
     it('should handle invalid `template`', () => {
-        assert.equal(elem6.innerHTML, '');
+        assert.equal(elem3.innerHTML, '');
     });
 
     it('should handle templates with <svg>', () => {
-        elem7.radius = 40;
-        let svg = elem7.firstElementChild;
+        elem4.radius = 40;
+        let svg = elem4.firstElementChild;
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');

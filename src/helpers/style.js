@@ -1,3 +1,10 @@
+function createStyle(id) {
+    let styleElem = document.createElement('style');
+    styleElem.type = 'text/css';
+    styleElem.setAttribute('id', id);
+    return styleElem;
+}
+
 /**
  * Add `<style>` tag for the component.
  * @param {String} id The CSS element unique id.
@@ -17,9 +24,7 @@ export function importStyle(id, styles) {
         css += style;
     });
     id = `style-${id}`;
-    let styleElem = document.getElementById(id) || document.createElement('style');
-    styleElem.type = 'text/css';
-    styleElem.setAttribute('id', id);
+    let styleElem = document.getElementById(id) || createStyle(id);
     styleElem.innerHTML = '';
     styleElem.appendChild(document.createTextNode(css));
     if (!styleElem.parentNode) {

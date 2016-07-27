@@ -5,8 +5,9 @@ export function delegate(element, evName, selector, callback) {
         let target = event.target;
         while (target && target !== element) {
             if (matches(target, selector)) {
-                callback.call(element, event, target);
-                return;
+                if (callback.call(element, event, target) === false) {
+                    return;
+                }
             }
             target = target.parentNode;
         }

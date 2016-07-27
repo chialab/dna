@@ -1,20 +1,27 @@
-import * as virtualDom from './lib/vdom.js';
 import { mix } from 'mixwith';
 import { DNAComponent } from '../dna-component.js';
 import { DNATemplateMixin } from '../dna-template-component.js';
 import { DNAProperty } from '../helpers/dna-property.js';
-import { templateToNodes } from '../helpers/template.js';
-import { nodeToVDOM } from './helpers/node-to-vdom.js';
+import snabbdom from 'snabbdom/snabbdom';
+import snabbdomClass from 'snabbdom/class';
+import snabbdomStyle from 'snabbdom/style';
+import snabbdomAttributes from 'snabbdom/attributes';
+import h from 'snabbdom/h';
 
 const VTREE_PROP = '__vtree';
 
+const patch = snabbdom.init([
+    snabbdomClass,
+    snabbdomStyle,
+    snabbdomAttributes,
+]);
+
+function isVNode(elem) {
+    return (typeof elem === 'object' &&
+        typeof elem.sel === 'string');
+}
+
 export const DNAVDomMixin = (SuperClass) => class extends mix(SuperClass).with(DNATemplateMixin) {
-    /**
-     * Use virtualDom hooks for component life-cycle.
-     */
-    static get useVirtualDomHooks() {
-        return true;
-    }
     /**
      * Update Component child nodes using VDOM trees.
      * @param {*} content Optional result of a `render` of an extended class.
@@ -22,26 +29,14 @@ export const DNAVDomMixin = (SuperClass) => class extends mix(SuperClass).with(D
      */
     render(content) {
         content = content || this.constructor.template;
-        content = templateToNodes(this, content);
-        if (content !== null && content !== undefined) {
-            let tree = new virtualDom.VNode(this.tagName);
-            let vtree = DNAProperty.get(this, VTREE_PROP) || tree;
-            if (content instanceof virtualDom.VNode) {
-                tree = new virtualDom.VNode(this.tagName, {}, [content]);
-            } else if (Array.isArray(content)) {
-                let useHooks = this.constructor.useVirtualDomHooks;
-                content = content.map((contentChild) =>
-                    nodeToVDOM(contentChild, {
-                        hooks: useHooks,
-                    })
-                );
-                tree = new virtualDom.VNode(this.tagName, {}, content);
-            }
-            if (tree instanceof virtualDom.VNode) {
-                let diff = virtualDom.diff(vtree, tree);
-                virtualDom.patch(this, diff);
-                DNAProperty.set(this, VTREE_PROP, tree, false);
-            }
+        if (typeof content === 'function') {
+            content = content.call(this);
+        }
+        if (isVNode(content) || Array.isArray(content)) {
+            let vtree = DNAProperty.get(this, VTREE_PROP) || this;
+            let tree = h(this.tagName.toLowerCase(), {}, isVNode(content) ? [content] : content);
+            patch(vtree, tree);
+            DNAProperty.set(this, VTREE_PROP, tree, false);
             return Promise.resolve();
         }
         return Promise.reject();

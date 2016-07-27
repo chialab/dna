@@ -1,9 +1,9 @@
 /* global React ReactDOM */
 import { dashToCamel } from '../helpers/strings.js';
-import { register as _register } from './dna.vdom-elements.js';
+import { register as _register } from './dna.vdom.js';
 
 // export library
-export * from './dna.vdom-elements.js';
+export * from './dna.vdom.js';
 
 /**
  * Create a React component wrapper.

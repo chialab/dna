@@ -1,8 +1,5 @@
-import { DNAVDomBaseComponent } from '../vdom/dna-vdom-base-component.js';
-
-export * from '../dna.js';
+// export library
+export * from './dna.elements.js';
 export * from '../vdom/dna-vdom-component.js';
-export { DNAVDomBaseComponent };
-
-// override default base component
-export let BaseComponent = DNAVDomBaseComponent;
+export * from '../vdom/dna-vdom-base-component.js';
+export { DNAVDomBaseComponent as BaseComponent } from '../vdom/dna-vdom-base-component.js';

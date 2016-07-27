@@ -3,7 +3,6 @@ import { DNAComponent } from './dna-component.js';
 import { DNAStyleMixin } from './dna-style-component.js';
 import { DNAEventsMixin } from './dna-events-component.js';
 import { DNAPropertiesMixin } from './dna-properties-component.js';
-import { DNAAttributesMixin } from './dna-attributes-component.js';
 import { DNATemplateMixin } from './dna-template-component.js';
 
 /**
@@ -16,19 +15,19 @@ import { DNATemplateMixin } from './dna-template-component.js';
  * ```js
  * import { DNABaseComponent } from 'dna/component';
  * export class MyComponent extends DNABaseComponent {
- *   get template() {
+ *   static get template() {
  *     return `...`;
  *   }
- *   get style() {
+ *   static get css() {
  *     return '...';
  *   }
- *   get attributes() {
+ *   static get observedAttributes() {
  *     return ['...', '...'];
  *   }
- *   get properties() {
+ *   static get observedProperties() {
  *     return ['...', '...'];
  *   }
- *   get events() {
+ *   static get events() {
  *     return {
  *       '...': '...'
  *     };
@@ -39,7 +38,6 @@ const DNAMixinComponent = mix(DNAComponent).with(
     DNAPropertiesMixin,
     DNAStyleMixin,
     DNAEventsMixin,
-    DNAAttributesMixin,
     DNATemplateMixin
 );
 

@@ -1,7 +1,8 @@
 import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
-import { dashToCamel } from './helpers/strings.js';
+import { camelToDash, dashToCamel } from './helpers/strings.js';
+import { setAttribute } from './helpers/set-attribute.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
 } from './helpers/descriptor.js';
@@ -13,35 +14,71 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let Ctr = this.constructor;
-        let properties = Ctr.observedProperties || [];
-        properties.forEach((prop) => {
+        let ctrProperties = Ctr.observedProperties || [];
+        let ctrAttributes = Ctr.observedAttributes || [];
+        ctrProperties.forEach((prop) => {
             let descriptor = getDescriptor(Ctr.prototype, prop) || {};
             Object.defineProperty(this, prop, {
                 configurable: true,
-                get: wrapDescriptorGet(prop, descriptor),
-                set: wrapDescriptorSet(prop, descriptor, (propKey, value) => {
-                    DNAProperty.set(this, propKey, value);
-                }),
+                get: wrapDescriptorGet(prop, descriptor, (propKey) =>
+                    this.getProperty(propKey)
+                ),
+                set: wrapDescriptorSet(prop, descriptor, (propKey, value) =>
+                    this.setProperty(propKey, value)
+                ),
             });
+            let attrName = camelToDash(prop);
+            if (ctrAttributes.indexOf(attrName) !== -1) {
+                this.observeProperty(prop, (key, oldValue, newValue) =>
+                    setAttribute(this, attrName, newValue)
+                );
+            }
         });
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
-            let key = dashToCamel(attr.name);
-            if (properties.indexOf(key) !== -1) {
-                let value = attr.value;
+            let propName = dashToCamel(attr.name);
+            this.attributeChangedCallback(attr.name, undefined, attr.value);
+            if (ctrProperties.indexOf(propName) !== -1 &&
+                ctrAttributes.indexOf(attr.name) === -1) {
                 this.removeAttribute(attr.name);
-                if (value === '') {
-                    this[key] = true;
-                } else {
-                    try {
-                        this[key] = JSON.parse(value);
-                    } catch (ex) {
-                        this[key] = value;
-                    }
-                }
             }
         }
+    }
+    /**
+     * On `attributeChanged` callback, sync attributes with properties.
+     * @param {String} attrName The changed attribute name.
+     * @param {*} oldVal The value of the attribute before the change.
+     * @param {*} newVal The value of the attribute after the change.
+     */
+    attributeChangedCallback(attr, oldVal, newVal) {
+        super.attributeChangedCallback(attr, oldVal, newVal);
+        let Ctr = this.constructor;
+        let ctrProperties = Ctr.observedProperties || [];
+        let propName = dashToCamel(attr);
+        if (ctrProperties.indexOf(propName) !== -1) {
+            try {
+                this[propName] = (newVal === '') || JSON.parse(newVal);
+            } catch (ex) {
+                this[propName] = newVal;
+            }
+        }
+    }
+    /**
+     * Get a property of a component.
+     * @param {string} propName The property name to observe.
+     * @return {*} The property value.
+     */
+    getProperty(propName) {
+        return DNAProperty.get(this, propName);
+    }
+    /**
+     * Set a property of a component.
+     * @param {string} propName The property name to observe.
+     * @param {*} propValue The property value.
+     */
+    setProperty(propName, propValue) {
+        return DNAProperty.set(this, propName, propValue);
     }
     /**
      * Create a listener for node's property changes.

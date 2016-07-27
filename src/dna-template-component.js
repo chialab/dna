@@ -1,24 +1,22 @@
 import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { DNAProperty } from './helpers/dna-property.js';
-import { templateToNodes } from './helpers/template.js';
+
+const READY_COMPONENTS = new WeakMap();
 
 export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * Fires when an instance of the element is created.
-     */
-    connectedCallback() {
-        let ctr = this.constructor;
-        if (ctr && ctr.hasOwnProperty('template')) {
+    constructor() {
+        super();
+        let Ctr = this.constructor;
+        if (Ctr && Ctr.hasOwnProperty('template')) {
             DNAProperty.observe(this, () => {
-                if (this.templateReady) {
+                if (READY_COMPONENTS.get(Ctr)) {
                     this.render();
                 }
             });
-            this.templateReady = true;
+            READY_COMPONENTS.set(Ctr, true);
             this.render();
         }
-        super.connectedCallback();
     }
     /**
      * Update Component child nodes.
@@ -27,29 +25,11 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
      */
     render(content) {
         content = content || this.constructor.template;
-        content = templateToNodes(this, content);
-        if (content !== null && content !== undefined) {
-            if (Array.isArray(content)) {
-                let oldChildren = DNAProperty.get(this, '__lastNode');
-                if (oldChildren) {
-                    if (oldChildren instanceof Node) {
-                        oldChildren = [oldChildren];
-                    }
-                    for (let i = 0; i < oldChildren.length; i++) {
-                        let oldChild = oldChildren[i];
-                        if (oldChild.parentNode === this) {
-                            this.removeChild(oldChild);
-                        }
-                    }
-                }
-                if (content instanceof Node) {
-                    content = [content];
-                }
-                for (let i = 0; i < content.length; i++) {
-                    this.appendChild(content[i]);
-                }
-                DNAProperty.set(this, '__lastNode', content, false);
-            }
+        if (typeof content === 'function') {
+            content = content.call(this);
+        }
+        if (typeof content === 'string') {
+            this.innerHTML = content;
             return Promise.resolve();
         }
         return Promise.reject();

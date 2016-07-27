@@ -48,8 +48,12 @@ describe('Unit: Helpers', () => {
             let obj = {};
             let descriptor = getDescriptor(obj, 'prop') || {};
             let newDescriptor = {
-                get: wrapDescriptorGet('prop', descriptor),
-                set: wrapDescriptorSet('prop', descriptor),
+                get: wrapDescriptorGet('prop', descriptor, (prop) =>
+                    this[`__${prop}`]
+                ),
+                set: wrapDescriptorSet('prop', descriptor, (prop, value) => {
+                    this[`__${prop}`] = value;
+                }),
             };
             Object.defineProperty(obj, 'prop', newDescriptor);
             obj.prop = 5;
@@ -74,30 +78,6 @@ describe('Unit: Helpers', () => {
             Object.defineProperty(obj, 'prop', newDescriptor);
             obj.prop = 10;
             assert.equal(obj.prop, 20);
-        });
-
-        it('should wrap a setter for a property and trigger callback', () => {
-            let obj = {
-                get prop() {
-                    return this.__prop;
-                },
-                set prop(val) {
-                    this.__prop = val * 2;
-                    return this.prop;
-                },
-            };
-            let descriptor = getDescriptor(obj, 'prop') || {};
-            let check = {};
-            let newDescriptor = {
-                get: wrapDescriptorGet('prop', descriptor),
-                set: wrapDescriptorSet('prop', descriptor, (prop, res) => {
-                    check[prop] = res * 5;
-                }),
-            };
-            Object.defineProperty(obj, 'prop', newDescriptor);
-            obj.prop = 10;
-            assert.equal(obj.prop, 20);
-            assert.equal(check.prop, 100);
         });
     });
 

@@ -1,44 +1,95 @@
 import { register } from '../src/libs/dna.elements.js';
-import { TestComponent } from './components/dna-properties.js';
+import {
+    TestComponent1,
+    TestComponent2,
+} from './components/dna-properties.js';
 
-register('test-properties-component', TestComponent);
+register('test1-properties-component', TestComponent1);
+const Test2 = register('test2-properties-component', TestComponent2);
 
 /* globals describe, before, it, assert */
-describe('Unit: DNAPropertiesComponent', () => {
-    let elem;
+describe('DNAPropertiesComponent', () => {
+    describe('Unit: DNAPropertiesComponent > creation', () => {
+        let elem;
+        before((done) => {
+            let temp = document.createElement('div');
+            temp.innerHTML = `
+                <test1-properties-component
+                    name="Alan"
+                    last-name="Turing"
+                    var="1234"
+                    married>
+                </test1-properties-component>`;
+            document.body.appendChild(temp);
+            setTimeout(() => {
+                elem = temp.firstElementChild;
+                done();
+            }, 1000);
+        });
+        it('init element\'s properties', () => {
+            assert.equal(elem.name, 'Alan');
+            assert.equal(elem.lastName, 'Turing');
+            assert.equal(elem.married, true);
+            assert.equal(elem.var, 1234);
+        });
 
-    before((done) => {
-        let temp = document.createElement('div');
-        temp.innerHTML = `
-            <test-properties-component
-                name="Alan"
-                last-name="Turing"
-                married>
-            </test-properties-component>`;
-        document.body.appendChild(temp);
-        setTimeout(() => {
-            elem = temp.firstElementChild;
-            done();
-        }, 1000);
+        it('observe properties changes', () => {
+            let changedSingle = false;
+            let changedAll = false;
+            elem.observeProperty('age', () => {
+                changedSingle = true;
+            });
+            elem.observeProperties(() => {
+                changedAll = true;
+            });
+            elem.age = 41;
+            assert(changedSingle);
+            assert(changedAll);
+        });
     });
 
-    it('init element\'s properties', () => {
-        assert.equal(elem.name, 'Alan');
-        assert.equal(elem.lastName, 'Turing');
-        assert.equal(elem.married, true);
+    describe('Unit: DNAPropertiesComponent > props 2 attrs', () => {
+        let elem = new Test2();
+        it('check sync between property and attribute', () => {
+            elem.title = 'DNA Test';
+            assert.equal(elem.getAttribute('title'), 'DNA Test');
+        });
+        it('check sync between custom property and attribute', () => {
+            elem.var = 1234;
+            elem.id = 'dna-test';
+            assert.equal(elem.getAttribute('var'), '1234');
+            assert.equal(elem.getAttribute('id'), 'dna-test');
+        });
+        it('check sync between custom computed property and attribute', () => {
+            elem.myVar = true;
+            assert.equal(elem.getAttribute('my-var'), '');
+            elem.myVar = false;
+            assert.equal(elem.getAttribute('my-var'), null);
+        });
+        it('check sync between custom computed property with setter and attribute', () => {
+            elem.myVar3 = true;
+            assert.equal(elem.getAttribute('my-var3'), 'DNA Test');
+        });
     });
 
-    it('observe properties changes', () => {
-        let changedSingle = false;
-        let changedAll = false;
-        elem.observeProperty('age', () => {
-            changedSingle = true;
+    describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
+        let elem = new Test2();
+        before((done) => {
+            elem.setAttribute('alt', 'DNA Test 2');
+            elem.setAttribute('mine', '1234');
+            elem.setAttribute('my-var2', 'true');
+            setTimeout(() => {
+                done();
+            }, 200);
         });
-        elem.observeProperties(() => {
-            changedAll = true;
+        it('check sync between attribute and property', () => {
+            assert.equal(elem.alt, 'DNA Test 2');
         });
-        elem.age = 41;
-        assert(changedSingle);
-        assert(changedAll);
+        it('check sync between custom attribute and property', () => {
+            assert.equal(elem.mine, 1234);
+        });
+        it('check sync between custom computed attribute and property', () => {
+            assert.equal(elem.myVar2, true);
+        });
     });
 });

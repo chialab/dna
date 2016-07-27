@@ -5,7 +5,6 @@ const path = require('path');
 const generator = require('../node_modules/es6-workflow/lib/gendoc.js').generate;
 
 let files = [
-    'dna-attributes-component.js',
     'dna-base-component.js',
     'dna-events-component.js',
     'dna-mixed-component.js',
