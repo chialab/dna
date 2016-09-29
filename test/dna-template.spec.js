@@ -1,4 +1,4 @@
-import { register } from '../src/libs/dna.elements.js';
+import { register } from '../src/dna.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -15,17 +15,13 @@ const Test4 = register('test4-template-component', TestComponent4);
 describe('Unit: DNATemplateComponent', () => {
     let elem1;
     let elem2;
-    let elem3;
     let elem4;
     before((done) => {
         elem1 = new Test1();
         elem2 = new Test2();
-        elem3 = new Test3();
         elem4 = new Test4();
         document.body.appendChild(elem1);
         document.body.appendChild(elem2);
-        document.body.appendChild(elem3);
-        document.body.appendChild(elem3);
         document.body.appendChild(elem4);
         setTimeout(() => {
             done();
@@ -45,7 +41,7 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     it('should handle invalid `template`', () => {
-        assert.equal(elem3.innerHTML, '');
+        assert.throws(() => new Test3());
     });
 
     it('should handle templates with <svg>', () => {

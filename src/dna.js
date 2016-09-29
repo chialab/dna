@@ -13,6 +13,6 @@ export * from './dna-style-component.js';
 export * from './dna-template-component.js';
 export * from './dna-base-component.js';
 export { DNABaseComponent as BaseComponent } from './dna-base-component.js';
-export { DNAProperty } from './helpers/dna-property.js';
+export { DNAProperty as Observer } from './helpers/dna-property.js';
 export { register } from './helpers/register.js';
 export const Version = self.__DNA__VERSION__ || 'dev';

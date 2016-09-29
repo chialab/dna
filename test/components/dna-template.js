@@ -13,22 +13,20 @@ class TestComponent extends mix(DNAComponent).with(DNAPropertiesMixin, DNATempla
 }
 
 export class TestComponent1 extends TestComponent {
-    static get template() {
-        return function() {
-            return `${this.title ? `<h1>${this.title}</h1><br>` : ''}Hello, ${this.fullname}`;
-        };
+    template(t) {
+        return t`${this.title ? `<h1>${this.title}</h1><br>` : ''}Hello, ${this.fullname}`;
     }
 }
 
 export class TestComponent2 extends TestComponent {
-    static get template() {
-        return '<span class="dna-test">Hello DNA!</span>';
+    template(t) {
+        return t`<span class="dna-test">Hello DNA!</span>`;
     }
 }
 
 export class TestComponent3 extends TestComponent {
-    static get template() {
-        return 4;
+    template() {
+        return {};
     }
 }
 
@@ -36,13 +34,11 @@ export class TestComponent4 extends TestComponent {
     static get observedProperties() {
         return ['radius'];
     }
-    static get template() {
-        return function() {
-            return `
-                <svg>
-                    <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" />
-                </svg>
-            `;
-        };
+    template(t) {
+        return t`
+            <svg>
+                <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" />
+            </svg>
+        `;
     }
 }

@@ -6,6 +6,14 @@
  * @return {Function} The Component constructor.
  */
 export function register(tagName, Component, config = {}) {
+    Object.defineProperty(Component.prototype, 'is', {
+        configurable: false,
+        get: () => tagName,
+    });
+    if (typeof self.customElements !== 'undefined') {
+        self.customElements.define(tagName, Component, config);
+        return Component;
+    }
     let res = function(element) {
         element = element || document.createElement(config.extends ? config.extends : tagName);
         element.__proto__ = Component.prototype;

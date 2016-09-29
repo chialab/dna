@@ -22,3 +22,4 @@ rules:
   no-param-reassign: 0
   quote-props: 1
   radix: 0
+  no-new-func: 0
