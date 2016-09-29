@@ -4,25 +4,40 @@ import {
     TestComponent2,
     TestComponent3,
     TestComponent4,
+    TestComponent5,
+    TestPlaceholder,
+    Test2Placeholder,
 } from './components/dna-template.js';
 
 const Test1 = register('test1-template-component', TestComponent1);
 const Test2 = register('test2-template-component', TestComponent2);
 const Test3 = register('test3-template-component', TestComponent3);
 const Test4 = register('test4-template-component', TestComponent4);
+const Test5 = register('test5-template-component', TestComponent5);
+
+register('test-vdom-placeholder', TestPlaceholder);
+
+const PLACEHOLDER = register('test2-vdom-placeholder', Test2Placeholder, {
+    extends: 'figure',
+});
+
+console.log(PLACEHOLDER, new PLACEHOLDER())
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
     let elem1;
     let elem2;
     let elem4;
+    let elem5;
     before((done) => {
         elem1 = new Test1();
         elem2 = new Test2();
         elem4 = new Test4();
+        elem5 = new Test5();
         document.body.appendChild(elem1);
         document.body.appendChild(elem2);
         document.body.appendChild(elem4);
+        document.body.appendChild(elem5);
         setTimeout(() => {
             done();
         }, 250);
@@ -50,5 +65,11 @@ describe('Unit: DNATemplateComponent', () => {
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');
+    });
+
+    it('should handle sub components', () => {
+        console.log(elem5);
+        assert.equal(elem5.querySelector('test-vdom-placeholder').value, 6);
+        assert.equal(elem5.querySelector('figure').value, 11);
     });
 });

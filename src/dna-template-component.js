@@ -6,14 +6,7 @@ import { DNAProperty } from './helpers/dna-property.js';
 export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        let Ctr = this.constructor;
-        if (Ctr && Ctr.hasOwnProperty('template')) {
-            if (!(Ctr.template instanceof Template)) {
-                let tpl = new Template(Ctr.template);
-                Object.defineProperty(Ctr, 'template', {
-                    get() { return tpl; },
-                });
-            }
+        if (this.template) {
             DNAProperty.observe(this, () => {
                 this.render();
             });
@@ -25,12 +18,11 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
      * @return Promise The render promise.
      */
     render() {
-        let Ctr = this.constructor;
-        try {
-            Ctr.template.render(this, this);
-            return Promise.resolve();
-        } catch (ex) {
-            return Promise.reject(ex);
+        let tpl = this.template;
+        if (tpl instanceof Template) {
+            tpl.render(this);
+        } else {
+            throw new Error('Invalid template property.');
         }
     }
 };
