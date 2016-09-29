@@ -1,6 +1,6 @@
 import { getDescriptor, wrapDescriptorGet, wrapDescriptorSet } from '../src/helpers/descriptor.js';
 import { camelToDash, dashToCamel } from '../src/helpers/strings.js';
-import { register } from '../src/helpers/register.js';
+import { define } from '../src/helpers/define.js';
 import { DNAComponent } from '../src/dna-component.js';
 
 /* globals describe, before, it, assert */
@@ -98,7 +98,7 @@ describe('Unit: Helpers', () => {
         });
     });
 
-    describe('register', () => {
+    describe('define', () => {
         class TestComponent extends DNAComponent {
             constructor() {
                 super();
@@ -108,9 +108,9 @@ describe('Unit: Helpers', () => {
         }
 
         describe('a simple element', () => {
-            const Test = register('test1-helper-component', TestComponent);
+            const Test = define('test1-helper-component', TestComponent);
 
-            it('should register a custom element', () => {
+            it('should define a custom element', () => {
                 let elem = new Test();
                 assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
                 assert.equal(elem.name, 'Alan');
@@ -119,11 +119,11 @@ describe('Unit: Helpers', () => {
         });
 
         describe('a with extends field', () => {
-            const Test = register('test1-helper-register-component', TestComponent, {
+            const Test = define('test1-helper-define-component', TestComponent, {
                 extends: 'div',
             });
 
-            it('should register a custom element with extends field', () => {
+            it('should define a custom element with extends field', () => {
                 let elem = new Test();
                 assert.equal(elem.tagName.toLowerCase(), 'div');
                 assert.equal(elem.name, 'Alan');

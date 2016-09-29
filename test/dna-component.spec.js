@@ -1,11 +1,17 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import { TestComponent } from './components/dna-component.js';
+import { Template } from 'skin-template/src/template.js';
 
-const Test = register('test-component', TestComponent);
+const WRAPPER = document.body;
+define('test-component', TestComponent);
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNAComponent', () => {
-    let elem = new Test();
+    let template = new Template((t, show) => t`
+        ${show ? '<test-component></test-component>' : ''}
+    `);
+    template.render(WRAPPER, true);
+    let elem = WRAPPER.querySelector('test-component');
 
     describe('Unit: DNAComponent > created', () => {
         it('check if element is correctly instantiated', () => {
@@ -14,12 +20,6 @@ describe('Unit: DNAComponent', () => {
     });
 
     describe('Unit: DNAComponent > attached', () => {
-        before((done) => {
-            document.body.appendChild(elem);
-            setTimeout(() => {
-                done();
-            }, 250);
-        });
         it('check if element is correctly attached to the tree', () => {
             assert.equal(elem.attached, true);
         });
@@ -39,10 +39,8 @@ describe('Unit: DNAComponent', () => {
 
     describe('Unit: DNAComponent > detached', () => {
         before((done) => {
-            document.body.removeChild(elem);
-            setTimeout(() => {
-                done();
-            }, 250);
+            template.render(WRAPPER, false);
+            done();
         });
         it('check if element is correctly detached from the tree', () => {
             assert.equal(elem.attached, false);

@@ -15,5 +15,6 @@ export * from './dna-base-component.js';
 export { DNABaseComponent as BaseComponent } from './dna-base-component.js';
 export { DNAProperty as Observer } from './helpers/dna-property.js';
 export { Template } from 'skin-template/src/template.js';
-export { register } from './helpers/register.js';
+export { polyfillElement as polyfill } from './helpers/polyfill-element.js';
+export { define } from './helpers/define.js';
 export const Version = self.__DNA__VERSION__ || 'dev';

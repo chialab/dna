@@ -1,11 +1,17 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import { TestComponent } from './components/dna-base.js';
+import { Template } from 'skin-template/src/template.js';
 
-const Test = register('test-base-component', TestComponent);
+const WRAPPER = document.body;
+define('test-base-component', TestComponent);
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNABaseComponent', () => {
-    let elem = new Test();
+    let template = new Template((t, show) => t`
+        ${show ? '<test-base-component></test-base-component>' : ''}
+    `);
+    template.render(WRAPPER, true);
+    let elem = WRAPPER.querySelector('test-base-component');
 
     describe('Unit: DNABaseComponent > created', () => {
         it('check if element is correctly instantiated', () => {
@@ -27,10 +33,8 @@ describe('Unit: DNABaseComponent', () => {
 
     describe('Unit: DNABaseComponent > detached', () => {
         before((done) => {
-            document.body.removeChild(elem);
-            setTimeout(() => {
-                done();
-            }, 250);
+            template.render(WRAPPER, false);
+            done();
         });
         it('check if element is correctly detached from the tree', () => {
             assert.equal(elem.attached, false);

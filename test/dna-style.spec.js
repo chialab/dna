@@ -1,4 +1,4 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './components/dna-style.js';
 
 document.body.innerHTML += `
@@ -7,9 +7,9 @@ document.body.innerHTML += `
     <div is="test3-style-component"></div>
 `;
 
-const Test1 = register('test1-style-component', TestComponent1);
-const Test2 = register('test2-style-component', TestComponent2);
-const Test3 = register('test3-style-component', TestComponent3, {
+const Test1 = define('test1-style-component', TestComponent1);
+const Test2 = define('test2-style-component', TestComponent2);
+const Test3 = define('test3-style-component', TestComponent3, {
     extends: 'div',
 });
 

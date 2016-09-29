@@ -1,4 +1,4 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -9,19 +9,16 @@ import {
     Test2Placeholder,
 } from './components/dna-template.js';
 
-const Test1 = register('test1-template-component', TestComponent1);
-const Test2 = register('test2-template-component', TestComponent2);
-const Test3 = register('test3-template-component', TestComponent3);
-const Test4 = register('test4-template-component', TestComponent4);
-const Test5 = register('test5-template-component', TestComponent5);
+const Test1 = define('test1-template-component', TestComponent1);
+const Test2 = define('test2-template-component', TestComponent2);
+const Test3 = define('test3-template-component', TestComponent3);
+const Test4 = define('test4-template-component', TestComponent4);
+const Test5 = define('test5-template-component', TestComponent5);
 
-register('test-vdom-placeholder', TestPlaceholder);
-
-const PLACEHOLDER = register('test2-vdom-placeholder', Test2Placeholder, {
+define('test-vdom-placeholder', TestPlaceholder);
+define('test2-vdom-placeholder', Test2Placeholder, {
     extends: 'figure',
 });
-
-console.log(PLACEHOLDER, new PLACEHOLDER())
 
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
@@ -68,7 +65,6 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     it('should handle sub components', () => {
-        console.log(elem5);
         assert.equal(elem5.querySelector('test-vdom-placeholder').value, 6);
         assert.equal(elem5.querySelector('figure').value, 11);
     });

@@ -1,31 +1,28 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import {
     TestComponent1,
     TestComponent2,
 } from './components/dna-properties.js';
+import { Template } from 'skin-template/src/template.js';
 
-register('test1-properties-component', TestComponent1);
-const Test2 = register('test2-properties-component', TestComponent2);
+const WRAPPER = document.body;
+define('test1-properties-component', TestComponent1);
+define('test2-properties-component', TestComponent2);
 
 /* globals describe, before, it, assert */
 describe('DNAPropertiesComponent', () => {
     describe('Unit: DNAPropertiesComponent > creation', () => {
-        let elem;
-        before((done) => {
-            let temp = document.createElement('div');
-            temp.innerHTML = `
-                <test1-properties-component
-                    name="Alan"
-                    last-name="Turing"
-                    var="1234"
-                    married>
-                </test1-properties-component>`;
-            document.body.appendChild(temp);
-            setTimeout(() => {
-                elem = temp.firstElementChild;
-                done();
-            }, 1000);
-        });
+        let template = new Template((t) => t`
+            <test1-properties-component
+                name="Alan"
+                last-name="Turing"
+                var="1234"
+                married>
+            </test1-properties-component>
+        `);
+        template.render(WRAPPER);
+        let elem = WRAPPER.querySelector('test1-properties-component');
+
         it('init element\'s properties', () => {
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
@@ -49,7 +46,12 @@ describe('DNAPropertiesComponent', () => {
     });
 
     describe('Unit: DNAPropertiesComponent > props 2 attrs', () => {
-        let elem = new Test2();
+        let template = new Template((t) => t`
+            <test2-properties-component></test2-properties-component>
+        `);
+        template.render(WRAPPER);
+        let elem = WRAPPER.querySelector('test2-properties-component');
+
         it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
             assert.equal(elem.getAttribute('title'), 'DNA Test');
@@ -73,7 +75,12 @@ describe('DNAPropertiesComponent', () => {
     });
 
     describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
-        let elem = new Test2();
+        let template = new Template((t) => t`
+            <test2-properties-component></test2-properties-component>
+        `);
+        template.render(WRAPPER);
+        let elem = WRAPPER.querySelector('test2-properties-component');
+
         before((done) => {
             elem.setAttribute('alt', 'DNA Test 2');
             elem.setAttribute('mine', '1234');

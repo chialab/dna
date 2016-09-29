@@ -88,7 +88,6 @@ export class Test2Placeholder extends mix(DNAComponent).with(DNAPropertiesMixin)
 
     constructor() {
         super();
-        console.log(this);
         this.value = 11;
     }
 }

@@ -1,17 +1,17 @@
-import { register } from '../src/dna.js';
+import { define } from '../src/dna.js';
 import { TestComponent } from './components/dna-events.js';
+import { Template } from 'skin-template/src/template.js';
 
-const Test = register('test-events-component', TestComponent);
+const WRAPPER = document.body;
+define('test-events-component', TestComponent);
 
 /* globals describe, before, it, assert */
 describe('Unit: DNAEventsComponent', () => {
-    let elem = new Test();
-    before((done) => {
-        document.body.appendChild(elem);
-        setTimeout(() => {
-            done();
-        }, 50);
-    });
+    let template = new Template((t, show) => t`
+        ${show ? '<test-events-component></test-events-component>' : ''}
+    `);
+    template.render(WRAPPER, true);
+    let elem = WRAPPER.querySelector('test-events-component');
 
     it('should track custom event on element', () => {
         assert.equal(elem.customElement, elem);

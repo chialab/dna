@@ -10,7 +10,7 @@ module.exports = function(karma) {
     });
     karma.files.unshift(
         'node_modules/dna-polyfills/src/extra/weak-map.js',
-        'node_modules/dna-polyfills/src/extra/custom-elements.js',
+        // 'node_modules/dna-polyfills/src/extra/custom-elements.js',
         'node_modules/incremental-dom/dist/incremental-dom.js',
         'node_modules/skin-template/src/parser.js',
         'node_modules/skin-template/src/render.js',
