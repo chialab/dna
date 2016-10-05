@@ -9,7 +9,7 @@ define('test-component', TestComponent);
 /* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNAComponent', () => {
     let template = new Template((t, show) => t`
-        ${show ? '<test-component></test-component>' : ''}
+        ${show ? '<test-component testCallback="Alan"></test-component>' : ''}
     `);
     template.render(WRAPPER, true);
     let elem = WRAPPER.querySelector('test-component');
@@ -27,14 +27,8 @@ describe('Unit: DNAComponent', () => {
     });
 
     describe('Unit: DNAComponent > attributeChanged', () => {
-        before((done) => {
-            elem.setAttribute('name', 'Alan');
-            setTimeout(() => {
-                done();
-            }, 250);
-        });
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            assert.equal(elem.name, 'Alan');
+            assert.equal(elem.testCallback, 'Alan');
         });
     });
 

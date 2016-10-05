@@ -30,7 +30,7 @@ describe('Unit: DNATemplateComponent', () => {
             <test1-template-component></<test1-template-component>
         `);
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('.test1-template-component');
+        let elem = WRAPPER.querySelector('test1-template-component');
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
@@ -43,7 +43,7 @@ describe('Unit: DNATemplateComponent', () => {
             <test2-template-component></<test2-template-component>
         `);
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('.test2-template-component');
+        let elem = WRAPPER.querySelector('test2-template-component');
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
@@ -59,7 +59,7 @@ describe('Unit: DNATemplateComponent', () => {
             <test4-template-component></<test4-template-component>
         `);
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('.test4-template-component');
+        let elem = WRAPPER.querySelector('test4-template-component');
         elem.radius = 40;
         let svg = elem.firstElementChild;
         let circle = svg.querySelector('circle');
@@ -72,7 +72,7 @@ describe('Unit: DNATemplateComponent', () => {
             <test5-template-component></<test5-template-component>
         `);
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('.test5-template-component');
+        let elem = WRAPPER.querySelector('test5-template-component');
         assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
         assert.equal(elem.querySelector('figure').value, 11);
     });

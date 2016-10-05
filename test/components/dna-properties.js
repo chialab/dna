@@ -1,8 +1,11 @@
 import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
 
 export class TestComponent1 extends DNAPropertiesComponent {
+    static get observedAttributes() {
+        return ['name', 'last-name', 'married', 'age', 'var'];
+    }
     static get observedProperties() {
-        return ['name', 'lastName', 'married', 'age', 'var'];
+        return this.observedAttributes;
     }
 }
 
@@ -12,7 +15,7 @@ export class TestComponent2 extends DNAPropertiesComponent {
     }
 
     static get observedProperties() {
-        return ['title', 'id', 'alt', 'var', 'mine', 'myVar', 'myVar2', 'myVar3'];
+        return this.observedAttributes;
     }
 
     get myVar3() {

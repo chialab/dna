@@ -76,19 +76,21 @@ describe('DNAPropertiesComponent', () => {
     });
 
     describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
-        let template = new Template((t) => t`
-            <test2-properties-component></test2-properties-component>
+        let template = new Template((t, attrs = false) => t`
+            <test2-properties-component
+            ${attrs ? `
+                alt="DNA Test 2"
+                mine="1234"
+                my-var2="true"
+            ` : ''}
+            ></test2-properties-component>
         `);
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test2-properties-component');
 
         before((done) => {
-            elem.setAttribute('alt', 'DNA Test 2');
-            elem.setAttribute('mine', '1234');
-            elem.setAttribute('my-var2', 'true');
-            setTimeout(() => {
-                done();
-            }, 200);
+            template.render(WRAPPER, true);
+            done();
         });
         it('check sync between attribute and property', () => {
             assert.equal(elem.alt, 'DNA Test 2');

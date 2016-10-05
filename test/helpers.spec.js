@@ -108,10 +108,10 @@ describe('Unit: Helpers', () => {
         }
 
         describe('a simple element', () => {
-            const Test = define('test1-helper-component', TestComponent);
+            define('test1-helper-component', TestComponent);
 
             it('should define a custom element', () => {
-                let elem = new Test();
+                let elem = new TestComponent();
                 assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
@@ -119,12 +119,13 @@ describe('Unit: Helpers', () => {
         });
 
         describe('a with extends field', () => {
-            const Test = define('test1-helper-define-component', TestComponent, {
+            const TestComponent2 = class extends TestComponent {};
+            define('test1-helper-define-component', TestComponent2, {
                 extends: 'div',
             });
 
             it('should define a custom element with extends field', () => {
-                let elem = new Test();
+                let elem = new TestComponent2();
                 assert.equal(elem.tagName.toLowerCase(), 'div');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
