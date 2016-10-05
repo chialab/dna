@@ -1,9 +1,9 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
+import { Component } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
 import { isString, isFunction } from './helpers/typeof.js';
 
-export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
+export const EventsMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
      */
@@ -56,14 +56,14 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
 /**
  * Simple Custom Component with events delegation,
  * It also implement a `dispatchEvent` wrapper named `trigger`.
- * @class DNAEventsComponent
- * @extends DNAComponent
+ * @class EventsComponent
+ * @extends Component
  *
  * @example
  * my-component.js
  * ```js
- * import { DNAEventsComponent } from 'dna/component';
- * export class MyComponent extends DNAEventsComponent {
+ * import { EventsComponent } from 'dna/component';
+ * export class MyComponent extends EventsComponent {
  *   static get events() {
  *     return {
  *       'click button': 'onButtonClick'
@@ -86,4 +86,4 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
  * button.click(); // logs "button clicked"
  * ```
  */
-export class DNAEventsComponent extends mix(DNAComponent).with(DNAEventsMixin) {}
+export class EventsComponent extends mix(Component).with(EventsMixin) {}

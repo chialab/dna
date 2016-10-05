@@ -1,6 +1,6 @@
-import { DNAPropertiesComponent } from '../../src/dna-properties-component.js';
+import { PropertiesComponent } from '../../src/dna-properties-component.js';
 
-export class TestComponent1 extends DNAPropertiesComponent {
+export class TestComponent1 extends PropertiesComponent {
     static get observedAttributes() {
         return ['name', 'last-name', 'married', 'age', 'var'];
     }
@@ -9,7 +9,7 @@ export class TestComponent1 extends DNAPropertiesComponent {
     }
 }
 
-export class TestComponent2 extends DNAPropertiesComponent {
+export class TestComponent2 extends PropertiesComponent {
     static get observedAttributes() {
         return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }

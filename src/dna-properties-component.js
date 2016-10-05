@@ -1,13 +1,13 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
-import { DNAProperty } from './helpers/dna-property.js';
+import { Component } from './dna-component.js';
+import { Property } from './helpers/property.js';
 import { camelToDash, dashToCamel } from './helpers/strings.js';
 import { setAttribute } from './helpers/set-attribute.js';
 import {
     getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
 } from './helpers/descriptor.js';
 
-export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
+export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     /**
      * On `created` callback, apply attributes to properties.
      */
@@ -68,7 +68,7 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {*} The property value.
      */
     getProperty(propName) {
-        return DNAProperty.get(this, propName);
+        return Property.get(this, propName);
     }
     /**
      * Set a property of a component.
@@ -76,7 +76,7 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
      * @param {*} propValue The property value.
      */
     setProperty(propName, propValue) {
-        return DNAProperty.set(this, propName, propValue);
+        return Property.set(this, propName, propValue);
     }
     /**
      * Create a listener for node's property changes.
@@ -85,7 +85,7 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperty(propName, callback) {
-        return DNAProperty.observe(this, propName, callback);
+        return Property.observe(this, propName, callback);
     }
     /**
      * Create a listener for node's properties changes.
@@ -93,20 +93,20 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperties(callback) {
-        return DNAProperty.observe(this, callback);
+        return Property.observe(this, callback);
     }
 };
 
 /**
  * Simple Custom Component for properties initialization via attributes.
- * @class DNAPropertiesComponent
- * @extends DNAComponent
+ * @class PropertiesComponent
+ * @extends Component
  *
  * @example
  * my-component.js
  * ```js
- * import { DNAPropertiesComponent } from 'dna/component';
- * export class MyComponent extends DNAPropertiesComponent {
+ * import { PropertiesComponent } from 'dna/component';
+ * export class MyComponent extends PropertiesComponent {
  *   static get observedProperties() {
  *     return ['name'];
  *   }
@@ -123,4 +123,4 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
  * console.log(element.name); // logs "Albert"
  * ```
  */
-export class DNAPropertiesComponent extends mix(DNAComponent).with(DNAPropertiesMixin) {}
+export class PropertiesComponent extends mix(Component).with(PropertiesMixin) {}

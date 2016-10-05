@@ -1,6 +1,6 @@
-import { DNABaseComponent } from '../../src/dna-base-component.js';
+import { BaseComponent } from '../../src/dna-base-component.js';
 
-export class TestComponent extends DNABaseComponent {
+export class TestComponent extends BaseComponent {
     static get observedAttributes() {
         return ['name'];
     }

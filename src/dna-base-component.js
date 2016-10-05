@@ -1,20 +1,20 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
-import { DNAStyleMixin } from './dna-style-component.js';
-import { DNAEventsMixin } from './dna-events-component.js';
-import { DNAPropertiesMixin } from './dna-properties-component.js';
-import { DNATemplateMixin } from './dna-template-component.js';
+import { Component } from './dna-component.js';
+import { StyleMixin } from './dna-style-component.js';
+import { EventsMixin } from './dna-events-component.js';
+import { PropertiesMixin } from './dna-properties-component.js';
+import { TemplateMixin } from './dna-template-component.js';
 
 /**
  * Simple Custom Component with some behaviors.
- * @class DNABaseComponent
- * @extends DNAMixedComponent
+ * @class BaseComponent
+ * @extends MixedComponent
  *
  * @example
  * my-component.js
  * ```js
- * import { DNABaseComponent } from 'dna/component';
- * export class MyComponent extends DNABaseComponent {
+ * import { BaseComponent } from 'dna/component';
+ * export class MyComponent extends BaseComponent {
  *   static get template() {
  *     return `...`;
  *   }
@@ -34,11 +34,11 @@ import { DNATemplateMixin } from './dna-template-component.js';
  *   }
  * }
  */
-const DNAMixinComponent = mix(DNAComponent).with(
-    DNAPropertiesMixin,
-    DNAStyleMixin,
-    DNAEventsMixin,
-    DNATemplateMixin
+const MixinComponent = mix(Component).with(
+    PropertiesMixin,
+    StyleMixin,
+    EventsMixin,
+    TemplateMixin
 );
 
-export class DNABaseComponent extends DNAMixinComponent {}
+export class BaseComponent extends MixinComponent {}

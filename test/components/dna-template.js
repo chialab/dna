@@ -1,10 +1,10 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from '../../src/dna-component.js';
-import { DNAPropertiesMixin } from '../../src/dna-properties-component.js';
-import { DNATemplateMixin } from '../../src/dna-template-component.js';
+import { Component } from '../../src/dna-component.js';
+import { PropertiesMixin } from '../../src/dna-properties-component.js';
+import { TemplateMixin } from '../../src/dna-template-component.js';
 import { Template } from 'skin-template/src/template.js';
 
-class TestComponent extends mix(DNAComponent).with(DNAPropertiesMixin, DNATemplateMixin) {
+class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
     static get observedProperties() {
         return ['name', 'lastName', 'title'];
     }
@@ -62,7 +62,7 @@ export class TestComponent5 extends TestComponent {
     }
 }
 
-export class TestPlaceholder extends mix(DNAComponent).with(DNAPropertiesMixin) {
+export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }
@@ -77,7 +77,7 @@ export class TestPlaceholder extends mix(DNAComponent).with(DNAPropertiesMixin) 
     }
 }
 
-export class Test2Placeholder extends mix(DNAComponent).with(DNAPropertiesMixin) {
+export class Test2Placeholder extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }

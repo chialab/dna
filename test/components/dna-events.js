@@ -1,6 +1,6 @@
-import { DNAEventsComponent } from '../../src/dna-events-component.js';
+import { EventsComponent } from '../../src/dna-events-component.js';
 
-export class TestComponent extends DNAEventsComponent {
+export class TestComponent extends EventsComponent {
     static get events() {
         return {
             customEvent: 'onCustomEvent',

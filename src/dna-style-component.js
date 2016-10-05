@@ -1,10 +1,10 @@
 import { mix } from 'mixwith';
-import { DNAComponent } from './dna-component.js';
+import { Component } from './dna-component.js';
 import { importStyle } from './helpers/style.js';
 
 const IMPORTED_STYLES = new WeakMap();
 
-export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
+export const StyleMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
      */
@@ -26,14 +26,14 @@ export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
- * @class DNAStyleComponent
- * @extends DNAComponent
+ * @class StyleComponent
+ * @extends Component
  *
  * @example
  * my-component.js
  * ```js
- * import { DNAStyleComponent } from 'dna/component';
- * export class MyComponent extends DNAStyleComponent {
+ * import { StyleComponent } from 'dna/component';
+ * export class MyComponent extends StyleComponent {
  *   static get css() {
  *     return '.my-component p { color: red; }'
  *   }
@@ -50,4 +50,4 @@ export const DNAStyleMixin = (SuperClass) => class extends SuperClass {
  * element.appendChild(p); // text inside `p` gets the red color
  * ```
  */
-export class DNAStyleComponent extends mix(DNAComponent).with(DNAStyleMixin) {}
+export class StyleComponent extends mix(Component).with(StyleMixin) {}

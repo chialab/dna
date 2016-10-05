@@ -1,13 +1,13 @@
 import { mix } from 'mixwith';
 import { Template } from 'skin-template/src/template.js';
-import { DNAComponent } from './dna-component.js';
-import { DNAProperty } from './helpers/dna-property.js';
+import { Component } from './dna-component.js';
+import { Property } from './helpers/property.js';
 
-export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
+export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         if (this.template) {
-            DNAProperty.observe(this, () => {
+            Property.observe(this, () => {
                 this.render();
             });
             this.render();
@@ -29,14 +29,14 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
 
 /**
  * Simple Custom Component with template handling using the `template` property.
- * @class DNATemplateComponent
- * @extends DNAComponent
+ * @class TemplateComponent
+ * @extends Component
  *
  * @example
  * my-component.js
  * ```js
- * import { DNATemplateComponent } from 'dna/component';
- * export class MyComponent extends DNATemplateComponent {
+ * import { TemplateComponent } from 'dna/component';
+ * export class MyComponent extends TemplateComponent {
  *   static get template() {
  *     return `<h1>${this.name}</h1>`;
  *   }
@@ -54,4 +54,4 @@ export const DNATemplateMixin = (SuperClass) => class extends SuperClass {
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
  * ```
  */
-export class DNATemplateComponent extends mix(DNAComponent).with(DNATemplateMixin) {}
+export class TemplateComponent extends mix(Component).with(TemplateMixin) {}

@@ -1,6 +1,6 @@
-import { DNAStyleComponent } from '../../src/dna-style-component.js';
+import { StyleComponent } from '../../src/dna-style-component.js';
 
-class TestComponent extends DNAStyleComponent {
+class TestComponent extends StyleComponent {
     constructor() {
         super();
         this.innerHTML = '<h1>DNA TESTS</h1>';

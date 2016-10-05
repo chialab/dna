@@ -1,7 +1,7 @@
 import { getDescriptor, wrapDescriptorGet, wrapDescriptorSet } from '../src/helpers/descriptor.js';
 import { camelToDash, dashToCamel } from '../src/helpers/strings.js';
 import { define } from '../src/helpers/define.js';
-import { DNAComponent } from '../src/dna-component.js';
+import { Component } from '../src/dna-component.js';
 
 /* globals describe, before, it, assert */
 describe('Unit: Helpers', () => {
@@ -99,7 +99,7 @@ describe('Unit: Helpers', () => {
     });
 
     describe('define', () => {
-        class TestComponent extends DNAComponent {
+        class TestComponent extends Component {
             constructor() {
                 super();
                 this.name = 'Alan';

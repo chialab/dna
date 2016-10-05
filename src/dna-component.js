@@ -4,14 +4,14 @@ const Element = polyfillElement('HTMLElement');
 
 /**
  * This is the model to use to create DNA Custom Components.
- * @class DNAComponent
+ * @class Component
  * @extends HTMLElement
  *
  * @example
  * my-component.js
  * ```js
- * import { DNAComponent } from 'dna/component';
- * export class MyComponent extends DNAComponent {
+ * import { Component } from 'dna/component';
+ * export class MyComponent extends Component {
  *   get constructor() {
  *     console.log('Created a MyComponent instance!!!');
  *   }
@@ -25,7 +25,7 @@ const Element = polyfillElement('HTMLElement');
  * var element = new MyElement(); // logs "Created a MyComponent instance!!!"
  * ```
  */
-export class DNAComponent extends Element {
+export class Component extends Element {
     /**
      * Fires when an instance was inserted into the document.
      */
