@@ -1,11 +1,18 @@
 import { registry } from './registry.js';
 
+function isNew(node) {
+    try {
+        return typeof node.outerHTML !== 'string';
+    } catch (ex) {
+        return true;
+    }
+}
+
 export function polyfillElement(name) {
     const Original = self[name];
     const Modified = function() {
         if (this.constructor) {
-            if (this instanceof Original) {
-                console.log(this);
+            if (!isNew(this)) {
                 return this;
             }
             let desc = registry.get(this.is);
@@ -13,6 +20,9 @@ export function polyfillElement(name) {
             let element = document.createElement(
                 desc.config.extends ? desc.config.extends : this.is
             );
+            if (desc.config.extends) {
+                element.setAttribute('is', this.is);
+            }
             element.__proto__ = desc.Ctr.prototype;
             return element;
         }
