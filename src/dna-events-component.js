@@ -43,13 +43,11 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
         if (!evName) {
             throw new Error('Event name is undefined');
         }
-        let ev = document.createEvent('Event');
-        if (typeof ev.initEvent !== 'undefined') {
-            ev.initEvent(evName, bubbles, cancelable);
-        }
-        if (data) {
-            ev.detail = data;
-        }
+        let ev = new CustomEvent(evName, {
+            detail: data,
+            bubbles,
+            cancelable,
+        });
         return this.dispatchEvent(ev);
     }
 };
