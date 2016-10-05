@@ -1,71 +1,41 @@
 import { define } from '../src/dna.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './components/dna-style.js';
+import { Template } from 'skin-template/src/template.js';
+import { Wrapper } from './utils/wrapper.js';
 
-document.body.innerHTML += `
-    <test1-style-component></test1-style-component>
-    <test2-style-component></test2-style-component>
-    <div is="test3-style-component"></div>
-`;
+const WRAPPER = new Wrapper();
 
-const Test1 = define('test1-style-component', TestComponent1);
-const Test2 = define('test2-style-component', TestComponent2);
-const Test3 = define('test3-style-component', TestComponent3, {
+define('test1-style-component', TestComponent1);
+define('test2-style-component', TestComponent2);
+define('test3-style-component', TestComponent3, {
     extends: 'div',
 });
 
+let template = new Template((t) => t`
+    <test1-style-component></test1-style-component>
+    <test2-style-component></test2-style-component>
+    <div is="test3-style-component"></div>
+`);
+template.render(WRAPPER);
+
 /* globals describe, before, it, assert */
 describe('Unit: DNAStyleComponent', () => {
-    let elem1;
-    let elem2;
-    let elem3;
-    let elem4;
-    let elem5;
-    let elem6;
+    let elem1 = WRAPPER.querySelector('.test1-style-component');
+    let elem2 = WRAPPER.querySelector('.test2-style-component');
+    let elem3 = WRAPPER.querySelector('.test3-style-component');
 
-    before((done) => {
-        elem4 = new Test1();
-        elem5 = new Test2();
-        elem6 = new Test3();
-        document.body.appendChild(elem4);
-        document.body.appendChild(elem5);
-        document.body.appendChild(elem6);
-        setTimeout(() => {
-            elem1 = document.querySelector('.test1-style-component');
-            elem2 = document.querySelector('.test2-style-component');
-            elem3 = document.querySelector('.test3-style-component');
-            done();
-        }, 250);
-    });
-
-    it('should handle `css` getter property as function for element already in the dom', () => {
+    it('should handle `css` getter property as function', () => {
         let style = window.getComputedStyle(elem1.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
     });
 
-    it('should handle `css` getter property as string for element already in the dom', () => {
+    it('should handle `css` getter property as string', () => {
         let style = window.getComputedStyle(elem2.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
     });
 
-    it('should handle `css` property as string for element already in the dom', () => {
+    it('should handle `css` property as string', () => {
         let style = window.getComputedStyle(elem3.querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
-    });
-
-    it('should handle `css` getter property as function', () => {
-        let style = window.getComputedStyle(elem4.querySelector('h1'));
-        assert.equal(style.color, 'rgb(95, 158, 160)');
-    });
-
-    it('should handle `css` getter property as string', () => {
-        let style = window.getComputedStyle(elem5.querySelector('h1'));
-        assert.equal(style.color, 'rgb(95, 158, 160)');
-    });
-
-    it('should handle `css` property as string', () => {
-        let style = window.getComputedStyle(elem6);
-        assert.equal(style.display, 'block');
-        let styleTitle = window.getComputedStyle(elem6.querySelector('h1'));
-        assert.equal(styleTitle.color, 'rgb(95, 158, 160)');
     });
 });

@@ -1,8 +1,9 @@
 import { define } from '../src/dna.js';
 import { TestComponent } from './components/dna-events.js';
 import { Template } from 'skin-template/src/template.js';
+import { Wrapper } from './utils/wrapper.js';
 
-const WRAPPER = document.body;
+const WRAPPER = new Wrapper();
 define('test-events-component', TestComponent);
 
 /* globals describe, before, it, assert */
