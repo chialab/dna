@@ -1,8 +1,9 @@
 import { registry } from './registry.js';
+import { isString } from './typeof.js';
 
 function isNew(node) {
     try {
-        return typeof node.outerHTML !== 'string';
+        return !isString(node.outerHTML);
     } catch (ex) {
         return true;
     }

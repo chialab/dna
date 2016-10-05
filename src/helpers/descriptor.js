@@ -1,3 +1,5 @@
+import { isFunction } from './typeof.js';
+
 function isNative(fn) {
     return (/\{\s*\[native code\]\s*\}/).test(`${fn}`);
 }
@@ -22,10 +24,10 @@ export function getDescriptor(ctr, prop) {
  */
 export function wrapDescriptorGet(prop, descriptor, value) {
     return function() {
-        if (typeof descriptor.get === 'function' && !isNative(descriptor.get)) {
+        if (isFunction(descriptor.get) && !isNative(descriptor.get)) {
             return descriptor.get.call(this);
         }
-        return typeof value === 'function' ? value.call(this, prop) : value;
+        return isFunction(value) ? value.call(this, prop) : value;
     };
 }
 
@@ -38,7 +40,7 @@ export function wrapDescriptorGet(prop, descriptor, value) {
  */
 export function wrapDescriptorSet(prop, descriptor, callback) {
     return function(value) {
-        if (typeof descriptor.set === 'function' && !isNative(descriptor.set)) {
+        if (isFunction(descriptor.set) && !isNative(descriptor.set)) {
             return descriptor.set.call(this, value);
         }
         return callback.call(this, prop, value);

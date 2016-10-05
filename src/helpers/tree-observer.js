@@ -1,8 +1,9 @@
 import { notifications, attributes, symbols } from 'google/incremental-dom';
+import { isUndefined } from './typeof.js';
 import { registry } from './registry.js';
 
 const customElements = self.customElements;
-const hasRegistry = typeof customElements !== 'undefined';
+const hasRegistry = !isUndefined(customElements);
 const _created = notifications.nodesCreated;
 const _removed = notifications.nodesDeleted;
 const _changed = attributes[symbols.default];

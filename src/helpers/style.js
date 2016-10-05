@@ -1,3 +1,5 @@
+import { isFunction } from './typeof.js';
+
 function createStyle(id) {
     let styleElem = document.createElement('style');
     styleElem.type = 'text/css';
@@ -18,7 +20,7 @@ export function importStyle(id, styles) {
         styles = [styles];
     }
     styles.forEach((style) => {
-        if (typeof style === 'function') {
+        if (isFunction(style)) {
             style = style();
         }
         css += style;

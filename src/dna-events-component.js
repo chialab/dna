@@ -1,6 +1,7 @@
 import { mix } from 'mixwith';
 import { DNAComponent } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
+import { isString, isFunction } from './helpers/typeof.js';
 
 export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
     /**
@@ -12,10 +13,10 @@ export const DNAEventsMixin = (SuperClass) => class extends SuperClass {
         let events = this.constructor.events || {};
         for (let k in events) {
             if (events.hasOwnProperty(k)) {
-                let callback = (typeof events[k] === 'string') ?
+                let callback = isString(events[k]) ?
                     this[events[k]] :
                     events[k];
-                if (typeof callback === 'function') {
+                if (isFunction(callback)) {
                     let rule = k.match(/([^\s]+)(.*)?/);
                     let evName = rule[1];
                     let selector = (rule[2] || '').trim();

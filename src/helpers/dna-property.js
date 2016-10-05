@@ -1,3 +1,5 @@
+import { isFunction } from './typeof.js';
+
 /**
  * Handle objects private properties using a WeakMap.
  * @class DNAProperty
@@ -73,7 +75,7 @@ export class DNAProperty {
      * @return {Object} An object with `cancel` method.
      */
     static observe(obj, key, callback) {
-        if (typeof key === 'function') {
+        if (isFunction(key)) {
             callback = key;
             key = DNAProperty.GENERIC_OBSERVER;
         }
@@ -100,11 +102,11 @@ export class DNAProperty {
     static changed(obj, key, oldValue, newValue) {
         let callbacks = DNAProperty.callbacks.get(obj) || {};
         let res = (callbacks[key] || []).some((clb) =>
-            typeof clb === 'function' && clb.call(obj, key, oldValue, newValue) === false
+            isFunction(clb) && clb.call(obj, key, oldValue, newValue) === false
         );
         if (!res) {
             (callbacks[DNAProperty.GENERIC_OBSERVER] || []).some((clb) =>
-                typeof clb === 'function' && clb.call(obj, key, oldValue, newValue) === false
+                isFunction(clb) && clb.call(obj, key, oldValue, newValue) === false
             );
         }
     }
