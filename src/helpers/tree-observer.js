@@ -7,25 +7,35 @@ const _created = notifications.nodesCreated;
 const _removed = notifications.nodesDeleted;
 const _changed = attributes[symbols.default];
 
-notifications.nodesCreated = function(nodes) {
-    nodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            let is = node.getAttribute('is') || node.tagName;
-            if (!hasRegistry || !customElements.get(is)) {
-                let desc = registry.get(is);
-                if (desc) {
-                    node.__proto__ = desc.Ctr.prototype;
-                    Object.defineProperty(node, 'constructor', {
-                        value: desc.Ctr,
-                        configurable: true,
-                        writable: true,
-                    });
-                    desc.Ctr.prototype.constructor.call(node);
-                    node.connectedCallback();
-                }
+function getDescriptor(node) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+        let is = node.getAttribute('is') || node.tagName;
+        if (!hasRegistry || !customElements.get(is)) {
+            let desc = registry.get(is);
+            if (desc) {
+                return desc;
             }
         }
-    });
+    }
+    return null;
+}
+
+function createNode(node, desc) {
+    desc = desc || getDescriptor(node);
+    if (desc) {
+        node.__proto__ = desc.Ctr.prototype;
+        Object.defineProperty(node, 'constructor', {
+            value: desc.Ctr,
+            configurable: true,
+            writable: true,
+        });
+        desc.Ctr.prototype.constructor.call(node);
+        node.connectedCallback();
+    }
+}
+
+notifications.nodesCreated = function(nodes) {
+    nodes.forEach((node) => createNode(node));
     if (_created) {
         _created(nodes);
     }
@@ -34,12 +44,9 @@ notifications.nodesCreated = function(nodes) {
 notifications.nodesDeleted = function(nodes) {
     nodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
-            let is = node.getAttribute('is') || node.tagName;
-            if (!hasRegistry || !customElements.get(is)) {
-                let Ctr = registry.get(is);
-                if (Ctr) {
-                    node.disconnectedCallback();
-                }
+            let desc = getDescriptor(node);
+            if (desc) {
+                node.disconnectedCallback();
             }
         }
     });
@@ -49,14 +56,15 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-        let is = node.getAttribute('is') || node.tagName;
-        if (!hasRegistry || !customElements.get(is)) {
-            let desc = registry.get(is);
-            if (desc) {
-                let oldValue = node.getAttribute(attrName);
-                node.attributeChangedCallback(attrName, oldValue, attrValue);
-            }
+    let desc = getDescriptor(node);
+    if (desc) {
+        if (!node.is) {
+            createNode(node, desc);
+        }
+        let oldValue = node.getAttribute(attrName);
+        if (desc.Ctr.observedAttributes &&
+            desc.Ctr.observedAttributes.indexOf(attrName) !== -1) {
+            node.attributeChangedCallback(attrName, oldValue, attrValue);
         }
     }
     if (_changed) {
