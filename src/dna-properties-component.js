@@ -14,7 +14,8 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let Ctr = this.constructor;
-        let ctrProperties = Ctr.observedProperties || [];
+        let ctrProperties = (Ctr.observedProperties || [])
+            .map((prop) => dashToCamel(prop));
         let ctrAttributes = Ctr.observedAttributes || [];
         ctrProperties.forEach((prop) => {
             let descriptor = getDescriptor(Ctr.prototype, prop) || {};
@@ -37,12 +38,7 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
-            let propName = dashToCamel(attr.name);
             this.attributeChangedCallback(attr.name, undefined, attr.value);
-            if (ctrProperties.indexOf(propName) !== -1 &&
-                ctrAttributes.indexOf(attr.name) === -1) {
-                this.removeAttribute(attr.name);
-            }
         }
     }
     /**
@@ -56,7 +52,9 @@ export const DNAPropertiesMixin = (SuperClass) => class extends SuperClass {
         let Ctr = this.constructor;
         let ctrProperties = Ctr.observedProperties || [];
         let propName = dashToCamel(attr);
-        if (ctrProperties.indexOf(propName) !== -1) {
+        if (ctrProperties.indexOf(propName) !== -1 ||
+            ctrProperties.indexOf(attr) !== -1) {
+            newVal = (newVal === '') || newVal;
             try {
                 this[propName] = (newVal === '') || JSON.parse(newVal);
             } catch (ex) {
