@@ -1,7 +1,9 @@
-import { PropertiesComponent } from '../../src/dna-properties-component.js';
+import { mix } from '../../src/helpers/mixins.js';
+import { Component } from '../../src/dna-component.js';
+import { PropertiesMixin } from '../../src/dna-properties-component.js';
 import { prop } from '../../src/helpers/property.js';
 
-export class TestComponent1 extends PropertiesComponent {
+export class TestComponent1 extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {
         return ['name', 'last-name', 'married', 'age', 'var'];
     }
@@ -17,7 +19,7 @@ export class TestComponent1 extends PropertiesComponent {
     }
 }
 
-export class TestComponent2 extends PropertiesComponent {
+export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {
         return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }

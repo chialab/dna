@@ -29,7 +29,6 @@ export function importStyle(id, styles) {
         });
         id = `style-${id}`;
         styleElem = createStyle(id);
-        styleElem.innerHTML = '';
         styleElem.textContent = css;
         if (!styleElem.parentNode) {
             let head = document.head;

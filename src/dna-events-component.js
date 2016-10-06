@@ -1,8 +1,39 @@
-import { mix } from './helpers/mixins.js'
-import { Component } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
 import { isString, isFunction } from './helpers/typeof.js';
 
+const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
+
+/**
+ * Simple Custom Component with events delegation,
+ * It also implement a `dispatchEvent` wrapper named `trigger`.
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { EventsMixin, Component, mix } from 'dna/component';
+ * export class MyComponent extends mix(Component).with(EventsMixin) {
+ *   static get events() {
+ *     return {
+ *       'click button': 'onButtonClick'
+ *     }
+ *   }
+ *   onButtonClick() {
+ *     console.log('button clicked');
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { define } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * define('my-component', MyComponent);
+ * var element = new MyComponent();
+ * var button = document.createElement('button');
+ * button.innerText = 'Click me';
+ * element.appendChild(button);
+ * button.click(); // logs "button clicked"
+ * ```
+ */
 export const EventsMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
@@ -17,7 +48,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                     this[events[k]] :
                     events[k];
                 if (isFunction(callback)) {
-                    let rule = k.match(/([^\s]+)(.*)?/);
+                    let rule = k.match(SPLIT_SELECTOR);
                     let evName = rule[1];
                     let selector = (rule[2] || '').trim();
                     if (selector) {
@@ -52,38 +83,3 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         return this.dispatchEvent(ev);
     }
 };
-
-/**
- * Simple Custom Component with events delegation,
- * It also implement a `dispatchEvent` wrapper named `trigger`.
- * @class EventsComponent
- * @extends Component
- *
- * @example
- * my-component.js
- * ```js
- * import { EventsComponent } from 'dna/component';
- * export class MyComponent extends EventsComponent {
- *   static get events() {
- *     return {
- *       'click button': 'onButtonClick'
- *     }
- *   }
- *   onButtonClick() {
- *     console.log('button clicked');
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement();
- * var button = document.createElement('button');
- * button.innerText = 'Click me';
- * element.appendChild(button);
- * button.click(); // logs "button clicked"
- * ```
- */
-export class EventsComponent extends mix(Component).with(EventsMixin) {}

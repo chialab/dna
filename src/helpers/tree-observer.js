@@ -44,11 +44,9 @@ notifications.nodesCreated = function(nodes) {
 
 notifications.nodesDeleted = function(nodes) {
     nodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            let desc = getDescriptor(node);
-            if (desc) {
-                node.disconnectedCallback();
-            }
+        let desc = getDescriptor(node);
+        if (desc) {
+            node.disconnectedCallback();
         }
     });
     if (_removed) {

@@ -9,7 +9,7 @@ function isNew(node) {
     }
 }
 
-export function polyfillElement(name) {
+export function polyfill(name) {
     const Original = self[name];
     const Modified = function() {
         if (this.constructor) {
@@ -17,11 +17,12 @@ export function polyfillElement(name) {
                 return this;
             }
             let desc = registry.get(this.is);
+            let config = desc.config;
             // Find the tagname of the constructor and create a new element with it
             let element = document.createElement(
-                desc.config.extends ? desc.config.extends : this.is
+                config.extends ? config.extends : this.is
             );
-            if (desc.config.extends) {
+            if (config.extends) {
                 element.setAttribute('is', this.is);
             }
             element.__proto__ = desc.Ctr.prototype;

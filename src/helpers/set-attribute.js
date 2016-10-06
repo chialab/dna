@@ -8,7 +8,7 @@ export function setAttribute(context, attr, value) {
             } else if (type === 'boolean') {
                 context.setAttribute(attr, '');
             }
-        } else if (currentAttrValue || currentAttrValue === '') {
+        } else if (currentAttrValue !== null) {
             context.removeAttribute(attr);
         }
     }

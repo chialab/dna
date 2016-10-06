@@ -1,6 +1,6 @@
-import { polyfillElement } from './helpers/polyfill-element.js';
+import { polyfill } from './helpers/polyfill.js';
 
-const Element = polyfillElement('HTMLElement');
+const Element = polyfill('HTMLElement');
 
 /**
  * This is the model to use to create DNA Custom Components.
@@ -19,10 +19,10 @@ const Element = polyfillElement('HTMLElement');
  * ```
  * app.js
  * ```js
- * import { register } from 'dna/component';
+ * import { define } from 'dna/component';
  * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement(); // logs "Created a MyComponent instance!!!"
+ * define('my-component', MyComponent);
+ * var element = new MyComponent(); // logs "Created a MyComponent instance!!!"
  * ```
  */
 export class Component extends Element {

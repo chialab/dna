@@ -1,6 +1,8 @@
-import { StyleComponent } from '../../src/dna-style-component.js';
+import { mix } from '../../src/helpers/mixins.js';
+import { Component } from '../../src/dna-component.js';
+import { StyleMixin } from '../../src/dna-style-component.js';
 
-class TestComponent extends StyleComponent {
+class TestComponent extends mix(Component).with(StyleMixin) {
     constructor() {
         super();
         this.innerHTML = '<h1>DNA TESTS</h1>';

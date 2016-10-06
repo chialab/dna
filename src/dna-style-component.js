@@ -1,7 +1,29 @@
-import { mix } from './helpers/mixins.js'
-import { Component } from './dna-component.js';
 import { importStyle } from './helpers/style.js';
 
+/**
+ * Simple Custom Component with css style handling using the `css` property.
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { StyleMixin, Component, mix } from 'dna/component';
+ * export class MyComponent extends mix(Component).with(StyleMixin) {
+ *   static get css() {
+ *     return '.my-component p { color: red; }'
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { define } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * define('my-component', MyComponent);
+ * var element = new MyComponent();
+ * var p = document.createElement('p');
+ * p.innerText = 'Paragraph';
+ * element.appendChild(p); // text inside `p` gets the red color
+ * ```
+ */
 export const StyleMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
@@ -20,31 +42,3 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         }
     }
 };
-
-/**
- * Simple Custom Component with css style handling using the `css` property.
- * @class StyleComponent
- * @extends Component
- *
- * @example
- * my-component.js
- * ```js
- * import { StyleComponent } from 'dna/component';
- * export class MyComponent extends StyleComponent {
- *   static get css() {
- *     return '.my-component p { color: red; }'
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var element = new MyElement();
- * var p = document.createElement('p');
- * p.innerText = 'Paragraph';
- * element.appendChild(p); // text inside `p` gets the red color
- * ```
- */
-export class StyleComponent extends mix(Component).with(StyleMixin) {}

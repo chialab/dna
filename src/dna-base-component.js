@@ -1,4 +1,4 @@
-import { mix } from './helpers/mixins.js'
+import { mix } from './helpers/mixins.js';
 import { Component } from './dna-component.js';
 import { StyleMixin } from './dna-style-component.js';
 import { EventsMixin } from './dna-events-component.js';
@@ -8,29 +8,29 @@ import { TemplateMixin } from './dna-template-component.js';
 /**
  * Simple Custom Component with some behaviors.
  * @class BaseComponent
- * @extends MixedComponent
+ * @extends Component
  *
  * @example
  * my-component.js
  * ```js
  * import { BaseComponent } from 'dna/component';
  * export class MyComponent extends BaseComponent {
- *   static get template() {
- *     return `...`;
- *   }
  *   static get css() {
  *     return '...';
- *   }
- *   static get observedAttributes() {
- *     return ['...', '...'];
- *   }
- *   static get observedProperties() {
- *     return ['...', '...'];
  *   }
  *   static get events() {
  *     return {
  *       '...': '...'
  *     };
+ *   }
+ *   static get observedAttributes() {
+ *     return ['...', '...'];
+ *   }
+ *   get template() {
+ *     return `...`;
+ *   }
+ *   get properties() {
+ *     return { ... };
  *   }
  * }
  */

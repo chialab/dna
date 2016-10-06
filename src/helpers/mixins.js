@@ -3,12 +3,14 @@
  * @see https://github.com/justinfagnani/mixwith.js
  */
 class Mixin {
-    constructor(superclass = class {}) {
+    constructor(superclass) {
+        superclass = superclass || class {};
         this.superclass = superclass;
     }
 
-    with(...args) {
-        return Array.from(args).reduce((c, m) => m(c), this.superclass);
+    with() {
+        // eslint-disable-next-line
+        return Array.from(arguments).reduce((c, m) => m(c), this.superclass);
     }
 }
 

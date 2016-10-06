@@ -1,6 +1,6 @@
 import { registry } from './registry.js';
-import './tree-observer.js';
 import { isUndefined } from './typeof.js';
+import './tree-observer.js';
 
 /**
  * Create the Component constructor.
@@ -9,7 +9,8 @@ import { isUndefined } from './typeof.js';
  * @param {Object} config A set of options for the registration of the Component.
  * @return {Function} The Component constructor.
  */
-export function define(tagName, Component, config = {}) {
+export function define(tagName, Component, config) {
+    config = config || {};
     Object.defineProperty(Component.prototype, 'is', {
         configurable: false,
         get: () => tagName,

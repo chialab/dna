@@ -1,5 +1,3 @@
-import { mix } from './helpers/mixins.js'
-import { Component } from './dna-component.js';
 import { camelToDash, dashToCamel } from './helpers/strings.js';
 import { setAttribute } from './helpers/set-attribute.js';
 import { PropertyList } from './helpers/property.js';
@@ -19,6 +17,30 @@ function getValue(property, attrVal) {
     return attrVal;
 }
 
+/**
+ * Simple Custom Component for properties initialization via attributes.
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { Component, PropertiesMixin, mix } from 'dna/component';
+ * export class MyComponent extends mix(Component).with(PropertiesMixin) {
+ *   get properties() {
+ *     return { name: String };
+ *   }
+ * }
+ * ```
+ * app.js
+ * ```js
+ * import { define } from 'dna/component';
+ * import { MyComponent } from './components/my-component/my-component.js';
+ * define('my-component', MyComponent);
+ * var temp = document.createElement('div');
+ * temp.innerHTML = '<my-component name="Albert"></my-component>';
+ * var element = temp.firstChild;
+ * console.log(element.name); // logs "Albert"
+ * ```
+ */
 export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     /**
      * On `created` callback, apply attributes to properties.
@@ -78,8 +100,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperty(propName, callback) {
-        let prop = this.properties.get(propName);
-        prop.observe(callback);
+        this.properties.get(propName).observe(callback);
     }
     /**
      * Create a listener for node's properties changes.
@@ -90,31 +111,3 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         return this.properties.observe(callback);
     }
 };
-
-/**
- * Simple Custom Component for properties initialization via attributes.
- * @class PropertiesComponent
- * @extends Component
- *
- * @example
- * my-component.js
- * ```js
- * import { PropertiesComponent } from 'dna/component';
- * export class MyComponent extends PropertiesComponent {
- *   static get observedProperties() {
- *     return ['name'];
- *   }
- * }
- * ```
- * app.js
- * ```js
- * import { register } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
- * var MyElement = register('my-component', MyComponent);
- * var temp = document.createElement('div');
- * temp.innerHTML = '<my-component name="Albert"></my-component>';
- * var element = temp.firstChild;
- * console.log(element.name); // logs "Albert"
- * ```
- */
-export class PropertiesComponent extends mix(Component).with(PropertiesMixin) {}

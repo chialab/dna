@@ -1,6 +1,8 @@
-import { EventsComponent } from '../../src/dna-events-component.js';
+import { mix } from '../../src/helpers/mixins.js';
+import { Component } from '../../src/dna-component.js';
+import { EventsMixin } from '../../src/dna-events-component.js';
 
-export class TestComponent extends EventsComponent {
+export class TestComponent extends mix(Component).with(EventsMixin) {
     static get events() {
         return {
             customEvent: 'onCustomEvent',

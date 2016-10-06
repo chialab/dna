@@ -19,12 +19,13 @@ class ObserverMixin {
         if (io !== -1) {
             this.callbacks.splice(io, 1);
         }
+        return this;
     }
 
-    changed(...args) {
+    changed(newValue, oldValue) {
         let ress = [];
         for (let i = 0, len = this.callbacks.length; i < len; i++) {
-            let res = this.callbacks[i](...args);
+            let res = this.callbacks[i](newValue, oldValue);
             if (res === false) {
                 return ress;
             }
@@ -35,8 +36,9 @@ class ObserverMixin {
 }
 
 class Property extends ObserverMixin {
-    constructor(ctrs = []) {
+    constructor(ctrs) {
         super();
+        ctrs = ctrs || [];
         if (!isArray(ctrs)) {
             ctrs = [ctrs];
         }
@@ -143,8 +145,8 @@ export class PropertyList extends ObserverMixin {
     add(property) {
         if (property instanceof Property) {
             this.props.push(
-                property.observe((...args) =>
-                    this.changed(...args)
+                property.observe((newValue, oldValue) =>
+                    this.changed(newValue, oldValue)
                 )
             );
         } else if (isObject(property)) {
@@ -194,8 +196,8 @@ export class PropertyList extends ObserverMixin {
     }
 }
 
-export function prop(...args) {
-    return new Property(...args);
+export function prop(ctrs) {
+    return new Property(ctrs);
 }
 
 define(prop, 'ANY', { get() { return prop(); } });

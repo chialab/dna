@@ -1,4 +1,4 @@
-export class Registry {
+class Registry {
     constructor() {
         this.components = {};
     }
