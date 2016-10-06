@@ -2,8 +2,6 @@ import { mix } from 'mixwith';
 import { Component } from './dna-component.js';
 import { importStyle } from './helpers/style.js';
 
-const IMPORTED_STYLES = new WeakMap();
-
 export const StyleMixin = (SuperClass) => class extends SuperClass {
     /**
      * Fires when an instance of the element is created.
@@ -14,9 +12,8 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
             // Add <style>
             let Ctr = this.constructor;
             let style = Ctr.css;
-            if (style && !IMPORTED_STYLES.get(Ctr)) {
+            if (style) {
                 importStyle(this.is, style);
-                IMPORTED_STYLES.get(Ctr, true);
             }
             // Add scope style class
             this.classList.add(this.is);

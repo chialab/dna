@@ -1,13 +1,12 @@
 import { mix } from 'mixwith';
 import { Template } from 'skin-template/src/template.js';
 import { Component } from './dna-component.js';
-import { Property } from './helpers/property.js';
 
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         if (this.template) {
-            Property.observe(this, () => {
+            this.observeProperties(() => {
                 this.render();
             });
             this.render();

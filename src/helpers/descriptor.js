@@ -1,5 +1,9 @@
 import { isFunction } from './typeof.js';
 
+/**
+ * Check if function is native.
+ * @private
+ */
 function isNative(fn) {
     return (/\{\s*\[native code\]\s*\}/).test(`${fn}`);
 }

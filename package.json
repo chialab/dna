@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "2.0.0-beta2",
+  "version": "2.0.0-beta3",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "src/dna.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/dna-components/dna-components"
+    "url": "https://github.com/chialab/dna"
   },
   "keywords": [
     "DNA",

@@ -13,3 +13,7 @@ export function isObject(obj) {
 export function isUndefined(obj) {
     return typeof obj === 'undefined';
 }
+
+export function isArray(obj) {
+    return Array.isArray(obj);
+}

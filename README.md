@@ -1,6 +1,6 @@
-<a href="http://dna.chialab.io" target="_blank"><img src="https://cdn.rawgit.com/Chialab/dna-design/master/logos/logo-full.svg" alt="DNA Components" width="128"></a>
+[![Logo](docs/logo.png)](http://dna.chialab.io)
 
-A component pattern for Web artisans.
+> A component pattern for Web artisans.
 
 [Documentation](http://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](http://dna.chialab.io) | [Author home page](http://www.chialab.com)
 

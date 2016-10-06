@@ -15,26 +15,29 @@ function createStyle(id) {
  * @return {HTMLStyleElement} the style tag created.
  */
 export function importStyle(id, styles) {
-    let css = '';
-    if (!Array.isArray(styles)) {
-        styles = [styles];
-    }
-    styles.forEach((style) => {
-        if (isFunction(style)) {
-            style = style();
+    let styleElem = document.getElementById(id);
+    if (!styleElem) {
+        let css = '';
+        if (!Array.isArray(styles)) {
+            styles = [styles];
         }
-        css += style;
-    });
-    id = `style-${id}`;
-    let styleElem = document.getElementById(id) || createStyle(id);
-    styleElem.innerHTML = '';
-    styleElem.appendChild(document.createTextNode(css));
-    if (!styleElem.parentNode) {
-        let head = document.head;
-        if (head.firstElementChild) {
-            head.insertBefore(styleElem, head.firstElementChild);
-        } else {
-            head.appendChild(styleElem);
+        styles.forEach((style) => {
+            if (isFunction(style)) {
+                style = style();
+            }
+            css += style;
+        });
+        id = `style-${id}`;
+        styleElem = createStyle(id);
+        styleElem.innerHTML = '';
+        styleElem.textContent = css;
+        if (!styleElem.parentNode) {
+            let head = document.head;
+            if (head.firstElementChild) {
+                head.insertBefore(styleElem, head.firstElementChild);
+            } else {
+                head.appendChild(styleElem);
+            }
         }
     }
     return styleElem;

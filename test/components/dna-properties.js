@@ -1,11 +1,19 @@
 import { PropertiesComponent } from '../../src/dna-properties-component.js';
+import { prop } from '../../src/helpers/property.js';
 
 export class TestComponent1 extends PropertiesComponent {
     static get observedAttributes() {
         return ['name', 'last-name', 'married', 'age', 'var'];
     }
-    static get observedProperties() {
-        return this.observedAttributes;
+
+    get properties() {
+        return {
+            name: String,
+            lastName: String,
+            married: Boolean,
+            age: Number,
+            var: String,
+        };
     }
 }
 
@@ -14,18 +22,23 @@ export class TestComponent2 extends PropertiesComponent {
         return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }
 
-    static get observedProperties() {
-        return this.observedAttributes;
+    get properties() {
+        return {
+            title: String,
+            id: String,
+            alt: String,
+            var: Number,
+            mine: Number,
+            myVar: Boolean,
+            myVar2: Boolean,
+            myVar3: prop.ANY.default(false).before(this.handleProp),
+        };
     }
 
-    get myVar3() {
-        return this.getProperty('var3') || false;
-    }
-
-    set myVar3(val) {
+    handleProp(val) {
         if (val) {
-            return this.setProperty('myVar3', 'DNA Test');
+            return 'DNA Test';
         }
-        return this.setProperty('myVar3', false);
+        return false;
     }
 }

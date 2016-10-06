@@ -1,11 +1,23 @@
 import { mix } from 'mixwith';
 import { Component } from './dna-component.js';
-import { Property } from './helpers/property.js';
 import { camelToDash, dashToCamel } from './helpers/strings.js';
 import { setAttribute } from './helpers/set-attribute.js';
-import {
-    getDescriptor, wrapDescriptorGet, wrapDescriptorSet,
-} from './helpers/descriptor.js';
+import { PropertyList } from './helpers/property.js';
+import { isArray } from './helpers/typeof.js';
+
+function getValue(property, attrVal) {
+    if (attrVal === '' && property.accepts(Boolean)) {
+        return true;
+    }
+    if (!property.accepts(String)) {
+        try {
+            return JSON.parse(attrVal);
+        } catch (ex) {
+            //
+        }
+    }
+    return attrVal;
+}
 
 export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     /**
@@ -13,33 +25,38 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        let Ctr = this.constructor;
-        let ctrProperties = (Ctr.observedProperties || [])
-            .map((prop) => dashToCamel(prop));
-        let ctrAttributes = Ctr.observedAttributes || [];
-        ctrProperties.forEach((prop) => {
-            let descriptor = getDescriptor(Ctr.prototype, prop) || {};
-            Object.defineProperty(this, prop, {
-                configurable: true,
-                get: wrapDescriptorGet(prop, descriptor, (propKey) =>
-                    this.getProperty(propKey)
-                ),
-                set: wrapDescriptorSet(prop, descriptor, (propKey, value) =>
-                    this.setProperty(propKey, value)
-                ),
-            });
-            let attrName = camelToDash(prop);
-            if (ctrAttributes.indexOf(attrName) !== -1) {
-                this.observeProperty(prop, (key, oldValue, newValue) =>
-                    setAttribute(this, attrName, newValue)
-                );
+        let props = this.properties || new PropertyList();
+        if (!(props instanceof PropertyList)) {
+            let list = new PropertyList();
+            if (!isArray(props)) {
+                props = [props];
             }
+            props.forEach((partialProps) => {
+                list.add(partialProps);
+            });
+            props = list;
+        }
+        Object.defineProperty(this, 'properties', {
+            value: props,
         });
+
         let attributes = Array.prototype.slice.call(this.attributes || [], 0);
+        let initProps = {};
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
-            this.attributeChangedCallback(attr.name, undefined, attr.value);
+            let propName = dashToCamel(attr.name);
+            if (props.has(propName)) {
+                initProps[propName] = getValue(props.get(propName), attr.value);
+            }
         }
+        props.iterate((prop) => {
+            let attrName = camelToDash(prop.name);
+            prop.scoped(this);
+            prop.observe((newValue) => {
+                setAttribute(this, attrName, newValue);
+            });
+            prop.init(initProps[prop.name]);
+        });
     }
     /**
      * On `attributeChanged` callback, sync attributes with properties.
@@ -49,34 +66,10 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let Ctr = this.constructor;
-        let ctrProperties = Ctr.observedProperties || [];
         let propName = dashToCamel(attr);
-        if (ctrProperties.indexOf(propName) !== -1 ||
-            ctrProperties.indexOf(attr) !== -1) {
-            newVal = (newVal === '') || newVal;
-            try {
-                this[propName] = (newVal === '') || JSON.parse(newVal);
-            } catch (ex) {
-                this[propName] = newVal;
-            }
+        if (this.properties.has(propName)) {
+            this[propName] = getValue(this.properties.get(propName), newVal);
         }
-    }
-    /**
-     * Get a property of a component.
-     * @param {string} propName The property name to observe.
-     * @return {*} The property value.
-     */
-    getProperty(propName) {
-        return Property.get(this, propName);
-    }
-    /**
-     * Set a property of a component.
-     * @param {string} propName The property name to observe.
-     * @param {*} propValue The property value.
-     */
-    setProperty(propName, propValue) {
-        return Property.set(this, propName, propValue);
     }
     /**
      * Create a listener for node's property changes.
@@ -85,7 +78,8 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperty(propName, callback) {
-        return Property.observe(this, propName, callback);
+        let prop = this.properties.get(propName);
+        prop.observe(callback);
     }
     /**
      * Create a listener for node's properties changes.
@@ -93,7 +87,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperties(callback) {
-        return Property.observe(this, callback);
+        return this.properties.observe(callback);
     }
 };
 

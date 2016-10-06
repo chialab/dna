@@ -2,16 +2,16 @@ import { notifications, attributes, symbols } from 'google/incremental-dom';
 import { isUndefined } from './typeof.js';
 import { registry } from './registry.js';
 
-const customElements = self.customElements;
-const hasRegistry = !isUndefined(customElements);
-const _created = notifications.nodesCreated;
-const _removed = notifications.nodesDeleted;
-const _changed = attributes[symbols.default];
+const CUSTOM_ELEMENTS = self.customElements;
+const HAS_REGISTRY = !isUndefined(CUSTOM_ELEMENTS);
+let _created = notifications.nodesCreated;
+let _removed = notifications.nodesDeleted;
+let _changed = attributes[symbols.default];
 
 function getDescriptor(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
         let is = node.getAttribute('is') || node.tagName;
-        if (!hasRegistry || !customElements.get(is)) {
+        if (!HAS_REGISTRY || !CUSTOM_ELEMENTS.get(is)) {
             let desc = registry.get(is);
             if (desc) {
                 return desc;

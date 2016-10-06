@@ -5,9 +5,14 @@ import { TemplateMixin } from '../../src/dna-template-component.js';
 import { Template } from 'skin-template/src/template.js';
 
 class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
-    static get observedProperties() {
-        return ['name', 'lastName', 'title'];
+    get properties() {
+        return {
+            name: String,
+            lastName: String,
+            title: String,
+        };
     }
+
     get fullname() {
         return `${this.name ? `${this.name} ` : ''}${this.lastName || ''}`;
     }
@@ -36,9 +41,12 @@ export class TestComponent3 extends TestComponent {
 }
 
 export class TestComponent4 extends TestComponent {
-    static get observedProperties() {
-        return ['radius'];
+    get properties() {
+        return {
+            radius: Number,
+        };
     }
+
     get template() {
         return new Template((t) =>
             t`
@@ -67,8 +75,10 @@ export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
         return ['value'];
     }
 
-    static get observedProperties() {
-        return ['value'];
+    get properties() {
+        return {
+            value: Number,
+        };
     }
 
     constructor() {
@@ -82,8 +92,10 @@ export class Test2Placeholder extends mix(Component).with(PropertiesMixin) {
         return ['value'];
     }
 
-    static get observedProperties() {
-        return ['value'];
+    get properties() {
+        return {
+            value: Number,
+        };
     }
 
     constructor() {

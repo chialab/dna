@@ -13,6 +13,9 @@ packageJSON.build = {
     rollup: true,
     sourceMaps: false,
     dest: 'dist',
+    globalDeps: {
+        'google/incremental-dom': 'IncrementalDOM',
+    },
 };
 
 function build(file) {
