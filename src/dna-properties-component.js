@@ -1,4 +1,4 @@
-import { mix } from 'mixwith';
+import { mix } from './helpers/mixins.js'
 import { Component } from './dna-component.js';
 import { camelToDash, dashToCamel } from './helpers/strings.js';
 import { setAttribute } from './helpers/set-attribute.js';

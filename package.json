@@ -30,9 +30,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "dna-polyfills": "github:chialab/dna-polyfills#next",
     "es6-workflow": "latest",
-    "mixwith": "^0.1.1",
     "skin-template": "^0.2.0"
   }
 }

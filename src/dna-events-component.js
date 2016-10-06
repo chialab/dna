@@ -1,4 +1,4 @@
-import { mix } from 'mixwith';
+import { mix } from './helpers/mixins.js'
 import { Component } from './dna-component.js';
 import { delegate } from './helpers/delegate.js';
 import { isString, isFunction } from './helpers/typeof.js';

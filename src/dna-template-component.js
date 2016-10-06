@@ -1,4 +1,4 @@
-import { mix } from 'mixwith';
+import { mix } from './helpers/mixins.js'
 import { Template } from 'skin-template/src/template.js';
 import { Component } from './dna-component.js';
 

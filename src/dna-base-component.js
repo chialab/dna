@@ -1,4 +1,4 @@
-import { mix } from 'mixwith';
+import { mix } from './helpers/mixins.js'
 import { Component } from './dna-component.js';
 import { StyleMixin } from './dna-style-component.js';
 import { EventsMixin } from './dna-events-component.js';
