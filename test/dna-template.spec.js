@@ -1,4 +1,6 @@
-import { define } from '../src/dna.js';
+/* eslint-env mocha */
+
+import { Template, define } from '../src/dna.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -8,7 +10,6 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from './components/dna-template.js';
-import { Template } from 'skin-template/src/template.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();
@@ -23,11 +24,10 @@ define('test2-vdom-placeholder', Test2Placeholder, {
     extends: 'figure',
 });
 
-/* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNATemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
         let template = new Template((t) => t`
-            <test1-template-component></<test1-template-component>
+            <test1-template-component></test1-template-component>
         `);
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test1-template-component');
@@ -40,7 +40,7 @@ describe('Unit: DNATemplateComponent', () => {
 
     it('should handle `template` getter property as string', () => {
         let template = new Template((t) => t`
-            <test2-template-component></<test2-template-component>
+            <test2-template-component></test2-template-component>
         `);
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test2-template-component');
@@ -49,14 +49,14 @@ describe('Unit: DNATemplateComponent', () => {
 
     it('should handle invalid `template`', () => {
         let template = new Template((t) => t`
-            <test3-template-component></<test3-template-component>
+            <test3-template-component></test3-template-component>
         `);
         assert.throws(() => template.render(WRAPPER));
     });
 
     it('should handle templates with <svg>', () => {
         let template = new Template((t) => t`
-            <test4-template-component></<test4-template-component>
+            <test4-template-component></test4-template-component>
         `);
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test4-template-component');
@@ -69,7 +69,7 @@ describe('Unit: DNATemplateComponent', () => {
 
     it('should handle sub components', () => {
         let template = new Template((t) => t`
-            <test5-template-component></<test5-template-component>
+            <test5-template-component></test5-template-component>
         `);
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test5-template-component');

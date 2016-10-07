@@ -1,12 +1,12 @@
-import { define } from '../src/dna.js';
+/* eslint-env mocha */
+
+import { Template, define } from '../src/dna.js';
 import { TestComponent } from './components/dna-component.js';
-import { Template } from 'skin-template/src/template.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();
 define('test-component', TestComponent);
 
-/* globals describe, before, beforeEach, it, assert */
 describe('Unit: DNAComponent', () => {
     let template = new Template((t, show) => t`
         ${show ? '<test-component testCallback="Alan"></test-component>' : ''}

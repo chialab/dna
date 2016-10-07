@@ -34,11 +34,9 @@ import { TemplateMixin } from './dna-template-component.js';
  *   }
  * }
  */
-const MixinComponent = mix(Component).with(
+export class BaseComponent extends mix(Component).with(
     PropertiesMixin,
     StyleMixin,
     EventsMixin,
     TemplateMixin
-);
-
-export class BaseComponent extends MixinComponent {}
+) {}

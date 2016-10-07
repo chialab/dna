@@ -1,6 +1,7 @@
-import { define } from '../src/dna.js';
+/* eslint-env mocha */
+
+import { Template, define } from '../src/dna.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './components/dna-style.js';
-import { Template } from 'skin-template/src/template.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();
@@ -18,7 +19,6 @@ let template = new Template((t) => t`
 `);
 template.render(WRAPPER);
 
-/* globals describe, before, it, assert */
 describe('Unit: DNAStyleComponent', () => {
     let elem1 = WRAPPER.querySelector('.test1-style-component');
     let elem2 = WRAPPER.querySelector('.test2-style-component');

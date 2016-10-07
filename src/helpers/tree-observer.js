@@ -1,4 +1,4 @@
-import { notifications, attributes, symbols } from 'google/incremental-dom';
+import { notifications, attributes, symbols } from 'incremental-dom';
 import { isUndefined } from './typeof.js';
 import { registry } from './registry.js';
 

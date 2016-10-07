@@ -1,2 +1,4 @@
-/node_modules
-/src/vendors
+*.js
+!index.js
+!src/*
+!test/*

@@ -62,7 +62,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             value: props,
         });
 
-        let attributes = Array.prototype.slice.call(this.attributes || [], 0);
+        let attributes = Array.prototype.slice.call(this.attributes, 0);
         let initProps = {};
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];

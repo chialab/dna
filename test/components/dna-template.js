@@ -2,7 +2,7 @@ import { mix } from '../../src/helpers/mixins.js';
 import { Component } from '../../src/dna-component.js';
 import { PropertiesMixin } from '../../src/dna-properties-component.js';
 import { TemplateMixin } from '../../src/dna-template-component.js';
-import { Template } from 'skin-template/src/template.js';
+import { Template } from '../../src/dna.js';
 
 class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
     get properties() {

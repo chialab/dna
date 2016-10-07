@@ -5,15 +5,16 @@
  *
  * A component pattern for Web artisans.
  */
-export { mix } from './helpers/mixins.js';
+import Skin from 'skin-template';
+
+export const Template = Skin;
 export * from './dna-component.js';
 export * from './dna-properties-component.js';
 export * from './dna-events-component.js';
 export * from './dna-style-component.js';
 export * from './dna-template-component.js';
 export * from './dna-base-component.js';
-export { BaseComponent as BaseComponent } from './dna-base-component.js';
-export { Template } from 'skin-template/src/template.js';
+export { mix } from './helpers/mixins.js';
 export { polyfill } from './helpers/polyfill.js';
 export { define } from './helpers/define.js';
 export { prop } from './helpers/property.js';

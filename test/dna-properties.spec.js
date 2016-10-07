@@ -1,16 +1,16 @@
-import { define } from '../src/dna.js';
+/* eslint-env mocha */
+
+import { Template, define } from '../src/dna.js';
 import {
     TestComponent1,
     TestComponent2,
 } from './components/dna-properties.js';
-import { Template } from 'skin-template/src/template.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();
 define('test1-properties-component', TestComponent1);
 define('test2-properties-component', TestComponent2);
 
-/* globals describe, before, it, assert */
 describe('DNAPropertiesComponent', () => {
     describe('Unit: DNAPropertiesComponent > creation', () => {
         let template = new Template((t) => t`

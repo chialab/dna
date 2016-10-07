@@ -46,3 +46,12 @@ export class TestComponent extends mix(Component).with(EventsMixin) {
         this.customElement = element;
     }
 }
+
+
+export class TestInvalidComponent extends mix(Component).with(EventsMixin) {
+    static get events() {
+        return {
+            customEvent: 'undefined',
+        };
+    }
+}

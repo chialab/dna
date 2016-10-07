@@ -1,4 +1,4 @@
-import { Template } from 'skin-template/src/template.js';
+import Template from 'skin-template';
 
 /**
  * Simple Custom Component with template handling using the `template` property.

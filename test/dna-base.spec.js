@@ -1,31 +1,31 @@
-import { define } from '../src/dna.js';
+/* eslint-env mocha */
+
+import { Template, define } from '../src/dna.js';
 import { TestComponent } from './components/dna-base.js';
-import { Template } from 'skin-template/src/template.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();
 define('test-base-component', TestComponent);
 
-/* globals describe, before, beforeEach, it, assert */
-describe('Unit: DNABaseComponent', () => {
+describe('Unit: BaseComponent', () => {
     let template = new Template((t, show, attr = false) => t`
         ${show ? `<test-base-component${attr ? ` name=${attr}` : ''}></test-base-component>` : ''}
     `);
     template.render(WRAPPER, true);
     let elem = WRAPPER.querySelector('test-base-component');
-    describe('Unit: DNABaseComponent > created', () => {
+    describe('Unit: BaseComponent > created', () => {
         it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);
         });
     });
 
-    describe('Unit: DNABaseComponent > attached', () => {
+    describe('Unit: BaseComponent > attached', () => {
         it('check if element is correctly attached to the tree', () => {
             assert.equal(elem.attached, true);
         });
     });
 
-    describe('Unit: DNABaseComponent > attributeChanged', () => {
+    describe('Unit: BaseComponent > attributeChanged', () => {
         before((done) => {
             template.render(WRAPPER, true, 'Alan');
             done();
@@ -35,7 +35,7 @@ describe('Unit: DNABaseComponent', () => {
         });
     });
 
-    describe('Unit: DNABaseComponent > detached', () => {
+    describe('Unit: BaseComponent > detached', () => {
         before((done) => {
             template.render(WRAPPER, false);
             done();

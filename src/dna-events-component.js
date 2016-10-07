@@ -43,24 +43,24 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         // bind events
         let events = this.constructor.events || {};
         for (let k in events) {
-            if (events.hasOwnProperty(k)) {
-                let callback = isString(events[k]) ?
-                    this[events[k]] :
-                    events[k];
-                if (isFunction(callback)) {
-                    let rule = k.match(SPLIT_SELECTOR);
-                    let evName = rule[1];
-                    let selector = (rule[2] || '').trim();
-                    if (selector) {
-                        delegate(this, evName, selector, (ev, target) => {
-                            callback.call(this, ev, target);
-                        });
-                    } else {
-                        this.addEventListener(evName, (ev) => {
-                            callback.call(this, ev, this);
-                        });
-                    }
+            let callback = isString(events[k]) ?
+                this[events[k]] :
+                events[k];
+            if (isFunction(callback)) {
+                let rule = k.match(SPLIT_SELECTOR);
+                let evName = rule[1];
+                let selector = (rule[2] || '').trim();
+                if (selector) {
+                    delegate(this, evName, selector, (ev, target) => {
+                        callback.call(this, ev, target);
+                    });
+                } else {
+                    this.addEventListener(evName, (ev) => {
+                        callback.call(this, ev, this);
+                    });
                 }
+            } else {
+                throw new TypeError('Invalid callback for event.');
             }
         }
     }

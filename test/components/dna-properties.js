@@ -25,7 +25,7 @@ export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
     }
 
     get properties() {
-        return {
+        return [{
             title: String,
             id: String,
             alt: String,
@@ -34,7 +34,7 @@ export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
             myVar: Boolean,
             myVar2: Boolean,
             myVar3: prop.ANY.default(false).before(this.handleProp),
-        };
+        }];
     }
 
     handleProp(val) {

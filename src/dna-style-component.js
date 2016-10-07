@@ -30,15 +30,11 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        if (this.is) {
-            // Add <style>
-            let Ctr = this.constructor;
-            let style = Ctr.css;
-            if (style) {
-                importStyle(this.is, style);
-            }
-            // Add scope style class
-            this.classList.add(this.is);
+        let Ctr = this.constructor;
+        let style = Ctr.css;
+        if (style) {
+            importStyle(this.is, style);
         }
+        this.classList.add(this.is);
     }
 };
