@@ -9,8 +9,7 @@
     "lint": "./node_modules/.bin/gulp lint",
     "build": "./node_modules/.bin/gulp build",
     "dist": "./node_modules/.bin/gulp dist",
-    "docs": "./node_modules/.bin/gulp docs",
-    "prepublish": "npm run dist"
+    "docs": "./node_modules/.bin/gulp docs"
   },
   "repository": {
     "type": "git",
@@ -51,7 +50,7 @@
     "rollup-plugin-istanbul": "^1.1.0",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-stream": "^1.14.0",
-    "skin-template": "^0.3.0",
+    "skin-template": "^0.3.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

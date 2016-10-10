@@ -61,8 +61,8 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
             createNode(node, desc);
         }
         let oldValue = node.getAttribute(attrName);
-        if (desc.Ctr.observedAttributes &&
-            desc.Ctr.observedAttributes.indexOf(attrName) !== -1) {
+        let attrs = desc.Ctr.observedAttributes || [];
+        if (attrs.indexOf(attrName) !== -1) {
             node.attributeChangedCallback(attrName, oldValue, attrValue);
         }
     }

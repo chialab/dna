@@ -1,5 +1,4 @@
 import { camelToDash, dashToCamel } from './helpers/strings.js';
-import { setAttribute } from './helpers/set-attribute.js';
 import { PropertyList } from './helpers/property.js';
 import { isArray } from './helpers/typeof.js';
 
@@ -15,6 +14,24 @@ function getValue(property, attrVal) {
         }
     }
     return attrVal;
+}
+
+function setAttribute(context, attr, value) {
+    let currentAttrValue = context.getAttribute(attr);
+    if (currentAttrValue !== value) {
+        if (value !== null && value !== undefined && value !== false) {
+            switch (typeof value) {
+            case 'string':
+            case 'number':
+                context.setAttribute(attr, value);
+                break;
+            case 'boolean':
+                context.setAttribute(attr, '');
+            }
+        } else if (currentAttrValue !== null) {
+            context.removeAttribute(attr);
+        }
+    }
 }
 
 /**
@@ -62,7 +79,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             value: props,
         });
 
-        let attributes = Array.prototype.slice.call(this.attributes, 0);
+        let attributes = Object.freeze(this.attributes);
         let initProps = {};
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
@@ -73,10 +90,10 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         }
         props.iterate((prop) => {
             let attrName = camelToDash(prop.name);
-            prop.scoped(this);
-            prop.observe((newValue) => {
-                setAttribute(this, attrName, newValue);
-            });
+            prop.scoped(this)
+                .observe((newValue) => {
+                    setAttribute(this, attrName, newValue);
+                });
             prop.init(initProps[prop.name]);
         });
     }

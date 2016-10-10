@@ -4,34 +4,28 @@ const define = Object.defineProperty;
 
 class ObserverMixin {
     constructor() {
-        this.callbacks = [];
+        this._ = [];
     }
 
     observe(fn) {
         if (isFunction(fn)) {
-            this.callbacks.push(fn);
+            this._.push(fn);
         }
         return this;
     }
 
     unobserve(fn) {
-        let io = this.callbacks.indexOf(fn);
+        let io = this._.indexOf(fn);
         if (io !== -1) {
-            this.callbacks.splice(io, 1);
+            this._.splice(io, 1);
         }
         return this;
     }
 
     changed(newValue, oldValue) {
-        let ress = [];
-        for (let i = 0, len = this.callbacks.length; i < len; i++) {
-            let res = this.callbacks[i](newValue, oldValue);
-            if (res === false) {
-                return ress;
-            }
-            ress.push(res);
+        for (let i = 0, len = this._.length; i < len; i++) {
+            this._[i](newValue, oldValue);
         }
-        return ress;
     }
 }
 
@@ -51,8 +45,8 @@ class Property extends ObserverMixin {
             val = this.beforeSet(val);
             if (this.validateType(val)) {
                 if (this.validator(val)) {
-                    if (this.value !== val) {
-                        let oldValue = this.value;
+                    let oldValue = this.value;
+                    if (oldValue !== val) {
                         this.value = val;
                         this.changed(val, oldValue);
                     }
@@ -68,7 +62,7 @@ class Property extends ObserverMixin {
     }
 
     default(initValue) {
-        this.value = initValue;
+        this.value = Object.freeze(initValue);
         return this;
     }
 

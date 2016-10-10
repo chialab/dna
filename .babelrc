@@ -1,4 +1,7 @@
 {
     "presets": ["es2015-rollup"],
-    "plugins": ["transform-inline-environment-variables"]
+    "plugins": [
+        ["transform-es2015-classes", { "loose": true}],
+        "transform-inline-environment-variables"
+    ]
 }

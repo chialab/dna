@@ -18,4 +18,3 @@ export { mix } from './helpers/mixins.js';
 export { polyfill } from './helpers/polyfill.js';
 export { define } from './helpers/define.js';
 export { prop } from './helpers/property.js';
-export const Version = self.__DNA__VERSION__ || 'dev';

@@ -1,7 +1,9 @@
 import { isFunction } from './typeof.js';
 
+let doc = document;
+
 function createStyle(id) {
-    let styleElem = document.createElement('style');
+    let styleElem = doc.createElement('style');
     styleElem.type = 'text/css';
     styleElem.setAttribute('id', id);
     return styleElem;
@@ -15,7 +17,7 @@ function createStyle(id) {
  * @return {HTMLStyleElement} the style tag created.
  */
 export function importStyle(id, styles) {
-    let styleElem = document.getElementById(id);
+    let styleElem = doc.getElementById(id);
     if (!styleElem) {
         let css = '';
         if (!Array.isArray(styles)) {
@@ -31,7 +33,7 @@ export function importStyle(id, styles) {
         styleElem = createStyle(id);
         styleElem.textContent = css;
         if (!styleElem.parentNode) {
-            let head = document.head;
+            let head = doc.head;
             if (head.firstElementChild) {
                 head.insertBefore(styleElem, head.firstElementChild);
             } else {

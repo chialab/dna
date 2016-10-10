@@ -29,6 +29,7 @@ var buffer = require('vinyl-buffer');
 var rollup = require('rollup-stream');
 var babel = require('rollup-plugin-babel');
 var uglify = require('rollup-plugin-uglify');
+var includePaths = require('rollup-plugin-includepaths');
 var eslint = require('gulp-eslint');
 var sourcemaps = require('gulp-sourcemaps');
 var karma = require('karma');
@@ -38,8 +39,8 @@ var jsdoc = require('gulp-jsdoc3');
 
 var env = process.env;
 var entryFileName = 'index.js';
-var moduleName = 'jsStarterKit';
-var artifactName = 'js-starter-kit';
+var moduleName = 'DNA';
+var artifactName = 'dna';
 var srcs = [entryFileName, 'src/**/*.js'];
 var tests = ['test/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
@@ -80,6 +81,9 @@ function bundle(format) {
         entry: entryFileName,
         sourceMap: true,
         plugins: [
+            includePaths({
+                paths: ['src', 'test', 'node_modules'],
+            }),
             env.min === 'true' ? uglify({
                 output: {
                     comments: /@license/,
@@ -92,9 +96,13 @@ function bundle(format) {
     });
 }
 
-function js() {
-    env.NODE_ENV = 'development';
-    env.min = false;
+function jsMinWatch() {
+    gulp.watch(srcs, ['js-min']);
+}
+
+function jsMin() {
+    env.NODE_ENV = 'production';
+    env.min = true;
 
     return bundle('umd')
         .pipe(source(`${artifactName}.js`))
@@ -106,31 +114,8 @@ function js() {
         .pipe(gulp.dest('dist'));
 }
 
-function jsWatch() {
-    gulp.watch(srcs, ['js']);
-}
-
-function jsMinWatch() {
-    gulp.watch(srcs, ['js-min']);
-}
-
-function jsMin() {
-    env.NODE_ENV = 'production';
-    env.min = true;
-
-    return bundle('umd')
-        .pipe(source(`${artifactName}-min.js`))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({
-            loadMaps: true,
-        }))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('dist'));
-}
-
 function jsDist() {
     return clean()
-        .then(js)
         .then(jsMin);
 }
 
@@ -150,12 +135,9 @@ gulp.task('clean', clean);
 gulp.task('unit', unit);
 gulp.task('unit-watch', unitWatch);
 gulp.task('lint', lint);
-gulp.task('js', js);
-gulp.task('js-watch', ['js'], jsWatch);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('js-dist', jsDist);
-gulp.task('build', ['lint', 'unit'], js);
 gulp.task('dist', ['lint', 'unit'], jsDist);
 gulp.task('docs', jsDoc);
 

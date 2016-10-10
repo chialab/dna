@@ -1,7 +1,20 @@
-import { delegate } from './helpers/delegate.js';
 import { isString, isFunction } from './helpers/typeof.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
+
+function delegate(element, evName, selector, callback) {
+    element.addEventListener(evName, (event) => {
+        let target = event.target;
+        while (target && target !== element) {
+            if (target.matches(selector)) {
+                if (callback.call(element, event, target) === false) {
+                    return;
+                }
+            }
+            target = target.parentNode;
+        }
+    });
+}
 
 /**
  * Simple Custom Component with events delegation,
@@ -72,8 +85,8 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @param {Boolean} cancelable Can be the event cancel by a callback.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
-        if (!evName) {
-            throw new Error('Event name is undefined');
+        if (!isString(evName)) {
+            throw new TypeError('Event name is undefined');
         }
         let ev = new CustomEvent(evName, {
             detail: data,
