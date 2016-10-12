@@ -30,7 +30,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let template = this.constructor.template;
-        if (template) {
+        if (template && !this.hasOwnProperty('template')) {
             if (typeof template === 'string') {
                 template = new Template(template);
                 Object.defineProperty(this.constructor, 'template', {
@@ -42,9 +42,13 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
                     value: template.clone().setScope(this),
                 });
             }
-            this.observeProperties(() => {
-                this.render();
-            });
+        }
+        if (this.hasOwnProperty('template')) {
+            if (this.observeProperties) {
+                this.observeProperties(() => {
+                    this.render();
+                });
+            }
             this.render();
         }
     }
