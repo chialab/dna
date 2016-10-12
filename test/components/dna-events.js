@@ -5,9 +5,9 @@ import { EventsMixin } from '../../src/dna-events-component.js';
 export class TestComponent extends mix(Component).with(EventsMixin) {
     static get events() {
         return {
-            customEvent: 'onCustomEvent',
+            'customEvent': 'onCustomEvent',
             'click button': 'onClick',
-            'click span': function(ev, span) {
+            'click span'(ev, span) {
                 this.clickedSpan = span;
                 this.clickedSpanEvent = ev;
             },

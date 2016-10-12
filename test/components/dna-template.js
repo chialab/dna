@@ -19,7 +19,7 @@ class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) 
 
 export class TestComponent1 extends TestComponent {
     static get template() {
-        return '${this.title ? `<h1>${this.title}</h1><br>` : \'\'}Hello, ${this.fullname}'
+        return '${this.title ? `<h1>${this.title}</h1><br>` : \'\'}Hello, ${this.fullname}';
     }
 }
 

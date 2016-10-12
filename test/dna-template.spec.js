@@ -47,13 +47,6 @@ describe('Unit: DNATemplateComponent', () => {
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
-    it('should handle invalid `template`', () => {
-        let template = new Template(
-            '<test3-template-component></test3-template-component>'
-        );
-        assert.throws(() => template.render(WRAPPER));
-    });
-
     it('should handle templates with <svg>', () => {
         let template = new Template(
             '<test4-template-component></test4-template-component>'
