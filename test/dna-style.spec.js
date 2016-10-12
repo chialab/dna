@@ -12,11 +12,11 @@ define('test3-style-component', TestComponent3, {
     extends: 'div',
 });
 
-let template = new Template((t) => t`
-    <test1-style-component></test1-style-component>
-    <test2-style-component></test2-style-component>
-    <div is="test3-style-component"></div>
-`);
+let template = new Template(' \
+    <test1-style-component></test1-style-component> \
+    <test2-style-component></test2-style-component> \
+    <div is="test3-style-component"></div> \
+');
 template.render(WRAPPER);
 
 describe('Unit: DNAStyleComponent', () => {

@@ -13,14 +13,14 @@ define('test2-properties-component', TestComponent2);
 
 describe('DNAPropertiesComponent', () => {
     describe('Unit: DNAPropertiesComponent > creation', () => {
-        let template = new Template((t) => t`
-            <test1-properties-component
-                name="Alan"
-                last-name="Turing"
-                var="1234"
-                married>
-            </test1-properties-component>
-        `);
+        let template = new Template(' \
+            <test1-properties-component \
+                name="Alan" \
+                last-name="Turing" \
+                var="1234" \
+                married> \
+            </test1-properties-component> \
+        ');
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test1-properties-component');
 
@@ -47,9 +47,9 @@ describe('DNAPropertiesComponent', () => {
     });
 
     describe('Unit: DNAPropertiesComponent > props 2 attrs', () => {
-        let template = new Template((t) => t`
-            <test2-properties-component></test2-properties-component>
-        `);
+        let template = new Template(
+            '<test2-properties-component></test2-properties-component>'
+        );
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test2-properties-component');
 
@@ -76,15 +76,15 @@ describe('DNAPropertiesComponent', () => {
     });
 
     describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
-        let template = new Template((t, attrs = false) => t`
-            <test2-properties-component
-            ${attrs ? `
-                alt="DNA Test 2"
-                mine="1234"
-                my-var2="true"
-            ` : ''}
-            ></test2-properties-component>
-        `);
+        let template = new Template('attrs', ' \
+            <test2-properties-component \
+            ${attrs ? ` \
+                alt="DNA Test 2" \
+                mine="1234" \
+                my-var2="true" \
+            ` : \'\'} \
+            ></test2-properties-component> \
+        ');
         template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test2-properties-component');
 

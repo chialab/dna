@@ -158,35 +158,29 @@ export class PropertyList extends ObserverMixin {
     }
 
     has(name) {
-        return !!this.iterate((property) => {
-            if (property.name === name) {
+        for (let i = 0, len = this.props.length; i < len; i++) {
+            let prop = this.props[i];
+            if (prop.name === name) {
                 return true;
             }
-            return undefined;
-        });
+        }
+        return false;
     }
 
     get(name) {
-        let res = this.iterate((property) => {
-            if (property.name === name) {
-                return property;
+        for (let i = 0, len = this.props.length; i < len; i++) {
+            let prop = this.props[i];
+            if (prop.name === name) {
+                return prop;
             }
-            return undefined;
-        });
-        if (res) {
-            return res;
         }
         throw new Error('Property not found.');
     }
 
     iterate(callback) {
         for (let i = 0, len = this.props.length; i < len; i++) {
-            let res = callback(this.props[i]);
-            if (!isUndefined(res)) {
-                return res;
-            }
+            callback(this.props[i]);
         }
-        return false;
     }
 }
 

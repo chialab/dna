@@ -10,10 +10,10 @@ define('test2-events-component', TestInvalidComponent);
 
 describe('Unit: DNAEventsComponent', () => {
     describe('attach callbacks', () => {
-        let template = new Template((t, show) => t`
-            ${show ? '<test-events-component></test-events-component>' : ''}
-        `);
-        template.render(WRAPPER, true);
+        let template = new Template(
+            '<test-events-component></test-events-component>'
+        );
+        template.render(WRAPPER);
         let elem = WRAPPER.querySelector('test-events-component');
 
         it('should track custom event on element', () => {
@@ -56,12 +56,12 @@ describe('Unit: DNAEventsComponent', () => {
     });
 
     describe('attach invalid callbacks', () => {
-        let template = new Template((t, show) => t`
-            ${show ? '<test2-events-component></test2-events-component>' : ''}
-        `);
+        let template = new Template(
+            '<test2-events-component></test2-events-component>'
+        );
         it('should throw', () => {
             let wrapper = () => {
-                template.render(WRAPPER, true);
+                template.render(WRAPPER);
             };
             assert.throws(wrapper, TypeError, 'Invalid callback for event.');
         });

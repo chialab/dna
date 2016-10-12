@@ -8,9 +8,9 @@ const WRAPPER = new Wrapper();
 define('test-component', TestComponent);
 
 describe('Unit: DNAComponent', () => {
-    let template = new Template((t, show) => t`
-        ${show ? '<test-component testCallback="Alan"></test-component>' : ''}
-    `);
+    let template = new Template('show',
+        '${show ? `<test-component testCallback="Alan"></test-component>` : \'\'}'
+    );
     template.render(WRAPPER, true);
     let elem = WRAPPER.querySelector('test-component');
 

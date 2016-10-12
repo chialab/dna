@@ -28,7 +28,19 @@ import Template from 'skin-template';
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        if (this.template) {
+        let template = this.constructor.template;
+        if (template) {
+            if (typeof template === 'string') {
+                template = new Template(template);
+                Object.defineProperty(this.constructor, 'template', {
+                    value: template,
+                });
+            }
+            if (template instanceof Template) {
+                Object.defineProperty(this, 'template', {
+                    value: template.clone().setScope(this),
+                });
+            }
             this.observeProperties(() => {
                 this.render();
             });

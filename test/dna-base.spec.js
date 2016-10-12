@@ -8,10 +8,10 @@ const WRAPPER = new Wrapper();
 define('test-base-component', TestComponent);
 
 describe('Unit: BaseComponent', () => {
-    let template = new Template((t, show, attr = false) => t`
-        ${show ? `<test-base-component${attr ? ` name=${attr}` : ''}></test-base-component>` : ''}
-    `);
-    template.render(WRAPPER, true);
+    let template = new Template('show', 'attr',
+        '${show ? `<test-base-component${attr ? ` name=${attr}` : \'\'}></test-base-component>` : \'\'}'
+    );
+    template.render(WRAPPER, true, false);
     let elem = WRAPPER.querySelector('test-base-component');
     describe('Unit: BaseComponent > created', () => {
         it('check if element is correctly instantiated', () => {

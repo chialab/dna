@@ -50,7 +50,7 @@
     "rollup-plugin-istanbul": "^1.1.0",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-stream": "^1.14.0",
-    "skin-template": "^0.3.1",
+    "skin-template": "^0.5.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }
