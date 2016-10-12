@@ -1,4 +1,5 @@
 import Template from 'skin-template';
+import './helpers/tree-observer.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.

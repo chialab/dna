@@ -1,6 +1,5 @@
 import { registry } from './registry.js';
 import { isUndefined } from './typeof.js';
-import './tree-observer.js';
 
 /**
  * Create the Component constructor.

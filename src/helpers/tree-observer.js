@@ -1,7 +1,10 @@
-import { notifications, attributes, symbols } from 'incremental-dom';
+import Template from 'skin-template';
 import { isUndefined } from './typeof.js';
 import { registry } from './registry.js';
 
+const notifications = Template.IDOM.notifications;
+const attributes = Template.IDOM.attributes;
+const symbols = Template.IDOM.symbols;
 const CUSTOM_ELEMENTS = self.customElements;
 const HAS_REGISTRY = !isUndefined(CUSTOM_ELEMENTS);
 let _created = notifications.nodesCreated;
