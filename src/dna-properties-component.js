@@ -89,8 +89,12 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                 initProps[propName] = getValue(props.get(propName), attr.value);
             }
         }
+        let observedAttributes = this.constructor.observedAttributes || [];
         props.iterate((prop) => {
             let attrName = camelToDash(prop.name);
+            if (observedAttributes.indexOf(attrName) !== -1) {
+                prop.attribute();
+            }
             prop.scoped(this);
             if (prop.isAttr || prop.event) {
                 prop.observe((newValue) => {
