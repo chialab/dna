@@ -10,7 +10,7 @@ class Mixin {
 
     with() {
         // eslint-disable-next-line
-        return Array.from(arguments).reduce((c, m) => m(c), this.superclass);
+        return [].slice.call(arguments, 0).reduce((c, m) => m(c), this.superclass);
     }
 }
 

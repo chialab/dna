@@ -63,6 +63,7 @@ module.exports = function(config) {
                         'node_modules/**/*.js',
                         'src/**/*.js',
                         'test/**/*.js',
+                        'index.js',
                     ],
                 }),
             ],
@@ -74,6 +75,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'index.js': ['rollup'],
             'src/**/*.js': ['rollup'],
             'test/**/*.js': ['rollup'],
         },

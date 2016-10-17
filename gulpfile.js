@@ -65,7 +65,7 @@ function unitWatch(done) {
     env.NODE_ENV = 'test';
     new karma.Server({
         configFile: karmaConfig,
-        browsers: ['Chrome'],
+        browsers: ['Chrome', 'Firefox'],
     }, done).start();
 }
 
