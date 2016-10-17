@@ -3,7 +3,7 @@ import { Component } from '../../src/dna-component.js';
 import { EventsMixin } from '../../src/dna-events-component.js';
 
 export class TestComponent extends mix(Component).with(EventsMixin) {
-    static get events() {
+    get events() {
         return {
             'customEvent': 'onCustomEvent',
             'click button': 'onClick',
@@ -49,7 +49,7 @@ export class TestComponent extends mix(Component).with(EventsMixin) {
 
 
 export class TestInvalidComponent extends mix(Component).with(EventsMixin) {
-    static get events() {
+    get events() {
         return {
             customEvent: 'undefined',
         };

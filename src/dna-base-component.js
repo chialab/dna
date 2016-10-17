@@ -18,7 +18,7 @@ import { TemplateMixin } from './dna-template-component.js';
  *   static get css() {
  *     return '...';
  *   }
- *   static get events() {
+ *   get events() {
  *     return {
  *       '...': '...'
  *     };

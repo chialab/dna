@@ -26,7 +26,7 @@ function delegate(element, evName, selector, callback) {
  * ```js
  * import { EventsMixin, Component, mix } from 'dna/component';
  * export class MyComponent extends mix(Component).with(EventsMixin) {
- *   static get events() {
+ *   get events() {
  *     return {
  *       'click button': 'onButtonClick'
  *     }
@@ -55,7 +55,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         // bind events
-        let events = this.constructor.events || {};
+        let events = this.events || {};
         for (let k in events) {
             let callback = isString(events[k]) ?
                 this[events[k]] :
