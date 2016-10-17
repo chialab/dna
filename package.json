@@ -3,7 +3,7 @@
   "version": "2.0.0-beta5",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
-  "main": "src/dna.js",
+  "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/gulp unit",
     "lint": "./node_modules/.bin/gulp lint",
