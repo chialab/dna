@@ -1,4 +1,4 @@
-import { importStyle } from './lib/style.js';
+import { createStyle, importStyle } from './lib/style.js';
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
@@ -30,10 +30,20 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
+        this.classList.add(this.is);
+        if (!this.styleElem) {
+            let Ctr = this.constructor;
+            Object.defineProperty(Ctr.prototype, 'styleElem', {
+                value: createStyle(this.is),
+            });
+        }
+        this.updateCSS();
+    }
+
+    updateCSS() {
         let style = this.css;
         if (style) {
-            importStyle(this.is, style);
+            importStyle(this.styleElem, style);
         }
-        this.classList.add(this.is);
     }
 };
