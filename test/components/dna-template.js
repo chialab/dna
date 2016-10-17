@@ -18,25 +18,25 @@ class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) 
 }
 
 export class TestComponent1 extends TestComponent {
-    static get template() {
+    get template() {
         return '${this.title ? `<h1>${this.title}</h1><br>` : \'\'}Hello, ${this.fullname}';
     }
 }
 
 export class TestComponent2 extends TestComponent {
-    static get template() {
+    get template() {
         return '<span class="dna-test">Hello DNA!</span>';
     }
 }
 
 export class TestComponent3 extends TestComponent {
-    static get template() {
+    get template() {
         return {};
     }
 }
 
 export class TestComponent4 extends TestComponent {
-    static get template() {
+    get template() {
         return ' \
             <svg> \
                 <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" /> \
@@ -52,7 +52,7 @@ export class TestComponent4 extends TestComponent {
 }
 
 export class TestComponent5 extends TestComponent {
-    static get template() {
+    get template() {
         return ' \
             <span class="dna-test">Hello DNA!</span> \
             <test-vdom-placeholder></test-vdom-placeholder> \

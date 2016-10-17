@@ -26,7 +26,7 @@ import { TemplateMixin } from './dna-template-component.js';
  *   static get observedAttributes() {
  *     return ['...', '...'];
  *   }
- *   static get template() {
+ *   get template() {
  *     return '...';
  *   }
  *   get properties() {

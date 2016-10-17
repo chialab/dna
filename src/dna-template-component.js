@@ -9,7 +9,7 @@ import './lib/tree-observer.js';
  * ```js
  * import { Component, TemplateMixin, mix } from 'dna/component';
  * export class MyComponent extends mix(Component).with(TemplateMixin) {
- *   static get template() {
+ *   get template() {
  *     return '<h1>${this.name}</h1>';
  *   }
  *   get name() {
@@ -29,11 +29,12 @@ import './lib/tree-observer.js';
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        let template = this.constructor.template;
+        let template = this.template;
         if (template && !this.hasOwnProperty('template')) {
+            let Ctr = this.constructor;
             if (typeof template === 'string') {
                 template = new Template(template);
-                Object.defineProperty(this.constructor, 'template', {
+                Object.defineProperty(Ctr.prototype, 'template', {
                     value: template,
                 });
             }
