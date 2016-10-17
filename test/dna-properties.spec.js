@@ -23,7 +23,7 @@ describe('DNAPropertiesComponent', () => {
             </test1-properties-component> \
         ');
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test1-properties-component');
+        const elem = WRAPPER.querySelector('test1-properties-component');
 
         it('init element\'s properties', () => {
             assert.equal(elem.name, 'Alan');
@@ -52,7 +52,7 @@ describe('DNAPropertiesComponent', () => {
             '<test2-properties-component></test2-properties-component>'
         );
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test2-properties-component');
+        const elem = WRAPPER.querySelector('test2-properties-component');
 
         it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
@@ -74,6 +74,15 @@ describe('DNAPropertiesComponent', () => {
             elem.myVar3 = true;
             assert.equal(elem.getAttribute('my-var3'), 'DNA Test');
         });
+        it('dispatch event', () => {
+            let triggered = 0;
+            elem.addEventListener('changed', () => {
+                triggered++;
+            });
+            elem.myVar3 = true;
+            elem.myVar3 = false;
+            assert.equal(triggered, 1);
+        });
     });
 
     describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
@@ -87,7 +96,7 @@ describe('DNAPropertiesComponent', () => {
             ></test2-properties-component> \
         ');
         template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test2-properties-component');
+        const elem = WRAPPER.querySelector('test2-properties-component');
 
         before((done) => {
             template.render(WRAPPER, true);
