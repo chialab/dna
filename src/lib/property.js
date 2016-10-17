@@ -62,7 +62,9 @@ class Property extends ObserverMixin {
     }
 
     default(initValue) {
-        this.defaultValue = Object.freeze(initValue);
+        this.defaultValue = isObject(initValue) ?
+            Object.freeze(initValue) :
+            initValue;
         return this;
     }
 
