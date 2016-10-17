@@ -10,7 +10,7 @@ function isNew(node) {
 }
 
 export function Polyfill(Original) {
-    const Modified = function() {
+    function Modified() {
         if (this.constructor) {
             if (!isNew(this)) {
                 return this;
@@ -18,20 +18,29 @@ export function Polyfill(Original) {
             let desc = registry.get(this.is);
             let config = desc.config;
             // Find the tagname of the constructor and create a new element with it
-            let element = document.createElement(
-                config.extends ? config.extends : this.is
-            );
+            let element;
+            if (registry.native) {
+                element = Reflect.construct(
+                    Original,
+                    [],
+                    this.constructor
+                );
+            } else {
+                element = document.createElement(
+                    config.extends ? config.extends : this.is
+                );
+            }
+            element.__proto__ = desc.Ctr.prototype;
             if (config.extends) {
                 element.setAttribute('is', this.is);
             }
-            element.__proto__ = desc.Ctr.prototype;
             return element;
         }
         return null;
-    };
+    }
     Modified.prototype = Object.create(Original.prototype, {
         constructor: {
-            value: self[name],
+            value: Modified,
             configurable: true,
             writable: true,
         },
