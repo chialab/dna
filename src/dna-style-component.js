@@ -8,7 +8,7 @@ import { importStyle } from './lib/style.js';
  * ```js
  * import { StyleMixin, Component, mix } from 'dna/component';
  * export class MyComponent extends mix(Component).with(StyleMixin) {
- *   static get css() {
+ *   get css() {
  *     return '.my-component p { color: red; }'
  *   }
  * }
@@ -30,8 +30,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        let Ctr = this.constructor;
-        let style = Ctr.style || Ctr.css;
+        let style = this.css;
         if (style) {
             importStyle(this.is, style);
         }

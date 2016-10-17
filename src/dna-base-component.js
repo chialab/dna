@@ -15,7 +15,7 @@ import { TemplateMixin } from './dna-template-component.js';
  * ```js
  * import { BaseComponent } from 'dna/component';
  * export class MyComponent extends BaseComponent {
- *   static get css() {
+ *   get css() {
  *     return '...';
  *   }
  *   get events() {

@@ -1,5 +1,3 @@
-import { isFunction } from './typeof.js';
-
 let doc = document;
 
 function createStyle(id) {
@@ -24,9 +22,6 @@ export function importStyle(id, styles) {
             styles = [styles];
         }
         styles.forEach((style) => {
-            if (isFunction(style)) {
-                style = style();
-            }
             css += style;
         });
         id = `style-${id}`;

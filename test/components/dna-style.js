@@ -12,15 +12,13 @@ class TestComponent extends mix(Component).with(StyleMixin) {
 let css = 'h1 { color: #5F9EA0; }';
 
 export class TestComponent1 extends TestComponent {
-    static get css() {
-        return function() {
-            return `.test1-style-component ${css}`;
-        };
+    get css() {
+        return `.test1-style-component ${css}`;
     }
 }
 
 export class TestComponent2 extends TestComponent {
-    static get css() {
+    get css() {
         return `.test2-style-component.active ${css}`;
     }
 
@@ -29,15 +27,3 @@ export class TestComponent2 extends TestComponent {
         this.classList.add('active');
     }
 }
-
-export class TestComponent3 extends TestComponent {
-    constructor() {
-        super();
-        this.classList.add('disabled');
-    }
-}
-
-TestComponent3.css = `
-    .test3-style-component { display: block; }
-    .test3-style-component.disabled ${css}
-`;
