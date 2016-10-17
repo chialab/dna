@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna.js';
+import { define } from '../src/lib/define.js';
+import { render } from '../src/lib/render.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -26,11 +27,9 @@ define('test2-vdom-placeholder', Test2Placeholder, {
 
 describe('Unit: DNATemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
-        let template = new Template(
-            '<test1-template-component></test1-template-component>'
-        );
-        template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test1-template-component');
+        render(WRAPPER, TestComponent1);
+        const elem = WRAPPER.querySelector('test1-template-component');
+
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
@@ -39,20 +38,16 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     it('should handle `template` getter property as string', () => {
-        let template = new Template(
-            '<test2-template-component></test2-template-component>'
-        );
-        template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test2-template-component');
+        render(WRAPPER, TestComponent2);
+        const elem = WRAPPER.querySelector('test2-template-component');
+
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should handle templates with <svg>', () => {
-        let template = new Template(
-            '<test4-template-component></test4-template-component>'
-        );
-        template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test4-template-component');
+        render(WRAPPER, TestComponent4);
+        const elem = WRAPPER.querySelector('test4-template-component');
+
         elem.radius = 40;
         let svg = elem.firstElementChild;
         let circle = svg.querySelector('circle');
@@ -61,11 +56,9 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     it('should handle sub components', () => {
-        let template = new Template(
-            '<test5-template-component></test5-template-component>'
-        );
-        template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test5-template-component');
+        render(WRAPPER, TestComponent5);
+        const elem = WRAPPER.querySelector('test5-template-component');
+
         assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
         assert.equal(elem.querySelector('figure').value, 11);
     });

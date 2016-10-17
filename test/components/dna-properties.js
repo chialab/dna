@@ -1,7 +1,7 @@
-import { mix } from '../../src/helpers/mixins.js';
+import { mix } from '../../src/lib/mixins.js';
 import { Component } from '../../src/dna-component.js';
 import { PropertiesMixin } from '../../src/dna-properties-component.js';
-import { prop } from '../../src/helpers/property.js';
+import { prop } from '../../src/lib/property.js';
 
 export class TestComponent1 extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {

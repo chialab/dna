@@ -1,6 +1,6 @@
 {
   "name": "dna-components",
-  "version": "2.0.0-beta4",
+  "version": "2.0.0-beta5",
   "description": "A component pattern for Web artisans.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "src/dna.js",
@@ -50,7 +50,7 @@
     "rollup-plugin-istanbul": "^1.1.0",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-stream": "^1.14.0",
-    "skin-template": "^0.6.0",
+    "skin-template": "^0.7.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

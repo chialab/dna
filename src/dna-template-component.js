@@ -1,5 +1,5 @@
 import Template from 'skin-template';
-import './helpers/tree-observer.js';
+import './lib/tree-observer.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -9,8 +9,8 @@ import './helpers/tree-observer.js';
  * ```js
  * import { Component, TemplateMixin, mix } from 'dna/component';
  * export class MyComponent extends mix(Component).with(TemplateMixin) {
- *   get template() {
- *     return `<h1>${this.name}</h1>`;
+ *   static get template() {
+ *     return '<h1>${this.name}</h1>';
  *   }
  *   get name() {
  *     return 'Newton';
@@ -37,11 +37,9 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
                     value: template,
                 });
             }
-            if (template instanceof Template) {
-                Object.defineProperty(this, 'template', {
-                    value: template.clone().setScope(this),
-                });
-            }
+            Object.defineProperty(this, 'template', {
+                value: new Template(template).setScope(this),
+            });
         }
         if (this.hasOwnProperty('template')) {
             if (this.observeProperties) {

@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna.js';
+import { define } from '../src/lib/define.js';
+import { render } from '../src/lib/render.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from './components/dna-style.js';
 import { Wrapper } from './utils/wrapper.js';
 
@@ -12,12 +13,9 @@ define('test3-style-component', TestComponent3, {
     extends: 'div',
 });
 
-let template = new Template(' \
-    <test1-style-component></test1-style-component> \
-    <test2-style-component></test2-style-component> \
-    <div is="test3-style-component"></div> \
-');
-template.render(WRAPPER);
+render(WRAPPER, TestComponent1);
+render(WRAPPER, TestComponent2);
+render(WRAPPER, TestComponent3);
 
 describe('Unit: DNAStyleComponent', () => {
     let elem1 = WRAPPER.querySelector('.test1-style-component');

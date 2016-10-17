@@ -66,10 +66,6 @@ module.exports = function(config) {
                     ],
                 }),
             ],
-            paths: {
-                'skin-template': './node_modules/skin-template/index.js',
-                'incremental-dom': './node_modules/incremental-dom/index.js',
-            },
             sourceMap: 'inline',
             format: 'iife',
             moduleName: 'DNA',

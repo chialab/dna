@@ -1,4 +1,4 @@
-import { mix } from '../../src/helpers/mixins.js';
+import { mix } from '../../src/lib/mixins.js';
 import { Component } from '../../src/dna-component.js';
 import { StyleMixin } from '../../src/dna-style-component.js';
 

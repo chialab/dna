@@ -1,4 +1,4 @@
-import { mix } from './helpers/mixins.js';
+import { mix } from './lib/mixins.js';
 import { Component } from './dna-component.js';
 import { StyleMixin } from './dna-style-component.js';
 import { EventsMixin } from './dna-events-component.js';
@@ -26,8 +26,8 @@ import { TemplateMixin } from './dna-template-component.js';
  *   static get observedAttributes() {
  *     return ['...', '...'];
  *   }
- *   get template() {
- *     return `...`;
+ *   static get template() {
+ *     return '...';
  *   }
  *   get properties() {
  *     return { ... };

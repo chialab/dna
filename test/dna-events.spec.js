@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna.js';
+import { define } from '../src/lib/define.js';
+import { render } from '../src/lib/render.js';
 import { TestComponent, TestInvalidComponent } from './components/dna-events.js';
 import { Wrapper } from './utils/wrapper.js';
 
@@ -10,11 +11,8 @@ define('test2-events-component', TestInvalidComponent);
 
 describe('Unit: DNAEventsComponent', () => {
     describe('attach callbacks', () => {
-        let template = new Template(
-            '<test-events-component></test-events-component>'
-        );
-        template.render(WRAPPER);
-        let elem = WRAPPER.querySelector('test-events-component');
+        render(WRAPPER, TestComponent);
+        const elem = WRAPPER.querySelector('test-events-component');
 
         it('should track custom event on element', () => {
             assert.equal(elem.customElement, elem);
@@ -56,12 +54,9 @@ describe('Unit: DNAEventsComponent', () => {
     });
 
     describe('attach invalid callbacks', () => {
-        let template = new Template(
-            '<test2-events-component></test2-events-component>'
-        );
         it('should throw', () => {
             let wrapper = () => {
-                template.render(WRAPPER);
+                render(WRAPPER, TestInvalidComponent);
             };
             assert.throws(wrapper, TypeError, 'Invalid callback for event.');
         });

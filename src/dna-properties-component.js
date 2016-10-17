@@ -1,6 +1,6 @@
-import { camelToDash, dashToCamel } from './helpers/strings.js';
-import { PropertyList } from './helpers/property.js';
-import { isArray } from './helpers/typeof.js';
+import { camelToDash, dashToCamel } from './lib/strings.js';
+import { PropertyList } from './lib/property.js';
+import { isArray } from './lib/typeof.js';
 
 function getValue(property, attrVal) {
     if (attrVal === '' && property.accepts(Boolean)) {

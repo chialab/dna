@@ -9,8 +9,7 @@ function isNew(node) {
     }
 }
 
-export function polyfill(name) {
-    const Original = self[name];
+export function Polyfill(Original) {
     const Modified = function() {
         if (this.constructor) {
             if (!isNew(this)) {
@@ -30,13 +29,12 @@ export function polyfill(name) {
         }
         return null;
     };
-    self[name] = Modified;
-    self[name].prototype = Object.create(Original.prototype, {
+    Modified.prototype = Object.create(Original.prototype, {
         constructor: {
             value: self[name],
             configurable: true,
             writable: true,
         },
     });
-    return self[name];
+    return Modified;
 }

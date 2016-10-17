@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna.js';
+import { Template } from '../index.js';
+import { define } from '../src/lib/define.js';
 import {
     TestComponent1,
     TestComponent2,

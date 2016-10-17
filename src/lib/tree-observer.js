@@ -1,9 +1,8 @@
 import Template from 'skin-template';
-import { isUndefined } from './typeof.js';
 import { registry } from './registry.js';
 import { bind } from './bind.js';
 
-const HAS_REGISTRY = !isUndefined(self.customElements);
+const HAS_REGISTRY = !!registry.native;
 
 if (!HAS_REGISTRY) {
     const notifications = Template.IDOM.notifications;

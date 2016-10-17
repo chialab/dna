@@ -1,4 +1,4 @@
-import { isString, isFunction } from './helpers/typeof.js';
+import { isString, isFunction } from './lib/typeof.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 

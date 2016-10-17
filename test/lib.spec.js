@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
-import { camelToDash, dashToCamel } from '../src/helpers/strings.js';
-import { define } from '../src/helpers/define.js';
+import { camelToDash, dashToCamel } from '../src/lib/strings.js';
+import { define } from '../src/lib/define.js';
 import { Component } from '../src/dna-component.js';
 
-describe('Unit: Helpers', () => {
+describe('Unit: lib', () => {
     describe('camelToDash', () => {
         it('should transform transform a camel case string to dashed case', () => {
             assert.equal(camelToDash('simple'), 'simple');
