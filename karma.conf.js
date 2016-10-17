@@ -135,8 +135,7 @@ module.exports = function(config) {
                     browserNoActivityTimeout: 4 * 60 * 1000,
                     captureTimeout: 4 * 60 * 1000,
                     reporters: ['progress', 'saucelabs'],
-                    sauceLabs: sauceLabsConf,
-                    customLaunchers: {
+                    sauceLabs: {
                         startConnect: false,
                         options: {},
                         username: process.env.SAUCE_USERNAME,
@@ -149,6 +148,7 @@ module.exports = function(config) {
                             undefined,
                         recordScreenshots: true,
                     },
+                    customLaunchers: saucelabsBrowsers,
                     browsers: Object.keys(saucelabsBrowsers),
                 });
                 break;
