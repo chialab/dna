@@ -28,7 +28,7 @@ addons:
   sauce_connect: true
 
 script:
-  - npm run test-ci
+  - npm test
 
 after_success:
   - if [ "$CI_BUILD_TYPE" = 'default' ]; then npm run codecov; fi
