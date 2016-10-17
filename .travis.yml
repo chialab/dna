@@ -5,8 +5,11 @@ node_js:
 branches:
   only:
     - master
+    - next
 
 env:
+  - SAUCE_USERNAME=SAUCE_NEXT_USERNAME
+  - SAUCE_ACCESS_KEY=SAUCE_NEXT_ACCESS_KEY
   matrix:
     - "CI_BUILD_TYPE=default"
     - "CI_BUILD_TYPE=saucelabs"

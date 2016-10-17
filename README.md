@@ -17,8 +17,7 @@ $ bower i dna-components --save
 
 ## Dev
 
-[![Chialab es6-workflow](https://img.shields.io/badge/project-es6--workflow-lightgrey.svg)](https://github.com/Chialab/es6-workflow)
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
-[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
+[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/next/graph/badge.svg)](https://codecov.io/gh/Chialab/dna/branch/next)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://saucelabs.com/u/chialab-sl-003)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
