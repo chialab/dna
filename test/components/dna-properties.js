@@ -33,7 +33,10 @@ export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
             mine: Number,
             myVar: Boolean,
             myVar2: Boolean,
-            myVar3: prop.ANY.default(false).before(this.handleProp),
+            myVar3: prop.ANY
+                .default(false)
+                .before(this.handleProp)
+                .dispatch('changed'),
         }];
     }
 

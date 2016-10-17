@@ -53,10 +53,10 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     }
     /**
      * Update Component child nodes.
-     * @return Promise The render promise.
      */
     render() {
         let tpl = this.template;
+        /* istanbul ignore else */
         if (tpl instanceof Template) {
             tpl.render(this);
         } else {

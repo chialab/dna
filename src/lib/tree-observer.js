@@ -30,6 +30,7 @@ if (!HAS_REGISTRY) {
 
     notifications.nodesCreated = function(nodes) {
         nodes.forEach((node) => createNode(node));
+        /* istanbul ignore if */
         if (_created) {
             _created(nodes);
         }
@@ -42,6 +43,7 @@ if (!HAS_REGISTRY) {
                 node.disconnectedCallback();
             }
         });
+        /* istanbul ignore if */
         if (_removed) {
             _removed(nodes);
         }
@@ -59,6 +61,7 @@ if (!HAS_REGISTRY) {
                 node.attributeChangedCallback(attrName, oldValue, attrValue);
             }
         }
+        /* istanbul ignore if */
         if (_changed) {
             _changed(node, attrName, attrValue);
         }
