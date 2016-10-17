@@ -62,7 +62,7 @@ class Property extends ObserverMixin {
     }
 
     default(initValue) {
-        this.value = Object.freeze(initValue);
+        this.defaultValue = Object.freeze(initValue);
         return this;
     }
 
@@ -76,6 +76,15 @@ class Property extends ObserverMixin {
         return this;
     }
 
+    attribute(isAttr = true) {
+        this.isAttr = !!isAttr;
+        return this;
+    }
+
+    dispatch(evName) {
+        this.event = evName;
+        return this;
+    }
 
     require() {
         this.required = true;
@@ -112,16 +121,17 @@ class Property extends ObserverMixin {
         }
         // eslint-disable-next-line
         throw new TypeError(
-            `Invalid "${val}" value for "${this.name}" property for ${this.scope.is} components.`
+            `Invalid \`${val}\` value for "${this.name}" property${this.scope ? ` for ${this.scope.is}` : ''}.`
         );
     }
 
     init(value) {
+        value = isUndefined(value) ? this.defaultValue : value;
         if (!isUndefined(value)) {
             if (!this.setter(value)) {
                 if (this.required) {
                     throw new Error(
-                        `"${this.name}" property is required for ${this.scope.is} components.`
+                        `"${this.name}" property is required${this.scope ? ` for ${this.scope.is}` : ''}.`
                     );
                 }
             }
@@ -145,14 +155,12 @@ export class PropertyList extends ObserverMixin {
             );
         } else if (isObject(property)) {
             for (let k in property) {
-                if (property.hasOwnProperty(k)) {
-                    let p = property[k];
-                    if (!(p instanceof Property)) {
-                        p = new Property(p);
-                    }
-                    p.name = k;
-                    this.add(p);
+                let p = property[k];
+                if (!(p instanceof Property)) {
+                    p = new Property(p);
                 }
+                p.name = k;
+                this.add(p);
             }
         }
     }

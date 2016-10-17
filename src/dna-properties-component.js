@@ -1,6 +1,7 @@
 import { camelToDash, dashToCamel } from './lib/strings.js';
 import { PropertyList } from './lib/property.js';
 import { isArray } from './lib/typeof.js';
+import { dispatch } from './lib/dispatch.js';
 
 function getValue(property, attrVal) {
     if (attrVal === '' && property.accepts(Boolean)) {
@@ -79,7 +80,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             value: props,
         });
 
-        let attributes = Object.freeze(this.attributes);
+        let attributes = [].slice.call(this.attributes || [], 0);
         let initProps = {};
         for (let i = 0, len = attributes.length; i < len; i++) {
             let attr = attributes[i];
@@ -90,10 +91,17 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         }
         props.iterate((prop) => {
             let attrName = camelToDash(prop.name);
-            prop.scoped(this)
-                .observe((newValue) => {
-                    setAttribute(this, attrName, newValue);
+            prop.scoped(this);
+            if (prop.isAttr || prop.event) {
+                prop.observe((newValue) => {
+                    if (prop.isAttr) {
+                        setAttribute(this, attrName, newValue);
+                    }
+                    if (prop.event) {
+                        dispatch(this, prop.event);
+                    }
                 });
+            }
             prop.init(initProps[prop.name]);
         });
     }

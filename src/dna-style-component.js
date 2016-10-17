@@ -31,7 +31,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let Ctr = this.constructor;
-        let style = Ctr.css;
+        let style = Ctr.style || Ctr.css;
         if (style) {
             importStyle(this.is, style);
         }

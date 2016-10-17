@@ -1,4 +1,5 @@
 import { isString, isFunction } from './lib/typeof.js';
+import { dispatch } from './lib/dispatch.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 
@@ -85,14 +86,6 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @param {Boolean} cancelable Can be the event cancel by a callback.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
-        if (!isString(evName)) {
-            throw new TypeError('Event name is undefined');
-        }
-        let ev = new CustomEvent(evName, {
-            detail: data,
-            bubbles,
-            cancelable,
-        });
-        return this.dispatchEvent(ev);
+        return dispatch(this, evName, data, bubbles, cancelable);
     }
 };
