@@ -3,20 +3,6 @@ import { dispatch } from './lib/dispatch.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 
-function delegate(element, evName, selector, callback) {
-    element.addEventListener(evName, (event) => {
-        let target = event.target;
-        while (target && target !== element) {
-            if (target.matches(selector)) {
-                if (callback.call(element, event, target) === false) {
-                    return;
-                }
-            }
-            target = target.parentNode;
-        }
-    });
-}
-
 /**
  * Simple Custom Component with events delegation,
  * It also implement a `dispatchEvent` wrapper named `trigger`.
@@ -65,9 +51,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 let evName = rule[1];
                 let selector = (rule[2] || '').trim();
                 if (selector) {
-                    delegate(this, evName, selector, (ev, target) => {
-                        callback.call(this, ev, target);
-                    });
+                    this.delegate(evName, selector, callback);
                 } else {
                     this.addEventListener(evName, (ev) => {
                         callback.call(this, ev, this);
@@ -77,6 +61,17 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 throw new TypeError('Invalid callback for event.');
             }
         }
+    }
+    delegate(evName, selector, callback) {
+        this.addEventListener(evName, (event) => {
+            let target = event.target;
+            while (target && target !== this) {
+                if (target.matches(selector)) {
+                    callback.call(this, event, target);
+                }
+                target = target.parentNode;
+            }
+        });
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.
