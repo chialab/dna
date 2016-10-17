@@ -8,6 +8,7 @@
 import Skin from 'skin-template';
 
 export const Template = Skin;
+export const IDOM = Template.IDOM;
 export * from './src/dna-component.js';
 export * from './src/dna-properties-component.js';
 export * from './src/dna-events-component.js';
