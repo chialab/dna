@@ -1,4 +1,3 @@
-import { camelToDash, dashToCamel } from './lib/strings.js';
 import { PropertyList } from './lib/property.js';
 import { isArray } from './lib/typeof.js';
 import { dispatch } from './lib/dispatch.js';
@@ -65,48 +64,44 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        let props = this.properties || new PropertyList();
-        if (!(props instanceof PropertyList)) {
-            let list = new PropertyList();
-            if (!isArray(props)) {
-                props = [props];
-            }
-            props.forEach((partialProps) => {
-                list.add(partialProps);
-            });
-            props = list;
+        let props = this.properties;
+        let list = new PropertyList();
+        if (!isArray(props)) {
+            props = [props];
         }
+        props.forEach((partialProps) => {
+            list.add(partialProps);
+        });
+        props = list;
+        this.count = this.count || 0;
+        this.count++;
         Object.defineProperty(this, 'properties', {
             value: props,
+            writable: false,
+            configurable: true,
         });
-
-        let attributes = [].slice.call(this.attributes || [], 0);
-        let initProps = {};
-        for (let i = 0, len = attributes.length; i < len; i++) {
-            let attr = attributes[i];
-            let propName = dashToCamel(attr.name);
-            if (props.has(propName)) {
-                initProps[propName] = getValue(props.get(propName), attr.value);
-            }
-        }
-        let observedAttributes = this.constructor.observedAttributes || [];
         props.iterate((prop) => {
-            let attrName = camelToDash(prop.name);
-            if (observedAttributes.indexOf(attrName) !== -1) {
-                prop.attribute();
+            prop.scoped(this).init(this[prop.name]);
+        });
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        let props = this.properties;
+        props.iterate((prop) => {
+            let { attrName, eventName } = prop;
+            if (attrName) {
+                setAttribute(this, attrName, prop.value);
             }
-            prop.scoped(this);
-            if (prop.isAttr || prop.event) {
+            if (attrName || eventName) {
                 prop.observe((newValue) => {
-                    if (prop.isAttr) {
+                    if (attrName) {
                         setAttribute(this, attrName, newValue);
                     }
-                    if (prop.event) {
-                        dispatch(this, prop.event);
+                    if (eventName) {
+                        dispatch(this, eventName);
                     }
                 });
             }
-            prop.init(initProps[prop.name]);
         });
     }
     /**
@@ -117,9 +112,9 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let propName = dashToCamel(attr);
-        if (this.properties.has(propName)) {
-            this[propName] = getValue(this.properties.get(propName), newVal);
+        let prop = this.properties.get(attr, true);
+        if (prop) {
+            this[prop.name] = getValue(prop, newVal);
         }
     }
     /**
