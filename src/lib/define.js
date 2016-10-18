@@ -1,5 +1,4 @@
 import { registry } from './registry.js';
-import { isUndefined } from './typeof.js';
 
 /**
  * Create the Component constructor.
@@ -15,8 +14,8 @@ export function define(tagName, Component, config) {
         get: () => tagName,
     });
     registry.define(tagName, Component, config);
-    if (!isUndefined(self.customElements)) {
-        self.customElements.define(tagName, Component, config);
+    if (registry.native) {
+        registry.native.define(tagName, Component, config);
     }
     return Component;
 }
