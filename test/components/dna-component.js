@@ -2,7 +2,7 @@ import { Component } from '../../src/dna-component.js';
 
 export class TestComponent extends Component {
     static get observedAttributes() {
-        return ['testCallback'];
+        return ['test-callback'];
     }
 
     constructor() {

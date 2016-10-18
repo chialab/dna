@@ -9,8 +9,8 @@ const WRAPPER = new Wrapper();
 define('test-component', TestComponent);
 
 describe('Unit: DNAComponent', () => {
-    let template = new Template('show',
-        '${show ? `<test-component testCallback="Alan"></test-component>` : \'\'}'
+    let template = new Template('show', 'attr',
+        '${show ? `<test-component${attr ? ` test-callback="Alan"` : \'\'}></test-component>` : \'\'}'
     );
     template.render(WRAPPER, true);
     let elem = WRAPPER.querySelector('test-component');
@@ -29,7 +29,8 @@ describe('Unit: DNAComponent', () => {
 
     describe('Unit: DNAComponent > attributeChanged', () => {
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            assert.equal(elem.testCallback, 'Alan');
+            template.render(WRAPPER, true, true);
+            assert.equal(elem['test-callback'], 'Alan');
         });
     });
 

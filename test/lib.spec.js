@@ -1,27 +1,11 @@
 /* eslint-env mocha */
 
-import { camelToDash, dashToCamel } from '../src/lib/strings.js';
 import { define } from '../src/lib/define.js';
 import { Component } from '../src/dna-component.js';
+import { Template } from '../index.js';
+import { Wrapper } from './utils/wrapper.js';
 
 describe('Unit: lib', () => {
-    describe('camelToDash', () => {
-        it('should transform transform a camel case string to dashed case', () => {
-            assert.equal(camelToDash('simple'), 'simple');
-            assert.equal(camelToDash('Simple'), 'simple');
-            assert.equal(camelToDash('SimpleString'), 'simple-string');
-            assert.equal(camelToDash('Simple String'), 'simple-string');
-        });
-    });
-
-    describe('dashToCamel', () => {
-        it('should transform transform a dashed case string to camel case', () => {
-            assert.equal(dashToCamel('simple'), 'simple');
-            assert.equal(dashToCamel('simple-string'), 'simpleString');
-            assert.equal(dashToCamel('simple-long-string'), 'simpleLongString');
-        });
-    });
-
     describe('define', () => {
         class TestComponent extends Component {
             constructor() {
@@ -30,6 +14,8 @@ describe('Unit: lib', () => {
                 this.lastName = 'Turing';
             }
         }
+
+        class TestComponent2 extends TestComponent {}
 
         describe('a simple element', () => {
             define('test1-helper-component', TestComponent);
@@ -42,15 +28,15 @@ describe('Unit: lib', () => {
             });
         });
 
-        describe('a with extends field', () => {
-            const TestComponent2 = class extends TestComponent {};
-            define('test1-helper-define-component', TestComponent2, {
-                extends: 'div',
-            });
+        describe('an element with extends field', () => {
+            const wrapper = new Wrapper();
+            define('helper-define-component', TestComponent2);
+            let template = new Template('<div is="helper-define-component"></div>');
+            template.render(wrapper);
+            const elem = wrapper.querySelector('[is="helper-define-component"]');
 
-            it('should define a custom element with extends field', () => {
-                let elem = new TestComponent2();
-                assert.equal(elem.tagName.toLowerCase(), 'div');
+            it('a custom element with extends field', () => {
+                assert.equal(elem.localName.toLowerCase(), 'div');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
             });

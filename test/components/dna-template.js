@@ -72,8 +72,8 @@ export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
         };
     }
 
-    constructor() {
-        super();
+    connectedCallback() {
+        super.connectedCallback();
         this.value = 6;
     }
 }
@@ -89,8 +89,8 @@ export class Test2Placeholder extends mix(Component).with(PropertiesMixin) {
         };
     }
 
-    constructor() {
-        super();
+    connectedCallback() {
+        super.connectedCallback();
         this.value = 11;
     }
 }

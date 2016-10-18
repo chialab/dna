@@ -10,11 +10,11 @@ export class TestComponent1 extends mix(Component).with(PropertiesMixin) {
 
     get properties() {
         return {
-            name: String,
-            lastName: String,
-            married: Boolean,
-            age: Number,
-            var: String,
+            name: prop(String).attribute(),
+            lastName: prop(String).attribute('last-name'),
+            married: prop(Boolean).attribute(),
+            age: prop(Number).attribute(),
+            var: prop(String).attribute(),
         };
     }
 }
@@ -26,15 +26,16 @@ export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
 
     get properties() {
         return [{
-            title: String,
-            id: String,
-            alt: String,
-            var: Number,
-            mine: Number,
-            myVar: Boolean,
-            myVar2: Boolean,
+            title: prop(String).attribute(),
+            id: prop(String).attribute(),
+            alt: prop(String).attribute(),
+            var: prop(Number).attribute(),
+            mine: prop(Number).attribute(),
+            myVar: prop(Boolean).attribute('my-var'),
+            myVar2: prop(Boolean).attribute('my-var2'),
             myVar3: prop.ANY
                 .default(false)
+                .attribute('my-var3')
                 .before(this.handleProp)
                 .dispatch('changed'),
         }];
