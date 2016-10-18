@@ -1,4 +1,4 @@
-import { isUndefined, isFunction, isArray, isObject } from './typeof.js';
+import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
 
 const define = Object.defineProperty;
 
@@ -61,6 +61,14 @@ class Property extends ObserverMixin {
         return this.ctrs.indexOf(Ctr) !== -1;
     }
 
+    named(name) {
+        this.name = name;
+        if (this.attrRequested === true) {
+            this.attrName = this.name;
+        }
+        return this;
+    }
+
     default(initValue) {
         this.defaultValue = isObject(initValue) ?
             Object.freeze(initValue) :
@@ -78,13 +86,18 @@ class Property extends ObserverMixin {
         return this;
     }
 
-    attribute(isAttr = true) {
-        this.isAttr = !!isAttr;
+    attribute(attrName = true) {
+        if (isString(attrName)) {
+            this.attrRequested = false;
+            this.attrName = attrName;
+        } else {
+            this.attrRequested = !!attrName;
+        }
         return this;
     }
 
     dispatch(evName) {
-        this.event = evName;
+        this.eventName = evName;
         return this;
     }
 
@@ -108,6 +121,9 @@ class Property extends ObserverMixin {
     }
 
     validateType(val) {
+        if (val === null || val === undefined) {
+            return true;
+        }
         let i = 0;
         let ctrs = this.ctrs;
         if (ctrs.length === 0) {
@@ -161,30 +177,21 @@ export class PropertyList extends ObserverMixin {
                 if (!(p instanceof Property)) {
                     p = new Property(p);
                 }
-                p.name = k;
+                p.named(k);
                 this.add(p);
             }
         }
     }
 
-    has(name) {
+    get(name, attr = false) {
+        let key = attr ? 'attrName' : 'name';
         for (let i = 0, len = this.props.length; i < len; i++) {
             let prop = this.props[i];
-            if (prop.name === name) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    get(name) {
-        for (let i = 0, len = this.props.length; i < len; i++) {
-            let prop = this.props[i];
-            if (prop.name === name) {
+            if (prop[key] === name) {
                 return prop;
             }
         }
-        throw new Error('Property not found.');
+        return null;
     }
 
     iterate(callback) {
