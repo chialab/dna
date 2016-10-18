@@ -30,7 +30,6 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        this.classList.add(this.is);
         if (!this.styleElem) {
             let Ctr = this.constructor;
             Object.defineProperty(Ctr.prototype, 'styleElem', {
@@ -38,6 +37,11 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
             });
         }
         this.updateCSS();
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.classList.add(this.is);
     }
 
     updateCSS() {
