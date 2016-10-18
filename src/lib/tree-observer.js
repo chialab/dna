@@ -29,7 +29,7 @@ if (!HAS_REGISTRY) {
     };
 
     notifications.nodesCreated = function(nodes) {
-        nodes.forEach((node) => createNode(node));
+        nodes.forEach((node) => !node.is && createNode(node));
         /* istanbul ignore if */
         if (_created) {
             _created(nodes);
