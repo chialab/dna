@@ -1,7 +1,8 @@
 import { mix } from '../../src/lib/mixins.js';
+import { prop } from '../../src/lib/property.js';
 import { Component } from '../../src/dna-component.js';
-import { PropertiesMixin } from '../../src/dna-properties-component.js';
-import { TemplateMixin } from '../../src/dna-template-component.js';
+import { PropertiesMixin } from '../../src/mixins/dna-properties-component.js';
+import { TemplateMixin } from '../../src/mixins/dna-template-component.js';
 
 class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
     get properties() {
@@ -68,12 +69,12 @@ export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
 
     get properties() {
         return {
-            value: Number,
+            value: prop.NUMBER.attribute(),
         };
     }
 
-    connectedCallback() {
-        super.connectedCallback();
+    constructor() {
+        super();
         this.value = 6;
     }
 }
@@ -89,8 +90,8 @@ export class Test2Placeholder extends mix(Component).with(PropertiesMixin) {
         };
     }
 
-    connectedCallback() {
-        super.connectedCallback();
+    constructor() {
+        super();
         this.value = 11;
     }
 }

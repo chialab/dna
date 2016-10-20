@@ -1,9 +1,9 @@
 import { mix } from './lib/mixins.js';
 import { Component } from './dna-component.js';
-import { StyleMixin } from './dna-style-component.js';
-import { EventsMixin } from './dna-events-component.js';
-import { PropertiesMixin } from './dna-properties-component.js';
-import { TemplateMixin } from './dna-template-component.js';
+import { StyleMixin } from './mixins/dna-style-component.js';
+import { EventsMixin } from './mixins/dna-events-component.js';
+import { PropertiesMixin } from './mixins/dna-properties-component.js';
+import { TemplateMixin } from './mixins/dna-template-component.js';
 
 /**
  * Simple Custom Component with some behaviors.

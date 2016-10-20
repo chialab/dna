@@ -1,6 +1,7 @@
 import { PropertyList } from './lib/property.js';
 import { isArray } from './lib/typeof.js';
 import { dispatch } from './lib/dispatch.js';
+import { isUndefined } from './lib/typeof.js';
 
 function getValue(property, attrVal) {
     if (attrVal === '' && property.accepts(Boolean)) {
@@ -73,34 +74,41 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             list.add(partialProps);
         });
         props = list;
-        this.count = this.count || 0;
-        this.count++;
         Object.defineProperty(this, 'properties', {
             value: props,
             writable: false,
             configurable: true,
         });
         props.iterate((prop) => {
-            prop.scoped(this).init(this[prop.name]);
+            prop.scoped(this).init();
+        });
+        props.iterate((prop) => {
+            let { attrName, eventName } = prop;
+            if (attrName || eventName) {
+                prop.observe(() => {
+                    if (attrName) {
+                        setAttribute(this, attrName, this[prop.name]);
+                    }
+                    if (eventName) {
+                        dispatch(this, eventName);
+                    }
+                });
+            }
         });
     }
     connectedCallback() {
         super.connectedCallback();
         let props = this.properties;
         props.iterate((prop) => {
-            let { attrName, eventName } = prop;
+            let { attrName } = prop;
             if (attrName) {
-                setAttribute(this, attrName, prop.value);
-            }
-            if (attrName || eventName) {
-                prop.observe((newValue) => {
-                    if (attrName) {
-                        setAttribute(this, attrName, newValue);
+                if (isUndefined(this[prop.name])) {
+                    if (this.hasAttribute(attrName)) {
+                        this[prop.name] = getValue(prop, this.getAttribute(attrName));
                     }
-                    if (eventName) {
-                        dispatch(this, eventName);
-                    }
-                });
+                } else {
+                    setAttribute(this, attrName, this[prop.name]);
+                }
             }
         });
     }

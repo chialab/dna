@@ -1,9 +1,11 @@
 /* eslint-env mocha */
 
+import '../src/observers/idom.js';
 import { Template } from '../index.js';
 import { define } from '../src/lib/define.js';
 import { TestComponent } from './components/dna-component.js';
 import { Wrapper } from './utils/wrapper.js';
+import { debounce } from './utils/debounce.js';
 
 const WRAPPER = new Wrapper();
 define('test-component', TestComponent);
@@ -28,17 +30,14 @@ describe('Unit: DNAComponent', () => {
     });
 
     describe('Unit: DNAComponent > attributeChanged', () => {
+        debounce(() => template.render(WRAPPER, true, true));
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            template.render(WRAPPER, true, true);
             assert.equal(elem['test-callback'], 'Alan');
         });
     });
 
     describe('Unit: DNAComponent > detached', () => {
-        before((done) => {
-            template.render(WRAPPER, false);
-            done();
-        });
+        debounce(() => template.render(WRAPPER, false));
         it('check if element is correctly detached from the tree', () => {
             assert.equal(elem.attached, false);
         });

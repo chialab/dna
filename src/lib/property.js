@@ -24,7 +24,7 @@ class ObserverMixin {
 
     changed(newValue, oldValue) {
         for (let i = 0, len = this._.length; i < len; i++) {
-            this._[i](newValue, oldValue);
+            this._[i](this, newValue, oldValue);
         }
     }
 }
@@ -39,10 +39,10 @@ class Property extends ObserverMixin {
         this.ctrs = ctrs;
         this.required = false;
         this.validator = () => true;
-        this.beforeSet = (val) => val;
-        this.getter = () => this.value;
-        this.setter = (val) => {
-            val = this.beforeSet(val);
+        this._setter = (val) => val;
+        this.getterFn = () => this.value;
+        this.setterFn = (val) => {
+            val = this._setter(val);
             if (this.validateType(val)) {
                 if (this.validator(val)) {
                     let oldValue = this.value;
@@ -79,8 +79,8 @@ class Property extends ObserverMixin {
     scoped(scope) {
         this.scope = scope;
         define(scope, this.name, {
-            get: this.getter.bind(this),
-            set: this.setter.bind(this),
+            get: this.getterFn.bind(this),
+            set: this.setterFn.bind(this),
             configurable: true,
         });
         return this;
@@ -106,9 +106,16 @@ class Property extends ObserverMixin {
         return this;
     }
 
-    before(callback) {
+    getter(callback) {
         if (isFunction(callback)) {
-            this.beforeSet = callback;
+            this.getterFn = () => callback(this.value);
+        }
+        return this;
+    }
+
+    setter(callback) {
+        if (isFunction(callback)) {
+            this._setter = callback;
         }
         return this;
     }

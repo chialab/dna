@@ -1,6 +1,6 @@
 import { mix } from '../../src/lib/mixins.js';
 import { Component } from '../../src/dna-component.js';
-import { EventsMixin } from '../../src/dna-events-component.js';
+import { EventsMixin } from '../../src/mixins/dna-events-component.js';
 
 export class TestComponent extends mix(Component).with(EventsMixin) {
     get events() {

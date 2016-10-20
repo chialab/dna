@@ -1,7 +1,8 @@
 /* eslint-env mocha */
 
+import '../src/observers/idom.js';
 import { define } from '../src/lib/define.js';
-import { render } from '../src/lib/render.js';
+import { render } from '../src/lib/nodes.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -12,6 +13,7 @@ import {
     Test2Placeholder,
 } from './components/dna-template.js';
 import { Wrapper } from './utils/wrapper.js';
+import { debounce } from './utils/debounce.js';
 
 const WRAPPER = new Wrapper();
 
@@ -55,11 +57,16 @@ describe('Unit: DNATemplateComponent', () => {
         assert.equal(circle.getAttribute('r'), '40');
     });
 
-    it('should handle sub components', () => {
-        render(WRAPPER, TestComponent5);
-        const elem = WRAPPER.querySelector('test5-template-component');
+    describe('should handle sub components', () => {
+        let elem;
+        debounce(() => {
+            render(WRAPPER, TestComponent5);
+            elem = WRAPPER.querySelector('test5-template-component');
+        });
 
-        assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
-        assert.equal(elem.querySelector('figure').value, 11);
+        it('and their callbacks', () => {
+            assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
+            assert.equal(elem.querySelector('figure').value, 11);
+        });
     });
 });

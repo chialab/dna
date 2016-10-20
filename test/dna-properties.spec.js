@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+import '../src/observers/idom.js';
 import { Template } from '../index.js';
 import { define } from '../src/lib/define.js';
 import {
@@ -7,6 +8,7 @@ import {
     TestComponent2,
 } from './components/dna-properties.js';
 import { Wrapper } from './utils/wrapper.js';
+import { debounce } from './utils/debounce.js';
 
 const WRAPPER = new Wrapper();
 define('test1-properties-component', TestComponent1);
@@ -22,6 +24,7 @@ describe('DNAPropertiesComponent', () => {
                 married> \
             </test1-properties-component> \
         ');
+
         template.render(WRAPPER);
         const elem = WRAPPER.querySelector('test1-properties-component');
 
@@ -98,10 +101,10 @@ describe('DNAPropertiesComponent', () => {
         template.render(WRAPPER);
         const elem = WRAPPER.querySelector('test2-properties-component');
 
-        before((done) => {
+        debounce(() => {
             template.render(WRAPPER, true);
-            done();
         });
+
         it('check sync between attribute and property', () => {
             assert.equal(elem.alt, 'DNA Test 2');
         });

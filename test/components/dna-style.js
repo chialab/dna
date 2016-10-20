@@ -1,6 +1,6 @@
 import { mix } from '../../src/lib/mixins.js';
 import { Component } from '../../src/dna-component.js';
-import { StyleMixin } from '../../src/dna-style-component.js';
+import { StyleMixin } from '../../src/mixins/dna-style-component.js';
 
 class TestComponent extends mix(Component).with(StyleMixin) {
     constructor() {

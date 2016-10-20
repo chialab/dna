@@ -1,7 +1,7 @@
 import { mix } from '../../src/lib/mixins.js';
-import { Component } from '../../src/dna-component.js';
-import { PropertiesMixin } from '../../src/dna-properties-component.js';
 import { prop } from '../../src/lib/property.js';
+import { Component } from '../../src/dna-component.js';
+import { PropertiesMixin } from '../../src/mixins/dna-properties-component.js';
 
 export class TestComponent1 extends mix(Component).with(PropertiesMixin) {
     static get observedAttributes() {
@@ -36,7 +36,8 @@ export class TestComponent2 extends mix(Component).with(PropertiesMixin) {
             myVar3: prop.ANY
                 .default(false)
                 .attribute('my-var3')
-                .before(this.handleProp)
+                .getter(this.handleProp)
+                .setter((val) => !!val)
                 .dispatch('changed'),
         }];
     }

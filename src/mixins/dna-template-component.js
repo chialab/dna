@@ -1,5 +1,4 @@
 import Template from 'skin-template';
-import './lib/tree-observer.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -43,12 +42,17 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
             });
         }
         if (this.hasOwnProperty('template')) {
+            this.render();
+        }
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.hasOwnProperty('template')) {
             if (this.observeProperties) {
                 this.observeProperties(() => {
                     this.render();
                 });
             }
-            this.render();
         }
     }
     /**
