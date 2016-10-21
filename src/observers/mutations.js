@@ -13,7 +13,7 @@ function onCreation(nodes) {
     });
 }
 
-let observer = new MutationObserver((mutations) => {
+const OBSERVER = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         switch (mutation.type) {
         case 'childList': {
@@ -45,7 +45,7 @@ let observer = new MutationObserver((mutations) => {
     });
 });
 
-observer.observe(document.body, {
+OBSERVER.observe(document.body, {
     attributes: true,
     childList: true,
     subtree: true,

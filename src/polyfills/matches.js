@@ -1,0 +1,9 @@
+const ELEM_PROTO = Element.prototype;
+if (!ELEM_PROTO.matches) {
+    ELEM_PROTO.matches =
+        ELEM_PROTO.matchesSelector ||
+        ELEM_PROTO.mozMatchesSelector ||
+        ELEM_PROTO.msMatchesSelector ||
+        ELEM_PROTO.oMatchesSelector ||
+        ELEM_PROTO.webkitMatchesSelector;
+}

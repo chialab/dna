@@ -1,17 +1,8 @@
+import '../polyfills/matches.js';
 import { isString, isFunction } from './lib/typeof.js';
 import { dispatch } from './lib/dispatch.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
-
-const elemProto = Element.prototype;
-if (!elemProto.matches) {
-    elemProto.matches =
-        elemProto.matchesSelector ||
-        elemProto.mozMatchesSelector ||
-        elemProto.msMatchesSelector ||
-        elemProto.oMatchesSelector ||
-        elemProto.webkitMatchesSelector;
-}
 
 /**
  * Simple Custom Component with events delegation,

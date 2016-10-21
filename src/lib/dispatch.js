@@ -1,3 +1,4 @@
+import '../polyfills/custom-event.js';
 import { isString } from './typeof.js';
 
 export function dispatch(node, evName, data, bubbles = true, cancelable = true) {
