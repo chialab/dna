@@ -38,10 +38,10 @@ var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
 
 var env = process.env;
-var entryFileName = 'index.js';
+var entries = ['index.js', 'index-idom.js', 'index-mutations.js'];
 var moduleName = 'DNA';
 var artifactName = 'dna';
-var srcs = [entryFileName, 'src/**/*.js'];
+var srcs = entries.concat(['src/**/*.js']);
 var tests = ['test/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
 
@@ -85,7 +85,7 @@ function lint() {
         .pipe(eslint.failAfterError());
 }
 
-function bundle(format) {
+function bundle(format, entryFileName) {
     return rollup({
         entry: entryFileName,
         sourceMap: true,
@@ -113,14 +113,16 @@ function jsMin() {
     env.NODE_ENV = 'production';
     env.min = true;
 
-    return bundle('umd')
-        .pipe(source(`${artifactName}.js`))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({
-            loadMaps: true,
-        }))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('dist'));
+    return entries.map((entry) =>
+        bundle('umd', entry)
+            .pipe(source(entry.replace('index', artifactName)))
+            .pipe(buffer())
+            .pipe(sourcemaps.init({
+                loadMaps: true,
+            }))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest('dist'))
+    );
 }
 
 function jsDist() {
