@@ -6,7 +6,7 @@ import { define } from '../src/lib/define.js';
 import {
     TestComponent1,
     TestComponent2,
-} from './components/dna-properties.js';
+} from './components/properties.js';
 import { Wrapper } from './utils/wrapper.js';
 import { debounce } from './utils/debounce.js';
 

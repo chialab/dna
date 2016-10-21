@@ -1,8 +1,8 @@
 import { mix } from '../../src/lib/mixins.js';
 import { prop } from '../../src/lib/property.js';
-import { Component } from '../../src/dna-component.js';
-import { PropertiesMixin } from '../../src/mixins/dna-properties-component.js';
-import { TemplateMixin } from '../../src/mixins/dna-template-component.js';
+import { Component } from '../../src/component.js';
+import { PropertiesMixin } from '../../src/mixins/properties-component.js';
+import { TemplateMixin } from '../../src/mixins/template-component.js';
 
 class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
     get properties() {

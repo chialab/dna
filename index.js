@@ -9,12 +9,12 @@ import Skin from 'skin-template';
 
 export const Template = Skin;
 export const IDOM = Template.IDOM;
-export * from './src/dna-component.js';
-export * from './src/mixins/dna-properties-component.js';
-export * from './src/mixins/dna-events-component.js';
-export * from './src/mixins/dna-style-component.js';
-export * from './src/mixins/dna-template-component.js';
-export * from './src/dna-base-component.js';
+export * from './src/component.js';
+export * from './src/mixins/properties-component.js';
+export * from './src/mixins/events-component.js';
+export * from './src/mixins/style-component.js';
+export * from './src/mixins/template-component.js';
+export * from './src/base-component.js';
 export * from './src/lib/nodes.js';
 export { mix } from './src/lib/mixins.js';
 export { Polyfill } from './src/lib/polyfill.js';

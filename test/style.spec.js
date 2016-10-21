@@ -3,7 +3,7 @@
 import '../src/observers/idom.js';
 import { define } from '../src/lib/define.js';
 import { render } from '../src/lib/nodes.js';
-import { TestComponent1, TestComponent2 } from './components/dna-style.js';
+import { TestComponent1, TestComponent2 } from './components/style.js';
 import { Wrapper } from './utils/wrapper.js';
 
 const WRAPPER = new Wrapper();

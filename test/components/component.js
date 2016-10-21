@@ -1,8 +1,8 @@
-import { BaseComponent } from '../../src/dna-base-component.js';
+import { Component } from '../../src/component.js';
 
-export class TestComponent extends BaseComponent {
+export class TestComponent extends Component {
     static get observedAttributes() {
-        return ['name'];
+        return ['test-callback'];
     }
 
     constructor() {

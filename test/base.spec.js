@@ -3,7 +3,7 @@
 import '../src/observers/idom.js';
 import { Template } from '../index.js';
 import { define } from '../src/lib/define.js';
-import { TestComponent } from './components/dna-base.js';
+import { TestComponent } from './components/base.js';
 import { Wrapper } from './utils/wrapper.js';
 import { debounce } from './utils/debounce.js';
 

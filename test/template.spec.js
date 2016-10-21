@@ -11,7 +11,7 @@ import {
     TestComponent5,
     TestPlaceholder,
     Test2Placeholder,
-} from './components/dna-template.js';
+} from './components/template.js';
 import { Wrapper } from './utils/wrapper.js';
 import { debounce } from './utils/debounce.js';
 
