@@ -9,6 +9,7 @@
 import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';
 import { ELEMENTS } from './lib/elements.js';
+import { REGISTRIES } from './src/lib/registries.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
@@ -17,15 +18,17 @@ import { TemplateMixin } from './mixins/template-component.js';
 
 export const Template = Skin;
 export const IDOM = Template.IDOM;
-export * from './src/lib/nodes.js';
+export { render } from './src/lib/render.js';
 export { ComponentMixin };
 export { PropertiesMixin };
 export { EventsMixin };
 export { StyleMixin };
 export { TemplateMixin };
 export { mix };
+export { define } from './src/lib/define.js';
 export { prop } from './src/lib/property.js';
 export { ELEMENTS };
+export const registry = REGISTRIES.default;
 
 /**
  * Simple Custom Component with some behaviors.

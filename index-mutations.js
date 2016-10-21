@@ -7,13 +7,77 @@
  * Use with DOM Mutations.
  */
 
- import { ELEMENTS } from './src/lib/elements.js';
- import { Polyfill } from './src/lib/polyfill.js';
- import './src/observers/mutations.js';
+import './src/observers/mutations.js';
+import Skin from 'skin-template';
+import { mix } from './lib/mixins.js';
+import { ELEMENTS } from './lib/elements.js';
+import { REGISTRIES } from './src/lib/registries.js';
+import { ComponentMixin } from './mixins/component.js';
+import { PropertiesMixin } from './mixins/properties-component.js';
+import { EventsMixin } from './mixins/events-component.js';
+import { StyleMixin } from './mixins/style-component.js';
+import { TemplateMixin } from './mixins/template-component.js';
+import { Polyfill } from './src/lib/polyfill.js';
+import { render as originalRender } from './src/lib/render.js';
+import { connect } from './src/lib/nodes.js';
 
- ELEMENTS.HTMLElement = new Polyfill(self.HTMLElement);
+REGISTRIES.default = REGISTRIES.custom;
+ELEMENTS.HTMLElement = new Polyfill(self.HTMLElement);
 
- export * from './index.js';
- export { registry } from './src/lib/registry.js';
- export { define } from './src/lib/define.js';
- export { Polyfill };
+export const Template = Skin;
+export const IDOM = Template.IDOM;
+export * from './src/lib/nodes.js';
+export function render(tagName, Component, config) {
+    let elem = originalRender(tagName, Component, config);
+    connect(elem);
+    return elem;
+}
+export { ComponentMixin };
+export { PropertiesMixin };
+export { EventsMixin };
+export { StyleMixin };
+export { TemplateMixin };
+export { mix };
+export { prop } from './src/lib/property.js';
+export { define } from './src/lib/define.js';
+export { Polyfill };
+export { ELEMENTS };
+export const registry = REGISTRIES.default;
+
+/**
+ * Simple custom Component with some mixins.
+ * @class BaseComponent
+ * @extends HTMLElement
+ *
+ * @example
+ * my-component.js
+ * ```js
+ * import { BaseComponent } from 'dna/component';
+ * export class MyComponent extends BaseComponent {
+ *   get css() {
+ *     return '...';
+ *   }
+ *   get events() {
+ *     return {
+ *       '...': '...'
+ *     };
+ *   }
+ *   static get observedAttributes() {
+ *     return ['...', '...'];
+ *   }
+ *   get template() {
+ *     return '...';
+ *   }
+ *   get properties() {
+ *     return { ... };
+ *   }
+ * }
+ * ```
+ */
+export const BaseComponent = mix(ELEMENTS.HTMLElement).with(
+    ComponentMixin,
+    PropertiesMixin,
+    StyleMixin,
+    EventsMixin,
+    TemplateMixin
+);

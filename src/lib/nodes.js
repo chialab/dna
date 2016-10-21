@@ -1,5 +1,5 @@
 import { isFunction } from './typeof.js';
-import { registry } from './registry.js';
+import { REGISTRIES } from './registries.js';
 
 const CONNECTED = 'connectedCallback';
 const DISCONNECTED = 'disconnectedCallback';
@@ -8,7 +8,7 @@ const UPDATED = 'attributeChangedCallback';
 export function getComponent(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
         let is = node.getAttribute('is') || node.tagName;
-        return registry.get(is);
+        return REGISTRIES.default.get(is);
     }
     return null;
 }
@@ -62,14 +62,4 @@ export function appendChild(parent, node) {
 export function removeChild(parent, node) {
     parent.removeChild(node);
     disconnect(node);
-}
-
-export function render(node, Component, props = {}) {
-    let element = new Component();
-    for (let k in props) {
-        element[k] = props[k];
-    }
-    node.appendChild(element);
-    connect(element);
-    return element;
 }

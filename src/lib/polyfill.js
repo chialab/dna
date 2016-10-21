@@ -1,4 +1,4 @@
-import { registry } from './registry.js';
+import { REGISTRIES } from './registries.js';
 import { isString } from './typeof.js';
 
 function isNew(node) {
@@ -15,7 +15,7 @@ export function Polyfill(Original) {
             if (!isNew(this)) {
                 return this;
             }
-            let desc = registry.get(this.is);
+            let desc = REGISTRIES.default.get(this.is);
             let config = desc.config;
             // Find the tagname of the constructor and create a new element with it
             let element = document.createElement(

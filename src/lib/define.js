@@ -1,4 +1,4 @@
-import { registry } from './registry.js';
+import { REGISTRIES } from './registries.js';
 
 /**
  * Create the Component constructor.
@@ -8,11 +8,10 @@ import { registry } from './registry.js';
  * @return {Function} The Component constructor.
  */
 export function define(tagName, Component, config) {
-    config = config || {};
     Object.defineProperty(Component.prototype, 'is', {
         configurable: false,
         get: () => tagName,
     });
-    registry.define(tagName, Component, config);
+    REGISTRIES.default.define(tagName, Component, config);
     return Component;
 }
