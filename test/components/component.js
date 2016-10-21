@@ -1,8 +1,6 @@
-import { mix } from '../../src/lib/mixins.js';
-import { ComponentMixin } from '../../src/mixins/component.js';
-import { HTMLElement } from '../../src/lib/html-element.js';
+import { ELEMENTS, mix, ComponentMixin } from '../../index-idom.js';
 
-export class TestComponent extends mix(HTMLElement).with(ComponentMixin) {
+export class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin) {
     static get observedAttributes() {
         return ['test-callback'];
     }

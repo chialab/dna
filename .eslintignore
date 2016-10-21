@@ -1,4 +1,4 @@
 *.js
-!index.js
+!index*
 !src/**/*.js
 !test/**/*.js

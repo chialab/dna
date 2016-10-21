@@ -38,7 +38,7 @@ export function bind(node, Ctr) {
         configurable: true,
         writable: true,
     });
-    Ctr.prototype.constructor.call(node);
+    Ctr.call(node);
 }
 
 export function create(node, descriptor) {

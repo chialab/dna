@@ -1,10 +1,6 @@
-import { mix } from '../../src/lib/mixins.js';
-import { prop } from '../../src/lib/property.js';
-import { ComponentMixin } from '../../src/mixins/component.js';
-import { HTMLElement } from '../../src/lib/html-element.js';
-import { PropertiesMixin } from '../../src/mixins/properties-component.js';
+import { ELEMENTS, mix, prop, ComponentMixin, PropertiesMixin } from '../../index-idom.js';
 
-export class TestComponent1 extends mix(HTMLElement).with(ComponentMixin, PropertiesMixin) {
+export class TestComponent1 extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['name', 'last-name', 'married', 'age', 'var'];
     }
@@ -20,7 +16,7 @@ export class TestComponent1 extends mix(HTMLElement).with(ComponentMixin, Proper
     }
 }
 
-export class TestComponent2 extends  mix(HTMLElement).with(ComponentMixin, PropertiesMixin) {
+export class TestComponent2 extends  mix(ELEMENTS.HTMLElement).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }

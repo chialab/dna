@@ -1,16 +1,11 @@
 /* eslint-env mocha */
 
-import '../src/observers/idom.js';
-import { define } from '../src/lib/define.js';
-import { mix } from '../src/lib/mixins.js';
-import { ComponentMixin } from '../src/mixins/component.js';
-import { HTMLElement } from '../src/lib/html-element.js';
-import { Template } from '../index.js';
+import { mix, define, Template, ComponentMixin, ELEMENTS } from '../index-idom.js';
 import { Wrapper } from './utils/wrapper.js';
 
 describe('Unit: lib', () => {
     describe('define', () => {
-        class TestComponent extends mix(HTMLElement).with(ComponentMixin) {
+        class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin) {
             constructor() {
                 super();
                 this.name = 'Alan';

@@ -1,8 +1,6 @@
 /* eslint-env mocha */
 
-import '../src/observers/idom.js';
-import { define } from '../src/lib/define.js';
-import { render } from '../src/lib/nodes.js';
+import { define, render } from '../index-idom.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 import { Wrapper } from './utils/wrapper.js';
 

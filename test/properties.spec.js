@@ -1,8 +1,6 @@
 /* eslint-env mocha */
 
-import '../src/observers/idom.js';
-import { Template } from '../index.js';
-import { define } from '../src/lib/define.js';
+import { Template, define } from '../index-idom.js';
 import {
     TestComponent1,
     TestComponent2,

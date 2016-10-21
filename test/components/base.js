@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../src/base-component.js';
+import { BaseComponent } from '../../index-idom.js';
 
 export class TestComponent extends BaseComponent {
     static get observedAttributes() {

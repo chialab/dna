@@ -10,28 +10,30 @@ function isNew(node) {
 }
 
 export function Polyfill(Original) {
-    function Modified() {
-        if (!isNew(this)) {
-            return this;
+    class Polyfilled {
+        constructor() {
+            if (!isNew(this)) {
+                return this;
+            }
+            let desc = registry.get(this.is);
+            let config = desc.config;
+            // Find the tagname of the constructor and create a new element with it
+            let element = document.createElement(
+                config.extends ? config.extends : this.is
+            );
+            element.__proto__ = desc.Ctr.prototype;
+            if (config.extends) {
+                element.setAttribute('is', this.is);
+            }
+            return element;
         }
-        let desc = registry.get(this.is);
-        let config = desc.config;
-        // Find the tagname of the constructor and create a new element with it
-        let element = document.createElement(
-            config.extends ? config.extends : this.is
-        );
-        element.__proto__ = desc.Ctr.prototype;
-        if (config.extends) {
-            element.setAttribute('is', this.is);
-        }
-        return element;
     }
-    Modified.prototype = Object.create(Original.prototype, {
+    Polyfilled.prototype = Object.create(Original.prototype, {
         constructor: {
-            value: Modified,
+            value: Polyfilled,
             configurable: true,
             writable: true,
         },
     });
-    return Modified;
+    return Polyfilled;
 }
