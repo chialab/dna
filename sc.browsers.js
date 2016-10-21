@@ -105,6 +105,12 @@ module.exports = {
         platform: 'Windows 10',
         version: '13',
     },
+    SL_Edge_14: {
+        base: 'SauceLabs',
+        browserName: 'microsoftedge',
+        platform: 'Windows 10',
+        version: '14',
+    },
     SL_iOS_8: {
         base: 'SauceLabs',
         browserName: 'iphone',
