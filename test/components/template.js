@@ -1,10 +1,12 @@
 import { mix } from '../../src/lib/mixins.js';
 import { prop } from '../../src/lib/property.js';
-import { Component } from '../../src/component.js';
+import { HTMLElement } from '../../src/lib/html-element.js';
+import { ComponentMixin } from '../../src/mixins/component.js';
 import { PropertiesMixin } from '../../src/mixins/properties-component.js';
 import { TemplateMixin } from '../../src/mixins/template-component.js';
 
-class TestComponent extends mix(Component).with(PropertiesMixin, TemplateMixin) {
+
+class TestComponent extends mix(HTMLElement).with(ComponentMixin, PropertiesMixin, TemplateMixin) {
     get properties() {
         return {
             name: String,
@@ -62,7 +64,7 @@ export class TestComponent5 extends TestComponent {
     }
 }
 
-export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
+export class TestPlaceholder extends mix(HTMLElement).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }
@@ -79,7 +81,7 @@ export class TestPlaceholder extends mix(Component).with(PropertiesMixin) {
     }
 }
 
-export class Test2Placeholder extends mix(Component).with(PropertiesMixin) {
+export class Test2Placeholder extends mix(HTMLElement).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }

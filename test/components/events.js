@@ -1,8 +1,9 @@
 import { mix } from '../../src/lib/mixins.js';
-import { Component } from '../../src/component.js';
+import { ComponentMixin } from '../../src/mixins/component.js';
+import { HTMLElement } from '../../src/lib/html-element.js';
 import { EventsMixin } from '../../src/mixins/events-component.js';
 
-export class TestComponent extends mix(Component).with(EventsMixin) {
+export class TestComponent extends mix(HTMLElement).with(ComponentMixin, EventsMixin) {
     get events() {
         return {
             'customEvent': 'onCustomEvent',
@@ -48,7 +49,7 @@ export class TestComponent extends mix(Component).with(EventsMixin) {
 }
 
 
-export class TestInvalidComponent extends mix(Component).with(EventsMixin) {
+export class TestInvalidComponent extends mix(HTMLElement).with(ComponentMixin, EventsMixin) {
     get events() {
         return {
             customEvent: 'undefined',

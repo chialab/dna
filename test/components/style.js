@@ -1,8 +1,9 @@
 import { mix } from '../../src/lib/mixins.js';
-import { Component } from '../../src/component.js';
+import { HTMLElement } from '../../src/lib/html-element.js';
+import { ComponentMixin } from '../../src/mixins/component.js';
 import { StyleMixin } from '../../src/mixins/style-component.js';
 
-class TestComponent extends mix(Component).with(StyleMixin) {
+class TestComponent extends mix(HTMLElement).with(ComponentMixin, StyleMixin) {
     constructor() {
         super();
         this.innerHTML = '<h1>DNA TESTS</h1>';
