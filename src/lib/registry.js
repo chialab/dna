@@ -1,8 +1,4 @@
 class Registry {
-    get native() {
-        return self.customElements;
-    }
-
     constructor() {
         this.components = {};
     }

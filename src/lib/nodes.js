@@ -71,4 +71,5 @@ export function render(node, Component, props = {}) {
     }
     node.appendChild(element);
     connect(element);
+    return element;
 }

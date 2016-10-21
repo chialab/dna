@@ -57,6 +57,9 @@ module.exports = function(config) {
                     include: [
                         'src/**/*.js',
                     ],
+                    exclude: [
+                        'src/polyfills/**/*.js',
+                    ],
                 }),
                 babel({
                     include: [
