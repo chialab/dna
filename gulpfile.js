@@ -61,6 +61,15 @@ function unit(done) {
     }, done).start();
 }
 
+function unitSaucelabsBrowser(done) {
+    env.NODE_ENV = 'test';
+    new karma.Server({
+        configFile: karmaConfig,
+        browsers: [],
+        singleRun: false,
+    }, done).start();
+}
+
 function unitWatch(done) {
     env.NODE_ENV = 'test';
     new karma.Server({
@@ -133,6 +142,7 @@ function jsDoc() {
 
 gulp.task('clean', clean);
 gulp.task('unit', unit);
+gulp.task('unit-sl-browser', unitSaucelabsBrowser);
 gulp.task('unit-watch', unitWatch);
 gulp.task('lint', lint);
 gulp.task('js-min', jsMin);

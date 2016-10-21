@@ -41,7 +41,6 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'https://cdn.polyfill.io/v2/polyfill.min.js',
             'test/**/*.spec.js',
         ],
 
@@ -129,7 +128,7 @@ module.exports = function(config) {
 
         switch (process.env.CI_BUILD_TYPE) {
             case 'saucelabs':
-                var saucelabsBrowsers = require('./sc.browsers.js');
+                var saucelabsBrowsers = require('./sl.browsers.js');
                 config.set({
                     browserDisconnectTimeout: 10000,
                     browserDisconnectTolerance: 1,
