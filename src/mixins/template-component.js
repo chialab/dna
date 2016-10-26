@@ -43,15 +43,14 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         }
         if (this.hasOwnProperty('template')) {
             this.render();
-        }
-    }
-    connectedCallback() {
-        super.connectedCallback();
-        if (this.hasOwnProperty('template')) {
-            if (this.observeProperties) {
-                this.observeProperties(() => {
+            let props = this.properties;
+            if (props) {
+                let callback = () => {
                     this.render();
-                });
+                };
+                for (let k in props) {
+                    props[k].observe(callback);
+                }
             }
         }
     }

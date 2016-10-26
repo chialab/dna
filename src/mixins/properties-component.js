@@ -1,7 +1,7 @@
-import { PropertyList } from './lib/property.js';
 import { isArray } from './lib/typeof.js';
 import { dispatch } from './lib/dispatch.js';
 import { isUndefined } from './lib/typeof.js';
+import { prop } from './lib/property.js';
 
 function getValue(property, attrVal) {
     if (attrVal === '' && property.accepts(Boolean)) {
@@ -66,23 +66,27 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let props = this.properties;
-        let list = new PropertyList();
-        if (!isArray(props)) {
-            props = [props];
+        if (props) {
+            if (!isArray(props)) {
+                props = [props];
+            }
+            props = props.reduce((res, partialProps) => {
+                for (let k in partialProps) {
+                    res[k] = prop(partialProps[k]);
+                }
+                return res;
+            }, {});
+        } else {
+            props = {};
         }
-        props.forEach((partialProps) => {
-            list.add(partialProps);
-        });
-        props = list;
         Object.defineProperty(this, 'properties', {
             value: props,
             writable: false,
             configurable: true,
         });
-        props.iterate((prop) => {
-            prop.scoped(this).init();
-        });
-        props.iterate((prop) => {
+        for (let k in props) {
+            let prop = props[k];
+            prop.named(k).scoped(this).init();
             let { attrName, eventName } = prop;
             if (attrName || eventName) {
                 prop.observe(() => {
@@ -94,12 +98,13 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                     }
                 });
             }
-        });
+        }
     }
     connectedCallback() {
         super.connectedCallback();
         let props = this.properties;
-        props.iterate((prop) => {
+        for (let k in props) {
+            let prop = props[k];
             let { attrName } = prop;
             if (attrName) {
                 if (isUndefined(this[prop.name])) {
@@ -110,7 +115,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                     setAttribute(this, attrName, this[prop.name]);
                 }
             }
-        });
+        }
     }
     /**
      * On `attributeChanged` callback, sync attributes with properties.
@@ -120,9 +125,13 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
-        let prop = this.properties.get(attr, true);
-        if (prop) {
-            this[prop.name] = getValue(prop, newVal);
+        let props = this.properties;
+        for (let k in props) {
+            let prop = props[k];
+            if (prop.attrName === attr) {
+                this[prop.name] = getValue(prop, newVal);
+                return;
+            }
         }
     }
     /**
@@ -132,14 +141,6 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperty(propName, callback) {
-        this.properties.get(propName).observe(callback);
-    }
-    /**
-     * Create a listener for node's properties changes.
-     * @param {Function} callback The callback to fire.
-     * @return {Object} An object with `cancel` method.
-     */
-    observeProperties(callback) {
-        return this.properties.observe(callback);
+        this.properties[propName].observe(callback);
     }
 };

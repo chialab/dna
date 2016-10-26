@@ -33,18 +33,13 @@ describe('DNAPropertiesComponent', () => {
             assert.equal(elem.var, 1234);
         });
 
-        it('observe properties changes', () => {
+        it('observe property changes', () => {
             let changedSingle = false;
-            let changedAll = false;
             elem.observeProperty('age', () => {
                 changedSingle = true;
             });
-            elem.observeProperties(() => {
-                changedAll = true;
-            });
             elem.age = 41;
             assert(changedSingle);
-            assert(changedAll);
         });
     });
 

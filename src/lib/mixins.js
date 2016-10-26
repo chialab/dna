@@ -1,3 +1,5 @@
+import '../polyfills/reduce.js';
+
 /**
  * @author Justin Fagnani
  * @see https://github.com/justinfagnani/mixwith.js

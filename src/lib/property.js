@@ -1,37 +1,11 @@
 import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
+import '../polyfills/reduce.js';
 
 const define = Object.defineProperty;
 
-class ObserverMixin {
-    constructor() {
-        this._ = [];
-    }
-
-    observe(fn) {
-        if (isFunction(fn)) {
-            this._.push(fn);
-        }
-        return this;
-    }
-
-    unobserve(fn) {
-        let io = this._.indexOf(fn);
-        if (io !== -1) {
-            this._.splice(io, 1);
-        }
-        return this;
-    }
-
-    changed(newValue, oldValue) {
-        for (let i = 0, len = this._.length; i < len; i++) {
-            this._[i](this, newValue, oldValue);
-        }
-    }
-}
-
-class Property extends ObserverMixin {
+class Property {
     constructor(ctrs) {
-        super();
+        this._ = [];
         ctrs = ctrs || [];
         if (!isArray(ctrs)) {
             ctrs = [ctrs];
@@ -55,6 +29,27 @@ class Property extends ObserverMixin {
             }
             return false;
         };
+    }
+
+    observe(fn) {
+        if (isFunction(fn)) {
+            this._.push(fn);
+        }
+        return this;
+    }
+
+    unobserve(fn) {
+        let io = this._.indexOf(fn);
+        if (io !== -1) {
+            this._.splice(io, 1);
+        }
+        return this;
+    }
+
+    changed(newValue, oldValue) {
+        for (let i = 0, len = this._.length; i < len; i++) {
+            this._[i](this, newValue, oldValue);
+        }
     }
 
     accepts(Ctr) {
@@ -164,51 +159,10 @@ class Property extends ObserverMixin {
     }
 }
 
-export class PropertyList extends ObserverMixin {
-    constructor(props) {
-        super();
-        this.props = [];
-        this.add(props);
-    }
-
-    add(property) {
-        if (property instanceof Property) {
-            this.props.push(
-                property.observe((newValue, oldValue) =>
-                    this.changed(newValue, oldValue)
-                )
-            );
-        } else if (isObject(property)) {
-            for (let k in property) {
-                let p = property[k];
-                if (!(p instanceof Property)) {
-                    p = new Property(p);
-                }
-                p.named(k);
-                this.add(p);
-            }
-        }
-    }
-
-    get(name, attr = false) {
-        let key = attr ? 'attrName' : 'name';
-        for (let i = 0, len = this.props.length; i < len; i++) {
-            let prop = this.props[i];
-            if (prop[key] === name) {
-                return prop;
-            }
-        }
-        return null;
-    }
-
-    iterate(callback) {
-        for (let i = 0, len = this.props.length; i < len; i++) {
-            callback(this.props[i]);
-        }
-    }
-}
-
 export function prop(ctrs) {
+    if (ctrs instanceof Property) {
+        return ctrs;
+    }
     return new Property(ctrs);
 }
 
