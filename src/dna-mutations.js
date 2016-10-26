@@ -6,7 +6,9 @@
  * Just another components pattern.
  * Use with DOM Mutations.
  */
-
+import './polyfills/custom-event.js';
+import './polyfills/reduce.js';
+import './polyfills/matches.js';
 import './observers/mutations.js';
 import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';

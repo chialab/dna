@@ -6,7 +6,9 @@
  * Just another components pattern.
  * Use with Incremental DOM notifications.
  */
-
+import './polyfills/custom-event.js';
+import './polyfills/reduce.js';
+import './polyfills/matches.js';
 import './observers/idom.js';
 import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';

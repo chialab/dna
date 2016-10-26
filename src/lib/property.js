@@ -1,5 +1,4 @@
 import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
-import '../polyfills/reduce.js';
 
 const define = Object.defineProperty;
 
