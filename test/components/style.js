@@ -1,4 +1,4 @@
-import { ELEMENTS, mix, ComponentMixin, StyleMixin } from '../../index-idom.js';
+import { ELEMENTS, mix, ComponentMixin, StyleMixin } from '../../src/dna-idom.js';
 
 class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, StyleMixin) {
     constructor() {

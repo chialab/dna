@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../index-idom.js';
+import { BaseComponent } from '../../src/dna-idom.js';
 
 export class TestComponent extends BaseComponent {
     static get observedAttributes() {

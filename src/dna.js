@@ -4,48 +4,34 @@
  * http://dna.chialab.io
  *
  * Just another components pattern.
- * Use with Incremental DOM notifications.
+ * Use with Custom Elements specs.
  */
-
-import './src/observers/idom.js';
 import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';
 import { ELEMENTS } from './lib/elements.js';
-import { REGISTRIES } from './src/lib/registries.js';
+import { REGISTRIES } from './lib/registries.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
 import { StyleMixin } from './mixins/style-component.js';
 import { TemplateMixin } from './mixins/template-component.js';
-import { Polyfill } from './src/lib/polyfill.js';
-import { render as originalRender } from './src/lib/render.js';
-import { connect } from './src/lib/nodes.js';
-
-REGISTRIES.default = REGISTRIES.custom;
-ELEMENTS.HTMLElement = new Polyfill(self.HTMLElement);
 
 export const Template = Skin;
 export const IDOM = Template.IDOM;
-export * from './src/lib/nodes.js';
-export function render(tagName, Component, config) {
-    let elem = originalRender(tagName, Component, config);
-    connect(elem);
-    return elem;
-}
+export { render } from './lib/render.js';
 export { ComponentMixin };
 export { PropertiesMixin };
 export { EventsMixin };
 export { StyleMixin };
 export { TemplateMixin };
 export { mix };
-export { prop } from './src/lib/property.js';
-export { define } from './src/lib/define.js';
-export { Polyfill };
+export { define } from './lib/define.js';
+export { prop } from './lib/property.js';
 export { ELEMENTS };
 export const registry = REGISTRIES.default;
 
 /**
- * Simple custom Component with some mixins.
+ * Simple Custom Component with some behaviors.
  * @class BaseComponent
  * @extends HTMLElement
  *
@@ -72,12 +58,11 @@ export const registry = REGISTRIES.default;
  *     return { ... };
  *   }
  * }
- * ```
  */
-export const BaseComponent = mix(ELEMENTS.HTMLElement).with(
+export class BaseComponent extends mix(ELEMENTS.HTMLElement).with(
     ComponentMixin,
     PropertiesMixin,
     StyleMixin,
     EventsMixin,
     TemplateMixin
-);
+) {}

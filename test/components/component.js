@@ -1,4 +1,4 @@
-import { ELEMENTS, mix, ComponentMixin } from '../../index-idom.js';
+import { ELEMENTS, mix, ComponentMixin } from '../../src/dna-idom.js';
 
 export class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin) {
     static get observedAttributes() {

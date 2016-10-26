@@ -38,9 +38,8 @@ var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
 
 var env = process.env;
-var entries = ['index.js', 'index-idom.js', 'index-mutations.js'];
+var entries = ['src/dna.js', 'src/dna-idom.js', 'src/dna-mutations.js'];
 var moduleName = 'DNA';
-var artifactName = 'dna';
 var srcs = entries.concat(['src/**/*.js']);
 var tests = ['test/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
@@ -115,7 +114,7 @@ function jsMin() {
 
     return entries.map((entry) =>
         bundle('umd', entry)
-            .pipe(source(entry.replace('index', artifactName)))
+            .pipe(source(entry.replace('src/', '')))
             .pipe(buffer())
             .pipe(sourcemaps.init({
                 loadMaps: true,

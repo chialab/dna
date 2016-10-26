@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { mix, define, Template, ComponentMixin, ELEMENTS } from '../index-idom.js';
+import { mix, define, Template, ComponentMixin, ELEMENTS } from '../src/dna-idom.js';
 import { Wrapper } from './utils/wrapper.js';
 
 describe('Unit: lib', () => {

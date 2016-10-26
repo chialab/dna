@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../index-idom.js';
+import { Template, define } from '../src/dna-idom.js';
 import { TestComponent } from './components/component.js';
 import { Wrapper } from './utils/wrapper.js';
 import { debounce } from './utils/debounce.js';
