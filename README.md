@@ -24,7 +24,7 @@ $ bower i dna-components --save
 
 ## Usage
 
-**Usage with Custom Elements v1** 🚀
+**Use with Custom Elements v1** 🚀
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
@@ -37,13 +37,14 @@ class MyElem extends DNA.BaseComponent {
 customElements.define('my-elem', MyElem);
 ```
 
-More:
+see also:
+* [tutorial](./tutorials/interop/custom-elements-v1.md)
 * [native support](http://caniuse.com/#feat=custom-elementsv1)
 * [polyfill](https://github.com/webcomponents/custom-elements/)
 
 ---
 
-**Usage with Incremental DOM** 🌟
+**Use with Incremental DOM** 🌟
 
 DNA's TemplateMixin uses [Skin templates](https://github.com/chialab/skin-template), which implements [Google IncrementalDOM](https://github.com/google/incremental-dom). Using IDOM callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
 
@@ -68,28 +69,15 @@ DNA.define('my-elem', MyElem);
 DNA.render(document.body, MyElem);
 ```
 
----
-
-**Usage with MutationObserver**
-
-This version of the library provides a lite polyfill for [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs using [MutationObserver API](https://developer.mozilla.org/it/docs/Web/API/MutationObserver) and without using the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) for element definition:
-
-```js
-import DNA from './dna-mutations.js';
-
-class MyElem extends DNA.BaseComponent {
-    // ...
-}
-
-DNA.define('my-elem', MyElem);
-```
-
-More:
-* [native support](http://caniuse.com/#feat=mutationobserver)
-* [polyfill](https://github.com/webcomponents/webcomponentsjs/tree/master/src/MutationObserver)
+see also:
+* [tutorial](./tutorials/interop/incremental-dom.md)
 
 ---
 
-**Usage with React**
+**Use with:**
 
-Coming soon...
+React (coming soon...)
+
+[MutationObserver](./tutorials/interop/mutation-observer.md)
+
+---
