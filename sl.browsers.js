@@ -120,7 +120,7 @@ module.exports = {
     SL_iOS_10: {
         base: 'SauceLabs',
         browserName: 'iphone',
-        platform: 'OS X 10.11',
+        platform: 'OS X 10.12',
         version: '10',
     },
     SL_Android_4: {

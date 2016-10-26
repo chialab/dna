@@ -25,10 +25,12 @@ export { EventsMixin };
 export { StyleMixin };
 export { TemplateMixin };
 export { mix };
-export { define } from './lib/define.js';
 export { prop } from './lib/property.js';
 export { ELEMENTS };
 export const registry = REGISTRIES.default;
+export function define(tagName, Component, config) {
+    return registry.define(tagName, Component, config);
+}
 
 /**
  * Simple Custom Component with some behaviors.

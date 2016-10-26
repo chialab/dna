@@ -41,10 +41,12 @@ export { StyleMixin };
 export { TemplateMixin };
 export { mix };
 export { prop } from './lib/property.js';
-export { define } from './lib/define.js';
 export { Polyfill };
 export { ELEMENTS };
 export const registry = REGISTRIES.default;
+export function define(tagName, Component, config) {
+    return registry.define(tagName, Component, config);
+}
 
 /**
  * Simple custom Component with some mixins.
