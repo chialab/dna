@@ -119,9 +119,10 @@ module.exports = {
     },
     SL_iOS_10: {
         base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.12',
-        version: '10',
+        deviceName: 'iPhone Simulator',
+        platformName: 'iOS',
+        platformVersion: '10.0',
+        browserName: 'Safari',
     },
     SL_Android_4: {
         base: 'SauceLabs',
