@@ -66,7 +66,7 @@ module.exports = function(config) {
                         'node_modules/**/*.js',
                         'src/**/*.js',
                         'test/**/*.js',
-                        'index.js',
+                        'index*.js',
                     ],
                 }),
             ],
