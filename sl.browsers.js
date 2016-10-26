@@ -81,6 +81,12 @@ module.exports = {
         platform: 'OS X 10.11',
         version: '9',
     },
+    SL_Safari_10: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.11',
+        version: '10',
+    },
     SL_IE_11: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
@@ -110,6 +116,12 @@ module.exports = {
         browserName: 'iphone',
         platform: 'OS X 10.11',
         version: '9.3',
+    },
+    SL_iOS_10: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.11',
+        version: '10',
     },
     SL_Android_4: {
         base: 'SauceLabs',
