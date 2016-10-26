@@ -4,6 +4,13 @@ Just another components pattern.
 
 [Documentation](http://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](http://dna.chialab.io) | [Author home page](http://www.chialab.com)
 
+[![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
+[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/next/graph/badge.svg)](https://codecov.io/gh/Chialab/dna/branch/next)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
+
+\* *tests executed using dna-idom implementations*
+
 ## Install
 
 [![NPM](https://img.shields.io/npm/v/dna-components.svg)](https://www.npmjs.com/package/dna-components)
@@ -15,9 +22,74 @@ $ npm i dna-components --save
 $ bower i dna-components --save
 ```
 
-## Dev
+## Usage
 
-[![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
-[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/next/graph/badge.svg)](https://codecov.io/gh/Chialab/dna/branch/next)
+**Usage with Custom Elements v1** 🚀
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
+DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
+```js
+import DNA from './dna.js';
+
+class MyElem extends DNA.BaseComponent {
+    // ...
+}
+
+customElements.define('my-elem', MyElem);
+```
+
+More:
+* [native support](http://caniuse.com/#feat=custom-elementsv1)
+* [polyfill](https://github.com/webcomponents/custom-elements/)
+
+---
+
+**Usage with Incremental DOM** 🌟
+
+DNA's TemplateMixin uses [Skin templates](https://github.com/chialab/skin-template), which implements [Google IncrementalDOM](https://github.com/google/incremental-dom). Using IDOM callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
+
+```js
+import DNA from './dna-idom.js';
+
+class MyChild extends DNA.BaseComponent {
+    // ...
+}
+
+class MyElem extends DNA.BaseComponent {
+    get template() {
+        return '<my-child></my-child>';
+    }
+}
+
+// define
+DNA.define('my-child', MyChild);
+DNA.define('my-elem', MyElem);
+
+// bootstrap
+DNA.render(document.body, MyElem);
+```
+
+---
+
+**Usage with MutationObserver**
+
+This version of the library provides a lite polyfill for [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs using [MutationObserver API](https://developer.mozilla.org/it/docs/Web/API/MutationObserver) and without using the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) for element definition:
+
+```js
+import DNA from './dna-mutations.js';
+
+class MyElem extends DNA.BaseComponent {
+    // ...
+}
+
+DNA.define('my-elem', MyElem);
+```
+
+More:
+* [native support](http://caniuse.com/#feat=mutationobserver)
+* [polyfill](https://github.com/webcomponents/webcomponentsjs/tree/master/src/MutationObserver)
+
+---
+
+**Usage with React**
+
+Coming soon...
