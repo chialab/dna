@@ -31,5 +31,4 @@ script:
   - npm test
 
 after_success:
-  - if [ "$CI_BUILD_TYPE" = 'default' ]; then npm run codecov; fi
-  - if [ "$CI_BUILD_TYPE" = 'default' ]; then npm run coveralls; fi
+  - if [ "$CI_BUILD_TYPE" = 'default' ]; then cat coverage/*/lcov.info | ./node_modules/.bin/codecov; fi

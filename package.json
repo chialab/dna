@@ -27,6 +27,7 @@
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
     "babel-preset-es2015-rollup": "^1.2.0",
     "chai": "^3.5.0",
+    "codecov.io": "^0.1.6",
     "del": "^2.2.2",
     "eslint": "^3.7.1",
     "eslint-plugin-mocha": "^4.6.0",
