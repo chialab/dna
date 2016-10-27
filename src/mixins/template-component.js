@@ -1,4 +1,4 @@
-import Template from 'skin-template';
+import { isFunction, isString } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -28,21 +28,7 @@ import Template from 'skin-template';
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        let template = this.template;
-        if (template && !this.hasOwnProperty('template')) {
-            let Ctr = this.constructor;
-            if (typeof template === 'string') {
-                template = new Template(template);
-                Object.defineProperty(Ctr.prototype, 'template', {
-                    value: template,
-                });
-            }
-            Object.defineProperty(this, 'template', {
-                value: new Template(template).setScope(this),
-            });
-        }
-        if (this.hasOwnProperty('template')) {
-            this.render();
+        if (this.template) {
             let props = this.properties;
             if (props) {
                 let callback = () => {
@@ -54,14 +40,22 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
             }
         }
     }
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.template) {
+            this.render();
+        }
+    }
     /**
      * Update Component child nodes.
      */
     render() {
         let tpl = this.template;
         /* istanbul ignore else */
-        if (tpl instanceof Template) {
-            tpl.render(this);
+        if (isFunction(tpl)) {
+            tpl();
+        } else if (isString(tpl)) {
+            this.innerHTML = tpl;
         } else {
             throw new Error('Invalid template property.');
         }

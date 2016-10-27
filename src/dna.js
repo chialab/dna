@@ -6,31 +6,27 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';
-import { ELEMENTS } from './lib/elements.js';
-import { REGISTRIES } from './lib/registries.js';
+import { Shim } from './lib/shim.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
 import { StyleMixin } from './mixins/style-component.js';
 import { TemplateMixin } from './mixins/template-component.js';
 
-export const Template = Skin;
-export const IDOM = Template.IDOM;
-export { render } from './lib/render.js';
 export { ComponentMixin };
 export { PropertiesMixin };
 export { EventsMixin };
 export { StyleMixin };
 export { TemplateMixin };
+export { Shim };
 export { mix };
 export { prop } from './lib/property.js';
-export { ELEMENTS };
-export const registry = REGISTRIES.default;
+export const registry = self.customElements;
 export function define(tagName, Component, config) {
     return registry.define(tagName, Component, config);
 }
+export { render } from './lib/render.js';
 
 /**
  * Simple Custom Component with some behaviors.
@@ -42,6 +38,9 @@ export function define(tagName, Component, config) {
  * ```js
  * import { BaseComponent } from 'dna/component';
  * export class MyComponent extends BaseComponent {
+ *   static get observedAttributes() {
+ *     return ['...', '...'];
+ *   }
  *   get css() {
  *     return '...';
  *   }
@@ -49,9 +48,6 @@ export function define(tagName, Component, config) {
  *     return {
  *       '...': '...'
  *     };
- *   }
- *   static get observedAttributes() {
- *     return ['...', '...'];
  *   }
  *   get template() {
  *     return '...';
@@ -61,7 +57,9 @@ export function define(tagName, Component, config) {
  *   }
  * }
  */
-export class BaseComponent extends mix(ELEMENTS.HTMLElement).with(
+export class BaseComponent extends mix(
+    new Shim(self.HTMLElement)
+).with(
     ComponentMixin,
     PropertiesMixin,
     StyleMixin,

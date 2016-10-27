@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render } from '../src/dna-idom.js';
+import { define, render } from './library.js';
 import { TestComponent1, TestComponent2 } from './components/style.js';
 import { Wrapper } from './utils/wrapper.js';
 

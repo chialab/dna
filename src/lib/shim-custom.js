@@ -1,4 +1,4 @@
-import { REGISTRIES } from './registries.js';
+import { registry } from './registry.js';
 import { isString } from './typeof.js';
 
 function isNew(node) {
@@ -9,13 +9,13 @@ function isNew(node) {
     }
 }
 
-export function Polyfill(Original) {
+export function Shim(Original) {
     class Polyfilled {
         constructor() {
             if (!isNew(this)) {
                 return this;
             }
-            let desc = REGISTRIES.default.get(this.constructor);
+            let desc = registry.get(this.constructor);
             let config = desc.config;
             // Find the tagname of the constructor and create a new element with it
             let element = document.createElement(

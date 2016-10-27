@@ -1,6 +1,6 @@
-import { ELEMENTS, mix, ComponentMixin, StyleMixin } from '../../src/dna-idom.js';
+import { Shim, mix, ComponentMixin, StyleMixin } from '../library.js';
 
-class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, StyleMixin) {
+class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, StyleMixin) {
     constructor() {
         super();
         this.innerHTML = '<h1>DNA TESTS</h1>';

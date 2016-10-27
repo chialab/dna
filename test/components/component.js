@@ -1,6 +1,6 @@
-import { ELEMENTS, mix, ComponentMixin } from '../../src/dna-idom.js';
+import { Shim, mix, ComponentMixin } from '../library.js';
 
-export class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin) {
+export class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin) {
     static get observedAttributes() {
         return ['test-callback'];
     }

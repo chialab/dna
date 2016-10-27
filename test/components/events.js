@@ -1,6 +1,6 @@
-import { ELEMENTS, mix, ComponentMixin, EventsMixin } from '../../src/dna-idom.js';
+import { Shim, mix, ComponentMixin, EventsMixin } from '../library.js';
 
-export class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, EventsMixin) {
+export class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, EventsMixin) {
     get events() {
         return {
             'customEvent': 'onCustomEvent',
@@ -46,7 +46,7 @@ export class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin
 }
 
 
-export class TestInvalidComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, EventsMixin) {
+export class TestInvalidComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, EventsMixin) {
     get events() {
         return {
             customEvent: 'undefined',

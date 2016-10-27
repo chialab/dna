@@ -1,6 +1,6 @@
-import { BaseComponent } from '../../src/dna-idom.js';
+import { TestComponent } from '../library.js';
 
-export class TestComponent extends BaseComponent {
+export class TestBaseComponent extends TestComponent {
     static get observedAttributes() {
         return ['name'];
     }

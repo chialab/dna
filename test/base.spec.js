@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna-idom.js';
-import { TestComponent } from './components/base.js';
+import { Template, define } from './library.js';
+import { TestBaseComponent } from './components/base.js';
 import { Wrapper } from './utils/wrapper.js';
 import { debounce } from './utils/debounce.js';
 
 const WRAPPER = new Wrapper();
-define('test-base-component', TestComponent);
+define('test-base-component', TestBaseComponent);
 
 describe('Unit: BaseComponent', () => {
     let template = new Template('show', 'attr',

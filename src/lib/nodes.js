@@ -1,5 +1,5 @@
 import { isFunction } from './typeof.js';
-import { REGISTRIES } from './registries.js';
+import { registry } from './registry.js';
 
 const CONNECTED = 'connectedCallback';
 const DISCONNECTED = 'disconnectedCallback';
@@ -8,7 +8,7 @@ const UPDATED = 'attributeChangedCallback';
 export function getComponent(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
         let is = node.getAttribute('is') || node.tagName;
-        return REGISTRIES.default.get(is);
+        return registry.get(is);
     }
     return null;
 }

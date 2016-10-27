@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 
-import { mix, define, Template, ComponentMixin, ELEMENTS } from '../src/dna-idom.js';
+import { mix, define, Template, ComponentMixin, Shim } from './library.js';
 import { Wrapper } from './utils/wrapper.js';
 
 describe('Unit: lib', () => {
     describe('define', () => {
-        class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin) {
+        class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin) {
             constructor() {
                 super();
                 this.name = 'Alan';

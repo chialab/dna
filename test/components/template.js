@@ -1,6 +1,6 @@
-import { ELEMENTS, mix, prop, ComponentMixin, PropertiesMixin, TemplateMixin } from '../../src/dna-idom.js';
+import { Shim, mix, prop, ComponentMixin, PropertiesMixin, TemplateMixin, SkinTemplateMixin } from '../library.js';
 
-class TestComponent extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, PropertiesMixin, TemplateMixin) {
+class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, PropertiesMixin, TemplateMixin, SkinTemplateMixin) {
     get properties() {
         return {
             name: String,
@@ -58,7 +58,7 @@ export class TestComponent5 extends TestComponent {
     }
 }
 
-export class TestPlaceholder extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, PropertiesMixin) {
+export class TestPlaceholder extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }
@@ -75,7 +75,7 @@ export class TestPlaceholder extends mix(ELEMENTS.HTMLElement).with(ComponentMix
     }
 }
 
-export class Test2Placeholder extends mix(ELEMENTS.HTMLElement).with(ComponentMixin, PropertiesMixin) {
+export class Test2Placeholder extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, PropertiesMixin) {
     static get observedAttributes() {
         return ['value'];
     }

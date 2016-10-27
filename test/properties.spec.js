@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { Template, define } from '../src/dna-idom.js';
+import { Template, define } from './library.js';
 import {
     TestComponent1,
     TestComponent2,

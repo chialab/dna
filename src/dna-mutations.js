@@ -10,30 +10,18 @@ import './polyfills/custom-event.js';
 import './polyfills/reduce.js';
 import './polyfills/matches.js';
 import './observers/mutations.js';
-import Skin from 'skin-template';
 import { mix } from './lib/mixins.js';
-import { ELEMENTS } from './lib/elements.js';
-import { REGISTRIES } from './lib/registries.js';
+import { Shim } from './lib/shim-custom.js';
+import { registry } from './lib/registry.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
 import { StyleMixin } from './mixins/style-component.js';
 import { TemplateMixin } from './mixins/template-component.js';
-import { Polyfill } from './lib/polyfill.js';
 import { render as originalRender } from './lib/render.js';
 import { connect } from './lib/nodes.js';
 
-REGISTRIES.default = REGISTRIES.custom;
-ELEMENTS.HTMLElement = new Polyfill(self.HTMLElement);
-
-export const Template = Skin;
-export const IDOM = Template.IDOM;
 export * from './lib/nodes.js';
-export function render(tagName, Component, config) {
-    let elem = originalRender(tagName, Component, config);
-    connect(elem);
-    return elem;
-}
 export { ComponentMixin };
 export { PropertiesMixin };
 export { EventsMixin };
@@ -41,11 +29,15 @@ export { StyleMixin };
 export { TemplateMixin };
 export { mix };
 export { prop } from './lib/property.js';
-export { Polyfill };
-export { ELEMENTS };
-export const registry = REGISTRIES.default;
+export { Shim };
+export { registry };
 export function define(tagName, Component, config) {
     return registry.define(tagName, Component, config);
+}
+export function render(tagName, Component, config) {
+    let elem = originalRender(tagName, Component, config);
+    connect(elem);
+    return elem;
 }
 
 /**
@@ -78,7 +70,7 @@ export function define(tagName, Component, config) {
  * }
  * ```
  */
-export const BaseComponent = mix(ELEMENTS.HTMLElement).with(
+export const BaseComponent = mix(new Shim(self.HTMLElement)).with(
     ComponentMixin,
     PropertiesMixin,
     StyleMixin,
