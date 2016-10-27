@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { mix, define, Template, ComponentMixin, Shim } from './library.js';
+import { mix, render, define, ComponentMixin, Shim } from './library.js';
 
 const WRAPPER = document.body;
 
@@ -28,10 +28,8 @@ describe('Unit: lib', () => {
         });
 
         describe('an element with extends field', () => {
-            define('helper-define-component', TestComponent2);
-            let template = new Template('<div is="helper-define-component"></div>');
-            template.render(WRAPPER);
-            const elem = WRAPPER.querySelector('[is="helper-define-component"]');
+            define('helper-define-component', TestComponent2, { extends: 'div' });
+            const elem = render(WRAPPER, TestComponent2);
 
             it('a custom element with extends field', () => {
                 assert.equal(elem.localName.toLowerCase(), 'div');

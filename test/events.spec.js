@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import { define, render } from './library.js';
+import { dispatch } from '../src/lib/dispatch.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 
 const WRAPPER = document.body;
@@ -8,8 +9,7 @@ define('test-events-component', TestComponent);
 define('test2-events-component', TestInvalidComponent);
 
 describe('Unit: EventsComponent', () => {
-    render(WRAPPER, TestComponent);
-    const elem = WRAPPER.querySelector('test-events-component');
+    const elem = render(WRAPPER, TestComponent);
     describe('delegate', () => {
         describe('custom events', () => {
             it('should be handled', () => {
@@ -23,10 +23,10 @@ describe('Unit: EventsComponent', () => {
             let button = elem.querySelector('button');
             let input = elem.querySelector('input');
             before((done) => {
-                elem.trigger.call(span, 'click');
-                elem.trigger.call(button, 'click');
+                dispatch(span, 'click');
+                dispatch(button, 'click');
                 input.value = 'DNA Tests';
-                elem.trigger.call(input, 'change');
+                dispatch(input, 'change');
                 setTimeout(() => done(), 500);
             });
 

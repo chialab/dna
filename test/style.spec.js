@@ -11,8 +11,8 @@ define('test2-style-component', TestComponent2, {
 });
 
 describe('Unit: StyleComponent', () => {
-    let elem1 = render(WRAPPER, TestComponent1);
-    let elem2 = render(WRAPPER, TestComponent2);
+    const elem1 = render(WRAPPER, TestComponent1);
+    const elem2 = render(WRAPPER, TestComponent2);
 
     it('should handle `css` getter property', () => {
         let style = window.getComputedStyle(elem1.querySelector('h1'));
