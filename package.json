@@ -1,9 +1,4 @@
 {
-  "name": "dna-components",
-  "version": "2.0.0-beta6",
-  "description": "Just another components pattern.",
-  "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
-  "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/gulp unit",
     "lint": "./node_modules/.bin/gulp lint",
@@ -15,13 +10,6 @@
     "type": "git",
     "url": "https://github.com/chialab/dna"
   },
-  "keywords": [
-    "DNA",
-    "components",
-    "Chialab",
-    "webcomponents",
-    "virtualdom"
-  ],
   "license": "MIT",
   "devDependencies": {
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",

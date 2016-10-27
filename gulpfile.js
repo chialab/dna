@@ -38,7 +38,7 @@ var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
 
 var env = process.env;
-var entries = ['packages/dna/dna.js', 'packages/dna/dna-idom.js', 'packages/dna/dna-mutations.js'];
+var entries = ['packages/dna/index.js', 'packages/dna/dna-idom.js', 'packages/dna/dna-mutations.js'];
 var moduleName = 'DNA';
 var srcs = entries.concat(['src/**/*.js']);
 var karmaConfig = path.resolve('./karma.conf.js');
