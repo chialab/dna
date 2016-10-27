@@ -1,4 +1,4 @@
-import { Shim, mix, ComponentMixin, EventsMixin } from '../library.js';
+import { Shim, mix, ComponentMixin, EventsMixin } from '../../index.js';
 
 export class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, EventsMixin) {
     get events() {

@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render, setAttribute } from './library.js';
+import { define, render, setAttribute } from '../index.js';
 import {
     TestComponent1,
     TestComponent2,

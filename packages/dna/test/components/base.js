@@ -1,6 +1,6 @@
-import { TestComponent } from '../library.js';
+import { BaseComponent } from '../../index.js';
 
-export class TestBaseComponent extends TestComponent {
+export class TestBaseComponent extends BaseComponent {
     static get observedAttributes() {
         return ['name'];
     }

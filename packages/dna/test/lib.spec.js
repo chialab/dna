@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { mix, render, define, ComponentMixin, Shim } from './library.js';
+import { mix, render, define, ComponentMixin, Shim } from '../index.js';
 
 const WRAPPER = document.body;
 

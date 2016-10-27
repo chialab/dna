@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render } from './library.js';
+import { define, render } from '../index.js';
 import { dispatch } from '../src/lib/dispatch.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 

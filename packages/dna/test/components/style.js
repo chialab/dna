@@ -1,4 +1,4 @@
-import { Shim, mix, ComponentMixin, StyleMixin } from '../library.js';
+import { Shim, mix, ComponentMixin, StyleMixin } from '../../index.js';
 
 class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, StyleMixin) {
     constructor() {

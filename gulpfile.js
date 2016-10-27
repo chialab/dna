@@ -145,6 +145,14 @@ function jsDoc() {
         });
 }
 
+function symlinks() {
+    fs.symlinkSync(
+        path.resolve('./packages/dna'),
+        './node_modules/dna-components',
+        'dir'
+    );
+}
+
 gulp.task('unit', unit);
 gulp.task('unit-server', unitServer);
 gulp.task('unit-watch', unitWatch);
@@ -153,5 +161,6 @@ gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);
 gulp.task('docs', jsDoc);
+gulp.task('symlinks', symlinks);
 
 gulp.task('default', ['build']);

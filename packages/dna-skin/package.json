@@ -1,5 +1,5 @@
 {
-  "name": "dna-components",
+  "name": "dna-skin",
   "version": "2.0.0-beta7",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
@@ -14,5 +14,8 @@
     "Chialab",
     "webcomponents"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dna-components": "^2.0.0"
+  }
 }

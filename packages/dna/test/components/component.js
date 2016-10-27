@@ -1,4 +1,4 @@
-import { Shim, mix, ComponentMixin } from '../library.js';
+import { Shim, mix, ComponentMixin } from '../../index.js';
 
 export class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin) {
     static get observedAttributes() {

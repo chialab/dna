@@ -6,6 +6,9 @@ import {
     TestComponent2,
     TestComponent3,
     TestComponent4,
+    TestComponent5,
+    TestPlaceholder,
+    Test2Placeholder,
 } from './components/template.js';
 
 const WRAPPER = document.body;
@@ -14,6 +17,11 @@ define('test1-template-component', TestComponent1);
 define('test2-template-component', TestComponent2);
 define('test3-template-component', TestComponent3);
 define('test4-template-component', TestComponent4);
+define('test5-template-component', TestComponent5);
+define('test-vdom-placeholder', TestPlaceholder);
+define('test2-vdom-placeholder', Test2Placeholder, {
+    extends: 'figure',
+});
 
 describe('Unit: TemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
@@ -40,5 +48,14 @@ describe('Unit: TemplateComponent', () => {
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');
+    });
+
+    describe('should handle sub components', () => {
+        let elem = render(WRAPPER, TestComponent5);
+
+        it('and their callbacks', () => {
+            assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
+            assert.equal(elem.querySelector('figure').value, 11);
+        });
     });
 });

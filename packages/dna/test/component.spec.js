@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, createElement, appendChild, setAttribute, removeChild } from './library.js';
+import { define, createElement, appendChild, setAttribute, removeChild } from '../index.js';
 import { TestComponent } from './components/component.js';
 
 const WRAPPER = document.body;
