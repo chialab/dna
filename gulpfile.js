@@ -36,16 +36,22 @@ var karma = require('karma');
 var path = require('path');
 var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
+var glob = require('glob');
 
 var env = process.env;
-var entries = ['packages/dna/index.js', 'packages/dna/dna-idom.js', 'packages/dna/dna-mutations.js'];
 var moduleName = 'DNA';
-var srcs = entries.concat(['src/**/*.js']);
+var srcs = ['packages/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
 
-function clean() {
-    return del(['dist/']);
-}
+var packages = glob.sync('packages/*/');
+var entries = packages.map(function(pkg) {
+    var fileName = path.join(pkg, 'index.js');
+    if (fs.existsSync(fileName)) {
+        return fileName;
+    }
+}).filter(function(pkg) {
+    return !!pkg;
+});
 
 function cleanDoc() {
     return del(['docs/']);
@@ -111,21 +117,20 @@ function jsMin() {
     env.NODE_ENV = 'production';
     env.min = true;
 
-    return entries.map((entry) =>
-        bundle('umd', entry)
-            .pipe(source(entry.replace('packages/dna/', '')))
-            .pipe(buffer())
-            .pipe(sourcemaps.init({
-                loadMaps: true,
-            }))
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest('dist'))
-    );
-}
-
-function jsDist() {
-    return clean()
-        .then(jsMin);
+    return entries.map((entry) => {
+        var distFile = path.basename(path.dirname(entry)) + '.js';
+        var distPath = path.join(path.dirname(entry), 'dist');
+        return del([distPath]).then(() =>
+            bundle('umd', entry)
+                .pipe(source(distFile))
+                .pipe(buffer())
+                .pipe(sourcemaps.init({
+                    loadMaps: true,
+                }))
+                .pipe(sourcemaps.write('.'))
+                .pipe(gulp.dest(distPath))
+        );
+    });
 }
 
 function jsDoc() {
@@ -140,15 +145,13 @@ function jsDoc() {
         });
 }
 
-gulp.task('clean', clean);
 gulp.task('unit', unit);
 gulp.task('unit-server', unitServer);
 gulp.task('unit-watch', unitWatch);
 gulp.task('lint', lint);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
-gulp.task('js-dist', jsDist);
-gulp.task('dist', ['lint', 'unit'], jsDist);
+gulp.task('dist', ['lint', 'unit'], jsMin);
 gulp.task('docs', jsDoc);
 
 gulp.task('default', ['build']);
