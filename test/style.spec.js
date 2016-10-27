@@ -10,7 +10,7 @@ define('test2-style-component', TestComponent2, {
     extends: 'div',
 });
 
-describe('Unit: DNAStyleComponent', () => {
+describe('Unit: StyleComponent', () => {
     let elem1 = render(WRAPPER, TestComponent1);
     let elem2 = render(WRAPPER, TestComponent2);
 

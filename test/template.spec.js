@@ -23,7 +23,7 @@ define('test2-vdom-placeholder', Test2Placeholder, {
     extends: 'figure',
 });
 
-describe('Unit: DNATemplateComponent', () => {
+describe('Unit: TemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
         const elem = render(WRAPPER, TestComponent1);
 
