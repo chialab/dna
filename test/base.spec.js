@@ -1,19 +1,13 @@
 /* eslint-env mocha */
 
-import { Template, define } from './library.js';
+import { define, createElement, appendChild, setAttribute, removeChild } from './library.js';
 import { TestBaseComponent } from './components/base.js';
-import { Wrapper } from './utils/wrapper.js';
-import { debounce } from './utils/debounce.js';
 
-const WRAPPER = new Wrapper();
+const WRAPPER = document.body;
 define('test-base-component', TestBaseComponent);
 
 describe('Unit: BaseComponent', () => {
-    let template = new Template('show', 'attr',
-        '${show ? `<test-base-component${attr ? ` name=${attr}` : \'\'}></test-base-component>` : \'\'}'
-    );
-    template.render(WRAPPER, true, false);
-    const elem = WRAPPER.querySelector('test-base-component');
+    let elem = createElement(TestBaseComponent);
 
     describe('Unit: BaseComponent > created', () => {
         it('check if element is correctly instantiated', () => {
@@ -23,20 +17,21 @@ describe('Unit: BaseComponent', () => {
 
     describe('Unit: BaseComponent > attached', () => {
         it('check if element is correctly attached to the tree', () => {
+            appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });
 
     describe('Unit: BaseComponent > attributeChanged', () => {
-        debounce(() => template.render(WRAPPER, true, 'Alan'));
+        setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
             assert.equal(elem.name, 'Alan');
         });
     });
 
     describe('Unit: BaseComponent > detached', () => {
-        debounce(() => template.render(WRAPPER, false));
         it('check if element is correctly detached from the tree', () => {
+            removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });
     });

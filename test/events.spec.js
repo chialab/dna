@@ -2,9 +2,8 @@
 
 import { define, render } from './library.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
-import { Wrapper } from './utils/wrapper.js';
 
-const WRAPPER = new Wrapper();
+const WRAPPER = document.body;
 define('test-events-component', TestComponent);
 define('test2-events-component', TestInvalidComponent);
 

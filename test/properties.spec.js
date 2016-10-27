@@ -1,36 +1,29 @@
 /* eslint-env mocha */
 
-import { Template, define } from './library.js';
+import { define, render, setAttribute } from './library.js';
 import {
     TestComponent1,
     TestComponent2,
 } from './components/properties.js';
-import { Wrapper } from './utils/wrapper.js';
-import { debounce } from './utils/debounce.js';
 
-const WRAPPER = new Wrapper();
+const WRAPPER = document.body;
 define('test1-properties-component', TestComponent1);
 define('test2-properties-component', TestComponent2);
 
-describe('DNAPropertiesComponent', () => {
-    describe('Unit: DNAPropertiesComponent > creation', () => {
-        let template = new Template(' \
-            <test1-properties-component \
-                name="Alan" \
-                last-name="Turing" \
-                var="1234" \
-                married> \
-            </test1-properties-component> \
-        ');
-
-        template.render(WRAPPER);
-        const elem = WRAPPER.querySelector('test1-properties-component');
+describe('PropertiesComponent', () => {
+    describe('Unit: PropertiesComponent > creation', () => {
+        const elem = render(WRAPPER, TestComponent1, {
+            name: 'Alan',
+            lastName: 'Turing',
+            var: '1234',
+            married: true,
+        });
 
         it('init element\'s properties', () => {
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
             assert.equal(elem.married, true);
-            assert.equal(elem.var, 1234);
+            assert.equal(elem.var, '1234');
         });
 
         it('observe property changes', () => {
@@ -43,12 +36,8 @@ describe('DNAPropertiesComponent', () => {
         });
     });
 
-    describe('Unit: DNAPropertiesComponent > props 2 attrs', () => {
-        let template = new Template(
-            '<test2-properties-component></test2-properties-component>'
-        );
-        template.render(WRAPPER);
-        const elem = WRAPPER.querySelector('test2-properties-component');
+    describe('Unit: PropertiesComponent > props 2 attrs', () => {
+        const elem = render(WRAPPER, TestComponent2);
 
         it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
@@ -81,30 +70,23 @@ describe('DNAPropertiesComponent', () => {
         });
     });
 
-    describe('Unit: DNAAttributesComponent > attrs 2 props', () => {
-        let template = new Template('attrs', ' \
-            <test2-properties-component \
-            ${attrs ? ` \
-                alt="DNA Test 2" \
-                mine="1234" \
-                my-var2="true" \
-            ` : \'\'} \
-            ></test2-properties-component> \
-        ');
-        template.render(WRAPPER);
-        const elem = WRAPPER.querySelector('test2-properties-component');
+    describe('Unit: PropertiesComponent > attrs 2 props', () => {
+        const elem = render(WRAPPER, TestComponent2);
 
-        debounce(() => {
-            template.render(WRAPPER, true);
-        });
+        setAttribute(elem, 'alt', 'DNA Test 2');
+        setAttribute(elem, 'mine', '1234');
+        setAttribute(elem, 'my-var2', 'true');
 
         it('check sync between attribute and property', () => {
+            assert.equal(elem.getAttribute('alt'), 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
         it('check sync between custom attribute and property', () => {
+            assert.equal(elem.getAttribute('mine'), 1234);
             assert.equal(elem.mine, 1234);
         });
         it('check sync between custom computed attribute and property', () => {
+            assert.equal(elem.getAttribute('my-var2'), '');
             assert.equal(elem.myVar2, true);
         });
     });

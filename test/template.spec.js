@@ -10,10 +10,8 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from './components/template.js';
-import { Wrapper } from './utils/wrapper.js';
-import { debounce } from './utils/debounce.js';
 
-const WRAPPER = new Wrapper();
+const WRAPPER = document.body;
 
 define('test1-template-component', TestComponent1);
 define('test2-template-component', TestComponent2);
@@ -27,8 +25,7 @@ define('test2-vdom-placeholder', Test2Placeholder, {
 
 describe('Unit: DNATemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
-        render(WRAPPER, TestComponent1);
-        const elem = WRAPPER.querySelector('test1-template-component');
+        const elem = render(WRAPPER, TestComponent1);
 
         assert.equal(elem.innerHTML, 'Hello, ');
         elem.name = 'Alan';
@@ -38,15 +35,13 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     it('should handle `template` getter property as string', () => {
-        render(WRAPPER, TestComponent2);
-        const elem = WRAPPER.querySelector('test2-template-component');
+        const elem = render(WRAPPER, TestComponent2);
 
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should handle templates with <svg>', () => {
-        render(WRAPPER, TestComponent4);
-        const elem = WRAPPER.querySelector('test4-template-component');
+        const elem = render(WRAPPER, TestComponent4);
 
         elem.radius = 40;
         let svg = elem.firstElementChild;
@@ -56,11 +51,7 @@ describe('Unit: DNATemplateComponent', () => {
     });
 
     describe('should handle sub components', () => {
-        let elem;
-        debounce(() => {
-            render(WRAPPER, TestComponent5);
-            elem = WRAPPER.querySelector('test5-template-component');
-        });
+        let elem = render(WRAPPER, TestComponent5);
 
         it('and their callbacks', () => {
             assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
