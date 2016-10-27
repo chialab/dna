@@ -38,10 +38,9 @@ var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
 
 var env = process.env;
-var entries = ['src/dna.js', 'src/dna-idom.js', 'src/dna-mutations.js'];
+var entries = ['packages/dna/dna.js', 'packages/dna/dna-idom.js', 'packages/dna/dna-mutations.js'];
 var moduleName = 'DNA';
 var srcs = entries.concat(['src/**/*.js']);
-var tests = ['test/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
 
 function clean() {
@@ -60,7 +59,7 @@ function unit(done) {
     }, done).start();
 }
 
-function unitSaucelabsBrowser(done) {
+function unitServer(done) {
     env.NODE_ENV = 'test';
     new karma.Server({
         configFile: karmaConfig,
@@ -78,7 +77,7 @@ function unitWatch(done) {
 }
 
 function lint() {
-    return gulp.src(srcs.concat(tests))
+    return gulp.src(srcs)
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
@@ -90,7 +89,7 @@ function bundle(format, entryFileName) {
         sourceMap: true,
         plugins: [
             includePaths({
-                paths: ['src', 'test', 'node_modules'],
+                paths: ['packages', 'node_modules'],
             }),
             env.min === 'true' ? uglify({
                 output: {
@@ -114,7 +113,7 @@ function jsMin() {
 
     return entries.map((entry) =>
         bundle('umd', entry)
-            .pipe(source(entry.replace('src/', '')))
+            .pipe(source(entry.replace('packages/dna/', '')))
             .pipe(buffer())
             .pipe(sourcemaps.init({
                 loadMaps: true,
@@ -143,7 +142,7 @@ function jsDoc() {
 
 gulp.task('clean', clean);
 gulp.task('unit', unit);
-gulp.task('unit-sl-browser', unitSaucelabsBrowser);
+gulp.task('unit-server', unitServer);
 gulp.task('unit-watch', unitWatch);
 gulp.task('lint', lint);
 gulp.task('js-min', jsMin);

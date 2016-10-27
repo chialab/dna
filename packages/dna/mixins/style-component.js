@@ -1,4 +1,4 @@
-import { createStyle, importStyle } from './lib/style.js';
+import { createStyle, importStyle } from '../lib/style.js';
 
 /**
  * Simple Custom Component with css style handling using the `css` property.

@@ -1,7 +1,7 @@
-import { isArray } from './lib/typeof.js';
-import { dispatch } from './lib/dispatch.js';
-import { isUndefined } from './lib/typeof.js';
-import { prop } from './lib/property.js';
+import { isArray } from '../lib/typeof.js';
+import { dispatch } from '../lib/dispatch.js';
+import { isUndefined } from '../lib/typeof.js';
+import { prop } from '../lib/property.js';
 
 function getValue(property, attrVal) {
     if (attrVal === '' && property.accepts(Boolean)) {

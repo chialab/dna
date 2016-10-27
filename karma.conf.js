@@ -41,7 +41,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'test/**/*.spec.js',
+            'packages/**/*.spec.js',
         ],
 
 
@@ -51,21 +51,21 @@ module.exports = function(config) {
         rollupPreprocessor: {
             plugins: [
                 includePaths({
-                    paths: ['src', 'test', 'node_modules'],
+                    paths: ['packages', 'node_modules'],
                 }),
                 istanbul({
                     include: [
-                        'src/**/*.js',
+                        'packages/**/*.js',
                     ],
                     exclude: [
-                        'src/polyfills/**/*.js',
+                        'packages/**/polyfills/**/*.js',
+                        'packages/**/test/**/*.js',
                     ],
                 }),
                 babel({
                     include: [
                         'node_modules/**/*.js',
-                        'src/**/*.js',
-                        'test/**/*.js',
+                        'packages/**/*.js',
                     ],
                 }),
             ],
@@ -78,8 +78,7 @@ module.exports = function(config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'index.js': ['rollup'],
-            'src/**/*.js': ['rollup'],
-            'test/**/*.js': ['rollup'],
+            'packages/**/*.js': ['rollup'],
         },
 
 

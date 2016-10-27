@@ -1,5 +1,5 @@
-import { isString, isFunction } from './lib/typeof.js';
-import { dispatch } from './lib/dispatch.js';
+import { isString, isFunction } from '../lib/typeof.js';
+import { dispatch } from '../lib/dispatch.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { define, render } from './library.js';
-import { dispatch } from '../src/lib/dispatch.js';
+import { dispatch } from '../lib/dispatch.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 
 const WRAPPER = document.body;
