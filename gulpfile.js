@@ -173,6 +173,7 @@ function loadModule(name) {
 }
 
 function dependencies() {
+    var sym = [];
     return Promise.all(
         packages.map(function(pkg) {
             var json = path.join(pkg, 'package.json');
@@ -181,10 +182,8 @@ function dependencies() {
                 if (data.dependencies) {
                     let loads = [];
                     for (let k in data.dependencies) {
-                        if (k === 'dna-components') {
-                            symlinks('dna', 'dna-components');
-                        } else if (packageNames.indexOf(k) !== -1) {
-                            symlinks(k);
+                        if (k === 'dna-components' || packageNames.indexOf(k) !== -1) {
+                            sym.push(k);
                         } else {
                             loads.push(loadModule(k + '@' + data.dependencies[k]));
                         }
@@ -194,7 +193,16 @@ function dependencies() {
             }
             return Promise.resolve();
         })
-    );
+    ).then(function() {
+        sym.forEach(function(name) {
+            if (name === 'dna-components') {
+                symlinks('dna', 'dna-components');
+            } else {
+                symlinks(name);
+            }
+        });
+        return Promise.resolve();
+    });
 }
 
 gulp.task('unit', unit);
