@@ -6,11 +6,13 @@
  * Just another components pattern.
  * Use with Skin template.
  */
+import Template from 'skin-template';
 import { SkinTemplateMixin } from './src/mixins/skin.js';
 import { mix, MIXINS, BaseComponent as OriginalComponent } from 'dna-components';
 
 MIXINS.SkinTemplateMixin = SkinTemplateMixin;
 
 export { mix, MIXINS };
+export { Template };
 export { registry, render, define, prop, shim, HELPERS, DOM } from 'dna-components';
 export class BaseComponent extends mix(OriginalComponent).with(SkinTemplateMixin) {}

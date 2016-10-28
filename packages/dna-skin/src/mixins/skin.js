@@ -1,7 +1,5 @@
 import Template from 'skin-template';
 
-export { Template };
-
 export const SkinTemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();

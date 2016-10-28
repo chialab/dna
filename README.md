@@ -9,17 +9,15 @@ Just another components pattern.
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
 
-\* *tests executed using dna-idom implementations*
-
 ## Install
 
-[![NPM](https://img.shields.io/npm/v/dna-components.svg)](https://www.npmjs.com/package/dna-components)
+<!-- [![NPM](https://img.shields.io/npm/v/dna-components.svg)](https://www.npmjs.com/package/dna-components) -->
 ```
-$ npm i dna-components --save
+$ npm i chialab/dna#next --save
 ```
-[![Bower](https://img.shields.io/bower/v/dna-components.svg)](https://github.com/chialab/dna)
+<!-- [![Bower](https://img.shields.io/bower/v/dna-components.svg)](https://github.com/chialab/dna) -->
 ```
-$ bower i dna-components --save
+$ bower i chialab/dna#next --save
 ```
 
 ## Usage

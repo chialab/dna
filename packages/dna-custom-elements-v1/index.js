@@ -4,13 +4,13 @@
  * http://dna.chialab.io
  *
  * Just another components pattern.
- * Use with Incremental DOM notifications.
+ * Use with Custom Elements spec.
  */
 import { mix, MIXINS } from 'dna-components/src/library-helpers.js';
 import { shim } from './src/lib/shim.js';
 
-export { mix, prop, HELPERS, MIXINS } from 'dna-components/src/library-helpers.js';
-export { shim };
+export { prop, HELPERS } from 'dna-components/src/library-helpers.js';
+export { shim, mix, MIXINS };
 export const registry = self.customElements;
 export function define(...args) {
     return registry.define(...args);
