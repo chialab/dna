@@ -6,6 +6,9 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
+import './src/polyfills/custom-event.js';
+import './src/polyfills/reduce.js';
+import './src/polyfills/matches.js';
 import { mix } from './src/lib/mixins.js';
 import { Shim } from './src/lib/shim-custom.js';
 import { ComponentMixin } from './src/mixins/component.js';
