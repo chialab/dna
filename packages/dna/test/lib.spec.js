@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 
-import { mix, render, define, ComponentMixin, Shim } from '../index.js';
+import { mix, shim, render, define, MIXINS } from '../index.js';
 
 const WRAPPER = document.body;
 
 describe('Unit: lib', () => {
     describe('define', () => {
-        class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin) {
+        class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin) {
             constructor() {
                 super();
                 this.name = 'Alan';

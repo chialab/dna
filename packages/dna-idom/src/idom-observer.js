@@ -1,15 +1,15 @@
-import Template from 'skin-template';
-import { getComponent, create, disconnect, update } from '../lib/nodes.js';
+import * as IDOM from 'incremental-dom';
+import { DOM } from 'dna-components';
 
-const notifications = Template.IDOM.notifications;
-const attributes = Template.IDOM.attributes;
-const symbols = Template.IDOM.symbols;
+const notifications = IDOM.notifications;
+const attributes = IDOM.attributes;
+const symbols = IDOM.symbols;
 let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
-    nodes.forEach((node) => !node.is && create(node));
+    nodes.forEach((node) => !node.is && DOM.create(node));
     /* istanbul ignore if */
     if (_created) {
         _created(nodes);
@@ -17,7 +17,7 @@ notifications.nodesCreated = function(nodes) {
 };
 
 notifications.nodesDeleted = function(nodes) {
-    nodes.forEach((node) => disconnect(node));
+    nodes.forEach((node) => DOM.disconnect(node));
     /* istanbul ignore if */
     if (_removed) {
         _removed(nodes);
@@ -25,15 +25,15 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
-    let desc = getComponent(node);
+    let desc = DOM.getComponent(node);
     if (desc) {
         if (!node.is) {
-            create(node, desc);
+            DOM.create(node, desc);
         }
         let oldValue = node.getAttribute(attrName);
         let attrs = desc.Ctr.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
-            update(node, attrName, oldValue, attrValue);
+            DOM.update(node, attrName, oldValue, attrValue);
         }
     }
     /* istanbul ignore if */

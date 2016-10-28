@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render, setAttribute } from '../index.js';
+import { define, render, DOM } from '../index.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -73,9 +73,9 @@ describe('PropertiesComponent', () => {
     describe('Unit: PropertiesComponent > attrs 2 props', () => {
         const elem = render(WRAPPER, TestComponent2);
 
-        setAttribute(elem, 'alt', 'DNA Test 2');
-        setAttribute(elem, 'mine', '1234');
-        setAttribute(elem, 'my-var2', 'true');
+        DOM.setAttribute(elem, 'alt', 'DNA Test 2');
+        DOM.setAttribute(elem, 'mine', '1234');
+        DOM.setAttribute(elem, 'my-var2', 'true');
 
         it('check sync between attribute and property', () => {
             assert.equal(elem.getAttribute('alt'), 'DNA Test 2');

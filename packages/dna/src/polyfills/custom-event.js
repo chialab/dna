@@ -1,8 +1,11 @@
+let CustomEvent;
+
 try {
     // eslint-disable-next-line
     let ev = new self.CustomEvent('test');
+    CustomEvent = self.CustomEvent;
 } catch(ex) {
-    const CustomEvent = function(event, params) {
+    CustomEvent = function(event, params) {
         params = params || {
             bubbles: false,
             cancelable: false,
@@ -13,5 +16,6 @@ try {
         return evt;
     };
     CustomEvent.prototype = self.CustomEvent.prototype;
-    self.CustomEvent = CustomEvent;
 }
+
+export { CustomEvent };

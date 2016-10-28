@@ -1,4 +1,5 @@
 import { isString, isFunction } from '../lib/typeof.js';
+import { matches } from '../polyfills/matches.js';
 import { dispatch } from '../lib/dispatch.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
@@ -66,7 +67,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         this.addEventListener(evName, (event) => {
             let target = event.target;
             while (target && target !== this) {
-                if (target.matches(selector)) {
+                if (matches.call(target, selector)) {
                     callback.call(this, event, target);
                 }
                 target = target.parentNode;

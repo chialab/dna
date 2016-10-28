@@ -1,6 +1,6 @@
-import { Shim, mix, ComponentMixin, EventsMixin } from '../../index.js';
+import { shim, mix, MIXINS } from '../../index.js';
 
-export class TestComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, EventsMixin) {
+export class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.EventsMixin) {
     get events() {
         return {
             'customEvent': 'onCustomEvent',
@@ -46,7 +46,7 @@ export class TestComponent extends mix(new Shim(self.HTMLElement)).with(Componen
 }
 
 
-export class TestInvalidComponent extends mix(new Shim(self.HTMLElement)).with(ComponentMixin, EventsMixin) {
+export class TestInvalidComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.EventsMixin) {
     get events() {
         return {
             customEvent: 'undefined',

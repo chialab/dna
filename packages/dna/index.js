@@ -6,41 +6,21 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import './src/polyfills/custom-event.js';
-import './src/polyfills/reduce.js';
-import './src/polyfills/matches.js';
-import { mix } from './src/lib/mixins.js';
-import { Shim } from './src/lib/shim-custom.js';
-import { ComponentMixin } from './src/mixins/component.js';
-import { PropertiesMixin } from './src/mixins/properties-component.js';
-import { EventsMixin } from './src/mixins/events-component.js';
-import { StyleMixin } from './src/mixins/style-component.js';
-import { TemplateMixin } from './src/mixins/template-component.js';
+import { mix, prop, shim, HELPERS, DOM, MIXINS } from './src/library-helpers.js';
 import { registry } from './src/lib/registry.js';
-import { render as originalRender } from './src/lib/render.js';
-import { connect } from './src/lib/nodes.js';
 
-export { ComponentMixin };
-export { PropertiesMixin };
-export { EventsMixin };
-export { StyleMixin };
-export { TemplateMixin };
-export { Shim };
-export { mix };
-export { prop } from './src/lib/property.js';
-export * from './src/lib/nodes.js';
-// export const registry = self.customElements;
-// export function define(tagName, Component, config) {
-//     return registry.define(tagName, Component, config);
-// }
+export { mix, prop, shim, HELPERS, DOM, MIXINS };
 export { registry };
 export function define(tagName, Component, config) {
     return registry.define(tagName, Component, config);
 }
-export function render(tagName, Component, config) {
-    let elem = originalRender(tagName, Component, config);
-    connect(elem);
-    return elem;
+export function render(node, Component, props) {
+    let element = new Component();
+    for (let k in props) {
+        element[k] = props[k];
+    }
+    DOM.appendChild(node, element);
+    return element;
 }
 
 /**
@@ -73,11 +53,11 @@ export function render(tagName, Component, config) {
  * }
  */
 export class BaseComponent extends mix(
-    new Shim(self.HTMLElement)
+    shim(self.HTMLElement)
 ).with(
-    ComponentMixin,
-    PropertiesMixin,
-    StyleMixin,
-    EventsMixin,
-    TemplateMixin
+    MIXINS.ComponentMixin,
+    MIXINS.PropertiesMixin,
+    MIXINS.StyleMixin,
+    MIXINS.EventsMixin,
+    MIXINS.TemplateMixin
 ) {}

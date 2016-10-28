@@ -1,17 +1,39 @@
-export class Shim {
-    constructor(Elem) {
-        const ShimElement = function() {
-            return Reflect.construct(Elem, [], this.constructor);
-        };
+import { registry } from './registry.js';
+import { isString } from './typeof.js';
 
-        ShimElement.prototype = Object.create(Elem.prototype, {
-            constructor: {
-                value: ShimElement,
-                configurable: true,
-                writable: true,
-            },
-        });
-
-        return ShimElement;
+function isNew(node) {
+    try {
+        return !isString(node.outerHTML);
+    } catch (ex) {
+        return true;
     }
+}
+
+export function shim(Original) {
+    class Polyfilled {
+        constructor() {
+            if (!isNew(this)) {
+                return this;
+            }
+            let desc = registry.get(this.constructor);
+            let config = desc.config;
+            // Find the tagname of the constructor and create a new element with it
+            let element = document.createElement(
+                config.extends ? config.extends : desc.is
+            );
+            element.__proto__ = desc.Ctr.prototype;
+            if (config.extends) {
+                element.setAttribute('is', desc.is);
+            }
+            return element;
+        }
+    }
+    Polyfilled.prototype = Object.create(Original.prototype, {
+        constructor: {
+            value: Polyfilled,
+            configurable: true,
+            writable: true,
+        },
+    });
+    return Polyfilled;
 }

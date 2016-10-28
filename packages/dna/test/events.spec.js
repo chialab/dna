@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render } from '../index.js';
-import { dispatch } from '../src/lib/dispatch.js';
+import { define, render, HELPERS } from '../index.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 
 const WRAPPER = document.body;
@@ -23,10 +22,10 @@ describe('Unit: EventsComponent', () => {
             let button = elem.querySelector('button');
             let input = elem.querySelector('input');
             before((done) => {
-                dispatch(span, 'click');
-                dispatch(button, 'click');
+                HELPERS.dispatch(span, 'click');
+                HELPERS.dispatch(button, 'click');
                 input.value = 'DNA Tests';
-                dispatch(input, 'change');
+                HELPERS.dispatch(input, 'change');
                 setTimeout(() => done(), 500);
             });
 

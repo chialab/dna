@@ -1,4 +1,3 @@
 *.js
-!index*
-!src/**/*.js
-!test/**/*.js
+!packages/**/*.js
+packages/**/dist/**/*.js

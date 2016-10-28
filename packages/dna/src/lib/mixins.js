@@ -1,3 +1,4 @@
+import { reduce } from '../polyfills/reduce.js';
 /**
  * @author Justin Fagnani
  * @see https://github.com/justinfagnani/mixwith.js
@@ -10,7 +11,8 @@ class Mixin {
 
     with() {
         // eslint-disable-next-line
-        return [].slice.call(arguments, 0).reduce((c, m) => m(c), this.superclass);
+        let args = [].slice.call(arguments, 0);
+        return reduce.call(args, (c, mixin) => mixin(c), this.superclass);
     }
 }
 
