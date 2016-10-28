@@ -1,11 +1,11 @@
-import { create, connect, disconnect, update } from '../lib/nodes.js';
+import { DOM } from 'dna-components';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
         if (!node.is) {
-            create(node);
+            DOM.create(node);
         } else {
-            connect(node);
+            DOM.connect(node);
         }
         if (node.children) {
             onCreation(node.children);
@@ -22,7 +22,7 @@ const OBSERVER = new MutationObserver((mutations) => {
             }
             if (mutation.removedNodes) {
                 mutation.removedNodes.forEach((node) => {
-                    disconnect(node);
+                    DOM.disconnect(node);
                 });
             }
             break;
@@ -33,7 +33,7 @@ const OBSERVER = new MutationObserver((mutations) => {
                 break;
             }
             let node = mutation.target;
-            update(
+            DOM.update(
                 node,
                 attributeName,
                 mutation.oldValue,

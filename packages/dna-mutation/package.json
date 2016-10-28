@@ -1,5 +1,5 @@
 {
-  "name": "dna-skin",
+  "name": "dna-mutation",
   "version": "2.0.0-beta7",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
@@ -16,8 +16,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "dna-components": "^2.0.0",
-    "incremental-dom": "^0.5.1",
-    "skin-template": "^0.7.1"
+    "dna-components": "^2.0.0"
   }
 }
