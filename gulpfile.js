@@ -37,6 +37,7 @@ var path = require('path');
 var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
 var glob = require('glob');
+var exec = require('child_process').exec;
 
 var env = process.env;
 var moduleName = 'DNA';
@@ -44,6 +45,9 @@ var srcs = ['packages/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
 
 var packages = glob.sync('packages/*/');
+var packageNames = packages.map(function(pkg) {
+    return path.basename(pkg);
+});
 var entries = packages.map(function(pkg) {
     var fileName = path.join(pkg, 'index.js');
     if (fs.existsSync(fileName)) {
@@ -145,11 +149,51 @@ function jsDoc() {
         });
 }
 
-function symlinks() {
-    fs.symlinkSync(
-        path.resolve('./packages/dna'),
-        './node_modules/dna-components',
-        'dir'
+function symlinks(f, t) {
+    t = t || f;
+    if (!fs.existsSync('./node_modules/' + t)) {
+        fs.symlinkSync(
+            path.resolve('./packages/' + f),
+            './node_modules/' + t,
+            'dir'
+        );
+    }
+}
+
+function loadModule(name) {
+    return new Promise(function(resolve, reject) {
+        exec('npm install ' + name, function(error) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+function dependencies() {
+    return Promise.all(
+        packages.map(function(pkg) {
+            var json = path.join(pkg, 'package.json');
+            if (fs.existsSync(json)) {
+                var data = require(path.resolve(json));
+                if (data.dependencies) {
+                    let loads = [];
+                    for (let k in data.dependencies) {
+                        if (k === 'dna-components') {
+                            symlinks('dna', 'dna-components');
+                        } else if (packageNames.indexOf(k) !== -1) {
+                            symlinks(k);
+                        } else {
+                            loads.push(loadModule(k + '@' + data.dependencies[k]));
+                        }
+                    }
+                    return Promise.all(loads);
+                }
+            }
+            return Promise.resolve();
+        })
     );
 }
 
@@ -161,6 +205,7 @@ gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);
 gulp.task('docs', jsDoc);
-gulp.task('symlinks', symlinks);
+gulp.task('dependencies', dependencies);
+gulp.task('post-install', ['dependencies']);
 
 gulp.task('default', ['build']);
