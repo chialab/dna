@@ -1,0 +1,24 @@
+{
+  "name": "dna-skin-idom",
+  "version": "2.0.0-beta7",
+  "description": "Just another components pattern.",
+  "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chialab/dna"
+  },
+  "keywords": [
+    "DNA",
+    "components",
+    "Chialab",
+    "webcomponents"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "dna-idom": "^2.0.0",
+    "dna-skin": "^2.0.0",
+    "incremental-dom": "^0.5.1",
+    "skin-template": "^0.7.1"
+  }
+}

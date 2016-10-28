@@ -3,7 +3,7 @@
 This version of the library provides a lite polyfill for [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs using [MutationObserver API](https://developer.mozilla.org/it/docs/Web/API/MutationObserver) and without using the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) for element definition:
 
 ```js
-import DNA from './dna-mutations.js';
+import DNA from 'dna-mutation';
 
 class MyElem extends DNA.BaseComponent {
     // ...

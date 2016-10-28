@@ -28,7 +28,7 @@ $ bower i dna-components --save
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
-import DNA from './dna.js';
+import DNA from 'dna-custom-elements-v1';
 
 class MyElem extends DNA.BaseComponent {
     // ...
@@ -44,12 +44,12 @@ see also:
 
 ---
 
-**Use with Incremental DOM** 🌟
+**Use with Incremental DOM and Skin** 🌟
 
-DNA's TemplateMixin uses [Skin templates](https://github.com/chialab/skin-template), which implements [Google IncrementalDOM](https://github.com/google/incremental-dom). Using IDOM callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
+DNA's SkinTemplateMixin uses [Skin templates](https://github.com/chialab/skin-template), which implements [Google IncrementalDOM](https://github.com/google/incremental-dom). Using IDOM callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
 
 ```js
-import DNA from './dna-idom.js';
+import DNA from 'dna-skin-idom';
 
 class MyChild extends DNA.BaseComponent {
     // ...
@@ -70,7 +70,7 @@ DNA.render(document.body, MyElem);
 ```
 
 see also:
-* [tutorial](./tutorials/interop/incremental-dom.md)
+* [tutorial](./tutorials/interop/skin-idom.md)
 
 ---
 

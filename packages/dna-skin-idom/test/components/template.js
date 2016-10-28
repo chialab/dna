@@ -1,6 +1,6 @@
 import { shim, mix, prop, MIXINS } from '../../index.js';
 
-class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin, MIXINS.TemplateMixin) {
+class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin, MIXINS.TemplateMixin, MIXINS.SkinTemplateMixin) {
     get properties() {
         return {
             name: String,
