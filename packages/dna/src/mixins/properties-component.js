@@ -86,7 +86,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         });
         for (let k in props) {
             let prop = props[k];
-            prop.named(k).scoped(this).init();
+            prop.named(k).init(this);
             let { attrName, eventName } = prop;
             if (attrName || eventName) {
                 prop.observe(() => {

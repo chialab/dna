@@ -10,7 +10,6 @@ class Property {
             ctrs = [ctrs];
         }
         this.ctrs = ctrs;
-        this.required = false;
         this.validator = () => true;
         this._setter = (val) => val;
         this.getterFn = () => this.value;
@@ -31,7 +30,7 @@ class Property {
     }
 
     observe(fn) {
-        if (isFunction(fn)) {
+        if (isFunction(fn) || isString(fn)) {
             this._.push(fn);
         }
         return this;
@@ -47,7 +46,11 @@ class Property {
 
     changed(newValue, oldValue) {
         for (let i = 0, len = this._.length; i < len; i++) {
-            this._[i](this, newValue, oldValue);
+            let clb = this._[i];
+            if (isString(clb)) {
+                clb = this.scope[this._[i]];
+            }
+            clb(this, newValue, oldValue);
         }
     }
 
@@ -70,16 +73,6 @@ class Property {
         return this;
     }
 
-    scoped(scope) {
-        this.scope = scope;
-        define(scope, this.name, {
-            get: this.getterFn.bind(this),
-            set: this.setterFn.bind(this),
-            configurable: true,
-        });
-        return this;
-    }
-
     attribute(attrName = true) {
         if (isString(attrName)) {
             this.attrRequested = false;
@@ -92,11 +85,6 @@ class Property {
 
     dispatch(evName) {
         this.eventName = evName;
-        return this;
-    }
-
-    require() {
-        this.required = true;
         return this;
     }
 
@@ -144,16 +132,15 @@ class Property {
         );
     }
 
-    init(value) {
-        value = isUndefined(value) ? this.defaultValue : value;
-        if (!isUndefined(value)) {
-            if (!this.setter(value)) {
-                if (this.required) {
-                    throw new Error(
-                        `"${this.name}" property is required${this.scope ? ` for ${this.scope.is}` : ''}.`
-                    );
-                }
-            }
+    init(scope) {
+        this.scope = scope;
+        define(scope, this.name, {
+            get: this.getterFn.bind(this),
+            set: this.setterFn.bind(this),
+            configurable: true,
+        });
+        if (!isUndefined(this.defaultValue)) {
+            this.setter(this.defaultValue);
         }
     }
 }
