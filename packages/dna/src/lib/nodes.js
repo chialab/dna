@@ -16,19 +16,25 @@ export function getComponent(node) {
 export function connect(node) {
     if (isFunction(node[CONNECTED])) {
         node[CONNECTED].call(node);
+        return true;
     }
+    return false;
 }
 
 export function disconnect(node) {
     if (isFunction(node[DISCONNECTED])) {
         node[DISCONNECTED].call(node);
+        return true;
     }
+    return false;
 }
 
 export function update(node, name, oldValue, newValue) {
     if (isFunction(node[UPDATED]) && name !== 'is') {
         node[UPDATED].call(node, name, oldValue, newValue);
+        return true;
     }
+    return false;
 }
 
 export function bind(node, Ctr) {
@@ -45,8 +51,9 @@ export function create(node, descriptor) {
     descriptor = descriptor || getComponent(node);
     if (descriptor) {
         bind(node, descriptor.Ctr);
-        connect(node);
+        return true;
     }
+    return false;
 }
 
 export function createElement(is) {
@@ -62,13 +69,14 @@ export function appendChild(parent, node) {
             removeChild(node.parentNode, node);
         }
         parent.appendChild(node);
-        connect(node);
+        return connect(node);
     }
+    return false;
 }
 
 export function removeChild(parent, node) {
     parent.removeChild(node);
-    disconnect(node);
+    return disconnect(node);
 }
 
 export function setAttribute(node, name, value) {
@@ -77,7 +85,9 @@ export function setAttribute(node, name, value) {
     let attrs = node.constructor.observedAttributes || [];
     if (attrs.indexOf(name) !== -1) {
         update(node, name, oldValue, value);
+        return true;
     }
+    return false;
 }
 
 export function removeAttribute(node, name) {
@@ -86,5 +96,7 @@ export function removeAttribute(node, name) {
     let attrs = node.constructor.observedAttributes || [];
     if (attrs.indexOf(name) !== -1) {
         update(node, name, oldValue, null);
+        return true;
     }
+    return false;
 }

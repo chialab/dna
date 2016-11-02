@@ -3,7 +3,9 @@ import { DOM } from 'dna-components';
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
         if (!node.is) {
-            DOM.create(node);
+            if(DOM.create(node)) {
+                DOM.connect(node);
+            }
         } else {
             DOM.connect(node);
         }

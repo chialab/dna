@@ -28,7 +28,9 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
     let desc = DOM.getComponent(node);
     if (desc) {
         if (!node.is) {
-            DOM.create(node, desc);
+            if (DOM.create(node, desc)) {
+                DOM.connect(node);
+            }
         }
         let oldValue = node.getAttribute(attrName);
         let attrs = desc.Ctr.observedAttributes || [];
