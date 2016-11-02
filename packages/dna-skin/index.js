@@ -14,5 +14,6 @@ MIXINS.SkinTemplateMixin = SkinTemplateMixin;
 
 export { mix, MIXINS };
 export { Template };
+export const IDOM = Template.IDOM;
 export { registry, render, define, prop, shim, HELPERS, DOM } from 'dna-components';
 export class BaseComponent extends mix(OriginalComponent).with(SkinTemplateMixin) {}

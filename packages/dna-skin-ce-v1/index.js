@@ -13,6 +13,7 @@ import Template from 'skin-template';
 MIXINS.SkinTemplateMixin = SkinTemplateMixin;
 
 export { Template };
+export const IDOM = Template.IDOM;
 export { mix, shim, MIXINS };
 export { prop, HELPERS } from 'dna-custom-elements-v1';
 export { registry, render, define } from 'dna-components';
