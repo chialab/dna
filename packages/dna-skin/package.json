@@ -18,6 +18,6 @@
   "dependencies": {
     "dna-components": "^2.0.0",
     "incremental-dom": "^0.5.1",
-    "skin-template": "^0.7.1"
+    "skin-template": "^0.8.0"
   }
 }
