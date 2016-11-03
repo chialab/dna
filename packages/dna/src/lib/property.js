@@ -48,9 +48,10 @@ class Property {
         for (let i = 0, len = this._.length; i < len; i++) {
             let clb = this._[i];
             if (isString(clb)) {
-                clb = this.scope[this._[i]];
+                this.scope[clb].call(this.scope, this, newValue, oldValue);
+            } else {
+                clb(this, newValue, oldValue);
             }
-            clb(this, newValue, oldValue);
         }
     }
 
