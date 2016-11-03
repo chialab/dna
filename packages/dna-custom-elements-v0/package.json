@@ -1,5 +1,5 @@
 {
-  "name": "dna-custom-elements-v0",
+  "name": "@dna/custom-elements-v0",
   "version": "2.0.0-beta.12",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
@@ -16,6 +16,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "dna-components": "^2.0.0"
+    "@dna/core": "^2.0.0"
   }
 }

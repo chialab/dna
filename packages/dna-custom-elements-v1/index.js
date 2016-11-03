@@ -6,10 +6,10 @@
  * Just another components pattern.
  * Use with Custom Elements spec.
  */
-import { mix, MIXINS } from 'dna-components/src/library-helpers.js';
+import { mix, MIXINS } from '@dna/core/src/library-helpers.js';
 import { shim } from './src/lib/shim.js';
 
-export { prop, HELPERS } from 'dna-components/src/library-helpers.js';
+export { prop, HELPERS } from '@dna/core/src/library-helpers.js';
 export { shim, mix, MIXINS };
 export const registry = self.customElements;
 export function define(...args) {

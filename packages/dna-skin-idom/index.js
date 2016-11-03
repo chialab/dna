@@ -6,5 +6,5 @@
  * Just another components pattern.
  * Use with Skin template and Incremental DOM notifications.
  */
-import 'dna-idom/src/idom-observer.js';
-export * from 'dna-skin';
+import '@dna/idom/src/idom-observer.js';
+export * from '@dna/skin';

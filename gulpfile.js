@@ -44,12 +44,14 @@ var moduleName = 'DNA';
 var srcs = ['packages/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
 
-var packages = glob.sync('packages/*/');
-var packageNames = packages.map(function(pkg) {
+var packages = glob.sync('packages/*/').map(function(pkg) {
     return path.basename(pkg);
 });
+var packageNames = packages.map(function(pkg) {
+    return pkg.replace(/^dna\-/, '@dna/');
+});
 var entries = packages.map(function(pkg) {
-    var fileName = path.join(pkg, 'index.js');
+    var fileName = path.join('packages', pkg, 'index.js');
     if (fs.existsSync(fileName)) {
         return fileName;
     }
@@ -150,39 +152,47 @@ function jsDoc() {
 }
 
 function symlinks(f, t) {
-    t = t || f;
-    if (!fs.existsSync('./node_modules/' + t)) {
+    t = t.replace('@dna/', '');
+    if (!fs.existsSync('./node_modules/@dna')) {
+        fs.mkdirSync('./node_modules/@dna');
+    }
+    if (!fs.existsSync('./node_modules/@dna/' + t)) {
         fs.symlinkSync(
             path.resolve('./packages/' + f),
-            './node_modules/' + t,
+            './node_modules/@dna/' + t,
             'dir'
         );
     }
 }
 
+const installing = {};
+
 function loadModule(name) {
-    return new Promise(function(resolve, reject) {
-        exec('npm install ' + name, function(error) {
-            if (error) {
-                reject(error);
-            } else {
-                resolve();
-            }
+    if (!installing[name]) {
+        installing[name] = new Promise(function(resolve, reject) {
+            exec('npm install ' + name, function(error) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
         });
-    });
+    }
+    return installing[name];
 }
 
 function dependencies() {
     var sym = [];
     return Promise.all(
         packages.map(function(pkg) {
-            var json = path.join(pkg, 'package.json');
+            var json = path.join('packages', pkg, 'package.json');
             if (fs.existsSync(json)) {
                 var data = require(path.resolve(json));
                 if (data.dependencies) {
                     let loads = [];
                     for (let k in data.dependencies) {
-                        if (k === 'dna-components' || packageNames.indexOf(k) !== -1) {
+                        if (packageNames.indexOf(k) !== -1) {
                             sym.push(k);
                         } else {
                             loads.push(loadModule(k + '@' + data.dependencies[k]));
@@ -194,11 +204,11 @@ function dependencies() {
             return Promise.resolve();
         })
     ).then(function() {
-        sym.forEach(function(name) {
-            if (name === 'dna-components') {
-                symlinks('dna', 'dna-components');
-            } else {
-                symlinks(name);
+        sym.forEach(function(packageName) {
+            let io = packageNames.indexOf(packageName);
+            let packagePath = packages[io];
+            if (packagePath) {
+                symlinks(packagePath, packageName);
             }
         });
         return Promise.resolve();

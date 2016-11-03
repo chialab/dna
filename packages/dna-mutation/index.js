@@ -7,4 +7,4 @@
  * Use with MutationObserver API.
  */
 import './src/mutation-observer.js';
-export * from 'dna-components';
+export * from '@dna/core';

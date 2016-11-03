@@ -1,4 +1,4 @@
-import { DOM } from 'dna-components/src/library-helpers.js';
+import { DOM } from '@dna/core/src/library-helpers.js';
 
 export const customElementMixin = (superClass) => class extends superClass {
     createdCallback() {

@@ -1,4 +1,4 @@
-import { DOM } from 'dna-components';
+import { DOM } from '@dna/core';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
