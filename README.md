@@ -9,24 +9,13 @@ Just another components pattern.
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
 
-## Install
-
-<!-- [![NPM](https://img.shields.io/npm/v/dna-components.svg)](https://www.npmjs.com/package/dna-components) -->
-```
-$ npm i chialab/dna#next --save
-```
-<!-- [![Bower](https://img.shields.io/bower/v/dna-components.svg)](https://github.com/chialab/dna) -->
-```
-$ bower i chialab/dna#next --save
-```
-
 ## Usage
 
-**Use with Custom Elements v1** 🚀
+### Use with Custom Elements v1 🚀
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
-import DNA from 'dna-custom-elements-v1';
+import DNA from '@dnajs/custom-elements-v1';
 
 class MyElem extends DNA.BaseComponent {
     // ...
@@ -35,19 +24,18 @@ class MyElem extends DNA.BaseComponent {
 customElements.define('my-elem', MyElem);
 ```
 
-see also:
-* [tutorial](./tutorials/interop/custom-elements-v1.md)
-* [native support](http://caniuse.com/#feat=custom-elementsv1)
-* [polyfill](https://github.com/webcomponents/custom-elements/)
+[package](,/packages/dna-custom-elements-v1/) (with [Skin](,/packages/dna-skin-ce-v1/)) |
+[tutorial](./tutorials/interop/custom-elements-v1.md) |
+[native support](http://caniuse.com/#feat=custom-elementsv1) |
+[polyfill](https://github.com/webcomponents/custom-elements/)
 
----
 
-**Use with Incremental DOM and Skin** 🌟
+### Use with Incremental DOM 🌟
 
-DNA's SkinTemplateMixin uses [Skin templates](https://github.com/chialab/skin-template), which implements [Google IncrementalDOM](https://github.com/google/incremental-dom). Using IDOM callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
+Using [Google IncrementalDOM](https://github.com/google/incremental-dom) callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
 
 ```js
-import DNA from 'dna-skin-idom';
+import DNA from '@dnajs/idom';
 
 class MyChild extends DNA.BaseComponent {
     // ...
@@ -67,15 +55,20 @@ DNA.define('my-elem', MyElem);
 DNA.render(document.body, MyElem);
 ```
 
-see also:
-* [tutorial](./tutorials/interop/skin-idom.md)
+[package](,/packages/dna-idom/) (with [Skin](,/packages/dna-skin-idom/)) |
+[tutorial](./tutorials/interop/skin-idom.md)
 
----
+### Others
 
-**Use with:**
+**Use with Custom Elements v0 spec.**
 
-React (coming soon...)
+[package](,/packages/dna-custom-elements-v0/) (with [Skin](,/packages/dna-skin-ce-v0/))
 
-[MutationObserver](./tutorials/interop/mutation-observer.md)
+**Use with MutationObserver API.**
 
----
+[package](,/packages/dna-mutation/) |
+[tutorial](./tutorials/interop/mutation-observer.md)
+
+**Use with React ans JSX.**
+
+(coming soon...)
