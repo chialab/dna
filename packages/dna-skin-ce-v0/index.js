@@ -7,7 +7,7 @@
  * Use with Skin template and Custom Elements v0 spec.
  */
 import { SkinTemplateMixin } from 'dna-skin/src/mixins/skin.js';
-import { OuterMixin } from './src/mixins/outer.js';
+import { OuterMixin } from 'dna-skin/src/mixins/outer.js';
 import { mix, MIXINS, BaseComponent as OriginalComponent } from 'dna-custom-elements-v0';
 
 MIXINS.SkinTemplateMixin = SkinTemplateMixin;
