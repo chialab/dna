@@ -11,7 +11,8 @@ const ADDED_CALLBACK = IDOM.notifications.nodesCreated;
 IDOM.notifications.nodesCreated = function(nodes) {
     if (rendering) {
         nodes.forEach((node) => {
-            if (node.hasAttribute('outer')) {
+            if (node.nodeType === Node.ELEMENT_NODE &&
+                node.hasAttribute('outer')) {
                 rendering.outer = node;
             }
         });
