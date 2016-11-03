@@ -1,5 +1,5 @@
 {
-  "name": "@dna/idom",
+  "name": "@dnajs/idom",
   "version": "2.0.0-beta.12",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dna/core": "^2.0.0",
+    "@dnajs/core": "^2.0.0",
     "incremental-dom": "^0.5.1"
   }
 }

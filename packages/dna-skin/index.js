@@ -9,7 +9,7 @@
 import Template from 'skin-template';
 import { SkinTemplateMixin } from './src/mixins/skin.js';
 import { OuterMixin } from './src/mixins/outer.js';
-import { mix, MIXINS, BaseComponent as OriginalComponent } from '@dna/core';
+import { mix, MIXINS, BaseComponent as OriginalComponent } from '@dnajs/core';
 
 MIXINS.SkinTemplateMixin = SkinTemplateMixin;
 MIXINS.OuterMixin = OuterMixin;
@@ -17,7 +17,7 @@ MIXINS.OuterMixin = OuterMixin;
 export { mix, MIXINS };
 export { Template };
 export const IDOM = Template.IDOM;
-export { registry, render, define, prop, shim, HELPERS, DOM } from '@dna/core';
+export { registry, render, define, prop, shim, HELPERS, DOM } from '@dnajs/core';
 export class BaseComponent extends mix(OriginalComponent).with(
     SkinTemplateMixin, OuterMixin
 ) {}

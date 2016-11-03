@@ -1,4 +1,4 @@
-import { DOM } from '@dna/core';
+import { DOM } from '@dnajs/core';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {

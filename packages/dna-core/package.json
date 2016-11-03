@@ -1,12 +1,12 @@
 {
-  "name": "@dna/core",
+  "name": "@dnajs/core",
   "version": "2.0.0-beta.12",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chialab/dna"
+    "url": "git+https://github.com/chialab/dna.git"
   },
   "keywords": [
     "DNA",
@@ -14,5 +14,9 @@
     "Chialab",
     "webcomponents"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://github.com/chialab/dna#readme"
 }

@@ -6,13 +6,13 @@
  * Just another components pattern.
  * Use with Custom Elements v0 spec.
  */
-import { shim, mix, MIXINS } from '@dna/core/src/library-helpers.js';
-import { registry, BaseComponent as OriginalComponent } from '@dna/core';
+import { shim, mix, MIXINS } from '@dnajs/core/src/library-helpers.js';
+import { registry, BaseComponent as OriginalComponent } from '@dnajs/core';
 import { customElementMixin } from './src/mixins/custom-element.js';
 
 MIXINS.customElementMixin = customElementMixin;
 
-export { prop, HELPERS } from '@dna/core/src/library-helpers.js';
+export { prop, HELPERS } from '@dnajs/core/src/library-helpers.js';
 export { shim, mix, registry, MIXINS };
 export function define(tagName, Component, config = {}) {
     registry.define(tagName, Component, config);

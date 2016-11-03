@@ -48,7 +48,7 @@ var packages = glob.sync('packages/*/').map(function(pkg) {
     return path.basename(pkg);
 });
 var packageNames = packages.map(function(pkg) {
-    return pkg.replace(/^dna\-/, '@dna/');
+    return pkg.replace(/^dna\-/, '@dnajs/');
 });
 var entries = packages.map(function(pkg) {
     var fileName = path.join('packages', pkg, 'index.js');
@@ -152,14 +152,14 @@ function jsDoc() {
 }
 
 function symlinks(f, t) {
-    t = t.replace('@dna/', '');
-    if (!fs.existsSync('./node_modules/@dna')) {
-        fs.mkdirSync('./node_modules/@dna');
+    t = t.replace('@dnajs/', '');
+    if (!fs.existsSync('./node_modules/@dnajs')) {
+        fs.mkdirSync('./node_modules/@dnajs');
     }
-    if (!fs.existsSync('./node_modules/@dna/' + t)) {
+    if (!fs.existsSync('./node_modules/@dnajs/' + t)) {
         fs.symlinkSync(
             path.resolve('./packages/' + f),
-            './node_modules/@dna/' + t,
+            './node_modules/@dnajs/' + t,
             'dir'
         );
     }
@@ -215,6 +215,27 @@ function dependencies() {
     });
 }
 
+function publish(path, beta) {
+    return new Promise(function(resolve, reject) {
+        exec('cd ' + path + ' && npm publish --access public' + (beta ? ' --tag beta' : ''), function(error) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+function publishModules(beta) {
+    return Promise.all(
+        packages.map(function(pkg) {
+            var fullPath = path.resolve(path.join('packages', pkg));
+            return publish(fullPath, beta);
+        })
+    );
+}
+
 gulp.task('unit', unit);
 gulp.task('unit-server', unitServer);
 gulp.task('unit-watch', unitWatch);
@@ -225,5 +246,11 @@ gulp.task('dist', ['lint', 'unit'], jsMin);
 gulp.task('docs', jsDoc);
 gulp.task('dependencies', dependencies);
 gulp.task('post-install', ['dependencies']);
+gulp.task('publish', function() {
+    return publishModules();
+});
+gulp.task('publish-beta', function() {
+    return publishModules(true);
+});
 
 gulp.task('default', ['build']);

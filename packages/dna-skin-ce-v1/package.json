@@ -1,5 +1,5 @@
 {
-  "name": "@dna/skin-ce-v1",
+  "name": "@dnajs/skin-ce-v1",
   "version": "2.0.0-beta.12",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
@@ -16,8 +16,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dna/custom-elements-v1": "^2.0.0",
-    "@dna/skin": "^2.0.0",
+    "@dnajs/custom-elements-v1": "^2.0.0",
+    "@dnajs/skin": "^2.0.0",
     "incremental-dom": "^0.5.1",
     "skin-template": "^0.8.1"
   }

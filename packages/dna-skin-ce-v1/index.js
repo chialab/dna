@@ -6,8 +6,8 @@
  * Just another components pattern.
  * Use with Skin template and Custome Elements spec.
  */
-import { mix, shim, MIXINS } from '@dna/custom-elements-v1';
-import { SkinTemplateMixin } from '@dna/skin/src/mixins/skin.js';
+import { mix, shim, MIXINS } from '@dnajs/custom-elements-v1';
+import { SkinTemplateMixin } from '@dnajs/skin/src/mixins/skin.js';
 import Template from 'skin-template';
 
 MIXINS.SkinTemplateMixin = SkinTemplateMixin;
@@ -15,7 +15,7 @@ MIXINS.SkinTemplateMixin = SkinTemplateMixin;
 export { Template };
 export const IDOM = Template.IDOM;
 export { mix, shim, MIXINS };
-export { registry, render, define, prop, HELPERS } from '@dna/custom-elements-v1';
+export { registry, render, define, prop, HELPERS } from '@dnajs/custom-elements-v1';
 
 export class BaseComponent extends mix(
     shim(self.HTMLElement)

@@ -1,5 +1,5 @@
 import * as IDOM from 'incremental-dom';
-import { DOM } from '@dna/core';
+import { DOM } from '@dnajs/core';
 
 const notifications = IDOM.notifications;
 const attributes = IDOM.attributes;

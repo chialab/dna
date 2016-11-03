@@ -8,11 +8,11 @@
  */
 import * as IDOM from 'incremental-dom';
 import { IDOMTemplateMixin } from './src/mixins/idom.js';
-import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dna/core/src/library-helpers.js';
+import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/library-helpers.js';
 import './src/idom-observer.js';
 
 MIXINS.IDOMTemplateMixin = IDOMTemplateMixin;
 
 export { mix, prop, shim, HELPERS, DOM, MIXINS };
-export { registry, render, define } from '@dna/core';
+export { registry, render, define } from '@dnajs/core';
 export { IDOM };
