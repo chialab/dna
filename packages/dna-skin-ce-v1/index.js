@@ -26,5 +26,6 @@ export class BaseComponent extends mix(
     MIXINS.StyleMixin,
     MIXINS.EventsMixin,
     MIXINS.TemplateMixin,
-    MIXINS.SkinTemplateMixin
+    MIXINS.SkinTemplateMixin,
+    MIXINS.OuterMixin
 ) {}

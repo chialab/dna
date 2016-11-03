@@ -38,6 +38,7 @@ export function update(node, name, oldValue, newValue) {
 }
 
 export function bind(node, Ctr) {
+    Ctr = Ctr || getComponent(node).Ctr;
     node.__proto__ = Ctr.prototype;
     Object.defineProperty(node, 'constructor', {
         value: Ctr,
