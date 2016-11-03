@@ -1,6 +1,6 @@
 {
   "name": "dna-skin-ce-v1",
-  "version": "2.0.0-beta.8",
+  "version": "2.0.0-beta.9",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
@@ -19,6 +19,6 @@
     "dna-custom-elements-v1": "^2.0.0",
     "dna-skin": "^2.0.0",
     "incremental-dom": "^0.5.1",
-    "skin-template": "^0.8.0"
+    "skin-template": "^0.8.1"
   }
 }
