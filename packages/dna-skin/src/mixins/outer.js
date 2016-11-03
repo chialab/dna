@@ -28,33 +28,42 @@ let rendering;
 export const OuterMixin = (superClass) => class extends superClass {
     constructor() {
         super();
-        this.__initialChildren = [].slice.call(this.childNodes);
-        this.childrenObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length && rendering !== this && this.outer) {
-                    appendOuterNodes(this, mutation.addedNodes);
-                }
+        if (this.hasOwnProperty('template')) {
+            this.__initialChildren = [].slice.call(this.childNodes).map((node) => {
+                this.removeChild(node);
+                return node;
             });
-        });
+            this.childrenObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes.length && rendering !== this && this.outer) {
+                        appendOuterNodes(this, mutation.addedNodes);
+                    }
+                });
+            });
+        }
     }
 
     connectedCallback() {
         super.connectedCallback();
-        this.childrenObserver.observe(this, {
-            childList: true,
-        });
+        if (this.childrenObserver) {
+            this.childrenObserver.observe(this, {
+                childList: true,
+            });
+        }
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.childrenObserver.disconnect();
+        if (this.childrenObserver) {
+            this.childrenObserver.disconnect();
+        }
     }
 
     render() {
         rendering = this;
         super.render();
         rendering = null;
-        if (this.__initialChildren && this.outer) {
+        if (this.childrenObserver && this.__initialChildren && this.outer) {
             appendOuterNodes(this, this.__initialChildren);
             delete this.__initialChildren;
         }
