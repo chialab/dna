@@ -17,5 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "@dnajs/core": "^2.0.0-beta"
-  }
+  },
+  "readme": "README.md"
 }

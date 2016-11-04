@@ -20,5 +20,6 @@
     "@dnajs/skin": "^2.0.0-beta",
     "incremental-dom": "^0.5.1",
     "skin-template": "^0.8.1"
-  }
+  },
+  "readme": "README.md"
 }

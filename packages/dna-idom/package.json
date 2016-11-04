@@ -18,5 +18,6 @@
   "dependencies": {
     "@dnajs/core": "^2.0.0-beta",
     "incremental-dom": "^0.5.1"
-  }
+  },
+  "readme": "README.md"
 }
