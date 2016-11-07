@@ -4,7 +4,7 @@ export const SkinTemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
         let template = this.template;
-        if (template && !this.hasOwnProperty('template')) {
+        if (template) {
             let Ctr = this.constructor;
             if (typeof template === 'string') {
                 template = new Template(template);
@@ -16,6 +16,7 @@ export const SkinTemplateMixin = (SuperClass) => class extends SuperClass {
             Object.defineProperty(this, 'template', {
                 value: () => tpl.render(this),
             });
+            this.render();
         }
     }
 };
