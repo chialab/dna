@@ -1,6 +1,6 @@
-import { shim, mix, prop, MIXINS } from '../../index.js';
+import { prop, BaseComponent } from '../../index.js';
 
-class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin, MIXINS.TemplateMixin, MIXINS.SkinTemplateMixin) {
+class TestComponent extends BaseComponent {
     get properties() {
         return {
             name: String,
@@ -54,11 +54,12 @@ export class TestComponent5 extends TestComponent {
             <span class="dna-test">Hello DNA!</span> \
             <test-vdom-placeholder></test-vdom-placeholder> \
             <figure is="test2-vdom-placeholder"></figure> \
+            <test-yeld>Hello world!</test-yeld> \
         ';
     }
 }
 
-export class TestPlaceholder extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin) {
+export class TestPlaceholder extends BaseComponent {
     static get observedAttributes() {
         return ['value'];
     }
@@ -75,9 +76,13 @@ export class TestPlaceholder extends mix(shim(self.HTMLElement)).with(MIXINS.Com
     }
 }
 
-export class Test2Placeholder extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin) {
+export class Test2Placeholder extends BaseComponent {
     static get observedAttributes() {
         return ['value'];
+    }
+
+    get template() {
+        return '<div class="yeld">${this.value}</div>';
     }
 
     get properties() {

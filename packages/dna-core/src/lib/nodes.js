@@ -80,6 +80,17 @@ export function removeChild(parent, node) {
     return disconnect(node);
 }
 
+export function insertBefore(parent, node, refNode) {
+    parent.insertBefore(node, refNode);
+    return connect(node);
+}
+
+export function replaceChild(parent, node, refNode) {
+    parent.replaceChild(node, refNode);
+    disconnect(refNode);
+    return connect(node);
+}
+
 export function setAttribute(node, name, value) {
     let oldValue = node.getAttribute(name);
     node.setAttribute(name, value);

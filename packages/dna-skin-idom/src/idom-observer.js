@@ -1,5 +1,5 @@
 import Template from 'skin-template';
-import { DOM } from '@dnajs/core';
+import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 const IDOM = Template.IDOM;
 const notifications = IDOM.notifications;
@@ -8,9 +8,14 @@ const symbols = IDOM.symbols;
 let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];
 
-IDOM.afterElementClose((node) =>
-    !node.is && DOM.create(node)
-);
+IDOM.afterElementOpen((node) => {
+    if (node.is || DOM.create(node)) {
+        if (node.template) {
+            IDOM.skip();
+            return false;
+        }
+    }
+});
 
 notifications.nodesDeleted = function(nodes) {
     nodes.forEach((node) => DOM.disconnect(node));

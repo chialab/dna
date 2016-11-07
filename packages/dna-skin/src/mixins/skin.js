@@ -1,5 +1,15 @@
 import Template from 'skin-template';
 
+const IDOM = Template.IDOM;
+
+IDOM.afterElementOpen((node) => {
+    if (node.is) {
+        if (node.template) {
+            return false;
+        }
+    }
+});
+
 export const SkinTemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();

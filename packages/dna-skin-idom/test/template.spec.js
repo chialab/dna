@@ -51,11 +51,17 @@ describe('Unit: TemplateComponent', () => {
     });
 
     describe('should handle sub components', () => {
-        let elem = render(WRAPPER, TestComponent5);
+        const elem = render(WRAPPER, TestComponent5);
+        const a = document.createElement('a');
+        elem.querySelector('test-vdom-placeholder').appendChild(a);
+        elem.render();
 
         it('and their callbacks', () => {
+            assert.equal(elem.querySelector('test-vdom-placeholder').children.length, 0);
             assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
             assert.equal(elem.querySelector('figure').value, 11);
+            assert.equal(elem.querySelector('figure').children.length, 1);
+            assert.equal(elem.querySelector('figure').children[0].textContent, '11');
         });
     });
 });
