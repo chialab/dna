@@ -5,15 +5,29 @@ const IDOM = Template.IDOM;
 const notifications = IDOM.notifications;
 const attributes = IDOM.attributes;
 const symbols = IDOM.symbols;
+let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];
 
 IDOM.afterElementOpen((node) => {
-    if (DOM.isComponent(node) || (DOM.create(node) && DOM.connect(node))) {
+    if (DOM.getComponent(node)) {
         IDOM.skip();
-        return false;
     }
 });
+
+notifications.nodesCreated = function(nodes) {
+    nodes.forEach((node) => {
+        if (!DOM.isComponent(node)) {
+            if (DOM.create(node)) {
+                DOM.connect(node);
+            }
+        }
+    });
+    /* istanbul ignore if */
+    if (_created) {
+        _created(nodes);
+    }
+};
 
 notifications.nodesDeleted = function(nodes) {
     nodes.forEach((node) => DOM.disconnect(node));

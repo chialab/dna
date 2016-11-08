@@ -1,5 +1,5 @@
 import * as IDOM from 'incremental-dom';
-import { DOM } from '@dnajs/core';
+import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 const notifications = IDOM.notifications;
 const attributes = IDOM.attributes;
@@ -9,7 +9,13 @@ let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
-    nodes.forEach((node) => !node.is && DOM.create(node));
+    nodes.forEach((node) => {
+        if (!DOM.isComponent(node)) {
+            if (DOM.create(node)) {
+                DOM.connect(node);
+            }
+        }
+    });
     /* istanbul ignore if */
     if (_created) {
         _created(nodes);
@@ -25,15 +31,9 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
-    let desc = DOM.getComponent(node);
-    if (desc) {
-        if (!node.is) {
-            if (DOM.create(node, desc)) {
-                DOM.connect(node);
-            }
-        }
+    if (DOM.isComponent(node)) {
         let oldValue = node.getAttribute(attrName);
-        let attrs = desc.Ctr.observedAttributes || [];
+        let attrs = node.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
             DOM.update(node, attrName, oldValue, attrValue);
         }
