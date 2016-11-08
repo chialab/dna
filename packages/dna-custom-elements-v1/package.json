@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/custom-elements-v1",
-  "version": "2.0.0-beta.14",
+  "version": "2.0.0-beta.15",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
@@ -18,5 +18,8 @@
   "dependencies": {
     "@dnajs/core": "^2.0.0-beta"
   },
-  "readme": "README.md"
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://github.com/chialab/dna#readme"
 }

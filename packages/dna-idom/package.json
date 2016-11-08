@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/idom",
-  "version": "2.0.0-beta.14",
+  "version": "2.0.0-beta.15",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
@@ -19,5 +19,8 @@
     "@dnajs/core": "^2.0.0-beta",
     "incremental-dom": "^0.5.1"
   },
-  "readme": "README.md"
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://github.com/chialab/dna#readme"
 }
