@@ -1,12 +1,11 @@
 import Template from 'skin-template';
+import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 const IDOM = Template.IDOM;
 
 IDOM.afterElementOpen((node) => {
-    if (node.is) {
-        if (node.template) {
-            return false;
-        }
+    if (DOM.isComponent(node)) {
+        return false;
     }
 });
 

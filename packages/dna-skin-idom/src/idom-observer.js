@@ -9,11 +9,9 @@ let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];
 
 IDOM.afterElementOpen((node) => {
-    if (node.is || DOM.create(node)) {
-        if (node.template) {
-            IDOM.skip();
-            return false;
-        }
+    if (DOM.isComponent(node) || (DOM.create(node) && DOM.connect(node))) {
+        IDOM.skip();
+        return false;
     }
 });
 
@@ -26,15 +24,9 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
-    let desc = DOM.getComponent(node);
-    if (desc) {
-        if (!node.is) {
-            if (DOM.create(node, desc)) {
-                DOM.connect(node);
-            }
-        }
+    if (DOM.isComponent(node)) {
         let oldValue = node.getAttribute(attrName);
-        let attrs = desc.Ctr.observedAttributes || [];
+        let attrs = node.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
             DOM.update(node, attrName, oldValue, attrValue);
         }

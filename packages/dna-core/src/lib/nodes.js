@@ -1,4 +1,3 @@
-import { isFunction } from './typeof.js';
 import { registry } from './registry.js';
 
 const CONNECTED = 'connectedCallback';
@@ -13,28 +12,30 @@ export function getComponent(node) {
     return registry.get(node);
 }
 
+export function isComponent(node) {
+    let desc = getComponent(node);
+    return desc && (node instanceof desc.Ctr);
+}
+
 export function connect(node) {
-    if (isFunction(node[CONNECTED])) {
+    if (isComponent(node)) {
         node[CONNECTED].call(node);
         return true;
     }
-    return false;
 }
 
 export function disconnect(node) {
-    if (isFunction(node[DISCONNECTED])) {
+    if (isComponent(node)) {
         node[DISCONNECTED].call(node);
         return true;
     }
-    return false;
 }
 
 export function update(node, name, oldValue, newValue) {
-    if (isFunction(node[UPDATED]) && name !== 'is') {
+    if (isComponent(node)) {
         node[UPDATED].call(node, name, oldValue, newValue);
         return true;
     }
-    return false;
 }
 
 export function bind(node, Ctr) {

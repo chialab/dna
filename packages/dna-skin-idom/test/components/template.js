@@ -54,7 +54,6 @@ export class TestComponent5 extends TestComponent {
             <span class="dna-test">Hello DNA!</span> \
             <test-vdom-placeholder></test-vdom-placeholder> \
             <figure is="test2-vdom-placeholder"></figure> \
-            <test-yeld>Hello world!</test-yeld> \
         ';
     }
 }

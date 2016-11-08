@@ -57,7 +57,8 @@ describe('Unit: TemplateComponent', () => {
         elem.render();
 
         it('and their callbacks', () => {
-            assert.equal(elem.querySelector('test-vdom-placeholder').children.length, 0);
+            assert.equal(elem.querySelector('test-vdom-placeholder').children.length, 1);
+            assert.equal(elem.querySelector('test-vdom-placeholder').children[0], a);
             assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
             assert.equal(elem.querySelector('figure').value, 11);
             assert.equal(elem.querySelector('figure').children.length, 1);
