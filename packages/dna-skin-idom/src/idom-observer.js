@@ -42,7 +42,10 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
         let oldValue = node.getAttribute(attrName);
         let attrs = node.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
-            DOM.update(node, attrName, oldValue, attrValue);
+            attrValue = (attrValue === undefined) ? null : attrValue;
+            setTimeout(() =>
+                DOM.update(node, attrName, oldValue, attrValue)
+            );
         }
     }
     /* istanbul ignore if */
