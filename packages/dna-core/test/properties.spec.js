@@ -24,6 +24,7 @@ describe('PropertiesComponent', () => {
             assert.equal(elem.lastName, 'Turing');
             assert.equal(elem.married, true);
             assert.equal(elem.var, '1234');
+            assert.equal(elem.type, 2);
         });
 
         it('observe property changes', () => {

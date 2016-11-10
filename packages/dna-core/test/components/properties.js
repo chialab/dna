@@ -12,6 +12,7 @@ export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.Comp
             married: prop(Boolean).attribute(),
             age: prop(Number).attribute(),
             var: prop(String).attribute(),
+            type: prop(Number).default(2),
         };
     }
 }

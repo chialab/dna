@@ -141,7 +141,7 @@ class Property {
             configurable: true,
         });
         if (!isUndefined(this.defaultValue)) {
-            this.setter(this.defaultValue);
+            scope[this.name] = this.defaultValue;
         }
     }
 }
