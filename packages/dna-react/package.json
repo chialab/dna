@@ -1,0 +1,27 @@
+{
+  "name": "@dnajs/react",
+  "version": "2.0.0-beta.17",
+  "description": "Just another components pattern.",
+  "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chialab/dna"
+  },
+  "keywords": [
+    "DNA",
+    "components",
+    "Chialab",
+    "webcomponents"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@dnajs/core": "^2.0.0-beta",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://github.com/chialab/dna#readme"
+}
