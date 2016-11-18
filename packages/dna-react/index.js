@@ -6,7 +6,7 @@
  * Just another components pattern.
  * Use with React.
  */
-import ReactDOM from 'react-dom';
+import ReactDOM from '@react/react-dom';
 import { mix, MIXINS } from '@dnajs/core/src/library-helpers.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';

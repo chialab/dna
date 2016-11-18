@@ -20,3 +20,4 @@ export const HELPERS = {
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';
 export { shim } from './lib/shim.js';
+export * from './lib/typeof.js';

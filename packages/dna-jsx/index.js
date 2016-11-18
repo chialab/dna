@@ -4,17 +4,14 @@
  * http://dna.chialab.io
  *
  * Just another components pattern.
- * Use with Incremental DOM notifications.
+ * Use with JSX extension.
  */
-import * as IDOM from 'incremental-dom';
-import { IDomTemplateMixin } from './src/mixins/idom.js';
+import { JSXTemplateMixin } from './src/mixins/jsx.js';
 import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/library-helpers.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';
-import './src/idom-observer.js';
 
-MIXINS.IDomTemplateMixin = IDomTemplateMixin;
+MIXINS.JSXTemplateMixin = JSXTemplateMixin;
 
 export { mix, prop, shim, HELPERS, DOM, MIXINS };
 export { registry, render, define } from '@dnajs/core';
-export { IDOM };
-export class BaseComponent extends mix(OriginalComponent).with(IDomTemplateMixin) {}
+export class BaseComponent extends mix(OriginalComponent).with(JSXTemplateMixin) {}

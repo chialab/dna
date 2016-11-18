@@ -1,0 +1,27 @@
+{
+  "name": "@dnajs/jsx-idom",
+  "version": "2.0.0-beta.17",
+  "description": "Just another components pattern.",
+  "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chialab/dna"
+  },
+  "keywords": [
+    "DNA",
+    "components",
+    "Chialab",
+    "webcomponents"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@dnajs/core": "^2.0.0-beta",
+    "@dnajs/idom": "^2.0.0-beta",
+    "@dnajs/jsx": "^2.0.0-beta"
+  },
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://github.com/chialab/dna#readme"
+}

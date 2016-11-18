@@ -6,13 +6,13 @@ Just another components pattern.
 
 ## Install
 
-[![NPM](https://img.shields.io/npm/v/@dnajs/idom.svg)](https://www.npmjs.com/package/@dnajs/idom)
+[![NPM](https://img.shields.io/npm/v/@dnajs/jsx-idom.svg)](https://www.npmjs.com/package/@dnajs/jsx-idom)
 ```
-$ npm i @dnajs/idom --save
+$ npm i @dnajs/jsx-idom --save
 ```
 
 ## Usage
 
-Use with IncrementalDOM notifications.
+Use with JSX extension and IncrementalDOM library.
 
 TODO

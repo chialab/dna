@@ -2,6 +2,7 @@
     "presets": ["es2015-rollup"],
     "plugins": [
         ["transform-es2015-classes", { "loose": true }],
-        "transform-inline-environment-variables"
+        "transform-inline-environment-variables",
+        ["incremental-dom", { "prefix": "IncrementalDOM" }]
     ]
 }

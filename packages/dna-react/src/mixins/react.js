@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from '@react/react';
+import ReactDOM from '@react/react-dom';
 import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 export const ReactMixin = (superClass) => {

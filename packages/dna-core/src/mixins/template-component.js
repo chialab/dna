@@ -49,8 +49,8 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     /**
      * Update Component child nodes.
      */
-    render() {
-        let tpl = this.template;
+    render(tpl) {
+        tpl = tpl || this.template;
         /* istanbul ignore else */
         if (isFunction(tpl)) {
             tpl();
