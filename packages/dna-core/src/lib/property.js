@@ -15,15 +15,19 @@ class Property {
         this.getterFn = () => this.value;
         this.setterFn = (val) => {
             val = this._setter(val);
-            if (this.validateType(val) && this.validator(val)) {
+            if ((val === null || val === undefined) ||
+                this.validateType(val) && this.validator(val)) {
                 let oldValue = this.value;
                 if (oldValue !== val) {
                     this.value = val;
                     this.changed(val, oldValue);
                 }
-                return true;
+            } else {
+                // eslint-disable-next-line
+                throw new TypeError(
+                    `Invalid \`${val}\` value for \`${this.name}\` property for \`${this.scope.is}\`.`
+                );
             }
-            return false;
         };
     }
 
@@ -109,9 +113,6 @@ class Property {
     }
 
     validateType(val) {
-        if (val === null || val === undefined) {
-            return true;
-        }
         let i = 0;
         let ctrs = this.ctrs;
         if (ctrs.length === 0) {
@@ -125,10 +126,7 @@ class Property {
             }
             i++;
         }
-        // eslint-disable-next-line
-        throw new TypeError(
-            `Invalid \`${val}\` value for "${this.name}" property${this.scope ? ` for ${this.scope.is}` : ''}.`
-        );
+        return false;
     }
 
     init(scope) {

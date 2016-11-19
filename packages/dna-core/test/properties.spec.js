@@ -11,7 +11,29 @@ define('test1-properties-component', TestComponent1);
 define('test2-properties-component', TestComponent2);
 
 describe('PropertiesComponent', () => {
-    describe('Unit: PropertiesComponent > creation', () => {
+    describe('handle property validation', () => {
+        const elem = render(WRAPPER, TestComponent1);
+
+        it('should throw if invalid type', () => {
+            let fn = () => elem.age = 'Hello';
+            assert.throws(fn, 'Invalid `Hello` value for `age` property for `test1-properties-component`.');
+        });
+
+        it('should throw if invalid value', () => {
+            let fn = () => elem.age = -1;
+            assert.throws(fn, 'Invalid `-1` value for `age` property for `test1-properties-component`.');
+        });
+
+        it('should accept null/undefined values', () => {
+            elem.age = 51;
+            assert.equal(elem.age, 51);
+            elem.age = null;
+            assert.equal(elem.age, null);
+            elem.age = undefined;
+            assert.equal(elem.age, undefined);
+        });
+    });
+    describe('handle properties on initialization', () => {
         const elem = render(WRAPPER, TestComponent1, {
             name: 'Alan',
             lastName: 'Turing',
@@ -28,16 +50,21 @@ describe('PropertiesComponent', () => {
         });
 
         it('observe property changes', () => {
-            let changedSingle = false;
-            elem.observeProperty('age', () => {
-                changedSingle = true;
-            });
+            let changedSingle = 0;
+            let callback = () => {
+                changedSingle++;
+                elem.unobserveProperty('age', callback);
+            };
+            elem.observeProperty('age', callback);
             elem.age = 41;
-            assert(changedSingle);
+            elem.age = 51;
+            assert.equal(elem.age, 51);
+            assert.equal(elem.ageChanged, 2);
+            assert.equal(changedSingle, 1);
         });
     });
 
-    describe('Unit: PropertiesComponent > props 2 attrs', () => {
+    describe('handle props 2 attrs', () => {
         const elem = render(WRAPPER, TestComponent2);
 
         it('check sync between property and attribute', () => {
@@ -71,7 +98,7 @@ describe('PropertiesComponent', () => {
         });
     });
 
-    describe('Unit: PropertiesComponent > attrs 2 props', () => {
+    describe('handle attrs 2 props', () => {
         const elem = render(WRAPPER, TestComponent2);
 
         DOM.setAttribute(elem, 'alt', 'DNA Test 2');
@@ -92,7 +119,7 @@ describe('PropertiesComponent', () => {
         });
     });
 
-    describe('Unit: PropertiesComponent > attrs 2 props on initialization', () => {
+    describe('handle attrs 2 props on initialization', () => {
         const elem = document.createElement('test2-properties-component');
         elem.setAttribute('alt', 'DNA Test 2');
         elem.setAttribute('mine', '1234');

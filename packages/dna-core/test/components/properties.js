@@ -10,10 +10,22 @@ export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.Comp
             name: prop.STRING.attribute(),
             lastName: prop.STRING.attribute('last-name'),
             married: prop.BOOLEAN.attribute(),
-            age: prop.NUMBER.attribute(),
+            age: prop.NUMBER
+                .validate((val) => val >= 0)
+                .attribute()
+                .observe('onAgeChanged'),
             var: prop.STRING.attribute(),
             type: prop.NUMBER.default(2),
         };
+    }
+
+    constructor() {
+        super();
+        this.ageChanged = 0;
+    }
+
+    onAgeChanged() {
+        this.ageChanged += 1;
     }
 }
 

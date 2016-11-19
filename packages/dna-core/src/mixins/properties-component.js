@@ -143,4 +143,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     observeProperty(propName, callback) {
         this.properties[propName].observe(callback);
     }
+    unobserveProperty(propName, callback) {
+        this.properties[propName].unobserve(callback);
+    }
 };
