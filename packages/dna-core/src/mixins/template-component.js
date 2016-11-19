@@ -28,7 +28,8 @@ import { isFunction, isString } from '../lib/typeof.js';
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        if (this.template) {
+        let proto = this.constructor.prototype;
+        if (proto.hasOwnProperty('template')) {
             let props = this.properties;
             if (props) {
                 let callback = () => {
@@ -42,7 +43,8 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     }
     connectedCallback() {
         super.connectedCallback();
-        if (this.template) {
+        let proto = this.constructor.prototype;
+        if (proto.hasOwnProperty('template')) {
             this.render();
         }
     }

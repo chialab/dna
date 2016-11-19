@@ -24,7 +24,7 @@ define('test2-vdom-placeholder', Test2Placeholder, {
 });
 
 describe('Unit: TemplateComponent', () => {
-    it('should handle `template` getter property as function with interpolation', () => {
+    it('should handle `template` with IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent1);
 
         assert.equal(elem.innerHTML, 'Hello, ');
@@ -34,7 +34,7 @@ describe('Unit: TemplateComponent', () => {
         assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
-    it('should handle `template` getter property as string', () => {
+    it('should handle `template` with JSX IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent2);
 
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');

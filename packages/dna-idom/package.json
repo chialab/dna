@@ -1,7 +1,7 @@
 {
   "name": "@dnajs/idom",
   "version": "2.0.0-beta.17",
-  "description": "Just another components pattern.",
+  "description": "Just another components pattern with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
   "repository": {
@@ -18,6 +18,9 @@
   "dependencies": {
     "@dnajs/core": "^2.0.0-beta",
     "incremental-dom": "^0.5.1"
+  },
+  "devDependencies": {
+    "babel-plugin-incremental-dom": "^3.4.0"
   },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"

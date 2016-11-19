@@ -31,9 +31,7 @@ export class TestComponent1 extends TestComponent {
 export class TestComponent2 extends TestComponent {
     get template() {
         return () => {
-            IDOM.elementOpen('span', null, ['class', 'dna-test']);
-            IDOM.text('Hello DNA!');
-            IDOM.elementClose('span');
+            <span class="dna-test">Hello DNA!</span>;
         };
     }
 }
