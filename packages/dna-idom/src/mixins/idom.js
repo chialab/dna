@@ -4,6 +4,7 @@ import * as IDOM from 'incremental-dom';
 export const IDomTemplateMixin = (superClass) => class extends superClass {
     render(template) {
         template = template || this.template;
+        /* istanbul ignore else */
         if (isFunction(template)) {
             IDOM.patch(this, template.bind(this));
         } else {

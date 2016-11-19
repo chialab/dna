@@ -3,7 +3,7 @@ import { DOM } from '@dnajs/core';
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
         if (!node.is) {
-            if(DOM.create(node)) {
+            if(DOM.bind(node)) {
                 DOM.connect(node);
             }
         } else {

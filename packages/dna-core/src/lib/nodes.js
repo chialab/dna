@@ -1,3 +1,4 @@
+import { isFunction, isString } from './typeof.js';
 import { registry } from './registry.js';
 
 const CONNECTED = 'connectedCallback';
@@ -8,6 +9,8 @@ export function getComponent(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
         let is = node.getAttribute('is') || node.tagName;
         return registry.get(is);
+    } else if (isString(node)) {
+        return registry.get(node);
     }
     return registry.get(node);
 }
@@ -39,20 +42,20 @@ export function update(node, name, oldValue, newValue) {
 }
 
 export function bind(node, Ctr) {
-    Ctr = Ctr || getComponent(node).Ctr;
-    node.__proto__ = Ctr.prototype;
-    Object.defineProperty(node, 'constructor', {
-        value: Ctr,
-        configurable: true,
-        writable: true,
-    });
-    Ctr.call(node);
-}
-
-export function create(node, descriptor) {
-    descriptor = descriptor || getComponent(node);
-    if (descriptor) {
-        bind(node, descriptor.Ctr);
+    if (!isFunction(Ctr)) {
+        let desc = getComponent(node);
+        if (desc) {
+            Ctr = desc.Ctr;
+        }
+    }
+    if (isFunction(Ctr)) {
+        node.__proto__ = Ctr.prototype;
+        Object.defineProperty(node, 'constructor', {
+            value: Ctr,
+            configurable: true,
+            writable: true,
+        });
+        Ctr.call(node);
         return true;
     }
     return false;

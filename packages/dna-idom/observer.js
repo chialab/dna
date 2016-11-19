@@ -11,7 +11,7 @@ let _changed = attributes[symbols.default];
 notifications.nodesCreated = function(nodes) {
     nodes.forEach((node) => {
         if (!DOM.isComponent(node)) {
-            if (DOM.create(node)) {
+            if (DOM.bind(node)) {
                 DOM.connect(node);
             }
         }

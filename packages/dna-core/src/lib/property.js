@@ -15,15 +15,13 @@ class Property {
         this.getterFn = () => this.value;
         this.setterFn = (val) => {
             val = this._setter(val);
-            if (this.validateType(val)) {
-                if (this.validator(val)) {
-                    let oldValue = this.value;
-                    if (oldValue !== val) {
-                        this.value = val;
-                        this.changed(val, oldValue);
-                    }
-                    return true;
+            if (this.validateType(val) && this.validator(val)) {
+                let oldValue = this.value;
+                if (oldValue !== val) {
+                    this.value = val;
+                    this.changed(val, oldValue);
                 }
+                return true;
             }
             return false;
         };

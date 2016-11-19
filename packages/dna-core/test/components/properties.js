@@ -7,12 +7,12 @@ export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.Comp
 
     get properties() {
         return {
-            name: prop(String).attribute(),
-            lastName: prop(String).attribute('last-name'),
-            married: prop(Boolean).attribute(),
-            age: prop(Number).attribute(),
-            var: prop(String).attribute(),
-            type: prop(Number).default(2),
+            name: prop.STRING.attribute(),
+            lastName: prop.STRING.attribute('last-name'),
+            married: prop.BOOLEAN.attribute(),
+            age: prop.NUMBER.attribute(),
+            var: prop.STRING.attribute(),
+            type: prop.NUMBER.default(2),
         };
     }
 }
@@ -24,13 +24,13 @@ export class TestComponent2 extends  mix(shim(self.HTMLElement)).with(MIXINS.Com
 
     get properties() {
         return [{
-            title: prop(String).attribute(),
-            id: prop(String).attribute(),
-            alt: prop(String).attribute(),
-            var: prop(Number).attribute(),
-            mine: prop(Number).attribute(),
-            myVar: prop(Boolean).attribute('my-var'),
-            myVar2: prop(Boolean).attribute('my-var2'),
+            title: prop.STRING.attribute(),
+            id: prop.STRING.attribute(),
+            alt: prop.STRING.attribute(),
+            var: prop.NUMBER.attribute(),
+            mine: prop.NUMBER.attribute(),
+            myVar: prop.BOOLEAN.attribute('my-var'),
+            myVar2: prop.BOOLEAN.attribute('my-var2'),
             myVar3: prop.ANY
                 .default(false)
                 .attribute('my-var3')

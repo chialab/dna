@@ -76,7 +76,29 @@ describe('PropertiesComponent', () => {
 
         DOM.setAttribute(elem, 'alt', 'DNA Test 2');
         DOM.setAttribute(elem, 'mine', '1234');
-        DOM.setAttribute(elem, 'my-var2', 'true');
+        DOM.setAttribute(elem, 'my-var2', '');
+
+        it('check sync between attribute and property', () => {
+            assert.equal(elem.getAttribute('alt'), 'DNA Test 2');
+            assert.equal(elem.alt, 'DNA Test 2');
+        });
+        it('check sync between custom attribute and property', () => {
+            assert.equal(elem.getAttribute('mine'), 1234);
+            assert.equal(elem.mine, 1234);
+        });
+        it('check sync between custom computed attribute and property', () => {
+            assert.equal(elem.getAttribute('my-var2'), '');
+            assert.equal(elem.myVar2, true);
+        });
+    });
+
+    describe('Unit: PropertiesComponent > attrs 2 props on initialization', () => {
+        const elem = document.createElement('test2-properties-component');
+        elem.setAttribute('alt', 'DNA Test 2');
+        elem.setAttribute('mine', '1234');
+        elem.setAttribute('my-var2', '');
+        DOM.bind(elem);
+        DOM.appendChild(WRAPPER, elem);
 
         it('check sync between attribute and property', () => {
             assert.equal(elem.getAttribute('alt'), 'DNA Test 2');

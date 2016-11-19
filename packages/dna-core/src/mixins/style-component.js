@@ -1,4 +1,5 @@
-import { createStyle, importStyle } from '../lib/style.js';
+import { isString } from '../lib/typeof.js';
+import { createStyle } from '../lib/style.js';
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
@@ -30,9 +31,9 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        if (!this.styleElem) {
+        if (!this.constructor.styleElem) {
             let Ctr = this.constructor;
-            Object.defineProperty(Ctr.prototype, 'styleElem', {
+            Object.defineProperty(Ctr, 'styleElem', {
                 value: createStyle(this.is),
             });
         }
@@ -46,8 +47,8 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
 
     updateCSS() {
         let style = this.css;
-        if (style) {
-            importStyle(this.styleElem, style);
+        if (isString(style)) {
+            this.constructor.styleElem.textContent = style;
         }
     }
 };
