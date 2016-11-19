@@ -85,11 +85,19 @@ export function removeChild(parent, node) {
 }
 
 export function insertBefore(parent, node, refNode) {
-    parent.insertBefore(node, refNode);
-    return connect(node);
+    if (node.nextSibling !== refNode) {
+        if (node.parentNode) {
+            disconnect(node);
+        }
+        parent.insertBefore(node, refNode);
+        return connect(node);
+    }
 }
 
 export function replaceChild(parent, node, refNode) {
+    if (node.parentNode) {
+        disconnect(node);
+    }
     parent.replaceChild(node, refNode);
     disconnect(refNode);
     return connect(node);
