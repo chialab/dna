@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import { define, render } from '../index.js';
+import '../observer.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -51,7 +52,7 @@ describe('Unit: TemplateComponent', () => {
     });
 
     describe('should handle sub components', () => {
-        let elem = render(WRAPPER, TestComponent5);
+        const elem = render(WRAPPER, TestComponent5);
 
         it('and their callbacks', () => {
             assert.equal(elem.querySelector('test-vdom-placeholder').value, 6);
