@@ -36,9 +36,7 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
         let attrs = node.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
             attrValue = (attrValue === undefined) ? null : attrValue;
-            setTimeout(() =>
-                DOM.update(node, attrName, oldValue, attrValue)
-            );
+            DOM.update(node, attrName, oldValue, attrValue);
         }
     }
     /* istanbul ignore if */

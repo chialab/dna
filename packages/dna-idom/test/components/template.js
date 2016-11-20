@@ -28,9 +28,11 @@ export class TestComponent1 extends TestComponent {
     }
 }
 
+const TEMPLATE = <span class="dna-test">Hello DNA!</span>;
+
 export class TestComponent2 extends TestComponent {
     get template() {
-        return () => <span class="dna-test">Hello DNA!</span>;
+        return TEMPLATE;
     }
 }
 

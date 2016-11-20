@@ -7,10 +7,7 @@ const UPDATED = 'attributeChangedCallback';
 
 export function getComponent(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
-        let is = node.getAttribute('is') || node.tagName;
-        return registry.get(is);
-    } else if (isString(node)) {
-        return registry.get(node);
+        node = node.getAttribute('is') || node.tagName;
     }
     return registry.get(node);
 }
@@ -108,10 +105,8 @@ export function setAttribute(node, name, value) {
     node.setAttribute(name, value);
     let attrs = node.constructor.observedAttributes || [];
     if (attrs.indexOf(name) !== -1) {
-        update(node, name, oldValue, value);
-        return true;
+        return update(node, name, oldValue, value);
     }
-    return false;
 }
 
 export function removeAttribute(node, name) {
@@ -119,8 +114,6 @@ export function removeAttribute(node, name) {
     node.removeAttribute(name);
     let attrs = node.constructor.observedAttributes || [];
     if (attrs.indexOf(name) !== -1) {
-        update(node, name, oldValue, null);
-        return true;
+        return update(node, name, oldValue, null);
     }
-    return false;
 }

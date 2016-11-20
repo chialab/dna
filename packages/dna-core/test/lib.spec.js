@@ -5,12 +5,17 @@ import { BaseComponent, render, define, DOM } from '../index.js';
 const WRAPPER = document.body;
 
 class TestComponent extends BaseComponent {
+    static get observedAttributes() {
+        return ['age'];
+    }
+
     constructor() {
         super();
         this.name = 'Alan';
         this.lastName = 'Turing';
         this.connectedTimes = 0;
         this.disconnectedTimes = 0;
+        this.attributeChanges = 0;
     }
 
     connectedCallback() {
@@ -21,6 +26,11 @@ class TestComponent extends BaseComponent {
     disconnectedCallback() {
         super.disconnectedCallback();
         this.disconnectedTimes++;
+    }
+
+    attributeChangedCallback(...args) {
+        super.attributeChangedCallback(...args);
+        this.attributeChanges++;
     }
 }
 
@@ -53,6 +63,12 @@ describe('Unit: lib', () => {
     describe('DOM helpers', () => {
         const elem = document.createElement('test1-helper-component');
         const elem2 = render(WRAPPER, TestComponent2);
+        it('should do nothing', () => {
+            const tmp = document.createElement('div');
+            assert(!DOM.bind(tmp));
+            assert(!DOM.connect(tmp));
+            assert(!DOM.disconnect(tmp));
+        });
         it('should create a component instance', () => {
             DOM.bind(elem);
             assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
@@ -110,6 +126,20 @@ describe('Unit: lib', () => {
             assert.equal(elem.connectedTimes, 4);
             assert.equal(elem2.disconnectedTimes, 1);
             assert.equal(elem2.connectedTimes, 1);
+        });
+        it('should set attributes', () => {
+            DOM.setAttribute(elem, 'age', 20);
+            DOM.setAttribute(elem, 'married', '');
+            assert.equal(elem.attributeChanges, 1);
+            assert.equal(elem.getAttribute('age'), '20');
+            assert.equal(elem.getAttribute('married'), '');
+        });
+        it('should remove attributes', () => {
+            DOM.removeAttribute(elem, 'age');
+            DOM.removeAttribute(elem, 'married');
+            assert.equal(elem.attributeChanges, 2);
+            assert.equal(elem.getAttribute('age'), null);
+            assert.equal(elem.getAttribute('married'), null);
         });
     });
 });
