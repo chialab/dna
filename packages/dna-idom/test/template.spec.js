@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render } from '../index.js';
+import { define, render, IDOM } from '../index.js';
 import '../observer.js';
 import {
     TestComponent1,
@@ -13,6 +13,7 @@ import {
 } from './components/template.js';
 
 const WRAPPER = document.body;
+self.IDOM = IDOM;
 
 define('test1-template-component', TestComponent1);
 define('test2-template-component', TestComponent2);
@@ -28,11 +29,11 @@ describe('Unit: TemplateComponent', () => {
     it('should handle `template` with IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent1);
 
-        assert.equal(elem.innerHTML, 'Hello, ');
+        assert.equal(elem.innerHTML, ' Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
         elem.title = 'Title';
-        assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
+        assert.equal(elem.innerHTML, '<h1>Title</h1><br> Hello, Alan Turing');
     });
 
     it('should handle `template` with JSX IDOM calls', () => {

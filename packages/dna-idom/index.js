@@ -5,7 +5,7 @@
  *
  * Just another components pattern with IncrementalDOM templates.
  */
-import * as IDOM from 'incremental-dom';
+import * as IDOM from './src/lib/idom.js';
 import { IDomTemplateMixin } from './src/mixins/idom.js';
 import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/library-helpers.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';

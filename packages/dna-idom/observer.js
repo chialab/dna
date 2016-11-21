@@ -1,4 +1,4 @@
-import * as IDOM from 'incremental-dom';
+import * as IDOM from './src/lib/idom.js';
 import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 const notifications = IDOM.notifications;

@@ -1,4 +1,4 @@
-import { isFunction, isString } from './typeof.js';
+import { isFunction } from './typeof.js';
 import { registry } from './registry.js';
 
 const CONNECTED = 'connectedCallback';

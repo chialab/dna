@@ -1,4 +1,4 @@
-import { prop, BaseComponent, IDOM } from '../../index.js';
+import { prop, BaseComponent } from '../../index.js';
 
 class TestComponent extends BaseComponent {
     get properties() {
@@ -14,25 +14,30 @@ class TestComponent extends BaseComponent {
     }
 }
 
+/* eslint-disable no-unused-vars */
+const TEMPLATE1 = function(IDOM) {
+    return <test1-template-component>
+        {this.title && [<h1>{this.title}</h1>,<br />]}
+        Hello, {this.fullname}
+    </test1-template-component>;
+};
+
 export class TestComponent1 extends TestComponent {
     get template() {
-        return () => {
-            if (this.title) {
-                IDOM.elementOpen('h1');
-                IDOM.text(this.title);
-                IDOM.elementClose('h1');
-                IDOM.elementVoid('br');
-            }
-            IDOM.text(`Hello, ${this.fullname}`);
-        };
+        return TEMPLATE1;
     }
 }
 
-const TEMPLATE = <span class="dna-test">Hello DNA!</span>;
+/* eslint-disable no-unused-vars */
+const TEMPLATE2 = function(IDOM) {
+    return <test2-template-component>
+        <span class="dna-test">Hello DNA!</span>
+    </test2-template-component>;
+};
 
 export class TestComponent2 extends TestComponent {
     get template() {
-        return TEMPLATE;
+        return TEMPLATE2;
     }
 }
 
@@ -42,19 +47,18 @@ export class TestComponent3 extends TestComponent {
     }
 }
 
+/* eslint-disable no-unused-vars */
+const TEMPLATE4 = function(IDOM) {
+    return <test4-template-component>
+        <svg>
+            <circle stroke="black" stroke-width="3" fill="red" r={this.radius} />
+        </svg>
+    </test4-template-component>;
+};
+
 export class TestComponent4 extends TestComponent {
     get template() {
-        return () => {
-            IDOM.elementOpen('svg');
-            IDOM.elementVoid('circle', null, [
-                'stroke', 'black',
-                'stroke-width', '3',
-                'fill', 'red',
-            ],
-                'r', this.radius
-            );
-            IDOM.elementClose('svg');
-        };
+        return TEMPLATE4;
     }
 
     get properties() {
@@ -64,17 +68,18 @@ export class TestComponent4 extends TestComponent {
     }
 }
 
+/* eslint-disable no-unused-vars */
+const TEMPLATE5 = function(IDOM) {
+    return <test5-template-component>
+        <span class="dna-test">Hello Dna!</span>
+        <test-vdom-placeholder />
+        <figure is="test2-vdom-placeholder" />
+    </test5-template-component>;
+};
+
 export class TestComponent5 extends TestComponent {
     get template() {
-        return () => {
-            IDOM.elementOpen('span', null, ['class', 'dna-test']);
-            IDOM.text('Hello DNA!');
-            IDOM.elementClose('span');
-            IDOM.elementOpen('test-vdom-placeholder');
-            IDOM.elementClose('test-vdom-placeholder');
-            IDOM.elementOpen('figure', null, ['is', 'test2-vdom-placeholder']);
-            IDOM.elementClose('figure');
-        };
+        return TEMPLATE5;
     }
 }
 
