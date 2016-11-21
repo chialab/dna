@@ -84,10 +84,15 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             writable: false,
             configurable: true,
         });
+        let observed = this.constructor.observedAttributes || [];
         for (let k in props) {
             let prop = props[k];
             prop.named(k).init(this);
             let { attrName, eventName } = prop;
+            if (!attrName && observed.indexOf(k)) {
+                prop.attribute(k);
+                attrName = k;
+            }
             if (attrName || eventName) {
                 prop.observe(() => {
                     if (attrName) {
