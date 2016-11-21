@@ -1,5 +1,4 @@
 /* eslint-env mocha */
-
 import { define, render, IDOM } from '../index.js';
 import '../observer.js';
 import {

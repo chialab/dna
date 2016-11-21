@@ -24,8 +24,16 @@ let scope;
 let currentOpen;
 
 function wrapOpen(originalFn) {
-    return (...args) => {
-        let res = originalFn(...args) || currentOpen;
+    return (tag, key, statics, ...props) => {
+        let filteredProps = [];
+        for (let i = 0, len = props.length - 1; i < len; i += 2) {
+            let key = props[i];
+            let value = props[i + 1];
+            if (value !== false && value !== null && value !== undefined) {
+                filteredProps.push(key, value);
+            }
+        }
+        let res = originalFn(tag, key, statics, ...filteredProps) || currentOpen;
         if (!scope) {
             scope = res;
         } else {
@@ -35,7 +43,7 @@ function wrapOpen(originalFn) {
         }
         currentOpen = null;
         return res;
-    }
+    };
 }
 
 function wrapPatch(originalFn) {
@@ -45,7 +53,7 @@ function wrapPatch(originalFn) {
         let res = originalFn(...args);
         scope = old;
         return res;
-    }
+    };
 }
 
 const patchInner = wrapPatch(originalPatchInner);
@@ -65,8 +73,8 @@ export const IDOM = {
     notifications,
     importNode,
     elementOpenStart(...args) {
-        let res = this.lementOpenStart(...args);
-        let currentOpen = res;
+        let res = originalElementOpenStart(...args);
+        currentOpen = res;
         return res;
     },
     elementOpen: wrapOpen(originalElementOpen),
@@ -79,4 +87,4 @@ export const IDOM = {
         this.elementClose(args[0]);
         return res;
     },
-}
+};

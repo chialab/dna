@@ -1,4 +1,4 @@
-import { prop, BaseComponent, IDOM } from '../../index.js';
+import { prop, BaseComponent } from '../../index.js';
 
 class TestComponent extends BaseComponent {
     get properties() {

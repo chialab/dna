@@ -42,7 +42,6 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     }
     connectedCallback() {
         super.connectedCallback();
-        let proto = this.constructor.prototype;
         if (this.template) {
             this.render();
         }
