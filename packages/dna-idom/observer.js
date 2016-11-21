@@ -1,4 +1,4 @@
-import * as IDOM from './src/lib/idom.js';
+import { IDOM } from './src/lib/idom.js';
 import { DOM } from '@dnajs/core/src/library-helpers.js';
 
 const notifications = IDOM.notifications;
@@ -31,6 +31,10 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
+    /* istanbul ignore if */
+    if (_changed) {
+        _changed(node, attrName, attrValue);
+    }
     if (DOM.isComponent(node)) {
         let oldValue = node.getAttribute(attrName);
         let attrs = node.constructor.observedAttributes || [];
@@ -38,9 +42,5 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
             attrValue = (attrValue === undefined) ? null : attrValue;
             DOM.update(node, attrName, oldValue, attrValue);
         }
-    }
-    /* istanbul ignore if */
-    if (_changed) {
-        _changed(node, attrName, attrValue);
     }
 };
