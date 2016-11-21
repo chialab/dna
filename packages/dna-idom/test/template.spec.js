@@ -29,11 +29,11 @@ describe('Unit: TemplateComponent', () => {
     it('should handle `template` with IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent1);
 
-        assert.equal(elem.innerHTML, ' Hello, ');
+        assert.equal(elem.innerHTML, '<span>Hello, </span>');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
         elem.title = 'Title';
-        assert.equal(elem.innerHTML, '<h1>Title</h1><br> Hello, Alan Turing');
+        assert.equal(elem.innerHTML, '<h1>Title</h1><br><span>Hello, Alan Turing</span>');
     });
 
     it('should handle `template` with JSX IDOM calls', () => {

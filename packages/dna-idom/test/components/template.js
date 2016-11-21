@@ -1,4 +1,4 @@
-import { prop, BaseComponent } from '../../index.js';
+import { prop, BaseComponent, IDOM } from '../../index.js';
 
 class TestComponent extends BaseComponent {
     get properties() {
@@ -14,12 +14,11 @@ class TestComponent extends BaseComponent {
     }
 }
 
-/* eslint-disable no-unused-vars */
-const TEMPLATE1 = function(IDOM) {
-    return <test1-template-component>
-        {this.title && [<h1>{this.title}</h1>,<br />]}
-        Hello, {this.fullname}
-    </test1-template-component>;
+const TEMPLATE1 = function() {
+    return [
+        this.title && [<h1>{this.title}</h1>,<br />],
+        <span>Hello, {this.fullname}</span>,
+    ];
 };
 
 export class TestComponent1 extends TestComponent {
@@ -28,11 +27,8 @@ export class TestComponent1 extends TestComponent {
     }
 }
 
-/* eslint-disable no-unused-vars */
-const TEMPLATE2 = function(IDOM) {
-    return <test2-template-component>
-        <span class="dna-test">Hello DNA!</span>
-    </test2-template-component>;
+const TEMPLATE2 = function() {
+    return <span class="dna-test">Hello DNA!</span>;
 };
 
 export class TestComponent2 extends TestComponent {
@@ -47,13 +43,10 @@ export class TestComponent3 extends TestComponent {
     }
 }
 
-/* eslint-disable no-unused-vars */
-const TEMPLATE4 = function(IDOM) {
-    return <test4-template-component>
-        <svg>
-            <circle stroke="black" stroke-width="3" fill="red" r={this.radius} />
-        </svg>
-    </test4-template-component>;
+const TEMPLATE4 = function() {
+    return <svg>
+        <circle stroke="black" stroke-width="3" fill="red" r={this.radius} />
+    </svg>;
 };
 
 export class TestComponent4 extends TestComponent {
@@ -68,13 +61,12 @@ export class TestComponent4 extends TestComponent {
     }
 }
 
-/* eslint-disable no-unused-vars */
-const TEMPLATE5 = function(IDOM) {
-    return <test5-template-component>
-        <span class="dna-test">Hello Dna!</span>
-        <test-vdom-placeholder />
-        <figure is="test2-vdom-placeholder" />
-    </test5-template-component>;
+const TEMPLATE5 = function() {
+    return [
+        <span class="dna-test">Hello Dna!</span>,
+        <test-vdom-placeholder />,
+        <figure is="test2-vdom-placeholder" />,
+    ];
 };
 
 export class TestComponent5 extends TestComponent {
