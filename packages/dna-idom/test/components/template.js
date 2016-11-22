@@ -1,4 +1,4 @@
-import { prop, BaseComponent } from '../../index.js';
+import { prop, BaseComponent, IDOM } from '../../index.js';
 
 class TestComponent extends BaseComponent {
     get properties() {
@@ -44,9 +44,15 @@ export class TestComponent3 extends TestComponent {
 }
 
 const TEMPLATE4 = function() {
-    return <svg>
-        <circle stroke="black" stroke-width="3" fill="red" r={this.radius} />
-    </svg>;
+    IDOM.elementOpen('svg');
+    IDOM.elementOpenStart('circle');
+    IDOM.attr('stroke', 'black');
+    IDOM.attr('stroke-width', '3');
+    IDOM.attr('fill', 'red');
+    IDOM.attr('r', this.radius);
+    IDOM.elementOpenEnd();
+    IDOM.elementClose('circle');
+    IDOM.elementClose('svg');
 };
 
 export class TestComponent4 extends TestComponent {
