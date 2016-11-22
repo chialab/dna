@@ -82,6 +82,7 @@ class Property {
             this.attrName = attrName;
         } else {
             this.attrRequested = !!attrName;
+            this.attrName = this.name;
         }
         return this;
     }

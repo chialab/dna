@@ -89,8 +89,8 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             let prop = props[k];
             prop.named(k).init(this);
             let { attrName, eventName } = prop;
-            if (!attrName && observed.indexOf(k)) {
-                prop.attribute(k);
+            if (!attrName && observed.indexOf(k) !== -1) {
+                prop.attribute();
                 attrName = k;
             }
             if (attrName || eventName) {
