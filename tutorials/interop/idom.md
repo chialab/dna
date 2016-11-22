@@ -26,7 +26,7 @@ define('my-elem', MyElem);
 render(document.body, MyElem);
 ```
 
-You can also use JSX for the template getter, thanks to (babel-plugin-incremental-dom)[https://github.com/jridgewell/babel-plugin-incremental-dom]:
+You can also use JSX for the template getter, thanks to [babel-plugin-incremental-dom](https://github.com/jridgewell/babel-plugin-incremental-dom):
 ```js
 import { BaseComponent, IDOM } from '@dnajs/idom';
 
