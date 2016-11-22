@@ -15,9 +15,9 @@ Just another components pattern.
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
-import DNA from '@dnajs/custom-elements-v1';
+import { BaseComponent } from '@dnajs/custom-elements-v1';
 
-class MyElem extends DNA.BaseComponent {
+class MyElem extends BaseComponent {
     // ...
 }
 
@@ -35,28 +35,31 @@ customElements.define('my-elem', MyElem);
 Using [Google IncrementalDOM](https://github.com/google/incremental-dom) callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
 
 ```js
-import DNA from '@dnajs/idom';
+import { BaseComponent, IDOM, define, render } from '@dnajs/idom';
 
-class MyChild extends DNA.BaseComponent {
+class MyChild extends BaseComponent {
     // ...
 }
 
-class MyElem extends DNA.BaseComponent {
+class MyElem extends BaseComponent {
     get template() {
-        return '<my-child></my-child>';
+        return () => {
+            IDOM.elementOpen('my-child');
+            IDOM.elementClose('my-child');
+        }
     }
 }
 
 // define
-DNA.define('my-child', MyChild);
-DNA.define('my-elem', MyElem);
+define('my-child', MyChild);
+define('my-elem', MyElem);
 
 // bootstrap
-DNA.render(document.body, MyElem);
+render(document.body, MyElem);
 ```
 
 [package](./packages/dna-idom/) |
-[tutorial](./tutorials/interop/skin-idom.md)
+[tutorial](./tutorials/interop/idom.md)
 
 ### Others
 
