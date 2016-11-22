@@ -24,7 +24,7 @@ class MyElem extends DNA.BaseComponent {
 customElements.define('my-elem', MyElem);
 ```
 
-[package](./packages/dna-custom-elements-v1/) (with [Skin](./packages/dna-skin-ce-v1/)) |
+[package](./packages/dna-custom-elements-v1/) |
 [tutorial](./tutorials/interop/custom-elements-v1.md) |
 [native support](http://caniuse.com/#feat=custom-elementsv1) |
 [polyfill](https://github.com/webcomponents/custom-elements/)
@@ -55,20 +55,20 @@ DNA.define('my-elem', MyElem);
 DNA.render(document.body, MyElem);
 ```
 
-[package](./packages/dna-idom/) (with [Skin](./packages/dna-skin-idom/)) |
+[package](./packages/dna-idom/) |
 [tutorial](./tutorials/interop/skin-idom.md)
 
 ### Others
 
 **Use with Custom Elements v0 spec.**
 
-[package](./packages/dna-custom-elements-v0/) (with [Skin](./packages/dna-skin-ce-v0/))
+[package](./packages/dna-custom-elements-v0/)
+
+**Use with React.**
+
+[package](./packages/dna-react/)
 
 **Use with MutationObserver API.**
 
 [package](./packages/dna-mutation/) |
 [tutorial](./tutorials/interop/mutation-observer.md)
-
-**Use with React ans JSX.**
-
-(coming soon...)
