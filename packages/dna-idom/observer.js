@@ -31,12 +31,12 @@ notifications.nodesDeleted = function(nodes) {
 };
 
 attributes[symbols.default] = function(node, attrName, attrValue) {
+    let oldValue = node.getAttribute(attrName);
     /* istanbul ignore if */
     if (_changed) {
         _changed(node, attrName, attrValue);
     }
     if (DOM.isComponent(node)) {
-        let oldValue = node.getAttribute(attrName);
         let attrs = node.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
             attrValue = (attrValue === undefined) ? null : attrValue;
