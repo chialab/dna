@@ -22,13 +22,14 @@ const UPDATED = 'attributeChangedCallback';
 /**
  * Retrieve a component constructor from an Element or from a tag name.
  * @param {HTMLElement|String} node The element or the tag name.
+ * @param {Boolean} full Retrieve full component information.
  * @return {Function} The component constructor for the given param.
  */
-export function getComponent(node) {
+export function getComponent(node, full = false) {
     if (node.nodeType === Node.ELEMENT_NODE) {
         node = node.getAttribute('is') || node.tagName;
     }
-    return registry.get(node);
+    return full ? registry.getDescriptor(node) : registry.get(node);
 }
 /**
  * Check if a node is an instance of a component.
@@ -36,8 +37,8 @@ export function getComponent(node) {
  * @return {Boolean}
  */
 export function isComponent(node) {
-    let desc = getComponent(node);
-    return desc && (node instanceof desc.Ctr);
+    let Ctr = getComponent(node);
+    return Ctr && (node instanceof Ctr);
 }
 /**
  * An helper for dynamically trigger the `connectedCallback` reaction on components.
@@ -80,10 +81,7 @@ export function update(node, name, oldValue, newValue) {
  */
 export function bind(node, Ctr) {
     if (!isFunction(Ctr)) {
-        let desc = getComponent(node);
-        if (desc) {
-            Ctr = desc.Ctr;
-        }
+        Ctr = getComponent(node);
     }
     if (isFunction(Ctr)) {
         node.__proto__ = Ctr.prototype;
@@ -103,9 +101,9 @@ export function bind(node, Ctr) {
  * @return {HTMLElement} The component instance.
  */
 export function createElement(is) {
-    let descriptor = getComponent(is);
-    if (descriptor) {
-        return new descriptor.Ctr();
+    let Ctr = getComponent(is);
+    if (Ctr) {
+        return new Ctr();
     }
 }
 /**
