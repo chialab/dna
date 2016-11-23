@@ -6,7 +6,7 @@ export const IDOMTemplateMixin = (superClass) => class extends superClass {
         template = template || this.template;
         /* istanbul ignore else */
         if (isFunction(template)) {
-            patch(this, template);
+            patch(this, template.bind(this));
         } else {
             super.render(template);
         }
