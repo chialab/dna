@@ -6,5 +6,5 @@
  * Just another components pattern.
  * Use with MutationObserver API.
  */
-import './src/mutation-observer.js';
+import './observer.js';
 export * from '@dnajs/core';
