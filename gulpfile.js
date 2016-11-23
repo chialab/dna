@@ -30,6 +30,7 @@ var rollup = require('rollup-stream');
 var babel = require('rollup-plugin-babel');
 var uglify = require('rollup-plugin-uglify');
 var includePaths = require('rollup-plugin-includepaths');
+var multiEntry = require('rollup-plugin-multi-entry');
 var eslint = require('gulp-eslint');
 var sourcemaps = require('gulp-sourcemaps');
 var karma = require('karma');
@@ -100,6 +101,7 @@ function bundle(format, entryFileName) {
         entry: entryFileName,
         sourceMap: true,
         plugins: [
+            multiEntry(),
             includePaths({
                 paths: ['packages', 'node_modules'],
             }),
@@ -124,8 +126,14 @@ function jsMin() {
     env.min = true;
 
     return entries.map((entry) => {
-        var distFile = path.basename(path.dirname(entry)) + '.js';
-        var distPath = path.join(path.dirname(entry), 'dist');
+        var dirname = path.dirname(entry);
+        var distFile = path.basename(dirname) + '.js';
+        var distPath = path.join(dirname, 'dist');
+        // add observer
+        var observer = path.join(dirname, 'observer.js');
+        if (fs.existsSync(observer)) {
+            entry = [entry, observer];
+        }
         return del([distPath]).then(() =>
             bundle('umd', entry)
                 .pipe(source(distFile))

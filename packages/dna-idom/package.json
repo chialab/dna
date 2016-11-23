@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/idom",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.20",
   "description": "Just another components pattern with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",

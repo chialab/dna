@@ -39,6 +39,7 @@
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-includepaths": "^0.1.6",
     "rollup-plugin-istanbul": "^1.1.0",
+    "rollup-plugin-multi-entry": "^2.0.1",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-stream": "^1.14.0",
     "vinyl-buffer": "^1.0.0",
