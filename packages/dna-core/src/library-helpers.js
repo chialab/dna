@@ -1,5 +1,5 @@
 import { dispatch } from './lib/dispatch.js';
-import * as DOM_HELPERS from './lib/nodes.js';
+import * as DOM_HELPERS from './lib/dom.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';

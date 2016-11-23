@@ -29,8 +29,9 @@ export function render(node, Component, props) {
  * @extends HTMLElement
  *
  * @example
- * my-component.js
+ *
  * ```js
+ * // my-component.js
  * import { BaseComponent } from 'dna/component';
  * export class MyComponent extends BaseComponent {
  *   static get observedAttributes() {
@@ -51,6 +52,7 @@ export function render(node, Component, props) {
  *     return { ... };
  *   }
  * }
+ * ```
  */
 export class BaseComponent extends mix(
     shim(self.HTMLElement)

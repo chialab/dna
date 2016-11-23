@@ -34,7 +34,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         if (!this.constructor.styleElem) {
             let Ctr = this.constructor;
             Object.defineProperty(Ctr, 'styleElem', {
-                value: createStyle(this.is),
+                value: createStyle(this),
             });
         }
         this.updateCSS();
