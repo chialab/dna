@@ -1,4 +1,4 @@
-import { isFunction } from '@dnajs/core/src/library-helpers.js';
+import { isFunction } from '@dnajs/core/src/core.js';
 import { patch } from '../lib/idom.js';
 
 export const IDOMTemplateMixin = (superClass) => class extends superClass {

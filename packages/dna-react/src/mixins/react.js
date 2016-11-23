@@ -1,6 +1,6 @@
 import React from '@react/react';
 import ReactDOM from '@react/react-dom';
-import { DOM } from '@dnajs/core/src/library-helpers.js';
+import { DOM } from '@dnajs/core/src/core.js';
 
 export const ReactMixin = (superClass) => {
     let ReactComponent = class extends React.Component {

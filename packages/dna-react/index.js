@@ -7,7 +7,7 @@
  * Use with React.
  */
 import ReactDOM from '@react/react-dom';
-import { mix, MIXINS } from '@dnajs/core/src/library-helpers.js';
+import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';
 import { ReactMixin } from './src/mixins/react.js';
@@ -15,7 +15,7 @@ import { ReactMixin } from './src/mixins/react.js';
 MIXINS.ReactMixin = ReactMixin;
 
 export { registry };
-export * from '@dnajs/core/src/library-helpers.js';
+export * from '@dnajs/core/src/core.js';
 
 export function defineComponent(tagName, Component, config) {
     Object.defineProperty(Component.prototype, 'is', {

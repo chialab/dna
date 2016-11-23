@@ -7,7 +7,7 @@
  */
 import * as IDOM from './src/lib/idom.js';
 import { IDOMTemplateMixin } from './src/mixins/idom.js';
-import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/library-helpers.js';
+import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/core.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';
 
 MIXINS.IDOMTemplateMixin = IDOMTemplateMixin;

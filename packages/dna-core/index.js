@@ -6,7 +6,7 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import { mix, prop, shim, HELPERS, DOM, MIXINS } from './src/library-helpers.js';
+import { mix, prop, shim, HELPERS, DOM, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 
 export { mix, prop, shim, HELPERS, DOM, MIXINS };

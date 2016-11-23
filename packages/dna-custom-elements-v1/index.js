@@ -6,10 +6,10 @@
  * Just another components pattern.
  * Use with Custom Elements spec.
  */
-import { mix, MIXINS } from '@dnajs/core/src/library-helpers.js';
+import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { shim } from './src/lib/shim.js';
 
-export { prop, HELPERS } from '@dnajs/core/src/library-helpers.js';
+export { prop, HELPERS } from '@dnajs/core/src/core.js';
 export { shim, mix, MIXINS };
 export const registry = self.customElements;
 export function define(...args) {

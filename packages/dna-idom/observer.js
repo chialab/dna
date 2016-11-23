@@ -1,5 +1,5 @@
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
-import { DOM } from '@dnajs/core/src/library-helpers.js';
+import { DOM } from '@dnajs/core/src/core.js';
 
 let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;

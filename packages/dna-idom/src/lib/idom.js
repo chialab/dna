@@ -1,4 +1,4 @@
-import { isObject, isFunction, isArray, DOM } from '@dnajs/core/src/library-helpers.js';
+import { isObject, isFunction, isArray, DOM } from '@dnajs/core/src/core.js';
 import {
     skip,
     text,
