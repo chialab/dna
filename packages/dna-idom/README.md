@@ -32,7 +32,11 @@ it will look like:
 </my-component>
 ```
 
-JSX support is provided too, passing `IDOM.h` as `pragma`:
+### With JSX!
+JSX support is provided too, passing `IDOM.h` as `pragma`.
+```sh
+$ npm install babel-plugin-transform-react-jsx -D
+```
 ```js
 // .babelrc
 ...
