@@ -1,4 +1,4 @@
-[![Logo](docs/logo.png)](http://dna.chialab.io)
+[![Logo](https://raw.githubusercontent.com/Chialab/dna/next/logo.png)](http://dna.chialab.io)
 
 Just another components pattern.
 

@@ -1,4 +1,4 @@
-[![Logo](https://raw.githubusercontent.com/Chialab/dna/next/docs/logo.png)](http://dna.chialab.io)
+[![Logo](https://raw.githubusercontent.com/Chialab/dna/next/logo.svg)](http://dna.chialab.io)
 
 Just another components pattern with IncrementalDOM templates.
 
