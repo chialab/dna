@@ -1,9 +1,6 @@
-import { IDOM } from './src/lib/idom.js';
+import { symbols, attributes, notifications } from 'incremental-dom/index.js';
 import { DOM } from '@dnajs/core/src/library-helpers.js';
 
-const notifications = IDOM.notifications;
-const attributes = IDOM.attributes;
-const symbols = IDOM.symbols;
 let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;
 let _changed = attributes[symbols.default];

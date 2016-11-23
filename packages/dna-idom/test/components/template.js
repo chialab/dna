@@ -14,26 +14,18 @@ class TestComponent extends BaseComponent {
     }
 }
 
-const TEMPLATE1 = function() {
-    return [
-        this.title && [<h1>{this.title}</h1>,<br />],
-        <span>Hello, {this.fullname}</span>,
-    ];
-};
-
 export class TestComponent1 extends TestComponent {
     get template() {
-        return TEMPLATE1;
+        return () => [
+            this.title && [<h1>{this.title}</h1>,<br />],
+            <span>Hello, {this.fullname}</span>,
+        ];
     }
 }
 
-const TEMPLATE2 = function() {
-    return <span class="dna-test">Hello DNA!</span>;
-};
-
 export class TestComponent2 extends TestComponent {
     get template() {
-        return TEMPLATE2;
+        return <span class="dna-test">Hello DNA!</span>;
     }
 }
 
@@ -43,21 +35,16 @@ export class TestComponent3 extends TestComponent {
     }
 }
 
-const TEMPLATE4 = function() {
-    IDOM.elementOpen('svg');
-    IDOM.elementOpenStart('circle');
-    IDOM.attr('stroke', 'black');
-    IDOM.attr('stroke-width', '3');
-    IDOM.attr('fill', 'red');
-    IDOM.attr('r', this.radius);
-    IDOM.elementOpenEnd();
-    IDOM.elementClose('circle');
-    IDOM.elementClose('svg');
-};
-
 export class TestComponent4 extends TestComponent {
     get template() {
-        return TEMPLATE4;
+        return IDOM.h('svg', [
+            IDOM.h('circle', {
+                'stroke': 'black',
+                'stroke-width': '3',
+                'fill': 'red',
+                'r': this.radius,
+            }),
+        ]);
     }
 
     get properties() {
@@ -67,17 +54,13 @@ export class TestComponent4 extends TestComponent {
     }
 }
 
-const TEMPLATE5 = function() {
-    return [
-        <span class="dna-test">Hello Dna!</span>,
-        <test-vdom-placeholder />,
-        <figure is="test2-vdom-placeholder" />,
-    ];
-};
-
 export class TestComponent5 extends TestComponent {
     get template() {
-        return TEMPLATE5;
+        return () => [
+            <span class="dna-test">Hello Dna!</span>,
+            <test-vdom-placeholder />,
+            <figure is="test2-vdom-placeholder" />,
+        ];
     }
 }
 

@@ -9,7 +9,7 @@ export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.Comp
         return {
             name: prop.STRING.attribute(),
             lastName: prop.STRING.attribute('last-name'),
-            married: prop.BOOLEAN.attribute(),
+            married: prop.BOOLEAN,
             age: prop.NUMBER
                 .validate((val) => val >= 0)
                 .attribute()

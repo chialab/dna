@@ -13,8 +13,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "babel-plugin-incremental-dom": "^3.4.0",
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-es2015-rollup": "^1.2.0",
     "chai": "^3.5.0",
     "codecov.io": "^0.1.6",

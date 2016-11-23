@@ -7,7 +7,7 @@ export function isString(str) {
 }
 
 export function isObject(obj) {
-    return typeof obj === 'object';
+    return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 export function isUndefined(obj) {

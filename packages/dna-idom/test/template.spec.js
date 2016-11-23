@@ -45,6 +45,7 @@ describe('Unit: TemplateComponent', () => {
         const elem = render(WRAPPER, TestComponent4);
 
         elem.radius = 40;
+
         let svg = elem.firstElementChild;
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');

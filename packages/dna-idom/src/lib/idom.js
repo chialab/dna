@@ -1,69 +1,68 @@
-import { DOM } from '@dnajs/core/src/library-helpers.js';
+import { isObject, isFunction, isArray, DOM } from '@dnajs/core/src/library-helpers.js';
 import {
-    currentElement,
-    currentPointer,
     skip,
-    skipNode,
-    elementClose,
     text,
     attr,
-    symbols,
-    attributes,
-    applyAttr,
-    applyProp,
-    notifications,
-    importNode,
-    patchInner,
-    patchOuter,
-    elementOpenStart as originalElementOpenStart,
-    elementOpen as originalElementOpen,
-    elementOpenEnd as originalElementOpenEnd,
+    elementClose,
+    elementOpenStart,
+    elementOpenEnd,
+    patch as originalPatch,
 } from 'incremental-dom/index.js';
 
-let scope;
-let currentOpen;
-
-function wrapOpen(originalFn) {
-    return (...args) => {
-        let res = originalFn(...args) || currentOpen;
-        if (!scope) {
-            scope = res;
-        } else {
-            if (DOM.getComponent(res)) {
-                skip();
-            }
+function handleChildren(children) {
+    children.forEach((child) => {
+        if (isFunction(child)) {
+            child();
+        } else if (isArray(child)) {
+            handleChildren(child);
+        } else if (child) {
+            text(child);
         }
-        currentOpen = null;
-        return res;
+    });
+}
+
+function interpolate(template, data) {
+    if (isFunction(template)) {
+        let res = template.call(this, data);
+        interpolate.call(this, res);
+    } else if (isArray(template)) {
+        template.forEach((chunk) => {
+            interpolate.call(this, chunk);
+        });
+    }
+}
+
+
+export function h(element, props, ...children) {
+    return () => {
+        elementOpenStart(element);
+
+        if (!isObject(props)) {
+            if (props) {
+                children.unshift(props);
+            }
+            props = {};
+        }
+
+        for (let k in props) {
+            attr(k, props[k]);
+        }
+
+        const node = elementOpenEnd(element);
+        const isComponent = DOM.getComponent(node);
+
+        if (isComponent) {
+            skip();
+        } else {
+            handleChildren(children);
+        }
+        elementClose(element);
+        return node;
     };
 }
 
-export const IDOM = {
-    currentElement,
-    currentPointer,
-    skip,
-    skipNode,
-    elementClose,
-    text,
-    attr,
-    symbols,
-    attributes,
-    applyAttr,
-    applyProp,
-    notifications,
-    importNode,
-    elementOpenStart(...args) {
-        currentOpen = originalElementOpenStart(...args);
-        return currentOpen;
-    },
-    elementOpen: wrapOpen(originalElementOpen),
-    elementOpenEnd: wrapOpen(originalElementOpenEnd),
-    patchOuter,
-    patchInner,
-    patch: patchInner,
-    elementVoid(...args) {
-        let res = this.elementOpen(...args);
-        this.elementClose(args[0]);
-        return res;
-    },
-};
+export function patch(scope, fn, data) {
+    return originalPatch(scope, interpolate.bind(this, fn, data));
+}
+
+export { text };

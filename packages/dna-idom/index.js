@@ -5,14 +5,14 @@
  *
  * Just another components pattern with IncrementalDOM templates.
  */
-import { IDOM } from './src/lib/idom.js';
-import { IDomTemplateMixin } from './src/mixins/idom.js';
+import * as IDOM from './src/lib/idom.js';
+import { IDOMTemplateMixin } from './src/mixins/idom.js';
 import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/library-helpers.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';
 
-MIXINS.IDomTemplateMixin = IDomTemplateMixin;
+MIXINS.IDOMTemplateMixin = IDOMTemplateMixin;
 
 export { mix, prop, shim, HELPERS, DOM, MIXINS };
 export { registry, render, define } from '@dnajs/core';
 export { IDOM };
-export class BaseComponent extends mix(OriginalComponent).with(IDomTemplateMixin) {}
+export class BaseComponent extends mix(OriginalComponent).with(IDOMTemplateMixin) {}

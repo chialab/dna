@@ -3,10 +3,8 @@
     "plugins": [
         ["transform-es2015-classes", { "loose": true }],
         "transform-inline-environment-variables",
-        ["incremental-dom", {
-          "prefix": "IDOM",
-          "inlineExpressions": true,
-          "fastRoot": true
+        ["transform-react-jsx", {
+          "pragma": "IDOM.h",
         }]
     ]
 }
