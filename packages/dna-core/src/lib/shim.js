@@ -1,6 +1,12 @@
 import { registry } from './registry.js';
 import { isString } from './typeof.js';
 
+/**
+ * Check if a node is already instantiated HTMLElement for programmatically `constructor` calls.
+ * @private
+ * @param {HTMLElement} node The node to check.
+ * @return {Boolean} The node should be instantiated.
+ */
 function isNew(node) {
     try {
         return !isString(node.outerHTML);
@@ -9,6 +15,23 @@ function isNew(node) {
     }
 }
 
+/**
+ * Shim original Element constructors in order to be used with `new`.
+ * @param {Function} Original The original constructor to shim.
+ * @return {Function} The shimmed constructor.
+ *
+ * @example
+ * ```js
+ * // shim audio element
+ * import { shim } from '@dnajs/core';
+ *
+ * class MyAudio extends shim(HTMLAudioElement) {
+ *     ...
+ * }
+ *
+ * let audio = new MyAudio();
+ * ```
+ */
 export function shim(Original) {
     class Polyfilled {
         constructor() {
@@ -28,6 +51,7 @@ export function shim(Original) {
             return element;
         }
     }
+    // Clone the prototype overriding the constructor.
     Polyfilled.prototype = Object.create(Original.prototype, {
         constructor: {
             value: Polyfilled,
