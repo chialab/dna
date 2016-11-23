@@ -25,16 +25,16 @@ customElements.define('my-elem', MyElem);
 ```
 
 [package](./packages/dna-custom-elements-v1/) |
-[tutorial](./tutorials/interop/custom-elements-v1.md) |
 [native support](http://caniuse.com/#feat=custom-elementsv1) |
 [polyfill](https://github.com/webcomponents/custom-elements/)
 
 
 ### Use with Incremental DOM 🌟
 
-Using [Google IncrementalDOM](https://github.com/google/incremental-dom) callbacks, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs (similar to the React way):
+Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notifications, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) callbacks without any polyfill:
 
 ```js
+import '@dnajs/idom/observer.js';
 import { BaseComponent, IDOM, define, render } from '@dnajs/idom';
 
 class MyChild extends BaseComponent {
@@ -43,10 +43,10 @@ class MyChild extends BaseComponent {
 
 class MyElem extends BaseComponent {
     get template() {
-        return () => {
-            IDOM.elementOpen('my-child');
-            IDOM.elementClose('my-child');
-        }
+        // Using IDOM.h helper
+        // return IDOM.h('my-child');
+        // or JSX
+        return <my-child />;
     }
 }
 
@@ -58,8 +58,7 @@ define('my-elem', MyElem);
 render(document.body, MyElem);
 ```
 
-[package](./packages/dna-idom/) |
-[tutorial](./tutorials/interop/idom.md)
+[package](./packages/dna-idom/)
 
 ### Others
 
@@ -73,5 +72,4 @@ render(document.body, MyElem);
 
 **Use with MutationObserver API.**
 
-[package](./packages/dna-mutation/) |
-[tutorial](./tutorials/interop/mutation-observer.md)
+[package](./packages/dna-mutation/)

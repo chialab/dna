@@ -13,19 +13,15 @@ $ npm i @dnajs/idom --save
 
 ## Usage
 
-### Defining a template using IncrementalDOM
-An IncrementalDOM template for DNA components is a wrapping function around the api calls:
+### Defining a template using `IDOM.h`
+`IDOM.h` is a wrapper for IncrementalDOM api:
 ```js
 // my-component.js
 import { BaseComponent, IDOM } from '@dnajs/idom';
 
 export class MyComponent extends BaseComponent {
     get template() {
-        return () => {
-            IDOM.elementOpen('span');
-            IDOM.text('Hello!');
-            IDOM.elementClose('span');
-        };
+        return () => IDOM.h('span', 'Hello!');
     }
 }
 ```
@@ -36,13 +32,13 @@ it will look like:
 </my-component>
 ```
 
-JSX support is provided too, thanks to the  [babel-plugin-incremental-dom](https://github.com/jridgewell/babel-plugin-incremental-dom):
+JSX support is provided too, passing `IDOM.h` as `pragma`:
 ```js
 // .babelrc
 ...
     "plugins": [
         ...,
-        ["incremental-dom", { "prefix": "IDOM" }],
+        ["transform-react-jsx", { "pragma": "IDOM.h" }],
         ...
     ]
 ...
@@ -53,7 +49,7 @@ import { BaseComponent, IDOM } from '@dnajs/idom';
 
 export class MyComponent extends BaseComponent {
     get template() {
-        return () => <span>Hello!</span>;
+        return <span>Hello!</span>;
     }
 }
 ```
