@@ -3,6 +3,8 @@ import { CustomEvent } from '../polyfills/custom-event.js';
 
 /**
  * Trigger a custom DOM Event.
+ * @private
+ *
  * @param {Node} node The event target.
  * @param {String} evName The custom event name.
  * @param {Object} data Extra data to pass to the event.

@@ -5,7 +5,42 @@
 import { reduce } from '../polyfills/reduce.js';
 
 /**
- * @private
+ * Mix a class with a mixin.
+ * @method mix(...).with(...)
+ * @memberof! DNA.
+ * @static
+ *
+ * @param {Function} superClass The class to extend.
+ * @return {Function} A mixed class.
+ *
+ * @example
+ * // my-super.js
+ * export class MySuperClass {
+ *     constructor() {
+ *         // do something
+ *     }
+ * }
+ * @example
+ * // mixin.js
+ * export const Mixin = (superClass) => class extend superClass {
+ *     constructor() {
+ *         super();
+ *         // do something else
+ *     }
+ * };
+ * @example
+ * import { mix } from '@dnajs/core';
+ * import { MySuperClass } from './my-super.js';
+ * import { Mixin } from './mixin.js';
+ *
+ * export class MixedClass extends mix(MySuperClass).with(Mixin) {
+ *     ...
+ * }
+ */
+
+/**
+ * A Mixin helper class.
+ * @ignore
  */
 class Mixin {
     /**
@@ -29,30 +64,7 @@ class Mixin {
 }
 
 /**
- * Mix a class with a mixin.
- * @param {Function} superClass The class to extend.
- * @return {Mixin} A Mixin instance.
- *
- * @example
- * ```js
- * // super class
- * class MySuperClass {
- *     constructor() {
- *         // do something
- *     }
- * }
- *
- * // create a mixin function
- * const Mixin = (superClass) => class extend superClass {
- *     constructor() {
- *         super();
- *         // do something else
- *     }
- * };
- *
- * export class MixedClass extends mix(MySuperClass).with(Mixin) {
- *
- * }
- * ```
+ * Create a Mixin instance.
+ * @ignore
  */
 export const mix = (superClass) => new Mixin(superClass);

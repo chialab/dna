@@ -9,11 +9,36 @@
 import { mix, prop, shim, HELPERS, DOM, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 
+/**
+ * @namespace DNA
+ */
 export { mix, prop, shim, HELPERS, DOM, MIXINS };
 export { registry };
+
+/**
+ * Register a new component.
+ * @method define
+ * @memberof! DNA.
+ * @static
+ *
+ * @param {String} name The id of the component.
+ * @param {Function} Ctr The component constructor.
+ * @param {Object} config Optional component configuration.
+ */
 export function define(tagName, Component, config) {
     return registry.define(tagName, Component, config);
 }
+/**
+ * Create and append a new component instance.
+ * @method render
+ * @memberof! DNA.
+ * @static
+ *
+ * @param {HTMLElement} node The parent node.
+ * @param {Function} Component The component constructor.
+ * @param {Object} props Optional set of properties to set to the component.
+ * @return {HTMLElement} The new component instance.
+ */
 export function render(node, Component, props) {
     let element = new Component();
     for (let k in props) {
@@ -27,12 +52,12 @@ export function render(node, Component, props) {
  * Simple Custom Component with some behaviors.
  * @class BaseComponent
  * @extends HTMLElement
+ * @memberof DNA.
+ * @static
  *
  * @example
- *
- * ```js
  * // my-component.js
- * import { BaseComponent } from 'dna/component';
+ * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
  *   static get observedAttributes() {
  *     return ['...', '...'];
@@ -52,7 +77,6 @@ export function render(node, Component, props) {
  *     return { ... };
  *   }
  * }
- * ```
  */
 export class BaseComponent extends mix(
     shim(self.HTMLElement)

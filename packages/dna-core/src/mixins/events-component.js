@@ -7,12 +7,14 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 /**
  * Simple Custom Component with events delegation,
  * It also implement a `dispatchEvent` wrapper named `trigger`.
+ * @mixin EventsMixin
+ * @memberof DNA.MIXINS.
+ * @static
  *
  * @example
- * my-component.js
- * ```js
- * import { EventsMixin, Component, mix } from 'dna/component';
- * export class MyComponent extends mix(Component).with(EventsMixin) {
+ * // my-component.js
+ * import { BaseComponent } from '@dnajs/core';
+ * export class MyComponent extends BaseComponent {
  *   get events() {
  *     return {
  *       'click button': 'onButtonClick'
@@ -22,22 +24,23 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
  *     console.log('button clicked');
  *   }
  * }
- * ```
- * app.js
- * ```js
- * import { define } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
+ * @example
+ * // app.js
+ * import { define } from '@dnajs/core';
+ * import { MyComponent } from './my-component.js';
  * define('my-component', MyComponent);
  * var element = new MyComponent();
  * var button = document.createElement('button');
  * button.innerText = 'Click me';
  * element.appendChild(button);
  * button.click(); // logs "button clicked"
- * ```
  */
 export const EventsMixin = (SuperClass) => class extends SuperClass {
     /**
-     * Fires when an instance of the element is created.
+     * Attach and delegate events to the component.
+     * @method constructor
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
      */
     constructor() {
         super();
@@ -63,6 +66,16 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
             }
         }
     }
+    /**
+     * Delegate events to the component descendents.
+     * @method delegate
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     *
+     * @param {String} evName The name of the event to delegate.
+     * @param {String} selector A CSS selector for descendents.
+     * @param {Function} callback The callback to fire when the event fires.
+     */
     delegate(evName, selector, callback) {
         this.addEventListener(evName, (event) => {
             let target = event.target;
@@ -76,10 +89,15 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.
+     * @method trigger
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     *
      * @param {String} evName The name of the event to fire.
      * @param {Object} data A set of custom data to pass to the event.
      * @param {Boolean} bubbles Should the event bubble throw the DOM tree.
      * @param {Boolean} cancelable Can be the event cancel by a callback.
+     * @return {Boolean} True if event propagation has not be stopped.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
         return dispatch(this, evName, data, bubbles, cancelable);

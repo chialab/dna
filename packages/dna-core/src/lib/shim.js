@@ -17,11 +17,14 @@ function isNew(node) {
 
 /**
  * Shim original Element constructors in order to be used with `new`.
+ * @method shim
+ * @memberof! DNA.
+ * @static
+ *
  * @param {Function} Original The original constructor to shim.
  * @return {Function} The shimmed constructor.
  *
  * @example
- * ```js
  * // shim audio element
  * import { shim } from '@dnajs/core';
  *
@@ -30,7 +33,6 @@ function isNew(node) {
  * }
  *
  * let audio = new MyAudio();
- * ```
  */
 export function shim(Original) {
     class Polyfilled {

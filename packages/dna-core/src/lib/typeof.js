@@ -1,5 +1,9 @@
 /**
  * Check if an value is a function.
+ * @method isFunction
+ * @memberof! DNA.
+ * @static
+ *
  * @param {*} obj The value to check.
  * @return {Boolean}
  */
@@ -8,6 +12,10 @@ export function isFunction(obj) {
 }
 /**
  * Check if an value is a string.
+ * @method isString
+ * @memberof! DNA.
+ * @static
+ *
  * @param {*} obj The value to check.
  * @return {Boolean}
  */
@@ -16,6 +24,10 @@ export function isString(obj) {
 }
 /**
  * Check if an value is an object.
+ * @method isObject
+ * @memberof! DNA.
+ * @static
+ *
  * @param {*} obj The value to check.
  * @return {Boolean}
  */
@@ -24,6 +36,10 @@ export function isObject(obj) {
 }
 /**
  * Check if an value is undefined.
+ * @method isUndefined
+ * @memberof! DNA.
+ * @static
+ *
  * @param {*} obj The value to check.
  * @return {Boolean}
  */
@@ -32,6 +48,10 @@ export function isUndefined(obj) {
 }
 /**
  * Check if an value is an array.
+ * @method isArray
+ * @memberof! DNA.
+ * @static
+ *
  * @param {*} obj The value to check.
  * @return {Boolean}
  */

@@ -1,6 +1,8 @@
 const rootDoc = document;
 /**
  * Create and attach a style element for a component.
+ * @private
+ *
  * @param {HTMLElement} node A component instance.
  * @return {HTMLElement} The created style element.
  */

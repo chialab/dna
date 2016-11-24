@@ -10,6 +10,7 @@ const define = Object.defineProperty;
 /**
  * Power to the component's properties.
  * Type checking, validation, callbacks, events and attribute syncing.
+ * @private
  */
 class Property {
     /**
@@ -221,14 +222,17 @@ class Property {
 
 /**
  * Helper method for Property creation.
- * @param {PropertyFunction|Array} A Property to clone or a single or a list of valid constructors for the property value.
- * @return {Property} The new property.
+ * @method prop
+ * @memberof! DNA.
+ * @static
  *
- * @namespace
  * @property {Property} ANY A property without type validation.
  * @property {Property} STRING A property which accepts only strings.
  * @property {Property} BOOLEAN A property which accepts only booleans.
  * @property {Property} NUMBER A property which accepts only numbers.
+ *
+ * @param {Property|Function|Array} ctrs A Property to clone or a single or a list of valid constructors for the property value.
+ * @return {Property} The new property.
  */
 export function prop(ctrs) {
     if (ctrs instanceof Property) {

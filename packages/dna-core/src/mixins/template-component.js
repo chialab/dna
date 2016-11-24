@@ -2,30 +2,39 @@ import { isFunction, isString } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
+ * @memberof DNA.MIXINS
+ * @mixin TemplateMixin
+ * @static
+ *
+ * @param {Function} SuperClass The class to extend.
+ * @return {Function} The extended class.
  *
  * @example
- * my-component.js
- * ```js
- * import { Component, TemplateMixin, mix } from 'dna/component';
- * export class MyComponent extends mix(Component).with(TemplateMixin) {
+ * // my-component.js
+ * import { BaseComponent } from '@dnajs/core';
+ * export class MyComponent extends BaseComponent {
  *   get template() {
- *     return '<h1>${this.name}</h1>';
+ *     return `<h1>${this.name}</h1>`;
  *   }
  *   get name() {
  *     return 'Newton';
  *   }
  * }
- * ```
- * app.js
- * ```js
- * import { define } from 'dna/component';
- * import { MyComponent } from './components/my-component/my-component.js';
+ * @example
+ * // app.js
+ * import { define } from '@dnajs/core';
+ * import { MyComponent } from './my-component.js';
  * define('my-component', MyComponent);
  * var element = new MyComponent();
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
- * ```
  */
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
+    /**
+     * Attach properties observers in order to update children.
+     * @method constructor
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     */
     constructor() {
         super();
         if (this.template) {
@@ -40,6 +49,12 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
             }
         }
     }
+    /**
+     * Render the component when connected.
+     * @method connectedCallback
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     */
     connectedCallback() {
         super.connectedCallback();
         if (this.template) {
@@ -48,6 +63,13 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
     }
     /**
      * Update Component child nodes.
+     * @method render
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     *
+     * @param {Function|string} tpl A template to use instead of `this.template`.
+     *
+     * @throws {TypeError} Will throw if the template type is not supported.
      */
     render(tpl) {
         tpl = tpl || this.template;
@@ -57,7 +79,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         } else if (isString(tpl)) {
             this.innerHTML = tpl;
         } else {
-            throw new Error('Invalid template property.');
+            throw new TypeError('Invalid template property.');
         }
     }
 };
