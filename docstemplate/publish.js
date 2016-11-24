@@ -215,7 +215,7 @@ function generate(title, docs, filename, resolveLinks) {
         docs: docs
     };
 
-    var outpath = path.join(outdir, filename),
+    var outpath = path.join(outdir, path.basename(filename, '.html')) + '.md',
         html = view.render('container.tmpl', docData);
 
     if (resolveLinks) {

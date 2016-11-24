@@ -162,7 +162,6 @@ function jsDoc(cb) {
                         useLongnameInNav: true,
                     }
                 },
-                plugins: ['plugins/markdown'],
                 opts: {
                     template: path.resolve('./docstemplate'),
                     destination: TMP_DOC,

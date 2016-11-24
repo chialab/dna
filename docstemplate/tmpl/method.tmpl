@@ -76,30 +76,31 @@ var self = this;
 <?js } ?>
 
 <?js if (data.exceptions && exceptions.length) { ?>
-<h5>Throws:</h5>
-<?js if (exceptions.length > 1) { ?><ul><?js
+#### Throws
+<?js if (exceptions.length > 1) { ?><?js
     exceptions.forEach(function(r) { ?>
-        <li><?js= self.partial('exceptions.tmpl', r) ?></li>
+        <?js= self.partial('exceptions.tmpl', r) ?>
+
     <?js });
-?></ul><?js } else {
+?><?js } else {
     exceptions.forEach(function(r) { ?>
         <?js= self.partial('exceptions.tmpl', r) ?>
     <?js });
 } } ?>
 
 <?js if (data.returns && returns.length) { ?>
-<h5>Returns:</h5>
-<?js if (returns.length > 1) { ?><ul><?js
+**Returns**:
+<?js if (returns.length > 1) { ?><?js
     returns.forEach(function(r) { ?>
-        <li><?js= self.partial('returns.tmpl', r) ?></li>
+        <?js= self.partial('returns.tmpl', r) ?>
     <?js });
-?></ul><?js } else {
+?><?js } else {
     returns.forEach(function(r) { ?>
         <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
 
 <?js if (data.examples && examples.length) { ?>
-    <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
+    #### Example<?js= examples.length > 1? 's':'' ?>
     <?js= this.partial('examples.tmpl', examples) ?>
 <?js } ?>
