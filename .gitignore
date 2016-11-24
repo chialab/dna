@@ -1,6 +1,8 @@
-.tmp
+.tmp*
 npm-debug.log
 /bower_components
 /node_modules
 /coverage
 /lib
+/api
+/jsdoc-md

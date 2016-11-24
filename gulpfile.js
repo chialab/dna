@@ -37,6 +37,7 @@ var karma = require('karma');
 var path = require('path');
 var fs = require('fs');
 var jsdoc = require('gulp-jsdoc3');
+var toMarkdown = require('gulp-to-markdown');
 var glob = require('glob');
 var exec = require('child_process').exec;
 
@@ -44,6 +45,8 @@ var env = process.env;
 var moduleName = 'DNA';
 var srcs = ['packages/**/*.js'];
 var karmaConfig = path.resolve('./karma.conf.js');
+var TMP_DOC = './.tmp-jsdoc/';
+var DOC = './api/';
 
 var packages = glob.sync('packages/*/').map(function(pkg) {
     return path.basename(pkg);
@@ -61,7 +64,7 @@ var entries = packages.map(function(pkg) {
 });
 
 function cleanDoc() {
-    return del(['docs/']);
+    return del([TMP_DOC, DOC]);
 }
 
 function unit(done) {
@@ -147,16 +150,66 @@ function jsMin() {
     });
 }
 
-function jsDoc() {
-    return cleanDoc()
-        .then(function() {
-            return gulp.src(['README.md'].concat(srcs), { read: false })
-                .pipe(jsdoc({
-                    opts: {
-                        destination: './docs',
+function jsDoc(cb) {
+    // return cleanDoc()
+        // .then(function() {
+        gulp.src(srcs, { read: false })
+            .pipe(jsdoc({
+                templates: {
+                    default: {
+                        mainPageTitle: 'DNA',
+                        includeDate: false,
+                        useLongnameInNav: true,
+                    }
+                },
+                plugins: ['plugins/markdown'],
+                opts: {
+                    template: path.resolve('./docstemplate'),
+                    destination: TMP_DOC,
+                },
+            }, cb));
+        // });
+}
+
+function docMD() {
+    function clearSpaces(str) {
+        return str.replace(/^\s*/, '')
+            .replace(/\s*$/, '');
+    }
+
+    return gulp.src(path.join(TMP_DOC, '**/*.html'))
+        .pipe(toMarkdown({
+            gfm: true,
+            converters: [
+                { filter: ['div', 'section', 'header', 'article', 'footer', 'nav'], replacement: function(content) { return content; } },
+                { filter: ['h1'], replacement: function(content) { return ''; } },
+                { filter: ['h2'], replacement: function(content) { return '# ' + content; } },
+                { filter: ['dl'], replacement: function(content) { return '\n\n' + content; } },
+                { filter: ['td'], replacement: function(content, node) {
+                    return '| ' +
+                        clearSpaces(content).replace(/\s*\|\s*/g, ', ') +
+                        ' ' +
+                        (!node.nextElementSibling ? '|' : '');
+                    }
+                },
+                { filter: ['dt'], replacement: function(content, node) {
+                        return '**' + clearSpaces(content) + '** ';
                     },
-                }));
-        });
+                },
+                { filter: ['dd'], replacement: function(content, node) {
+                        if (node.className === 'tag-source') {
+                            return content.replace(/^\*\s*/m, '> ');
+                        }
+                        return clearSpaces(content) + '\n';
+                    },
+                },
+                { filter: function(node) { return node.className === 'type-signature' }, replacement: function(content) { return content ? '*' + clearSpaces(content) + '*' : ''; } },
+                { filter: function(node) { return node.className === 'ancestors' }, replacement: function(content) { return content; } },
+                { filter: function(node) { return node.className === 'signature' }, replacement: function(content) { return content; } },
+                { filter: function(node) { return node.className === 'param-type' }, replacement: function(content) { return content; } },
+            ],
+        }))
+        .pipe(gulp.dest(DOC));
 }
 
 function symlinks(f, t) {
@@ -251,7 +304,8 @@ gulp.task('lint', lint);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);
-gulp.task('docs', jsDoc);
+gulp.task('jsdocs', jsDoc);
+gulp.task('docs', ['jsdocs'], docMD);
 gulp.task('dependencies', dependencies);
 gulp.task('post-install', ['dependencies']);
 gulp.task('publish', function() {

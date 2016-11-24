@@ -4,7 +4,6 @@ import { isFunction, isString } from './typeof.js';
  * A custom components registry.
  * It replicates the [CustomElementRegistry interface](https://www.w3.org/TR/custom-elements/#custom-elements-api).
  * @name registry
- * @type {Object}
  * @memberof! DNA.
  * @static
  */

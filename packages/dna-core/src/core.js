@@ -10,7 +10,6 @@ import { TemplateMixin } from './mixins/template-component.js';
  * are not supported by the browser.
  * @name DOM
  * @namespace DOM
- * @type {Object}
  * @memberof! DNA.
  * @static
  */
@@ -18,7 +17,7 @@ export const DOM = DOM_HELPERS;
 /**
  * A set of core mixins.
  * @name MIXINS
- * @type {Object}
+ * @namespace MIXINS
  * @memberof! DNA.
  * @static
  */

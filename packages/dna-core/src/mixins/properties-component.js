@@ -154,8 +154,8 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @instance
      *
      * @param {String} attrName The changed attribute name.
-     * @param {*} oldVal The value of the attribute before the change.
-     * @param {*} newVal The value of the attribute after the change.
+     * @param {String} oldVal The value of the attribute before the change.
+     * @param {String} newVal The value of the attribute after the change.
      */
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
