@@ -1,6 +1,6 @@
 export const ComponentMixin = (SuperClass) => class extends SuperClass {
     get is() {
-        return this.getAttribute('is') || this.localName;
+        return (this.getAttribute('is') || this.localName).toLowerCase();
     }
     /**
      * Fires when an instance was inserted into the document.

@@ -146,8 +146,13 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @return {Object} An object with `cancel` method.
      */
     observeProperty(propName, callback) {
-        this.properties[propName].observe(callback);
+        return this.properties[propName].observe(callback);
     }
+    /**
+     * Remove a listener for node's property changes.
+     * @param {string} propName The property name to unobserve.
+     * @param {Function} callback The callback to remove.
+     */
     unobserveProperty(propName, callback) {
         this.properties[propName].unobserve(callback);
     }
