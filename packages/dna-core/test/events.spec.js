@@ -7,6 +7,7 @@ function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {
         bubbles: true,
         cancelable: true,
+        detail: undefined,
     });
     return node.dispatchEvent(ev);
 }
