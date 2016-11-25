@@ -14,13 +14,15 @@ import { reduce } from '../polyfills/reduce.js';
  * @return {Function} A mixed class.
  *
  * @example
+ * ```js
  * // my-super.js
  * export class MySuperClass {
  *     constructor() {
  *         // do something
  *     }
  * }
- * @example
+ * ```
+ * ```js
  * // mixin.js
  * export const Mixin = (superClass) => class extend superClass {
  *     constructor() {
@@ -28,7 +30,8 @@ import { reduce } from '../polyfills/reduce.js';
  *         // do something else
  *     }
  * };
- * @example
+ * ```
+ * ```js
  * import { mix } from '@dnajs/core';
  * import { MySuperClass } from './my-super.js';
  * import { Mixin } from './mixin.js';
@@ -36,6 +39,7 @@ import { reduce } from '../polyfills/reduce.js';
  * export class MixedClass extends mix(MySuperClass).with(Mixin) {
  *     ...
  * }
+ * ```
  */
 
 /**

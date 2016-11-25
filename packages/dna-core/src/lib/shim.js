@@ -25,6 +25,7 @@ function isNew(node) {
  * @return {Function} The shimmed constructor.
  *
  * @example
+ * ```js
  * // shim audio element
  * import { shim } from '@dnajs/core';
  *
@@ -33,6 +34,7 @@ function isNew(node) {
  * }
  *
  * let audio = new MyAudio();
+ * ```
  */
 export function shim(Original) {
     class Polyfilled {
