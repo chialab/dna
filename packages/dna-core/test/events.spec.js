@@ -1,7 +1,15 @@
 /* eslint-env mocha */
 
-import { define, render, HELPERS } from '../index.js';
+import { define, render } from '../index.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
+
+function dispatch(node, evName) {
+    let ev = new CustomEvent(evName, {
+        bubbles: true,
+        cancelable: true,
+    });
+    return node.dispatchEvent(ev);
+}
 
 const WRAPPER = document.body;
 define('test-events-component', TestComponent);
@@ -22,10 +30,10 @@ describe('Unit: EventsComponent', () => {
             let button = elem.querySelector('button');
             let input = elem.querySelector('input');
             before((done) => {
-                HELPERS.dispatch(span, 'click');
-                HELPERS.dispatch(button, 'click');
+                dispatch(span, 'click');
+                dispatch(button, 'click');
                 input.value = 'DNA Tests';
-                HELPERS.dispatch(input, 'change');
+                dispatch(input, 'change');
                 setTimeout(() => done(), 500);
             });
 

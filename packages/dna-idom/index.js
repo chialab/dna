@@ -7,12 +7,12 @@
  */
 import * as IDOM from './src/lib/idom.js';
 import { IDOMTemplateMixin } from './src/mixins/idom.js';
-import { mix, prop, shim, HELPERS, DOM, MIXINS } from '@dnajs/core/src/core.js';
+import { mix, prop, shim, DOM, MIXINS } from '@dnajs/core/src/core.js';
 import { BaseComponent as OriginalComponent } from '@dnajs/core';
 
 MIXINS.IDOMTemplateMixin = IDOMTemplateMixin;
 
-export { mix, prop, shim, HELPERS, DOM, MIXINS };
+export { mix, prop, shim, DOM, MIXINS };
 export { registry, render, define } from '@dnajs/core';
 export { IDOM };
 export class BaseComponent extends mix(OriginalComponent).with(IDOMTemplateMixin) {}

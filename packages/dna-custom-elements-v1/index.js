@@ -9,7 +9,7 @@
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { shim } from './src/lib/shim.js';
 
-export { prop, HELPERS } from '@dnajs/core/src/core.js';
+export { prop } from '@dnajs/core/src/core.js';
 export { shim, mix, MIXINS };
 export const registry = self.customElements;
 export function define(...args) {

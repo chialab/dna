@@ -12,7 +12,7 @@ import { customElementMixin } from './src/mixins/custom-element.js';
 
 MIXINS.customElementMixin = customElementMixin;
 
-export { prop, HELPERS } from '@dnajs/core/src/core.js';
+export { prop } from '@dnajs/core/src/core.js';
 export { shim, mix, registry, MIXINS };
 export function define(tagName, Component, config = {}) {
     registry.define(tagName, Component, config);
