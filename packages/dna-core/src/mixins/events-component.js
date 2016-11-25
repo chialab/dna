@@ -12,6 +12,7 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
  * @static
  *
  * @example
+ * ```js
  * // my-component.js
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
@@ -24,7 +25,8 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
  *     console.log('button clicked');
  *   }
  * }
- * @example
+ * ```
+ * ```js
  * // app.js
  * import { define } from '@dnajs/core';
  * import { MyComponent } from './my-component.js';
@@ -34,6 +36,7 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
  * button.innerText = 'Click me';
  * element.appendChild(button);
  * button.click(); // logs "button clicked"
+ * ```
  */
 export const EventsMixin = (SuperClass) => class extends SuperClass {
     /**

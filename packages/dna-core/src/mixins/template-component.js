@@ -1,4 +1,4 @@
-import { isFunction, isString } from '../lib/typeof.js';
+import { isUndefined, isFunction, isString } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -10,6 +10,7 @@ import { isFunction, isString } from '../lib/typeof.js';
  * @return {Function} The extended class.
  *
  * @example
+ * ```js
  * // my-component.js
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
@@ -20,13 +21,15 @@ import { isFunction, isString } from '../lib/typeof.js';
  *     return 'Newton';
  *   }
  * }
- * @example
+ * ```
+ * ```js
  * // app.js
  * import { define } from '@dnajs/core';
  * import { MyComponent } from './my-component.js';
  * define('my-component', MyComponent);
  * var element = new MyComponent();
  * console.log(element.innerHTML); // logs "<h1>Newton</h1>"
+ * ```
  */
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     /**
@@ -37,7 +40,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        if (this.template) {
+        if (!isUndefined(this.template)) {
             let props = this.properties;
             if (props) {
                 let callback = () => {
@@ -57,7 +60,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     connectedCallback() {
         super.connectedCallback();
-        if (this.template) {
+        if (!isUndefined(this.template)) {
             this.render();
         }
     }

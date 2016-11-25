@@ -8,6 +8,7 @@ import { createStyle } from '../lib/style.js';
  * @static
  *
  * @example
+ * ```js
  * // my-component.js
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
@@ -15,7 +16,8 @@ import { createStyle } from '../lib/style.js';
  *     return '.my-component p { color: red; }'
  *   }
  * }
- * @example
+ * ```
+ * ```js
  * // app.js
  * import { define } from '@dnajs/core';
  * import { MyComponent } from './my-component.js';
@@ -24,6 +26,7 @@ import { createStyle } from '../lib/style.js';
  * var p = document.createElement('p');
  * p.innerText = 'Paragraph';
  * element.appendChild(p); // text inside `p` gets the red color
+ * ```
  */
 export const StyleMixin = (SuperClass) => class extends SuperClass {
     /**

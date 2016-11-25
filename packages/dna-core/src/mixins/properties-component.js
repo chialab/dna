@@ -58,6 +58,7 @@ function setAttribute(context, attr, value) {
  * @static
  *
  * @example
+ * ```js
  * // my-component.js
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
@@ -65,7 +66,8 @@ function setAttribute(context, attr, value) {
  *     return { name: String };
  *   }
  * }
- * @example
+ * ```
+ * ```js
  * // app.js
  * import { define } from '@dnajs/core';
  * import { MyComponent } from './my-component.js';
@@ -74,6 +76,7 @@ function setAttribute(context, attr, value) {
  * temp.innerHTML = '<my-component name="Albert"></my-component>';
  * var element = temp.firstChild;
  * console.log(element.name); // logs "Albert"
+ * ```
  */
 export const PropertiesMixin = (SuperClass) => class extends SuperClass {
     /**
