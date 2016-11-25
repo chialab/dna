@@ -56,6 +56,7 @@ export function render(node, Component, props) {
  * @static
  *
  * @example
+ * ```js
  * // my-component.js
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
@@ -77,6 +78,7 @@ export function render(node, Component, props) {
  *     return { ... };
  *   }
  * }
+ * ```
  */
 export class BaseComponent extends mix(
     shim(self.HTMLElement)
