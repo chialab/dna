@@ -169,7 +169,7 @@ function dependencies() {
                         if (packageNames.indexOf(k) !== -1) {
                             sym.push(k);
                         } else {
-                            // loads.push(loadModule(k + '@' + data.dependencies[k]));
+                            loads.push(loadModule(k + '@' + data.dependencies[k]));
                         }
                     }
                     return Promise.all(loads);
