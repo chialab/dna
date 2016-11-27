@@ -27,6 +27,7 @@ var del = require('del');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var rollup = require('rollup-stream');
+var rollupConfig = require('./rollup.config.js');
 var eslint = require('gulp-eslint');
 var sourcemaps = require('gulp-sourcemaps');
 var karma = require('karma');
@@ -88,11 +89,11 @@ function lint() {
 }
 
 function bundle(format, entryFileName) {
-    return rollup({
+    return rollup(Object.assign({
         entry: entryFileName,
         sourceMap: true,
         format,
-    });
+    }, rollupConfig));
 }
 
 function jsMinWatch() {

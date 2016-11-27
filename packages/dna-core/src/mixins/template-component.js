@@ -32,6 +32,13 @@ import { isUndefined, isFunction, isString } from '../lib/typeof.js';
  * ```
  */
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
+    /**
+     * @property {Boolean} autoRender Should the component re-render on properties changes.
+     * @name autoRender
+     * @type {Boolean}
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     */
     get autoRender() {
         return true;
     }

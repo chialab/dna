@@ -45,4 +45,5 @@ module.exports = {
             },
         }) : {},
     ],
+    external: process.env.min === 'true' ? ['react', 'react-dom'] : [],
 };

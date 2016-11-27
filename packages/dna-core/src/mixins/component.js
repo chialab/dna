@@ -17,6 +17,13 @@ export const ComponentMixin = (SuperClass) => class extends SuperClass {
     get is() {
         return (this.getAttribute('is') || this.localName).toLowerCase();
     }
+    /**
+     * @property {HTMLElement} node Get component node reference.
+     * @name node
+     * @type {HTMLElement}
+     * @memberof DNA.MIXINS.ComponentMixin
+     * @instance
+     */
     get node() {
         return this;
     }
