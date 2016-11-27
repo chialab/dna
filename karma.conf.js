@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-var babel = require('rollup-plugin-babel');
-var istanbul = require('rollup-plugin-istanbul');
-var includePaths = require('rollup-plugin-includepaths');
 var json = require('./package.json');
+var rollupConfig = require('./rollup.config.js');
 
 module.exports = function(config) {
     config.set({
@@ -48,31 +46,10 @@ module.exports = function(config) {
         // list of files to exclude
         exclude: [],
 
-        rollupPreprocessor: {
-            plugins: [
-                includePaths({
-                    paths: ['packages', 'node_modules'],
-                }),
-                istanbul({
-                    include: [
-                        'packages/**/*.js',
-                    ],
-                    exclude: [
-                        'packages/**/polyfills/**/*.js',
-                        'packages/**/test/**/*.js',
-                    ],
-                }),
-                babel({
-                    include: [
-                        'node_modules/**/*.js',
-                        'packages/**/*.js',
-                    ],
-                }),
-            ],
-            sourceMap: 'inline',
+        rollupPreprocessor: Object.assign({
+            sourceMap: false,
             format: 'iife',
-            moduleName: 'DNA',
-        },
+        }, rollupConfig),
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor

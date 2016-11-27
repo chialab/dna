@@ -1,5 +1,6 @@
 import { isFunction } from './typeof.js';
 import { registry } from './registry.js';
+import { COMPONENT_SYMBOL } from './symbols.js';
 
 /**
  * The `connectedCallback` name.
@@ -31,15 +32,18 @@ const UPDATED = 'attributeChangedCallback';
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement|String} node The element or the tag name.
+ * @param {Component|String} element The element or the tag name.
  * @param {Boolean} full Retrieve full component information.
  * @return {Function} The component constructor for the given param.
  */
-export function getComponent(node, full = false) {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-        node = node.getAttribute('is') || node.tagName;
+export function getComponent(element, full = false) {
+    if (element.node) {
+        element = element.node;
     }
-    return full ? registry.getDescriptor(node) : registry.get(node);
+    if (element.nodeType === Node.ELEMENT_NODE) {
+        element = element.getAttribute('is') || element.tagName;
+    }
+    return full ? registry.getDescriptor(element) : registry.get(element);
 }
 /**
  * Check if a node is an instance of a component.
@@ -47,12 +51,12 @@ export function getComponent(node, full = false) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The element to check.
+ * @param {Component} element The element to check.
  * @return {Boolean}
  */
-export function isComponent(node) {
-    let Ctr = getComponent(node);
-    return Ctr && (node instanceof Ctr);
+export function isComponent(element) {
+    let Ctr = getComponent(element);
+    return Ctr && (element instanceof Ctr);
 }
 /**
  * An helper for dynamically trigger the `connectedCallback` reaction on components.
@@ -60,12 +64,12 @@ export function isComponent(node) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The attached node.
+ * @param {Component} element The attached node.
  * @return {Boolean} The callback has been triggered.
  */
-export function connect(node) {
-    if (isComponent(node)) {
-        node[CONNECTED].call(node);
+export function connect(element) {
+    if (isComponent(element)) {
+        element[CONNECTED].call(element);
         return true;
     }
 }
@@ -75,12 +79,12 @@ export function connect(node) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The detached node.
+ * @param {Component} element The detached node.
  * @return {Boolean} The callback has been triggered.
  */
-export function disconnect(node) {
-    if (isComponent(node)) {
-        node[DISCONNECTED].call(node);
+export function disconnect(element) {
+    if (isComponent(element)) {
+        element[DISCONNECTED].call(element);
         return true;
     }
 }
@@ -90,12 +94,12 @@ export function disconnect(node) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The updated node.
+ * @param {Component} element The updated element.
  * @return {Boolean} The callback has been triggered.
  */
-export function update(node, name, oldValue, newValue) {
-    if (isComponent(node)) {
-        node[UPDATED].call(node, name, oldValue, newValue);
+export function update(element, name, oldValue, newValue) {
+    if (isComponent(element)) {
+        element[UPDATED].call(element, name, oldValue, newValue);
         return true;
     }
 }
@@ -149,16 +153,19 @@ export function createElement(is) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {HTMLElement} node The node to append.
+ * @param {Component} element The element to append.
  * @return {Boolean} The node has been appended.
  */
-export function appendChild(parent, node) {
-    if (parent !== node.parentNode || parent.lastElementChild !== node) {
-        if (node.parentNode) {
-            removeChild(node.parentNode, node);
+export function appendChild(parent, element) {
+    if (element.node) {
+        let node = element.node;
+        if (parent !== node.parentNode || parent.lastElementChild !== node) {
+            if (node.parentNode) {
+                removeChild(node.parentNode, element);
+            }
+            parent.appendChild(node);
+            return connect(element);
         }
-        parent.appendChild(node);
-        return connect(node);
     }
     return false;
 }
@@ -169,12 +176,14 @@ export function appendChild(parent, node) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {HTMLElement} node The node to remove.
+ * @param {Component} element The element to remove.
  * @return {Boolean} The node has been removed.
  */
-export function removeChild(parent, node) {
-    parent.removeChild(node);
-    return disconnect(node);
+export function removeChild(parent, element) {
+    if (element.node) {
+        parent.removeChild(element.node);
+        return disconnect(element);
+    }
 }
 /**
  * Dynamically insert a node before another and call all the reactions.
@@ -185,17 +194,20 @@ export function removeChild(parent, node) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {HTMLElement} node The node to insert.
+ * @param {Component} element The element to insert.
  * @param {HTMLElement} refNode The node for positioning.
  * @return {Boolean} The node has been appended.
  */
-export function insertBefore(parent, node, refNode) {
-    if (node.nextSibling !== refNode) {
-        if (node.parentNode) {
-            disconnect(node);
+export function insertBefore(parent, element, refNode) {
+    if (element.node) {
+        let node = element.node;
+        if (node.nextSibling !== refNode) {
+            if (node.parentNode) {
+                disconnect(element);
+            }
+            parent.insertBefore(node, refNode);
+            return connect(element);
         }
-        parent.insertBefore(node, refNode);
-        return connect(node);
     }
 }
 /**
@@ -208,17 +220,22 @@ export function insertBefore(parent, node, refNode) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {HTMLElement} node The node to insert.
+ * @param {Component} element The element to insert.
  * @param {HTMLElement} refNode The node to replace.
  * @return {Boolean} The node has been appended.
  */
-export function replaceChild(parent, node, refNode) {
-    if (node.parentNode) {
-        disconnect(node);
+export function replaceChild(parent, element, refNode) {
+    if (element.node) {
+        let node = element.node;
+        if (node.parentNode) {
+            disconnect(element);
+        }
+        parent.replaceChild(node, refNode);
+        if (refNode[COMPONENT_SYMBOL]) {
+            disconnect(refNode[COMPONENT_SYMBOL]);
+        }
+        return connect(node);
     }
-    parent.replaceChild(node, refNode);
-    disconnect(refNode);
-    return connect(node);
 }
 /**
  * Dynamically update a node attribute and call all the reactions.
@@ -226,17 +243,20 @@ export function replaceChild(parent, node, refNode) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The node to update.
+ * @param {Component} element The element to update.
  * @param {String} name The attribute name.
  * @param {String} value The attribute value.
  * @return {Boolean} The node has been updated.
  */
-export function setAttribute(node, name, value) {
-    let oldValue = node.getAttribute(name);
-    node.setAttribute(name, value);
-    let attrs = node.constructor.observedAttributes || [];
-    if (attrs.indexOf(name) !== -1) {
-        return update(node, name, oldValue, value);
+export function setAttribute(element, name, value) {
+    if (element.node) {
+        let node = element.node;
+        let oldValue = node.getAttribute(name);
+        node.setAttribute(name, value);
+        let attrs = element.constructor.observedAttributes || [];
+        if (attrs.indexOf(name) !== -1) {
+            return update(element, name, oldValue, value);
+        }
     }
 }
 /**
@@ -245,15 +265,18 @@ export function setAttribute(node, name, value) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {HTMLElement} node The node to update.
+ * @param {Component} element The element to update.
  * @param {String} name The attribute name.
  * @return {Boolean} The node has been updated.
  */
-export function removeAttribute(node, name) {
-    let oldValue = node.getAttribute(name);
-    node.removeAttribute(name);
-    let attrs = node.constructor.observedAttributes || [];
-    if (attrs.indexOf(name) !== -1) {
-        return update(node, name, oldValue, null);
+export function removeAttribute(element, name) {
+    if (element.node) {
+        let node = element.node;
+        let oldValue = node.getAttribute(name);
+        node.removeAttribute(name);
+        let attrs = element.constructor.observedAttributes || [];
+        if (attrs.indexOf(name) !== -1) {
+            return update(element, name, oldValue, null);
+        }
     }
 }

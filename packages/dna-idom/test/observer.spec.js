@@ -3,6 +3,9 @@
 import { BaseComponent, define, IDOM } from '../index.js';
 import '../observer.js';
 
+// eslint-disable-next-line
+const h = IDOM.h;
+
 class TestComponent extends BaseComponent {
     static get observedAttributes() {
         return ['age'];

@@ -45,7 +45,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
 
     connectedCallback() {
         super.connectedCallback();
-        this.classList.add(this.is);
+        this.node.classList.add(this.is);
     }
 
     updateCSS() {

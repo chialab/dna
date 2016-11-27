@@ -11,6 +11,9 @@ import {
     Test2Placeholder,
 } from './components/template.js';
 
+// eslint-disable-next-line
+const h = IDOM.h;
+
 const WRAPPER = document.body;
 self.IDOM = IDOM;
 

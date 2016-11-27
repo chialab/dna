@@ -27,10 +27,6 @@ var del = require('del');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var rollup = require('rollup-stream');
-var babel = require('rollup-plugin-babel');
-var uglify = require('rollup-plugin-uglify');
-var includePaths = require('rollup-plugin-includepaths');
-var multiEntry = require('rollup-plugin-multi-entry');
 var eslint = require('gulp-eslint');
 var sourcemaps = require('gulp-sourcemaps');
 var karma = require('karma');
@@ -95,20 +91,7 @@ function bundle(format, entryFileName) {
     return rollup({
         entry: entryFileName,
         sourceMap: true,
-        plugins: [
-            multiEntry(),
-            includePaths({
-                paths: ['packages', 'node_modules'],
-            }),
-            env.min === 'true' ? uglify({
-                output: {
-                    comments: /@license/,
-                },
-            }) : {},
-            babel(),
-        ],
         format,
-        moduleName,
     });
 }
 
@@ -186,7 +169,7 @@ function dependencies() {
                         if (packageNames.indexOf(k) !== -1) {
                             sym.push(k);
                         } else {
-                            loads.push(loadModule(k + '@' + data.dependencies[k]));
+                            // loads.push(loadModule(k + '@' + data.dependencies[k]));
                         }
                     }
                     return Promise.all(loads);

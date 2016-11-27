@@ -32,6 +32,9 @@ import { isUndefined, isFunction, isString } from '../lib/typeof.js';
  * ```
  */
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
+    get autoRender() {
+        return true;
+    }
     /**
      * Attach properties observers in order to update children.
      * @method constructor
@@ -40,7 +43,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        if (!isUndefined(this.template)) {
+        if (this.autoRender && !isUndefined(this.template)) {
             let props = this.properties;
             if (props) {
                 let callback = () => {
@@ -78,9 +81,9 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         tpl = tpl || this.template;
         /* istanbul ignore else */
         if (isFunction(tpl)) {
-            tpl();
+            tpl.call(this);
         } else if (isString(tpl)) {
-            this.innerHTML = tpl;
+            this.node.innerHTML = tpl;
         } else {
             throw new TypeError('Invalid template property.');
         }

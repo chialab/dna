@@ -60,7 +60,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 if (selector) {
                     this.delegate(evName, selector, callback);
                 } else {
-                    this.addEventListener(evName, (ev) => {
+                    this.node.addEventListener(evName, (ev) => {
                         callback.call(this, ev, this);
                     });
                 }
@@ -80,7 +80,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @param {Function} callback The callback to fire when the event fires.
      */
     delegate(evName, selector, callback) {
-        this.addEventListener(evName, (event) => {
+        this.node.addEventListener(evName, (event) => {
             let target = event.target;
             while (target && target !== this) {
                 if (matches.call(target, selector)) {

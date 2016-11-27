@@ -118,10 +118,10 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             if (attrName || eventName) {
                 prop.observe(() => {
                     if (attrName) {
-                        setAttribute(this, attrName, this[prop.name]);
+                        setAttribute(this.node, attrName, this[prop.name]);
                     }
                     if (eventName) {
-                        dispatch(this, eventName);
+                        dispatch(this.node, eventName);
                     }
                 });
             }
@@ -141,11 +141,11 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             let { attrName } = prop;
             if (attrName) {
                 if (isUndefined(this[prop.name])) {
-                    if (this.hasAttribute(attrName)) {
-                        this[prop.name] = getValue(prop, this.getAttribute(attrName));
+                    if (this.node.hasAttribute(attrName)) {
+                        this[prop.name] = getValue(prop, this.node.getAttribute(attrName));
                     }
                 } else {
-                    setAttribute(this, attrName, this[prop.name]);
+                    setAttribute(this.node, attrName, this[prop.name]);
                 }
             }
         }

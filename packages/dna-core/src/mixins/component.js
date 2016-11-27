@@ -1,3 +1,5 @@
+import { COMPONENT_SYMBOL } from '../lib/symbols.js';
+
 /**
  * THe base custom component mixins. Just add life cycles callback and `is` getter.
  * @mixin ComponentMixin
@@ -15,13 +17,18 @@ export const ComponentMixin = (SuperClass) => class extends SuperClass {
     get is() {
         return (this.getAttribute('is') || this.localName).toLowerCase();
     }
+    get node() {
+        return this;
+    }
     /**
      * Fires when an instance was inserted into the document.
      * @method connectedCallback
      * @memberof DNA.MIXINS.ComponentMixin
      * @instance
      */
-    connectedCallback() {}
+    connectedCallback() {
+        this.node[COMPONENT_SYMBOL] = this;
+    }
     /**
      * Fires when an instance was detached from the document.
      * @method disconnectedCallback

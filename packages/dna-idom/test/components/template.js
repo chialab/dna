@@ -1,5 +1,8 @@
 import { prop, BaseComponent, IDOM } from '../../index.js';
 
+// eslint-disable-next-line
+const h = IDOM.h;
+
 class TestComponent extends BaseComponent {
     get properties() {
         return {

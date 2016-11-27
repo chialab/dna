@@ -31,4 +31,5 @@ export const MIXINS = {
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';
 export { shim } from './lib/shim.js';
+export * from './lib/symbols.js';
 export * from './lib/typeof.js';
