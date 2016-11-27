@@ -22,14 +22,11 @@ export function define(tagName, Component, config) {
         get: () => tagName,
     });
     registry.define(tagName, Component, config);
-    return function(...args) {
-        return new Component(...args);
-    };
 }
 
-export function render(parent, Component) {
+export function render(parent, Component, props) {
     return ReactDOM.render(
-        React.createElement(Component),
+        React.createElement(Component, props),
         parent
     );
 }

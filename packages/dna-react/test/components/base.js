@@ -1,22 +1,23 @@
 import React from 'react';
-import { BaseComponent } from '../../index.js';
+import { prop, BaseComponent } from '../../index.js';
 
 // eslint-disable-next-line
 const h = React.createElement;
 
 export class ReactTestComponent extends BaseComponent {
     static get observedAttributes() {
-        return ['name'];
+        return ['name', 'last-name'];
     }
 
     get properties() {
         return {
             name: String,
+            lastName: prop.STRING.attribute('last-name'),
         };
     }
 
     get template() {
-        return () => <span>{this.name}</span>;
+        return () => <span>{this.name} {this.lastName}</span>;
     }
 
     constructor() {

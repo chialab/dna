@@ -9,7 +9,7 @@ document.body.appendChild(WRAPPER);
 define('test-base-component', ReactTestComponent);
 
 describe('Unit: BaseComponent', () => {
-    const elem = render(WRAPPER, ReactTestComponent);
+    const elem = render(WRAPPER, ReactTestComponent, { lastName: 'Turing' });
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -32,7 +32,7 @@ describe('Unit: BaseComponent', () => {
 
     describe('> render', () => {
         it('check if element has been correctly rendered', () => {
-            assert.equal(elem.node.querySelector('span').textContent, 'Alan');
+            assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
         });
     });
 

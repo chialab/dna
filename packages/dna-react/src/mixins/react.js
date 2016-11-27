@@ -53,12 +53,9 @@ export const ReactMixin = (SuperClass) => class extends SuperClass {
     }
 
     componentDidMount() {
-        let node = this.node;
-        if (node) {
-            DOM.connect(this);
-            for (let k in this.props) {
-                this[k] = this.props[k];
-            }
+        DOM.connect(this);
+        for (let k in this.props) {
+            this[k] = this.props[k];
         }
     }
 
