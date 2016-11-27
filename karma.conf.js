@@ -23,7 +23,6 @@
  */
 
 var json = require('./package.json');
-var rollupConfig = require('./rollup.config.js');
 
 module.exports = function(config) {
     config.set({
@@ -49,7 +48,7 @@ module.exports = function(config) {
         rollupPreprocessor: Object.assign({
             sourceMap: false,
             format: 'iife',
-        }, rollupConfig),
+        }, require('./rollup.config.js')),
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
