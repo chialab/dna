@@ -31,8 +31,8 @@ describe('Unit: BaseComponent', () => {
     });
 
     describe('> render', () => {
-        it('check if element is correctly trigger attributeChangedCallback', () => {
-            assert.equal(elem.node.querySelector('span').innerText, 'Alan');
+        it('check if element has been correctly rendered', () => {
+            assert.equal(elem.node.querySelector('span').textContent, 'Alan');
         });
     });
 
