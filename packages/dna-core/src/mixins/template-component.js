@@ -86,7 +86,6 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     render(tpl) {
         tpl = tpl || this.template;
-        /* istanbul ignore else */
         if (isFunction(tpl)) {
             tpl.call(this);
         } else if (isString(tpl)) {

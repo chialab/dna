@@ -1,6 +1,9 @@
-import { prop, BaseComponent } from '../../index.js';
+import { prop, BaseComponent, IDOM } from '../../index.js';
 
-export class TestBaseComponent extends BaseComponent {
+// eslint-disable-next-line
+const h = IDOM.h;
+
+export class TestBaseIDOMComponent extends BaseComponent {
     static get observedAttributes() {
         return ['name'];
     }
@@ -13,7 +16,7 @@ export class TestBaseComponent extends BaseComponent {
     }
 
     get template() {
-        return `<span>${this.name} ${this.lastName}</span>`;
+        return () => <span>{this.name} {this.lastName}</span>;
     }
 
     constructor() {
