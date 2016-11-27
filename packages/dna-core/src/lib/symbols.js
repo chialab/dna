@@ -1,1 +1,1 @@
-export const COMPONENT_SYMBOL = Symbol('component');
+export const COMPONENT_SYMBOL = '__component';
