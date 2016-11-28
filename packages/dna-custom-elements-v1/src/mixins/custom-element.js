@@ -1,4 +1,4 @@
-import { COMPONENT_SYMBOL, DOM } from '@dnajs/core/src/core.js';
+import { COMPONENT_SYMBOL } from '@dnajs/core/src/core.js';
 
 export const CustomElementMixin = (superClass) => class extends superClass {
     /**
@@ -14,14 +14,5 @@ export const CustomElementMixin = (superClass) => class extends superClass {
     constructor() {
         super();
         this[COMPONENT_SYMBOL] = this;
-    }
-    createdCallback() {
-        DOM.bind(this);
-    }
-    attachedCallback() {
-        this.connectedCallback();
-    }
-    detachedCallback() {
-        this.detachedCallback();
     }
 };

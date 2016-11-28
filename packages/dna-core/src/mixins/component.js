@@ -1,22 +1,12 @@
 import { COMPONENT_SYMBOL } from '../lib/symbols.js';
 
 /**
- * THe base custom component mixins. Just add life cycles callback and `is` getter.
+ * The base custom component mixins. Just add life cycles callback and `is` getter.
  * @mixin ComponentMixin
  * @memberof DNA.MIXINS
  * @static
  */
 export const ComponentMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * @property {String} is Get component id.
-     * @name is
-     * @type {String}
-     * @memberof DNA.MIXINS.ComponentMixin
-     * @instance
-     */
-    get is() {
-        return (this.getAttribute('is') || this.localName).toLowerCase();
-    }
     /**
      * @property {HTMLElement} node Get component node reference.
      * @name node

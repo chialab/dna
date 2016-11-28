@@ -6,13 +6,19 @@
  * Just another components pattern with IncrementalDOM templates.
  */
 import * as IDOM from './src/lib/idom.js';
-import { IDOMTemplateMixin } from './src/mixins/idom.js';
-import { mix, prop, shim, DOM, MIXINS } from '@dnajs/core/src/core.js';
-import { BaseComponent as OriginalComponent } from '@dnajs/core';
+import { IDOMMixin } from './src/mixins/idom.js';
+import { mix, MIXINS } from '@dnajs/core/src/core.js';
 
-MIXINS.IDOMTemplateMixin = IDOMTemplateMixin;
+MIXINS.IDOMMixin = IDOMMixin;
 
-export { mix, prop, shim, DOM, MIXINS };
+export * from '@dnajs/core/src/core.js';
 export { registry, render, define } from '@dnajs/core';
 export { IDOM };
-export class BaseComponent extends mix(OriginalComponent).with(IDOMTemplateMixin) {}
+export class BaseComponent extends mix().with(
+    MIXINS.ComponentMixin,
+    MIXINS.PropertiesMixin,
+    MIXINS.StyleMixin,
+    MIXINS.EventsMixin,
+    MIXINS.TemplateMixin,
+    IDOMMixin
+) {}

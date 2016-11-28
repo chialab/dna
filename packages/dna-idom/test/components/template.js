@@ -61,8 +61,8 @@ export class TestComponent5 extends TestComponent {
     get template() {
         return () => [
             <span class="dna-test">Hello Dna!</span>,
-            <test-vdom-placeholder />,
-            <figure is="test2-vdom-placeholder" />,
+            <test-idom-placeholder />,
+            <figure is="test2-idom-placeholder" />,
         ];
     }
 }

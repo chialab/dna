@@ -1,5 +1,5 @@
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
-import { DOM } from '@dnajs/core/src/core.js';
+import { COMPONENT_SYMBOL, DOM } from '@dnajs/core/src/core.js';
 
 let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;
@@ -7,10 +7,11 @@ let _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
     nodes.forEach((node) => {
-        if (!DOM.isComponent(node)) {
-            if (DOM.bind(node)) {
-                DOM.connect(node);
-            }
+        let Ctr = DOM.getComponent(node);
+        if (Ctr) {
+            let elem = new Ctr();
+            elem.node = node;
+            DOM.connect(elem);
         }
     });
     /* istanbul ignore if */
@@ -20,7 +21,11 @@ notifications.nodesCreated = function(nodes) {
 };
 
 notifications.nodesDeleted = function(nodes) {
-    nodes.forEach((node) => DOM.disconnect(node));
+    nodes.forEach((node) => {
+        if (node[COMPONENT_SYMBOL]) {
+            DOM.disconnect(node[COMPONENT_SYMBOL]);
+        }
+    });
     /* istanbul ignore if */
     if (_removed) {
         _removed(nodes);
@@ -33,11 +38,12 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
     if (_changed) {
         _changed(node, attrName, attrValue);
     }
-    if (DOM.isComponent(node)) {
-        let attrs = node.constructor.observedAttributes || [];
+    let elem = node[COMPONENT_SYMBOL];
+    if (elem) {
+        let attrs = elem.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {
             attrValue = (attrValue === undefined) ? null : attrValue;
-            DOM.update(node, attrName, oldValue, attrValue);
+            DOM.update(elem, attrName, oldValue, attrValue);
         }
     }
 };

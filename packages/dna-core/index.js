@@ -26,6 +26,9 @@ export { registry };
  * @param {Object} config Optional component configuration.
  */
 export function define(tagName, Component, config) {
+    Object.defineProperty(Component.prototype, 'is', {
+        get: () => tagName,
+    });
     return registry.define(tagName, Component, config);
 }
 /**

@@ -8,9 +8,9 @@
  */
 import { shim, mix, MIXINS } from '@dnajs/core/src/core.js';
 import { registry, BaseComponent as OriginalComponent } from '@dnajs/core';
-import { customElementMixin } from './src/mixins/custom-element.js';
+import { CustomElementMixin } from './src/mixins/custom-element.js';
 
-MIXINS.customElementMixin = customElementMixin;
+MIXINS.CustomElementMixin = CustomElementMixin;
 
 export { prop } from '@dnajs/core/src/core.js';
 export { shim, mix, registry, MIXINS };
@@ -34,5 +34,5 @@ export function render(node, Component, props = {}) {
 }
 
 export class BaseComponent extends mix(OriginalComponent).with(
-    customElementMixin
+    CustomElementMixin
 ) {}

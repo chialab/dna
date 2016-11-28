@@ -7,7 +7,10 @@
  * Use with Custom Elements spec.
  */
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { CustomElementMixin } from './src/mixins/custom-element.js';
 import { shim } from './src/lib/shim.js';
+
+MIXINS.CustomElementMixin = CustomElementMixin;
 
 export { prop } from '@dnajs/core/src/core.js';
 export { shim, mix, MIXINS };
@@ -31,5 +34,6 @@ export class BaseComponent extends mix(
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,
     MIXINS.EventsMixin,
-    MIXINS.TemplateMixin
+    MIXINS.TemplateMixin,
+    CustomElementMixin
 ) {}

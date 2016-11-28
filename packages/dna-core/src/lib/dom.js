@@ -238,6 +238,21 @@ export function replaceChild(parent, element, refNode) {
     }
 }
 /**
+ * Get a component attribute.
+ * @method getAttribute
+ * @memberof DNA.DOM
+ * @static
+ *
+ * @param {Component} element The element.
+ * @param {String} name The attribute name.
+ * @return {String} The element attribute value.
+ */
+export function getAttribute(element, name) {
+    if (element.node) {
+        return element.node.getAttribute(name);
+    }
+}
+/**
  * Dynamically update a node attribute and call all the reactions.
  * @method setAttribute
  * @memberof DNA.DOM

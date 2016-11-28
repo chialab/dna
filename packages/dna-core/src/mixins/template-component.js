@@ -1,4 +1,4 @@
-import { isUndefined, isFunction, isString } from '../lib/typeof.js';
+import { isUndefined, isFunction, isString, isFalsy } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -69,10 +69,10 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      * @instance
      */
     connectedCallback() {
-        super.connectedCallback();
         if (!isUndefined(this.template)) {
             this.render();
         }
+        super.connectedCallback();
     }
     /**
      * Update Component child nodes.
@@ -90,7 +90,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
             tpl.call(this);
         } else if (isString(tpl)) {
             (this.shadowRoot || this.node).innerHTML = tpl;
-        } else {
+        } else if (!isFalsy(tpl)) {
             throw new TypeError('Invalid template property.');
         }
     }
