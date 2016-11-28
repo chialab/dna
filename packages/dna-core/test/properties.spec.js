@@ -121,9 +121,9 @@ describe('PropertiesComponent', () => {
 
     describe('handle attrs 2 props on initialization', () => {
         const elem = new TestComponent2();
-        DOM.setAttribute(elem, 'alt', 'DNA Test 2');
-        DOM.setAttribute(elem, 'mine', '1234');
-        DOM.setAttribute(elem, 'my-var2', '');
+        elem.node.setAttribute('alt', 'DNA Test 2');
+        elem.node.setAttribute('mine', '1234');
+        elem.node.setAttribute('my-var2', '');
 
         DOM.appendChild(WRAPPER, elem);
 
