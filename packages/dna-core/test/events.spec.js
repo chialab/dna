@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, render } from '../index.js';
+import { define, render, DOM } from '../index.js';
 import { CustomEvent } from '../src/polyfills/custom-event.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 
@@ -28,15 +28,25 @@ describe('Unit: EventsComponent', () => {
             });
         });
         describe('events', () => {
-            let span = elem.node.querySelector('span');
-            let button = elem.node.querySelector('button');
-            let input = elem.node.querySelector('input');
+            const span = elem.node.querySelector('span');
+            const button = elem.node.querySelector('button');
+            const input = elem.node.querySelector('input');
+
             before((done) => {
                 dispatch(span, 'click');
                 dispatch(button, 'click');
                 input.value = 'DNA Tests';
                 dispatch(input, 'change');
                 setTimeout(() => done(), 500);
+            });
+
+            after(() => {
+                delete elem.clickedSpan;
+                delete elem.clickedElement;
+                delete elem.changedElement;
+                delete elem.clickedSpanEvent;
+                delete elem.clicked;
+                delete elem.changed;
             });
 
             it('should trigger a function callback', () => {
@@ -55,6 +65,30 @@ describe('Unit: EventsComponent', () => {
                 assert.equal(elem.changedElement, input);
                 assert.equal(elem.changed instanceof Event, true);
                 assert.equal(elem.changed.type, 'change');
+            });
+        });
+
+        describe('undelegate', () => {
+            const span = elem.node.querySelector('span');
+            const button = elem.node.querySelector('button');
+            const input = elem.node.querySelector('input');
+
+            before((done) => {
+                DOM.removeChild(WRAPPER, elem);
+                dispatch(span, 'click');
+                dispatch(button, 'click');
+                input.value = 'DNA Tests';
+                dispatch(input, 'change');
+                setTimeout(() => done(), 500);
+            });
+
+            it('should stop to delegate on component detached', () => {
+                assert.equal(elem.clickedSpan, undefined);
+                assert.equal(elem.clickedSpanEvent, undefined);
+                assert.equal(elem.clickedElement, undefined);
+                assert.equal(elem.clicked, undefined);
+                assert.equal(elem.changedElement, undefined);
+                assert.equal(elem.changed, undefined);
             });
         });
     });

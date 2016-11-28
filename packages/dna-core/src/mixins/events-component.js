@@ -7,9 +7,9 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 const PRIVATE_PROP = 'events';
 
 function addToPrivate(scope, evName, callback) {
-    scope[PRIVATE_SYMBOL][PRIVATE_PROP] = scope[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
-    scope[PRIVATE_SYMBOL][evName] = scope[PRIVATE_SYMBOL][evName] || [];
-    scope[PRIVATE_SYMBOL][evName].push(callback);
+    let internal = scope[PRIVATE_SYMBOL][PRIVATE_PROP] = scope[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
+    let events = internal[evName] = internal[evName] || [];
+    events.push(callback);
 }
 
 /**
@@ -89,7 +89,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         super.disconnectedCallback();
         let events = this[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
         for (let k in events) {
-            events[k].forEach((callback) => this.removeEventListener(k, callback));
+            events[k].forEach((callback) => this.node.removeEventListener(k, callback));
         }
     }
     /**
