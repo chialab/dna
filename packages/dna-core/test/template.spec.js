@@ -32,6 +32,14 @@ describe('Unit: TemplateComponent', () => {
         assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
+    it('should throw if invalid template', () => {
+        const willThrow = () => {
+            render(WRAPPER, TestComponent3);
+        };
+
+        assert.throws(willThrow, TypeError, 'Invalid template property.');
+    });
+
     it('should handle templates with <svg>', () => {
         const elem = render(WRAPPER, TestComponent4);
 

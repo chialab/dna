@@ -6,7 +6,7 @@ export const IDOMTemplateMixin = (superClass) => class extends superClass {
         template = template || this.template;
         if (isFunction(template)) {
             let tpl = template.bind(this);
-            template = () => patch(this, tpl);
+            template = () => patch(this.shadowRoot || this.node, tpl);
         }
         super.render(template);
     }

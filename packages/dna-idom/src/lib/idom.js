@@ -1,4 +1,4 @@
-import { isObject, isFunction, isArray, DOM } from '@dnajs/core/src/core.js';
+import { isFalsy, isObject, isFunction, isArray, DOM } from '@dnajs/core/src/core.js';
 import {
     skip,
     text,
@@ -45,7 +45,9 @@ export function h(element, props, ...children) {
         }
 
         for (let k in props) {
-            attr(k, props[k]);
+            if (!isFalsy(props[k])) {
+                attr(k, props[k]);
+            }
         }
 
         const node = elementOpenEnd(element);

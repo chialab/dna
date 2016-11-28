@@ -1,6 +1,20 @@
 /* eslint-env mocha */
 
-import { BaseComponent, render, define, DOM } from '../index.js';
+import {
+    isFunction,
+    isString,
+    isObject,
+    isUndefined,
+    isArray,
+    isFalsy,
+} from '../src/core.js';
+
+import {
+    BaseComponent,
+    render,
+    define,
+    DOM,
+} from '../index.js';
 
 const WRAPPER = document.body;
 
@@ -40,6 +54,28 @@ define('test1-helper-component', TestComponent);
 define('helper-define-component', TestComponent2, { extends: 'div' });
 
 describe('Unit: lib', () => {
+    describe('typeof', () => {
+        it('should correctly check type of objects', () => {
+            assert(isFunction(() => {}));
+            assert(!isFunction({}));
+            assert(isString(''));
+            assert(!isString(4));
+            assert(isObject({}));
+            assert(!isObject([]));
+            assert(isUndefined(undefined));
+            assert(!isUndefined(null));
+            assert(!isUndefined(false));
+            assert(!isUndefined(''));
+            assert(isArray([]));
+            assert(!isArray({}));
+            assert(!isArray(''));
+            assert(isFalsy(undefined));
+            assert(isFalsy(null));
+            assert(isFalsy(false));
+            assert(!isFalsy(''));
+        });
+    });
+
     describe('define', () => {
         describe('a simple element', () => {
             it('should define a custom element', () => {

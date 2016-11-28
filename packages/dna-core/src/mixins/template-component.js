@@ -89,7 +89,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         if (isFunction(tpl)) {
             tpl.call(this);
         } else if (isString(tpl)) {
-            this.node.innerHTML = tpl;
+            (this.shadowRoot || this.node).innerHTML = tpl;
         } else {
             throw new TypeError('Invalid template property.');
         }

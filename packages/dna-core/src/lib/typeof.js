@@ -58,3 +58,15 @@ export function isUndefined(obj) {
 export function isArray(obj) {
     return Array.isArray(obj);
 }
+/**
+ * Check if falsy value.
+ * @method isFalsy
+ * @memberof! DNA.
+ * @static
+ *
+ * @param {*} obj The value to check.
+ * @return {Boolean}
+ */
+export function isFalsy(obj) {
+    return isUndefined(obj) || obj === null || obj === false;
+}

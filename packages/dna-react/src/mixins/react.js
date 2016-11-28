@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DOM } from '@dnajs/core/src/core.js';
+import { isFunction, DOM } from '@dnajs/core/src/core.js';
 
 function convertProps(elem) {
     let res = {};
@@ -48,7 +48,7 @@ export const ReactMixin = (SuperClass) => class extends SuperClass {
         return React.createElement(
             this.is,
             filterAttributes(this),
-            this.template ? this.template.call(this) : undefined
+            isFunction(this.template) ? this.template.call(this) : undefined
         );
     }
 
