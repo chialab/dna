@@ -1,10 +1,13 @@
-import { DOM } from '@dnajs/core';
+import { DOM, COMPONENT_SYMBOL } from '@dnajs/core';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
-        if (!node.is) {
-            if(DOM.bind(node)) {
-                DOM.connect(node);
+        if (!node[COMPONENT_SYMBOL]) {
+            let Ctr = DOM.getComponent(node);
+            if (Ctr) {
+                let elem = new Ctr();
+                elem.node = node;
+                DOM.connect(elem);
             }
         } else {
             DOM.connect(node);

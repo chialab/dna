@@ -19,17 +19,17 @@ describe('Unit: TemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
         const elem = render(WRAPPER, TestComponent1);
 
-        assert.equal(elem.innerHTML, 'Hello, ');
+        assert.equal(elem.node.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
         elem.title = 'Title';
-        assert.equal(elem.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
+        assert.equal(elem.node.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
     it('should handle `template` getter property as string', () => {
         const elem = render(WRAPPER, TestComponent2);
 
-        assert.equal(elem.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should throw if invalid template', () => {
@@ -44,7 +44,7 @@ describe('Unit: TemplateComponent', () => {
         const elem = render(WRAPPER, TestComponent4);
 
         elem.radius = 40;
-        let svg = elem.firstElementChild;
+        let svg = elem.node.querySelector('svg');
         let circle = svg.querySelector('circle');
         assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
         assert.equal(circle.getAttribute('r'), '40');

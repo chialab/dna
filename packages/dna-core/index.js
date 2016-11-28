@@ -6,13 +6,13 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import { mix, prop, shim, DOM, MIXINS } from './src/core.js';
+import { mix, prop, DOM, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 
 /**
  * @namespace DNA
  */
-export { mix, prop, shim, DOM, MIXINS };
+export { mix, prop, DOM, MIXINS };
 export { registry };
 
 /**
@@ -83,12 +83,22 @@ export function render(node, Component, props) {
  * }
  * ```
  */
-export class BaseComponent extends mix(
-    shim(self.HTMLElement)
-).with(
+export class BaseComponent extends mix().with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,
     MIXINS.EventsMixin,
     MIXINS.TemplateMixin
-) {}
+) {
+    constructor() {
+        super();
+        let desc = registry.getDescriptor(this.constructor);
+        let config = desc.config;
+        this.node = document.createElement(
+            config.extends ? config.extends : desc.is
+        );
+        if (config.extends) {
+            this.node.setAttribute('is', desc.is);
+        }
+    }
+}

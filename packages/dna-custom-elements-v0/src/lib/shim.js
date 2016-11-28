@@ -1,5 +1,5 @@
-import { registry } from './registry.js';
-import { isString } from './typeof.js';
+import { isString } from '@dnajs/core/src/core.js';
+import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**
  * Check if a node is already instantiated HTMLElement for programmatically `constructor` calls.

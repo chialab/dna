@@ -1,9 +1,8 @@
-import { shim, mix, MIXINS } from '../../index.js';
+import { BaseComponent } from '../../index.js';
 
-class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.StyleMixin) {
-    constructor() {
-        super();
-        this.innerHTML = '<h1>DNA TESTS</h1>';
+class TestComponent extends BaseComponent {
+    get template() {
+        return '<h1>DNA TESTS</h1>';
     }
 }
 
@@ -22,6 +21,6 @@ export class TestComponent2 extends TestComponent {
 
     constructor() {
         super();
-        this.classList.add('active');
+        this.node.classList.add('active');
     }
 }

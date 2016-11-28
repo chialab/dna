@@ -1,4 +1,4 @@
-import { COMPONENT_SYMBOL } from '../lib/symbols.js';
+import { PRIVATE_SYMBOL, COMPONENT_SYMBOL } from '../lib/symbols.js';
 
 /**
  * The base custom component mixins. Just add life cycles callback and `is` getter.
@@ -7,15 +7,9 @@ import { COMPONENT_SYMBOL } from '../lib/symbols.js';
  * @static
  */
 export const ComponentMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * @property {HTMLElement} node Get component node reference.
-     * @name node
-     * @type {HTMLElement}
-     * @memberof DNA.MIXINS.ComponentMixin
-     * @instance
-     */
-    get node() {
-        return this;
+    constructor() {
+        super();
+        this[PRIVATE_SYMBOL] = {};
     }
     /**
      * Fires when an instance was inserted into the document.

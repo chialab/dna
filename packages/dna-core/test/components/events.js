@@ -1,6 +1,6 @@
-import { shim, mix, MIXINS } from '../../index.js';
+import { BaseComponent } from '../../index.js';
 
-export class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.EventsMixin) {
+export class TestComponent extends BaseComponent {
     get events() {
         return {
             'customEvent': 'onCustomEvent',
@@ -13,9 +13,8 @@ export class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.Compo
         };
     }
 
-    constructor() {
-        super();
-        this.innerHTML = `
+    get template() {
+        return `
             <button id="button">Click</button>
             <input type="text" id="input" value="Test" />
             <span>Hold me</span>
@@ -46,7 +45,7 @@ export class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.Compo
 }
 
 
-export class TestInvalidComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.EventsMixin) {
+export class TestInvalidComponent extends BaseComponent {
     get events() {
         return {
             customEvent: 'undefined',

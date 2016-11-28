@@ -69,27 +69,27 @@ describe('PropertiesComponent', () => {
 
         it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
-            assert.equal(elem.getAttribute('title'), 'DNA Test');
+            assert.equal(elem.node.getAttribute('title'), 'DNA Test');
         });
         it('check sync between custom property and attribute', () => {
             elem.var = 1234;
             elem.id = 'dna-test';
-            assert.equal(elem.getAttribute('var'), '1234');
-            assert.equal(elem.getAttribute('id'), 'dna-test');
+            assert.equal(elem.node.getAttribute('var'), '1234');
+            assert.equal(elem.node.getAttribute('id'), 'dna-test');
         });
         it('check sync between custom computed property and attribute', () => {
             elem.myVar = true;
-            assert.equal(elem.getAttribute('my-var'), '');
+            assert.equal(elem.node.getAttribute('my-var'), '');
             elem.myVar = false;
-            assert.equal(elem.getAttribute('my-var'), null);
+            assert.equal(elem.node.getAttribute('my-var'), null);
         });
         it('check sync between custom computed property with setter and attribute', () => {
             elem.myVar3 = true;
-            assert.equal(elem.getAttribute('my-var3'), 'DNA Test');
+            assert.equal(elem.node.getAttribute('my-var3'), 'DNA Test');
         });
         it('dispatch event', () => {
             let triggered = 0;
-            elem.addEventListener('changed', () => {
+            elem.node.addEventListener('changed', () => {
                 triggered++;
             });
             elem.myVar3 = true;
@@ -106,37 +106,37 @@ describe('PropertiesComponent', () => {
         DOM.setAttribute(elem, 'my-var2', '');
 
         it('check sync between attribute and property', () => {
-            assert.equal(elem.getAttribute('alt'), 'DNA Test 2');
+            assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
         it('check sync between custom attribute and property', () => {
-            assert.equal(elem.getAttribute('mine'), 1234);
+            assert.equal(elem.node.getAttribute('mine'), 1234);
             assert.equal(elem.mine, 1234);
         });
         it('check sync between custom computed attribute and property', () => {
-            assert.equal(elem.getAttribute('my-var2'), '');
+            assert.equal(elem.node.getAttribute('my-var2'), '');
             assert.equal(elem.myVar2, true);
         });
     });
 
     describe('handle attrs 2 props on initialization', () => {
-        const elem = document.createElement('test2-properties-component');
-        elem.setAttribute('alt', 'DNA Test 2');
-        elem.setAttribute('mine', '1234');
-        elem.setAttribute('my-var2', '');
-        DOM.bind(elem);
+        const elem = new TestComponent2();
+        DOM.setAttribute(elem, 'alt', 'DNA Test 2');
+        DOM.setAttribute(elem, 'mine', '1234');
+        DOM.setAttribute(elem, 'my-var2', '');
+
         DOM.appendChild(WRAPPER, elem);
 
         it('check sync between attribute and property', () => {
-            assert.equal(elem.getAttribute('alt'), 'DNA Test 2');
+            assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
         it('check sync between custom attribute and property', () => {
-            assert.equal(elem.getAttribute('mine'), 1234);
+            assert.equal(elem.node.getAttribute('mine'), 1234);
             assert.equal(elem.mine, 1234);
         });
         it('check sync between custom computed attribute and property', () => {
-            assert.equal(elem.getAttribute('my-var2'), '');
+            assert.equal(elem.node.getAttribute('my-var2'), '');
             assert.equal(elem.myVar2, true);
         });
     });

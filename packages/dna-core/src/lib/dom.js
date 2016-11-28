@@ -1,4 +1,3 @@
-import { isFunction } from './typeof.js';
 import { registry } from './registry.js';
 import { COMPONENT_SYMBOL } from './symbols.js';
 
@@ -68,6 +67,8 @@ export function isComponent(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function connect(element) {
+    element = element[COMPONENT_SYMBOL] ?
+        element[COMPONENT_SYMBOL] : element;
     if (isComponent(element)) {
         element[CONNECTED].call(element);
         return true;
@@ -83,6 +84,8 @@ export function connect(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function disconnect(element) {
+    element = element[COMPONENT_SYMBOL] ?
+        element[COMPONENT_SYMBOL] : element;
     if (isComponent(element)) {
         element[DISCONNECTED].call(element);
         return true;
@@ -98,36 +101,12 @@ export function disconnect(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function update(element, name, oldValue, newValue) {
+    element = element[COMPONENT_SYMBOL] ?
+        element[COMPONENT_SYMBOL] : element;
     if (isComponent(element)) {
         element[UPDATED].call(element, name, oldValue, newValue);
         return true;
     }
-}
-/**
- * Attach a component prototype to an already instantiated HTMLElement.
- * @method bind
- * @memberof DNA.DOM
- * @static
- *
- * @param {HTMLElement} node The node to update.
- * @param {Function} Ctr The component class to use (leave empty for auto detect).
- * @return {Boolean} The prototype has been attached.
- */
-export function bind(node, Ctr) {
-    if (!isFunction(Ctr)) {
-        Ctr = getComponent(node);
-    }
-    if (isFunction(Ctr)) {
-        node.__proto__ = Ctr.prototype;
-        Object.defineProperty(node, 'constructor', {
-            value: Ctr,
-            configurable: true,
-            writable: true,
-        });
-        Ctr.call(node);
-        return true;
-    }
-    return false;
 }
 /**
  * Create a component instance.
@@ -201,6 +180,9 @@ export function removeChild(parent, element) {
 export function insertBefore(parent, element, refNode) {
     if (element.node) {
         let node = element.node;
+        refNode = refNode.node ?
+            refNode.node :
+            refNode;
         if (node.nextSibling !== refNode) {
             if (node.parentNode) {
                 disconnect(element);
@@ -230,11 +212,16 @@ export function replaceChild(parent, element, refNode) {
         if (node.parentNode) {
             disconnect(element);
         }
-        parent.replaceChild(node, refNode);
-        if (refNode[COMPONENT_SYMBOL]) {
+        if (refNode.node) {
+            parent.replaceChild(node, refNode.node);
+            disconnect(refNode);
+        } else if (refNode[COMPONENT_SYMBOL]) {
+            parent.replaceChild(node, refNode);
             disconnect(refNode[COMPONENT_SYMBOL]);
+        } else {
+            parent.replaceChild(node, refNode);
         }
-        return connect(node);
+        return connect(element);
     }
 }
 /**

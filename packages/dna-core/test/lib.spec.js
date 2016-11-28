@@ -80,7 +80,7 @@ describe('Unit: lib', () => {
         describe('a simple element', () => {
             it('should define a custom element', () => {
                 const elem = new TestComponent();
-                assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
+                assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
             });
@@ -89,7 +89,7 @@ describe('Unit: lib', () => {
         describe('an element with extends field', () => {
             it('a custom element with extends field', () => {
                 const elem = render(WRAPPER, TestComponent2);
-                assert.equal(elem.localName.toLowerCase(), 'div');
+                assert.equal(elem.node.localName.toLowerCase(), 'div');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
             });
@@ -97,23 +97,21 @@ describe('Unit: lib', () => {
     });
 
     describe('DOM helpers', () => {
-        const elem = document.createElement('test1-helper-component');
+        const elem = new TestComponent();
         const elem2 = render(WRAPPER, TestComponent2);
         it('should do nothing', () => {
             const tmp = document.createElement('div');
-            assert(!DOM.bind(tmp));
             assert(!DOM.connect(tmp));
             assert(!DOM.disconnect(tmp));
         });
         it('should create a component instance', () => {
-            DOM.bind(elem);
-            assert.equal(elem.tagName.toLowerCase(), 'test1-helper-component');
+            assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
         });
         it('should append a component', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.parentNode, WRAPPER);
+            assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 0);
             assert.equal(elem.connectedTimes, 1);
             assert.equal(elem2.disconnectedTimes, 0);
@@ -121,9 +119,9 @@ describe('Unit: lib', () => {
         });
         it('should append a component before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.parentNode, WRAPPER);
-            assert.equal(elem2.parentNode, WRAPPER);
-            assert.equal(elem.nextSibling, elem2);
+            assert.equal(elem.node.parentNode, WRAPPER);
+            assert.equal(elem2.node.parentNode, WRAPPER);
+            assert.equal(elem.node.nextSibling, elem2.node);
             assert.equal(elem.disconnectedTimes, 1);
             assert.equal(elem.connectedTimes, 2);
             assert.equal(elem2.disconnectedTimes, 0);
@@ -131,9 +129,9 @@ describe('Unit: lib', () => {
         });
         it('should do nothing if already before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.parentNode, WRAPPER);
-            assert.equal(elem2.parentNode, WRAPPER);
-            assert.equal(elem.nextSibling, elem2);
+            assert.equal(elem.node.parentNode, WRAPPER);
+            assert.equal(elem2.node.parentNode, WRAPPER);
+            assert.equal(elem.node.nextSibling, elem2.node);
             assert.equal(elem.disconnectedTimes, 1);
             assert.equal(elem.connectedTimes, 2);
             assert.equal(elem2.disconnectedTimes, 0);
@@ -141,7 +139,7 @@ describe('Unit: lib', () => {
         });
         it('should append again a component', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.parentNode, WRAPPER);
+            assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 2);
             assert.equal(elem.connectedTimes, 3);
             assert.equal(elem2.disconnectedTimes, 0);
@@ -149,7 +147,7 @@ describe('Unit: lib', () => {
         });
         it('should do nothing if already last child of parent', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.parentNode, WRAPPER);
+            assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 2);
             assert.equal(elem.connectedTimes, 3);
             assert.equal(elem2.disconnectedTimes, 0);
@@ -157,7 +155,7 @@ describe('Unit: lib', () => {
         });
         it('should replace a child', () => {
             DOM.replaceChild(WRAPPER, elem, elem2);
-            assert.equal(elem.parentNode, WRAPPER);
+            assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 3);
             assert.equal(elem.connectedTimes, 4);
             assert.equal(elem2.disconnectedTimes, 1);
@@ -167,15 +165,19 @@ describe('Unit: lib', () => {
             DOM.setAttribute(elem, 'age', 20);
             DOM.setAttribute(elem, 'married', '');
             assert.equal(elem.attributeChanges, 1);
-            assert.equal(elem.getAttribute('age'), '20');
-            assert.equal(elem.getAttribute('married'), '');
+            assert.equal(elem.node.getAttribute('age'), '20');
+            assert.equal(elem.node.getAttribute('married'), '');
+            assert.equal(DOM.getAttribute(elem, 'age'), '20');
+            assert.equal(DOM.getAttribute(elem, 'married'), '');
         });
         it('should remove attributes', () => {
             DOM.removeAttribute(elem, 'age');
             DOM.removeAttribute(elem, 'married');
             assert.equal(elem.attributeChanges, 2);
-            assert.equal(elem.getAttribute('age'), null);
-            assert.equal(elem.getAttribute('married'), null);
+            assert.equal(elem.node.getAttribute('age'), null);
+            assert.equal(elem.node.getAttribute('married'), null);
+            assert.equal(DOM.getAttribute(elem, 'age'), null);
+            assert.equal(DOM.getAttribute(elem, 'married'), null);
         });
     });
 });

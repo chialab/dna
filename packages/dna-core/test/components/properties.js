@@ -1,6 +1,6 @@
-import { shim, mix, prop, MIXINS } from '../../index.js';
+import { prop, BaseComponent } from '../../index.js';
 
-export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin) {
+export class TestComponent1 extends BaseComponent {
     static get observedAttributes() {
         return ['name', 'last-name', 'married', 'age', 'var'];
     }
@@ -29,7 +29,7 @@ export class TestComponent1 extends mix(shim(self.HTMLElement)).with(MIXINS.Comp
     }
 }
 
-export class TestComponent2 extends  mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin) {
+export class TestComponent2 extends BaseComponent {
     static get observedAttributes() {
         return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
     }

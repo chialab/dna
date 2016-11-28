@@ -28,9 +28,9 @@ describe('Unit: EventsComponent', () => {
             });
         });
         describe('events', () => {
-            let span = elem.querySelector('span');
-            let button = elem.querySelector('button');
-            let input = elem.querySelector('input');
+            let span = elem.node.querySelector('span');
+            let button = elem.node.querySelector('button');
+            let input = elem.node.querySelector('input');
             before((done) => {
                 dispatch(span, 'click');
                 dispatch(button, 'click');

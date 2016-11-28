@@ -1,8 +1,16 @@
 import { isString, isFunction } from '../lib/typeof.js';
 import { matches } from '../polyfills/matches.js';
 import { dispatch } from '../lib/dispatch.js';
+import { PRIVATE_SYMBOL } from '../lib/symbols.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
+const PRIVATE_PROP = 'events';
+
+function addToPrivate(scope, evName, callback) {
+    scope[PRIVATE_SYMBOL][PRIVATE_PROP] = scope[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
+    scope[PRIVATE_SYMBOL][evName] = scope[PRIVATE_SYMBOL][evName] || [];
+    scope[PRIVATE_SYMBOL][evName].push(callback);
+}
 
 /**
  * Simple Custom Component with events delegation,
@@ -41,12 +49,12 @@ const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
 export const EventsMixin = (SuperClass) => class extends SuperClass {
     /**
      * Attach and delegate events to the component.
-     * @method constructor
+     * @method connectedCallback
      * @memberof DNA.MIXINS.EventsMixin
      * @instance
      */
-    constructor() {
-        super();
+    connectedCallback() {
+        super.connectedCallback();
         // bind events
         let events = this.events || {};
         for (let k in events) {
@@ -60,13 +68,28 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 if (selector) {
                     this.delegate(evName, selector, callback);
                 } else {
-                    this.node.addEventListener(evName, (ev) => {
-                        callback.call(this, ev, this);
-                    });
+                    let wrapCallback = (event) => {
+                        callback.call(this, event, this);
+                    };
+                    this.node.addEventListener(evName, wrapCallback);
+                    addToPrivate(this, evName, wrapCallback);
                 }
             } else {
                 throw new TypeError('Invalid callback for event.');
             }
+        }
+    }
+    /**
+     * Detach and undelegate events from the component.
+     * @method disconnectedCallback
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     */
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        let events = this[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
+        for (let k in events) {
+            events[k].forEach((callback) => this.removeEventListener(k, callback));
         }
     }
     /**
@@ -80,15 +103,18 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @param {Function} callback The callback to fire when the event fires.
      */
     delegate(evName, selector, callback) {
-        this.node.addEventListener(evName, (event) => {
+        let wrapCallback = (event) => {
             let target = event.target;
-            while (target && target !== this) {
+            let node = this.node;
+            while (target && target !== node) {
                 if (matches.call(target, selector)) {
                     callback.call(this, event, target);
                 }
                 target = target.parentNode;
             }
-        });
+        };
+        this.node.addEventListener(evName, wrapCallback);
+        addToPrivate(this, evName, wrapCallback);
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.
@@ -103,6 +129,6 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @return {Boolean} True if event propagation has not be stopped.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
-        return dispatch(this, evName, data, bubbles, cancelable);
+        return dispatch(this.node, evName, data, bubbles, cancelable);
     }
 };

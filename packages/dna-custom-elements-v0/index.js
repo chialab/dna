@@ -6,8 +6,9 @@
  * Just another components pattern.
  * Use with Custom Elements v0 spec.
  */
-import { shim, mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { registry, BaseComponent as OriginalComponent } from '@dnajs/core';
+import { shim } from './src/lib/shim.js';
 import { CustomElementMixin } from './src/mixins/custom-element.js';
 
 MIXINS.CustomElementMixin = CustomElementMixin;
@@ -33,6 +34,13 @@ export function render(node, Component, props = {}) {
     return element;
 }
 
-export class BaseComponent extends mix(OriginalComponent).with(
+export class BaseComponent extends mix(
+    shim(self.HTMLElement)
+).with(
+    MIXINS.ComponentMixin,
+    MIXINS.PropertiesMixin,
+    MIXINS.StyleMixin,
+    MIXINS.EventsMixin,
+    MIXINS.TemplateMixin,
     CustomElementMixin
 ) {}

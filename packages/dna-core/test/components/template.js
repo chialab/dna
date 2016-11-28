@@ -1,6 +1,6 @@
-import { shim, mix, MIXINS } from '../../index.js';
+import { BaseComponent } from '../../index.js';
 
-class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMixin, MIXINS.PropertiesMixin, MIXINS.TemplateMixin) {
+class TestComponent extends BaseComponent {
     get properties() {
         return {
             name: String,
@@ -17,7 +17,7 @@ class TestComponent extends mix(shim(self.HTMLElement)).with(MIXINS.ComponentMix
 export class TestComponent1 extends TestComponent {
     get template() {
         return () => {
-            this.innerHTML = `${this.title ? `<h1>${this.title}</h1><br>` : ''}Hello, ${this.fullname}`;
+            this.node.innerHTML = `${this.title ? `<h1>${this.title}</h1><br>` : ''}Hello, ${this.fullname}`;
         };
     }
 }
@@ -37,7 +37,7 @@ export class TestComponent3 extends TestComponent {
 export class TestComponent4 extends TestComponent {
     get template() {
         return () => {
-            this.innerHTML = `
+            this.node.innerHTML = `
                 <svg>
                     <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" /> \
                 </svg>
