@@ -24,27 +24,25 @@ function filterAttributes(elem) {
     return res;
 }
 
+let changing;
+
 export const ReactMixin = (SuperClass) => class extends SuperClass {
     get node() {
         return ReactDOM.findDOMNode(this);
     }
 
-    get autoRender() {
-        return false;
-    }
-
-    constructor(...args) {
-        super(...args);
-        if (this.properties) {
-            for (let k in this.properties) {
-                this.properties[k].observe(() => {
-                    this.setState(convertProps(this));
-                });
-            }
-        }
+    propertyChangedCallback(propName, oldValue, newValue) {
+        changing = true;
+        super.propertyChangedCallback(propName, oldValue, newValue);
+        changing = false;
+        this.setState(convertProps(this));
     }
 
     render() {
+        if (changing) {
+            // prevent rerendering from other mixins.
+            return false;
+        }
         return React.createElement(
             this.is,
             filterAttributes(this),

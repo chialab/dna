@@ -1,4 +1,4 @@
-import { isUndefined, isFunction, isString, isFalsy } from '../lib/typeof.js';
+import { isFunction, isString, isFalsy } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -33,46 +33,28 @@ import { isUndefined, isFunction, isString, isFalsy } from '../lib/typeof.js';
  */
 export const TemplateMixin = (SuperClass) => class extends SuperClass {
     /**
-     * @property {Boolean} autoRender Should the component re-render on properties changes.
-     * @name autoRender
-     * @type {Boolean}
-     * @memberof DNA.MIXINS.TemplateMixin
-     * @instance
-     */
-    get autoRender() {
-        return true;
-    }
-    /**
-     * Attach properties observers in order to update children.
-     * @method constructor
-     * @memberof DNA.MIXINS.TemplateMixin
-     * @instance
-     */
-    constructor() {
-        super();
-        if (this.autoRender && !isUndefined(this.template)) {
-            let props = this.properties;
-            if (props) {
-                let callback = () => {
-                    this.render();
-                };
-                for (let k in props) {
-                    props[k].observe(callback);
-                }
-            }
-        }
-    }
-    /**
      * Render the component when connected.
      * @method connectedCallback
      * @memberof DNA.MIXINS.TemplateMixin
      * @instance
      */
     connectedCallback() {
-        if (!isUndefined(this.template)) {
+        if (!isFalsy(this.template)) {
             this.render();
         }
         super.connectedCallback();
+    }
+    /**
+     * Trigger rerender on property changes.
+     * @method propertyChangedCallback
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     */
+    propertyChangedCallback(propName, oldValue, newValue) {
+        super.propertyChangedCallback(propName, oldValue, newValue);
+        if (!isFalsy(this.template)) {
+            this.render();
+        }
     }
     /**
      * Update Component child nodes.

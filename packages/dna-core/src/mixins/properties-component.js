@@ -109,7 +109,11 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         let observed = this.constructor.observedAttributes || [];
         for (let k in props) {
             let prop = props[k];
-            prop.named(k).init(this);
+            prop.named(k)
+                .observe((prop, newValue, oldValue) =>
+                    this.propertyChangedCallback(prop.name, oldValue, newValue)
+                )
+                .init(this);
             let { attrName, eventName } = prop;
             if (!attrName && observed.indexOf(k) !== -1) {
                 prop.attribute();
@@ -171,6 +175,18 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             }
         }
     }
+    /**
+     * Callback for property changes.
+     * - Just define the callback, do nothing.
+     * @method propertyChangedCallback
+     * @memberof DNA.MIXINS.PropertiesMixin
+     * @instance
+     *
+     * @param {String} propName The changed property name.
+     * @param {String} oldVal The value of the property before the change.
+     * @param {String} newVal The value of the property after the change.
+     */
+    propertyChangedCallback() {}
     /**
      * Create a listener for node's property changes.
      * @method observeProperty
