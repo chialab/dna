@@ -1,4 +1,4 @@
-import { PRIVATE_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js';
+import { COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js';
 
 /**
  * The base custom component mixins. Just add life cycles callback and `is` getter.
@@ -7,16 +7,6 @@ import { PRIVATE_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js
  * @static
  */
 export const ComponentMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * Set up component object.
-     * @method constructor
-     * @memberof DNA.MIXINS.ComponentMixin
-     * @instance
-     */
-    constructor() {
-        super();
-        this[PRIVATE_SYMBOL] = {};
-    }
     /**
      * @property {HTMLElement} node Get component node reference.
      * @name node

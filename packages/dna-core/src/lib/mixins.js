@@ -1,10 +1,13 @@
+function reduce(arr, callback, value) {
+    for (let k = 0, len = arr.length; k < len; k++) {
+        value = callback(value, arr[k], k, arr);
+    }
+    return value;
+}
+
 /**
  * @author Justin Fagnani
  * @see https://github.com/justinfagnani/mixwith.js
- */
-import { reduce } from '../polyfills/reduce.js';
-
-/**
  * Mix a class with a mixin.
  * @method mix(...).with(...)
  * @memberof! DNA.
@@ -63,7 +66,7 @@ class Mixin {
     with() {
         // eslint-disable-next-line
         let args = [].slice.call(arguments, 0);
-        return reduce.call(args, (c, mixin) => mixin(c), this.superclass);
+        return reduce(args, (c, mixin) => mixin(c), this.superclass);
     }
 }
 

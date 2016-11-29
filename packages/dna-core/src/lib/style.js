@@ -9,14 +9,7 @@ const rootDoc = document;
 export function createStyle(node) {
     let doc = node.ownerDocument || rootDoc;
     let styleElem = doc.createElement('style');
-    styleElem.type = 'text/css';
-    styleElem.setAttribute('id', `style-${node.is}`);
-    let head = doc.head;
-    /* istanbul ignore else */
-    if (head.firstElementChild) {
-        head.insertBefore(styleElem, head.firstElementChild);
-    } else {
-        head.appendChild(styleElem);
-    }
+    styleElem.id = `style-${node.is}`;
+    doc.head.appendChild(styleElem);
     return styleElem;
 }

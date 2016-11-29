@@ -6,12 +6,15 @@
  * @memberof! DNA.
  * @static
  */
+
+const sym = 'components';
+
 export const registry = {
     /**
      * The list of defined components.
      * @type {Object}
      */
-    components: {},
+    [sym]: {},
     /**
      * Register a new component.
      * @param {String} name The id of the component.
@@ -23,7 +26,7 @@ export const registry = {
         Object.defineProperty(Ctr.prototype, 'is', {
             get: () => name,
         });
-        this.components[name] = {
+        this[sym][name] = {
             is: name,
             Ctr,
             config,
@@ -35,8 +38,8 @@ export const registry = {
      * @param {Boolean} full Get the full component descriptor.
      * @return {Function|Object} The component constructor or a component descriptor.
      */
-    get(name, full = false) {
-        let desc = this.components[name.toLowerCase()];
+    get(name, full) {
+        let desc = this[sym][name.toLowerCase()];
         if (desc) {
             return full ? desc : desc.Ctr;
         }

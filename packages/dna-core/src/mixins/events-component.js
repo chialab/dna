@@ -1,13 +1,12 @@
 import { isString, isFunction } from '../lib/typeof.js';
 import { matches } from '../polyfills/matches.js';
 import { dispatch } from '../lib/dispatch.js';
-import { PRIVATE_SYMBOL } from '../lib/symbols.js';
+import { EVENTS_SYMBOL } from '../lib/symbols.js';
 
 const SPLIT_SELECTOR = /([^\s]+)(.*)?/;
-const PRIVATE_PROP = 'events';
 
 function addToPrivate(scope, evName, callback) {
-    let internal = scope[PRIVATE_SYMBOL][PRIVATE_PROP] = scope[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
+    let internal = scope[EVENTS_SYMBOL] = scope[EVENTS_SYMBOL] || {};
     let events = internal[evName] = internal[evName] || [];
     events.push(callback);
 }
@@ -87,7 +86,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      */
     disconnectedCallback() {
         super.disconnectedCallback();
-        let events = this[PRIVATE_SYMBOL][PRIVATE_PROP] || {};
+        let events = this[EVENTS_SYMBOL] || {};
         for (let k in events) {
             events[k].forEach((callback) => this.node.removeEventListener(k, callback));
         }

@@ -1,6 +1,5 @@
-import { isArray } from '../lib/typeof.js';
+import { isFalsy, isArray, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';
-import { isUndefined } from '../lib/typeof.js';
 import { prop } from '../lib/property.js';
 
 /**
@@ -36,15 +35,11 @@ function getValue(property, attrVal) {
 function setAttribute(context, attr, value) {
     let currentAttrValue = context.getAttribute(attr);
     if (currentAttrValue !== value) {
-        if (value !== null && value !== undefined && value !== false) {
-            switch (typeof value) {
-            case 'string':
-            case 'number':
-                context.setAttribute(attr, value);
-                break;
-            case 'boolean':
-                context.setAttribute(attr, '');
+        if (!isFalsy(value)) {
+            if (typeof value === 'boolean') {
+                value = '';
             }
+            context.setAttribute(attr, value);
         } else if (currentAttrValue !== null) {
             context.removeAttribute(attr);
         }
@@ -142,14 +137,14 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         let props = this.properties;
         for (let k in props) {
             let prop = props[k];
-            let { attrName } = prop;
+            let { attrName, name } = prop;
             if (attrName) {
-                if (isUndefined(this[prop.name])) {
+                if (isUndefined(this[name])) {
                     if (this.node.hasAttribute(attrName)) {
-                        this[prop.name] = getValue(prop, this.node.getAttribute(attrName));
+                        this[name] = getValue(prop, this.node.getAttribute(attrName));
                     }
                 } else {
-                    setAttribute(this.node, attrName, this[prop.name]);
+                    setAttribute(this.node, attrName, this[name]);
                 }
             }
         }
