@@ -7,7 +7,7 @@
  * Use with Custom Elements v0 spec.
  */
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
-import { registry, BaseComponent as OriginalComponent } from '@dnajs/core';
+import { registry } from '@dnajs/core';
 import { shim } from './src/lib/shim.js';
 import { CustomElementMixin } from './src/mixins/custom-element.js';
 
