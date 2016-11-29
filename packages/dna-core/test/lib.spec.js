@@ -167,8 +167,6 @@ describe('Unit: lib', () => {
             assert.equal(elem.attributeChanges, 1);
             assert.equal(elem.node.getAttribute('age'), '20');
             assert.equal(elem.node.getAttribute('married'), '');
-            assert.equal(DOM.getAttribute(elem, 'age'), '20');
-            assert.equal(DOM.getAttribute(elem, 'married'), '');
         });
         it('should remove attributes', () => {
             DOM.removeAttribute(elem, 'age');
@@ -176,8 +174,6 @@ describe('Unit: lib', () => {
             assert.equal(elem.attributeChanges, 2);
             assert.equal(elem.node.getAttribute('age'), null);
             assert.equal(elem.node.getAttribute('married'), null);
-            assert.equal(DOM.getAttribute(elem, 'age'), null);
-            assert.equal(DOM.getAttribute(elem, 'married'), null);
         });
     });
 });

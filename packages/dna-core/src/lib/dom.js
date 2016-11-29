@@ -1,6 +1,35 @@
+import { isFunction, isString } from './typeof.js';
 import { registry } from './registry.js';
 import { COMPONENT_SYMBOL } from './symbols.js';
 
+/**
+ * Retrieve a HTMLElement instance from a component instance.
+ * @private
+ * @method getComponentNode
+ *
+ * @param {Component} elem The component instance.
+ * @return {HTMLElement} The node for the component instance.
+ */
+function getComponentNode(elem) {
+    if (!elem.nodeType) {
+        return elem.node;
+    }
+    return elem;
+}
+/**
+ * Retrieve a component instance from a HTMLElement instance.
+ * @private
+ * @method getNodeComponent
+ *
+ * @param {HTMLElement} elem The node instance.
+ * @return {Component} The component for the node instance.
+ */
+function getNodeComponent(elem) {
+    if (elem.nodeType) {
+        return elem[COMPONENT_SYMBOL];
+    }
+    return elem;
+}
 /**
  * The `connectedCallback` name.
  * @private
@@ -36,26 +65,13 @@ const UPDATED = 'attributeChangedCallback';
  * @return {Function} The component constructor for the given param.
  */
 export function getComponent(element, full = false) {
-    if (element.node) {
-        element = element.node;
-    }
-    if (element.nodeType === Node.ELEMENT_NODE) {
-        element = element.getAttribute('is') || element.tagName;
+    if (!isString(element)) {
+        element = getComponentNode(element);
+        if (element.nodeType === Node.ELEMENT_NODE) {
+            element = element.getAttribute('is') || element.tagName;
+        }
     }
     return full ? registry.getDescriptor(element) : registry.get(element);
-}
-/**
- * Check if a node is an instance of a component.
- * @method isComponent
- * @memberof DNA.DOM
- * @static
- *
- * @param {Component} element The element to check.
- * @return {Boolean}
- */
-export function isComponent(element) {
-    let Ctr = getComponent(element);
-    return Ctr && (element instanceof Ctr);
 }
 /**
  * An helper for dynamically trigger the `connectedCallback` reaction on components.
@@ -67,9 +83,8 @@ export function isComponent(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function connect(element) {
-    element = element[COMPONENT_SYMBOL] ?
-        element[COMPONENT_SYMBOL] : element;
-    if (isComponent(element)) {
+    element = getNodeComponent(element);
+    if (element) {
         element[CONNECTED].call(element);
         return true;
     }
@@ -84,9 +99,8 @@ export function connect(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function disconnect(element) {
-    element = element[COMPONENT_SYMBOL] ?
-        element[COMPONENT_SYMBOL] : element;
-    if (isComponent(element)) {
+    element = getNodeComponent(element);
+    if (element) {
         element[DISCONNECTED].call(element);
         return true;
     }
@@ -101,11 +115,13 @@ export function disconnect(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function update(element, name, oldValue, newValue) {
-    element = element[COMPONENT_SYMBOL] ?
-        element[COMPONENT_SYMBOL] : element;
-    if (isComponent(element)) {
-        element[UPDATED].call(element, name, oldValue, newValue);
-        return true;
+    element = getNodeComponent(element);
+    if (element) {
+        let attrs = element.constructor.observedAttributes || [];
+        if (attrs.indexOf(name) !== -1) {
+            element[UPDATED].call(element, name, oldValue, newValue);
+            return true;
+        }
     }
 }
 /**
@@ -114,12 +130,14 @@ export function update(element, name, oldValue, newValue) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {String} is The component tag name.
+ * @param {Function|String} Ctr The component constructor or tag name.
  * @return {HTMLElement} The component instance.
  */
-export function createElement(is) {
-    let Ctr = getComponent(is);
-    if (Ctr) {
+export function createElement(Ctr) {
+    if (isString(Ctr)) {
+        Ctr = getComponent(Ctr);
+    }
+    if (isFunction(Ctr)) {
         return new Ctr();
     }
 }
@@ -132,19 +150,18 @@ export function createElement(is) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {Component} element The element to append.
+ * @param {HTMLElement} element The element to append.
  * @return {Boolean} The node has been appended.
  */
 export function appendChild(parent, element) {
-    if (element.node) {
-        let node = element.node;
-        if (parent !== node.parentNode || parent.lastElementChild !== node) {
-            if (node.parentNode) {
-                removeChild(node.parentNode, element);
-            }
-            parent.appendChild(node);
-            return connect(element);
+    parent = getComponentNode(parent);
+    element = getComponentNode(element);
+    if (parent !== element.parentNode || parent.lastElementChild !== element) {
+        if (element.parentNode) {
+            removeChild(element.parentNode, element);
         }
+        parent.appendChild(element);
+        return connect(element);
     }
     return false;
 }
@@ -155,14 +172,14 @@ export function appendChild(parent, element) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {Component} element The element to remove.
+ * @param {HTMLElement} element The element to remove.
  * @return {Boolean} The node has been removed.
  */
 export function removeChild(parent, element) {
-    if (element.node) {
-        parent.removeChild(element.node);
-        return disconnect(element);
-    }
+    parent = getComponentNode(parent);
+    element = getComponentNode(element);
+    parent.removeChild(element);
+    return disconnect(element);
 }
 /**
  * Dynamically insert a node before another and call all the reactions.
@@ -173,23 +190,20 @@ export function removeChild(parent, element) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {Component} element The element to insert.
+ * @param {HTMLElement} element The element to insert.
  * @param {HTMLElement} refNode The node for positioning.
  * @return {Boolean} The node has been appended.
  */
 export function insertBefore(parent, element, refNode) {
-    if (element.node) {
-        let node = element.node;
-        refNode = refNode.node ?
-            refNode.node :
-            refNode;
-        if (node.nextSibling !== refNode) {
-            if (node.parentNode) {
-                disconnect(element);
-            }
-            parent.insertBefore(node, refNode);
-            return connect(element);
+    parent = getComponentNode(parent);
+    element = getComponentNode(element);
+    refNode = getComponentNode(refNode);
+    if (element.nextSibling !== refNode) {
+        if (element.parentNode) {
+            disconnect(element);
         }
+        parent.insertBefore(element, refNode);
+        return connect(element);
     }
 }
 /**
@@ -202,42 +216,19 @@ export function insertBefore(parent, element, refNode) {
  * @static
  *
  * @param {HTMLElement} parent The parent element.
- * @param {Component} element The element to insert.
+ * @param {HTMLElement} element The element to insert.
  * @param {HTMLElement} refNode The node to replace.
  * @return {Boolean} The node has been appended.
  */
 export function replaceChild(parent, element, refNode) {
-    if (element.node) {
-        let node = element.node;
-        if (node.parentNode) {
-            disconnect(element);
-        }
-        if (refNode.node) {
-            parent.replaceChild(node, refNode.node);
-            disconnect(refNode);
-        } else if (refNode[COMPONENT_SYMBOL]) {
-            parent.replaceChild(node, refNode);
-            disconnect(refNode[COMPONENT_SYMBOL]);
-        } else {
-            parent.replaceChild(node, refNode);
-        }
-        return connect(element);
+    element = getComponentNode(element);
+    refNode = getComponentNode(refNode);
+    if (element.parentNode) {
+        disconnect(element);
     }
-}
-/**
- * Get a component attribute.
- * @method getAttribute
- * @memberof DNA.DOM
- * @static
- *
- * @param {Component} element The element.
- * @param {String} name The attribute name.
- * @return {String} The element attribute value.
- */
-export function getAttribute(element, name) {
-    if (element.node) {
-        return element.node.getAttribute(name);
-    }
+    parent.replaceChild(element, refNode);
+    disconnect(refNode);
+    return connect(element);
 }
 /**
  * Dynamically update a node attribute and call all the reactions.
@@ -245,21 +236,16 @@ export function getAttribute(element, name) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {Component} element The element to update.
+ * @param {HTMLElement} element The element to update.
  * @param {String} name The attribute name.
  * @param {String} value The attribute value.
  * @return {Boolean} The node has been updated.
  */
 export function setAttribute(element, name, value) {
-    if (element.node) {
-        let node = element.node;
-        let oldValue = node.getAttribute(name);
-        node.setAttribute(name, value);
-        let attrs = element.constructor.observedAttributes || [];
-        if (attrs.indexOf(name) !== -1) {
-            return update(element, name, oldValue, value);
-        }
-    }
+    element = getComponentNode(element);
+    let oldValue = element.getAttribute(name);
+    element.setAttribute(name, value);
+    return update(element, name, oldValue, value);
 }
 /**
  * Dynamically remove a node attribute and call all the reactions.
@@ -267,18 +253,13 @@ export function setAttribute(element, name, value) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {Component} element The element to update.
+ * @param {HTMLElement} element The element to update.
  * @param {String} name The attribute name.
  * @return {Boolean} The node has been updated.
  */
 export function removeAttribute(element, name) {
-    if (element.node) {
-        let node = element.node;
-        let oldValue = node.getAttribute(name);
-        node.removeAttribute(name);
-        let attrs = element.constructor.observedAttributes || [];
-        if (attrs.indexOf(name) !== -1) {
-            return update(element, name, oldValue, null);
-        }
-    }
+    element = getComponentNode(element);
+    let oldValue = element.getAttribute(name);
+    element.removeAttribute(name);
+    return update(element, name, oldValue, null);
 }
