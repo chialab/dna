@@ -1,4 +1,5 @@
-import { isFalsy, isObject, isFunction, isArray, DOM } from '@dnajs/core/src/core.js';
+import { isFalsy, isObject, isFunction, isArray } from '@dnajs/core/src/core.js';
+import { registry } from '@dnajs/core/src/lib/registry.js';
 import {
     skip,
     text,
@@ -51,7 +52,9 @@ export function h(element, props, ...children) {
         }
 
         const node = elementOpenEnd(element);
-        const isComponent = DOM.getComponent(node);
+        const isComponent = !!registry.get(
+            node.getAttribute('is') || node.tagName
+        );
 
         if (isComponent) {
             skip();

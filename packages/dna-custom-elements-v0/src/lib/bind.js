@@ -1,4 +1,4 @@
-import { DOM, isFunction } from '@dnajs/core/src/core.js';
+import { isFunction } from '@dnajs/core/src/core.js';
 
 /**
  * Attach a component prototype to an already instantiated HTMLElement.
@@ -11,9 +11,6 @@ import { DOM, isFunction } from '@dnajs/core/src/core.js';
  * @return {Boolean} The prototype has been attached.
  */
 export function bind(node, Ctr) {
-    if (!isFunction(Ctr)) {
-        Ctr = DOM.getComponent(node);
-    }
     if (isFunction(Ctr)) {
         node.__proto__ = Ctr.prototype;
         Object.defineProperty(node, 'constructor', {

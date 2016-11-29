@@ -7,7 +7,7 @@ const WRAPPER = document.body;
 define('test-base-component', TestBaseComponent);
 
 describe('Unit: BaseComponent', () => {
-    const elem = DOM.createElement(TestBaseComponent);
+    const elem = DOM.createElement('test-base-component');
     elem.lastName = 'Turing';
 
     describe('> created', () => {

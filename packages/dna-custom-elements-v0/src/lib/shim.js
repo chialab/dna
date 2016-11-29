@@ -42,7 +42,7 @@ export function shim(Original) {
             if (!isNew(this)) {
                 return this;
             }
-            let desc = registry.getDescriptor(this.constructor);
+            let desc = registry.get(this.is, true);
             let config = desc.config;
             // Find the tagname of the constructor and create a new element with it
             let element = document.createElement(

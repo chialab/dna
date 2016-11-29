@@ -18,10 +18,7 @@ export { registry };
 export * from '@dnajs/core/src/core.js';
 
 export function define(tagName, Component, config) {
-    Object.defineProperty(Component.prototype, 'is', {
-        get: () => tagName,
-    });
-    registry.define(tagName, Component, config);
+    return registry.define(tagName, Component, config);
 }
 
 export function render(parent, Component, props) {

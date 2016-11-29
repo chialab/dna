@@ -55,25 +55,6 @@ const DISCONNECTED = 'disconnectedCallback';
  */
 const UPDATED = 'attributeChangedCallback';
 /**
- * Retrieve a component constructor from an Element or from a tag name.
- * @method getComponent
- * @memberof DNA.DOM
- * @static
- *
- * @param {Component|String} element The element or the tag name.
- * @param {Boolean} full Retrieve full component information.
- * @return {Function} The component constructor for the given param.
- */
-export function getComponent(element, full = false) {
-    if (!isString(element)) {
-        element = getComponentNode(element);
-        if (element.nodeType === Node.ELEMENT_NODE) {
-            element = element.getAttribute('is') || element.tagName;
-        }
-    }
-    return full ? registry.getDescriptor(element) : registry.get(element);
-}
-/**
  * An helper for dynamically trigger the `connectedCallback` reaction on components.
  * @method connect
  * @memberof DNA.DOM
@@ -135,7 +116,7 @@ export function update(element, name, oldValue, newValue) {
  */
 export function createElement(Ctr) {
     if (isString(Ctr)) {
-        Ctr = getComponent(Ctr);
+        Ctr = registry.get(Ctr);
     }
     if (isFunction(Ctr)) {
         return new Ctr();

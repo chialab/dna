@@ -1,5 +1,6 @@
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
 import { COMPONENT_SYMBOL, DOM } from '@dnajs/core/src/core.js';
+import { registry } from '@dnajs/core/src/lib/registry.js';
 
 let _created = notifications.nodesCreated;
 let _removed = notifications.nodesDeleted;
@@ -7,11 +8,13 @@ let _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
     nodes.forEach((node) => {
-        let Ctr = DOM.getComponent(node);
-        if (Ctr) {
-            let elem = new Ctr();
-            elem.node = node;
-            DOM.connect(elem);
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            let Ctr = registry.get(node.getAttribute('is') || node.tagName);
+            if (Ctr) {
+                let elem = new Ctr();
+                elem.node = node;
+                DOM.connect(elem);
+            }
         }
     });
     /* istanbul ignore if */
