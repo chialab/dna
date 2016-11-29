@@ -6,13 +6,13 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import { mix, prop, DOM, MIXINS } from './src/core.js';
+import { mix, DOM, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 
 /**
  * @namespace DNA
  */
-export { mix, prop, DOM, MIXINS };
+export * from './src/core.js';
 export { registry };
 
 /**

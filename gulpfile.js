@@ -88,12 +88,12 @@ function lint() {
 }
 
 function bundle(format, entryFileName) {
+    delete require.cache[path.resolve('./rollup.config.js')];
     var rollupConfig = require('./rollup.config.js');
-    return rollup(Object.assign({
-        entry: entryFileName,
-        sourceMap: true,
-        format,
-    }, rollupConfig));
+    rollupConfig.entry = entryFileName;
+    rollupConfig.sourceMap = true;
+    rollupConfig.format = format;
+    return rollup(rollupConfig);
 }
 
 function jsMinWatch() {
