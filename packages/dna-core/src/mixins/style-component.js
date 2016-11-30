@@ -1,5 +1,75 @@
 import { isString } from '../lib/typeof.js';
-import { createStyle } from '../lib/style.js';
+import { STYLE_SYMBOL } from '../lib/symbols.js';
+
+const HOST_REGEX = /(\:host)(\([^)]*\))?/g;
+const CSS_RULES_REGEX = /(#|\.|\@|\[|[a-zA-Z]|\:)([^{\;\}]*){/g;
+const SEPARATOR_REGEX = /\,\s*/;
+const rootDoc = document;
+
+/**
+ * Get the owner document for a node.
+ * @private
+ *
+ * @param {HTMLElement} node A node.
+ * @return {DocumentFragment} The node document parent.
+ */
+function ownerDocument(node) {
+    return node.ownerDocument || rootDoc;
+}
+
+/**
+ * Create and attach a style element for a component.
+ * @private
+ *
+ * @param {HTMLElement} node A component instance.
+ * @return {HTMLElement} The created style element.
+ */
+function createStyle(node) {
+    let styleElem = ownerDocument(node).createElement('style');
+    styleElem.id = `style-${node.is}`;
+    return styleElem;
+}
+
+/**
+ * Convert a shadowDOM css string into a normal scoped css.
+ * @private
+ *
+ * @param {String} css The css string to convert.
+ * @param {String} is The component name for scoping.
+ * @return {String} The converted string.
+ */
+function convertShadowCSS(css, is) {
+    const scope = `.${is}`;
+    return css
+        .replace(CSS_RULES_REGEX, (fullMatch) => {
+            let rules = fullMatch
+                .slice(0, -1)
+                .split(SEPARATOR_REGEX)
+                .map((rule) => {
+                    if (rule.indexOf(':host') === 0) {
+                        return rule.replace(HOST_REGEX, (fullMatch, host, state) => {
+                            state = state ? state.slice(1, -1) : '';
+                            return `${scope}${state}`;
+                        });
+                    } else {
+                        return `${scope} ${rule}`;
+                    }
+                })
+                .join(', ');
+            return `${rules}{`;
+        });
+}
+
+function updateCSS(element) {
+    let style = element.css;
+    if (isString(style)) {
+        if (element.node.shadowRoot) {
+            element[STYLE_SYMBOL].textContent = style;
+        } else {
+            element.constructor[STYLE_SYMBOL].textContent = convertShadowCSS(style, element.is);
+        }
+    }
+}
 
 /**
  * Simple Custom Component with css style handling using the `css` property.
@@ -13,7 +83,7 @@ import { createStyle } from '../lib/style.js';
  * import { BaseComponent } from '@dnajs/core';
  * export class MyComponent extends BaseComponent {
  *   get css() {
- *     return '.my-component p { color: red; }'
+ *     return 'p { color: red; }'
  *   }
  * }
  * ```
@@ -29,29 +99,21 @@ import { createStyle } from '../lib/style.js';
  * ```
  */
 export const StyleMixin = (SuperClass) => class extends SuperClass {
-    /**
-     * Fires when an instance of the element is created.
-     */
-    constructor() {
-        super();
-        if (!this.constructor.styleElem) {
-            let Ctr = this.constructor;
-            Object.defineProperty(Ctr, 'styleElem', {
-                value: createStyle(this),
-            });
-        }
-        this.updateCSS();
-    }
-
     connectedCallback() {
         super.connectedCallback();
-        this.node.classList.add(this.is);
-    }
-
-    updateCSS() {
-        let style = this.css;
-        if (isString(style)) {
-            this.constructor.styleElem.textContent = style;
+        if (this.css) {
+            if (this.node.shadowRoot) {
+                if (!this[STYLE_SYMBOL]) {
+                    let style = this[STYLE_SYMBOL] = createStyle(this.node);
+                    this.node.shadowRoot.appendChild(style);
+                }
+                updateCSS(this);
+            } else if (!this.constructor[STYLE_SYMBOL]) {
+                let style = this.constructor[STYLE_SYMBOL] = createStyle(this.node);
+                ownerDocument(this.node).head.appendChild(style);
+                updateCSS(this);
+            }
         }
+        this.node.classList.add(this.is);
     }
 };

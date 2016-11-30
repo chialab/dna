@@ -1,22 +1,40 @@
-import { BaseComponent } from '../../index.js';
+import { isFunction, BaseComponent } from '../../index.js';
 
 class TestComponent extends BaseComponent {
     get template() {
         return '<h1>DNA TESTS</h1>';
     }
+    constructor() {
+        super();
+        if (this.node && isFunction(this.node.createShadowRoot)) {
+            this.node.createShadowRoot();
+        }
+    }
 }
-
-let css = 'h1 { color: #5F9EA0; }';
 
 export class TestComponent1 extends TestComponent {
     get css() {
-        return `.test1-style-component ${css}`;
+        return `
+        :host {
+            color: #5F9EA0;
+        }
+
+        h1, h2 {
+            color: inherit;
+        }`;
     }
 }
 
 export class TestComponent2 extends TestComponent {
     get css() {
-        return `.test2-style-component.active ${css}`;
+        return `
+        :host(.active) {
+            color: #5F9EA0;
+        }
+
+        h1, h2 {
+            color: inherit;
+        }`;
     }
 
     constructor() {
