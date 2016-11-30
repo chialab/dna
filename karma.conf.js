@@ -113,7 +113,7 @@ module.exports = function(config) {
                     browserDisconnectTolerance: 1,
                     browserNoActivityTimeout: 4 * 60 * 1000,
                     captureTimeout: 4 * 60 * 1000,
-                    reporters: ['progress', 'saucelabs'],
+                    reporters: ['dots', 'saucelabs'],
                     sauceLabs: {
                         startConnect: false,
                         options: {},
