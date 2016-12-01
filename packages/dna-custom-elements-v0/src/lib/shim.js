@@ -1,4 +1,4 @@
-import { isString } from '@dnajs/core/src/core.js';
+import { isString } from '@dnajs/core/src/lib/typeof.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**

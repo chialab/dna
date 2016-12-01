@@ -30,9 +30,4 @@ export const MIXINS = {
 };
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';
-export * from './lib/custom-event.js';
-export * from './lib/dispatch.js';
-export * from './lib/matches.js';
-export * from './lib/reduce.js';
 export * from './lib/symbols.js';
-export * from './lib/typeof.js';

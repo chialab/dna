@@ -1,16 +1,15 @@
-let CustomEvent = self.CustomEvent;
+let CustomEvent_ = self.CustomEvent;
 
 try {
     // eslint-disable-next-line
-    new CustomEvent('test');
+    let ev = new self.CustomEvent('test');
 } catch(ex) {
-    let proto = CustomEvent.prototype;
-    CustomEvent = function(event, params) {
+    CustomEvent_ = function(ev, params) {
         let evt = document.createEvent('CustomEvent');
         evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
         return evt;
     };
-    CustomEvent.prototype = proto;
+    CustomEvent_.prototype = self.CustomEvent.prototype;
 }
 
-export { CustomEvent };
+export const CustomEvent = CustomEvent_;

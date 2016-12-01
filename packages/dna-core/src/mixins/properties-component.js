@@ -1,4 +1,4 @@
-import { reduce, reduceProperty } from '../lib/reduce.js';
+import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';
 import { prop } from '../lib/property.js';
@@ -47,18 +47,6 @@ function setAttribute(context, attr, value) {
     }
 }
 
-function getProtoProps(scope) {
-    let protoProps = reduceProperty(scope, 'properties');
-    return reduce(protoProps, (properties, proto) => {
-        for (let k in proto) {
-            if (!properties.hasOwnProperty(k)) {
-                properties[k] = proto[k];
-            }
-        }
-        return properties;
-    }, {});
-}
-
 /**
  * Simple Custom Component for properties initialization via attributes.
  * @mixin PropertiesMixin
@@ -95,10 +83,9 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      */
     constructor() {
         super();
-        let protoProps = getProtoProps(this);
-        let props = {};
-        for (let k in protoProps) {
-            props[k] = prop(protoProps[k]);
+        let props = reduceObjectProperty(this, 'properties');
+        for (let k in props) {
+            props[k] = prop(props[k]);
         }
         Object.defineProperty(this, 'properties', {
             value: props,

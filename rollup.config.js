@@ -20,7 +20,8 @@ module.exports = {
                 'packages/**/*.js',
             ],
             exclude: [
-                'packages/**/polyfills/**/*.js',
+                'packages/dna-core/src/lib/custom-event.js',
+                'packages/dna-core/src/lib/matches.js',
                 'packages/**/test/**/*.js',
             ],
         }) : {},

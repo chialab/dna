@@ -1,4 +1,4 @@
-import { isFunction } from '@dnajs/core/src/core.js';
+import { isFunction } from '@dnajs/core/src/lib/typeof.js';
 
 /**
  * Attach a component prototype to an already instantiated HTMLElement.

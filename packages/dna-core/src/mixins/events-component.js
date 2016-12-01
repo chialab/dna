@@ -1,4 +1,4 @@
-import { reduce, reduceProperty } from '../lib/reduce.js';
+import { reduceObjectProperty } from '../lib/reduce.js';
 import { isString, isFunction } from '../lib/typeof.js';
 import { matches } from '../lib/matches.js';
 import { dispatch } from '../lib/dispatch.js';
@@ -49,15 +49,7 @@ function addToPrivate(scope, evName, callback) {
 export const EventsMixin = (SuperClass) => class extends SuperClass {
     constructor() {
         super();
-        let protoEvents = reduceProperty(this, 'events');
-        let events = reduce(protoEvents, (evs, proto) => {
-            for (let k in proto) {
-                if (!evs.hasOwnProperty(k)) {
-                    evs[k] = proto[k];
-                }
-            }
-            return evs;
-        }, {});
+        let events = reduceObjectProperty(this, 'events');
         Object.defineProperty(this, 'events', { value: events });
     }
     /**

@@ -7,7 +7,7 @@ import {
     isUndefined,
     isArray,
     isFalsy,
-} from '../src/core.js';
+} from '../src/lib/typeof.js';
 
 import {
     BaseComponent,

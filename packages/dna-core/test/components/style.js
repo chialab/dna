@@ -1,4 +1,5 @@
-import { isFunction, BaseComponent } from '../../index.js';
+import { BaseComponent } from '../../index.js';
+import { isFunction } from '../../src/lib/typeof.js';
 
 class TestComponent extends BaseComponent {
     get template() {

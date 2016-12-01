@@ -5,16 +5,10 @@ export function reduce(arr, callback, value) {
     return value;
 }
 
-const CONSTRUCTOR = '__proto__';
-
-export function reducePrototype(scope, callback, value) {
-    let k = 0;
-    let obj = scope;
-    // eslint-disable-next-line
+export function reducePrototype(obj, callback, value) {
     while (obj) {
-        value = callback(value, obj, k, scope);
-        obj = obj[CONSTRUCTOR];
-        k++;
+        value = callback(value, obj);
+        obj = obj.__proto__;
     }
     return value;
 }
@@ -26,4 +20,16 @@ export function reduceProperty(obj, key) {
         }
         return properties;
     }, []);
+}
+
+export function reduceObjectProperty(scope, prop) {
+    let protoProp = reduceProperty(scope, prop);
+    return reduce(protoProp, (res, proto) => {
+        for (let k in proto) {
+            if (!res.hasOwnProperty(k)) {
+                res[k] = proto[k];
+            }
+        }
+        return res;
+    }, {});
 }
