@@ -1,3 +1,5 @@
+/** Polyfill for `Element.matches API`. */
+
 const ELEM_PROTO = Element.prototype;
 
 export const matches = ELEM_PROTO.matches ||

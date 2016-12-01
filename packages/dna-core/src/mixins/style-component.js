@@ -3,10 +3,30 @@ import { reduceProperty } from '../lib/reduce.js';
 import { isString } from '../lib/typeof.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 
+/**
+ * A regex to match css `:host` selector.
+ * @type {RegExp}
+ * @private
+ */
 const HOST_REGEX = /(\:host)(\([^)]*\))?/g;
+/**
+ * A regex to match css rules.
+ * @type {RegExp}
+ * @private
+ */
 const CSS_RULES_REGEX = /(#|\.|\@|\[|[a-zA-Z]|\:)([^{\;\}]*){/g;
+/**
+ * A regex to split css rules.
+ * @type {RegExp}
+ * @private
+ */
 const SEPARATOR_REGEX = /\,\s*/;
-const rootDoc = document;
+/**
+ * The root document element.
+ * @type {DocumentFragment}
+ * @private
+ */
+const ROOT_DOC = document;
 
 /**
  * Get the owner document for a node.
@@ -16,9 +36,8 @@ const rootDoc = document;
  * @return {DocumentFragment} The node document parent.
  */
 function ownerDocument(node) {
-    return node.ownerDocument || rootDoc;
+    return node.ownerDocument || ROOT_DOC;
 }
-
 /**
  * Create and attach a style element for a component.
  * @private
@@ -31,7 +50,6 @@ function createStyle(node) {
     styleElem.id = `style-${node.is}`;
     return styleElem;
 }
-
 /**
  * Convert a shadowDOM css string into a normal scoped css.
  * @private
@@ -62,17 +80,6 @@ function convertShadowCSS(css, is) {
         });
 }
 
-function updateCSS(element) {
-    let style = element.css;
-    if (isString(style)) {
-        if (element.node.shadowRoot) {
-            element[STYLE_SYMBOL].textContent = style;
-        } else {
-            element.constructor[STYLE_SYMBOL].textContent = convertShadowCSS(style, element.is);
-        }
-    }
-}
-
 /**
  * Simple Custom Component with css style handling using the `css` property.
  * @mixin StyleMixin
@@ -101,23 +108,32 @@ function updateCSS(element) {
  * ```
  */
 export const StyleMixin = (SuperClass) => class extends SuperClass {
-    connectedCallback() {
-        super.connectedCallback();
+    /**
+     * Inherit all css properties.
+     */
+    constructor() {
+        super();
         let css = reduceProperty(this, 'css')
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');
         define(this, 'css', { value: css });
-        if (css) {
+    }
+    /**
+     * Create or update a style element for a component.
+     */
+    connectedCallback() {
+        super.connectedCallback();
+        if (isString(this.css)) {
             if (this.node.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
                     let style = this[STYLE_SYMBOL] = createStyle(this.node);
                     this.node.shadowRoot.appendChild(style);
+                    style.textContent = this.css;
                 }
-                updateCSS(this);
             } else if (!this.constructor[STYLE_SYMBOL]) {
                 let style = this.constructor[STYLE_SYMBOL] = createStyle(this.node);
                 ownerDocument(this.node).head.appendChild(style);
-                updateCSS(this);
+                style.textContent = convertShadowCSS(this.css, this.is);
             }
         }
         this.node.classList.add(this.is);

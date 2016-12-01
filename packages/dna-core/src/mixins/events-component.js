@@ -4,6 +4,15 @@ import { isString, isFunction } from '../lib/typeof.js';
 import { matches } from '../lib/matches.js';
 import { dispatch } from '../lib/dispatch.js';
 
+/**
+ * Check if an event has a selector in mathc in target list.
+ * @private
+ *
+ * @param {Event} event The event to check.
+ * @param {HTMLElement} node The root node.
+ * @param {String} selector The CSS selector to match.
+ * @return {HTMLElement} The element in target list which matches the selector.
+ */
 function checkDelegate(event, node, selector) {
     if (!selector) {
         return node;
@@ -17,7 +26,14 @@ function checkDelegate(event, node, selector) {
     }
     return null;
 }
-
+/**
+ * Generate a delegate listener for an event.
+ * @private
+ *
+ * @param {String} selector The CSS selector to match.
+ * @param {Function} callback The original callback for the event.
+ * @return {Function} Wrapped callback with a delegation check.
+ */
 function delegateCallback(selector, callback) {
     return (ev) => {
         let target = checkDelegate(ev, this.node, selector);

@@ -1,10 +1,30 @@
+/**
+ * Reduce an array to a single value.
+ * Similar to `Array.prototype.reduce`.
+ * @method reduce
+ * @ignore
+ *
+ * @param {Array} arr The array to reduce.
+ * @param {Function} callback The reducer function to fire for all value of the array.
+ * @param {*} value Optional initial value.
+ * @return {*} The value for the reduced array.
+ */
 export function reduce(arr, callback, value) {
     for (let k = 0, len = arr.length; k < len; k++) {
         value = callback(value, arr[k], k, arr);
     }
     return value;
 }
-
+/**
+ * Reduce an object prototype chain to a single value.
+ * @method reducePrototype
+ * @ignore
+ *
+ * @param {*} obj The object prototype scope to iterate.
+ * @param {Function} callback The reducer function to fire for all value of the prototype chain.
+ * @param {*} value Optional initial value.
+ * @return {*} The value for the reduced prototype chain.
+ */
 export function reducePrototype(obj, callback, value) {
     while (obj) {
         value = callback(value, obj);
@@ -12,7 +32,15 @@ export function reducePrototype(obj, callback, value) {
     }
     return value;
 }
-
+/**
+ * Reduce to array of property values of a prototype chain.
+ * @method reduceProperty
+ * @ignore
+ *
+ * @param {*} obj The object prototype scope to iterate.
+ * @param {String} key The property name.
+ * @return {Array} A list of property values.
+ */
 export function reduceProperty(obj, key) {
     return reducePrototype(obj, (properties, proto) => {
         if (proto.hasOwnProperty(key)) {
@@ -21,7 +49,15 @@ export function reduceProperty(obj, key) {
         return properties;
     }, []);
 }
-
+/**
+ * Marge an array of property values of a prototype chain.
+ * @method reduceObjectProperty
+ * @ignore
+ *
+ * @param {*} obj The object prototype scope to iterate.
+ * @param {String} key The property name.
+ * @return {Object} A merged list of property values.
+ */
 export function reduceObjectProperty(scope, prop) {
     let protoProp = reduceProperty(scope, prop);
     return reduce(protoProp, (res, proto) => {

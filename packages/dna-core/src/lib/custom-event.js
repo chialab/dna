@@ -1,3 +1,5 @@
+/** Polyfill for CustomEvent constructor. */
+
 let CustomEvent_ = self.CustomEvent;
 
 try {
