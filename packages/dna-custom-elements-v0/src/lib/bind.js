@@ -1,4 +1,5 @@
 import { isFunction } from '@dnajs/core/src/lib/typeof.js';
+import { define } from '@dnajs/core/src/lib/obj-define.js';
 
 /**
  * Attach a component prototype to an already instantiated HTMLElement.
@@ -13,7 +14,7 @@ import { isFunction } from '@dnajs/core/src/lib/typeof.js';
 export function bind(node, Ctr) {
     if (isFunction(Ctr)) {
         node.__proto__ = Ctr.prototype;
-        Object.defineProperty(node, 'constructor', {
+        define(node, 'constructor', {
             value: Ctr,
             configurable: true,
             writable: true,

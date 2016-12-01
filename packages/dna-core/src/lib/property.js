@@ -1,18 +1,11 @@
 import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
-
-/**
- * Shortcut to `Object.defineProperty`.
- * @type {Function}
- * @private
- */
-const define = Object.defineProperty;
+import { define } from './obj-define.js';
 
 /**
  * Power to the component's properties.
  * Type checking, validation, callbacks, events and attribute syncing.
- * @private
  */
-class Property {
+export class Property {
     /**
      * Create a Property instance.
      * @param {Function|Array} A single or a list of valid constructors for the property value.
@@ -231,13 +224,10 @@ class Property {
  * @property {Property} BOOLEAN A property which accepts only booleans.
  * @property {Property} NUMBER A property which accepts only numbers.
  *
- * @param {Property|Function|Array} ctrs A Property to clone or a single or a list of valid constructors for the property value.
+ * @param {Function|Array} ctrs A single or a list of valid constructors for the property value.
  * @return {Property} The new property.
  */
 export function prop(ctrs) {
-    if (ctrs instanceof Property) {
-        return ctrs;
-    }
     return new Property(ctrs);
 }
 

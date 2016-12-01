@@ -1,7 +1,8 @@
+import { define } from '../lib/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';
-import { prop } from '../lib/property.js';
+import { prop, Property } from '../lib/property.js';
 
 /**
  * Try to parse attribute value checking the property validation types.
@@ -85,9 +86,11 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         super();
         let props = reduceObjectProperty(this, 'properties');
         for (let k in props) {
-            props[k] = prop(props[k]);
+            if (!(props[k] instanceof Property)) {
+                props[k] = prop(props[k]);
+            }
         }
-        Object.defineProperty(this, 'properties', {
+        define(this, 'properties', {
             value: props,
             writable: false,
             configurable: true,

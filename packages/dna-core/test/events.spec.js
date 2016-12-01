@@ -22,7 +22,7 @@ describe('Unit: EventsComponent', () => {
     describe('delegate', () => {
         describe('custom events', () => {
             it('should be handled', () => {
-                assert.equal(elem.customElement, elem);
+                assert.equal(elem.customElement, elem.node);
                 assert.equal(elem.custom instanceof Event, true);
                 assert.equal(elem.custom.detail.data, 1234);
             });

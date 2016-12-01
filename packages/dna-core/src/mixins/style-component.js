@@ -1,3 +1,4 @@
+import { define } from '../lib/obj-define.js';
 import { reduceProperty } from '../lib/reduce.js';
 import { isString } from '../lib/typeof.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
@@ -105,7 +106,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         let css = reduceProperty(this, 'css')
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');
-        Object.defineProperty(this, 'css', { value: css });
+        define(this, 'css', { value: css });
         if (css) {
             if (this.node.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
