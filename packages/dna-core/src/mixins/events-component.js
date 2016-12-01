@@ -19,7 +19,7 @@ function checkDelegate(event, node, selector) {
     }
     let target = event.target;
     while (target && target !== node) {
-        if (matches.call(target, selector)) {
+        if (matches(target, selector)) {
             return target;
         }
         target = target.parentNode;
