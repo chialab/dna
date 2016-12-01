@@ -1,5 +1,5 @@
 import { isString, isFunction } from '../lib/typeof.js';
-import { matches } from '../polyfills/matches.js';
+import { matches } from '../lib/matches.js';
 import { dispatch } from '../lib/dispatch.js';
 import { EVENTS_SYMBOL } from '../lib/symbols.js';
 

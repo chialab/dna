@@ -1,3 +1,5 @@
+const sym = 'components';
+
 /**
  * A custom components registry.
  * It replicates the [CustomElementRegistry interface](https://www.w3.org/TR/custom-elements/#custom-elements-api).
@@ -6,9 +8,6 @@
  * @memberof! DNA.
  * @static
  */
-
-const sym = 'components';
-
 export const registry = {
     /**
      * The list of defined components.

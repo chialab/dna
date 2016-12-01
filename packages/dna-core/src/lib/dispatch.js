@@ -1,5 +1,5 @@
 import { isString } from './typeof.js';
-import { CustomEvent } from '../polyfills/custom-event.js';
+import { CustomEvent } from './custom-event.js';
 
 /**
  * Trigger a custom DOM Event.
