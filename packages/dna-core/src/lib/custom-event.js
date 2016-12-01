@@ -1,17 +1,17 @@
 /** Polyfill for CustomEvent constructor. */
 
-let CustomEvent_ = self.CustomEvent;
+let CustomEvent = self.CustomEvent;
 
 try {
     // eslint-disable-next-line
-    let ev = new self.CustomEvent('test');
+    new CustomEvent('test');
 } catch(ex) {
-    CustomEvent_ = function(ev, params) {
+    CustomEvent = function(ev, params) {
         let evt = document.createEvent('CustomEvent');
         evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
         return evt;
     };
-    CustomEvent_.prototype = self.CustomEvent.prototype;
+    CustomEvent.prototype = self.CustomEvent.prototype;
 }
 
-export const CustomEvent = CustomEvent_;
+export { CustomEvent };
