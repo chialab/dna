@@ -132,14 +132,12 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
         for (let k in props) {
             let prop = props[k];
             let { attrName, name } = prop;
-            if (attrName) {
-                if (isUndefined(this[name])) {
-                    if (this.node.hasAttribute(attrName)) {
-                        this[name] = getValue(prop, this.node.getAttribute(attrName));
-                    }
-                } else {
-                    setAttribute(this.node, attrName, this[name]);
+            if (isUndefined(this[name])) {
+                if (this.node.hasAttribute(attrName || name)) {
+                    this[name] = getValue(prop, this.node.getAttribute(attrName || name));
                 }
+            } else if (attrName) {
+                setAttribute(this.node, attrName, this[name]);
             }
         }
     }
