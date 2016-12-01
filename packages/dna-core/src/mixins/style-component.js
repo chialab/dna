@@ -1,3 +1,4 @@
+import { reduceProperty } from '../lib/reduce.js';
 import { isString } from '../lib/typeof.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 
@@ -101,7 +102,11 @@ function updateCSS(element) {
 export const StyleMixin = (SuperClass) => class extends SuperClass {
     connectedCallback() {
         super.connectedCallback();
-        if (this.css) {
+        let css = reduceProperty(this, 'css')
+            .filter((protoCSS) => isString(protoCSS))
+            .join('\n');
+        Object.defineProperty(this, 'css', { value: css });
+        if (css) {
             if (this.node.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
                     let style = this[STYLE_SYMBOL] = createStyle(this.node);
