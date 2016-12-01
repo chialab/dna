@@ -86,8 +86,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 this[events[k]] :
                 events[k];
             if (isFunction(callback)) {
-                let rule = k.split(' ');
-                let selector = rule.slice(1).join(' ').trim();
+                let selector = k.split(' ').slice(1).join(' ').trim();
                 events[k] = delegateCallback.call(this, selector, callback);
             } else {
                 throw new TypeError('Invalid callback for event.');

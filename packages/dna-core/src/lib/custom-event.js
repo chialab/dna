@@ -8,7 +8,7 @@ try {
 } catch(ex) {
     CustomEvent = function(ev, params) {
         let evt = document.createEvent('CustomEvent');
-        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        evt.initCustomEvent(ev, params.bubbles, params.cancelable, params.detail);
         return evt;
     };
     CustomEvent.prototype = self.CustomEvent.prototype;
