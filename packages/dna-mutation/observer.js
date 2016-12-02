@@ -1,8 +1,8 @@
-import { registry, DOM, COMPONENT_SYMBOL } from '@dnajs/core';
+import { registry, DOM } from '@dnajs/core';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {
-        if (!node[COMPONENT_SYMBOL]) {
+        if (!DOM.getNodeComponent(node)) {
             let Ctr = registry.get(node.getAttribute('is') || node.tagName);
             if (Ctr) {
                 let elem = new Ctr();

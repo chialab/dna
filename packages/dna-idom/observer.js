@@ -1,11 +1,11 @@
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
-import { COMPONENT_SYMBOL, DOM } from '@dnajs/core/src/core.js';
+import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { isFalsy } from '@dnajs/core/src/lib/typeof.js';
 
-let _created = notifications.nodesCreated;
-let _removed = notifications.nodesDeleted;
-let _changed = attributes[symbols.default];
+const _created = notifications.nodesCreated;
+const _removed = notifications.nodesDeleted;
+const _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
     nodes.forEach((node) => {
@@ -26,9 +26,7 @@ notifications.nodesCreated = function(nodes) {
 
 notifications.nodesDeleted = function(nodes) {
     nodes.forEach((node) => {
-        if (node[COMPONENT_SYMBOL]) {
-            DOM.disconnect(node[COMPONENT_SYMBOL]);
-        }
+        DOM.disconnect(node);
     });
     /* istanbul ignore if */
     if (_removed) {
@@ -42,7 +40,7 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
     if (_changed) {
         _changed(node, attrName, attrValue);
     }
-    let elem = node[COMPONENT_SYMBOL];
+    let elem = DOM.getNodeComponent(node);
     if (elem) {
         let attrs = elem.constructor.observedAttributes || [];
         if (attrs.indexOf(attrName) !== -1) {

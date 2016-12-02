@@ -1,34 +1,26 @@
 import { isFunction, isString } from './typeof.js';
 import { registry } from './registry.js';
-import { COMPONENT_SYMBOL } from './symbols.js';
+import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
 
 /**
  * Retrieve a HTMLElement instance from a component instance.
- * @private
  * @method getComponentNode
  *
- * @param {Component} elem The component instance.
+ * @param {Object} elem The component instance.
  * @return {HTMLElement} The node for the component instance.
  */
-function getComponentNode(elem) {
-    if (!elem.nodeType) {
-        return elem.node;
-    }
-    return elem;
+export function getComponentNode(elem) {
+    return elem && elem.node;
 }
 /**
  * Retrieve a component instance from a HTMLElement instance.
- * @private
  * @method getNodeComponent
  *
  * @param {HTMLElement} elem The node instance.
- * @return {Component} The component for the node instance.
+ * @return {Object} The component for the node instance.
  */
-function getNodeComponent(elem) {
-    if (elem.nodeType) {
-        return elem[COMPONENT_SYMBOL];
-    }
-    return elem;
+export function getNodeComponent(elem) {
+    return elem && elem[COMPONENT_SYMBOL];
 }
 /**
  * The `connectedCallback` name.
@@ -60,12 +52,12 @@ const UPDATED = 'attributeChangedCallback';
  * @memberof DNA.DOM
  * @static
  *
- * @param {Component} element The attached node.
+ * @param {HTMLElement} element The attached node.
  * @return {Boolean} The callback has been triggered.
  */
 export function connect(element) {
-    element = getNodeComponent(element);
-    if (element) {
+    element = getNodeComponent(element) || element;
+    if (element[DNA_SYMBOL]) {
         element[CONNECTED].call(element);
         return true;
     }
@@ -76,12 +68,12 @@ export function connect(element) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {Component} element The detached node.
+ * @param {HTMLElement} element The detached node.
  * @return {Boolean} The callback has been triggered.
  */
 export function disconnect(element) {
-    element = getNodeComponent(element);
-    if (element) {
+    element = getNodeComponent(element) || element;
+    if (element[DNA_SYMBOL]) {
         element[DISCONNECTED].call(element);
         return true;
     }
@@ -92,12 +84,12 @@ export function disconnect(element) {
  * @memberof DNA.DOM
  * @static
  *
- * @param {Component} element The updated element.
+ * @param {HTMLElement} element The updated element.
  * @return {Boolean} The callback has been triggered.
  */
 export function update(element, name, oldValue, newValue) {
-    element = getNodeComponent(element);
-    if (element) {
+    element = getNodeComponent(element) || element;
+    if (element[DNA_SYMBOL]) {
         let attrs = element.constructor.observedAttributes || [];
         if (attrs.indexOf(name) !== -1) {
             element[UPDATED].call(element, name, oldValue, newValue);
@@ -135,8 +127,8 @@ export function createElement(Ctr) {
  * @return {Boolean} The node has been appended.
  */
 export function appendChild(parent, element) {
-    parent = getComponentNode(parent);
-    element = getComponentNode(element);
+    parent = getComponentNode(parent) || parent;
+    element = getComponentNode(element) || element;
     if (parent !== element.parentNode || parent.lastElementChild !== element) {
         if (element.parentNode) {
             removeChild(element.parentNode, element);
@@ -157,8 +149,8 @@ export function appendChild(parent, element) {
  * @return {Boolean} The node has been removed.
  */
 export function removeChild(parent, element) {
-    parent = getComponentNode(parent);
-    element = getComponentNode(element);
+    parent = getComponentNode(parent) || parent;
+    element = getComponentNode(element) || element;
     parent.removeChild(element);
     return disconnect(element);
 }
@@ -176,9 +168,9 @@ export function removeChild(parent, element) {
  * @return {Boolean} The node has been appended.
  */
 export function insertBefore(parent, element, refNode) {
-    parent = getComponentNode(parent);
-    element = getComponentNode(element);
-    refNode = getComponentNode(refNode);
+    parent = getComponentNode(parent) || parent;
+    element = getComponentNode(element) || element;
+    refNode = getComponentNode(refNode) || refNode;
     if (element.nextSibling !== refNode) {
         if (element.parentNode) {
             disconnect(element);
@@ -202,8 +194,8 @@ export function insertBefore(parent, element, refNode) {
  * @return {Boolean} The node has been appended.
  */
 export function replaceChild(parent, element, refNode) {
-    element = getComponentNode(element);
-    refNode = getComponentNode(refNode);
+    element = getComponentNode(element) || element;
+    refNode = getComponentNode(refNode) || refNode;
     if (element.parentNode) {
         disconnect(element);
     }
@@ -223,7 +215,7 @@ export function replaceChild(parent, element, refNode) {
  * @return {Boolean} The node has been updated.
  */
 export function setAttribute(element, name, value) {
-    element = getComponentNode(element);
+    element = getComponentNode(element) || element;
     let oldValue = element.getAttribute(name);
     element.setAttribute(name, value);
     return update(element, name, oldValue, value);
@@ -239,7 +231,7 @@ export function setAttribute(element, name, value) {
  * @return {Boolean} The node has been updated.
  */
 export function removeAttribute(element, name) {
-    element = getComponentNode(element);
+    element = getComponentNode(element) || element;
     let oldValue = element.getAttribute(name);
     element.removeAttribute(name);
     return update(element, name, oldValue, null);

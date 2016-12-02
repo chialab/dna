@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { define, COMPONENT_SYMBOL, IDOM } from '../index.js';
+import { define, DOM, IDOM } from '../index.js';
 import { TestComponent } from './components/observer.js';
 import '../observer.js';
 
@@ -20,7 +20,8 @@ describe('Unit: IDOM observer', () => {
             }
         };
         IDOM.patch(WRAPPER, render, { show: true, age: 20, married: false });
-        const elem = WRAPPER.querySelector('test-idom-component')[COMPONENT_SYMBOL];
+        const node = WRAPPER.querySelector('test-idom-component');
+        const elem = DOM.getNodeComponent(node);
         it('should create a component instance', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'test-idom-component');
             assert.equal(elem.name, 'Alan');

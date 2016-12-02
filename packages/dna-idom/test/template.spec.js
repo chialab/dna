@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { define, render, COMPONENT_SYMBOL, IDOM } from '../index.js';
+import { define, render, DOM, IDOM } from '../index.js';
 import '../observer.js';
 import {
     TestComponent1,
@@ -59,8 +59,10 @@ describe('Unit: IDOMTemplateComponent', () => {
         const elem = render(WRAPPER, TestComponent5);
 
         it('and their callbacks', () => {
-            assert.equal(elem.node.querySelector('test-idom-placeholder')[COMPONENT_SYMBOL].value, 6);
-            assert.equal(elem.node.querySelector('figure')[COMPONENT_SYMBOL].value, 11);
+            const testElement1 = elem.node.querySelector('test-idom-placeholder');
+            const testElement2 = elem.node.querySelector('figure');
+            assert.equal(DOM.getNodeComponent(testElement1).value, 6);
+            assert.equal(DOM.getNodeComponent(testElement2).value, 11);
         });
     });
 });
