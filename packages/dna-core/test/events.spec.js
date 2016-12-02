@@ -27,6 +27,17 @@ describe('Unit: EventsComponent', () => {
                 assert.equal(elem.custom.detail.data, 1234);
             });
         });
+
+        describe('using api', () => {
+            const span = elem.node.querySelector('span');
+            let fired = false;
+            elem.delegate('checkDelegation', 'span', () => fired = true);
+            dispatch(span, 'checkDelegation');
+            it('should trigger a function callback', () => {
+                assert(fired);
+            });
+        });
+
         describe('events', () => {
             const span = elem.node.querySelector('span');
             const button = elem.node.querySelector('button');

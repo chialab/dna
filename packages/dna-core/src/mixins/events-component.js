@@ -116,7 +116,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @instance
      */
     disconnectedCallback() {
-        let events = this.events || {};
+        let events = this.events;
         for (let k in events) {
             let evName = k.split(' ').shift();
             this.node.removeEventListener(evName, events[k]);

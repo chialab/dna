@@ -5,6 +5,13 @@ export class TestComponent extends BaseComponent {
         return ['age'];
     }
 
+    get properties() {
+        return {
+            age: Number,
+            married: Boolean,
+        };
+    }
+
     constructor() {
         super();
         this.name = 'Alan';
