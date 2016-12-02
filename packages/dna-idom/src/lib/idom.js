@@ -36,14 +36,16 @@ function interpolate(template, data) {
 
 export function h(element, props, ...children) {
     return () => {
-        elementOpenStart(element);
-
         if (!isObject(props)) {
             if (props) {
                 children.unshift(props);
             }
             props = {};
         }
+        let key = props.key;
+        delete props.key;
+
+        elementOpenStart(element, key);
 
         for (let k in props) {
             if (!isFalsy(props[k])) {
