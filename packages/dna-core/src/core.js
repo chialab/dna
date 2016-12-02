@@ -30,3 +30,4 @@ export const MIXINS = {
 };
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';
+export * from './lib/notifications.js';
