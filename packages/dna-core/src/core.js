@@ -9,16 +9,16 @@ import { TemplateMixin } from './mixins/template-component.js';
  * A set of DOM helpers for callbacks trigger when Custom Elements
  * are not supported by the browser.
  * @name DOM
- * @namespace DOM
- * @memberof! DNA.
+ * @namespace DNA.DOM
+ * @memberof DNA
  * @static
  */
 export const DOM = DOM_HELPERS;
 /**
  * A set of core mixins.
  * @name MIXINS
- * @namespace MIXINS
- * @memberof! DNA.
+ * @namespace DNA.MIXINS
+ * @memberof DNA
  * @static
  */
 export const MIXINS = {

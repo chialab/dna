@@ -16,27 +16,27 @@ function Sym(name) {
  * Symbol for DNA component mixin.
  * Bound to a component instance.
  * @type {String}
- * @memberof DNA
+ * @private
  */
 export const DNA_SYMBOL = Sym('dna');
 /**
  * Symbol for component instance.
  * Bound to a node.
  * @type {String}
- * @memberof DNA
+ * @private
  */
 export const COMPONENT_SYMBOL = Sym('component');
 /**
  * Symbol for node instance.
  * Bound to a component instance.
  * @type {String}
- * @memberof DNA
+ * @private
  */
 export const NODE_SYMBOL = Sym('node');
 /**
  * Symbol for style element.
  * Bound to a component instance.
  * @type {String}
- * @memberof DNA
+ * @private
  */
 export const STYLE_SYMBOL = Sym('style');

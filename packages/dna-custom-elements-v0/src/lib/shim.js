@@ -4,6 +4,7 @@ import { registry } from '@dnajs/core/src/lib/registry.js';
 /**
  * Check if a node is already instantiated HTMLElement for programmatically `constructor` calls.
  * @private
+ *
  * @param {HTMLElement} node The node to check.
  * @return {Boolean} The node should be instantiated.
  */
@@ -18,8 +19,8 @@ function isNew(node) {
 /**
  * Shim original Element constructors in order to be used with `new`.
  * @method shim
- * @memberof! DNA.
  * @static
+ * @private
  *
  * @param {Function} Original The original constructor to shim.
  * @return {Function} The shimmed constructor.

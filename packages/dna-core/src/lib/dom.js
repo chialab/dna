@@ -5,6 +5,7 @@ import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
 /**
  * Retrieve a HTMLElement instance from a component instance.
  * @method getComponentNode
+ * @memberof DNA.DOM
  *
  * @param {Object} elem The component instance.
  * @return {HTMLElement} The node for the component instance.
@@ -15,6 +16,7 @@ export function getComponentNode(elem) {
 /**
  * Retrieve a component instance from a HTMLElement instance.
  * @method getNodeComponent
+ * @memberof DNA.DOM
  *
  * @param {HTMLElement} elem The node instance.
  * @return {Object} The component for the node instance.

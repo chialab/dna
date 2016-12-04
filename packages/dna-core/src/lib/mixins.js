@@ -1,9 +1,8 @@
 import { reduce } from './reduce.js';
 
 /**
- * @author Justin Fagnani
- * @see https://github.com/justinfagnani/mixwith.js
  * Mix a class with a mixin.
+ * @author Justin Fagnani (https://github.com/justinfagnani)
  * @method mix(...).with(...)
  * @memberof! DNA.
  * @static

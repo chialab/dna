@@ -110,6 +110,9 @@ function convertShadowCSS(css, is) {
 export const StyleMixin = (SuperClass) => class extends SuperClass {
     /**
      * Inherit all css properties.
+     * @method constructor
+     * @memberof DNA.MIXINS.StyleMixin
+     * @instance
      */
     constructor() {
         super();
@@ -120,6 +123,9 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
     }
     /**
      * Create or update a style element for a component.
+     * @method connectedCallback
+     * @memberof DNA.MIXINS.StyleMixin
+     * @instance
      */
     connectedCallback() {
         super.connectedCallback();
