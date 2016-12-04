@@ -51,7 +51,6 @@ export function render(node, Component, props) {
 /**
  * Simple Custom Component with some behaviors.
  * @class BaseComponent
- * @extends HTMLElement
  * @memberof DNA.
  * @static
  *
