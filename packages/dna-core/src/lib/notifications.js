@@ -44,6 +44,22 @@ export const notifications = {
         }
     },
     /**
+     * Remove a callback for a notifications.
+     * @method off
+     * @memberof DNA.notifications
+     *
+     * @param {String} notification The notification name.
+     * @param {Function} callback The callback to remove.
+     */
+    off(notification, callback) {
+        if (isArray(this[notification]) && isFunction(callback)) {
+            let io = this[notification].indexOf(callback);
+            if (io !== -1) {
+                this[notification].splice(io);
+            }
+        }
+    },
+    /**
      * Trigger a list of callbacks.
      * @method trigger
      * @memberof DNA.notifications

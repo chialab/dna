@@ -52,9 +52,26 @@ describe('Unit: BaseComponent', () => {
                 updated = true;
             }
         });
+        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element update fires a notification', () => {
-            DOM.setAttribute(elem, 'name', 'Alan');
             assert(updated);
+        });
+    });
+
+    describe('> off', () => {
+        let changed = 0;
+        let callback = (elem, prop) => {
+            if (elem.is === 'test-notification-component' && prop === 'name') {
+                changed++;
+            }
+        };
+        notifications.on('updated', callback);
+        DOM.setAttribute(elem, 'name', 'Bill');
+        notifications.off('updated', callback);
+        DOM.setAttribute(elem, 'name', 'Steve');
+        it('check if element update fires a notification', () => {
+            assert.equal(elem.name, 'Steve');
+            assert.equal(changed, 1);
         });
     });
 
