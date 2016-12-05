@@ -1,7 +1,7 @@
 {
   "name": "@dnajs/react",
-  "version": "2.0.0-beta.25",
-  "description": "Just another components pattern.",
+  "version": "2.0.0",
+  "description": "Just another components pattern with React implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
   "repository": {
@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.0.0-beta",
+    "@dnajs/core": "^2.0.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
