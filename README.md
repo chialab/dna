@@ -9,9 +9,20 @@ Just another components pattern.
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
 
+## Principles
+
+### 🚀 Standards first
+Components are built using the same syntax of W3C Custom Elements specifications.
+
+### 🍔 Modular system
+Thanks to ES2015 classes and a [smart mixins implementation](https://github.com/justinfagnani/mixwith.js), it is easy to combine features and reuse code.
+
+### 🍻 Interoperability
+Moving away DOM strategies and focusing on the pattern, components can work with different implementations like Custom Elements, React, Incremental DOM and, ideally, any other javascript library.
+
 ## Usage
 
-### Use with Custom Elements v1 🚀
+### Use with [Custom Elements v1](./packages/dna-custom-elements-v1/)
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
@@ -24,12 +35,7 @@ class MyElem extends BaseComponent {
 customElements.define('my-elem', MyElem);
 ```
 
-[package](./packages/dna-custom-elements-v1/) |
-[native support](http://caniuse.com/#feat=custom-elementsv1) |
-[polyfill](https://github.com/webcomponents/custom-elements/)
-
-
-### Use with Incremental DOM 🌟
+### Use with [Incremental DOM](./packages/dna-idom/)
 
 Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notifications, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) callbacks without any polyfill:
 
@@ -58,18 +64,8 @@ define('my-elem', MyElem);
 render(document.body, MyElem);
 ```
 
-[package](./packages/dna-idom/)
+**Use with [Custom Elements v0 spec](./packages/dna-custom-elements-v0/).**
 
-### Others
+**Use with [React](./packages/dna-react/).**
 
-**Use with Custom Elements v0 spec.**
-
-[package](./packages/dna-custom-elements-v0/)
-
-**Use with React.**
-
-[package](./packages/dna-react/)
-
-**Use with MutationObserver API.**
-
-[package](./packages/dna-mutation/)
+**Use with [MutationObserver API](./packages/dna-mutation/).**
