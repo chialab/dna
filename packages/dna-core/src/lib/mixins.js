@@ -21,7 +21,7 @@ import { reduce } from './reduce.js';
  * ```
  * ```js
  * // mixin.js
- * export const Mixin = (superClass) => class extend superClass {
+ * export const Mixin = (superClass) => class extends superClass {
  *     constructor() {
  *         super();
  *         // do something else
