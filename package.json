@@ -2,7 +2,6 @@
   "scripts": {
     "test": "./node_modules/.bin/gulp unit",
     "lint": "./node_modules/.bin/gulp lint",
-    "build": "./node_modules/.bin/gulp build",
     "dist": "./node_modules/.bin/gulp dist",
     "docs": "./node_modules/.bin/gulp docs",
     "postinstall": "./node_modules/.bin/gulp post-install"
