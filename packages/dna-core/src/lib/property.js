@@ -28,7 +28,9 @@ export class Property {
                 let oldValue = this.value;
                 if (oldValue !== val) {
                     this.value = val;
-                    this.changed(val, oldValue);
+                    if (this.initialized) {
+                        this.changed(val, oldValue);
+                    }
                 }
             } else {
                 // eslint-disable-next-line
@@ -73,7 +75,7 @@ export class Property {
             if (isString(clb)) {
                 this.scope[clb].call(this.scope, this, newValue, oldValue);
             } else {
-                clb(this, newValue, oldValue);
+                clb.call(this.scope, this, newValue, oldValue);
             }
         }
     }
@@ -210,6 +212,7 @@ export class Property {
         if (!isUndefined(this.defaultValue)) {
             scope[this.name] = this.defaultValue;
         }
+        this.initialized = true;
     }
 }
 
