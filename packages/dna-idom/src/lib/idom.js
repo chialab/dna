@@ -58,7 +58,7 @@ export function h(element, props, ...children) {
             node.getAttribute('is') || node.tagName
         );
 
-        if (isComponent) {
+        if (isComponent && children.length === 0) {
             skip();
         } else {
             handleChildren(children);
