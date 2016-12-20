@@ -1,4 +1,4 @@
-import { isFunction, isString, isFalsy } from '../lib/typeof.js';
+import { isFunction, isFalsy } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -62,18 +62,13 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.TemplateMixin
      * @instance
      *
-     * @param {Function|string} tpl A template to use instead of `this.template`.
-     *
-     * @throws {TypeError} Will throw if the template type is not supported.
+     * @param {Function|*} tpl A template to use instead of `this.template`.
      */
     render(tpl) {
         tpl = tpl || this.template;
         if (isFunction(tpl)) {
-            tpl.call(this);
-        } else if (isString(tpl)) {
-            (this.node.shadowRoot || this.node).innerHTML = tpl;
-        } else if (!isFalsy(tpl)) {
-            throw new TypeError('Invalid template property.');
+            return tpl.call(this);
         }
+        (this.node.shadowRoot || this.node).innerHTML = tpl;
     }
 };

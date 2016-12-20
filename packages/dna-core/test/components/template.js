@@ -30,7 +30,7 @@ export class TestComponent2 extends TestComponent {
 
 export class TestComponent3 extends TestComponent {
     get template() {
-        return {};
+        return 4;
     }
 }
 
