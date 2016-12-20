@@ -10,11 +10,17 @@ import { STYLE_SYMBOL } from '../lib/symbols.js';
  */
 const HOST_REGEX = /(\:host)(\([^)]*\))?/g;
 /**
- * A regex to match css rules.
+ * A regex to match css blocks.
  * @type {RegExp}
  * @private
  */
-const CSS_RULES_REGEX = /(#|\.|\@|\[|[a-zA-Z]|\:)([^{\;\}]*){/g;
+const CSS_BLOCKS = /(#|\.|\@|\[|[a-zA-Z]|\:)([^{\;\}]*)({({(.|\n)*?}|.|\n)*?})/g;
+/**
+ * A regex to match css rules in block.
+ * @type {RegExp}
+ * @private
+ */
+const CSS_RULES = /[^{]*{/;
 /**
  * A regex to split css rules.
  * @type {RegExp}
@@ -61,23 +67,29 @@ function createStyle(component) {
 function convertShadowCSS(css, is) {
     const scope = `.${is}`;
     return css
-        .replace(CSS_RULES_REGEX, (fullMatch) => {
-            let rules = fullMatch
-                .slice(0, -1)
-                .split(SEPARATOR_REGEX)
-                .map((rule) => {
-                    if (rule.indexOf(':host') === 0) {
-                        return rule.replace(HOST_REGEX, (fullMatch, host, state) => {
-                            state = state ? state.slice(1, -1) : '';
-                            return `${scope}${state}`;
-                        });
-                    } else {
-                        return `${scope} ${rule}`;
+        // split blocks
+        .replace(CSS_BLOCKS, (fullMatch) =>
+            fullMatch
+                // get rules
+                .replace(CSS_RULES, (chunk) => {
+                    if (chunk[0] === '@') {
+                        return chunk;
                     }
+                    // split rules
+                    return chunk.split(SEPARATOR_REGEX)
+                        .map((rule) => {
+                            if (rule.indexOf(':host') === 0) {
+                                return rule.replace(HOST_REGEX, (fullMatch, host, state) => {
+                                    state = state ? state.slice(1, -1) : '';
+                                    return `${scope}${state}`;
+                                });
+                            } else {
+                                return `${scope} ${rule}`;
+                            }
+                        })
+                        .join(', ');
                 })
-                .join(', ');
-            return `${rules}{`;
-        });
+        );
 }
 
 /**
