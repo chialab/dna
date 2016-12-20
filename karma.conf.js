@@ -103,23 +103,21 @@ module.exports = function(config) {
             client: {
                 captureConsole: false,
             },
+            coverageReporter: {
+                dir: 'coverage',
+                reporters: [
+                    {
+                        type: 'lcov',
+                        subdir: function(browserName) {
+                            return path.join('report-lcov', browserName);
+                        },
+                    },
+                ],
+            },
             logLevel: config.LOG_ERROR,
         });
 
         switch (process.env.CI_BUILD_TYPE) {
-            config.set({
-                coverageReporter: {
-                    dir: 'coverage',
-                    reporters: [
-                        {
-                            type: 'lcov',
-                            subdir: function(browserName) {
-                                return path.join('report-lcov', browserName);
-                            },
-                        },
-                    ],
-                },
-            });
             case 'saucelabs':
                 var saucelabsBrowsers = require('./sl.browsers.js');
                 config.set({
