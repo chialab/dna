@@ -6,7 +6,7 @@
  * Just another components pattern.
  * Use with Custom Elements specs.
  */
-import { mix, DOM, MIXINS } from './src/core.js';
+import { mix, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 
 /**
@@ -14,39 +14,10 @@ import { registry } from './src/lib/registry.js';
  */
 export * from './src/core.js';
 export { registry };
+export { bootstrap } from './src/lib/bootstrap.js';
+export { define } from './src/lib/define.js';
+export { render } from './src/lib/render.js';
 
-/**
- * Register a new component.
- * @method define
- * @memberof! DNA.
- * @static
- *
- * @param {String} name The id of the component.
- * @param {Function} Ctr The component constructor.
- * @param {Object} config Optional component configuration.
- */
-export function define(tagName, Component, config) {
-    return registry.define(tagName, Component, config);
-}
-/**
- * Create and append a new component instance.
- * @method render
- * @memberof! DNA.
- * @static
- *
- * @param {HTMLElement} node The parent node.
- * @param {Function} Component The component constructor.
- * @param {Object} props Optional set of properties to set to the component.
- * @return {HTMLElement} The new component instance.
- */
-export function render(node, Component, props) {
-    let element = new Component();
-    for (let k in props) {
-        element[k] = props[k];
-    }
-    DOM.appendChild(node, element);
-    return element;
-}
 
 /**
  * Simple Custom Component with some behaviors.

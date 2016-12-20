@@ -7,7 +7,6 @@
  * Use with React.
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { ReactMixin } from './src/mixins/react.js';
@@ -16,17 +15,9 @@ MIXINS.ReactMixin = ReactMixin;
 
 export { registry };
 export * from '@dnajs/core/src/core.js';
-
-export function define(tagName, Component, config) {
-    return registry.define(tagName, Component, config);
-}
-
-export function render(parent, Component, props) {
-    return ReactDOM.render(
-        React.createElement(Component, props),
-        parent
-    );
-}
+export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
+export { define } from '@dnajs/core/src/lib/define.js';
+export { render } from './src/lib/render.js';
 
 export class BaseComponent extends mix(
     React.Component

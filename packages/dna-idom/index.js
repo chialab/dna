@@ -12,8 +12,12 @@ import { mix, MIXINS } from '@dnajs/core/src/core.js';
 MIXINS.IDOMMixin = IDOMMixin;
 
 export * from '@dnajs/core/src/core.js';
-export { registry, render, define } from '@dnajs/core';
+export { registry } from '@dnajs/core/src/lib/registry.js';
+export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
+export { define } from '@dnajs/core/src/lib/define.js';
+export { render } from '@dnajs/core/src/lib/render.js';
 export { IDOM };
+
 export class BaseComponent extends mix().with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,

@@ -14,18 +14,9 @@ MIXINS.CustomElementMixin = CustomElementMixin;
 
 export { prop } from '@dnajs/core/src/core.js';
 export { shim, mix, MIXINS };
-export const registry = self.customElements;
-export function define(...args) {
-    return registry.define(...args);
-}
-export function render(node, Component, props = {}) {
-    let element = new Component();
-    for (let k in props) {
-        element[k] = props[k];
-    }
-    node.appendChild(element);
-    return element;
-}
+export { registry } from './src/lib/registry.js';
+export { define } from './src/lib/define.js';
+export { render } from './src/lib/render.js';
 
 export class BaseComponent extends mix(
     shim(self.HTMLElement)
