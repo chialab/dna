@@ -1,4 +1,5 @@
 import { isFalsy, isObject, isFunction, isArray } from '@dnajs/core/src/lib/typeof.js';
+import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import {
     skip,
@@ -47,18 +48,29 @@ export function h(element, props, ...children) {
 
         elementOpenStart(element, key);
 
+        const Component = registry.get(element);
+        const observedAttributes = Component && (Component.observedAttributes || []);
+
         for (let k in props) {
             if (!isFalsy(props[k])) {
-                attr(k, props[k]);
+                if (!observedAttributes ||
+                    observedAttributes.indexOf(k) !== -1) {
+                    attr(k, props[k]);
+                    delete props[k];
+                }
             }
         }
 
         const node = elementOpenEnd(element);
-        const isComponent = !!registry.get(
-            node.getAttribute('is') || node.tagName
-        );
+        const component = DOM.getNodeComponent(node);
 
-        if (isComponent && children.length === 0) {
+        if (component) {
+            for (let k in props) {
+                component[k] = props[k];
+            }
+        }
+
+        if (component && children.length === 0) {
             skip();
         } else {
             handleChildren(children);
