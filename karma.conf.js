@@ -107,6 +107,19 @@ module.exports = function(config) {
         });
 
         switch (process.env.CI_BUILD_TYPE) {
+            config.set({
+                coverageReporter: {
+                    dir: 'coverage',
+                    reporters: [
+                        {
+                            type: 'lcov',
+                            subdir: function(browserName) {
+                                return path.join('report-lcov', browserName);
+                            },
+                        },
+                    ],
+                },
+            });
             case 'saucelabs':
                 var saucelabsBrowsers = require('./sl.browsers.js');
                 config.set({
@@ -114,7 +127,7 @@ module.exports = function(config) {
                     browserDisconnectTolerance: 1,
                     browserNoActivityTimeout: 4 * 60 * 1000,
                     captureTimeout: 4 * 60 * 1000,
-                    reporters: ['dots', 'saucelabs'],
+                    reporters: ['dots', 'coverage', 'saucelabs'],
                     sauceLabs: {
                         startConnect: false,
                         options: {},
@@ -134,17 +147,6 @@ module.exports = function(config) {
                 break;
             default:
                 config.set({
-                    coverageReporter: {
-                        dir: 'coverage',
-                        reporters: [
-                            {
-                                type: 'lcov',
-                                subdir: function(browserName) {
-                                    return path.join('report-lcov', browserName);
-                                },
-                            },
-                        ],
-                    },
                     customLaunchers: {
                         Chrome_CI: {
                             base: 'Chrome',
