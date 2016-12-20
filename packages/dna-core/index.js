@@ -86,15 +86,18 @@ export class BaseComponent extends mix().with(
     MIXINS.EventsMixin,
     MIXINS.TemplateMixin
 ) {
-    constructor() {
+    constructor(node) {
         super();
-        let desc = registry.get(this.is, true);
-        let config = desc.config;
-        this.node = document.createElement(
-            config.extends ? config.extends : desc.is
-        );
-        if (config.extends) {
-            this.node.setAttribute('is', desc.is);
+        if (!node) {
+            let desc = registry.get(this.is, true);
+            let config = desc.config;
+            node = document.createElement(
+                config.extends ? config.extends : desc.is
+            );
+            if (config.extends) {
+                node.setAttribute('is', desc.is);
+            }
         }
+        this.node = node;
     }
 }
