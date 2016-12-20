@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+var path = require('path');
 var json = require('./package.json');
 
 module.exports = function(config) {
@@ -85,7 +86,7 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome'],
+        browsers: ['Chrome', 'Firefox'],
 
 
         // Continuous Integration mode
@@ -136,7 +137,12 @@ module.exports = function(config) {
                     coverageReporter: {
                         dir: 'coverage',
                         reporters: [
-                            { type: 'lcov', subdir: 'report-lcov' },
+                            {
+                                type: 'lcov',
+                                subdir: function(browserName) {
+                                    return path.join('report-lcov', browserName);
+                                },
+                            },
                         ],
                     },
                     customLaunchers: {
@@ -154,7 +160,18 @@ module.exports = function(config) {
             coverageReporter: {
                 dir: 'coverage',
                 reporters: [
-                    { type: 'html', subdir: 'report-html' },
+                    {
+                        type: 'html',
+                        subdir: function(browserName) {
+                            return path.join('report-html', browserName);
+                        },
+                    },
+                    {
+                        type: 'lcov',
+                        subdir: function(browserName) {
+                            return path.join('report-lcov', browserName);
+                        },
+                    },
                 ],
             },
         });
