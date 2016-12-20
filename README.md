@@ -1,11 +1,11 @@
-[![Logo](https://cdn.rawgit.com/Chialab/dna/next/logo.svg)](http://dna.chialab.io)
+[![Logo](https://cdn.rawgit.com/Chialab/dna/logo.svg)](http://dna.chialab.io)
 
 Just another components pattern.
 
 [Documentation](http://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](http://dna.chialab.io) | [Author home page](http://www.chialab.com)
 
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
-[![Code coverage](https://codecov.io/gh/Chialab/dna/branch/next/graph/badge.svg)](https://codecov.io/gh/Chialab/dna/branch/next)
+[![Code coverage](https://codecov.io/gh/Chialab/dna/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
 
