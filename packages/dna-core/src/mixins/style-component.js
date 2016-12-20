@@ -42,12 +42,12 @@ function ownerDocument(node) {
  * Create and attach a style element for a component.
  * @private
  *
- * @param {HTMLElement} node A component instance.
+ * @param {Object} component A component instance.
  * @return {HTMLElement} The created style element.
  */
-function createStyle(node) {
-    let styleElem = ownerDocument(node).createElement('style');
-    styleElem.id = `style-${node.is}`;
+function createStyle(component) {
+    let styleElem = ownerDocument(component.node).createElement('style');
+    styleElem.id = `style-${component.is}`;
     return styleElem;
 }
 /**
@@ -119,7 +119,9 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         let css = reduceProperty(this, 'css')
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');
-        define(this, 'css', { value: css });
+        if (css) {
+            define(this, 'css', { value: css });
+        }
     }
     /**
      * Create or update a style element for a component.
@@ -132,12 +134,12 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         if (isString(this.css)) {
             if (this.node.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
-                    let style = this[STYLE_SYMBOL] = createStyle(this.node);
+                    let style = this[STYLE_SYMBOL] = createStyle(this);
                     this.node.shadowRoot.appendChild(style);
                     style.textContent = this.css;
                 }
             } else if (!this.constructor[STYLE_SYMBOL]) {
-                let style = this.constructor[STYLE_SYMBOL] = createStyle(this.node);
+                let style = this.constructor[STYLE_SYMBOL] = createStyle(this);
                 ownerDocument(this.node).head.appendChild(style);
                 style.textContent = convertShadowCSS(this.css, this.is);
             }
