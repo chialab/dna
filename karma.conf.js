@@ -103,6 +103,7 @@ module.exports = function(config) {
             client: {
                 captureConsole: false,
             },
+            autoWatch: false,
             coverageReporter: {
                 dir: 'coverage',
                 reporters: [
@@ -125,7 +126,7 @@ module.exports = function(config) {
                     browserDisconnectTolerance: 1,
                     browserNoActivityTimeout: 4 * 60 * 1000,
                     captureTimeout: 4 * 60 * 1000,
-                    reporters: ['dots', 'coverage', 'saucelabs'],
+                    reporters: ['dots', 'saucelabs', 'coverage'],
                     sauceLabs: {
                         startConnect: false,
                         options: {},
