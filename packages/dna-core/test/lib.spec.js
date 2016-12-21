@@ -8,13 +8,12 @@ import {
     isArray,
     isFalsy,
 } from '../src/lib/typeof.js';
+import * as DOM from '../src/lib/dom.js';
+import { render } from '../src/lib/render.js';
+import { define } from '../src/lib/define.js';
+import { bootstrap } from '../src/lib/bootstrap.js';
 
-import {
-    BaseComponent,
-    render,
-    define,
-    DOM,
-} from '../index.js';
+import { BaseComponent } from '../index.js';
 
 const WRAPPER = document.body;
 
@@ -174,6 +173,22 @@ describe('Unit: lib', () => {
             assert.equal(elem.attributeChanges, 2);
             assert.equal(elem.node.getAttribute('age'), null);
             assert.equal(elem.node.getAttribute('married'), null);
+        });
+    });
+
+    describe('bootstrap', () => {
+        let WRAPPER = document.createElement('div');
+        WRAPPER.innerHTML = '<p>Hello <test1-helper-component age="21"></test1-helper-component></p>';
+        it('should instantiate all components', () => {
+            bootstrap(WRAPPER);
+            const elem = DOM.getNodeComponent(
+                WRAPPER.querySelector('.test1-helper-component')
+            );
+            assert.equal(elem.node.localName.toLowerCase(), 'test1-helper-component');
+            assert.equal(elem.node.getAttribute('age'), '21');
+            assert.equal(elem.node.getAttribute('class'), 'test1-helper-component');
+            assert.equal(elem.name, 'Alan');
+            assert.equal(elem.lastName, 'Turing');
         });
     });
 });
