@@ -13,9 +13,9 @@ module.exports = {
         entries(),
         resolve(),
         replace({
-            'process.env.NODE_ENV': JSON.stringify('development'),
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),
-        (process.env.NODE_ENV === 'test' && process.env.CI_BUILD_TYPE !== 'saucelabs') ? istanbul({
+        (process.env.NODE_ENV === 'test') ? istanbul({
             include: [
                 'packages/**/*.js',
             ],
