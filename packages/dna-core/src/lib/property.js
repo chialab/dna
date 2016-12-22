@@ -70,6 +70,7 @@ export class Property {
      * @param {*} oldValue The previous property value.
      */
     changed(newValue, oldValue) {
+        this.defaultSet = false;
         for (let i = 0, len = this._.length; i < len; i++) {
             let clb = this._[i];
             if (isString(clb)) {
@@ -211,6 +212,7 @@ export class Property {
         });
         if (!isUndefined(this.defaultValue)) {
             scope[this.name] = this.defaultValue;
+            this.defaultSet = true;
         }
         this.initialized = true;
     }
