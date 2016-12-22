@@ -139,7 +139,8 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                 } else if (!isUndefined(this.node[name])) {
                     this[name] = this.node[name];
                 }
-            } else if (attrName) {
+            }
+            if (attrName) {
                 setAttribute(this.node, attrName, this[name]);
             }
         }
