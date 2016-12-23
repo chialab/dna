@@ -69,6 +69,6 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         if (isFunction(tpl)) {
             return tpl.call(this);
         }
-        (this.node.shadowRoot || this.node).innerHTML = tpl;
+        (this.shadowRoot || this.node).innerHTML = tpl;
     }
 };

@@ -31,7 +31,7 @@ function getValue(property, attrVal) {
  * Set an attribute value checking its type.
  * @private
  *
- * @param {HTMLElement} context The node to update.
+ * @param {Object} component The component to update.
  * @param {String} attr The attribute name to update.
  * @param {*} value The value to set.
  */
@@ -112,10 +112,10 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             if (attrName || eventName) {
                 prop.observe(() => {
                     if (attrName) {
-                        setAttribute(this.node, attrName, this[prop.name]);
+                        setAttribute(this, attrName, this[prop.name]);
                     }
                     if (eventName) {
-                        dispatch(this.node, eventName);
+                        dispatch(this, eventName);
                     }
                 });
             }
@@ -134,14 +134,14 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
             let prop = props[k];
             let { attrName, name } = prop;
             if (isUndefined(this[name]) || prop.defaultSet) {
-                if (this.node.hasAttribute(attrName || name)) {
-                    this[name] = getValue(prop, this.node.getAttribute(attrName || name));
+                if (this.hasAttribute(attrName || name)) {
+                    this[name] = getValue(prop, this.getAttribute(attrName || name));
                 } else if (!isUndefined(this.node[name])) {
                     this[name] = this.node[name];
                 }
             }
             if (attrName) {
-                setAttribute(this.node, attrName, this[name]);
+                setAttribute(this, attrName, this[name]);
             }
         }
     }

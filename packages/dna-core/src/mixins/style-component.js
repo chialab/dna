@@ -145,10 +145,10 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
     connectedCallback() {
         super.connectedCallback();
         if (isString(this.css)) {
-            if (this.node.shadowRoot) {
+            if (this.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
                     let style = this[STYLE_SYMBOL] = createStyle(this);
-                    this.node.shadowRoot.appendChild(style);
+                    this.shadowRoot.appendChild(style);
                     style.textContent = this.css;
                 }
             } else if (!this.constructor[STYLE_SYMBOL]) {
@@ -157,6 +157,6 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
                 style.textContent = convertShadowCSS(this.css, this.is);
             }
         }
-        this.node.classList.add(this.is);
+        this.classList.add(this.is);
     }
 };
