@@ -1,4 +1,5 @@
-import { registry, DOM } from '@dnajs/core';
+import { DOM } from '@dnajs/core/src/core.js';
+import { registry } from '@dnajs/core/src/lib/registry.js';
 
 function onCreation(nodes) {
     [].forEach.call(nodes, (node) => {

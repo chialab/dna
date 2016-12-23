@@ -12,8 +12,7 @@ notifications.nodesCreated = function(nodes) {
         if (node.nodeType === Node.ELEMENT_NODE) {
             let Ctr = registry.get(node.getAttribute('is') || node.tagName);
             if (Ctr) {
-                let elem = new Ctr();
-                elem.node = node;
+                let elem = new Ctr(node);
                 DOM.connect(elem);
             }
         }

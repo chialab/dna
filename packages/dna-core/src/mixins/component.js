@@ -34,8 +34,8 @@ export const ComponentMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.ComponentMixin
      * @instance
      */
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         notifications.trigger('created', this);
     }
     /**

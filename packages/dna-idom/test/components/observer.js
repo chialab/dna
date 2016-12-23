@@ -12,8 +12,8 @@ export class TestComponent extends BaseComponent {
         };
     }
 
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         this.name = 'Alan';
         this.lastName = 'Turing';
         this.connectedTimes = 0;

@@ -32,6 +32,11 @@ export const ReactMixin = (SuperClass) => class extends SuperClass {
         return ReactDOM.findDOMNode(this);
     }
 
+    constructor(node) {
+        super(node);
+        this.render();
+    }
+
     propertyChangedCallback(propName, oldValue, newValue) {
         changing = true;
         super.propertyChangedCallback(propName, oldValue, newValue);

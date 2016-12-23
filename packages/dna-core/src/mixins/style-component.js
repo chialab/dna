@@ -127,8 +127,8 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.StyleMixin
      * @instance
      */
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         let css = reduceProperty(this, 'css')
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');

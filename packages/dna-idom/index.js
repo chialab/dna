@@ -18,7 +18,11 @@ export { define } from '@dnajs/core/src/lib/define.js';
 export { render } from '@dnajs/core/src/lib/render.js';
 export { IDOM };
 
-export class BaseComponent extends mix().with(
+export class BaseComponent extends mix(class {
+    constructor(node) {
+        this.node = node || document.createElement(this.is);
+    }
+}).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,

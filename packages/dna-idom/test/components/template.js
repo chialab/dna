@@ -78,8 +78,8 @@ export class TestPlaceholder extends BaseComponent {
         };
     }
 
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         this.value = 6;
     }
 }
@@ -95,8 +95,8 @@ export class Test2Placeholder extends BaseComponent {
         };
     }
 
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         this.value = 11;
     }
 }

@@ -83,8 +83,8 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.PropertiesMixin
      * @instance
      */
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         let props = reduceObjectProperty(this, 'properties');
         for (let k in props) {
             if (!(props[k] instanceof Property)) {

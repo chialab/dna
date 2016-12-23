@@ -19,8 +19,8 @@ export class TestBaseIDOMComponent extends BaseComponent {
         return () => <span>{this.name} {this.lastName}</span>;
     }
 
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         this.created = true;
     }
 

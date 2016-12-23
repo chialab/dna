@@ -78,8 +78,14 @@ function delegateCallback(selector, callback) {
  * ```
  */
 export const EventsMixin = (SuperClass) => class extends SuperClass {
-    constructor() {
-        super();
+    /**
+     * Iterate `events` properties.
+     * @method constructor
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     */
+    constructor(node) {
+        super(node);
         let events = reduceObjectProperty(this, 'events');
         for (let k in events) {
             let callback = isString(events[k]) ?
