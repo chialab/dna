@@ -112,7 +112,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         let events = this.events;
         for (let k in events) {
             let evName = k.split(' ').shift();
-            this.node.addEventListener(evName, events[k]);
+            this.on(evName, events[k]);
         }
     }
     /**
@@ -125,7 +125,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         let events = this.events;
         for (let k in events) {
             let evName = k.split(' ').shift();
-            this.node.removeEventListener(evName, events[k]);
+            this.off(evName, events[k]);
         }
         super.disconnectedCallback();
     }
@@ -141,7 +141,32 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      */
     delegate(evName, selector, callback) {
         let wrapCallback = delegateCallback.call(this, selector, callback);
-        this.node.addEventListener(evName, wrapCallback);
+        return this.on(evName, wrapCallback);
+    }
+    /**
+     * `Node.prototype.addEventListener` wrapper.
+     * @method on
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     *
+     * @param {String} evName The name of the event to fire.
+     * @param {Function} callback The callback to fire.
+     * @param {Object} options Listener options.
+     */
+    on(evName, callback, options) {
+        return this.node.addEventListener(evName, callback, options);
+    }
+    /**
+     * `Node.prototype.removeEventListener` wrapper.
+     * @method off
+     * @memberof DNA.MIXINS.EventsMixin
+     * @instance
+     *
+     * @param {String} evName The name of the event to unlisten.
+     * @param {Function} callback The callback to trim.
+     */
+    off(evName, callback) {
+        return this.node.removeEventListener(evName, callback);
     }
     /**
      * `Node.prototype.dispatchEvent` wrapper.
