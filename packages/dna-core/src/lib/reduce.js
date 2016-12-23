@@ -28,7 +28,7 @@ export function reduce(arr, callback, value) {
 export function reducePrototype(obj, callback, value) {
     while (obj) {
         value = callback(value, obj);
-        obj = obj.__proto__;
+        obj = Object.getPrototypeOf(obj);
     }
     return value;
 }
@@ -44,7 +44,14 @@ export function reducePrototype(obj, callback, value) {
 export function reduceProperty(obj, key) {
     return reducePrototype(obj, (properties, proto) => {
         if (proto.hasOwnProperty(key)) {
-            properties.push(proto[key]);
+            let desc = Object.getOwnPropertyDescriptor(proto, key);
+            let res;
+            if (desc.hasOwnProperty('value')) {
+                res = desc.value;
+            } else if (desc.hasOwnProperty('get')) {
+                res = desc.get.call(obj);
+            }
+            properties.push(res);
         }
         return properties;
     }, []);
