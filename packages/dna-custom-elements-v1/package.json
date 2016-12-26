@@ -16,7 +16,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.3.0"
+    "@dnajs/core": "^2.3.0",
+    "@dnajs/idom": "^2.3.0"
   },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
