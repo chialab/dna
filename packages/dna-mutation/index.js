@@ -6,7 +6,6 @@
  * Just another components pattern.
  * Use with MutationObserver API.
  */
-import './observer.js';
 export * from '@dnajs/core/src/core.js';
 export { registry } from '@dnajs/core/src/lib/registry.js';
 export { define } from '@dnajs/core/src/lib/define.js';
