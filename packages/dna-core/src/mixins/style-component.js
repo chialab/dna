@@ -133,7 +133,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');
         if (css) {
-            define(this, 'css', { value: css });
+            define(this, 'css', { configurable: true, value: css });
         }
     }
     /**
