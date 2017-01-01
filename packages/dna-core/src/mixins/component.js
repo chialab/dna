@@ -10,6 +10,12 @@ import { notifications } from '../lib/notifications.js';
 export const ComponentMixin = (SuperClass) => {
     const Component = class extends SuperClass {
         /**
+         * @private
+         */
+        get [DNA_SYMBOL]() {
+            return true;
+        }
+        /**
          * @property {HTMLElement} node Get component node reference.
          * @name node
          * @type {HTMLElement}
@@ -31,7 +37,6 @@ export const ComponentMixin = (SuperClass) => {
          */
         constructor(node) {
             super(node);
-            this[DNA_SYMBOL] = true;
             notifications.trigger('created', this);
         }
         /**
