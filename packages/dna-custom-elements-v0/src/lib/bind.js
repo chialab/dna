@@ -1,5 +1,6 @@
 import { isFunction } from '@dnajs/core/src/lib/typeof.js';
 import { define } from '@dnajs/core/src/lib/obj-define.js';
+import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**
  * Attach a component prototype to an already instantiated HTMLElement.
@@ -8,10 +9,10 @@ import { define } from '@dnajs/core/src/lib/obj-define.js';
  * @static
  *
  * @param {HTMLElement} node The node to update.
- * @param {Function} Ctr The component class to use (leave empty for auto detect).
  * @return {Boolean} The prototype has been attached.
  */
-export function bind(node, Ctr) {
+export function bind(node) {
+    let Ctr = registry.get(node.getAttribute('is') || node.tagName);
     if (isFunction(Ctr)) {
         node.__proto__ = Ctr.prototype;
         define(node, 'constructor', {
