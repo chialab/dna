@@ -14,6 +14,6 @@ export const CustomElementMixin = (superClass) => class extends superClass {
         this.connectedCallback();
     }
     detachedCallback() {
-        this.detachedCallback();
+        this.disconnectedCallback();
     }
 };
