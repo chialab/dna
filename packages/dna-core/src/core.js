@@ -1,4 +1,4 @@
-import * as DOM_HELPERS from './lib/dom.js';
+import * as DOM from './lib/dom.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
@@ -13,7 +13,7 @@ import { TemplateMixin } from './mixins/template-component.js';
  * @memberof DNA
  * @static
  */
-export const DOM = DOM_HELPERS;
+export { DOM };
 /**
  * A set of core mixins.
  * @name MIXINS
