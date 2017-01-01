@@ -8,21 +8,25 @@
 import * as IDOM from './src/lib/idom.js';
 import { IDOMMixin } from './src/mixins/idom.js';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { proxy } from '@dnajs/core/src/lib/proxy.js';
 
 MIXINS.IDOMMixin = IDOMMixin;
 
 export * from '@dnajs/core/src/core.js';
+export { proxy };
 export { registry } from '@dnajs/core/src/lib/registry.js';
 export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
 export { define } from '@dnajs/core/src/lib/define.js';
 export { render } from '@dnajs/core/src/lib/render.js';
 export { IDOM };
 
-export class BaseComponent extends mix(class {
+const Component = proxy(class {
     constructor(node) {
         this.node = node || document.createElement(this.is);
     }
-}).with(
+});
+
+export class BaseComponent extends mix(Component).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,

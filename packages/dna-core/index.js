@@ -8,16 +8,19 @@
  */
 import { mix, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
+import { proxy } from './src/lib/proxy.js';
 
 /**
  * @namespace DNA
  */
 export * from './src/core.js';
 export { registry };
+export { proxy };
 export { bootstrap } from './src/lib/bootstrap.js';
 export { define } from './src/lib/define.js';
 export { render } from './src/lib/render.js';
 
+const Component = proxy(class {});
 
 /**
  * Simple Custom Component with some behaviors.
@@ -50,7 +53,7 @@ export { render } from './src/lib/render.js';
  * }
  * ```
  */
-export class BaseComponent extends mix().with(
+export class BaseComponent extends mix(Component).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,

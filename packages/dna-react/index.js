@@ -9,6 +9,7 @@
 import React from 'react';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
+import { proxy } from '@dnajs/core/src/lib/proxy.js';
 import { ReactMixin } from './src/mixins/react.js';
 
 MIXINS.ReactMixin = ReactMixin;
@@ -19,9 +20,9 @@ export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
 export { define } from '@dnajs/core/src/lib/define.js';
 export { render } from './src/lib/render.js';
 
-export class BaseComponent extends mix(
-    React.Component
-).with(
+const Component = proxy(React.Component);
+
+export class BaseComponent extends mix(Component).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,
