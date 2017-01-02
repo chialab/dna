@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { define, render, DOM } from '../index.js';
-import { CustomEvent } from '../src/lib/custom-event.js';
+import { CustomEvent } from '../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent } from './components/events.js';
 
 function dispatch(node, evName) {

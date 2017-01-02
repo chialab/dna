@@ -1,4 +1,4 @@
-import { reduce } from './reduce.js';
+import { reduce } from '../helpers/arr-reduce.js';
 
 /**
  * Mix a class with a mixin.

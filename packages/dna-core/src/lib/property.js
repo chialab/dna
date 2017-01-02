@@ -1,5 +1,5 @@
 import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
-import { define } from './obj-define.js';
+import { define } from '../helpers/obj-define.js';
 
 /**
  * Power to the component's properties.

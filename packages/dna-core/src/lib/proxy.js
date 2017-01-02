@@ -1,4 +1,4 @@
-import { reduce } from '../lib/reduce.js';
+import { reduce } from '../helpers/arr-reduce.js';
 import { isFunction } from '../lib/typeof.js';
 
 /**

@@ -1,4 +1,4 @@
-import { define } from '../lib/obj-define.js';
+import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';

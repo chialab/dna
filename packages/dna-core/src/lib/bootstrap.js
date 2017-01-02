@@ -10,8 +10,7 @@ export function bootstrap(root) {
         let Component = registry.get(k);
         let elements = root.querySelectorAll(k);
         for (let i = 0, len = elements.length; i < len; i++) {
-            let component = new Component();
-            component.node = elements[i];
+            let component = new Component(elements[i]);
             connect(component);
         }
     }

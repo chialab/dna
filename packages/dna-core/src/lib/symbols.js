@@ -1,16 +1,4 @@
-/**
- * Wrap Symbol function.
- * @private
- *
- * @param {String} name The symbol name.
- * @return {Symbol|String} A real symbol if supported or a string key.
- */
-function Sym(name) {
-    if (self.Symbol) {
-        return self.Symbol(name);
-    }
-    return `__${name}`;
-}
+import { Symbol } from '../helpers/symbol.js';
 
 /**
  * Symbol for DNA component mixin.
@@ -18,25 +6,25 @@ function Sym(name) {
  * @type {String}
  * @private
  */
-export const DNA_SYMBOL = Sym('dna');
+export const DNA_SYMBOL = Symbol('dna');
 /**
  * Symbol for component instance.
  * Bound to a node.
  * @type {String}
  * @private
  */
-export const COMPONENT_SYMBOL = Sym('component');
+export const COMPONENT_SYMBOL = Symbol('component');
 /**
  * Symbol for node instance.
  * Bound to a component instance.
  * @type {String}
  * @private
  */
-export const NODE_SYMBOL = Sym('node');
+export const NODE_SYMBOL = Symbol('node');
 /**
  * Symbol for style element.
  * Bound to a component instance.
  * @type {String}
  * @private
  */
-export const STYLE_SYMBOL = Sym('style');
+export const STYLE_SYMBOL = Symbol('style');

@@ -1,4 +1,4 @@
-import { define } from './obj-define.js';
+import { define } from '../helpers/obj-define.js';
 const sym = 'components';
 
 /**
