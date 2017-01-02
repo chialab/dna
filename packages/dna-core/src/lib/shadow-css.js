@@ -15,8 +15,7 @@ const HOST_REGEX = /\:host(\(([^({]+(\([^)]*\))?)+\))?/g;
  * @return {String} The scoped css.
  */
 function scoped(sheet, scope, ignore) {
-    let rules = sheet.rules || sheet.cssRules;
-    let res = '';
+    let rules = sheet.cssRules || sheet.rules;
     for (let i = 0, len = rules.length; i < len; i++) {
         let rule = rules[i];
         let body = rule.cssText;
@@ -31,15 +30,12 @@ function scoped(sheet, scope, ignore) {
                 })
                 .join(', ');
             body = rule.cssText.replace(rule.selectorText, selector);
-        } else if (rule.rules || rule.cssRules) {
+            sheet.deleteRule(i);
+            sheet.insertRule(body, i);
+        } else if (rule.cssRules || rule.rules) {
             scoped(rule, scope, ignore);
-            body = rule.cssText;
         }
-        sheet.deleteRule(i);
-        sheet.insertRule(body, i);
-        res += body;
     }
-    return res;
 }
 
 /**
@@ -59,5 +55,5 @@ export function convertShadowCSS(style, is) {
             ingoreSelectors.push(s);
             return s;
         });
-    style.textContent = scoped(style.sheet, scope, ingoreSelectors);
+    scoped(style.sheet, scope, ingoreSelectors);
 }
