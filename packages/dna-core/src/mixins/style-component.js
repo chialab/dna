@@ -14,7 +14,7 @@ const HOST_REGEX = /(\:host)(\(([^(]+(\([^)]*\))?)+\))?/g;
  * @type {RegExp}
  * @private
  */
-const CSS_BLOCKS = /(#|\.|\@|\[|[a-zA-Z]|\:)([^{\;\}\/]*)({({(.|\n)*?}|.|\n)*?})/g;
+const CSS_BLOCKS = /[\n\s\,\}](#|\.|\[|[a-zA-Z]|\:)([^{\;\}\/]*)({({(.|\n)*?}|.|\n)*?})/g;
 /**
  * A regex to match css rules in block.
  * @type {RegExp}
@@ -71,25 +71,19 @@ function convertShadowCSS(css, is) {
         .replace(CSS_BLOCKS, (fullMatch) =>
             fullMatch
                 // get rules
-                .replace(CSS_RULES, (chunk) => {
-                    /* istanbul ignore if  */
-                    if (chunk[0] === '@') {
-                        return chunk;
-                    }
+                .replace(CSS_RULES, (chunk) =>
                     // split rules
-                    return chunk.split(SEPARATOR_REGEX)
+                    chunk.split(SEPARATOR_REGEX)
                         .map((rule) => {
                             if (rule.indexOf(':host') === 0) {
-                                return rule.replace(HOST_REGEX, (fullMatch, host, state) => {
-                                    state = state ? state.slice(1, -1) : '';
-                                    return `${scope}${state}`;
-                                });
-                            } else {
-                                return `${scope} ${rule}`;
+                                return rule.replace(HOST_REGEX, (fullMatch, host, mod, state) =>
+                                    `${scope}${state || ''}`
+                                );
                             }
+                            return `${scope} ${rule}`;
                         })
-                        .join(', ');
-                })
+                        .join(', ')
+                )
         );
 }
 

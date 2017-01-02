@@ -1,5 +1,5 @@
 import { isFunction } from '@dnajs/core/src/lib/typeof.js';
-import { define } from '@dnajs/core/src/lib/obj-define.js';
+import { define } from '@dnajs/core/src/helpers/obj-define.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**
