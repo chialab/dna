@@ -4,12 +4,6 @@
  * @private
  */
 const HOST_REGEX = /\:host(\(([^({]+(\([^)]*\))?)+\))?/g;
-/**
- * A regex to split css rules.
- * @type {RegExp}
- * @private
- */
-const SEPARATOR_REGEX = /\,\s*/;
 
 /**
  * Add a scope to all selectors.
@@ -27,7 +21,7 @@ function scoped(sheet, scope, ignore) {
         let rule = rules[i];
         let body = rule.cssText;
         if (rule.selectorText) {
-            let selector = rule.selectorText.split(SEPARATOR_REGEX)
+            let selector = rule.selectorText.split(',')
                 .map((rule) => {
                     rule = rule.trim();
                     if (ignore.indexOf(rule) !== -1) {
