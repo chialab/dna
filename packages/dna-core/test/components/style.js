@@ -16,26 +16,30 @@ class TestComponent extends BaseComponent {
 export class TestComponent1 extends TestComponent {
     get css() {
         return `
-        :host {
-            color: #5F9EA0;
-        }
+:host {
+    color: #5F9EA0;
+}
 
-        h1, h2 {
-            color: inherit;
-        }`;
+@media (min-width: 0) {
+    h1, h2 {
+        color: inherit;
+    }
+}`;
     }
 }
 
 export class TestComponent2 extends TestComponent {
     get css() {
         return `
-        :host(.active) {
-            color: #5F9EA0;
-        }
+:host {
+    color: #5F9EA0;
+}
 
-        h1, h2 {
-            color: inherit;
-        }`;
+@media (min-width: 0) {
+    h1, h2 {
+        color: inherit;
+    }
+}`;
     }
 
     constructor() {

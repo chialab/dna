@@ -14,7 +14,7 @@ const HOST_REGEX = /(\:host)(\(([^(]+(\([^)]*\))?)+\))?/g;
  * @type {RegExp}
  * @private
  */
-const CSS_BLOCKS = /[\n\s\,\}](#|\.|\[|[a-zA-Z]|\:)([^{\;\}\/]*)({({(.|\n)*?}|.|\n)*?})/g;
+const CSS_BLOCKS = /(#|\@|\.|\[|[a-zA-Z]|\:)([^{\;\}\/]*)({({(.|\n)*?}|.|\n)*?})/g;
 /**
  * A regex to match css rules in block.
  * @type {RegExp}
@@ -27,6 +27,12 @@ const CSS_RULES = /[^{]*{/;
  * @private
  */
 const SEPARATOR_REGEX = /\,\s*/;
+/**
+ * A regex to match animation rules.
+ * @type {RegExp}
+ * @private
+ */
+const KEYFRAMES = /^(\-\w*\-)?keyframes/;
 /**
  * The root document element.
  * @type {DocumentFragment}
@@ -68,8 +74,16 @@ function convertShadowCSS(css, is) {
     const scope = `.${is}`;
     return css
         // split blocks
-        .replace(CSS_BLOCKS, (fullMatch) =>
-            fullMatch
+        .replace(CSS_BLOCKS, (fullMatch, start, header, body) => {
+            fullMatch = fullMatch.trim();
+            if (fullMatch[0] === '@') {
+                if (fullMatch.match(KEYFRAMES)) {
+                    return fullMatch;
+                }
+                body = convertShadowCSS(body, is);
+                return `${start}${header}${body}`;
+            }
+            return fullMatch
                 // get rules
                 .replace(CSS_RULES, (chunk) =>
                     // split rules
@@ -84,8 +98,8 @@ function convertShadowCSS(css, is) {
                             return `${scope} ${rule}`;
                         })
                         .join(', ')
-                )
-        );
+                );
+        });
 }
 
 /**
