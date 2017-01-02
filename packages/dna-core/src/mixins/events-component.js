@@ -92,8 +92,14 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 this[events[k]] :
                 events[k];
             if (isFunction(callback)) {
-                let selector = k.split(' ').slice(1).join(' ').trim();
-                events[k] = delegateCallback.call(this, selector, callback);
+                let ev = k.trim().split(' ');
+                let name = ev.shift();
+                let selector = ev.join(' ');
+                events[k] = {
+                    name,
+                    selector,
+                    callback: delegateCallback.call(this, selector, callback),
+                };
             } else {
                 throw new TypeError('Invalid callback for event.');
             }
@@ -111,8 +117,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         // bind events
         let events = this.events;
         for (let k in events) {
-            let evName = k.split(' ').shift();
-            this.addEventListener(evName, events[k]);
+            this.addEventListener(events[k].name, events[k].callback);
         }
     }
     /**
