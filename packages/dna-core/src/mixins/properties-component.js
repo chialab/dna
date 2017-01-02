@@ -3,7 +3,6 @@ import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';
 import { prop, Property } from '../lib/property.js';
-import { notifications } from '../lib/notifications.js';
 
 /**
  * Try to parse attribute value checking the property validation types.
@@ -177,9 +176,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @param {String} oldVal The value of the property before the change.
      * @param {String} newVal The value of the property after the change.
      */
-    propertyChangedCallback(propName, oldVal, newVal) {
-        notifications.trigger('updated', this, propName, oldVal, newVal);
-    }
+    propertyChangedCallback() {}
     /**
      * Create a listener for node's property changes.
      * @method observeProperty

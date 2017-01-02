@@ -1,5 +1,4 @@
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js';
-import { notifications } from '../lib/notifications.js';
 
 /**
  * The base custom component mixins. Just add life cycles callback and `is` getter.
@@ -30,16 +29,6 @@ export const ComponentMixin = (SuperClass) => {
             this[NODE_SYMBOL] = node;
         }
         /**
-         * Fires on component creation.
-         * @method constructor
-         * @memberof DNA.MIXINS.ComponentMixin
-         * @instance
-         */
-        constructor(node) {
-            super(node);
-            notifications.trigger('created', this);
-        }
-        /**
          * Fires when an instance was inserted into the document.
          * @method connectedCallback
          * @memberof DNA.MIXINS.ComponentMixin
@@ -47,7 +36,6 @@ export const ComponentMixin = (SuperClass) => {
          */
         connectedCallback() {
             this.node[COMPONENT_SYMBOL] = this;
-            notifications.trigger('connected', this);
         }
         /**
          * Fires when an instance was detached from the document.
@@ -55,9 +43,7 @@ export const ComponentMixin = (SuperClass) => {
          * @memberof DNA.MIXINS.ComponentMixin
          * @instance
          */
-        disconnectedCallback() {
-            notifications.trigger('disconnected', this);
-        }
+        disconnectedCallback() {}
         /**
          * Fires when an attribute was added, removed, or updated.
          * @method attributeChangedCallback
