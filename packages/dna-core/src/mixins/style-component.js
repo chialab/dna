@@ -8,7 +8,7 @@ import { STYLE_SYMBOL } from '../lib/symbols.js';
  * @type {RegExp}
  * @private
  */
-const HOST_REGEX = /(\:host)(\([^)]*\))?/g;
+const HOST_REGEX = /(\:host)(\(([^(]+(\([^)]*\))?)+\))?/g;
 /**
  * A regex to match css blocks.
  * @type {RegExp}
