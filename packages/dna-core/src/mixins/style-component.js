@@ -75,6 +75,7 @@ function convertShadowCSS(css, is) {
                     // split rules
                     chunk.split(SEPARATOR_REGEX)
                         .map((rule) => {
+                            rule = rule.trim();
                             if (rule.indexOf(':host') === 0) {
                                 return rule.replace(HOST_REGEX, (fullMatch, host, mod, state) =>
                                     `${scope}${state || ''}`
