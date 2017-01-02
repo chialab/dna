@@ -31,7 +31,7 @@ export class TestComponent1 extends TestComponent {
 export class TestComponent2 extends TestComponent {
     get css() {
         return `
-:host {
+:host(.active) {
     color: #5F9EA0;
 }
 
