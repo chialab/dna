@@ -50,13 +50,11 @@ function proxyProto(proto, proxy) {
 }
 
 export function proxy(Component) {
-    if (!(Component.prototype instanceof HTMLElement)) {
-        Component.prototype = Object.create(
-            Component.prototype,
-            reduce(DOM_PROXY, (prototype, proxy) =>
-                proxyProto(prototype, proxy), {}
-            )
-        );
-    }
+    Component.prototype = Object.create(
+        Component.prototype,
+        reduce(DOM_PROXY, (prototype, proxy) =>
+            proxyProto(prototype, proxy), {}
+        )
+    );
     return Component;
 }
