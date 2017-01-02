@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/idom",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Just another components pattern with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
   "main": "index.js",
@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.4.0",
+    "@dnajs/core": "^2.4.1",
     "incremental-dom": "^0.5.1"
   },
   "bugs": {
