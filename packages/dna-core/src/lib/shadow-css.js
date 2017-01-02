@@ -18,24 +18,26 @@ function scoped(sheet, scope) {
     let reg = new RegExp(`${scope}([\.\[:]|$)`);
     for (let i = 0, len = rules.length; i < len; i++) {
         let rule = rules[i];
-        let body = rule.cssText;
-        if (rule.selectorText) {
-            let selector = rule.cssText.split('{').shift().split(',')
-                .map((rule) => {
-                    rule = rule.trim();
-                    if (rule.match(reg)) {
-                        return rule;
-                    }
-                    return `${scope} ${rule}`;
-                })
-                .join(', ');
-            body = rule.cssText.replace(rule.selectorText, selector);
-        } else if (rule.cssRules || rule.rules) {
-            scoped(rule, scope);
-            body = rule.cssText;
+        if (rule.insertRule) {
+            let body = rule.cssText;
+            if (rule.selectorText) {
+                let selector = rule.cssText.split('{').shift().split(',')
+                    .map((rule) => {
+                        rule = rule.trim();
+                        if (rule.match(reg)) {
+                            return rule;
+                        }
+                        return `${scope} ${rule}`;
+                    })
+                    .join(', ');
+                body = rule.cssText.replace(rule.selectorText, selector);
+            } else if (rule.cssRules || rule.rules) {
+                scoped(rule, scope);
+                body = rule.cssText;
+            }
+            sheet.deleteRule(i);
+            sheet.insertRule(body, i);
         }
-        sheet.deleteRule(i);
-        sheet.insertRule(body, i);
     }
 }
 
