@@ -49,6 +49,14 @@ function proxyProto(proto, proxy) {
     return proto;
 }
 
+/**
+ * Add HTMLElement properties and methods proxies to a prototype.
+ * @method proxy
+ * @memberof DNA
+ *
+ * @param {Function} Component The component class to proxy.
+ * @return {Function} The updated class.
+ */
 export function proxy(Component) {
     Component.prototype = Object.create(
         Component.prototype,
