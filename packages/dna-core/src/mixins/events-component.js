@@ -104,7 +104,7 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
                 throw new TypeError('Invalid callback for event.');
             }
         }
-        define(this, 'events', { configurable: true, value: events });
+        define(this, 'events', { value: events });
     }
     /**
      * Attach and delegate events to the component.

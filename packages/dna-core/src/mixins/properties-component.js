@@ -90,11 +90,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                 props[k] = prop(props[k]);
             }
         }
-        define(this, 'properties', {
-            value: props,
-            writable: false,
-            configurable: true,
-        });
+        define(this, 'properties', { value: props });
         let observed = this.constructor.observedAttributes || [];
         for (let k in props) {
             let prop = props[k];
