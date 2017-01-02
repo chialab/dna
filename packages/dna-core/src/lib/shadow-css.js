@@ -11,30 +11,31 @@ const HOST_REGEX = /\:host(\(([^({]+(\([^)]*\))?)+\))?/g;
  *
  * @param {CSSStyleSheet} css The css sheet to scope.
  * @param {String} scope The scope selector.
- * @param {Array} ignore A list of selectors to ignore.
  * @return {String} The scoped css.
  */
-function scoped(sheet, scope, ignore) {
+function scoped(sheet, scope) {
     let rules = sheet.cssRules || sheet.rules;
+    let reg = new RegExp(`${scope}([\.\[:]|$)`);
     for (let i = 0, len = rules.length; i < len; i++) {
         let rule = rules[i];
         let body = rule.cssText;
         if (rule.selectorText) {
-            let selector = rule.selectorText.split(',')
+            let selector = rule.cssText.split('{').shift().split(',')
                 .map((rule) => {
                     rule = rule.trim();
-                    if (ignore.indexOf(rule) !== -1) {
+                    if (rule.match(reg)) {
                         return rule;
                     }
                     return `${scope} ${rule}`;
                 })
                 .join(', ');
             body = rule.cssText.replace(rule.selectorText, selector);
-            sheet.deleteRule(i);
-            sheet.insertRule(body, i);
         } else if (rule.cssRules || rule.rules) {
-            scoped(rule, scope, ignore);
+            scoped(rule, scope);
+            body = rule.cssText;
         }
+        sheet.deleteRule(i);
+        sheet.insertRule(body, i);
     }
 }
 
@@ -47,13 +48,10 @@ function scoped(sheet, scope, ignore) {
  * @return {String} The converted string.
  */
 export function convertShadowCSS(style, is) {
-    let ingoreSelectors = [];
     let scope = `.${is}`;
     style.textContent = style.textContent
-        .replace(HOST_REGEX, (fullMatch, mod, state) => {
-            let s = `${scope}${state || ''}`;
-            ingoreSelectors.push(s);
-            return s;
-        });
-    scoped(style.sheet, scope, ingoreSelectors);
+        .replace(HOST_REGEX, (fullMatch, mod, state) =>
+            `${scope}${state || ''}`
+        );
+    scoped(style.sheet, scope);
 }
