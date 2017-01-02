@@ -22,8 +22,8 @@ class TestComponent extends BaseComponent {
         return ['age'];
     }
 
-    constructor() {
-        super();
+    constructor(node) {
+        super(node);
         this.name = 'Alan';
         this.lastName = 'Turing';
         this.connectedTimes = 0;
