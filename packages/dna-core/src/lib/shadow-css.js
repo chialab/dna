@@ -14,11 +14,11 @@ const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * @return {String} The scoped css.
  */
 function scoped(sheet, scope) {
-    let rules = sheet.cssRules || sheet.rules;
-    let reg = new RegExp(`${scope}([\.\[:]|$)`);
-    for (let i = 0, len = rules.length; i < len; i++) {
-        let rule = rules[i];
-        if (rule.insertRule) {
+    if (sheet.insertRule) {
+        let rules = sheet.cssRules || sheet.rules;
+        let reg = new RegExp(`${scope}([\.\[:]|$)`);
+        for (let i = 0, len = rules.length; i < len; i++) {
+            let rule = rules[i];
             let body = rule.cssText;
             if (rule.selectorText) {
                 let selector = rule.cssText.split('{').shift().split(',')
