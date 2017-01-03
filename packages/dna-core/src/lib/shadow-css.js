@@ -3,7 +3,7 @@
  * @type {RegExp}
  * @private
  */
-const HOST_REGEX = /\:host(\(([^({]+(\([^)]*\))?)+\))?/g;
+const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 
 /**
  * Add a scope to all selectors.
