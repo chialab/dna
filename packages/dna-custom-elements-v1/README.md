@@ -15,7 +15,7 @@ $ npm i @dnajs/custom-elements-v1 --save
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
 ```js
-import { prop, BaseComponent } from '@dnajs/custom-elements-v1';
+import { prop, BaseComponent, IDOM } from '@dnajs/custom-elements-v1';
 
 class MyElem extends BaseComponent {
     static get observedAttributes() {
@@ -25,6 +25,9 @@ class MyElem extends BaseComponent {
         return {
             helloMessage: prop.STRING.attribute('message'),
         };
+    }
+    get template() {
+        return IDOM.h('span', this.helloMessage);
     }
     connectedCallback() {
         super.connectedCallback();
@@ -40,10 +43,13 @@ document.body.appendChild(new MyElem());
 ```html
 <!-- result -->
 <body>
-    <my-elem message="Hi!"></my-elem>
+    <my-elem message="Hi!">
+        <span>Hi!</span>
+    </my-elem>
 </body>
 ```
 
 More:
+* [JSX support](http://dna.chialab.io/docs/#!/JSX-Templates.md)
 * [native support](http://caniuse.com/#feat=custom-elementsv1)
 * [polyfill](https://github.com/webcomponents/custom-elements/)

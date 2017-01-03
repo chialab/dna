@@ -6,6 +6,7 @@ Just another components pattern.
 
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
 [![Code coverage](https://codecov.io/gh/Chialab/dna/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
+[![NPM](https://img.shields.io/npm/v/@dnajs/core.svg)](https://www.npmjs.com/package/@dnajs/core)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
 
@@ -24,45 +25,11 @@ Moving away DOM strategies and focusing on the pattern, components can work with
 
 ### Use with [Custom Elements v1](./packages/dna-custom-elements-v1/)
 
-DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`:
-```js
-import { BaseComponent } from '@dnajs/custom-elements-v1';
-
-class MyElem extends BaseComponent {
-    // ...
-}
-
-customElements.define('my-elem', MyElem);
-```
+DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`.
 
 ### Use with [Incremental DOM](./packages/dna-idom/)
 
-Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notifications, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) callbacks without any polyfill:
-
-```js
-import '@dnajs/idom/observer.js';
-import { BaseComponent, IDOM, define, render } from '@dnajs/idom';
-
-class MyChild extends BaseComponent {
-    // ...
-}
-
-class MyElem extends BaseComponent {
-    get template() {
-        // Using IDOM.h helper
-        // return IDOM.h('my-child');
-        // or JSX
-        return <my-child />;
-    }
-}
-
-// define
-define('my-child', MyChild);
-define('my-elem', MyElem);
-
-// bootstrap
-render(document.body, MyElem);
-```
+Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notifications, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) callbacks without any polyfill.
 
 **Use with [Custom Elements v0 spec](./packages/dna-custom-elements-v0/).**
 
