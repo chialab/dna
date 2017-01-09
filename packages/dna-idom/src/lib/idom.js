@@ -52,17 +52,16 @@ export function h(element, props, ...children) {
         const observedAttributes = Component && (Component.observedAttributes || []);
 
         for (let k in props) {
-            if (!isFalsy(props[k])) {
-                if (!observedAttributes ||
-                    observedAttributes.indexOf(k) !== -1) {
-                    attr(k, props[k]);
-                    delete props[k];
-                }
+            if (!isFalsy(props[k]) &&
+                (!observedAttributes ||
+                observedAttributes.indexOf(k) !== -1)) {
+                attr(k, props[k]);
+                delete props[k];
             }
         }
 
         const node = elementOpenEnd(element);
-        const component = DOM.getNodeComponent(node);
+        const component = DOM.getNodeComponent(node) || (Component && new Component(node));
 
         if (component) {
             for (let k in props) {

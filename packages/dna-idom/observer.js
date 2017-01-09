@@ -11,9 +11,9 @@ notifications.nodesCreated = function(nodes) {
     nodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
             let Ctr = registry.get(node.getAttribute('is') || node.tagName);
-            if (Ctr) {
-                let elem = new Ctr(node);
-                DOM.connect(elem);
+            let component = DOM.getNodeComponent(node) || (Ctr && new Ctr(node));
+            if (component) {
+                DOM.connect(component);
             }
         }
     });
