@@ -51,12 +51,13 @@ export function h(element, props, ...children) {
         const Component = registry.get(element);
         const observedAttributes = Component && (Component.observedAttributes || []);
 
+        let ignoreProps = [];
         for (let k in props) {
             if (!isFalsy(props[k]) &&
                 (!observedAttributes ||
                 observedAttributes.indexOf(k) !== -1)) {
                 attr(k, props[k]);
-                delete props[k];
+                ignoreProps.push(k);
             }
         }
 
@@ -65,7 +66,9 @@ export function h(element, props, ...children) {
 
         if (component) {
             for (let k in props) {
-                component[k] = props[k];
+                if (ignoreProps.indexOf(k) === -1) {
+                    component[k] = props[k];
+                }
             }
         }
 
