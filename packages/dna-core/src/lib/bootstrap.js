@@ -8,7 +8,7 @@ import { connect } from './dom.js';
 export function bootstrap(root) {
     for (let k in registry.components) {
         let Component = registry.get(k);
-        let elements = root.querySelectorAll(k);
+        let elements = root.querySelectorAll(`${k}, [is="${k}"]`);
         for (let i = 0, len = elements.length; i < len; i++) {
             let component = new Component(elements[i]);
             connect(component);

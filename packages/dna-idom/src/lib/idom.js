@@ -48,10 +48,10 @@ export function h(element, props, ...children) {
 
         elementOpenStart(element, key);
 
-        const Component = registry.get(element);
+        const Component = registry.get(props.is || element);
         const observedAttributes = Component && (Component.observedAttributes || []);
 
-        let ignoreProps = [];
+        let ignoreProps = ['is'];
         for (let k in props) {
             if (!isFalsy(props[k]) &&
                 (!observedAttributes ||
