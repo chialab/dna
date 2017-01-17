@@ -1,4 +1,4 @@
-import { isFalsy, isObject, isFunction, isArray } from '@dnajs/core/src/lib/typeof.js';
+import { isFalsy, isObject, isFunction, isArray, isString } from '@dnajs/core/src/lib/typeof.js';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import {
@@ -49,14 +49,15 @@ export function h(element, props, ...children) {
         elementOpenStart(element, key);
 
         const Component = registry.get(props.is || element);
-        const observedAttributes = Component && (Component.observedAttributes || []);
 
-        let ignoreProps = ['is'];
+        let ignoreProps = [];
         for (let k in props) {
-            if (!isFalsy(props[k]) &&
-                (!observedAttributes ||
-                observedAttributes.indexOf(k) !== -1)) {
-                attr(k, props[k]);
+            let val = props[k];
+            if (!isFalsy(val) && (!Component ||
+                isString(val) ||
+                !isNaN(val) ||
+                val === true)) {
+                attr(k, val);
                 ignoreProps.push(k);
             }
         }

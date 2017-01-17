@@ -33,7 +33,6 @@ describe('Unit: IDOM observer', () => {
             assert.equal(elem.age, 21);
             assert.equal(elem.attributeChanges, 1);
             assert.equal(elem.married, true);
-            assert.equal(elem.node.getAttribute('married'), null);
         });
         it('should remove a component', () => {
             IDOM.patch(WRAPPER, render, { show: false });
