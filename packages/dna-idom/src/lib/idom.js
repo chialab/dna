@@ -46,28 +46,23 @@ export function h(element, props, ...children) {
         let key = props.key;
         delete props.key;
 
+        const Component = registry.get(props.is || element);
         elementOpenStart(element, key);
 
-        const Component = registry.get(props.is || element);
-
-        let ignoreProps = [];
         for (let k in props) {
             let val = props[k];
-            if (!isFalsy(val) && (!Component ||
-                isString(val) ||
-                !isNaN(val) ||
-                val === true)) {
+            if (!isFalsy(val) && (!Component || isString(val) || !isNaN(val) || val === true)) {
                 attr(k, val);
-                ignoreProps.push(k);
             }
         }
 
         const node = elementOpenEnd(element);
-        const component = DOM.getNodeComponent(node) || (Component && new Component(node));
+        const component = Component && (DOM.getNodeComponent(node) || new Component(node));
 
-        if (component) {
+        if (component && isObject(component.properties)) {
+            let componentProperties = component.properties;
             for (let k in props) {
-                if (ignoreProps.indexOf(k) === -1) {
+                if (componentProperties.hasOwnProperty(k)) {
                     component[k] = props[k];
                 }
             }
