@@ -52,8 +52,8 @@ function scoped(sheet, scope) {
 export function convertShadowCSS(style, is) {
     let scope = `.${is}`;
     style.textContent = style.textContent
-        .replace(HOST_REGEX, (fullMatch, mod, state) =>
-            `${scope}${state || ''}`
+        .replace(HOST_REGEX, (fullMatch, mod) =>
+            `${scope}${mod ? mod.slice(1, -1) : ''}`
         );
     scoped(style.sheet, scope);
 }
