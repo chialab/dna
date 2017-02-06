@@ -113,12 +113,12 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @instance
      */
     connectedCallback() {
-        super.connectedCallback();
         // bind events
         let events = this.events;
         for (let k in events) {
             this.addEventListener(events[k].name, events[k].callback);
         }
+        super.connectedCallback();
     }
     /**
      * Detach and undelegate events from the component.
