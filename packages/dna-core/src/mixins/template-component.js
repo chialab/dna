@@ -1,4 +1,4 @@
-import { isFunction, isFalsy } from '../lib/typeof.js';
+import { isUndefined, isFunction, isFalsy } from '../lib/typeof.js';
 
 /**
  * Simple Custom Component with template handling using the `template` property.
@@ -39,10 +39,10 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      * @instance
      */
     connectedCallback() {
+        super.connectedCallback();
         if (!isFalsy(this.template)) {
             this.render();
         }
-        super.connectedCallback();
     }
     /**
      * Trigger rerender on property changes.
@@ -69,6 +69,10 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
         if (isFunction(tpl)) {
             return tpl.call(this);
         }
-        (this.shadowRoot || this.node).innerHTML = tpl;
+        let root = this.shadowRoot || this.node;
+        if (isUndefined(this.__innerHTML)) {
+            this.__innerHTML = root.innerHTML;
+        }
+        root.innerHTML = `${this.__innerHTML}${tpl}`;
     }
 };

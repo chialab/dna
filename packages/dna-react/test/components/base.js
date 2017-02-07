@@ -16,6 +16,12 @@ export class ReactTestComponent extends BaseComponent {
         };
     }
 
+    get events() {
+        return {
+            click: 'onClick',
+        };
+    }
+
     get template() {
         return () => <span>{this.name} {this.lastName}</span>;
     }
@@ -38,5 +44,9 @@ export class ReactTestComponent extends BaseComponent {
     attributeChangedCallback(attr, oldVal, newVal) {
         super.attributeChangedCallback(attr, oldVal, newVal);
         this[attr] = newVal;
+    }
+
+    onClick() {
+        this.clicked = true;
     }
 }
