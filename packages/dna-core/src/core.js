@@ -24,9 +24,9 @@ export { DOM };
 export const MIXINS = {
     ComponentMixin,
     PropertiesMixin,
+    EventsMixin,
     StyleMixin,
     TemplateMixin,
-    EventsMixin,
 };
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';

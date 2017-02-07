@@ -30,7 +30,7 @@ export class BaseComponent extends mix(Component).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,
+    MIXINS.EventsMixin,
     MIXINS.TemplateMixin,
-    IDOMMixin,
-    MIXINS.EventsMixin
+    IDOMMixin
 ) {}
