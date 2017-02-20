@@ -1,34 +1,25 @@
-import { isFunction } from '../lib/typeof.js';
-
 /**
  * A list of HTMLElement properties to proxy from the node to the component instance.
  * @type Array
  * @private
  */
-const DOM_PROXY = [
-    'attributes',
-    'classList',
-    'getAttribute',
-    'hasAttribute',
-    'setAttribute',
-    'removeAttribute',
-    'addEventListener',
-    'removeEventListener',
-    'dispatchEvent',
-    'style',
-    'querySelector',
-    'querySelectorAll',
-    'shadowRoot',
-    'attachShadow',
-    'createShadowRoot',
-];
-
-/**
- * Reference to Element prototype.
- * @type Object
- * @private
- */
-const ELEMENT_PROTOTYPE = Element.prototype;
+const DOM_PROXY = {
+    attributes: 1,
+    classList: 1,
+    getAttribute: 0,
+    hasAttribute: 0,
+    setAttribute: 0,
+    removeAttribute: 0,
+    addEventListener: 0,
+    removeEventListener: 0,
+    dispatchEvent: 0,
+    style: 1,
+    querySelector: 0,
+    querySelectorAll: 0,
+    shadowRoot: 1,
+    attachShadow: 0,
+    createShadowRoot: 0,
+};
 
 /**
  * Reference to Node prototype.
@@ -47,26 +38,26 @@ function checkNode() {
  *
  * @param {Object} proto The prototype to update.
  * @param {String} property The property name to proxy.
+ * @param {Number} type The property type (0: function, 1: getter, 2: setter).
  */
-function proxyProperty(proto, property) {
+function proxyProperty(proto, property, type) {
     let desc = {};
-    let propDescriptor = Object.getOwnPropertyDescriptor(ELEMENT_PROTOTYPE, property);
-    let hasProp = !!propDescriptor;
-    let isFn = hasProp && isFunction(propDescriptor.value);
-    if (isFn || (!hasProp && typeof ELEMENT_PROTOTYPE[property] === 'function')) {
+    if (type === 0) {
         desc.value = function(...args) {
             checkNode.call(this);
             return this.node[property].call(this.node, ...args);
         };
-    } else if (hasProp) {
+    } else if (type > 0) {
         desc.get = function() {
             checkNode.call(this);
             return this.node[property];
         };
-        desc.set = function(val) {
-            checkNode.call(this);
-            return this.node[property] = val;
-        };
+        if (type > 2) {
+            desc.set = function(val) {
+                checkNode.call(this);
+                return this.node[property] = val;
+            };
+        }
     }
     Object.defineProperty(proto, property, desc);
 }
@@ -80,8 +71,8 @@ function proxyProperty(proto, property) {
  * @return {Function} The updated class.
  */
 export function proxy(Component) {
-    DOM_PROXY.forEach((prop) => {
-        proxyProperty(Component.prototype, prop);
-    });
+    for (let k in DOM_PROXY) {
+        proxyProperty(Component.prototype, k, DOM_PROXY[k]);
+    }
     return Component;
 }
