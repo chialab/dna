@@ -53,7 +53,7 @@ function proxyProperty(proto, property) {
     let propDescriptor = Object.getOwnPropertyDescriptor(ELEMENT_PROTOTYPE, property);
     let hasProp = !!propDescriptor;
     let isFn = hasProp && isFunction(propDescriptor.value);
-    if (isFn || (!hasProp && isFunction(ELEMENT_PROTOTYPE[property]))) {
+    if (isFn || (!hasProp && typeof ELEMENT_PROTOTYPE[property] === 'function')) {
         desc.value = function(...args) {
             checkNode.call(this);
             return this.node[property].call(this.node, ...args);
