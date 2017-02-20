@@ -1,4 +1,3 @@
-import { reduce } from '../helpers/arr-reduce.js';
 import { isFunction } from '../lib/typeof.js';
 
 /**
@@ -25,28 +24,51 @@ const DOM_PROXY = [
 ];
 
 /**
+ * Reference to Element prototype.
+ * @type Object
+ * @private
+ */
+const ELEMENT_PROTOTYPE = Element.prototype;
+
+/**
+ * Reference to Node prototype.
+ * @type Object
+ * @private
+ */
+function checkNode() {
+    if (!this.node) {
+        throw new ReferenceError('The component\'s `node` is undefined.');
+    }
+}
+
+/**
  * Add a proxy property descriptor to a prototype.
  * @private
  *
  * @param {Object} proto The prototype to update.
- * @param {String} proxy The property name to proxy.
- * @return {Object} The updated prototype.
+ * @param {String} property The property name to proxy.
  */
-function proxyProto(proto, proxy) {
-    proto[proxy] = {
-        configurable: true,
-        get() {
-            if (!this.node) {
-                throw new ReferenceError('The component\'s `node` is undefined.');
-            }
-            let res = this.node[proxy];
-            if (isFunction(res)) {
-                return res.bind(this.node);
-            }
-            return res;
-        },
-    };
-    return proto;
+function proxyProperty(proto, property) {
+    let desc = {};
+    let propDescriptor = Object.getOwnPropertyDescriptor(ELEMENT_PROTOTYPE, property);
+    let hasProp = !!propDescriptor;
+    let isFn = hasProp && isFunction(propDescriptor.value);
+    if (isFn || (!hasProp && isFunction(ELEMENT_PROTOTYPE[property]))) {
+        desc.value = function(...args) {
+            checkNode.call(this);
+            return this.node[property].call(this.node, ...args);
+        };
+    } else if (hasProp) {
+        desc.get = function() {
+            checkNode.call(this);
+            return this.node[property];
+        };
+        desc.set = function(val) {
+            checkNode.call(this);
+            return this.node[property] = val;
+        };
+    }
+    Object.defineProperty(proto, property, desc);
 }
 
 /**
@@ -58,11 +80,8 @@ function proxyProto(proto, proxy) {
  * @return {Function} The updated class.
  */
 export function proxy(Component) {
-    Component.prototype = Object.create(
-        Component.prototype,
-        reduce(DOM_PROXY, (prototype, proxy) =>
-            proxyProto(prototype, proxy), {}
-        )
-    );
+    DOM_PROXY.forEach((prop) => {
+        proxyProperty(Component.prototype, prop);
+    });
     return Component;
 }
