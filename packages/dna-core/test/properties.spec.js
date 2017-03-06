@@ -89,8 +89,14 @@ describe('PropertiesComponent', () => {
         });
         it('dispatch event', () => {
             let triggered = 0;
-            elem.node.addEventListener('changed', () => {
-                triggered++;
+            elem.node.addEventListener('changed', (ev) => {
+                let data = ev.detail;
+                if (data.component === elem &&
+                    data.property === 'myVar3' &&
+                    data.oldValue === true &&
+                    data.newValue === false) {
+                    triggered++;
+                }
             });
             elem.myVar3 = true;
             elem.myVar3 = false;

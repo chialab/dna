@@ -105,12 +105,17 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                 attrName = k;
             }
             if (attrName || eventName) {
-                prop.observe(() => {
+                prop.observe((changedProp, newValue, oldValue) => {
                     if (attrName) {
                         setAttribute(this, attrName, this[prop.name]);
                     }
                     if (eventName) {
-                        dispatch(this, eventName);
+                        dispatch(this, eventName, {
+                            component: this,
+                            property: changedProp.name,
+                            newValue,
+                            oldValue,
+                        });
                     }
                 });
             }
