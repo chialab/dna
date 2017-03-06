@@ -7,13 +7,13 @@ import {
     isUndefined,
     isArray,
     isFalsy,
-} from '../src/lib/typeof.js';
-import * as DOM from '../src/lib/dom.js';
-import { render } from '../src/lib/render.js';
-import { define } from '../src/lib/define.js';
-import { bootstrap } from '../src/lib/bootstrap.js';
+} from '../../src/lib/typeof.js';
+import * as DOM from '../../src/lib/dom.js';
+import { render } from '../../src/lib/render.js';
+import { define } from '../../src/lib/define.js';
+import { bootstrap } from '../../src/lib/bootstrap.js';
 
-import { BaseComponent } from '../index.js';
+import { BaseComponent } from '../../index.js';
 
 const WRAPPER = document.body;
 

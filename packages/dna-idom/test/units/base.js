@@ -1,13 +1,13 @@
 /* eslint-env mocha */
 
-import { define, DOM } from '../index.js';
-import { TestComponent } from './components/component.js';
+import { render, define, DOM } from '../../index.js';
+import { TestBaseIDOMComponent } from '../components/base.js';
 
 const WRAPPER = document.body;
-define('test-component', TestComponent);
+define('test-base-idom-component', TestBaseIDOMComponent);
 
-describe('Unit: Component', () => {
-    let elem = DOM.createElement(TestComponent);
+describe('Unit: BaseComponent', () => {
+    const elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing' });
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -17,15 +17,20 @@ describe('Unit: Component', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
-            DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });
 
     describe('> attributeChanged', () => {
+        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            DOM.setAttribute(elem, 'test-callback', 'Alan');
-            assert.equal(elem['test-callback'], 'Alan');
+            assert.equal(elem.name, 'Alan');
+        });
+    });
+
+    describe('> render', () => {
+        it('check if element has been correctly rendered', () => {
+            assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
         });
     });
 

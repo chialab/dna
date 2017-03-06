@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
-import { define, render } from '../index.js';
-import { TestComponent1, TestComponent2 } from './components/style.js';
+import { define, render } from '../../index.js';
+import { TestComponent1, TestComponent2 } from '../components/style.js';
 
 const WRAPPER = document.body;
 

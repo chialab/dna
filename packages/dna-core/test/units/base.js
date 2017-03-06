@@ -1,13 +1,14 @@
 /* eslint-env mocha */
 
-import { render, define, DOM } from '../index.js';
-import { TestBaseIDOMComponent } from './components/base.js';
+import { define, DOM } from '../../index.js';
+import { TestBaseComponent } from '../components/base.js';
 
 const WRAPPER = document.body;
-define('test-base-idom-component', TestBaseIDOMComponent);
+define('test-base-component', TestBaseComponent);
 
 describe('Unit: BaseComponent', () => {
-    const elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing' });
+    const elem = DOM.createElement('test-base-component');
+    elem.lastName = 'Turing';
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -17,6 +18,7 @@ describe('Unit: BaseComponent', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
+            DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });

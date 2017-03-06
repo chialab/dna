@@ -1,6 +1,6 @@
 /* eslint-env mocha */
-import { define, render, DOM, IDOM } from '../index.js';
-import '../observer.js';
+import { define, render, DOM, IDOM } from '../../index.js';
+import '../../observer.js';
 import {
     TestComponent1,
     TestComponent2,
@@ -9,7 +9,7 @@ import {
     TestComponent5,
     TestPlaceholder,
     Test2Placeholder,
-} from './components/template.js';
+} from '../components/template.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;

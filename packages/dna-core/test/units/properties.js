@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
-import { define, render, DOM } from '../index.js';
+import { define, render, DOM } from '../../index.js';
 import {
     TestComponent1,
     TestComponent2,
-} from './components/properties.js';
+} from '../components/properties.js';
 
 const WRAPPER = document.body;
 define('test1-properties-component', TestComponent1);

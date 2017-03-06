@@ -1,14 +1,13 @@
 /* eslint-env mocha */
 
-import { define, DOM } from '../index.js';
-import { TestBaseComponent } from './components/base.js';
+import { define, DOM } from '../../index.js';
+import { TestComponent } from '../components/component.js';
 
 const WRAPPER = document.body;
-define('test-base-component', TestBaseComponent);
+define('test-component', TestComponent);
 
-describe('Unit: BaseComponent', () => {
-    const elem = DOM.createElement('test-base-component');
-    elem.lastName = 'Turing';
+describe('Unit: Component', () => {
+    let elem = DOM.createElement(TestComponent);
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -24,15 +23,9 @@ describe('Unit: BaseComponent', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            assert.equal(elem.name, 'Alan');
-        });
-    });
-
-    describe('> render', () => {
-        it('check if element has been correctly rendered', () => {
-            assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
+            DOM.setAttribute(elem, 'test-callback', 'Alan');
+            assert.equal(elem['test-callback'], 'Alan');
         });
     });
 
