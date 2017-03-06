@@ -126,7 +126,7 @@ module.exports = {
     SL_Android_4: {
         base: 'SauceLabs',
         browserName: 'android',
-        deviceName: 'Samsung Galaxy S3 Emulator',
+        deviceName: 'Android Emulator',
         platform: 'Linux',
         version: '4.4',
     },
