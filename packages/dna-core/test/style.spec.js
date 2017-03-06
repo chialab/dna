@@ -17,10 +17,12 @@ describe('Unit: StyleComponent', () => {
     it('should handle `css` getter property', () => {
         let style = window.getComputedStyle((elem1.node.shadowRoot || elem1.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
+        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
     });
 
     it('should handle `css` getter property with state', () => {
         let style = window.getComputedStyle((elem2.node.shadowRoot || elem2.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
+        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
     });
 });

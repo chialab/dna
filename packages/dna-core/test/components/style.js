@@ -20,6 +20,10 @@ export class TestComponent1 extends TestComponent {
     color: #5F9EA0;
 }
 
+:host > * {
+    background-color: #5F9EA0;
+}
+
 @media (min-width: 0) {
     h1, h2 {
         color: inherit;
@@ -33,6 +37,10 @@ export class TestComponent2 extends TestComponent {
         return `
 :host(.active) {
     color: #5F9EA0;
+}
+
+:host(.active) > * {
+    background-color: #5F9EA0;
 }
 
 @media (min-width: 0) {

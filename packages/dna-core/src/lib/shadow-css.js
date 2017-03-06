@@ -16,7 +16,7 @@ const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 function scoped(sheet, scope) {
     if (sheet.insertRule) {
         let rules = sheet.cssRules || sheet.rules;
-        let reg = new RegExp(`${scope}([\.\[:]|$)`);
+        let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
             let body = rule.cssText;
