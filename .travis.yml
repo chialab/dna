@@ -24,7 +24,8 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 
 addons:
-  sauce_connect: true
+  sauce_connect:
+    no_ssl_bump_domains: all
 
 script:
   - npm test
