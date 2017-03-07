@@ -134,56 +134,6 @@ function symlinks(f, t) {
     }
 }
 
-const installing = {};
-
-function loadModule(name) {
-    if (!installing[name]) {
-        installing[name] = new Promise(function(resolve, reject) {
-            exec('npm install ' + name, function(error) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-    return installing[name];
-}
-
-function dependencies() {
-    var sym = [];
-    return Promise.all(
-        packages.map(function(pkg) {
-            var json = path.join('packages', pkg, 'package.json');
-            if (fs.existsSync(json)) {
-                var data = require(path.resolve(json));
-                if (data.dependencies) {
-                    let loads = [];
-                    for (let k in data.dependencies) {
-                        if (packageNames.indexOf(k) !== -1) {
-                            sym.push(k);
-                        } else {
-                            loads.push(loadModule(k + '@' + data.dependencies[k]));
-                        }
-                    }
-                    return Promise.all(loads);
-                }
-            }
-            return Promise.resolve();
-        })
-    ).then(function() {
-        sym.forEach(function(packageName) {
-            let io = packageNames.indexOf(packageName);
-            let packagePath = packages[io];
-            if (packagePath) {
-                symlinks(packagePath, packageName);
-            }
-        });
-        return Promise.resolve();
-    });
-}
-
 function publish(path, beta) {
     return new Promise(function(resolve, reject) {
         exec('cd ' + path + ' && npm publish --access public' + (beta ? ' --tag beta' : ''), function(error) {
@@ -212,8 +162,6 @@ gulp.task('lint', lint);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);
-gulp.task('dependencies', dependencies);
-gulp.task('post-install', ['dependencies']);
 gulp.task('publish', function() {
     return publishModules();
 });
