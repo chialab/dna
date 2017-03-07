@@ -41,6 +41,7 @@ module.exports = function(config) {
         files: [
             'packages/dna-core/**/*.spec.js',
             'packages/dna-idom/**/*.spec.js',
+            'packages/dna-react/**/*.spec.js',
         ],
 
 
