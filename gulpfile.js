@@ -46,13 +46,12 @@ var packages = glob.sync('packages/*/').map(function(pkg) {
 var packageNames = packages.map(function(pkg) {
     return pkg.replace(/^dna\-/, '@dnajs/');
 });
-var entries = packages.map(function(pkg) {
-    var fileName = path.join('packages', pkg, 'index.js');
-    if (fs.existsSync(fileName)) {
-        return fileName;
-    }
-}).filter(function(pkg) {
-    return !!pkg;
+var entries = [];
+packages.forEach(function(pkg) {
+    glob.sync(path.join('packages', pkg, 'index*.js'))
+        .forEach((path) => {
+            entries.push(path);
+        });
 });
 
 function unit(done) {
@@ -106,13 +105,8 @@ function jsMin() {
 
     return entries.map((entry) => {
         var dirname = path.dirname(entry);
-        var distFile = path.basename(dirname) + '.js';
+        var distFile = path.basename(entry).replace('index', path.basename(dirname));
         var distPath = path.join(dirname, 'dist');
-        // add observer
-        var observer = path.join(dirname, 'observer.js');
-        if (fs.existsSync(observer)) {
-            entry = [entry, observer];
-        }
         return del([distPath]).then(() =>
             bundle('umd', entry)
                 .pipe(source(distFile))
