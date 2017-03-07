@@ -23,6 +23,39 @@
  */
 
 module.exports = {
+    SL_iOS_8: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.10',
+        version: '8.1',
+    },
+    SL_iOS_9: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.11',
+        version: '9.3',
+    },
+    SL_iOS_10: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.11',
+        version: '10.0',
+    },
+    SL_Android_4: {
+        base: 'SauceLabs',
+        browserName: 'android',
+        deviceName: 'Android Emulator',
+        platform: 'Linux',
+        version: '4.4',
+    },
+    SL_Android_5: {
+        base: 'SauceLabs',
+        browserName: 'android',
+        deviceName: 'Android Emulator',
+        deviceType: 'phone',
+        platform: 'Linux',
+        version: '5.1',
+    },
     SL_Chrome_beta: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -104,38 +137,5 @@ module.exports = {
         browserName: 'microsoftedge',
         platform: 'Windows 10',
         version: '14',
-    },
-    SL_iOS_8: {
-        base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.10',
-        version: '8.1',
-    },
-    SL_iOS_9: {
-        base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.11',
-        version: '9.3',
-    },
-    SL_iOS_10: {
-        base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.11',
-        version: '10.0',
-    },
-    SL_Android_4: {
-        base: 'SauceLabs',
-        browserName: 'android',
-        deviceName: 'Android Emulator',
-        platform: 'Linux',
-        version: '4.4',
-    },
-    SL_Android_5: {
-        base: 'SauceLabs',
-        browserName: 'android',
-        deviceName: 'Android Emulator',
-        deviceType: 'phone',
-        platform: 'Linux',
-        version: '5.1',
     },
 };
