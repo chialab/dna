@@ -2,7 +2,7 @@
   "name": "@dnajs/custom-elements-v0",
   "version": "2.5.1",
   "description": "Just another components pattern with Custom Elements v0 implementation.",
-  "author": "Chialab <dev@chialab.io> (http://www.chialab.com)",
+  "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
   "repository": {
     "type": "git",
