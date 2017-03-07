@@ -39,9 +39,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'packages/dna-core/**/*.spec.js',
-            'packages/dna-idom/**/*.spec.js',
-            'packages/dna-react/**/*.spec.js',
+            'packages/**/*.spec.js',
         ],
 
 
@@ -125,6 +123,7 @@ module.exports = function(config) {
             case 'saucelabs':
                 var saucelabsBrowsers = require('./sl.browsers.js');
                 config.set({
+                    retryLimit: 3,
                     browserDisconnectTimeout: 10000,
                     browserDisconnectTolerance: 1,
                     browserNoActivityTimeout: 4 * 60 * 1000,
