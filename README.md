@@ -34,5 +34,3 @@ Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notific
 **Use with [Custom Elements v0 spec](./packages/dna-custom-elements-v0/).**
 
 **Use with [React](./packages/dna-react/).**
-
-**Use with [MutationObserver API](./packages/dna-mutation/).**
