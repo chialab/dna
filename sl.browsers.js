@@ -23,6 +23,11 @@
  */
 
 module.exports = {
+    SL_Chrome_dev: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        version: 'dev',
+    },
     SL_Chrome_beta: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -45,6 +50,11 @@ module.exports = {
         browserName: 'chrome',
         platform: 'Linux',
         version: 'latest-2',
+    },
+    SL_Firefox_dev: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        version: 'dev',
     },
     SL_Firefox_beta: {
         base: 'SauceLabs',
@@ -109,7 +119,7 @@ module.exports = {
         base: 'SauceLabs',
         browserName: 'iphone',
         platform: 'OS X 10.10',
-        version: '8.0',
+        version: '8.4',
     },
     SL_iOS_9: {
         base: 'SauceLabs',
@@ -121,7 +131,7 @@ module.exports = {
         base: 'SauceLabs',
         browserName: 'iphone',
         platform: 'OS X 10.11',
-        version: '10.0',
+        version: '10.2',
     },
     SL_Android_4: {
         base: 'SauceLabs',
