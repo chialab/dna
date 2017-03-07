@@ -40,6 +40,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'packages/dna-core/**/*.spec.js',
+            'packages/dna-idom/**/*.spec.js',
         ],
 
 
