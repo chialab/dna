@@ -19,6 +19,8 @@ const DOM_PROXY = {
     shadowRoot: 1,
     attachShadow: 0,
     createShadowRoot: 0,
+    innerText: 2,
+    innerHTML: 2,
 };
 
 /**
@@ -27,6 +29,7 @@ const DOM_PROXY = {
  * @private
  */
 function checkNode() {
+    /* istanbul ignore if  */
     if (!this.node) {
         throw new ReferenceError('The component\'s `node` is undefined.');
     }
@@ -52,7 +55,7 @@ function proxyProperty(proto, property, type) {
             checkNode.call(this);
             return this.node[property];
         };
-        if (type > 2) {
+        if (type > 1) {
             desc.set = function(val) {
                 checkNode.call(this);
                 return this.node[property] = val;
