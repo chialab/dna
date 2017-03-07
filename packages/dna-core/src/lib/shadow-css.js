@@ -9,14 +9,15 @@ const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * Add a scope to all selectors.
  * @private
  *
- * @param {CSSStyleSheet} css The css sheet to scope.
+ * @param {CSSStyleSheet} sheet The css sheet to scope.
  * @param {String} scope The scope selector.
  * @return {String} The scoped css.
  */
 function scoped(sheet, scope) {
+    let rules = sheet.cssRules || sheet.rules;
     if (sheet.insertRule) {
-        let rules = sheet.cssRules || sheet.rules;
         let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
+        let text = '';
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
             let body = rule.cssText;
@@ -36,8 +37,9 @@ function scoped(sheet, scope) {
                 body = rule.cssText;
             }
             sheet.deleteRule(i);
-            sheet.insertRule(body, i);
+            text += rules[sheet.insertRule(body, i)].cssText;
         }
+        return text;
     }
 }
 
@@ -45,15 +47,15 @@ function scoped(sheet, scope) {
  * Convert a shadowDOM css string into a normal scoped css.
  * @private
  *
+ * @param {HTMLStyleElement} style The style element.
  * @param {String} css The css string to convert.
  * @param {String} is The component name for scoping.
  * @return {String} The converted string.
  */
-export function convertShadowCSS(style, is) {
+export function convertShadowCSS(style, css, is) {
     let scope = `.${is}`;
-    style.textContent = style.textContent
-        .replace(HOST_REGEX, (fullMatch, mod) =>
-            `${scope}${mod ? mod.slice(1, -1) : ''}`
-        );
-    scoped(style.sheet, scope);
+    style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) =>
+        `${scope}${mod ? mod.slice(1, -1) : ''}`
+    );
+    style.textContent = scoped(style.sheet, scope) || '';
 }
