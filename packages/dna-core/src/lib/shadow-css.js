@@ -31,13 +31,13 @@ function scoped(sheet, scope) {
                         return `${scope} ${rule}`;
                     })
                     .join(', ');
-                body = rule.cssText.replace(rule.selectorText, selector);
+                text += rule.cssText.replace(rule.selectorText, selector);
             } else if (rule.cssRules || rule.rules) {
                 scoped(rule, scope);
-                body = rule.cssText;
+                text += rule.cssText;
+            } else {
+                text += body;
             }
-            sheet.deleteRule(i);
-            text += rules[sheet.insertRule(body, i)].cssText;
         }
         return text;
     }
