@@ -116,7 +116,6 @@ module.exports = function(config) {
                 ],
             },
             logLevel: config.LOG_ERROR,
-            concurrency: 1,
         });
 
         switch (process.env.CI_BUILD_TYPE) {

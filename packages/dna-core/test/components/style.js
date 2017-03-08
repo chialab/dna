@@ -16,6 +16,14 @@ class TestComponent extends BaseComponent {
 export class TestComponent1 extends TestComponent {
     get css() {
         return `
+@charset "UTF-8";
+
+/*
+
+CSS Created by Chialab.it
+
+*/
+
 :host {
     color: #5F9EA0;
 }
