@@ -36,6 +36,11 @@ CSS Created by Chialab.it
     h1, h2 {
         color: inherit;
     }
+}
+
+@keyframes anim {
+    0% { top: 0; }
+    100% { top: 10px; }
 }`;
     }
 }
