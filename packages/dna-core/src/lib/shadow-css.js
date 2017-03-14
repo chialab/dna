@@ -11,35 +11,36 @@ const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  *
  * @param {CSSStyleSheet} sheet The css sheet to scope.
  * @param {String} scope The scope selector.
- * @return {String} The scoped css.
  */
 function scoped(sheet, scope) {
     let rules = sheet.cssRules || sheet.rules;
     if (sheet.insertRule) {
         let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
-        let text = '';
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
-            let body = rule.cssText;
-            if (rule.selectorText) {
-                let selector = rule.cssText.split('{').shift().split(',')
-                    .map((rule) => {
-                        rule = rule.trim();
-                        if (rule.match(reg)) {
-                            return rule;
-                        }
-                        return `${scope} ${rule}`;
-                    })
-                    .join(', ');
-                text += rule.cssText.replace(rule.selectorText, selector);
-            } else if (rule.cssRules || rule.rules) {
-                scoped(rule, scope);
-                text += rule.cssText;
-            } else {
-                text += body;
+            try {
+                let body = rule.cssText;
+                if (rule.selectorText) {
+                    let selector = rule.cssText.split('{').shift().split(',')
+                        .map((rule) => {
+                            rule = rule.trim();
+                            if (rule.match(reg)) {
+                                return rule;
+                            }
+                            return `${scope} ${rule}`;
+                        })
+                        .join(', ');
+                    body = rule.cssText.replace(rule.selectorText, selector);
+                } else if (rule.cssRules || rule.rules) {
+                    scoped(rule, scope);
+                    body = rule.cssText;
+                }
+                sheet.deleteRule(i);
+                sheet.insertRule(body, i);
+            } catch(ex) {
+                //
             }
         }
-        return text;
     }
 }
 
@@ -57,5 +58,5 @@ export function convertShadowCSS(style, css, is) {
     style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) =>
         `${scope}${mod ? mod.slice(1, -1) : ''}`
     );
-    style.textContent = scoped(style.sheet, scope) || '';
+    scoped(style.sheet, scope) || '';
 }
