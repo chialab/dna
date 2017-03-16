@@ -1,5 +1,5 @@
 import { registry } from './registry.js';
-import { connect } from './dom.js';
+import { getNodeComponent, connect } from './dom.js';
 
 /**
  * Instantiate all defined components in a DOM tree.
@@ -10,8 +10,10 @@ export function bootstrap(root) {
         let Component = registry.get(k);
         let elements = root.querySelectorAll(`${k}, [is="${k}"]`);
         for (let i = 0, len = elements.length; i < len; i++) {
-            let component = new Component(elements[i]);
-            connect(component);
+            if (!getNodeComponent(elements[i])) {
+                let component = new Component(elements[i]);
+                connect(component);
+            }
         }
     }
 }
