@@ -68,3 +68,42 @@ export class TestComponent2 extends TestComponent {
         this.node.classList.add('active');
     }
 }
+
+export class TestComponent3 extends TestComponent {
+    get css() {
+        return `
+#before1:before {
+    content: "Hello";
+}
+
+#before2:before {
+    content: attr(id);
+}
+
+#before3:before {
+    content: "Hello world";
+}
+
+#before4:before {
+    content: "attr(id)";
+}
+
+#before5:before {
+    content: "♜";
+}
+
+#before6:before {
+    content: "hello-world";
+}
+`;
+    }
+
+    get template() {
+        return '<span id="before1"></span><span id="before2"></span><span id="before3"></span><span id="before4"></span><span id="before5"></span><span id="before6"></span>';
+    }
+
+    constructor() {
+        super();
+        this.node.classList.add('active');
+    }
+}

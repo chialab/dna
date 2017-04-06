@@ -31,6 +31,10 @@ function scoped(sheet, scope) {
                         })
                         .join(', ');
                     body = rule.cssText.replace(rule.selectorText, selector);
+                    // Safari does not use "..." for single word content
+                    if (rule.style && rule.style.content && !rule.style.content.match(/^([\w_-]+\(|['"])/)) {
+                        body = body.replace(`content: ${rule.style.content}`, `content: "${rule.style.content}"`);
+                    }
                 } else if (rule.cssRules || rule.rules) {
                     scoped(rule, scope);
                     body = rule.cssText;
