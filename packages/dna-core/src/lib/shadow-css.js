@@ -4,6 +4,14 @@
  * @private
  */
 const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
+/**
+ * CSSKeyframesRule class.
+ * @type {function}
+ * @private
+ */
+const KFRule = self.CSSKeyframesRule ||
+    self.WebKitCSSKeyframesRule ||
+    self.MozCSSKeyframesRule;
 
 /**
  * Add a scope to all selectors.
@@ -18,7 +26,7 @@ function scoped(sheet, scope) {
         let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
-            if (!(rule instanceof CSSKeyframesRule)) {
+            if (!(rule instanceof KFRule)) {
                 try {
                     let body = rule.cssText;
                     if (rule.selectorText) {
