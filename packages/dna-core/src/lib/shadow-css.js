@@ -18,31 +18,33 @@ function scoped(sheet, scope) {
         let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
-            try {
-                let body = rule.cssText;
-                if (rule.selectorText) {
-                    let selector = rule.cssText.split('{').shift().split(',')
-                        .map((rule) => {
-                            rule = rule.trim();
-                            if (rule.match(reg)) {
-                                return rule;
-                            }
-                            return `${scope} ${rule}`;
-                        })
-                        .join(', ');
-                    body = rule.cssText.replace(rule.selectorText, selector);
-                    // Safari does not use "..." for single word content
-                    if (rule.style && rule.style.content && !rule.style.content.match(/^([\w_-]+\(|['"])/)) {
-                        body = body.replace(`content: ${rule.style.content}`, `content: "${rule.style.content}"`);
+            if (!(rule instanceof CSSKeyframesRule)) {
+                try {
+                    let body = rule.cssText;
+                    if (rule.selectorText) {
+                        let selector = rule.cssText.split('{').shift().split(',')
+                            .map((rule) => {
+                                rule = rule.trim();
+                                if (rule.match(reg)) {
+                                    return rule;
+                                }
+                                return `${scope} ${rule}`;
+                            })
+                            .join(', ');
+                        body = rule.cssText.replace(rule.selectorText, selector);
+                        // Safari does not use "..." for single word content
+                        if (rule.style && rule.style.content && !rule.style.content.match(/^([\w_-]+\(|['"])/)) {
+                            body = body.replace(`content: ${rule.style.content}`, `content: "${rule.style.content}"`);
+                        }
+                    } else if (rule.cssRules || rule.rules) {
+                        scoped(rule, scope);
+                        body = rule.cssText;
                     }
-                } else if (rule.cssRules || rule.rules) {
-                    scoped(rule, scope);
-                    body = rule.cssText;
+                    sheet.deleteRule(i);
+                    sheet.insertRule(body, i);
+                } catch (ex) {
+                    //
                 }
-                sheet.deleteRule(i);
-                sheet.insertRule(body, i);
-            } catch(ex) {
-                //
             }
         }
     }
