@@ -1,7 +1,7 @@
 {
-  "name": "@dnajs/custom-elements-v0",
-  "version": "2.6.5",
-  "description": "Just another components pattern with Custom Elements v0 implementation.",
+  "name": "@dnajs/idom",
+  "version": "2.6.6",
+  "description": "Just another components pattern with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
   "repository": {
@@ -16,8 +16,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.6.5",
-    "@dnajs/idom": "^2.6.5"
+    "@dnajs/core": "^2.6.6",
+    "incremental-dom": "^0.5.1"
   },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"

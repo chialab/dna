@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 /**
  * Copyright 2016 Chialab. All Rights Reserved.
  *
@@ -26,11 +28,13 @@ module.exports = {
     SL_Chrome_dev: {
         base: 'SauceLabs',
         browserName: 'chrome',
+        platform: 'macOS 10.12',
         version: 'dev',
     },
     SL_Chrome_beta: {
         base: 'SauceLabs',
         browserName: 'chrome',
+        platform: 'macOS 10.12',
         version: 'beta',
     },
     SL_Chrome: {
@@ -54,11 +58,13 @@ module.exports = {
     SL_Firefox_dev: {
         base: 'SauceLabs',
         browserName: 'firefox',
+        platform: 'Windows 10',
         version: 'dev',
     },
     SL_Firefox_beta: {
         base: 'SauceLabs',
         browserName: 'firefox',
+        platform: 'Windows 10',
         version: 'beta',
     },
     SL_Firefox: {
@@ -133,7 +139,7 @@ module.exports = {
         base: 'SauceLabs',
         browserName: 'Safari',
         platform: 'iOS',
-        version: '10.2',
+        version: '10.3',
         device: 'iPhone 7',
     },
     SL_Android_4: {
@@ -150,5 +156,21 @@ module.exports = {
         deviceType: 'phone',
         platform: 'Linux',
         version: '5.1',
+    },
+    SL_Android_6: {
+        base: 'SauceLabs',
+        browserName: 'android',
+        deviceName: 'Android Emulator',
+        deviceType: 'phone',
+        platform: 'Linux',
+        version: '6.0',
+    },
+    SL_Android_7: {
+        base: 'SauceLabs',
+        browserName: 'android',
+        deviceName: 'Android GoogleAPI Emulator',
+        deviceType: 'phone',
+        platform: 'Linux',
+        version: '7.0',
     },
 };

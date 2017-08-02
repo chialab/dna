@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 /**
  * Copyright 2016 Chialab. All Rights Reserved.
  *
@@ -22,8 +24,7 @@
  * SOFTWARE.
  */
 
-var path = require('path');
-var json = require('./package.json');
+const path = require('path');
 
 module.exports = function(config) {
     config.set({
@@ -109,9 +110,7 @@ module.exports = function(config) {
                 reporters: [
                     {
                         type: 'lcov',
-                        subdir: function(browserName) {
-                            return path.join('report-lcov', browserName);
-                        },
+                        subdir: (browserName) => path.join('report-lcov', browserName),
                     },
                 ],
             },
@@ -119,8 +118,8 @@ module.exports = function(config) {
         });
 
         switch (process.env.CI_BUILD_TYPE) {
-            case 'saucelabs':
-                var saucelabsBrowsers = require('./sl.browsers.js');
+            case 'saucelabs': {
+                const saucelabsBrowsers = require('./sauce.browsers.js');
                 config.set({
                     retryLimit: 3,
                     browserDisconnectTimeout: 10000,
@@ -145,7 +144,8 @@ module.exports = function(config) {
                     browsers: Object.keys(saucelabsBrowsers),
                 });
                 break;
-            default:
+            }
+            default: {
                 config.set({
                     customLaunchers: {
                         Chrome_CI: {
@@ -156,6 +156,7 @@ module.exports = function(config) {
                     browsers: ['Chrome_CI', 'Firefox'],
                 });
                 break;
+            }
         }
     } else {
         config.set({
@@ -164,15 +165,11 @@ module.exports = function(config) {
                 reporters: [
                     {
                         type: 'html',
-                        subdir: function(browserName) {
-                            return path.join('report-html', browserName);
-                        },
+                        subdir: (browserName) => path.join('report-html', browserName),
                     },
                     {
                         type: 'lcov',
-                        subdir: function(browserName) {
-                            return path.join('report-lcov', browserName);
-                        },
+                        subdir: (browserName) => path.join('report-lcov', browserName),
                     },
                 ],
             },

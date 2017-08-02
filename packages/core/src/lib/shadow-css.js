@@ -9,7 +9,7 @@ const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * @type {function}
  * @private
  */
-const KFRule = self.CSSKeyframesRule ||
+const KFRule = CSSKeyframesRule ||
     self.WebKitCSSKeyframesRule ||
     self.MozCSSKeyframesRule;
 

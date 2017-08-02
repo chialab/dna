@@ -2,6 +2,7 @@ import { symbols, attributes, notifications } from 'incremental-dom/index.js';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { isFalsy } from '@dnajs/core/src/lib/typeof.js';
+import { patch } from './idom.js';
 
 const _created = notifications.nodesCreated;
 const _removed = notifications.nodesDeleted;
@@ -41,12 +42,14 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
     }
     let elem = DOM.getNodeComponent(node);
     if (elem) {
-        let attrs = elem.constructor.observedAttributes || [];
-        if (attrs.indexOf(attrName) !== -1) {
-            attrValue = (isFalsy(attrValue)) ? null : attrValue;
-            DOM.update(elem, attrName, oldValue, attrValue);
-        } else if (elem.properties && elem.properties.hasOwnProperty(attrName)) {
-            elem[attrName] = attrValue;
-        }
+        patch.current.after(() => {
+            let attrs = elem.constructor.observedAttributes || [];
+            if (attrs.indexOf(attrName) !== -1) {
+                attrValue = (isFalsy(attrValue)) ? null : attrValue;
+                DOM.update(elem, attrName, oldValue, attrValue);
+            } else if (elem.properties && elem.properties.hasOwnProperty(attrName)) {
+                elem[attrName] = attrValue;
+            }
+        });
     }
 };

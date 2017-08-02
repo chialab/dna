@@ -1,34 +1,64 @@
 language: node_js
-node_js:
-  - "6"
 
 branches:
   only:
     - master
 
-env:
-  global:
-    - "SAUCE_USERNAME=$SAUCE_NEXT_USERNAME"
-    - "SAUCE_ACCESS_KEY=$SAUCE_NEXT_ACCESS_KEY"
-  matrix:
-    - "CI_BUILD_TYPE=default"
-    - "CI_BUILD_TYPE=saucelabs"
-
-matrix:
+jobs:
+  include:
+    - stage: test
+      env: CI_BUILD_TYPE=default
+      node_js: 6
+      install:
+        - npm install
+      script:
+        - npm run test-default
+    - stage: test
+      env: CI_BUILD_TYPE=default
+      node_js: 7
+      install:
+        - npm install
+      script:
+        - npm run test-default
+    - stage: test
+      os: linux
+      env: CI_BUILD_TYPE=saucelabs
+      node_js: 7
+      install:
+        - npm install
+        - npm install karma-sauce-launcher
+      script:
+        - npm run test-saucelabs
+    - stage: test
+      os: linux
+      env: CI_BUILD_TYPE=electron
+      node_js: 7
+      install:
+        - export DISPLAY=':99.0'
+        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        - npm install
+        - npm install electron karma-electron-launcher
+      script:
+        - npm run test-electron
+    - stage: test
+      os: osx
+      env: CI_BUILD_TYPE=electron
+      node_js: 7
+      install:
+        - export DISPLAY=':99.0'
+        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        - npm install
+        - npm install electron karma-electron-launcher
+      script:
+        - npm run test-electron
   allow_failures:
-    - env: "CI_BUILD_TYPE=saucelabs"
-
-before_install:
-  - export CHROME_BIN=chromium-browser
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+    - env: CI_BUILD_TYPE=electron
+    - env: CI_BUILD_TYPE=saucelabs
 
 addons:
-  sauce_connect:
-    no_ssl_bump_domains: all
-
-script:
-  - npm test
+  apt:
+    packages:
+      - xvfb
 
 after_success:
-  - if [ "$CI_BUILD_TYPE" = 'saucelabs' ]; then cat coverage/report-lcov/*/lcov.info | ./node_modules/.bin/codecov; fi
+  - cat coverage/report-lcov/*/lcov.info | ./node_modules/.bin/codecov

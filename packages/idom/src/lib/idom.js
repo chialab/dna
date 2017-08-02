@@ -59,27 +59,47 @@ export function h(element, props, ...children) {
         const node = elementOpenEnd(element);
         const component = Component && (DOM.getNodeComponent(node) || new Component(node));
 
-        if (component && isObject(component.properties)) {
-            let componentProperties = component.properties;
-            for (let k in props) {
-                if (componentProperties.hasOwnProperty(k)) {
-                    component[k] = props[k];
-                }
-            }
-        }
-
         if (component && children.length === 0) {
             skip();
         } else {
             handleChildren(children);
         }
         elementClose(element);
+
+        if (component && isObject(component.properties)) {
+            patch.current.after(() => {
+                let componentProperties = component.properties;
+                for (let k in props) {
+                    if (componentProperties.hasOwnProperty(k)) {
+                        component[k] = props[k];
+                    }
+                }
+            });
+        }
+
         return node;
     };
 }
 
+class Patch {
+    constructor() {
+        this.callbacks = [];
+    }
+
+    after(fn) {
+        this.callbacks.push(fn);
+    }
+
+    flush() {
+        this.callbacks.forEach((clb) => clb());
+    }
+}
+
 export function patch(scope, fn, data) {
-    return originalPatch(scope, interpolate.bind(this, fn, data));
+    patch.current = new Patch();
+    originalPatch(scope, interpolate.bind(this, fn, data));
+    patch.current.flush();
+    patch.current = null;
 }
 
 export { text };

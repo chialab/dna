@@ -1,12 +1,14 @@
-var path = require('path');
-var babel = require('rollup-plugin-babel');
-var resolve = require('rollup-plugin-node-resolve');
-var commonjs = require('rollup-plugin-commonjs');
-var replace = require('rollup-plugin-replace');
+/* eslint-env node */
 
-var istanbul = require('rollup-plugin-istanbul');
-var uglify = require('rollup-plugin-uglify');
-var alias = require('rollup-plugin-alias');
+const path = require('path');
+const babel = require('rollup-plugin-babel');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const replace = require('rollup-plugin-replace');
+
+const istanbul = require('rollup-plugin-istanbul');
+const uglify = require('rollup-plugin-uglify');
+const alias = require('rollup-plugin-alias');
 
 module.exports = {
     moduleName: 'DNA',

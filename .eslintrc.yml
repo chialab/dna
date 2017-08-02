@@ -3,13 +3,11 @@ extends:
 
 globals:
   assert: true
+  process: true
 
 env:
   es6: true
   browser: true
-
-plugins:
-  - mocha
 
 parserOptions:
   ecmaVersion: 6
@@ -29,6 +27,7 @@ rules:
   indent:
     - 1
     - 4
+    - SwitchCase: 1
   func-names: 0
   prefer-const: 0
   space-before-function-paren:
@@ -90,3 +89,8 @@ rules:
     - 10
   no-bitwise: 0
   no-plusplus: 0
+  no-unused-vars:
+    - 2
+    - varsIgnorePattern: (IDOM|process)
+  no-console:
+    - 1

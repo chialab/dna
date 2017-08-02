@@ -1,12 +1,12 @@
 {
-  "name": "@dnajs/react",
-  "version": "2.6.5",
-  "description": "Just another components pattern with React implementation.",
+  "name": "@dnajs/core",
+  "version": "2.6.6",
+  "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chialab/dna"
+    "url": "git+https://github.com/chialab/dna.git"
   },
   "keywords": [
     "DNA",
@@ -15,11 +15,6 @@
     "webcomponents"
   ],
   "license": "MIT",
-  "dependencies": {
-    "@dnajs/core": "^2.6.5",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0"
-  },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
