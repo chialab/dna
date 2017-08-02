@@ -3,6 +3,8 @@
   "version": "2.6.6",
   "scripts": {
     "test": "gulp unit",
+    "test-saucelabs": "BROWSER_PROVIDER=\"saucelabs\" gulp unit",
+    "test-electron": "BROWSER_PROVIDER=\"electron\" gulp unit",
     "lint": "gulp lint",
     "dist": "gulp dist",
     "docs": "gulp docs"

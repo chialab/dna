@@ -117,7 +117,7 @@ module.exports = function(config) {
             logLevel: config.LOG_ERROR,
         });
 
-        switch (process.env.CI_BUILD_TYPE) {
+        switch (process.env.BROWSER_PROVIDER) {
             case 'saucelabs': {
                 const saucelabsBrowsers = require('./sauce.browsers.js');
                 config.set({
@@ -145,6 +145,15 @@ module.exports = function(config) {
                 });
                 break;
             }
+            case 'electron': {
+                config.set({
+                    browsers: ['Electron'],
+                    client: {
+                        useIframe: false,
+                    },
+                });
+                break;
+            }    
             default: {
                 config.set({
                     customLaunchers: {
