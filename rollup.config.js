@@ -15,18 +15,16 @@ module.exports = {
     plugins: [
         alias({
             // packages
-            '@dnajs/core': path.resolve('./packages/dna-core'),
-            '@dnajs/custom-elements-v0': path.resolve('./packages/dna-custom-elements-v0'),
-            '@dnajs/custom-elements-v1': path.resolve('./packages/dna-custom-elements-v1'),
-            '@dnajs/idom': path.resolve('./packages/dna-idom'),
-            '@dnajs/react': path.resolve('./packages/dna-react'),
+            '@dnajs/core': path.resolve('./packages/core'),
+            '@dnajs/custom-elements-v0': path.resolve('./packages/custom-elements-v0'),
+            '@dnajs/custom-elements-v1': path.resolve('./packages/custom-elements-v1'),
+            '@dnajs/idom': path.resolve('./packages/idom'),
+            '@dnajs/react': path.resolve('./packages/react'),
             // dev
             'react-dom': path.resolve('./node_modules/react-dom/dist/react-dom.min.js'),
             'react': path.resolve('./node_modules/react/dist/react.min.js'),
         }),
-        resolve({
-            skip: ['react', 'react-dom'],
-        }),
+        resolve(),
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),

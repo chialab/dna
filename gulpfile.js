@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 /**
  * Copyright 2016 Chialab. All Rights Reserved.
  *
@@ -22,32 +24,25 @@
  * SOFTWARE.
  */
 
-var gulp = require('gulp');
-var del = require('del');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var rollup = require('rollup-stream');
-var eslint = require('gulp-eslint');
-var sourcemaps = require('gulp-sourcemaps');
-var karma = require('karma');
-var path = require('path');
-var fs = require('fs');
-var glob = require('glob');
-var exec = require('child_process').exec;
+const gulp = require('gulp');
+const del = require('del');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const rollup = require('rollup-stream');
+const eslint = require('gulp-eslint');
+const sourcemaps = require('gulp-sourcemaps');
+const karma = require('karma');
+const path = require('path');
+const glob = require('glob');
 
-var env = process.env;
-var moduleName = 'DNA';
-var srcs = ['packages/**/*.js'];
-var karmaConfig = path.resolve('./karma.conf.js');
+const env = process.env;
+const srcs = ['packages/**/*.js'];
+const karmaConfig = path.resolve('./karma.conf.js');
 
-var packages = glob.sync('packages/*/').map(function(pkg) {
-    return path.basename(pkg);
-});
-var packageNames = packages.map(function(pkg) {
-    return pkg.replace(/^dna\-/, '@dnajs/');
-});
-var entries = [];
-packages.forEach(function(pkg) {
+const packages = glob.sync('packages/*/').map((pkg) => path.basename(pkg));
+
+const entries = [];
+packages.forEach((pkg) => {
     glob.sync(path.join('packages', pkg, 'index*.js'))
         .forEach((path) => {
             entries.push(path);
@@ -88,7 +83,7 @@ function lint() {
 
 function bundle(format, entryFileName) {
     delete require.cache[path.resolve('./rollup.config.js')];
-    var rollupConfig = require('./rollup.config.js');
+    let rollupConfig = require('./rollup.config.js');
     rollupConfig.entry = entryFileName;
     rollupConfig.sourceMap = true;
     rollupConfig.format = format;
@@ -104,9 +99,9 @@ function jsMin() {
     env.min = true;
 
     return entries.map((entry) => {
-        var dirname = path.dirname(entry);
-        var distFile = path.basename(entry).replace('index', path.basename(dirname));
-        var distPath = path.join(dirname, 'dist');
+        let dirname = path.dirname(entry);
+        let distFile = path.basename(entry).replace('index', path.basename(dirname));
+        let distPath = path.join(dirname, 'dist');
         return del([distPath]).then(() =>
             bundle('umd', entry)
                 .pipe(source(distFile))
@@ -120,41 +115,6 @@ function jsMin() {
     });
 }
 
-function symlinks(f, t) {
-    t = t.replace('@dnajs/', '');
-    if (!fs.existsSync('./node_modules/@dnajs')) {
-        fs.mkdirSync('./node_modules/@dnajs');
-    }
-    if (!fs.existsSync('./node_modules/@dnajs/' + t)) {
-        fs.symlinkSync(
-            path.resolve('./packages/' + f),
-            './node_modules/@dnajs/' + t,
-            'dir'
-        );
-    }
-}
-
-function publish(path, beta) {
-    return new Promise(function(resolve, reject) {
-        exec('cd ' + path + ' && npm publish --access public' + (beta ? ' --tag beta' : ''), function(error) {
-            if (error) {
-                reject(error);
-            } else {
-                resolve();
-            }
-        });
-    });
-}
-
-function publishModules(beta) {
-    return Promise.all(
-        packages.map(function(pkg) {
-            var fullPath = path.resolve(path.join('packages', pkg));
-            return publish(fullPath, beta);
-        })
-    );
-}
-
 gulp.task('unit', unit);
 gulp.task('unit-server', unitServer);
 gulp.task('unit-watch', unitWatch);
@@ -162,11 +122,5 @@ gulp.task('lint', lint);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);
-gulp.task('publish', function() {
-    return publishModules();
-});
-gulp.task('publish-beta', function() {
-    return publishModules(true);
-});
 
 gulp.task('default', ['build']);

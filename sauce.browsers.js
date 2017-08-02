@@ -52,7 +52,7 @@ module.exports = {
     SL_Chrome_2: {
         base: 'SauceLabs',
         browserName: 'chrome',
-        platform: 'Linux',
+        platform: 'Windows 10',
         version: 'latest-2',
     },
     SL_Firefox_dev: {
@@ -64,7 +64,7 @@ module.exports = {
     SL_Firefox_beta: {
         base: 'SauceLabs',
         browserName: 'firefox',
-        platform: 'Windows 10',
+        platform: 'macOS 10.12',
         version: 'beta',
     },
     SL_Firefox: {
@@ -82,7 +82,7 @@ module.exports = {
     SL_Firefox_2: {
         base: 'SauceLabs',
         browserName: 'firefox',
-        platform: 'Linux',
+        platform: 'Windows 10',
         version: 'latest-2',
     },
     SL_Safari_8: {
@@ -120,6 +120,12 @@ module.exports = {
         browserName: 'microsoftedge',
         platform: 'Windows 10',
         version: '14',
+    },
+    SL_Edge_15: {
+        base: 'SauceLabs',
+        browserName: 'microsoftedge',
+        platform: 'Windows 10',
+        version: '15',
     },
     SL_iOS_8: {
         base: 'SauceLabs',

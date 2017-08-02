@@ -6,3 +6,4 @@ npm-debug.log
 /lib
 /api
 /jsdoc-md
+/packages/*/dist/*
