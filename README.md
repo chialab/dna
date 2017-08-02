@@ -23,14 +23,14 @@ Moving away DOM strategies and focusing on the pattern, components can work with
 
 ## Usage
 
-### Use with [Custom Elements v1](./packages/dna-custom-elements-v1/)
+### Use with [Custom Elements v1](./packages/custom-elements-v1/)
 
 DNA is built on the top of [Custom Elements v1](https://www.w3.org/TR/custom-elements/) specs, so it is 100% compatible with the [CustomElementsRegistry](https://www.w3.org/TR/custom-elements/#custom-elements-api) interface. Simply define the component and register it using `customElements.define`.
 
-### Use with [Incremental DOM](./packages/dna-idom/)
+### Use with [Incremental DOM](./packages/idom/)
 
 Using [Google IncrementalDOM](https://github.com/google/incremental-dom) notifications, DNA can replicate [Custom Elements v1](https://www.w3.org/TR/custom-elements/) callbacks without any polyfill.
 
-**Use with [Custom Elements v0 spec](./packages/dna-custom-elements-v0/).**
+**Use with [Custom Elements v0 spec](./packages/custom-elements-v0/).**
 
-**Use with [React](./packages/dna-react/).**
+**Use with [React](./packages/react/).**
