@@ -128,7 +128,12 @@ module.exports = function(config) {
                     captureTimeout: 4 * 60 * 1000,
                     reporters: ['dots', 'saucelabs', 'coverage'],
                     sauceLabs: {
-                        startConnect: false,
+                        startConnect: true,
+                        connectOptions: {
+                            'no-ssl-bump-domains': 'all',
+                            'username': process.env.SAUCE_USERNAME,
+                            'accessKey': process.env.SAUCE_ACCESS_KEY,
+                        },
                         options: {},
                         username: process.env.SAUCE_USERNAME,
                         accessKey: process.env.SAUCE_ACCESS_KEY,
