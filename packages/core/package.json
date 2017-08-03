@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/core",
-  "version": "2.6.6",
+  "version": "2.7.0",
   "description": "Just another components pattern.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
