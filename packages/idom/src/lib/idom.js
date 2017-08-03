@@ -96,10 +96,17 @@ class Patch {
 }
 
 export function patch(scope, fn, data) {
-    patch.current = new Patch();
-    originalPatch(scope, interpolate.bind(this, fn, data));
-    patch.current.flush();
-    patch.current = null;
+    function exec() {
+        patch.current = new Patch();
+        originalPatch(scope, interpolate.bind(this, fn, data));
+        patch.current.flush();
+        patch.current = null;
+    }
+    if (patch.current) {
+        patch.current.after(exec);
+    } else {
+        exec();
+    }
 }
 
 export { text };
