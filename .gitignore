@@ -7,3 +7,4 @@
 /packages/*/package-lock.json
 /coverage
 /api
+.npmrc
