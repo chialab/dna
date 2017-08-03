@@ -52,12 +52,3 @@ document.body.appendChild(new MyElem());
 More:
 * [JSX support](http://dna.chialab.io/docs/#!/JSX-Templates.md)
 * [native support](http://caniuse.com/#feat=custom-elementsv1)
-
-### With MutationObserver
-
-A lite polyfill is already provided in the library for Custom Elements v1.
-
-In order to activate the polyfill, import the `@dnajs/custom-elements-v1/index.observer.js` file instead of `@dnajs/custom-elements-v1`:
-```js
-import '@dnajs/custom-elements-v1/index.observer.js';
-```

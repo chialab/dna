@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { render, define, DOM } from '../../index.observer.js';
+import { render, define, DOM } from '../../index.js';
 import { TestBaseIDOMComponent } from '../components/base.js';
 
 const WRAPPER = document.body;

@@ -57,11 +57,3 @@ export class MyComponent extends BaseComponent {
     }
 }
 ```
-
-### IncrementalDOM notifications
-You can use IncrementalDOM notifications to trigger components' life cycle callbacks. This will save you from import heavy polyfills for Custom Elements support if your application is built entirely with DNA or IncrementalDOM.
-
-In order to activate IncrementalDOM notifications, import the `index.observer.js` file instead of `@dnajs/idom`:
-```js
-import '@dnajs/idom/index.observer.js';
-```

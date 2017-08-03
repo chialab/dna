@@ -6,6 +6,7 @@
  * Just another components pattern.
  * Use with Custom Elements spec.
  */
+import './src/lib/observer.js';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
 import * as IDOM from '@dnajs/idom/src/lib/idom.js';
 import { IDOMMixin } from '@dnajs/idom/src/mixins/idom.js';

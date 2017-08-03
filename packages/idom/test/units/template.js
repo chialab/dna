@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { define, render, DOM, IDOM } from '../../index.observer.js';
+import { define, render, DOM, IDOM } from '../../index.js';
 import {
     TestComponent1,
     TestComponent2,

@@ -27,15 +27,12 @@ module.exports = {
             ],
         }) : {},
         babel({
-            exclude: [
-                'packages/*/node_modules/**',
-            ],
             include: [
                 'packages/*/node_modules/incremental-dom/**/*.js',
                 'packages/*/node_modules/@dnajs/**/*.js',
                 'packages/*/src/**',
                 'packages/*/test/**',
-                'packages/*/index*',
+                'packages/*/index.js',
             ],
         }),
         commonjs({

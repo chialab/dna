@@ -43,7 +43,7 @@ const packages = glob.sync('packages/*/').map((pkg) => path.basename(pkg));
 
 const entries = [];
 packages.forEach((pkg) => {
-    glob.sync(path.join('packages', pkg, 'index*.js'))
+    glob.sync(path.join('packages', pkg, 'index.js'))
         .forEach((path) => {
             entries.push(path);
         });

@@ -5,6 +5,7 @@
  *
  * Just another components pattern with IncrementalDOM templates.
  */
+import './src/lib/observer.js';
 import * as IDOM from './src/lib/idom.js';
 import { IDOMMixin } from './src/mixins/idom.js';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
