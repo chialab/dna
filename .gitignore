@@ -1,9 +1,10 @@
 .tmp*
-npm-debug.log
-/bower_components
+*.log
+*.cache
 /node_modules
+/packages/*/node_modules
+/packages/*/dist
+/.package.json
+package-lock.json
 /coverage
-/lib
 /api
-/jsdoc-md
-/packages/*/dist/*

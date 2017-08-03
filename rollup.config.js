@@ -1,6 +1,5 @@
 /* eslint-env node */
 
-const path = require('path');
 const babel = require('rollup-plugin-babel');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
@@ -8,49 +7,45 @@ const replace = require('rollup-plugin-replace');
 
 const istanbul = require('rollup-plugin-istanbul');
 const uglify = require('rollup-plugin-uglify');
-const alias = require('rollup-plugin-alias');
 
 module.exports = {
     moduleName: 'DNA',
     plugins: [
-        alias({
-            // packages
-            '@dnajs/core': path.resolve('./packages/core'),
-            '@dnajs/custom-elements-v0': path.resolve('./packages/custom-elements-v0'),
-            '@dnajs/custom-elements-v1': path.resolve('./packages/custom-elements-v1'),
-            '@dnajs/idom': path.resolve('./packages/idom'),
-            '@dnajs/react': path.resolve('./packages/react'),
-            // dev
-            'react-dom': path.resolve('./node_modules/react-dom/dist/react-dom.min.js'),
-            'react': path.resolve('./node_modules/react/dist/react.min.js'),
-        }),
         resolve(),
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),
         (process.env.NODE_ENV === 'test') ? istanbul({
             include: [
-                'packages/**/*.js',
+                'packages/*/*.js',
             ],
             exclude: [
-                'packages/dna-core/src/lib/custom-event.js',
-                'packages/dna-core/src/lib/matches.js',
-                'packages/**/test/**/*.js',
+                'packages/*/node_modules/**',
+                'packages/*/test/**',
+                'packages/core/src/lib/custom-event.js',
+                'packages/core/src/lib/matches.js',
             ],
         }) : {},
         babel({
+            exclude: [
+                'packages/*/node_modules/**',
+            ],
             include: [
-                'node_modules/incremental-dom/**/*.js',
-                'node_modules/@dnajs/**/*.js',
-                'packages/**/*.js',
+                'packages/*/node_modules/incremental-dom/**/*.js',
+                'packages/*/node_modules/@dnajs/**/*.js',
+                'packages/*/src/**',
+                'packages/*/test/**',
+                'packages/*/index*',
             ],
         }),
         commonjs({
             include: [
-                'node_modules/fbjs/**',
-                'node_modules/object-assign/**',
-                'node_modules/react/**',
-                'node_modules/react-dom/**',
+                'packages/*/node_modules/fbjs/**',
+                'packages/*/node_modules/object-assign/**',
+                'packages/*/node_modules/prop-types/**',
+                'packages/*/node_modules/create-react-class/**',
+                'packages/*/node_modules/react/**',
+                'packages/*/node_modules/react-dom/**',
             ],
         }),
         process.env.min === 'true' ? uglify({

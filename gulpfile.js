@@ -115,10 +115,10 @@ function jsMin() {
     });
 }
 
-gulp.task('unit', unit);
-gulp.task('unit-server', unitServer);
-gulp.task('unit-watch', unitWatch);
 gulp.task('lint', lint);
+gulp.task('unit', ['lint'], unit);
+gulp.task('unit-server', ['lint'], unitServer);
+gulp.task('unit-watch', ['lint'], unitWatch);
 gulp.task('js-min', jsMin);
 gulp.task('js-min-watch', ['js-min'], jsMinWatch);
 gulp.task('dist', ['lint', 'unit'], jsMin);

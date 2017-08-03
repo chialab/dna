@@ -22,31 +22,31 @@ function onCreation(nodes) {
 const OBSERVER = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         switch (mutation.type) {
-        case 'childList': {
-            if (mutation.addedNodes) {
-                onCreation(mutation.addedNodes);
-            }
-            if (mutation.removedNodes) {
-                mutation.removedNodes.forEach((node) => {
-                    DOM.disconnect(node);
-                });
-            }
-            break;
-        }
-        case 'attributes': {
-            let attributeName = mutation.attributeName;
-            if (attributeName === 'is') {
+            case 'childList': {
+                if (mutation.addedNodes) {
+                    onCreation(mutation.addedNodes);
+                }
+                if (mutation.removedNodes) {
+                    mutation.removedNodes.forEach((node) => {
+                        DOM.disconnect(node);
+                    });
+                }
                 break;
             }
-            let node = mutation.target;
-            DOM.update(
-                node,
-                attributeName,
-                mutation.oldValue,
-                node.getAttribute(attributeName)
-            );
-            break;
-        }
+            case 'attributes': {
+                let attributeName = mutation.attributeName;
+                if (attributeName === 'is') {
+                    break;
+                }
+                let node = mutation.target;
+                DOM.update(
+                    node,
+                    attributeName,
+                    mutation.oldValue,
+                    node.getAttribute(attributeName)
+                );
+                break;
+            }
         }
     });
 });

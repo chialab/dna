@@ -3,7 +3,7 @@
  * @type {RegExp}
  * @private
  */
-const HOST_REGEX = /\:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
+const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 /**
  * CSSKeyframesRule class.
  * @type {function}
@@ -23,7 +23,7 @@ const KFRule = self.CSSKeyframesRule ||
 function scoped(sheet, scope) {
     let rules = sheet.cssRules || sheet.rules;
     if (sheet.insertRule) {
-        let reg = new RegExp(`${scope}([\\s\.\[:]|$)`);
+        let reg = new RegExp(`${scope}([\\s.[:]|$)`);
         for (let i = 0, len = rules.length; i < len; i++) {
             let rule = rules[i];
             if (!(rule instanceof KFRule)) {
