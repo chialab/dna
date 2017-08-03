@@ -1,7 +1,8 @@
 {
   "name": "@dnajs/dna",
-  "version": "2.6.6",
+  "version": "2.7.0",
   "scripts": {
+    "postinstall": "lerna bootstrap",
     "test": "gulp unit",
     "test-saucelabs": "BROWSER_PROVIDER=\"saucelabs\" gulp unit",
     "test-electron": "BROWSER_PROVIDER=\"electron\" gulp unit",
