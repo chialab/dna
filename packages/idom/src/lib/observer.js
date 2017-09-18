@@ -9,14 +9,16 @@ const _removed = notifications.nodesDeleted;
 const _changed = attributes[symbols.default];
 
 notifications.nodesCreated = function(nodes) {
-    nodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            let Ctr = registry.get(node.getAttribute('is') || node.tagName);
-            let component = DOM.getNodeComponent(node) || (Ctr && new Ctr(node));
-            if (component) {
-                DOM.connect(component);
+    patch.current.after(() => {
+        nodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                let Ctr = registry.get(node.getAttribute('is') || node.tagName);
+                let component = DOM.getNodeComponent(node) || (Ctr && new Ctr(node));
+                if (component) {
+                    DOM.connect(component);
+                }
             }
-        }
+        });
     });
     /* istanbul ignore if */
     if (_created) {
