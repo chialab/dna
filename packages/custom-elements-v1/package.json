@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/custom-elements-v1",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "Just another components pattern with Custom Elements v1 implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@dnajs/core": "^2.7.0",
-    "@dnajs/idom": "^2.7.2"
+    "@dnajs/idom": "^2.7.3"
   },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
