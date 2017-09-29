@@ -1,15 +1,27 @@
 {
+    "compact": "auto",
     "presets": [
-        ["es2015", {
-            "modules": false
+        ["env", {
+            "targets": {
+                "browsers": ["ie >= 11", "safari >= 8"]
+            },
+            "modules": false,
+            "loose": true
         }]
     ],
     "plugins": [
-        "external-helpers", ["transform-es2015-classes", {
-            "loose": true
-        }],
-        "transform-inline-environment-variables", ["transform-react-jsx", {
-            "pragma": "h"
-        }]
+        "external-helpers",
+        [
+            "transform-es2015-classes",
+            {
+                "loose": true
+            }
+        ],
+        "transform-inline-environment-variables",
+        ["transform-react-jsx",
+            {
+                "pragma": "h"
+            }
+        ]
     ]
 }
