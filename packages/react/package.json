@@ -1,7 +1,7 @@
 {
   "name": "@dnajs/react",
   "version": "2.7.0",
-  "description": "Just another components pattern with React implementation.",
+  "description": "Evolution-based components with React implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
   "repository": {

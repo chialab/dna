@@ -3,7 +3,7 @@
  * (c) 2015-2017 Chialab (http://www.chialab.it) <dev@chialab.io>
  * http://dna.chialab.io
  *
- * Just another components pattern.
+ * Evolution-based components.
  * Use with Custom Elements v0 spec.
  */
 import { mix, MIXINS } from '@dnajs/core/src/core.js';

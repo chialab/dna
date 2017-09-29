@@ -1,6 +1,6 @@
 [![Logo](https://cdn.rawgit.com/Chialab/dna/master/logo.svg)](http://dna.chialab.io)
 
-Just another components pattern with IncrementalDOM templates.
+Evolution-based components with IncrementalDOM templates.
 
 [Documentation](http://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](http://dna.chialab.io) | [Author home page](http://www.chialab.it)
 

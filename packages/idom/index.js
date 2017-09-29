@@ -3,7 +3,8 @@
  * (c) 2015-2017 Chialab (http://www.chialab.it) <dev@chialab.io>
  * http://dna.chialab.io
  *
- * Just another components pattern with IncrementalDOM templates.
+ * Evolution-based components.
+ * Use with IncrementalDOM templates.
  */
 import './src/lib/observer.js';
 import * as IDOM from './src/lib/idom.js';

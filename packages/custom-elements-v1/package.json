@@ -1,7 +1,7 @@
 {
   "name": "@dnajs/custom-elements-v1",
   "version": "2.7.3",
-  "description": "Just another components pattern with Custom Elements v1 implementation.",
+  "description": "Evolution-based components with Custom Elements v1 implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "index.js",
   "repository": {

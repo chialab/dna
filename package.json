@@ -1,5 +1,6 @@
 {
-  "name": "@dnajs/dna",
+  "name": "@dnajs/core",
+  "description": "Evolution-based components.",
   "version": "2.7.3",
   "scripts": {
     "postinstall": "lerna bootstrap",

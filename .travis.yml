@@ -75,7 +75,7 @@ jobs:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
         - git clone https://${GH_TOKEN}@github.com/Chialab/dna.wiki.git wiki
-        - ./node_modules/.bin/documentation build src/**/*.js -f md > ./wiki/API.md
+        - ./node_modules/.bin/documentation build packages/core/**/*.js -f md > ./wiki/API.md
         - cd wiki
         - git add .
         - git diff-index --quiet HEAD || git commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
