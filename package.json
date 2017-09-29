@@ -1,5 +1,5 @@
 {
-  "name": "@dnajs/core",
+  "name": "@dnajs/dna",
   "description": "Evolution-based components.",
   "version": "2.7.3",
   "scripts": {
