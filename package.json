@@ -12,9 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chialab/dna"
+    "url": "git+https://github.com/chialab/dna.git"
   },
+  "author": "Chialab <dev@chialab.io> (https://chialab.io)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chialab/dna/issues"
+  },
+  "homepage": "https://dna.chialab.io",
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
