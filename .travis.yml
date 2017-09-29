@@ -97,6 +97,7 @@ jobs:
         - npm install
         - cd ..
         - node ./pages/index.js . --extra.ga 'UA-149131-70'
+        - ls -R public
       after_success:
         - for file in public/*.html; do mv -- "$file" "${file%%.html}"; done
         - for file in public/**/*.html; do mv -- "$file" "${file%%.html}"; done
