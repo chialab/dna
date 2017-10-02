@@ -1,11 +1,34 @@
 import { reduce } from '../helpers/arr-reduce.js';
 
 /**
+ * A Mixin helper class.
+ * @ignore
+ */
+class Mixin {
+    /**
+     * Create a mixable class.
+     * @param {Function} superClass The class to extend.
+     */
+    constructor(superclass) {
+        superclass = superclass || class {};
+        this.superclass = superclass;
+    }
+    /**
+     * Mix the super class with a list of mixins.
+     * @param {...Function} mixins *N* mixin functions.
+     * @return {Function} The extended class.
+     */
+    with() {
+        // eslint-disable-next-line
+        let args = [].slice.call(arguments, 0);
+        return reduce(args, (c, mixin) => mixin(c), this.superclass);
+    }
+}
+
+/**
  * Mix a class with a mixin.
  * @author Justin Fagnani (https://github.com/justinfagnani)
- * @method mix(...).with(...)
- * @memberof! DNA.
- * @static
+ * @memberof DNA
  *
  * @param {Function} superClass The class to extend.
  * @return {Function} A mixed class.
@@ -37,35 +60,5 @@ import { reduce } from '../helpers/arr-reduce.js';
  *     ...
  * }
  * ```
- */
-
-/**
- * A Mixin helper class.
- * @ignore
- */
-class Mixin {
-    /**
-     * Create a mixable class.
-     * @param {Function} superClass The class to extend.
-     */
-    constructor(superclass) {
-        superclass = superclass || class {};
-        this.superclass = superclass;
-    }
-    /**
-     * Mix the super class with a list of mixins.
-     * @param {...Function} mixins *N* mixin functions.
-     * @return {Function} The extended class.
-     */
-    with() {
-        // eslint-disable-next-line
-        let args = [].slice.call(arguments, 0);
-        return reduce(args, (c, mixin) => mixin(c), this.superclass);
-    }
-}
-
-/**
- * Create a Mixin instance.
- * @ignore
  */
 export const mix = (superClass) => new Mixin(superClass);

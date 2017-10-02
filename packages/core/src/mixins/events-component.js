@@ -47,8 +47,10 @@ function delegateCallback(selector, callback) {
  * Simple Custom Component with events delegation,
  * It also implement a `dispatchEvent` wrapper named `trigger`.
  * @mixin EventsMixin
- * @memberof DNA.MIXINS.
- * @static
+ * @memberof DNA.MIXINS
+ *
+ * @param {Function} SuperClass The class to extend.
+ * @return {Function} The extended class.
  *
  * @example
  * ```js

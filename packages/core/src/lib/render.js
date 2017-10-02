@@ -3,8 +3,7 @@ import { appendChild } from './dom.js';
 /**
  * Create and append a new component instance.
  * @method render
- * @memberof! DNA.
- * @static
+ * @memberof DNA
  *
  * @param {HTMLElement} node The parent node.
  * @param {Function} Component The component constructor.

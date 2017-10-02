@@ -2,9 +2,7 @@ import { registry } from './registry.js';
 
 /**
  * Register a new component.
- * @method define
- * @memberof! DNA.
- * @static
+ * @memberof DNA
  *
  * @param {String} name The id of the component.
  * @param {Function} Ctr The component constructor.

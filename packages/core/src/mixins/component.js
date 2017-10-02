@@ -4,7 +4,9 @@ import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js';
  * The base custom component mixins. Just add life cycles callback and `is` getter.
  * @mixin ComponentMixin
  * @memberof DNA.MIXINS
- * @static
+ *
+ * @param {Function} SuperClass The class to extend.
+ * @return {Function} The extended class.
  */
 export const ComponentMixin = (SuperClass) => {
     const Component = class extends SuperClass {

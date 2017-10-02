@@ -5,14 +5,16 @@
  *
  * Evolution-based components.
  */
+
+/**
+ * @module DNA
+ */
+export * from './src/core.js';
+
 import { mix, MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 import { proxy } from './src/lib/proxy.js';
 
-/**
- * @namespace DNA
- */
-export * from './src/core.js';
 export { registry };
 export { proxy };
 export { bootstrap } from './src/lib/bootstrap.js';
@@ -24,8 +26,7 @@ const Component = proxy(class {});
 /**
  * Simple Custom Component with some behaviors.
  * @class BaseComponent
- * @memberof DNA.
- * @static
+ * @memberof DNA
  *
  * @example
  * ```js

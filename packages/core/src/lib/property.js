@@ -4,10 +4,13 @@ import { define } from '../helpers/obj-define.js';
 /**
  * Power to the component's properties.
  * Type checking, validation, callbacks, events and attribute syncing.
+ * @memberof DNA
  */
 export class Property {
     /**
      * Create a Property instance.
+     * @memberof DNA.Property
+     *
      * @param {Function|Array} A single or a list of valid constructors for the property value.
      * @return {Property}
      */
@@ -42,6 +45,8 @@ export class Property {
     }
     /**
      * Add a callback when the property changes.
+     * @memberof DNA.Property
+     *
      * @param {Function} callback The callback to trigger.
      * @return {Property} The property instance for chaining.
      */
@@ -53,6 +58,8 @@ export class Property {
     }
     /**
      * Remove a callback on property changes.
+     * @memberof DNA.Property
+     *
      * @param {Function} callback The callback to remove.
      * @return {Property} The property instance for chaining.
      */
@@ -65,7 +72,9 @@ export class Property {
     }
     /**
      * Trigger callbacks after a change.
+     * @memberof DNA.Property
      * @private
+     *
      * @param {*} newValue The current property value.
      * @param {*} oldValue The previous property value.
      */
@@ -82,6 +91,8 @@ export class Property {
     }
     /**
      * Check if a property accepts a given type as value.
+     * @memberof DNA.Property
+     *
      * @param {Function} Ctr The constructor for the given type.
      * @return {Boolean}
      */
@@ -92,6 +103,8 @@ export class Property {
      * Set the property name.
      * It also set the attrName if `.attribute` method as been previously
      * invoked without arguments.
+     * @memberof DNA.Property
+     *
      * @param {String} name The property name.
      * @return {Property} The property instance for chaining.
      */
@@ -104,6 +117,8 @@ export class Property {
     }
     /**
      * Set the property initial value.
+     * @memberof DNA.Property
+     *
      * @param {*} initValue The property initial value.
      * @return {Property} The property instance for chaining.
      */
@@ -116,6 +131,8 @@ export class Property {
     /**
      * Set the attribute name to sync.
      * Invoked without arguments, it retrieve the name of the property.
+     * @memberof DNA.Property
+     *
      * @param {String} attrName The attribute name.
      * @return {Property} The property instance for chaining.
      */
@@ -131,6 +148,8 @@ export class Property {
     }
     /**
      * Add a DOM event name to dispatch on changes.
+     * @memberof DNA.Property
+     *
      * @param {String} evName The event name.
      * @return {Property} The property instance for chaining.
      */
@@ -141,6 +160,8 @@ export class Property {
     /**
      * Set a getter function for the property.
      * By default, the property value will be return.
+     * @memberof DNA.Property
+     *
      * @param {Function} callback The property getter.
      * @return {Property} The property instance for chaining.
      */
@@ -154,6 +175,8 @@ export class Property {
      * Set a setter function for the property.
      * By default, the property value will be updated with given value
      * without any modification.
+     * @memberof DNA.Property
+     *
      * @param {Function} callback The property setter.
      * @return {Property} The property instance for chaining.
      */
@@ -167,6 +190,8 @@ export class Property {
      * Set the property validator.
      * A validator should return `true` if the value is acceptable
      * or `false` if unaccaptable.
+     * @memberof DNA.Property
+     *
      * @param {Function} callback The property validtor.
      * @return {Property} The property instance for chaining.
      */
@@ -178,7 +203,9 @@ export class Property {
     }
     /**
      * Check if the given value is a valid type.
+     * @memberof DNA.Property
      * @private
+     *
      * @param {*} val The value to check.
      * @return {Boolean}
      */
@@ -201,6 +228,8 @@ export class Property {
     /**
      * Attach the property to a scope (a component instance).
      * Set the default value if provided.
+     * @memberof DNA.Property
+     *
      * @param {Object} scope The scope which needs to be bound with the property.
      */
     init(scope) {
@@ -220,9 +249,7 @@ export class Property {
 
 /**
  * Helper method for Property creation.
- * @method prop
- * @memberof! DNA.
- * @static
+ * @memberof DNA
  *
  * @property {Property} ANY A property without type validation.
  * @property {Property} STRING A property which accepts only strings.

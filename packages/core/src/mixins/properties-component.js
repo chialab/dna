@@ -52,7 +52,9 @@ function setAttribute(context, attr, value) {
  * Simple Custom Component for properties initialization via attributes.
  * @mixin PropertiesMixin
  * @memberof DNA.MIXINS
- * @static
+ *
+ * @param {Function} SuperClass The class to extend.
+ * @return {Function} The extended class.
  *
  * @example
  * ```js

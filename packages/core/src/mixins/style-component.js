@@ -38,7 +38,9 @@ function createStyle(component) {
  * Simple Custom Component with css style handling using the `css` property.
  * @mixin StyleMixin
  * @memberof DNA.MIXINS
- * @static
+ *
+ * @param {Function} SuperClass The class to extend.
+ * @return {Function} The extended class.
  *
  * @example
  * ```js

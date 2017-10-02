@@ -8,18 +8,14 @@ import { TemplateMixin } from './mixins/template-component.js';
 /**
  * A set of DOM helpers for callbacks trigger when Custom Elements
  * are not supported by the browser.
- * @name DOM
- * @namespace DNA.DOM
+ * @module DOM
  * @memberof DNA
- * @static
  */
 export { DOM };
 /**
  * A set of core mixins.
- * @name MIXINS
- * @namespace DNA.MIXINS
+ * @module MIXINS
  * @memberof DNA
- * @static
  */
 export const MIXINS = {
     ComponentMixin,

@@ -19,7 +19,6 @@ function isNew(node) {
 /**
  * Shim original Element constructors in order to be used with `new`.
  * @method shim
- * @static
  * @private
  *
  * @param {Function} Original The original constructor to shim.

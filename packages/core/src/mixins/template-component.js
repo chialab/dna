@@ -4,7 +4,6 @@ import { isUndefined, isFunction, isFalsy } from '../lib/typeof.js';
  * Simple Custom Component with template handling using the `template` property.
  * @memberof DNA.MIXINS
  * @mixin TemplateMixin
- * @static
  *
  * @param {Function} SuperClass The class to extend.
  * @return {Function} The extended class.

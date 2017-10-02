@@ -3,6 +3,8 @@ import { getNodeComponent, connect } from './dom.js';
 
 /**
  * Instantiate all defined components in a DOM tree.
+ * @memberof DNA
+ *
  * @param {HTMLElement} root The root Node of the tree.
  */
 export function bootstrap(root) {
