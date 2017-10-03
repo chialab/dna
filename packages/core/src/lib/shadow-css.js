@@ -56,6 +56,7 @@ function scoped(sheet, scope) {
             }
         }
     }
+    return rules;
 }
 
 /**
@@ -65,12 +66,14 @@ function scoped(sheet, scope) {
  * @param {HTMLStyleElement} style The style element.
  * @param {String} css The css string to convert.
  * @param {String} is The component name for scoping.
- * @return {String} The converted string.
  */
 export function convertShadowCSS(style, css, is) {
     let scope = `.${is}`;
     style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) =>
         `${scope}${mod ? mod.slice(1, -1) : ''}`
     );
-    scoped(style.sheet, scope) || '';
+    style.textContent = [].map.call(
+        scoped(style.sheet, scope),
+        (rule) => rule.cssText
+    ).join('');
 }
