@@ -15,7 +15,7 @@ const CSS_COMMENTS_REGEX = /\s*(?!<")\/\*[^*]+\*\/(?!")\s*/g;
  * @type {RegExp}
  * @private
  */
-const CSS_RULES_REGEX = /(#|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
+const CSS_RULES_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
 
 /**
  * Convert a shadowDOM css string into a normal scoped css.
