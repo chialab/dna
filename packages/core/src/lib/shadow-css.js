@@ -9,7 +9,7 @@ const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * @type {RegExp}
  * @private
  */
-const CONTENT_REGEX = /content:\s*([\w_-]*);/g;
+const CONTENT_REGEX = /(?:^|\s)content:\s*([\w_-]*);/g;
 
 /**
  * CSSKeyframesRule class.
