@@ -5,6 +5,13 @@
  */
 const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 /**
+ * A regex to match content rule.
+ * @type {RegExp}
+ * @private
+ */
+const CONTENT_REGEX = /content:\s*([\w_-]*);/g;
+
+/**
  * CSSKeyframesRule class.
  * @type {function}
  * @private
@@ -39,11 +46,9 @@ function scoped(sheet, scope) {
                                 return `${scope} ${rule}`;
                             })
                             .join(', ');
-                        body = rule.cssText.replace(rule.selectorText, selector);
-                        // Safari does not use "..." for single word content
-                        if (rule.style && rule.style.content && !rule.style.content.match(/^([\w_-]+\(|['"])/)) {
-                            body = body.replace(`content: ${rule.style.content}`, `content: "${rule.style.content}"`);
-                        }
+                        body = rule.cssText
+                            .replace(rule.selectorText, selector)
+                            .replace(CONTENT_REGEX, 'content: "$1";');
                     } else if (rule.cssRules || rule.rules) {
                         scoped(rule, scope);
                         body = rule.cssText;
@@ -56,7 +61,10 @@ function scoped(sheet, scope) {
             }
         }
     }
-    return rules;
+    return [].map.call(
+        rules,
+        (rule) => rule.cssText.replace(CONTENT_REGEX, 'content: "$1";')
+    ).join('');
 }
 
 /**
@@ -69,11 +77,9 @@ function scoped(sheet, scope) {
  */
 export function convertShadowCSS(style, css, is) {
     let scope = `.${is}`;
-    style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) =>
-        `${scope}${mod ? mod.slice(1, -1) : ''}`
-    );
-    style.textContent = [].map.call(
-        scoped(style.sheet, scope),
-        (rule) => rule.cssText
-    ).join('');
+    style.textContent = css
+        .replace(HOST_REGEX, (fullMatch, mod) =>
+            `${scope}${mod ? mod.slice(1, -1) : ''}`
+        );
+    style.textContent = scoped(style.sheet, scope);
 }
