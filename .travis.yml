@@ -25,20 +25,20 @@ jobs:
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 6
-      before_install:
-        - sh -e /etc/init.d/xvfb start
       install:
         - yarn install
+      before_script:
+        - sh -e /etc/init.d/xvfb start
       script:
         - yarn test
 
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 7
-      before_install:
-        - sh -e /etc/init.d/xvfb start
       install:
         - yarn install
+      before_script:
+        - sh -e /etc/init.d/xvfb start
       script:
         - yarn test
 
@@ -122,6 +122,9 @@ jobs:
   allow_failures:
     - env: CI_BUILD_TYPE=electron
     - env: CI_BUILD_TYPE=saucelabs
+
+before_install:
+  - npm install -g yarn
 
 after_success:
   - cat coverage/report-lcov/*/lcov.info | ./node_modules/.bin/codecov
