@@ -43,9 +43,19 @@ jobs:
         - yarn test
 
     - stage: test
+      env: CI_BUILD_TYPE=default
+      node_js: 8
+      install:
+        - yarn install
+      before_script:
+        - sh -e /etc/init.d/xvfb start
+      script:
+        - yarn test
+
+    - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
-      node_js: 7
+      node_js: 8
       install:
         - yarn install
         # - yarn install karma-sauce-launcher
@@ -55,7 +65,7 @@ jobs:
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=electron
-      node_js: 7
+      node_js: 8
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
@@ -66,7 +76,7 @@ jobs:
     - stage: test
       os: osx
       env: CI_BUILD_TYPE=electron
-      node_js: 7
+      node_js: 8
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
@@ -74,13 +84,23 @@ jobs:
       script:
         - yarn run test-electron
 
+    - stage: test
+      env: CI_BUILD_TYPE=default
+      node_js: latest
+      install:
+        - yarn install
+      before_script:
+        - sh -e /etc/init.d/xvfb start
+      script:
+        - yarn test
+
     ##############
     ### Deploy ###
     ##############
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
-      node_js: 7
+      node_js: latest
       install:
         - yarn install documentation
         - yarn install
@@ -98,7 +118,7 @@ jobs:
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
-      node_js: 7
+      node_js: latest
       install:
         - pip install --user awscli
         - aws configure set preview.cloudfront true
