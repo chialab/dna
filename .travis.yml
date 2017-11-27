@@ -1,69 +1,82 @@
 language: node_js
 
-branches:
-  only:
-    - master
+stages:
+  - name: test
+  - name: deploy
+    if: repo = Chialab/dna AND branch = master AND type IN (push, api)
+
+addons:
+  apt:
+    packages:
+      - xvfb
 
 env:
   global:
     - "SAUCE_USERNAME=$SAUCE_NEXT_USERNAME"
     - "SAUCE_ACCESS_KEY=$SAUCE_NEXT_ACCESS_KEY"
+    - "DISPLAY=':99.0'"
+    - "CHROME_BIN=chromium-browser"
 
 jobs:
   include:
+    ############
+    ### Test ###
+    ############
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 6
       before_install:
-        - export DISPLAY=:99.0
-        - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
       install:
         - yarn install
       script:
         - yarn test
+
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 7
       before_install:
-        - export DISPLAY=:99.0
-        - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
       install:
         - yarn install
       script:
         - yarn test
+
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
       node_js: 7
       install:
         - yarn install
-        - yarn install karma-sauce-launcher
+        # - yarn install karma-sauce-launcher
       script:
         - yarn run test-saucelabs
+
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=electron
       node_js: 7
       install:
-        - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn install electron karma-electron-launcher
+        # - yarn install electron karma-electron-launcher
       script:
         - yarn run test-electron
+
     - stage: test
       os: osx
       env: CI_BUILD_TYPE=electron
       node_js: 7
       install:
-        - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn install electron karma-electron-launcher
+        # - yarn install electron karma-electron-launcher
       script:
         - yarn run test-electron
+
+    ##############
+    ### Deploy ###
+    ##############
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
@@ -71,15 +84,17 @@ jobs:
       install:
         - yarn install documentation
         - yarn install
-      script:
+        - git clone https://${GH_TOKEN}@github.com/Chialab/dna.wiki.git wiki
+      before_script:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
-        - git clone https://${GH_TOKEN}@github.com/Chialab/dna.wiki.git wiki
+      script:
         - ./node_modules/.bin/documentation build packages/core/index.js -f md > ./wiki/API.md
-        - cd wiki
-        - git add .
-        - git diff-index --quiet HEAD || git commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
-        - git push origin
+      after_success:
+        - git -C wiki add .
+        - git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
+        - git -C wiki push origin
+
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
@@ -87,15 +102,13 @@ jobs:
       install:
         - pip install --user awscli
         - aws configure set preview.cloudfront true
+        - git clone https://gitlab.com/chialab/project-pages.git pages
       before_script:
         - mkdir -p public
-      script:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
-        - git clone https://gitlab.com/chialab/project-pages.git pages
-        - cd pages
-        - yarn install
-        - cd ..
+      script:
+        - yarn --cwd pages install
         - node ./pages/index.js . --extra.ga 'UA-149131-70'
         - ls -R public
       after_success:
@@ -105,14 +118,10 @@ jobs:
         - aws s3 sync public s3://$S3_BUCKET/$CNAME/ --region eu-west-1 --size-only --exclude "*" --include "*.*" --delete
         - aws s3 sync public s3://$S3_BUCKET/$CNAME/ --region eu-west-1 --size-only --content-type text/html --exclude "*.*" --delete
         - aws cloudfront create-invalidation --paths '/*' --distribution-id $(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Aliases.Items, '${CNAME}')].Id" --output text)
+
   allow_failures:
     - env: CI_BUILD_TYPE=electron
     - env: CI_BUILD_TYPE=saucelabs
-
-addons:
-  apt:
-    packages:
-      - xvfb
 
 after_success:
   - cat coverage/report-lcov/*/lcov.info | ./node_modules/.bin/codecov
