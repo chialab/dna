@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
 import ReactDOM from 'react-dom';
-import { render, define, DOM } from '../index.js';
-import { ReactTestComponent } from './components/base.js';
+import { render, define, DOM } from '../../index.js';
+import { ReactTestComponent } from '../components/base.js';
 
 const WRAPPER = document.createElement('div');
 document.body.appendChild(WRAPPER);

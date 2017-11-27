@@ -23,7 +23,7 @@ export class ReactTestComponent extends BaseComponent {
     }
 
     get template() {
-        return () => <span>{this.name} {this.lastName}</span>;
+        return React.createElement('span', null, `${this.name} ${this.lastName}`);
     }
 
     constructor() {
