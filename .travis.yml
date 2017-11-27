@@ -59,7 +59,7 @@ jobs:
       node_js: 8
       install:
         - yarn install
-        - yarn add karma-sauce-launcher
+        - yarn add -W karma-sauce-launcher
       script:
         - yarn run test-saucelabs
 
@@ -70,7 +70,7 @@ jobs:
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn add electron karma-electron-launcher
+        - yarn add -W electron karma-electron-launcher
       script:
         - yarn run test-electron
 
@@ -81,7 +81,7 @@ jobs:
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn add electron karma-electron-launcher
+        - yarn add -W electron karma-electron-launcher
       script:
         - yarn run test-electron
 
