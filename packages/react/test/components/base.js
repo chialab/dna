@@ -23,7 +23,7 @@ export class ReactTestComponent extends BaseComponent {
     }
 
     get template() {
-        return React.createElement('span', null, `${this.name} ${this.lastName}`);
+        return () => h('span', null, `${this.name} ${this.lastName}`);
     }
 
     constructor() {
