@@ -3,13 +3,18 @@
   "description": "Evolution-based components.",
   "version": "2.7.4",
   "scripts": {
-    "postinstall": "lerna bootstrap",
-    "test": "gulp unit",
-    "test-saucelabs": "BROWSER_PROVIDER=\"saucelabs\" gulp unit",
-    "test-electron": "BROWSER_PROVIDER=\"electron\" gulp unit",
-    "lint": "gulp lint",
-    "dist": "gulp dist",
-    "docs": "gulp docs"
+    "postinstall": "which rna || npm install --no-save git+https://gitlab.com/chialab/rna-cli.git",
+    "start": "echo 'Nothing to start' && exit 1",
+    "serve": "echo 'Nothing to serve' && exit 1",
+    "build": "rna build",
+    "clean": "rm -rf node_modules/ && rna bootstrap",
+    "unit": "rna unit",
+    "test": "rna unit",
+    "test-saucelabs": "rna unit --saucelabs",
+    "test-electron": "rna unit --electron",
+    "lint": "rna lint",
+    "dist": "rna build --production --no-map",
+    "docs": "echo 'Documentation builder not set up' && exit 1"
   },
   "repository": {
     "type": "git",
@@ -17,43 +22,17 @@
   },
   "author": "Chialab <dev@chialab.io> (https://chialab.io)",
   "license": "MIT",
+  "private": true,
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
   "homepage": "https://dna.chialab.io",
   "devDependencies": {
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-transform-inline-environment-variables": "^6.8.0",
-    "babel-plugin-transform-react-jsx": "^6.24.0",
-    "babel-preset-env": "^1.6.0",
-    "chai": "^4.0.0",
     "codecov.io": "^0.1.6",
-    "del": "^3.0.0",
     "eslint": "^4.2.0",
-    "eslint-plugin-mocha": "^4.11.0",
-    "glob": "^7.1.1",
-    "gulp": "^3.9.1",
-    "gulp-eslint": "^4.0.0",
-    "gulp-sourcemaps": "^2.6.0",
-    "karma": "^1.7.0",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.1",
-    "karma-firefox-launcher": "^1.0.0",
-    "karma-mocha": "^1.3.0",
-    "karma-rollup-preprocessor": "^4.0.2",
-    "karma-sauce-launcher": "^1.1.0",
-    "lerna": "^2.0.0-rc.5",
-    "mocha": "^3.4.0",
-    "rollup": "^0.45.0",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-istanbul": "^1.1.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-replace": "^1.1.1",
-    "rollup-plugin-uglify": "^2.0.1",
-    "rollup-stream": "^1.23.0",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
-  }
+    "eslint-plugin-mocha": "^4.11.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
