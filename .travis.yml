@@ -1,3 +1,4 @@
+---
 language: node_js
 
 stages:
@@ -58,7 +59,7 @@ jobs:
       node_js: 8
       install:
         - yarn install
-        - yarn install karma-sauce-launcher
+        - yarn add karma-sauce-launcher
       script:
         - yarn run test-saucelabs
 
@@ -69,7 +70,7 @@ jobs:
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn install electron karma-electron-launcher
+        - yarn add electron karma-electron-launcher
       script:
         - yarn run test-electron
 
@@ -80,7 +81,7 @@ jobs:
       install:
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         - yarn install
-        - yarn install electron karma-electron-launcher
+        - yarn add electron karma-electron-launcher
       script:
         - yarn run test-electron
 

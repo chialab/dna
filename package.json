@@ -3,7 +3,7 @@
   "description": "Evolution-based components.",
   "version": "2.7.4",
   "scripts": {
-    "postinstall": "which rna || npm install --no-save git+https://gitlab.com/chialab/rna-cli.git",
+    "postinstall": "which rna || yarn add git+https://gitlab.com/chialab/rna-cli.git",
     "start": "echo 'Nothing to start' && exit 1",
     "serve": "echo 'Nothing to serve' && exit 1",
     "build": "rna build",
