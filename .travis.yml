@@ -19,9 +19,9 @@ jobs:
         - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
       install:
-        - npm install
+        - yarn install
       script:
-        - npm test
+        - yarn test
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 7
@@ -30,18 +30,18 @@ jobs:
         - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
       install:
-        - npm install
+        - yarn install
       script:
-        - npm test
+        - yarn test
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
       node_js: 7
       install:
-        - npm install
-        - npm install karma-sauce-launcher
+        - yarn install
+        - yarn install karma-sauce-launcher
       script:
-        - npm run test-saucelabs
+        - yarn run test-saucelabs
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=electron
@@ -49,10 +49,10 @@ jobs:
       install:
         - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - npm install
-        - npm install electron karma-electron-launcher
+        - yarn install
+        - yarn install electron karma-electron-launcher
       script:
-        - npm run test-electron
+        - yarn run test-electron
     - stage: test
       os: osx
       env: CI_BUILD_TYPE=electron
@@ -60,17 +60,17 @@ jobs:
       install:
         - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - npm install
-        - npm install electron karma-electron-launcher
+        - yarn install
+        - yarn install electron karma-electron-launcher
       script:
-        - npm run test-electron
+        - yarn run test-electron
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
       node_js: 7
       install:
-        - npm install documentation
-        - npm install
+        - yarn install documentation
+        - yarn install
       script:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
@@ -94,7 +94,7 @@ jobs:
         - git config --global user.name "travis-ci"
         - git clone https://gitlab.com/chialab/project-pages.git pages
         - cd pages
-        - npm install
+        - yarn install
         - cd ..
         - node ./pages/index.js . --extra.ga 'UA-149131-70'
         - ls -R public
