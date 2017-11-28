@@ -3,6 +3,9 @@
 import ReactDOM from 'react-dom';
 import { render, define, DOM } from '../../index.js';
 import { ReactTestComponent } from '../components/base.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 const WRAPPER = document.createElement('div');
 document.body.appendChild(WRAPPER);

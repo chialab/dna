@@ -14,6 +14,9 @@ import { define } from '../../src/lib/define.js';
 import { bootstrap } from '../../src/lib/bootstrap.js';
 
 import { BaseComponent } from '../../index.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 const WRAPPER = document.body;
 

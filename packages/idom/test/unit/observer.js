@@ -2,6 +2,9 @@
 
 import { define, DOM, IDOM } from '../../index.js';
 import { TestComponent } from '../components/observer.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 // eslint-disable-next-line
 const h = IDOM.h;

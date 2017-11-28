@@ -28,6 +28,7 @@
   },
   "homepage": "https://dna.chialab.io",
   "devDependencies": {
+    "chai": "^4.1.2",
     "codecov.io": "^0.1.6",
     "eslint": "^4.12.0",
     "eslint-plugin-mocha": "^4.11.0"

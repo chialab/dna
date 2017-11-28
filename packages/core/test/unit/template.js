@@ -7,6 +7,9 @@ import {
     TestComponent3,
     TestComponent4,
 } from '../components/template.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 const WRAPPER = document.body;
 

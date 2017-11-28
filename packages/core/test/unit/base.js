@@ -2,6 +2,9 @@
 
 import { define, DOM } from '../../index.js';
 import { TestBaseComponent } from '../components/base.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 const WRAPPER = document.body;
 define('test-base-component', TestBaseComponent);
