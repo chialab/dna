@@ -190,5 +190,15 @@ describe('Unit: lib', () => {
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
         });
+
+        let WRAPPER2 = document.createElement('div');
+        WRAPPER2.innerHTML = '<p>Hello again <test1-helper-component age="21"/><test1-helper-component age="22"/></p>';
+        it('should call callback for every component', () => {
+            let count = 0;
+            bootstrap(WRAPPER2, () => {
+                count++;
+            });
+            assert.equal(count, 2);
+        });
     });
 });
