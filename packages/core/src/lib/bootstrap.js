@@ -1,5 +1,6 @@
 import { registry } from './registry.js';
 import { getNodeComponent, connect } from './dom.js';
+import { isFunction } from './typeof.js';
 
 /**
  * Instantiate all defined components in a DOM tree.
@@ -16,7 +17,7 @@ export function bootstrap(root, beforeConnectCallback) {
         for (let i = 0, len = elements.length; i < len; i++) {
             if (!getNodeComponent(elements[i])) {
                 let component = new Component(elements[i]);
-                if (beforeConnectCallback && typeof beforeConnectCallback === 'function') {
+                if (beforeConnectCallback && isFunction(beforeConnectCallback)) {
                     beforeConnectCallback(component, elements[i]);
                 }
                 connect(component);
