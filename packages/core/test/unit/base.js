@@ -1,15 +1,17 @@
 /* eslint-env mocha */
 
-import ReactDOM from 'react-dom';
-import { render, define, DOM } from '../index.js';
-import { ReactTestComponent } from './components/base.js';
+import { define, DOM } from '../../index.js';
+import { TestBaseComponent } from '../components/base.js';
+import Chai from 'chai';
 
-const WRAPPER = document.createElement('div');
-document.body.appendChild(WRAPPER);
-define('test-base-component', ReactTestComponent);
+const assert = Chai.assert;
+
+const WRAPPER = document.body;
+define('test-base-component', TestBaseComponent);
 
 describe('Unit: BaseComponent', () => {
-    const elem = render(WRAPPER, ReactTestComponent, { lastName: 'Turing' });
+    const elem = DOM.createElement('test-base-component');
+    elem.lastName = 'Turing';
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -19,6 +21,7 @@ describe('Unit: BaseComponent', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
+            DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });
@@ -38,7 +41,7 @@ describe('Unit: BaseComponent', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            ReactDOM.unmountComponentAtNode(WRAPPER);
+            DOM.removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });
     });

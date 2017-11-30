@@ -2,6 +2,9 @@
 
 import { define, render } from '../../index.js';
 import { TestComponent1, TestComponent2, TestComponent3 } from '../components/style.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 const WRAPPER = document.body;
 

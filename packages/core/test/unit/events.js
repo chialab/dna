@@ -3,6 +3,9 @@
 import { define, render, DOM } from '../../index.js';
 import { CustomEvent } from '../../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent } from '../components/events.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {

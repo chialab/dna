@@ -9,6 +9,9 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from '../components/template.js';
+import Chai from 'chai';
+
+const assert = Chai.assert;
 
 // eslint-disable-next-line
 const h = IDOM.h;

@@ -1,10 +1,6 @@
-.tmp*
-*.log
-*.cache
+
+# RNA-CORE
 /node_modules
-/packages/*/node_modules
-/packages/*/dist
-/packages/*/package-lock.json
 /coverage
-/api
-.npmrc
+npm-debug.log
+# RNA-CORE
