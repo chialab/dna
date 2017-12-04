@@ -1,4 +1,4 @@
-import { isFalsy, isObject, isFunction, isArray, isString } from '@dnajs/core/src/lib/typeof.js';
+import { isFalsy, isObject, isFunction, isArray, isString } from '@chialab/proteins';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import {

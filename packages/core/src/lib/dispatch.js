@@ -1,4 +1,4 @@
-import { isString } from './typeof.js';
+import { isString } from '@chialab/proteins';
 import { CustomEvent } from '../helpers/custom-event.js';
 
 /**

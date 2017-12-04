@@ -1,6 +1,6 @@
+import { isString, isFunction } from '@chialab/proteins';
 import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
-import { isString, isFunction } from '../lib/typeof.js';
 import { matches } from '../helpers/matches.js';
 import { dispatch } from '../lib/dispatch.js';
 

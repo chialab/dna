@@ -1,6 +1,6 @@
+import { isString } from '@chialab/proteins';
 import { define } from '../helpers/obj-define.js';
 import { reduceProperty } from '../lib/reduce.js';
-import { isString } from '../lib/typeof.js';
 import { convertShadowCSS } from '../lib/shadow-css.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 

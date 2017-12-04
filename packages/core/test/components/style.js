@@ -1,5 +1,5 @@
+import { isFunction } from '@chialab/proteins';
 import { BaseComponent } from '../../index.js';
-import { isFunction } from '../../src/lib/typeof.js';
 
 class TestComponent extends BaseComponent {
     get template() {

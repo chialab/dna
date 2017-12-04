@@ -7,7 +7,7 @@ import {
     isUndefined,
     isArray,
     isFalsy,
-} from '../../src/lib/typeof.js';
+} from '@chialab/proteins';
 import * as DOM from '../../src/lib/dom.js';
 import { render } from '../../src/lib/render.js';
 import { define } from '../../src/lib/define.js';

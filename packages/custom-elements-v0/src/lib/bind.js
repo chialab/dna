@@ -1,4 +1,4 @@
-import { isFunction } from '@dnajs/core/src/lib/typeof.js';
+import { isFunction } from '@chialab/proteins';
 import { define } from '@dnajs/core/src/helpers/obj-define.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 

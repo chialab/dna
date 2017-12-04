@@ -1,4 +1,4 @@
-import { isFunction, isString } from './typeof.js';
+import { isFunction, isString } from '@chialab/proteins';
 import { registry } from './registry.js';
 import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
 

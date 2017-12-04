@@ -1,4 +1,4 @@
-import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
+import { isUndefined, isFunction, isArray, isObject, isString } from '@chialab/proteins';
 import { define } from '../helpers/obj-define.js';
 
 /**

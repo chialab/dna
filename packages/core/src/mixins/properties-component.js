@@ -1,6 +1,6 @@
+import { isFalsy, isUndefined } from '@chialab/proteins';
 import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
-import { isFalsy, isUndefined } from '../lib/typeof.js';
 import { dispatch } from '../lib/dispatch.js';
 import { prop, Property } from '../lib/property.js';
 

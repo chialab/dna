@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { isFunction } from '@chialab/proteins';
 import { DOM } from '@dnajs/core/src/core.js';
-import { isFunction } from '@dnajs/core/src/lib/typeof.js';
 
 function convertProps(elem) {
     let res = {};
