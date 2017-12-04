@@ -6,7 +6,8 @@
  * Evolution-based components.
  * Use with Custom Elements v0 spec.
  */
-import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix } from '@chialab/proteins';
+import { MIXINS } from '@dnajs/core/src/core.js';
 import * as IDOM from '@dnajs/idom/src/lib/idom.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { IDOMMixin } from '@dnajs/idom/src/mixins/idom.js';

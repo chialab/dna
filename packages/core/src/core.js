@@ -24,5 +24,5 @@ export const MIXINS = {
     StyleMixin,
     TemplateMixin,
 };
-export { mix } from './lib/mixins.js';
+export { mix } from '@chialab/proteins';
 export { prop } from './lib/property.js';

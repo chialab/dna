@@ -11,7 +11,8 @@
  */
 export * from './src/core.js';
 
-import { mix, MIXINS } from './src/core.js';
+import { mix } from '@chialab/proteins';
+import { MIXINS } from './src/core.js';
 import { registry } from './src/lib/registry.js';
 import { proxy } from './src/lib/proxy.js';
 
