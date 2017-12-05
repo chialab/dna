@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@chialab/proteins@^3.0.0-rc.5":
-  version "3.0.0-rc.5"
-  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.0.0-rc.5.tgz#1b53b39ec70be2087249ad9a4dddc2007f51c3c4"
+"@chialab/proteins@^3.0.0-rc.6":
+  version "3.0.0-rc.6"
+  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.0.0-rc.6.tgz#90720cdb7879326f8b443e9b692d8563c562e60e"
 
 acorn-jsx@^3.0.0:
   version "3.0.1"

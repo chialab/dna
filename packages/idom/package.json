@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@chialab/proteins": "^3.0.0-rc.5",
+    "@chialab/proteins": "^3.0.0-rc.6",
     "@dnajs/core": "^2.7.4",
     "incremental-dom": "^0.5.1"
   },

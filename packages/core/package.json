@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/chialab/dna#readme",
   "dependencies": {
-    "@chialab/proteins": "^3.0.0-rc.5"
+    "@chialab/proteins": "^3.0.0-rc.6"
   }
 }
