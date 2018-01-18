@@ -52,3 +52,16 @@ export class TestInvalidComponent extends BaseComponent {
         };
     }
 }
+
+export class TestPropagationComponent extends BaseComponent {
+    get template() {
+        return `<div class="child1">
+            <div class="child2">
+                <div class="child4">
+                    <div class="child5"></div>
+                </div>
+            </div>
+            <div class="child3"></div>
+        </div>`;
+    }
+}

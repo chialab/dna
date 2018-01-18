@@ -30,17 +30,52 @@ function checkDelegate(event, node, selector) {
  * Generate a delegate listener for an event.
  * @private
  *
+ * @param {String} eventName The Event name to register.
  * @param {String} selector The CSS selector to match.
  * @param {Function} callback The original callback for the event.
  * @return {Function} Wrapped callback with a delegation check.
  */
-function delegateCallback(selector, callback) {
-    return (ev) => {
-        let target = checkDelegate(ev, this.node, selector);
-        if (target) {
-            callback.call(this, ev, target);
-        }
+function delegateCallback(eventName, selector, callback) {
+    if (!isFunction(callback)) {
+        throw new TypeError('Invalid callback for event.');
+    }
+    const events = this.events;
+    const callbacks = events[eventName] ? events[eventName].callbacks : [];
+    callbacks.push({
+        selector,
+        callback,
+    });
+    const eventCallback = (ev) => {
+        let stopped = false;
+        const originalStopPropagation = ev.stopPropagation;
+        ev.stopPropagation = () => {
+            stopped = true;
+            return originalStopPropagation.call(ev);
+        };
+        callbacks
+            // check valid target for the event.
+            .map((desc) => {
+                let target = checkDelegate(ev, this.node, desc.selector);
+                if (target) {
+                    return {
+                        target,
+                        callback: desc.callback,
+                    };
+                }
+            })
+            .filter((desc) => !!desc)
+            // reorder targets by position in the dom tree.
+            .sort((desc1, desc2) => (desc1.target.contains(desc2.target) ? 1 : -1))
+            // trigger the callback
+            .forEach((desc) => {
+                if (!stopped) {
+                    desc.callback.call(this, ev, desc.target);
+                }
+            });
     };
+    eventCallback.callbacks = callbacks;
+    events[eventName] = eventCallback;
+    return eventCallback;
 }
 
 /**
@@ -89,24 +124,16 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
     constructor(node) {
         super(node);
         let events = reduceObjectProperty(this, 'events');
+        define(this, 'events', { value: {} });
         for (let k in events) {
             let callback = isString(events[k]) ?
                 this[events[k]] :
                 events[k];
-            if (isFunction(callback)) {
-                let ev = k.trim().split(' ');
-                let name = ev.shift();
-                let selector = ev.join(' ');
-                events[k] = {
-                    name,
-                    selector,
-                    callback: delegateCallback.call(this, selector, callback),
-                };
-            } else {
-                throw new TypeError('Invalid callback for event.');
-            }
+            let ev = k.trim().split(' ');
+            let evName = ev.shift();
+            let selector = ev.join(' ');
+            delegateCallback.call(this, evName, selector, callback);
         }
-        define(this, 'events', { value: events });
     }
     /**
      * Attach and delegate events to the component.
@@ -118,8 +145,8 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
         super.connectedCallback();
         // bind events
         let events = this.events;
-        for (let k in events) {
-            this.addEventListener(events[k].name, events[k].callback);
+        for (let evName in events) {
+            this.addEventListener(evName, events[evName]);
         }
     }
     /**
@@ -130,8 +157,8 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      */
     disconnectedCallback() {
         let events = this.events;
-        for (let k in events) {
-            this.removeEventListener(events[k].name, events[k].callback);
+        for (let evName in events) {
+            this.removeEventListener(evName, events[evName]);
         }
         super.disconnectedCallback();
     }
@@ -146,7 +173,10 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @param {Function} callback The callback to fire.
      */
     delegate(evName, selector, callback) {
-        let wrapCallback = delegateCallback.call(this, selector, callback);
+        if (this.events[evName]) {
+            this.removeEventListener(evName, this.events[evName]);
+        }
+        let wrapCallback = delegateCallback.call(this, evName, selector, callback);
         return this.addEventListener(evName, wrapCallback);
     }
     /**
