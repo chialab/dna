@@ -17,13 +17,13 @@ module.exports = {
         }),
         (process.env.NODE_ENV === 'test') ? istanbul({
             include: [
-                'packages/*/*.js',
+                'packages/**/*.js',
             ],
             exclude: [
                 'packages/*/node_modules/**',
                 'packages/*/test/**',
-                'packages/core/src/lib/custom-event.js',
-                'packages/core/src/lib/matches.js',
+                'packages/core/src/helpers/custom-event.js',
+                'packages/core/src/helpers/matches.js',
             ],
         }) : {},
         babel({
