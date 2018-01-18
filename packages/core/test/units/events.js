@@ -2,7 +2,7 @@
 
 import { define, render, DOM } from '../../index.js';
 import { CustomEvent } from '../../src/helpers/custom-event.js';
-import { TestComponent, TestInvalidComponent } from '../components/events.js';
+import { TestComponent, TestInvalidComponent, TestPropagationComponent } from '../components/events.js';
 
 function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {
@@ -16,6 +16,7 @@ function dispatch(node, evName) {
 const WRAPPER = document.body;
 define('test-events-component', TestComponent);
 define('test2-events-component', TestInvalidComponent);
+define('test3-events-component', TestPropagationComponent);
 
 describe('Unit: EventsComponent', () => {
     const elem = render(WRAPPER, TestComponent);
@@ -117,6 +118,46 @@ describe('Unit: EventsComponent', () => {
                 render(WRAPPER, TestInvalidComponent);
             };
             assert.throws(wrapper, TypeError, 'Invalid callback for event.');
+        });
+    });
+    describe('propagation', () => {
+        it('should stop', () => {
+            const elem = render(WRAPPER, TestPropagationComponent);
+            const checks = {
+                click1: false,
+                click2: false,
+                click3: false,
+                click4: false,
+                click5: false,
+            };
+            elem.delegate('click', '.child', () => {
+                // this should not trigger
+                checks.click1 = true;
+            });
+            elem.delegate('click', '.child3', (ev) => {
+                // this should not trigger
+                ev.stopPropagation();
+                checks.click3 = true;
+            });
+            elem.delegate('click', '.child5', (ev, target) => {
+                checks.click5 = target.classList.contains('child5');
+            });
+            elem.delegate('click', '.child2', (ev, target) => {
+                ev.stopPropagation();
+                checks.click2 = target.classList.contains('child2');
+            });
+            elem.delegate('click', '.child4', (ev, target) => {
+                checks.click4 = target.classList.contains('child4');
+            });
+
+            let elementToClick = elem.node.querySelector('.child5');
+            dispatch(elementToClick, 'click');
+
+            assert(!checks.click1);
+            assert(checks.click2);
+            assert(!checks.click3);
+            assert(checks.click4);
+            assert(checks.click5);
         });
     });
 });
