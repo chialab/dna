@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/react",
-  "version": "2.7.6",
+  "version": "2.7.7",
   "description": "Evolution-based components with React implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "dist/react.js",
@@ -17,7 +17,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.7.6",
+    "@dnajs/core": "^2.7.7",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
