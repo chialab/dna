@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/idom",
-  "version": "2.7.7",
+  "version": "2.7.8",
   "description": "Evolution-based components with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "dist/idom.js",
@@ -17,7 +17,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.7.7",
+    "@dnajs/core": "^2.7.8",
     "incremental-dom": "^0.5.1"
   },
   "bugs": {
