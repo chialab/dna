@@ -32,6 +32,13 @@ describe('PropertiesComponent', () => {
             elem.age = undefined;
             assert.equal(elem.age, undefined);
         });
+
+        it('should accept string value as boolean when string equals property name or empty string', () => {
+            elem.validbool = 'validbool';
+            assert.equal(elem.validbool, 'validbool');
+            elem.validbool = '';
+            assert.equal(elem.validbool, '');
+        });
     });
     describe('handle properties on initialization', () => {
         const elem = render(WRAPPER, TestComponent1, {
