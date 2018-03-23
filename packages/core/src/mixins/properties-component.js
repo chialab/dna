@@ -13,7 +13,7 @@ import { prop, Property } from '../lib/property.js';
  * @return {*} The parsed value.
  */
 function getValue(property, attrVal) {
-    if (attrVal === '' && property.accepts(Boolean)) {
+    if ((attrVal === '' || property.name === attrVal) && property.accepts(Boolean)) {
         return true;
     }
     if (!property.accepts(String)) {
