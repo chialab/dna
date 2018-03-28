@@ -34,10 +34,8 @@ describe('PropertiesComponent', () => {
         });
 
         it('should accept string value as boolean when string equals property name or empty string', () => {
-            elem.validbool = 'validbool';
-            assert.equal(elem.validbool, 'validbool');
-            elem.validbool = '';
-            assert.equal(elem.validbool, '');
+            DOM.setAttribute(elem, 'validbool', 'validbool');
+            assert.equal(elem.validbool, true);
         });
     });
     describe('handle properties on initialization', () => {

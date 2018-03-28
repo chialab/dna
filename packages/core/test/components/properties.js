@@ -24,7 +24,7 @@ export class TestComponent1 extends TestComponent {
                 .observe('onAgeChanged'),
             var: prop.STRING.attribute(),
             type: prop.NUMBER.default(2),
-            validbool: prop.STRING.attribute('validbool'),
+            validbool: prop.BOOLEAN.attribute('validbool'),
         };
     }
 
