@@ -11,7 +11,7 @@ class TestComponent extends BaseComponent {
 
 export class TestComponent1 extends TestComponent {
     static get observedAttributes() {
-        return ['name', 'last-name', 'married', 'age', 'var'];
+        return ['name', 'last-name', 'married', 'age', 'var', 'validbool'];
     }
 
     get properties() {
@@ -24,6 +24,7 @@ export class TestComponent1 extends TestComponent {
                 .observe('onAgeChanged'),
             var: prop.STRING.attribute(),
             type: prop.NUMBER.default(2),
+            validbool: prop.BOOLEAN.attribute('validbool'),
         };
     }
 
