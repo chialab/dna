@@ -1,7 +1,7 @@
 {
   "name": "@dnajs/dna",
   "description": "Evolution-based components.",
-  "version": "2.7.6",
+  "version": "2.7.9",
   "scripts": {
     "postinstall": "lerna bootstrap",
     "test": "gulp unit",
