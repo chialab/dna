@@ -2,7 +2,7 @@
 
 Evolution-based components.
 
-[Documentation](https://dna.chialab.io/docs) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](https://dna.chialab.io) | [Author home page](http://www.chialab.it)
+[Documentation](https://dna.chialab.io/docs/getting-started) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](https://dna.chialab.io) | [Author home page](http://www.chialab.it)
 
 [![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
 [![Code coverage](https://codecov.io/gh/Chialab/dna/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
