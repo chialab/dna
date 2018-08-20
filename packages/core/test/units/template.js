@@ -7,6 +7,7 @@ import {
     TestComponent3,
     TestComponent4,
 } from '../components/template.js';
+import chai from 'chai';
 
 const WRAPPER = document.body;
 
@@ -19,23 +20,23 @@ describe('Unit: TemplateComponent', () => {
     it('should handle `template` getter property as function with interpolation', () => {
         const elem = render(WRAPPER, TestComponent1);
 
-        assert.equal(elem.node.innerHTML, 'Hello, ');
+        chai.assert.equal(elem.node.innerHTML, 'Hello, ');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
         elem.title = 'Title';
-        assert.equal(elem.node.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
+        chai.assert.equal(elem.node.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
     it('should handle `template` getter property as string', () => {
         const elem = render(WRAPPER, TestComponent2);
 
-        assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        chai.assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should handle `template` getter property as number', () => {
         const elem = render(WRAPPER, TestComponent3);
 
-        assert.equal(elem.node.innerHTML, '4');
+        chai.assert.equal(elem.node.innerHTML, '4');
     });
 
     it('should handle templates with <svg>', () => {
@@ -44,7 +45,7 @@ describe('Unit: TemplateComponent', () => {
         elem.radius = 40;
         let svg = elem.node.querySelector('svg');
         let circle = svg.querySelector('circle');
-        assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
-        assert.equal(circle.getAttribute('r'), '40');
+        chai.assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
+        chai.assert.equal(circle.getAttribute('r'), '40');
     });
 });

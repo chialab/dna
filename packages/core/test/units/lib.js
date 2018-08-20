@@ -12,8 +12,8 @@ import * as DOM from '../../src/lib/dom.js';
 import { render } from '../../src/lib/render.js';
 import { define } from '../../src/lib/define.js';
 import { bootstrap } from '../../src/lib/bootstrap.js';
-
 import { BaseComponent } from '../../index.js';
+import chai from 'chai';
 
 const WRAPPER = document.body;
 
@@ -55,23 +55,23 @@ define('helper-define-component', TestComponent2, { extends: 'div' });
 describe('Unit: lib', () => {
     describe('typeof', () => {
         it('should correctly check type of objects', () => {
-            assert(isFunction(() => {}));
-            assert(!isFunction({}));
-            assert(isString(''));
-            assert(!isString(4));
-            assert(isObject({}));
-            assert(!isObject([]));
-            assert(isUndefined(undefined));
-            assert(!isUndefined(null));
-            assert(!isUndefined(false));
-            assert(!isUndefined(''));
-            assert(isArray([]));
-            assert(!isArray({}));
-            assert(!isArray(''));
-            assert(isFalsy(undefined));
-            assert(isFalsy(null));
-            assert(isFalsy(false));
-            assert(!isFalsy(''));
+            chai.assert(isFunction(() => {}));
+            chai.assert(!isFunction({}));
+            chai.assert(isString(''));
+            chai.assert(!isString(4));
+            chai.assert(isObject({}));
+            chai.assert(!isObject([]));
+            chai.assert(isUndefined(undefined));
+            chai.assert(!isUndefined(null));
+            chai.assert(!isUndefined(false));
+            chai.assert(!isUndefined(''));
+            chai.assert(isArray([]));
+            chai.assert(!isArray({}));
+            chai.assert(!isArray(''));
+            chai.assert(isFalsy(undefined));
+            chai.assert(isFalsy(null));
+            chai.assert(isFalsy(false));
+            chai.assert(!isFalsy(''));
         });
     });
 
@@ -79,18 +79,18 @@ describe('Unit: lib', () => {
         describe('a simple element', () => {
             it('should define a custom element', () => {
                 const elem = new TestComponent();
-                assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
-                assert.equal(elem.name, 'Alan');
-                assert.equal(elem.lastName, 'Turing');
+                chai.assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
+                chai.assert.equal(elem.name, 'Alan');
+                chai.assert.equal(elem.lastName, 'Turing');
             });
         });
 
         describe('an element with extends field', () => {
             it('a custom element with extends field', () => {
                 const elem = render(WRAPPER, TestComponent2);
-                assert.equal(elem.node.localName.toLowerCase(), 'div');
-                assert.equal(elem.name, 'Alan');
-                assert.equal(elem.lastName, 'Turing');
+                chai.assert.equal(elem.node.localName.toLowerCase(), 'div');
+                chai.assert.equal(elem.name, 'Alan');
+                chai.assert.equal(elem.lastName, 'Turing');
             });
         });
     });
@@ -100,79 +100,79 @@ describe('Unit: lib', () => {
         const elem2 = render(WRAPPER, TestComponent2);
         it('should do nothing', () => {
             const tmp = document.createElement('div');
-            assert(!DOM.connect(tmp));
-            assert(!DOM.disconnect(tmp));
+            chai.assert(!DOM.connect(tmp));
+            chai.assert(!DOM.disconnect(tmp));
         });
         it('should create a component instance', () => {
-            assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
-            assert.equal(elem.name, 'Alan');
-            assert.equal(elem.lastName, 'Turing');
+            chai.assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
+            chai.assert.equal(elem.name, 'Alan');
+            chai.assert.equal(elem.lastName, 'Turing');
         });
         it('should append a component', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 0);
-            assert.equal(elem.connectedTimes, 1);
-            assert.equal(elem2.disconnectedTimes, 0);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.disconnectedTimes, 0);
+            chai.assert.equal(elem.connectedTimes, 1);
+            chai.assert.equal(elem2.disconnectedTimes, 0);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should append a component before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem2.node.parentNode, WRAPPER);
-            assert.equal(elem.node.nextSibling, elem2.node);
-            assert.equal(elem.disconnectedTimes, 1);
-            assert.equal(elem.connectedTimes, 2);
-            assert.equal(elem2.disconnectedTimes, 0);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem2.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.node.nextSibling, elem2.node);
+            chai.assert.equal(elem.disconnectedTimes, 1);
+            chai.assert.equal(elem.connectedTimes, 2);
+            chai.assert.equal(elem2.disconnectedTimes, 0);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should do nothing if already before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem2.node.parentNode, WRAPPER);
-            assert.equal(elem.node.nextSibling, elem2.node);
-            assert.equal(elem.disconnectedTimes, 1);
-            assert.equal(elem.connectedTimes, 2);
-            assert.equal(elem2.disconnectedTimes, 0);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem2.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.node.nextSibling, elem2.node);
+            chai.assert.equal(elem.disconnectedTimes, 1);
+            chai.assert.equal(elem.connectedTimes, 2);
+            chai.assert.equal(elem2.disconnectedTimes, 0);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should append again a component', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 2);
-            assert.equal(elem.connectedTimes, 3);
-            assert.equal(elem2.disconnectedTimes, 0);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.disconnectedTimes, 2);
+            chai.assert.equal(elem.connectedTimes, 3);
+            chai.assert.equal(elem2.disconnectedTimes, 0);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should do nothing if already last child of parent', () => {
             DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 2);
-            assert.equal(elem.connectedTimes, 3);
-            assert.equal(elem2.disconnectedTimes, 0);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.disconnectedTimes, 2);
+            chai.assert.equal(elem.connectedTimes, 3);
+            chai.assert.equal(elem2.disconnectedTimes, 0);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should replace a child', () => {
             DOM.replaceChild(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 3);
-            assert.equal(elem.connectedTimes, 4);
-            assert.equal(elem2.disconnectedTimes, 1);
-            assert.equal(elem2.connectedTimes, 1);
+            chai.assert.equal(elem.node.parentNode, WRAPPER);
+            chai.assert.equal(elem.disconnectedTimes, 3);
+            chai.assert.equal(elem.connectedTimes, 4);
+            chai.assert.equal(elem2.disconnectedTimes, 1);
+            chai.assert.equal(elem2.connectedTimes, 1);
         });
         it('should set attributes', () => {
             DOM.setAttribute(elem, 'age', 20);
             DOM.setAttribute(elem, 'married', '');
-            assert.equal(elem.attributeChanges, 1);
-            assert.equal(elem.node.getAttribute('age'), '20');
-            assert.equal(elem.node.getAttribute('married'), '');
+            chai.assert.equal(elem.attributeChanges, 1);
+            chai.assert.equal(elem.node.getAttribute('age'), '20');
+            chai.assert.equal(elem.node.getAttribute('married'), '');
         });
         it('should remove attributes', () => {
             DOM.removeAttribute(elem, 'age');
             DOM.removeAttribute(elem, 'married');
-            assert.equal(elem.attributeChanges, 2);
-            assert.equal(elem.node.getAttribute('age'), null);
-            assert.equal(elem.node.getAttribute('married'), null);
+            chai.assert.equal(elem.attributeChanges, 2);
+            chai.assert.equal(elem.node.getAttribute('age'), null);
+            chai.assert.equal(elem.node.getAttribute('married'), null);
         });
     });
 
@@ -184,11 +184,11 @@ describe('Unit: lib', () => {
             const elem = DOM.getNodeComponent(
                 WRAPPER.querySelector('.test1-helper-component')
             );
-            assert.equal(elem.node.localName.toLowerCase(), 'test1-helper-component');
-            assert.equal(elem.node.getAttribute('age'), '21');
-            assert.equal(elem.node.getAttribute('class'), 'test1-helper-component');
-            assert.equal(elem.name, 'Alan');
-            assert.equal(elem.lastName, 'Turing');
+            chai.assert.equal(elem.node.localName.toLowerCase(), 'test1-helper-component');
+            chai.assert.equal(elem.node.getAttribute('age'), '21');
+            chai.assert.equal(elem.node.getAttribute('class'), 'test1-helper-component');
+            chai.assert.equal(elem.name, 'Alan');
+            chai.assert.equal(elem.lastName, 'Turing');
         });
 
         let WRAPPER2 = document.createElement('div');
@@ -198,7 +198,7 @@ describe('Unit: lib', () => {
             bootstrap(WRAPPER2, () => {
                 count++;
             });
-            assert.equal(count, 2);
+            chai.assert.equal(count, 2);
         });
     });
 });

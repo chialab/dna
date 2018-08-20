@@ -3,6 +3,7 @@
 import { define, render, DOM } from '../../index.js';
 import { CustomEvent } from '../../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent, TestPropagationComponent } from '../components/events.js';
+import chai from 'chai';
 
 function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {
@@ -23,9 +24,9 @@ describe('Unit: EventsComponent', () => {
     describe('delegate', () => {
         describe('custom events', () => {
             it('should be handled', () => {
-                assert.equal(elem.customElement, elem.node);
-                assert.equal(elem.custom instanceof Event, true);
-                assert.equal(elem.custom.detail.data, 1234);
+                chai.assert.equal(elem.customElement, elem.node);
+                chai.assert.equal(elem.custom instanceof Event, true);
+                chai.assert.equal(elem.custom.detail.data, 1234);
             });
         });
 
@@ -35,7 +36,7 @@ describe('Unit: EventsComponent', () => {
             elem.delegate('checkDelegation', 'span', () => fired = true);
             dispatch(span, 'checkDelegation');
             it('should trigger a function callback', () => {
-                assert(fired);
+                chai.assert(fired);
             });
         });
 
@@ -62,21 +63,21 @@ describe('Unit: EventsComponent', () => {
             });
 
             it('should trigger a function callback', () => {
-                assert.equal(elem.clickedSpan, span);
-                assert.equal(elem.clickedSpanEvent instanceof Event, true);
-                assert.equal(elem.clickedSpanEvent.type, 'click');
+                chai.assert.equal(elem.clickedSpan, span);
+                chai.assert.equal(elem.clickedSpanEvent instanceof Event, true);
+                chai.assert.equal(elem.clickedSpanEvent.type, 'click');
             });
 
             it('should track click on button element', () => {
-                assert.equal(elem.clickedElement, button);
-                assert.equal(elem.clicked instanceof Event, true);
-                assert.equal(elem.clicked.type, 'click');
+                chai.assert.equal(elem.clickedElement, button);
+                chai.assert.equal(elem.clicked instanceof Event, true);
+                chai.assert.equal(elem.clicked.type, 'click');
             });
 
             it('should track changes on input element', () => {
-                assert.equal(elem.changedElement, input);
-                assert.equal(elem.changed instanceof Event, true);
-                assert.equal(elem.changed.type, 'change');
+                chai.assert.equal(elem.changedElement, input);
+                chai.assert.equal(elem.changed instanceof Event, true);
+                chai.assert.equal(elem.changed.type, 'change');
             });
         });
 
@@ -95,12 +96,12 @@ describe('Unit: EventsComponent', () => {
             });
 
             it('should stop to delegate on component detached', () => {
-                assert.equal(elem.clickedSpan, undefined);
-                assert.equal(elem.clickedSpanEvent, undefined);
-                assert.equal(elem.clickedElement, undefined);
-                assert.equal(elem.clicked, undefined);
-                assert.equal(elem.changedElement, undefined);
-                assert.equal(elem.changed, undefined);
+                chai.assert.equal(elem.clickedSpan, undefined);
+                chai.assert.equal(elem.clickedSpanEvent, undefined);
+                chai.assert.equal(elem.clickedElement, undefined);
+                chai.assert.equal(elem.clicked, undefined);
+                chai.assert.equal(elem.changedElement, undefined);
+                chai.assert.equal(elem.changed, undefined);
             });
         });
     });
@@ -109,7 +110,7 @@ describe('Unit: EventsComponent', () => {
             let wrapper = () => {
                 elem.trigger();
             };
-            assert.throws(wrapper, Error, 'Event name is undefined');
+            chai.assert.throws(wrapper, Error, 'Event name is undefined');
         });
     });
     describe('delegate invalid callbacks', () => {
@@ -117,7 +118,7 @@ describe('Unit: EventsComponent', () => {
             let wrapper = () => {
                 render(WRAPPER, TestInvalidComponent);
             };
-            assert.throws(wrapper, TypeError, 'Invalid callback for event.');
+            chai.assert.throws(wrapper, TypeError, 'Invalid callback for event.');
         });
     });
     describe('propagation', () => {
@@ -153,11 +154,11 @@ describe('Unit: EventsComponent', () => {
             let elementToClick = elem.node.querySelector('.child5');
             dispatch(elementToClick, 'click');
 
-            assert(!checks.click1);
-            assert(checks.click2);
-            assert(!checks.click3);
-            assert(checks.click4);
-            assert(checks.click5);
+            chai.assert(!checks.click1);
+            chai.assert(checks.click2);
+            chai.assert(!checks.click3);
+            chai.assert(checks.click4);
+            chai.assert(checks.click5);
         });
     });
 });

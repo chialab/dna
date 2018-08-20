@@ -9,6 +9,7 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from '../components/template.js';
+import chai from 'chai';
 
 // eslint-disable-next-line
 const h = IDOM.h;
@@ -30,17 +31,17 @@ describe('Unit: IDOMTemplateComponent', () => {
     it('should handle `template` with IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent1);
 
-        assert.equal(elem.node.innerHTML, '<span>Hello, </span>');
+        chai.assert.equal(elem.node.innerHTML, '<span>Hello, </span>');
         elem.name = 'Alan';
         elem.lastName = 'Turing';
         elem.title = 'Title';
-        assert.equal(elem.node.innerHTML, '<h1>Title</h1><br><span>Hello, Alan Turing</span>');
+        chai.assert.equal(elem.node.innerHTML, '<h1>Title</h1><br><span>Hello, Alan Turing</span>');
     });
 
     it('should handle `template` with JSX IDOM calls', () => {
         const elem = render(WRAPPER, TestComponent2);
 
-        assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+        chai.assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
     it('should handle templates with <svg>', () => {
@@ -50,8 +51,8 @@ describe('Unit: IDOMTemplateComponent', () => {
 
         let svg = elem.node.firstElementChild;
         let circle = svg.querySelector('circle');
-        assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
-        assert.equal(circle.getAttribute('r'), '40');
+        chai.assert.equal(svg && svg.tagName.toUpperCase(), 'SVG');
+        chai.assert.equal(circle.getAttribute('r'), '40');
     });
 
     describe('should handle sub components', () => {
@@ -60,8 +61,8 @@ describe('Unit: IDOMTemplateComponent', () => {
         it('and their callbacks', () => {
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             const testElement2 = elem.node.querySelector('figure');
-            assert.equal(DOM.getNodeComponent(testElement1).value, 6);
-            assert.equal(DOM.getNodeComponent(testElement2).value, 11);
+            chai.assert.equal(DOM.getNodeComponent(testElement1).value, 6);
+            chai.assert.equal(DOM.getNodeComponent(testElement2).value, 11);
         });
     });
 });
