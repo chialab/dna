@@ -1,14 +1,33 @@
-[![Logo](https://logos.chialab.io/@dnajs/dna.svg)](https://dna.chialab.io)
+<p align="center">
+    <img alt="synapse" src="https://logos.chialab.io/@dnajs/dna.svg" width="100">
+</p>
 
-Evolution-based components.
+<p align="center">
+    Evolution-based components.
+</p>
 
-[Documentation](https://dna.chialab.io/docs/getting-started) | [Issue tracker](https://github.com/Chialab/dna/issues) | [Project home page](https://dna.chialab.io) | [Author home page](http://www.chialab.it)
+<p align="center">
+    <a href="https://travis-ci.org/Chialab/dna">
+        <img alt="Travis status" src="https://img.shields.io/travis/Chialab/dna.svg?style=flat-square">
+    </a>
+    <a href="https://codecov.io/gh/Chialab/dna">
+        <img alt="Code coverage" src="https://img.shields.io/codecov/c/github/chialab/dna.svg?style=flat-square">
+    </a>
+    <a href="https://www.npmjs.com/package/@dnajs/core">
+        <img alt="NPM" src="https://img.shields.io/npm/v/@dnajs/core.svg?style=flat-square">
+    </a>
+    <a href="https://github.com/Chialab/synapse/blob/master/LICENSE">
+        <img alt="License" src="https://img.shields.io/npm/l/@dnajs/core.svg?style=flat-square">
+    </a>
+    <a href="https://dna.chialab.io">
+        <img alt="Documentation" src="https://img.shields.io/badge/documentation-wiki-ff69b4.svg?style=flat-square">
+    </a>
+    <a href="https://saucelabs.com/u/chialab-sl-012">
+        <img alt="Saucelabs" src="https://badges.herokuapp.com/sauce/chialab-sl-012?labels=none&style=flat-square">
+    </a>
+</p>
 
-[![Travis](https://img.shields.io/travis/Chialab/dna.svg?maxAge=2592000)](https://travis-ci.org/Chialab/dna)
-[![Code coverage](https://codecov.io/gh/Chialab/dna/graph/badge.svg)](https://codecov.io/gh/Chialab/dna)
-[![NPM](https://img.shields.io/npm/v/@dnajs/core.svg)](https://www.npmjs.com/package/@dnajs/core)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-012.svg)](https://saucelabs.com/u/chialab-sl-012)
+---
 
 ## Principles
 
