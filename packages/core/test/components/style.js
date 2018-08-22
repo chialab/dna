@@ -107,3 +107,29 @@ export class TestComponent3 extends TestComponent {
         this.node.classList.add('active');
     }
 }
+
+
+export class TestComponent4 extends TestComponent {
+    get css() {
+        return `
+@charset "UTF-8";
+
+/*
+        /* strip */
+  /*
+        */
+
+:host {
+    color: #5F9EA0;
+}
+
+:host > * {
+    background-color: #5F9EA0;
+}
+
+@keyframes anim {
+    0% { top: 0; }
+    100% { top: 10px; }
+}`;
+    }
+}

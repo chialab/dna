@@ -9,7 +9,7 @@ const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * @type {RegExp}
  * @private
  */
-const CSS_COMMENTS_REGEX = /\s*(?!<")\/\*[^*]+\*\/(?!")\s*/g;
+const CSS_COMMENTS_REGEX = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 /**
  * A regex to match css rules.
  * @type {RegExp}
