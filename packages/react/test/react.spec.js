@@ -33,7 +33,6 @@ describe('Unit: BaseReactComponent', () => {
 
     describe('> render', () => {
         it('check if element has been correctly rendered', () => {
-            console.log(elem.node);
             chai.assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
         });
     });

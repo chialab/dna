@@ -109,17 +109,15 @@ export class TestComponent3 extends TestComponent {
 }
 
 
-export class TestComponen4 extends TestComponent {
+export class TestComponent4 extends TestComponent {
     get css() {
         return `
 @charset "UTF-8";
 
-/* /*
-
-CSS with many wrong characters
-
-*/ */ */ 
 /*
+        /* strip */
+  /*
+        */
 
 :host {
     color: #5F9EA0;
