@@ -13,57 +13,54 @@ jobs:
   include:
     - stage: test
       env: CI_BUILD_TYPE=default
-      node_js: 6
+      node_js: 10
       before_install:
         - export DISPLAY=:99.0
         - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
+        - yarn config set registry https://registry.npmjs.org/
+        - yarn global add @chialab/rna-cli
       install:
-        - npm install
+        - rna install
       script:
-        - npm test
-    - stage: test
-      env: CI_BUILD_TYPE=default
-      node_js: 7
-      before_install:
-        - export DISPLAY=:99.0
-        - export CHROME_BIN=chromium-browser
-        - sh -e /etc/init.d/xvfb start
-      install:
-        - npm install
-      script:
-        - npm test
+        - rna test
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
-      node_js: 7
+      node_js: 10
+      before_install:
+        - yarn config set registry https://registry.npmjs.org/
+        - yarn global add @chialab/rna-cli
       install:
-        - npm install
-        - npm install karma-sauce-launcher
+        - rna install
       script:
-        - npm run test-saucelabs
+        - rna run test-saucelabs
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=electron
-      node_js: 7
-      install:
+      node_js: 10
+      before_install:
         - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - npm install
-        - npm install electron karma-electron-launcher
+        - yarn config set registry https://registry.npmjs.org/
+        - yarn global add @chialab/rna-cli electron
+      install:
+        - rna install
       script:
-        - npm run test-electron
+        - rna run test-electron
     - stage: test
       os: osx
       env: CI_BUILD_TYPE=electron
-      node_js: 7
-      install:
+      node_js: 10
+      before_install:
         - export DISPLAY=':99.0'
         - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - npm install
-        - npm install electron karma-electron-launcher
+        - yarn config set registry https://registry.npmjs.org/
+        - yarn global add @chialab/rna-cli electron
+      install:
+        - rna install
       script:
-        - npm run test-electron
+        - rna run test-electron
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs

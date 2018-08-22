@@ -1,11 +1,22 @@
-.tmp*
-*.log
-*.cache
-.history
+# RNA-CORE
+# NPM
 /node_modules
+npm-debug.log
+yarn-error.log
+
+# LINT
+.eslintcache
+
+# TEST
+/coverage
+
+# RNA-CORE
+# RNA-STRUCTURE
 /packages/*/node_modules
 /packages/*/dist
-/packages/*/package-lock.json
-/coverage
+# RNA-STRUCTURE
+
+.tmp*
+.history
 /api
 .npmrc

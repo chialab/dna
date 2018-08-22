@@ -1,2 +1,6 @@
+# RNA
+node_modules/
+# RNA
+
 packages/**/node_modules/**/*.js
 packages/**/dist/**/*.js
