@@ -96,9 +96,8 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
                 }
             } else if (!this.constructor.hasOwnProperty(STYLE_SYMBOL)) {
                 let style = this.constructor[STYLE_SYMBOL] = createStyle(this);
-                style.textContent = this.css;
+                style.textContent = convertShadowCSS(this.css, this.is);
                 ownerDocument(this.node).head.appendChild(style);
-                convertShadowCSS(style, this.is);
             }
         }
         this.classList.add(this.is);
