@@ -13,7 +13,7 @@ import { render } from '../../src/lib/render.js';
 import { define } from '../../src/lib/define.js';
 import { bootstrap } from '../../src/lib/bootstrap.js';
 import { BaseComponent } from '../../index.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.body;
 

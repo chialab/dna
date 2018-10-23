@@ -7,7 +7,7 @@ import {
     TestComponent3,
     TestComponent4,
 } from '../components/template.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.body;
 

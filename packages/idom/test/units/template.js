@@ -9,7 +9,7 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from '../components/template.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;

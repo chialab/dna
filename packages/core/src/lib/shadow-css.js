@@ -10,7 +10,7 @@ const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
  * @private
  * @param {CSSStyleSheet} sheet The sheet to convert.
  * @param {String} is The scope name to use.
- * @return {void}
+ * @return {String} The updated css.
  */
 function convertShadowSheet(sheet, is) {
     if (sheet.selectorText) {

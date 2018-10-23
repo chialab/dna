@@ -2,7 +2,7 @@
 
 import { render, define, DOM } from '../../index.js';
 import { TestBaseIDOMComponent } from '../components/base.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.body;
 define('test-base-idom-component', TestBaseIDOMComponent);
