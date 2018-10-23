@@ -19,13 +19,14 @@ const SPLIT_SELECTOR_REGEX = /\s*,\s*/;
  * @private
  * @param {CSSStyleSheet} sheet The sheet to convert.
  * @param {String} scope The scope name to use.
+ * @param {RegExp} scopeRegex The scope class regex.
  * @return {String} The updated css.
  */
-function convertShadowSheet(sheet, scope) {
+function convertShadowSheet(sheet, scope, scopeRegex) {
     let content = sheet.cssText;
     if (sheet.selectorText) {
         let selector = sheet.selectorText.trim();
-        if (selector.indexOf(scope) === 0) {
+        if (selector.match(scopeRegex)) {
             return content;
         }
         let scoped = selector
@@ -61,5 +62,5 @@ export function convertShadowCSS(css, is) {
     let scope = `.${is}`;
     style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
     doc.body.appendChild(style);
-    return convertShadowSheet(style.sheet, scope);
+    return convertShadowSheet(style.sheet, scope, new RegExp(`${scope}/b`));
 }
