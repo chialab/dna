@@ -1,4 +1,4 @@
-const doc = new DOMParser().parseFromString('<html><body></body></html>', 'text/html');
+const doc = document.implementation.createHTMLDocument('');
 
 /**
  * A regex to match css `:host` selector.
