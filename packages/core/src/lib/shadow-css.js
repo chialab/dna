@@ -8,6 +8,14 @@ const doc = document.implementation.createHTMLDocument('');
 const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 
 /**
+ * A regex to match pseudo elements content without required quotes.
+ * (Yes, Safari, it's you).
+ * @type {RegExp}
+ * @private
+ */
+const CONTENT_REGEX = /(content:\s*)([^"';}\s()]+)([\s;}])/gi;
+
+/**
  * A regex for selector splitting.
  * @type {RegExp}
  * @private
@@ -23,7 +31,7 @@ const SPLIT_SELECTOR_REGEX = /\s*,\s*/;
  * @return {String} The updated css.
  */
 function convertShadowSheet(sheet, scope, scopeRegex) {
-    let content = sheet.cssText;
+    let content = (sheet.cssText || '').replace(CONTENT_REGEX, '$1"$2"$3');
     if (sheet.selectorText) {
         let selector = sheet.selectorText.trim();
         if (selector.match(scopeRegex)) {
