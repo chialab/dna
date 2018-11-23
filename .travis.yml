@@ -19,11 +19,13 @@ jobs:
         - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
         - yarn config set registry https://registry.npmjs.org/
-        - yarn global add @chialab/rna-cli
+        - yarn add codecov
       install:
-        - rna install
+        - yarn install
       script:
-        - rna test
+        - yarn test
+      after_success:
+        - cat reports/unit/coverage/*/lcov.info | ./node_modules/.bin/codecov
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
@@ -32,9 +34,9 @@ jobs:
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli
       install:
-        - rna install
+        - yarn install
       script:
-        - rna run test-saucelabs
+        - yarn run test-saucelabs
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=electron
@@ -45,9 +47,9 @@ jobs:
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli electron
       install:
-        - rna install
+        - yarn install
       script:
-        - rna run test-electron
+        - yarn run test-electron
     - stage: test
       os: osx
       env: CI_BUILD_TYPE=electron
@@ -58,9 +60,9 @@ jobs:
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli electron
       install:
-        - rna install
+        - yarn install
       script:
-        - rna run test-electron
+        - yarn run test-electron
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
@@ -110,6 +112,3 @@ addons:
   apt:
     packages:
       - xvfb
-
-after_success:
-  - cat coverage/report-lcov/*/lcov.info | ./node_modules/.bin/codecov

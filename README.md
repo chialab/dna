@@ -8,7 +8,7 @@
 
 <p align="center">
     <a href="https://travis-ci.org/Chialab/dna">
-        <img alt="Travis status" src="https://img.shields.io/travis/Chialab/dna.svg?style=flat-square">
+        <img alt="Travis status" src="https://img.shields.io/travis/chialab/dna.svg?style=flat-square">
     </a>
     <a href="https://codecov.io/gh/Chialab/dna">
         <img alt="Code coverage" src="https://img.shields.io/codecov/c/github/chialab/dna.svg?style=flat-square">
