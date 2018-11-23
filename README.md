@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-    <a href="https://travis-ci.org/Chialab/dna">
+    <a href="https://travis-ci.org/chialab/dna">
         <img alt="Travis status" src="https://img.shields.io/travis/chialab/dna.svg?style=flat-square">
     </a>
-    <a href="https://codecov.io/gh/Chialab/dna">
+    <a href="https://codecov.io/gh/chialab/dna">
         <img alt="Code coverage" src="https://img.shields.io/codecov/c/github/chialab/dna.svg?style=flat-square">
     </a>
     <a href="https://www.npmjs.com/package/@dnajs/core">
