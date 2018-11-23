@@ -58,8 +58,18 @@ const UPDATED = 'attributeChangedCallback';
  * @return {Boolean} The callback has been triggered.
  */
 export function connect(element) {
-    element = getNodeComponent(element) || element;
-    if (element[DNA_SYMBOL]) {
+    let component = getNodeComponent(element);
+    let children;
+    if (component) {
+        element = component;
+        children = component.node.childNodes;
+    } else {
+        children = element.childNodes;
+    }
+    if (children) {
+        [].forEach.call(children, connect);
+    }
+    if (element[DNA_SYMBOL] && !element.isConnected()) {
         element[CONNECTED].call(element);
         return true;
     }

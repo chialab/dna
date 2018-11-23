@@ -75,5 +75,11 @@ describe('Unit: IDOMTemplateComponent', () => {
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             chai.assert.equal(DOM.getNodeComponent(testElement1).attached, false);
         });
+
+        it('and their life cycle (riconnected)', () => {
+            DOM.appendChild(WRAPPER, elem);
+            const testElement1 = elem.node.querySelector('test-idom-placeholder');
+            chai.assert.equal(DOM.getNodeComponent(testElement1).attached, true);
+        });
     });
 });
