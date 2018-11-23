@@ -75,12 +75,23 @@ export class TestPlaceholder extends BaseComponent {
     get properties() {
         return {
             value: prop.NUMBER.attribute(),
+            attached: prop.BOOLEAN,
         };
     }
 
     constructor(node) {
         super(node);
         this.value = 6;
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.attached = this.isConnected();
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        this.attached = this.isConnected();
     }
 }
 

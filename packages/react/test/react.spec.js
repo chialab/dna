@@ -3,7 +3,7 @@
 import ReactDOM from 'react-dom';
 import { render, define, DOM } from '../index.js';
 import { ReactTestComponent } from './components/base.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.createElement('div');
 document.body.appendChild(WRAPPER);

@@ -9,7 +9,7 @@ import {
     TestPlaceholder,
     Test2Placeholder,
 } from '../components/template.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;
@@ -63,6 +63,17 @@ describe('Unit: IDOMTemplateComponent', () => {
             const testElement2 = elem.node.querySelector('figure');
             chai.assert.equal(DOM.getNodeComponent(testElement1).value, 6);
             chai.assert.equal(DOM.getNodeComponent(testElement2).value, 11);
+        });
+
+        it('and their life cycle (connected)', () => {
+            const testElement1 = elem.node.querySelector('test-idom-placeholder');
+            chai.assert.equal(DOM.getNodeComponent(testElement1).attached, true);
+        });
+
+        it('and their life cycle (disconnected)', () => {
+            DOM.removeChild(WRAPPER, elem);
+            const testElement1 = elem.node.querySelector('test-idom-placeholder');
+            chai.assert.equal(DOM.getNodeComponent(testElement1).attached, false);
         });
     });
 });

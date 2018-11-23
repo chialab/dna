@@ -3,7 +3,7 @@
 import { define, render, DOM } from '../../index.js';
 import { CustomEvent } from '../../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent, TestPropagationComponent } from '../components/events.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {

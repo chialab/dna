@@ -74,7 +74,17 @@ export function connect(element) {
  * @return {Boolean} The callback has been triggered.
  */
 export function disconnect(element) {
-    element = getNodeComponent(element) || element;
+    let component = getNodeComponent(element);
+    let children;
+    if (component) {
+        element = component;
+        children = component.node.childNodes;
+    } else {
+        children = element.childNodes;
+    }
+    if (children) {
+        [].forEach.call(children, disconnect);
+    }
     if (element[DNA_SYMBOL]) {
         element[DISCONNECTED].call(element);
         return true;
