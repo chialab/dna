@@ -19,6 +19,7 @@ jobs:
         - export CHROME_BIN=chromium-browser
         - sh -e /etc/init.d/xvfb start
         - yarn config set registry https://registry.npmjs.org/
+        - yarn global add @chialab/rna-cli
         - yarn add codecov -W
       install:
         - yarn install
