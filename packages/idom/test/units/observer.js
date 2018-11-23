@@ -2,7 +2,7 @@
 
 import { define, DOM, IDOM } from '../../index.js';
 import { TestComponent } from '../components/observer.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;

@@ -28,3 +28,10 @@ export const NODE_SYMBOL = Symbol('node');
  * @private
  */
 export const STYLE_SYMBOL = Symbol('style');
+/**
+ * Symbol for connected state.
+ * Bound to a component instance.
+ * @type {Boolean}
+ * @private
+ */
+export const CONNECTED_SYMBOL = Symbol('connected');

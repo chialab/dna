@@ -5,7 +5,7 @@ import {
     TestComponent1,
     TestComponent2,
 } from '../components/properties.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.body;
 define('test1-properties-component', TestComponent1);

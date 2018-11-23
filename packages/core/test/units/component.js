@@ -2,7 +2,7 @@
 
 import { define, DOM } from '../../index.js';
 import { TestComponent } from '../components/component.js';
-import chai from 'chai';
+import chai from 'chai/chai.js';
 
 const WRAPPER = document.body;
 define('test-component', TestComponent);
