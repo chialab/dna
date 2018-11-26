@@ -86,12 +86,12 @@ export class TestPlaceholder extends BaseComponent {
 
     connectedCallback() {
         super.connectedCallback();
-        this.attached = this.isConnected();
+        this.attached = this.isConnected;
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        this.attached = this.isConnected();
+        this.attached = this.isConnected;
     }
 }
 

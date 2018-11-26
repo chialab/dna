@@ -32,13 +32,13 @@ export const ComponentMixin = (SuperClass) => {
         }
         /**
          * Check if an instance was inserted into the document.
-         * @method isConnected
+         * @property {Boolean} isConnected Get the component connection status.
+         * @name isConnected
+         * @type {Boolean}
          * @memberof DNA.MIXINS.ComponentMixin
          * @instance
-         *
-         * @return {Boolean}
          */
-        isConnected() {
+        get isConnected() {
             return !!this[CONNECTED_SYMBOL];
         }
         /**

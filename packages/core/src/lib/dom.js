@@ -69,7 +69,7 @@ export function connect(element) {
     if (children) {
         [].forEach.call(children, connect);
     }
-    if (element[DNA_SYMBOL] && !element.isConnected()) {
+    if (element[DNA_SYMBOL] && !element.isConnected) {
         element[CONNECTED].call(element);
         return true;
     }
