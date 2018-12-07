@@ -1,34 +1,34 @@
 {
   "name": "@dnajs/dna",
   "description": "Evolution-based components.",
-  "version": "2.7.9",
+  "version": "2.9.0",
   "private": true,
-  "scripts": {
-    "test": "rna unit 'packages/*/test/**/*.spec.js' --browser --jsx.pragma h",
-    "test-saucelabs": "rna unit 'packages/*/test/**/*.spec.js' --saucelabs --jsx.pragma h",
-    "test-electron": "rna unit 'packages/*/test/**/*.spec.js' --electron --jsx.pragma h",
-    "lint": "rna lint",
-    "build": "rna build --production",
-    "dist": "rna build --production"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chialab/dna.git"
   },
-  "author": "Chialab <dev@chialab.io> (https://chialab.io)",
+  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
   "homepage": "https://dna.chialab.io",
   "devDependencies": {
-    "babel-eslint": "^8.2.6",
+    "babel-eslint": "^10.0.1",
     "chai": "^4.1.2",
-    "eslint": "^5.4.0",
-    "eslint-plugin-babel": "^5.1.0",
+    "eslint": "^5.9.0",
+    "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-mocha": "^5.2.0"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "build": "rna build --production",
+    "watch": "rna build --watch",
+    "test": "rna lint + unit",
+    "lint": "rna lint",
+    "start": "yarn install --ignore-scripts && rna build --watch",
+    "prepublish": "yarn run build"
+  }
 }

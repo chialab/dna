@@ -1,5 +1,17 @@
 # RNA
-node_modules/
+# NPM
+/node_modules
+
+# LINT
+.eslintcache
+.stylelintcache
+
+# TEST
+/reports
+
+/dist
+/public
+
 # RNA
 
 packages/**/node_modules/**/*.js
