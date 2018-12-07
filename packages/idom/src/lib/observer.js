@@ -1,7 +1,7 @@
+import { isFalsy } from '@chialab/proteins';
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
-import { isFalsy } from '@dnajs/core/src/lib/typeof.js';
 import { patch } from './idom.js';
 
 const _created = notifications.nodesCreated;

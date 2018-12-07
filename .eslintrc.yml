@@ -3,11 +3,15 @@ extends:
   - eslint:recommended
 
 globals:
+  assert: true
+  expect: true
+  should: true
   process: true
 
 env:
   es6: true
   browser: true
+  node: true
 
 plugins:
   - mocha
@@ -37,7 +41,9 @@ rules:
   prefer-const: 0
   space-before-function-paren:
     - 1
-    - never
+    - anonymous: never
+      named: never
+      asyncArrow: always
   no-proto: 0
   no-param-reassign: 0
   quote-props:
@@ -58,6 +64,7 @@ rules:
     - always-multiline
   constructor-super: 0
   generator-star-spacing: 0
+  getter-return: 1
   no-class-assign: 0
   no-confusing-arrow:
     - 2

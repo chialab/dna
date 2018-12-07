@@ -1,6 +1,5 @@
-import { define } from '../helpers/obj-define.js';
+import { isString } from '@chialab/proteins';
 import { reduceProperty } from '../lib/reduce.js';
-import { isString } from '../lib/typeof.js';
 import { convertShadowCSS } from '../lib/shadow-css.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 
@@ -70,13 +69,13 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.StyleMixin
      * @instance
      */
-    constructor(node) {
-        super(node);
+    constructor(...args) {
+        super(...args);
         let css = reduceProperty(this, 'css')
             .filter((protoCSS) => isString(protoCSS))
             .join('\n');
         if (css) {
-            define(this, 'css', { value: css });
+            Object.defineProperty(this, 'css', { value: css });
         }
     }
     /**

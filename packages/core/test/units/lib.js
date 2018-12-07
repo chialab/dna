@@ -1,14 +1,6 @@
 /* eslint-env mocha */
 
-import {
-    isFunction,
-    isString,
-    isObject,
-    isUndefined,
-    isArray,
-    isFalsy,
-} from '../../src/lib/typeof.js';
-import * as DOM from '../../src/lib/dom.js';
+import DOM from '../../src/lib/dom.js';
 import { render } from '../../src/lib/render.js';
 import { define } from '../../src/lib/define.js';
 import { bootstrap } from '../../src/lib/bootstrap.js';
@@ -53,28 +45,6 @@ define('test1-helper-component', TestComponent);
 define('helper-define-component', TestComponent2, { extends: 'div' });
 
 describe('Unit: lib', () => {
-    describe('typeof', () => {
-        it('should correctly check type of objects', () => {
-            chai.assert(isFunction(() => {}));
-            chai.assert(!isFunction({}));
-            chai.assert(isString(''));
-            chai.assert(!isString(4));
-            chai.assert(isObject({}));
-            chai.assert(!isObject([]));
-            chai.assert(isUndefined(undefined));
-            chai.assert(!isUndefined(null));
-            chai.assert(!isUndefined(false));
-            chai.assert(!isUndefined(''));
-            chai.assert(isArray([]));
-            chai.assert(!isArray({}));
-            chai.assert(!isArray(''));
-            chai.assert(isFalsy(undefined));
-            chai.assert(isFalsy(null));
-            chai.assert(isFalsy(false));
-            chai.assert(!isFalsy(''));
-        });
-    });
-
     describe('define', () => {
         describe('a simple element', () => {
             it('should define a custom element', () => {

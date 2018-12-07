@@ -1,6 +1,22 @@
-import { isFunction, isString } from './typeof.js';
-import { registry } from './registry.js';
 import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
+import { isString } from '@chialab/proteins';
+
+let TRIGGER_LIFE_CYCLE_METHODS = false;
+
+/**
+ * Enable or disable Component's programmatic life cycle.
+ * @param {Boolean} enabled
+ */
+function lifeCycle(enabled) {
+    TRIGGER_LIFE_CYCLE_METHODS = !!enabled;
+}
+
+/**
+ * The base Node constructor.
+ * @type {Function}
+ * @memberof DNA.DOM
+ */
+const Node = self.Node;
 
 /**
  * Retrieve a HTMLElement instance from a component instance.
@@ -10,9 +26,10 @@ import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
  * @param {Object} elem The component instance.
  * @return {HTMLElement} The node for the component instance.
  */
-export function getComponentNode(elem) {
+function getComponentNode(elem) {
     return elem && elem.node;
 }
+
 /**
  * Retrieve a component instance from a HTMLElement instance.
  * @method getNodeComponent
@@ -21,9 +38,10 @@ export function getComponentNode(elem) {
  * @param {HTMLElement} elem The node instance.
  * @return {Object} The component for the node instance.
  */
-export function getNodeComponent(elem) {
+function getNodeComponent(elem) {
     return elem && elem[COMPONENT_SYMBOL];
 }
+
 /**
  * The `connectedCallback` name.
  * @private
@@ -32,6 +50,7 @@ export function getNodeComponent(elem) {
  * @see [W3C spec](https://www.w3.org/TR/custom-elements/#custom-element-reactions)
  */
 const CONNECTED = 'connectedCallback';
+
 /**
  * The `disconnectedCallback` name.
  * @private
@@ -40,6 +59,7 @@ const CONNECTED = 'connectedCallback';
  * @see [W3C spec](https://www.w3.org/TR/custom-elements/#custom-element-reactions)
  */
 const DISCONNECTED = 'disconnectedCallback';
+
 /**
  * The `attributeChangedCallback` name.
  * @private
@@ -48,6 +68,7 @@ const DISCONNECTED = 'disconnectedCallback';
  * @see [W3C spec](https://www.w3.org/TR/custom-elements/#custom-element-reactions)
  */
 const UPDATED = 'attributeChangedCallback';
+
 /**
  * An helper for dynamically trigger the `connectedCallback` reaction on components.
  * @method connect
@@ -57,13 +78,28 @@ const UPDATED = 'attributeChangedCallback';
  * @param {HTMLElement} element The attached node.
  * @return {Boolean} The callback has been triggered.
  */
-export function connect(element) {
-    element = getNodeComponent(element) || element;
-    if (element[DNA_SYMBOL]) {
-        element[CONNECTED].call(element);
+function connect(element) {
+    if (!TRIGGER_LIFE_CYCLE_METHODS) {
+        return false;
+    }
+    let component = DOM.getNodeComponent(element);
+    let children;
+    if (component) {
+        element = component;
+        children = component.node.childNodes;
+    } else {
+        children = element.childNodes;
+    }
+    if (children) {
+        [].forEach.call(children, connect);
+    }
+    if (element[DNA_SYMBOL] && !element.isConnected) {
+        element[DOM.CONNECTED].call(element);
         return true;
     }
+    return false;
 }
+
 /**
  * An helper for dynamically trigger the `disconnectedCallback` reaction on components.
  * @method disconnect
@@ -73,13 +109,28 @@ export function connect(element) {
  * @param {HTMLElement} element The detached node.
  * @return {Boolean} The callback has been triggered.
  */
-export function disconnect(element) {
-    element = getNodeComponent(element) || element;
+function disconnect(element) {
+    if (!TRIGGER_LIFE_CYCLE_METHODS) {
+        return false;
+    }
+    let component = DOM.getNodeComponent(element);
+    let children;
+    if (component) {
+        element = component;
+        children = component.node.childNodes;
+    } else {
+        children = element.childNodes;
+    }
+    if (children) {
+        [].forEach.call(children, disconnect);
+    }
     if (element[DNA_SYMBOL]) {
-        element[DISCONNECTED].call(element);
+        element[DOM.DISCONNECTED].call(element);
         return true;
     }
+    return false;
 }
+
 /**
  * An helper for dynamically trigger the `attributeChangedCallback` reaction on components.
  * @method update
@@ -87,35 +138,39 @@ export function disconnect(element) {
  * @static
  *
  * @param {HTMLElement} element The updated element.
+ * @param {String} name The property name.
+ * @property {*} oldValue The previous property value.
+ * @property {*} newValue The current property value.
  * @return {Boolean} The callback has been triggered.
  */
-export function update(element, name, oldValue, newValue) {
-    element = getNodeComponent(element) || element;
+function update(element, name, oldValue, newValue) {
+    if (!TRIGGER_LIFE_CYCLE_METHODS) {
+        return false;
+    }
+    element = DOM.getNodeComponent(element) || element;
     if (element[DNA_SYMBOL]) {
         let attrs = element.constructor.observedAttributes || [];
         if (attrs.indexOf(name) !== -1) {
-            element[UPDATED].call(element, name, oldValue, newValue);
+            element[DOM.UPDATED].call(element, name, oldValue, newValue);
             return true;
         }
     }
+    return false;
 }
+
 /**
- * Create a component instance.
+ * Create a node instance.
  * @method createElement
  * @memberof DNA.DOM
  * @static
  *
- * @param {Function|String} Ctr The component constructor or tag name.
- * @return {HTMLElement} The component instance.
+ * @param {String} tag The tag name of the node to create.
+ * @return {Node} The node instance.
  */
-export function createElement(Ctr) {
-    if (isString(Ctr)) {
-        Ctr = registry.get(Ctr);
-    }
-    if (isFunction(Ctr)) {
-        return new Ctr();
-    }
+function createElement(tag) {
+    return document.createElement(tag);
 }
+
 /**
  * Dynamically append a node and call the `connectedCallback`.
  * - disconnect the node if already in the tree
@@ -128,7 +183,7 @@ export function createElement(Ctr) {
  * @param {HTMLElement} element The element to append.
  * @return {Boolean} The node has been appended.
  */
-export function appendChild(parent, element) {
+function appendChild(parent, element) {
     parent = getComponentNode(parent) || parent;
     element = getComponentNode(element) || element;
     if (parent !== element.parentNode || parent.lastElementChild !== element) {
@@ -150,12 +205,13 @@ export function appendChild(parent, element) {
  * @param {HTMLElement} element The element to remove.
  * @return {Boolean} The node has been removed.
  */
-export function removeChild(parent, element) {
+function removeChild(parent, element) {
     parent = getComponentNode(parent) || parent;
     element = getComponentNode(element) || element;
     parent.removeChild(element);
     return disconnect(element);
 }
+
 /**
  * Dynamically insert a node before another and call all the reactions.
  * - disconnect the node if already in the tree
@@ -169,7 +225,7 @@ export function removeChild(parent, element) {
  * @param {HTMLElement} refNode The node for positioning.
  * @return {Boolean} The node has been appended.
  */
-export function insertBefore(parent, element, refNode) {
+function insertBefore(parent, element, refNode) {
     parent = getComponentNode(parent) || parent;
     element = getComponentNode(element) || element;
     refNode = getComponentNode(refNode) || refNode;
@@ -181,6 +237,7 @@ export function insertBefore(parent, element, refNode) {
         return connect(element);
     }
 }
+
 /**
  * Dynamically replace a node with another and call all the reactions.
  * - disconnect the node if already in the tree
@@ -195,7 +252,7 @@ export function insertBefore(parent, element, refNode) {
  * @param {HTMLElement} refNode The node to replace.
  * @return {Boolean} The node has been appended.
  */
-export function replaceChild(parent, element, refNode) {
+function replaceChild(parent, element, refNode) {
     element = getComponentNode(element) || element;
     refNode = getComponentNode(refNode) || refNode;
     if (element.parentNode) {
@@ -205,6 +262,7 @@ export function replaceChild(parent, element, refNode) {
     disconnect(refNode);
     return connect(element);
 }
+
 /**
  * Dynamically update a node attribute and call all the reactions.
  * @method setAttribute
@@ -216,12 +274,13 @@ export function replaceChild(parent, element, refNode) {
  * @param {String} value The attribute value.
  * @return {Boolean} The node has been updated.
  */
-export function setAttribute(element, name, value) {
+function setAttribute(element, name, value) {
     element = getComponentNode(element) || element;
     let oldValue = element.getAttribute(name);
     element.setAttribute(name, value);
     return update(element, name, oldValue, value);
 }
+
 /**
  * Dynamically remove a node attribute and call all the reactions.
  * @method removeAttribute
@@ -232,9 +291,75 @@ export function setAttribute(element, name, value) {
  * @param {String} name The attribute name.
  * @return {Boolean} The node has been updated.
  */
-export function removeAttribute(element, name) {
+function removeAttribute(element, name) {
     element = getComponentNode(element) || element;
     let oldValue = element.getAttribute(name);
     element.removeAttribute(name);
     return update(element, name, oldValue, null);
 }
+
+let CustomEvent = self.CustomEvent;
+
+try {
+    // eslint-disable-next-line
+    new CustomEvent('test');
+} catch(ex) {
+    CustomEvent = function(ev, params) {
+        let evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(ev, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+    CustomEvent.prototype = self.CustomEvent.prototype;
+}
+
+/**
+ * Trigger a custom DOM Event.
+ * @private
+ *
+ * @param {Node} node The event target.
+ * @param {String} evName The custom event name.
+ * @param {Object} data Extra data to pass to the event.
+ * @param {Boolean} bubbles Enable event bubbling.
+ * @param {Boolean} cancelable Make event cancelable.
+ * @return {Boolean} True if event propagation has not be stopped.
+ */
+function dispatchEvent(node, evName, data, bubbles = true, cancelable = true) {
+    if (!isString(evName)) {
+        throw new TypeError('Event name is undefined');
+    }
+    let ev = new CustomEvent(evName, {
+        detail: data,
+        bubbles,
+        cancelable,
+    });
+    return node.dispatchEvent(ev);
+}
+
+/**
+ * A set of DOM helpers for callbacks trigger when Custom Elements
+ * are not supported by the browser.
+ * @module DOM
+ * @memberof DNA
+ */
+const DOM = {
+    Node,
+    CONNECTED,
+    DISCONNECTED,
+    UPDATED,
+    getNodeComponent,
+    getComponentNode,
+    connect,
+    disconnect,
+    update,
+    createElement,
+    appendChild,
+    removeChild,
+    insertBefore,
+    replaceChild,
+    setAttribute,
+    removeAttribute,
+    dispatchEvent,
+    lifeCycle,
+};
+
+export default DOM;

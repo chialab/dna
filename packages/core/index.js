@@ -11,17 +11,17 @@
  */
 export * from './src/core.js';
 
-import { mix, MIXINS } from './src/core.js';
+import { mix } from './src/core.js';
+import { MIXINS } from './src/mixins/index.js';
 import { registry } from './src/lib/registry.js';
 import { proxy } from './src/lib/proxy.js';
 
+export { MIXINS };
 export { registry };
 export { proxy };
 export { bootstrap } from './src/lib/bootstrap.js';
 export { define } from './src/lib/define.js';
 export { render } from './src/lib/render.js';
-
-const Component = proxy(class {});
 
 /**
  * Simple Custom Component with some behaviors.
@@ -53,25 +53,10 @@ const Component = proxy(class {});
  * }
  * ```
  */
-export class BaseComponent extends mix(Component).with(
+export class BaseComponent extends mix(proxy(class {})).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,
     MIXINS.EventsMixin,
     MIXINS.TemplateMixin
-) {
-    constructor(node) {
-        super();
-        if (!node) {
-            let desc = registry.get(this.is, true);
-            let config = desc.config;
-            node = document.createElement(
-                config.extends ? config.extends : desc.is
-            );
-            if (config.extends) {
-                node.setAttribute('is', desc.is);
-            }
-        }
-        this.node = node;
-    }
-}
+) {}

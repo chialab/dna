@@ -1,4 +1,4 @@
-import { appendChild } from './dom.js';
+import DOM from './dom.js';
 
 /**
  * Create and append a new component instance.
@@ -11,10 +11,7 @@ import { appendChild } from './dom.js';
  * @return {HTMLElement} The new component instance.
  */
 export function render(node, Component, props) {
-    let element = new Component();
-    for (let k in props) {
-        element[k] = props[k];
-    }
-    appendChild(node, element);
+    let element = new Component(props);
+    DOM.appendChild(node, element);
     return element;
 }

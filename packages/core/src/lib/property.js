@@ -1,5 +1,6 @@
-import { isUndefined, isFunction, isArray, isObject, isString } from './typeof.js';
-import { define } from '../helpers/obj-define.js';
+import { isUndefined, isFunction, isArray, isObject, isString } from '@chialab/proteins';
+
+const define = Object.defineProperty;
 
 /**
  * Power to the component's properties.

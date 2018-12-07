@@ -7,7 +7,8 @@
  * Use with Custom Elements spec.
  */
 import './src/lib/observer.js';
-import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix } from '@dnajs/core/src/core.js';
+import { MIXINS } from '@dnajs/core/src/mixins/index.js';
 import * as IDOM from '@dnajs/idom/src/lib/idom.js';
 import { IDOMMixin } from '@dnajs/idom/src/mixins/idom.js';
 import { CustomElementMixin } from './src/mixins/custom-element.js';
@@ -16,12 +17,12 @@ import { shim } from './src/lib/shim.js';
 MIXINS.CustomElementMixin = CustomElementMixin;
 MIXINS.IDOMMixin = IDOMMixin;
 
-export { prop } from '@dnajs/core/src/core.js';
+export * from '@dnajs/core/src/core.js';
+export { trust } from '@dnajs/idom/src/lib/trust.js';
 export { shim, mix, MIXINS, IDOM };
 export const h = IDOM.h;
 export { registry } from './src/lib/registry.js';
 export { define } from './src/lib/define.js';
-export { render } from './src/lib/render.js';
 
 export class BaseComponent extends mix(
     shim(self.HTMLElement)

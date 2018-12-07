@@ -1,5 +1,4 @@
-import { isFunction } from '@dnajs/core/src/lib/typeof.js';
-import { define } from '@dnajs/core/src/helpers/obj-define.js';
+import { isFunction } from '@chialab/proteins';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**
@@ -14,7 +13,7 @@ export function bind(node) {
     let Ctr = registry.get(node.getAttribute('is') || node.tagName);
     if (isFunction(Ctr)) {
         node.__proto__ = Ctr.prototype;
-        define(node, 'constructor', {
+        Object.defineProperty(node, 'constructor', {
             value: Ctr,
             configurable: true,
             writable: true,

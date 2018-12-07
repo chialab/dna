@@ -1,30 +1,41 @@
-import { Symbol } from '../helpers/symbol.js';
+import Symbolic from '@chialab/proteins/src/symbolic.js';
 
 /**
  * Symbol for DNA component mixin.
  * Bound to a component instance.
- * @type {String}
+ * @type {Symbol}
  * @private
  */
-export const DNA_SYMBOL = Symbol('dna');
+export const DNA_SYMBOL = Symbolic('dna');
+
 /**
  * Symbol for component instance.
  * Bound to a node.
- * @type {String}
+ * @type {Symbol}
  * @private
  */
-export const COMPONENT_SYMBOL = Symbol('component');
+export const COMPONENT_SYMBOL = Symbolic('component');
+
 /**
  * Symbol for node instance.
  * Bound to a component instance.
- * @type {String}
+ * @type {Symbol}
  * @private
  */
-export const NODE_SYMBOL = Symbol('node');
+export const NODE_SYMBOL = Symbolic('node');
+
 /**
  * Symbol for style element.
  * Bound to a component instance.
- * @type {String}
+ * @type {Symbol}
  * @private
  */
-export const STYLE_SYMBOL = Symbol('style');
+export const STYLE_SYMBOL = Symbolic('style');
+
+/**
+ * Symbol for connected state.
+ * Bound to a component instance.
+ * @type {Symbol}
+ * @private
+ */
+export const CONNECTED_SYMBOL = Symbolic('connected');

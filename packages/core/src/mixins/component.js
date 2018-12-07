@@ -1,4 +1,6 @@
-import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL } from '../lib/symbols.js';
+import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL } from '../lib/symbols.js';
+import DOM from '../lib/dom.js';
+import { registry } from '../lib/registry.js';
 
 /**
  * The base custom component mixins. Just add life cycles callback and `is` getter.
@@ -31,6 +33,30 @@ export const ComponentMixin = (SuperClass) => {
             this[NODE_SYMBOL] = node;
         }
         /**
+         * Check if an instance was inserted into the document.
+         * @property {Boolean} isConnected Get the component connection status.
+         * @name isConnected
+         * @type {Boolean}
+         * @memberof DNA.MIXINS.ComponentMixin
+         * @instance
+         */
+        get isConnected() {
+            return !!this[CONNECTED_SYMBOL];
+        }
+        constructor(node) {
+            super();
+            if (!node) {
+                let desc = registry.get(this.is, true);
+                let config = desc.config;
+                let tag = config.extends || desc.is;
+                node = DOM.createElement(tag);
+                if (config.extends) {
+                    node.setAttribute('is', desc.is);
+                }
+            }
+            this.node = node;
+        }
+        /**
          * Fires when an instance was inserted into the document.
          * @method connectedCallback
          * @memberof DNA.MIXINS.ComponentMixin
@@ -38,6 +64,7 @@ export const ComponentMixin = (SuperClass) => {
          */
         connectedCallback() {
             this.node[COMPONENT_SYMBOL] = this;
+            this[CONNECTED_SYMBOL] = true;
         }
         /**
          * Fires when an instance was detached from the document.
@@ -45,7 +72,9 @@ export const ComponentMixin = (SuperClass) => {
          * @memberof DNA.MIXINS.ComponentMixin
          * @instance
          */
-        disconnectedCallback() {}
+        disconnectedCallback() {
+            this[CONNECTED_SYMBOL] = false;
+        }
         /**
          * Fires when an attribute was added, removed, or updated.
          * @method attributeChangedCallback

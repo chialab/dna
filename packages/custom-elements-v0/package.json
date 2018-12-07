@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/custom-elements-v0",
-  "version": "2.7.9",
+  "version": "2.8.2",
   "description": "Evolution-based components with Custom Elements v0 implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
   "main": "dist/custom-elements-v0.js",
@@ -17,8 +17,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.7.9",
-    "@dnajs/idom": "^2.7.9"
+    "@chialab/proteins": "^3.0.0",
+    "@dnajs/core": "^2.8.2",
+    "@dnajs/idom": "^2.8.2"
   },
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"

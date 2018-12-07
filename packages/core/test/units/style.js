@@ -1,8 +1,10 @@
 /* eslint-env mocha */
 
-import { define, render } from '../../index.js';
+import { define, render, DOM } from '../../index.js';
 import { TestComponent1, TestComponent2, TestComponent3, TestComponent4 } from '../components/style.js';
 import chai from 'chai/chai.js';
+
+DOM.lifeCycle(true);
 
 const WRAPPER = document.body;
 
