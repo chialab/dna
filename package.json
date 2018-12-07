@@ -26,7 +26,9 @@
   "scripts": {
     "build": "rna build --production",
     "watch": "rna build --watch",
-    "test": "rna lint + unit",
+    "test": "rna lint + unit 'packages/*/test/**/*.spec.js' --browser --jsx.pragma h",
+    "test-saucelabs": "rna lint + unit 'packages/*/test/**/*.spec.js' --saucelabs --jsx.pragma h",
+    "test-electron": "rna lint + unit 'packages/*/test/**/*.spec.js' --electron --jsx.pragma h",
     "lint": "rna lint",
     "start": "yarn install --ignore-scripts && rna build --watch",
     "prepublish": "yarn run build"
