@@ -90,6 +90,11 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@chialab/proteins@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.0.0.tgz#5577e5b36f4cfc56c2f5a9a279ed4c45315e5c6a"
+  integrity sha512-V2aJg0+SdmndjKEwzVpq0JTkm44jCjXS1m7+lnuNILYZkyoPBInF0yEYIK+5Ruj96boP3WaWRAfQ5kf0kvTZow==
+
 acorn-jsx@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-4.1.1.tgz#e8e41e48ea2fe0c896740610ab6a4ffd8add225e"

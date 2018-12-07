@@ -9,7 +9,8 @@
 import './src/lib/observer.js';
 import * as IDOM from './src/lib/idom.js';
 import { IDOMMixin } from './src/mixins/idom.js';
-import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix } from '@dnajs/core/src/core.js';
+import { MIXINS } from '@dnajs/core/src/mixins/index.js';
 import DOM from '@dnajs/core/src/lib/dom.js';
 import { proxy } from '@dnajs/core/src/lib/proxy.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';

@@ -7,7 +7,8 @@
  * Use with Custom Elements spec.
  */
 import './src/lib/observer.js';
-import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix } from '@dnajs/core/src/core.js';
+import { MIXINS } from '@dnajs/core/src/mixins/index.js';
 import * as IDOM from '@dnajs/idom/src/lib/idom.js';
 import { IDOMMixin } from '@dnajs/idom/src/mixins/idom.js';
 import { CustomElementMixin } from './src/mixins/custom-element.js';

@@ -297,6 +297,12 @@ function removeAttribute(element, name) {
     return update(element, name, oldValue, null);
 }
 
+/**
+ * A set of DOM helpers for callbacks trigger when Custom Elements
+ * are not supported by the browser.
+ * @module DOM
+ * @memberof DNA
+ */
 const DOM = {
     Node,
     CONNECTED,

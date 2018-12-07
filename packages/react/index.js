@@ -7,7 +7,8 @@
  * Use with React.
  */
 import React from 'react';
-import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import { mix } from '@dnajs/core/src/core.js';
+import { MIXINS } from '@dnajs/core/src/mixins/index.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { proxy } from '@dnajs/core/src/lib/proxy.js';
 import { ReactMixin } from './src/mixins/react.js';

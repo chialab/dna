@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
-  "homepage": "https://github.com/chialab/dna#readme"
+  "homepage": "https://github.com/chialab/dna#readme",
+  "dependencies": {
+    "@chialab/proteins": "^3.0.0"
+  }
 }

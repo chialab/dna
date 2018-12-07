@@ -11,10 +11,12 @@
  */
 export * from './src/core.js';
 
-import { mix, MIXINS } from './src/core.js';
+import { mix } from './src/core.js';
+import { MIXINS } from './src/mixins/index.js';
 import { registry } from './src/lib/registry.js';
 import { proxy } from './src/lib/proxy.js';
 
+export { MIXINS };
 export { registry };
 export { proxy };
 export { bootstrap } from './src/lib/bootstrap.js';
