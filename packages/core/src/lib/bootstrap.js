@@ -1,6 +1,6 @@
 import { registry } from './registry.js';
 import DOM from './dom.js';
-import { isFunction } from './typeof.js';
+import { isFunction } from '@chialab/proteins';
 
 /**
  * Instantiate all defined components in a DOM tree.

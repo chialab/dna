@@ -1,4 +1,3 @@
-import { define } from '../helpers/obj-define.js';
 const sym = 'components';
 
 /**
@@ -25,7 +24,7 @@ export const registry = {
      */
     define(name, Ctr, config = {}) {
         name = name.toLowerCase();
-        define(Ctr.prototype, 'is', {
+        Object.defineProperty(Ctr.prototype, 'is', {
             get: () => name,
         });
         this[sym][name] = {

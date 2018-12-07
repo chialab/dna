@@ -1,20 +1,10 @@
 /* eslint-env mocha */
 
 import { define, render, DOM } from '../../index.js';
-import { CustomEvent } from '../../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent, TestPropagationComponent } from '../components/events.js';
 import chai from 'chai/chai.js';
 
 DOM.lifeCycle(true);
-
-function dispatch(node, evName) {
-    let ev = new CustomEvent(evName, {
-        bubbles: true,
-        cancelable: true,
-        detail: undefined,
-    });
-    return node.dispatchEvent(ev);
-}
 
 const WRAPPER = document.body;
 define('test-events-component', TestComponent);
@@ -36,7 +26,7 @@ describe('Unit: EventsComponent', () => {
             const span = elem.node.querySelector('span');
             let fired = false;
             elem.delegate('checkDelegation', 'span', () => fired = true);
-            dispatch(span, 'checkDelegation');
+            DOM.dispatchEvent(span, 'checkDelegation');
             it('should trigger a function callback', () => {
                 chai.assert(fired);
             });
@@ -48,10 +38,10 @@ describe('Unit: EventsComponent', () => {
             const input = elem.node.querySelector('input');
 
             before((done) => {
-                dispatch(span, 'click');
-                dispatch(button, 'click');
+                DOM.dispatchEvent(span, 'click');
+                DOM.dispatchEvent(button, 'click');
                 input.value = 'DNA Tests';
-                dispatch(input, 'change');
+                DOM.dispatchEvent(input, 'change');
                 setTimeout(() => done(), 500);
             });
 
@@ -90,10 +80,10 @@ describe('Unit: EventsComponent', () => {
 
             before((done) => {
                 DOM.removeChild(WRAPPER, elem);
-                dispatch(span, 'click');
-                dispatch(button, 'click');
+                DOM.dispatchEvent(span, 'click');
+                DOM.dispatchEvent(button, 'click');
                 input.value = 'DNA Tests';
-                dispatch(input, 'change');
+                DOM.dispatchEvent(input, 'change');
                 setTimeout(() => done(), 500);
             });
 
@@ -154,7 +144,7 @@ describe('Unit: EventsComponent', () => {
             });
 
             let elementToClick = elem.node.querySelector('.child5');
-            dispatch(elementToClick, 'click');
+            DOM.dispatchEvent(elementToClick, 'click');
 
             chai.assert(!checks.click1);
             chai.assert(checks.click2);

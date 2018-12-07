@@ -1,4 +1,5 @@
 import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
+import { isString } from '@chialab/proteins';
 
 let TRIGGER_LIFE_CYCLE_METHODS = false;
 
@@ -297,6 +298,43 @@ function removeAttribute(element, name) {
     return update(element, name, oldValue, null);
 }
 
+let CustomEvent = self.CustomEvent;
+
+try {
+    // eslint-disable-next-line
+    new CustomEvent('test');
+} catch(ex) {
+    CustomEvent = function(ev, params) {
+        let evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(ev, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+    CustomEvent.prototype = self.CustomEvent.prototype;
+}
+
+/**
+ * Trigger a custom DOM Event.
+ * @private
+ *
+ * @param {Node} node The event target.
+ * @param {String} evName The custom event name.
+ * @param {Object} data Extra data to pass to the event.
+ * @param {Boolean} bubbles Enable event bubbling.
+ * @param {Boolean} cancelable Make event cancelable.
+ * @return {Boolean} True if event propagation has not be stopped.
+ */
+function dispatchEvent(node, evName, data, bubbles = true, cancelable = true) {
+    if (!isString(evName)) {
+        throw new TypeError('Event name is undefined');
+    }
+    let ev = new CustomEvent(evName, {
+        detail: data,
+        bubbles,
+        cancelable,
+    });
+    return node.dispatchEvent(ev);
+}
+
 /**
  * A set of DOM helpers for callbacks trigger when Custom Elements
  * are not supported by the browser.
@@ -320,6 +358,7 @@ const DOM = {
     replaceChild,
     setAttribute,
     removeAttribute,
+    dispatchEvent,
     lifeCycle,
 };
 

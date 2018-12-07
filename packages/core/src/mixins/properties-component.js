@@ -1,8 +1,6 @@
+import { isFalsy, isUndefined } from '@chialab/proteins';
 import DOM from '../lib/dom.js';
-import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
-import { isFalsy, isUndefined } from '../lib/typeof.js';
-import { dispatch } from '../lib/dispatch.js';
 import { prop, Property } from '../lib/property.js';
 
 /**
@@ -97,7 +95,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                 props[k] = prop(props[k]);
             }
         }
-        define(this, 'properties', { value: props });
+        Object.defineProperty(this, 'properties', { value: props });
         let observed = this.constructor.observedAttributes || [];
         for (let k in props) {
             let prop = props[k];
@@ -117,7 +115,7 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                         setAttribute(this, attrName, this[prop.name]);
                     }
                     if (eventName) {
-                        dispatch(this, eventName, {
+                        DOM.dispatchEvent(this, eventName, {
                             component: this,
                             property: changedProp.name,
                             newValue,
