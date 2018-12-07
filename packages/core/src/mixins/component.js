@@ -1,4 +1,5 @@
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL } from '../lib/symbols.js';
+import * as DOM from '../lib/dom.js';
 import { registry } from '../lib/registry.js';
 
 /**
@@ -47,9 +48,8 @@ export const ComponentMixin = (SuperClass) => {
             if (!node) {
                 let desc = registry.get(this.is, true);
                 let config = desc.config;
-                node = document.createElement(
-                    config.extends ? config.extends : desc.is
-                );
+                let tag = config.extends || desc.is;
+                node = DOM.createElement(tag);
                 if (config.extends) {
                     node.setAttribute('is', desc.is);
                 }
