@@ -23,7 +23,6 @@ describe('Unit: IDOM observer', () => {
         const node = WRAPPER.querySelector('test-idom-component');
         const elem = DOM.getNodeComponent(node);
         it('should create a component instance', () => {
-            chai.assert.equal(elem.node.tagName.toLowerCase(), 'test-idom-component');
             chai.assert.equal(elem.name, 'Alan');
             chai.assert.equal(elem.lastName, 'Turing');
         });
