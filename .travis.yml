@@ -20,13 +20,13 @@ jobs:
         - sh -e /etc/init.d/xvfb start
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli
-        - yarn add codecov -W
+        - yarn global add codecov
       install:
         - yarn install
       script:
         - yarn test
       after_success:
-        - cat reports/unit/coverage/*/lcov.info | ./node_modules/.bin/codecov
+        - cat reports/unit/coverage/*/lcov.info | codecov
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
@@ -69,13 +69,13 @@ jobs:
       env: CI_BUILD_TYPE=docs
       node_js: 7
       install:
-        - npm install documentation
-        - npm install
+        - yarn global add documentation
+        - yarn install --ignore-scripts
       script:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
         - git clone https://${GH_TOKEN}@github.com/Chialab/dna.wiki.git wiki
-        - ./node_modules/.bin/documentation build packages/core/index.js -f md > ./wiki/API.md
+        - documentation build packages/core/index.js -f md > ./wiki/API.md
         - cd wiki
         - git add .
         - git diff-index --quiet HEAD || git commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
