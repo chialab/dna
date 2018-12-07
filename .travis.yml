@@ -67,7 +67,7 @@ jobs:
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
-      node_js: 7
+      node_js: 10
       install:
         - yarn global add documentation
         - yarn install --ignore-scripts
@@ -83,7 +83,7 @@ jobs:
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
-      node_js: 7
+      node_js: 10
       install:
         - pip install --user awscli
         - aws configure set preview.cloudfront true
