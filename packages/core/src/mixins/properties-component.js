@@ -1,4 +1,4 @@
-import * as DOM from '../lib/dom.js';
+import DOM from '../lib/dom.js';
 import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';

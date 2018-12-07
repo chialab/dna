@@ -11,6 +11,8 @@ import {
 } from '../components/template.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 // eslint-disable-next-line
 const h = IDOM.h;
 

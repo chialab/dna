@@ -1,4 +1,4 @@
-import * as DOM from './lib/dom.js';
+import DOM from './lib/dom.js';
 import { ComponentMixin } from './mixins/component.js';
 import { PropertiesMixin } from './mixins/properties-component.js';
 import { EventsMixin } from './mixins/events-component.js';
@@ -26,3 +26,4 @@ export const MIXINS = {
 };
 export { mix } from './lib/mixins.js';
 export { prop } from './lib/property.js';
+export { render } from './lib/render.js';

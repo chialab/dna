@@ -5,6 +5,8 @@ import { CustomEvent } from '../../src/helpers/custom-event.js';
 import { TestComponent, TestInvalidComponent, TestPropagationComponent } from '../components/events.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 function dispatch(node, evName) {
     let ev = new CustomEvent(evName, {
         bubbles: true,

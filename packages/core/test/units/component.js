@@ -4,6 +4,8 @@ import { define, DOM } from '../../index.js';
 import { TestComponent } from '../components/component.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 const WRAPPER = document.body;
 define('test-component', TestComponent);
 

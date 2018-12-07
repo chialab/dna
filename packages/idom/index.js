@@ -10,6 +10,7 @@ import './src/lib/observer.js';
 import * as IDOM from './src/lib/idom.js';
 import { IDOMMixin } from './src/mixins/idom.js';
 import { mix, MIXINS } from '@dnajs/core/src/core.js';
+import DOM from '@dnajs/core/src/lib/dom.js';
 import { proxy } from '@dnajs/core/src/lib/proxy.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 
@@ -23,6 +24,8 @@ export { define } from '@dnajs/core/src/lib/define.js';
 export { render } from '@dnajs/core/src/lib/render.js';
 export { IDOM };
 export const h = IDOM.h;
+
+DOM.lifeCycle(true);
 
 export class BaseComponent extends mix(proxy(class { })).with(
     MIXINS.ComponentMixin,

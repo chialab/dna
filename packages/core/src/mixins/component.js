@@ -1,5 +1,5 @@
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL } from '../lib/symbols.js';
-import * as DOM from '../lib/dom.js';
+import DOM from '../lib/dom.js';
 import { registry } from '../lib/registry.js';
 
 /**
