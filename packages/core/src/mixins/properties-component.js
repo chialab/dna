@@ -1,3 +1,4 @@
+import * as DOM from '../lib/dom.js';
 import { define } from '../helpers/obj-define.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
 import { isFalsy, isUndefined } from '../lib/typeof.js';
@@ -84,7 +85,11 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.PropertiesMixin
      * @instance
      */
-    constructor(node) {
+    constructor(node, properties) {
+        if (node && !(node instanceof DOM.Node)) {
+            properties = node;
+            node = null;
+        }
         super(node);
         let props = reduceObjectProperty(this, 'properties');
         for (let k in props) {
@@ -120,6 +125,11 @@ export const PropertiesMixin = (SuperClass) => class extends SuperClass {
                         });
                     }
                 });
+            }
+        }
+        if (properties) {
+            for (let key in properties) {
+                this[key] = properties[key];
             }
         }
     }

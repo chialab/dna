@@ -5,8 +5,8 @@ class TestComponent extends BaseComponent {
     get template() {
         return '<h1>DNA TESTS</h1>';
     }
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         if (this.node && isFunction(this.node.createShadowRoot)) {
             this.node.createShadowRoot();
         }
@@ -63,8 +63,8 @@ export class TestComponent2 extends TestComponent {
 }`;
     }
 
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         this.node.classList.add('active');
     }
 }
@@ -102,8 +102,8 @@ export class TestComponent3 extends TestComponent {
         return '<span id="before1"></span><span id="before2"></span><span id="before3"></span><span id="before4"></span><span id="before5"></span><span id="before6"></span>';
     }
 
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         this.node.classList.add('active');
     }
 }

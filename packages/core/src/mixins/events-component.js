@@ -121,8 +121,8 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.EventsMixin
      * @instance
      */
-    constructor(node) {
-        super(node);
+    constructor(...args) {
+        super(...args);
         let events = reduceObjectProperty(this, 'events');
         define(this, 'events', { value: {} });
         for (let k in events) {

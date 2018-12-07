@@ -8,7 +8,7 @@ const WRAPPER = document.body;
 define('test-component', TestComponent);
 
 describe('Unit: Component', () => {
-    let elem = DOM.createElement(TestComponent);
+    let elem = new TestComponent();
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {

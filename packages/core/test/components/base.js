@@ -16,8 +16,8 @@ export class TestBaseComponent extends BaseComponent {
         return `<span>${this.name} ${this.lastName}</span>`;
     }
 
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         this.created = true;
     }
 

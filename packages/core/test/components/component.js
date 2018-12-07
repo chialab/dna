@@ -5,8 +5,8 @@ export class TestComponent extends BaseComponent {
         return ['test-callback'];
     }
 
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         this.created = true;
     }
 

@@ -24,23 +24,7 @@ export { render } from '@dnajs/core/src/lib/render.js';
 export { IDOM };
 export const h = IDOM.h;
 
-const Component = proxy(class {
-    constructor(node) {
-        if (!node) {
-            let desc = registry.get(this.is, true);
-            let config = desc.config;
-            node = document.createElement(
-                config.extends ? config.extends : desc.is
-            );
-            if (config.extends) {
-                node.setAttribute('is', desc.is);
-            }
-        }
-        this.node = node;
-    }
-});
-
-export class BaseComponent extends mix(Component).with(
+export class BaseComponent extends mix(proxy(class { })).with(
     MIXINS.ComponentMixin,
     MIXINS.PropertiesMixin,
     MIXINS.StyleMixin,

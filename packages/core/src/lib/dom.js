@@ -1,6 +1,11 @@
-import { isFunction, isString } from './typeof.js';
-import { registry } from './registry.js';
 import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
+
+/**
+ * The base Node constructor.
+ * @type {Function}
+ * @memberof DNA.DOM
+ */
+export const Node = self.Node;
 
 /**
  * Retrieve a HTMLElement instance from a component instance.
@@ -120,21 +125,16 @@ export function update(element, name, oldValue, newValue) {
     }
 }
 /**
- * Create a component instance.
+ * Create a node instance.
  * @method createElement
  * @memberof DNA.DOM
  * @static
  *
- * @param {Function|String} Ctr The component constructor or tag name.
- * @return {HTMLElement} The component instance.
+ * @param {String} tag The tag name of the node to create.
+ * @return {Node} The node instance.
  */
-export function createElement(Ctr) {
-    if (isString(Ctr)) {
-        Ctr = registry.get(Ctr);
-    }
-    if (isFunction(Ctr)) {
-        return new Ctr();
-    }
+export function createElement(tag) {
+    return document.createElement(tag);
 }
 /**
  * Dynamically append a node and call the `connectedCallback`.
