@@ -18,6 +18,7 @@ MIXINS.CustomElementMixin = CustomElementMixin;
 MIXINS.IDOMMixin = IDOMMixin;
 
 export * from '@dnajs/core/src/core.js';
+export { trust } from '@dnajs/idom/src/lib/trust.js';
 export { shim, mix, MIXINS, IDOM };
 export const h = IDOM.h;
 export { registry } from './src/lib/registry.js';
