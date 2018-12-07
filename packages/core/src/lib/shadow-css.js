@@ -8,14 +8,6 @@ const doc = document.implementation.createHTMLDocument('');
 const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 
 /**
- * A regex to match pseudo elements content without required quotes.
- * (Yes, Safari, it's you).
- * @type {RegExp}
- * @private
- */
-const CONTENT_REGEX = /(content:\s*)([^"';}\s()]+)([\s;}])/gi;
-
-/**
  * A regex for selector splitting.
  * @type {RegExp}
  * @private
@@ -28,33 +20,25 @@ const SPLIT_SELECTOR_REGEX = /\s*,\s*/;
  * @param {CSSStyleSheet} sheet The sheet to convert.
  * @param {String} scope The scope name to use.
  * @param {RegExp} scopeRegex The scope class regex.
- * @return {String} The updated css.
  */
 function convertShadowSheet(sheet, scope, scopeRegex) {
-    let content = (sheet.cssText || '').replace(CONTENT_REGEX, '$1"$2"$3');
     if (sheet.selectorText) {
         let selector = sheet.selectorText.trim();
         if (selector.match(scopeRegex)) {
-            return content;
+            return;
         }
         let scoped = selector
             .split(SPLIT_SELECTOR_REGEX)
             .map((sel) => `${scope} ${sel}`).join(', ');
-        return content.replace(selector, scoped);
+        sheet.selectorText = scoped;
     }
     let rules = sheet.cssRules || sheet.rules;
     if (!rules) {
-        return content;
+        return;
     }
-    let inner = '';
     for (let i = 0, len = rules.length; i < len; i++) {
-        inner += `${convertShadowSheet(rules[i], scope)}\n`;
+        convertShadowSheet(rules[i], scope);
     }
-    if (sheet.parentStyleSheet) {
-        let firstBracket = content.indexOf('{');
-        return `${content.substring(0, firstBracket)}{${inner}}`;
-    }
-    return inner;
 }
 
 /**
@@ -63,12 +47,14 @@ function convertShadowSheet(sheet, scope, scopeRegex) {
  *
  * @param {String} css The style CSS to convert.
  * @param {String} is The component name for scoping.
- * @return {String} The scoped css.
+ * @return {HTMLStyleElement} The scoped css.
  */
 export function convertShadowCSS(css, is) {
     let style = doc.createElement('style');
     let scope = `.${is}`;
     style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
     doc.body.appendChild(style);
-    return convertShadowSheet(style.sheet, scope, new RegExp(`${scope}/b`));
+    convertShadowSheet(style.sheet, scope, new RegExp(`${scope}/b`));
+    doc.body.removeChild(style);
+    return style;
 }
