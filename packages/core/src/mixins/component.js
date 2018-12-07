@@ -1,4 +1,6 @@
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL } from '../lib/symbols.js';
+import DOM from '../lib/dom.js';
+import { registry } from '../lib/registry.js';
 
 /**
  * The base custom component mixins. Just add life cycles callback and `is` getter.
@@ -40,6 +42,19 @@ export const ComponentMixin = (SuperClass) => {
          */
         get isConnected() {
             return !!this[CONNECTED_SYMBOL];
+        }
+        constructor(node) {
+            super();
+            if (!node) {
+                let desc = registry.get(this.is, true);
+                let config = desc.config;
+                let tag = config.extends || desc.is;
+                node = DOM.createElement(tag);
+                if (config.extends) {
+                    node.setAttribute('is', desc.is);
+                }
+            }
+            this.node = node;
         }
         /**
          * Fires when an instance was inserted into the document.

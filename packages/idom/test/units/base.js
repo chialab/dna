@@ -4,6 +4,8 @@ import { render, define, DOM } from '../../index.js';
 import { TestBaseIDOMComponent } from '../components/base.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 const WRAPPER = document.body;
 
 class TestBaseIDOMComponent2 extends TestBaseIDOMComponent { }

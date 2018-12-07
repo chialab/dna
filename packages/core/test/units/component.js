@@ -4,11 +4,13 @@ import { define, DOM } from '../../index.js';
 import { TestComponent } from '../components/component.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 const WRAPPER = document.body;
 define('test-component', TestComponent);
 
 describe('Unit: Component', () => {
-    let elem = DOM.createElement(TestComponent);
+    let elem = new TestComponent();
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {

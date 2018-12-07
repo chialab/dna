@@ -4,6 +4,8 @@ import { define, DOM, IDOM } from '../../index.js';
 import { TestComponent } from '../components/observer.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 // eslint-disable-next-line
 const h = IDOM.h;
 

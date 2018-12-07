@@ -4,6 +4,8 @@ import { define, DOM } from '../../index.js';
 import { TestBaseComponent } from '../components/base.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 const WRAPPER = document.body;
 
 class TestBaseComponent2 extends TestBaseComponent { }
@@ -14,7 +16,7 @@ define('test-base-component-2', TestBaseComponent2, {
 });
 
 describe('Unit: BaseComponent', () => {
-    const elem = DOM.createElement('test-base-component');
+    const elem = new TestBaseComponent();
     elem.lastName = 'Turing';
 
     describe('> created', () => {
@@ -56,7 +58,7 @@ describe('Unit: BaseComponent', () => {
 });
 
 describe('Unit: BaseComponent with native element', () => {
-    const elem = DOM.createElement('test-base-component-2');
+    const elem = new TestBaseComponent2();
     elem.lastName = 'Turing';
 
     describe('> created', () => {

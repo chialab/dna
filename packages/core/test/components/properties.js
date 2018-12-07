@@ -28,8 +28,8 @@ export class TestComponent1 extends TestComponent {
         };
     }
 
-    constructor() {
-        super();
+    constructor(...args) {
+        super(...args);
         this.ageChanged = 0;
     }
 

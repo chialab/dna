@@ -16,11 +16,10 @@ import { CustomElementMixin } from './src/mixins/custom-element.js';
 MIXINS.IDOMMixin = IDOMMixin;
 MIXINS.CustomElementMixin = CustomElementMixin;
 
-export { prop } from '@dnajs/core/src/core.js';
+export * from '@dnajs/core/src/core.js';
 export { shim, mix, registry, MIXINS, IDOM };
 export const h = IDOM.h;
 export { define } from './src/lib/define.js';
-export { render } from './src/lib/render.js';
 
 export class BaseComponent extends mix(
     shim(self.HTMLElement)
