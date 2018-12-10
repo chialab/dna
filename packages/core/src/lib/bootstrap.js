@@ -1,6 +1,6 @@
 import { registry } from './registry.js';
-import { getNodeComponent, connect } from './dom.js';
-import { isFunction } from './typeof.js';
+import DOM from './dom.js';
+import { isFunction } from '@chialab/proteins';
 
 /**
  * Instantiate all defined components in a DOM tree.
@@ -15,12 +15,12 @@ export function bootstrap(root, beforeConnectCallback) {
         let Component = registry.get(k);
         let elements = root.querySelectorAll(`${k}, [is="${k}"]`);
         for (let i = 0, len = elements.length; i < len; i++) {
-            if (!getNodeComponent(elements[i])) {
+            if (!DOM.getNodeComponent(elements[i])) {
                 let component = new Component(elements[i]);
                 if (beforeConnectCallback && isFunction(beforeConnectCallback)) {
                     beforeConnectCallback(component, elements[i]);
                 }
-                connect(component);
+                DOM.connect(component);
             }
         }
     }

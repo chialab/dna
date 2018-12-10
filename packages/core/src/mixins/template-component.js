@@ -1,4 +1,4 @@
-import { isUndefined, isFunction, isFalsy } from '../lib/typeof.js';
+import { isUndefined, isFunction, isFalsy } from '@chialab/proteins';
 
 /**
  * Simple Custom Component with template handling using the `template` property.

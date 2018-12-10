@@ -1,4 +1,4 @@
-import { isString } from '@dnajs/core/src/lib/typeof.js';
+import { isString } from '@chialab/proteins';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 
 /**

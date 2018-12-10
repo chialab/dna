@@ -1,8 +1,24 @@
-import { define } from '../helpers/obj-define.js';
+import { isString, isFunction } from '@chialab/proteins';
+import DOM from '../lib/dom.js';
 import { reduceObjectProperty } from '../lib/reduce.js';
-import { isString, isFunction } from '../lib/typeof.js';
-import { matches } from '../helpers/matches.js';
-import { dispatch } from '../lib/dispatch.js';
+
+/**
+ * Alias to Element prototype.
+ * @type {Object}
+ * @private
+ */
+const ELEM_PROTO = Element.prototype;
+
+/**
+ * Alias to `Element.prototype.matches`.
+ * @type {Function}
+ * @private
+ */
+const MATCHES_SELECTOR = ELEM_PROTO.matches ||
+    ELEM_PROTO.mozMatchesSelector ||
+    ELEM_PROTO.msMatchesSelector ||
+    ELEM_PROTO.oMatchesSelector ||
+    ELEM_PROTO.webkitMatchesSelector;
 
 /**
  * Check if an event has a selector in mathc in target list.
@@ -19,7 +35,7 @@ function checkDelegate(event, node, selector) {
     }
     let target = event.target;
     while (target && target !== node) {
-        if (matches(target, selector)) {
+        if (MATCHES_SELECTOR.call(target, selector)) {
             return target;
         }
         target = target.parentNode;
@@ -121,10 +137,10 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @memberof DNA.MIXINS.EventsMixin
      * @instance
      */
-    constructor(node) {
-        super(node);
+    constructor(...args) {
+        super(...args);
         let events = reduceObjectProperty(this, 'events');
-        define(this, 'events', { value: {} });
+        Object.defineProperty(this, 'events', { value: {} });
         for (let k in events) {
             let callback = isString(events[k]) ?
                 this[events[k]] :
@@ -192,6 +208,6 @@ export const EventsMixin = (SuperClass) => class extends SuperClass {
      * @return {Boolean} True if event propagation has not be stopped.
      */
     trigger(evName, data, bubbles = true, cancelable = true) {
-        return dispatch(this, evName, data, bubbles, cancelable);
+        return DOM.dispatchEvent(this, evName, data, bubbles, cancelable);
     }
 };

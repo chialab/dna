@@ -1,5 +1,3 @@
-import { reduce } from '../helpers/arr-reduce.js';
-
 /**
  * Reduce an object prototype chain to a single value.
  * @method reducePrototype
@@ -52,7 +50,7 @@ export function reduceProperty(obj, key) {
  */
 export function reduceObjectProperty(scope, prop) {
     let protoProp = reduceProperty(scope, prop);
-    return reduce(protoProp, (res, proto) => {
+    return protoProp.reduce((res, proto) => {
         for (let k in proto) {
             if (!res.hasOwnProperty(k)) {
                 res[k] = proto[k];

@@ -7,6 +7,8 @@ import {
 } from '../components/properties.js';
 import chai from 'chai/chai.js';
 
+DOM.lifeCycle(true);
+
 const WRAPPER = document.body;
 define('test1-properties-component', TestComponent1);
 define('test2-properties-component', TestComponent2);

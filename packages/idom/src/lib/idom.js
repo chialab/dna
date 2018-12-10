@@ -1,6 +1,7 @@
-import { isFalsy, isObject, isFunction, isArray, isString } from '@dnajs/core/src/lib/typeof.js';
+import { isFalsy, isObject, isFunction, isArray, isString } from '@chialab/proteins';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
+import { TrustedData } from './trust.js';
 import {
     skip,
     text,
@@ -11,16 +12,37 @@ import {
     patch as originalPatch,
 } from 'incremental-dom/index.js';
 
-function handleChildren(children) {
-    children.forEach((child) => {
-        if (isFunction(child)) {
-            child();
-        } else if (isArray(child)) {
-            handleChildren(child);
-        } else if (child) {
-            text(child);
+function handleChildren(children, parentNode) {
+    if (children instanceof DOM.Node) {
+        return true;
+    }
+
+    if (isArray(children)) {
+        for (let i = 0, len = children.length; i < len; i++) {
+            let child = children[i];
+            if (!handleChildren(child, parentNode)) {
+                return false;
+            }
         }
-    });
+        return true;
+    }
+
+    if (isString(children)) {
+        text(children);
+        return true;
+    }
+
+    if (isFunction(children)) {
+        return handleChildren(children(), parentNode);
+    }
+
+    if (children instanceof TrustedData) {
+        parentNode.innerHTML = children.toString();
+        skip();
+        return false;
+    }
+
+    return true;
 }
 
 function interpolate(template, data) {
@@ -62,7 +84,7 @@ export function h(element, props, ...children) {
         if (component && children.length === 0) {
             skip();
         } else {
-            handleChildren(children);
+            handleChildren(children, node);
         }
         elementClose(element);
 

@@ -1,4 +1,4 @@
-import { isFunction } from '@dnajs/core/src/lib/typeof.js';
+import { isFunction } from '@chialab/proteins';
 import { patch } from '../lib/idom.js';
 
 export const IDOMMixin = (superClass) => class extends superClass {

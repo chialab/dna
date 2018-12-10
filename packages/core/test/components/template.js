@@ -39,7 +39,7 @@ export class TestComponent4 extends TestComponent {
         return () => {
             this.node.innerHTML = `
                 <svg>
-                    <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" /> \
+                    <circle r="${this.radius}" stroke="black" stroke-width="3" fill="red" />
                 </svg>
             `;
         };
