@@ -1,7 +1,7 @@
 import { isString } from '@chialab/proteins';
 import DOM from '../lib/dom.js';
 import { reduceProperty } from '../lib/reduce.js';
-import { convertShadowCSS } from '../lib/shadow-css.js';
+import { scopeStyle, HOST_REGEX } from '../lib/scope-style.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 
 /**
@@ -13,6 +13,26 @@ import { STYLE_SYMBOL } from '../lib/symbols.js';
  */
 function ownerDocument(node) {
     return node.ownerDocument || document;
+}
+
+const doc = document.implementation.createHTMLDocument('');
+
+/**
+ * Convert a shadowDOM style CSS string into a normal scoped css.
+ * @private
+ *
+ * @param {String} css The style CSS to convert.
+ * @param {String} is The component name for scoping.
+ * @return {HTMLStyleElement} The scoped css.
+ */
+function convertShadowCSS(css, is) {
+    let style = doc.createElement('style');
+    let scope = `.${is}`;
+    style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
+    doc.body.appendChild(style);
+    scopeStyle(style, scope);
+    doc.body.removeChild(style);
+    return style;
 }
 
 /**

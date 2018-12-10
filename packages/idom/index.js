@@ -23,6 +23,7 @@ export { registry };
 export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
 export { define } from '@dnajs/core/src/lib/define.js';
 export { render } from '@dnajs/core/src/lib/render.js';
+export { scopeStyle } from '@dnajs/core/src/lib/scope-style.js';
 export { trust } from './src/lib/trust.js';
 export { IDOM };
 export const h = IDOM.h;
