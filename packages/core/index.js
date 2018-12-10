@@ -22,6 +22,7 @@ export { proxy };
 export { bootstrap } from './src/lib/bootstrap.js';
 export { define } from './src/lib/define.js';
 export { render } from './src/lib/render.js';
+export { scopeStyle } from './src/lib/scope-style.js';
 
 /**
  * Simple Custom Component with some behaviors.

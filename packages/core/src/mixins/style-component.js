@@ -1,14 +1,8 @@
 import { isString } from '@chialab/proteins';
+import DOM from '../lib/dom.js';
 import { reduceProperty } from '../lib/reduce.js';
-import { convertShadowCSS } from '../lib/shadow-css.js';
+import { scopeStyle, HOST_REGEX } from '../lib/scope-style.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
-
-/**
- * The root document element.
- * @type {DocumentFragment}
- * @private
- */
-const ROOT_DOC = document;
 
 /**
  * Get the owner document for a node.
@@ -18,19 +12,27 @@ const ROOT_DOC = document;
  * @return {DocumentFragment} The node document parent.
  */
 function ownerDocument(node) {
-    return node.ownerDocument || ROOT_DOC;
+    return node.ownerDocument || document;
 }
+
+const doc = document.implementation.createHTMLDocument('');
+
 /**
- * Create and attach a style element for a component.
+ * Convert a shadowDOM style CSS string into a normal scoped css.
  * @private
  *
- * @param {Object} component A component instance.
- * @return {HTMLElement} The created style element.
+ * @param {String} css The style CSS to convert.
+ * @param {String} is The component name for scoping.
+ * @return {HTMLStyleElement} The scoped css.
  */
-function createStyle(component) {
-    let styleElem = ownerDocument(component.node).createElement('style');
-    styleElem.id = `style-${component.is}`;
-    return styleElem;
+function convertShadowCSS(css, is) {
+    let style = doc.createElement('style');
+    let scope = `.${is}`;
+    style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
+    doc.body.appendChild(style);
+    scopeStyle(style, scope);
+    doc.body.removeChild(style);
+    return style;
 }
 
 /**
@@ -89,13 +91,14 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
         if (isString(this.css)) {
             if (this.shadowRoot) {
                 if (!this[STYLE_SYMBOL]) {
-                    let style = this[STYLE_SYMBOL] = createStyle(this);
+                    let style = this[STYLE_SYMBOL] = DOM.createElement('style');
                     style.textContent = this.css;
                     this.shadowRoot.appendChild(style);
                 }
             } else if (!this.constructor.hasOwnProperty(STYLE_SYMBOL)) {
-                let style = this.constructor[STYLE_SYMBOL] = createStyle(this);
-                style.textContent = convertShadowCSS(this.css, this.is);
+                let style = convertShadowCSS(this.css, this.is);
+                style.id = `style-${this.is}`;
+                this.constructor[STYLE_SYMBOL] = style;
                 ownerDocument(this.node).head.appendChild(style);
             }
         }
