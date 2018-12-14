@@ -12,11 +12,12 @@ export class TestBaseIDOMComponent extends BaseComponent {
         return {
             name: String,
             lastName: prop.STRING.attribute('last-name'),
+            age: Number,
         };
     }
 
     get template() {
-        return () => <span>{this.name} {this.lastName}</span>;
+        return () => <span>{this.name} {this.lastName} {this.age}</span>;
     }
 
     constructor(node) {

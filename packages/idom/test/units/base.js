@@ -16,7 +16,7 @@ define('test-base-idom-component-2', TestBaseIDOMComponent2, {
 });
 
 describe('Unit: Base IDOM Component', () => {
-    const elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing' });
+    const elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -43,7 +43,7 @@ describe('Unit: Base IDOM Component', () => {
 
     describe('> render', () => {
         it('check if element has been correctly rendered', () => {
-            chai.assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
+            chai.assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing 42');
         });
     });
 
@@ -56,7 +56,7 @@ describe('Unit: Base IDOM Component', () => {
 });
 
 describe('Unit: Base IDOM Component with native element', () => {
-    const elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing' });
+    const elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing', age: 42 });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -84,7 +84,7 @@ describe('Unit: Base IDOM Component with native element', () => {
 
     describe('> render', () => {
         it('check if element has been correctly rendered', () => {
-            chai.assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
+            chai.assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing 42');
         });
     });
 

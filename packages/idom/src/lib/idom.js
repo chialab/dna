@@ -27,11 +27,6 @@ function handleChildren(children, parentNode) {
         return true;
     }
 
-    if (isString(children)) {
-        text(children);
-        return true;
-    }
-
     if (isFunction(children)) {
         return handleChildren(children(), parentNode);
     }
@@ -42,6 +37,7 @@ function handleChildren(children, parentNode) {
         return false;
     }
 
+    text(children);
     return true;
 }
 
