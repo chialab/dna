@@ -17,7 +17,7 @@ export class TestBaseIDOMComponent extends BaseComponent {
     }
 
     get template() {
-        return () => <span>{this.name} {this.lastName} {this.age}</span>;
+        return () => <span>{this.name} {this.lastName} {this.age}{this.undefinedProp}{false}</span>;
     }
 
     constructor(node) {

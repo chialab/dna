@@ -13,6 +13,10 @@ import {
 } from 'incremental-dom/index.js';
 
 function handleChildren(children, parentNode) {
+    if (isFalsy(children)) {
+        return true;
+    }
+
     if (children instanceof DOM.Node) {
         return true;
     }
