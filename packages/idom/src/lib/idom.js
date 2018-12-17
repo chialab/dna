@@ -13,7 +13,7 @@ import {
 } from 'incremental-dom/index.js';
 
 function handleChildren(children, parentNode) {
-    if (isFalsy(children)) {
+    if (!children) {
         return true;
     }
 
