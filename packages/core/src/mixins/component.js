@@ -45,6 +45,9 @@ export const ComponentMixin = (SuperClass) => {
         }
         constructor(node) {
             super();
+            if (!node && !this.is) {
+                throw new Error('Component has not been defined');
+            }
             if (!node) {
                 let desc = registry.get(this.is, true);
                 let config = desc.config;

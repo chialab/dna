@@ -8,15 +8,25 @@ DOM.lifeCycle(true);
 
 const WRAPPER = document.body;
 
+class TestBaseComponent1 extends TestBaseComponent { }
 class TestBaseComponent2 extends TestBaseComponent { }
+class TestBaseComponent3 extends TestBaseComponent { }
 
-define('test-base-component', TestBaseComponent);
+define('test-base-component', TestBaseComponent1);
 define('test-base-component-2', TestBaseComponent2, {
     extends: 'button',
 });
 
+describe('Unit: BaseComponent without definition', () => {
+    describe('> constructor', () => {
+        it('should throw', () => {
+            chai.assert.throws(() => new TestBaseComponent3(), 'Component has not been defined');
+        });
+    });
+});
+
 describe('Unit: BaseComponent', () => {
-    const elem = new TestBaseComponent();
+    const elem = new TestBaseComponent1();
     elem.lastName = 'Turing';
 
     describe('> created', () => {
