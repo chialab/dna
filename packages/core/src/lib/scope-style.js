@@ -27,7 +27,7 @@ export const SPLIT_SELECTOR_REGEX = /\s*,\s*/;
  * @param {CSSStyleSheet|HTMLStyleElement} sheet The sheet to convert.
  * @param {String} scope The scope name to use.
  */
-export function scopeStyle(sheet, scope, scopeRegex, index) {
+export function scopeStyle(sheet, scope, scopeRegex, index, parent) {
     if (sheet instanceof HTMLStyleElement) {
         sheet = sheet.sheet;
     }
@@ -47,8 +47,8 @@ export function scopeStyle(sheet, scope, scopeRegex, index) {
             const text = sheet.cssText;
             const selectorText = text.substr(0, text.indexOf('{') - 1);
             const rest = text.substr(selectorText.length);
-            sheet.parentStyleSheet.deleteRule(index);
-            sheet.parentStyleSheet.insertRule(`${scoped} ${rest}`, index);
+            parent.deleteRule(index);
+            parent.insertRule(`${scoped} ${rest}`, index);
         }
     }
     let rules = sheet.cssRules || sheet.rules;
@@ -56,6 +56,6 @@ export function scopeStyle(sheet, scope, scopeRegex, index) {
         return;
     }
     for (let i = 0, len = rules.length; i < len; i++) {
-        scopeStyle(rules[i], scope, scopeRegex, i);
+        scopeStyle(rules[i], scope, scopeRegex, i, sheet);
     }
 }
