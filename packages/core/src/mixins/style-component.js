@@ -5,37 +5,6 @@ import { scopeStyle, HOST_REGEX } from '../lib/scope-style.js';
 import { STYLE_SYMBOL } from '../lib/symbols.js';
 
 /**
- * Get the owner document for a node.
- * @private
- *
- * @param {HTMLElement} node A node.
- * @return {DocumentFragment} The node document parent.
- */
-function ownerDocument(node) {
-    return node.ownerDocument || document;
-}
-
-const doc = document.implementation.createHTMLDocument('');
-
-/**
- * Convert a shadowDOM style CSS string into a normal scoped css.
- * @private
- *
- * @param {String} css The style CSS to convert.
- * @param {String} is The component name for scoping.
- * @return {HTMLStyleElement} The scoped css.
- */
-function convertShadowCSS(css, is) {
-    let style = doc.createElement('style');
-    let scope = `.${is}`;
-    style.textContent = css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
-    doc.body.appendChild(style);
-    scopeStyle(style, scope);
-    doc.body.removeChild(style);
-    return style;
-}
-
-/**
  * Simple Custom Component with css style handling using the `css` property.
  * @mixin StyleMixin
  * @memberof DNA.MIXINS
@@ -96,10 +65,14 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
                     this.shadowRoot.appendChild(style);
                 }
             } else if (!this.constructor.hasOwnProperty(STYLE_SYMBOL)) {
-                let style = convertShadowCSS(this.css, this.is);
+                let doc = this.node.ownerDocument || document;
+                let style = doc.createElement('style');
+                let scope = `.${this.is}`;
+                style.textContent = this.css.replace(HOST_REGEX, (fullMatch, mod) => `${scope}${(mod || '').slice(1, -1)}`);
+                doc.head.appendChild(style);
+                scopeStyle(style, scope);
                 style.id = `style-${this.is}`;
                 this.constructor[STYLE_SYMBOL] = style;
-                ownerDocument(this.node).head.appendChild(style);
             }
         }
         this.classList.add(this.is);

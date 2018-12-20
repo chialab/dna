@@ -21,14 +21,20 @@ function normalizeContent(content) {
 
 describe('Unit: StyleComponent', () => {
     const elem1 = render(WRAPPER, TestComponent1);
+    const h3 = document.createElement('h3');
+    WRAPPER.appendChild(h3);
     const elem2 = render(WRAPPER, TestComponent2);
     const elem3 = render(WRAPPER, TestComponent3);
     const elem4 = render(WRAPPER, TestComponent4);
 
     it('should handle `css` getter property', () => {
         let style = window.getComputedStyle((elem1.node.shadowRoot || elem1.node).querySelector('h1'));
+        let styleH3 = window.getComputedStyle((elem1.node.shadowRoot || elem1.node).querySelector('h3'));
         chai.assert.equal(style.color, 'rgb(95, 158, 160)');
         chai.assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
+        chai.assert.equal(styleH3.color, 'rgb(0, 0, 255)');
+        let styleOutside = window.getComputedStyle(h3);
+        chai.assert.equal(styleOutside.color, 'rgb(0, 0, 0)');
     });
 
     it('should handle `css` getter property with state', () => {

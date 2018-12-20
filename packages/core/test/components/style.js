@@ -3,7 +3,7 @@ import { isFunction } from '@chialab/proteins';
 
 class TestComponent extends BaseComponent {
     get template() {
-        return '<h1>DNA TESTS</h1>';
+        return '<h1>DNA TESTS</h1><h3>test</h3>';
     }
     constructor(...args) {
         super(...args);
@@ -30,6 +30,10 @@ CSS Created by Chialab.it
 
 :host > * {
     background-color: #5F9EA0;
+}
+
+h3 {
+    color: blue;
 }
 
 @media (min-width: 0) {
