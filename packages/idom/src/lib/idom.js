@@ -2,6 +2,7 @@ import { isFalsy, isObject, isFunction, isArray, isString } from '@chialab/prote
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { TrustedData } from './trust.js';
+import { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
 import {
     skip,
     text,
@@ -37,6 +38,7 @@ function handleChildren(children, parentNode) {
 
     if (children instanceof TrustedData) {
         parentNode.innerHTML = children.toString();
+        bootstrap(parentNode);
         skip();
         return false;
     }
