@@ -26,7 +26,7 @@
   "scripts": {
     "build": "rna build --production",
     "watch": "rna build --watch",
-    "test": "rna lint + unit 'packages/*/test/**/*.spec.js' --browser --jsx.pragma h",
+    "test": "rna lint + unit 'packages/*/test/**/*.spec.js' --browser --jsx.pragma h --context 'test/context.html'",
     "test-saucelabs": "rna lint + unit 'packages/*/test/**/*.spec.js' --saucelabs --jsx.pragma h",
     "test-electron": "rna lint + unit 'packages/*/test/**/*.spec.js' --electron --jsx.pragma h",
     "lint": "rna lint",

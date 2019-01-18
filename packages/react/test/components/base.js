@@ -6,12 +6,12 @@ const h = React.createElement;
 
 export class ReactTestComponent extends BaseComponent {
     static get observedAttributes() {
-        return ['name', 'last-name'];
+        return ['first-name', 'last-name'];
     }
 
     get properties() {
         return {
-            name: String,
+            firstName: prop.STRING.attribute('first-name'),
             lastName: prop.STRING.attribute('last-name'),
         };
     }
@@ -23,7 +23,7 @@ export class ReactTestComponent extends BaseComponent {
     }
 
     get template() {
-        return () => <span>{this.name} {this.lastName}</span>;
+        return () => <span>{this.firstName} {this.lastName}</span>;
     }
 
     constructor() {

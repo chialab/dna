@@ -29,8 +29,8 @@ describe('Unit: BaseReactComponent', () => {
 
     describe('> attributeChanged', () => {
         it('check if element is correctly trigger attributeChangedCallback', () => {
-            DOM.setAttribute(elem, 'name', 'Alan');
-            chai.assert.equal(elem.name, 'Alan');
+            DOM.setAttribute(elem, 'first-name', 'Alan');
+            chai.assert.equal(elem.firstName, 'Alan');
         });
     });
 

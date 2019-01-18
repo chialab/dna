@@ -31,8 +31,10 @@ export const ReactMixin = (SuperClass) => class extends SuperClass {
         return ReactDOM.findDOMNode(this);
     }
 
-    constructor(node) {
-        super(node);
+    set node(node) { return; }
+
+    constructor(node, ...args) {
+        super(null, ...args);
         this.render();
     }
 
