@@ -1,10 +1,7 @@
 /* eslint-env mocha */
 
 import { define, render, DOM } from '../../index.js';
-import {
-    TestComponent1,
-    TestComponent2,
-} from '../components/properties.js';
+import { TestComponent1, TestComponent2 } from '../components/properties.js';
 import chai from 'chai/chai.js';
 
 DOM.lifeCycle(true);
@@ -15,7 +12,10 @@ define('test2-properties-component', TestComponent2);
 
 describe('PropertiesComponent', () => {
     describe('handle property validation', () => {
-        const elem = render(WRAPPER, TestComponent1);
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestComponent1);
+        });
 
         it('should throw if invalid type', () => {
             let fn = () => elem.age = 'Hello';
@@ -42,11 +42,14 @@ describe('PropertiesComponent', () => {
         });
     });
     describe('handle properties on initialization', () => {
-        const elem = render(WRAPPER, TestComponent1, {
-            name: 'Alan',
-            lastName: 'Turing',
-            var: '1234',
-            married: true,
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestComponent1, {
+                name: 'Alan',
+                lastName: 'Turing',
+                var: '1234',
+                married: true,
+            });
         });
 
         it('init element\'s properties', () => {
@@ -73,28 +76,35 @@ describe('PropertiesComponent', () => {
     });
 
     describe('handle props 2 attrs', () => {
-        const elem = render(WRAPPER, TestComponent2);
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestComponent2);
+        });
 
         it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
             chai.assert.equal(elem.node.getAttribute('title'), 'DNA Test');
         });
+
         it('check sync between custom property and attribute', () => {
             elem.var = 1234;
             elem.id = 'dna-test';
             chai.assert.equal(elem.node.getAttribute('var'), '1234');
             chai.assert.equal(elem.node.getAttribute('id'), 'dna-test');
         });
+
         it('check sync between custom computed property and attribute', () => {
             elem.myVar = true;
             chai.assert.equal(elem.node.getAttribute('my-var'), '');
             elem.myVar = false;
             chai.assert.equal(elem.node.getAttribute('my-var'), null);
         });
+
         it('check sync between custom computed property with setter and attribute', () => {
             elem.myVar3 = true;
             chai.assert.equal(elem.node.getAttribute('my-var3'), 'DNA Test');
         });
+
         it('dispatch event', () => {
             let triggered = 0;
             elem.node.addEventListener('changed', (ev) => {
@@ -113,20 +123,24 @@ describe('PropertiesComponent', () => {
     });
 
     describe('handle attrs 2 props', () => {
-        const elem = render(WRAPPER, TestComponent2);
-
-        DOM.setAttribute(elem, 'alt', 'DNA Test 2');
-        DOM.setAttribute(elem, 'mine', '1234');
-        DOM.setAttribute(elem, 'my-var2', '');
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestComponent2);
+            DOM.setAttribute(elem, 'alt', 'DNA Test 2');
+            DOM.setAttribute(elem, 'mine', '1234');
+            DOM.setAttribute(elem, 'my-var2', '');
+        });
 
         it('check sync between attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             chai.assert.equal(elem.alt, 'DNA Test 2');
         });
+
         it('check sync between custom attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('mine'), 1234);
             chai.assert.equal(elem.mine, 1234);
         });
+
         it('check sync between custom computed attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('my-var2'), '');
             chai.assert.equal(elem.myVar2, true);
@@ -134,21 +148,25 @@ describe('PropertiesComponent', () => {
     });
 
     describe('handle attrs 2 props on initialization', () => {
-        const elem = new TestComponent2();
-        elem.node.setAttribute('alt', 'DNA Test 2');
-        elem.node.setAttribute('mine', '1234');
-        elem.node.setAttribute('my-var2', '');
-
-        DOM.appendChild(WRAPPER, elem);
+        let elem;
+        before(() => {
+            elem = new TestComponent2();
+            elem.node.setAttribute('alt', 'DNA Test 2');
+            elem.node.setAttribute('mine', '1234');
+            elem.node.setAttribute('my-var2', '');
+            DOM.appendChild(WRAPPER, elem);
+        });
 
         it('check sync between attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             chai.assert.equal(elem.alt, 'DNA Test 2');
         });
+
         it('check sync between custom attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('mine'), 1234);
             chai.assert.equal(elem.mine, 1234);
         });
+
         it('check sync between custom computed attribute and property', () => {
             chai.assert.equal(elem.node.getAttribute('my-var2'), '');
             chai.assert.equal(elem.myVar2, true);

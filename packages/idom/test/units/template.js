@@ -15,9 +15,7 @@ DOM.lifeCycle(true);
 
 // eslint-disable-next-line
 const h = IDOM.h;
-
 const WRAPPER = document.body;
-self.IDOM = IDOM;
 
 define('test1-idom-template-component', TestComponent1);
 define('test2-idom-template-component', TestComponent2);
@@ -58,7 +56,10 @@ describe('Unit: IDOMTemplateComponent', () => {
     });
 
     describe('should handle sub components', () => {
-        const elem = render(WRAPPER, TestComponent5);
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestComponent5);
+        });
 
         it('and their callbacks', () => {
             const testElement1 = elem.node.querySelector('test-idom-placeholder');

@@ -12,7 +12,10 @@ define('test-base-html-component', TestBaseHTMLComponent);
 
 describe('Unit: Base HTML Component', () => {
     describe('> inject simple content', () => {
-        const elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello' });
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello' });
+        });
 
         it('check if element has the correct content', () => {
             chai.assert.equal(elem.node.innerHTML, '<p>Hello</p>');
@@ -20,7 +23,10 @@ describe('Unit: Base HTML Component', () => {
     });
 
     describe('> inject complex content', () => {
-        const elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello <strong>world!</strong>' });
+        let elem;
+        before(() => {
+            elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello <strong>world!</strong>' });
+        });
 
         it('check if element has the correct content', () => {
             chai.assert.equal(elem.node.innerHTML, '<p>Hello <strong>world!</strong></p>');

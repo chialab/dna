@@ -66,18 +66,24 @@ describe('Unit: lib', () => {
     });
 
     describe('DOM helpers', () => {
-        const elem = new TestComponent();
-        const elem2 = render(WRAPPER, TestComponent2);
+        let elem, elem2;
+        before(() => {
+            elem = new TestComponent();
+            elem2 = render(WRAPPER, TestComponent2);
+        });
+
         it('should do nothing', () => {
             const tmp = document.createElement('div');
             chai.assert(!DOM.connect(tmp));
             chai.assert(!DOM.disconnect(tmp));
         });
+
         it('should create a component instance', () => {
             chai.assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
             chai.assert.equal(elem.name, 'Alan');
             chai.assert.equal(elem.lastName, 'Turing');
         });
+
         it('should append a component', () => {
             DOM.appendChild(WRAPPER, elem);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -86,6 +92,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 0);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should append a component before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -96,6 +103,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 0);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should do nothing if already before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -106,6 +114,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 0);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should append again a component', () => {
             DOM.appendChild(WRAPPER, elem);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -114,6 +123,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 0);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should do nothing if already last child of parent', () => {
             DOM.appendChild(WRAPPER, elem);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -122,6 +132,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 0);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should replace a child', () => {
             DOM.replaceChild(WRAPPER, elem, elem2);
             chai.assert.equal(elem.node.parentNode, WRAPPER);
@@ -130,6 +141,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem2.disconnectedTimes, 1);
             chai.assert.equal(elem2.connectedTimes, 1);
         });
+
         it('should set attributes', () => {
             DOM.setAttribute(elem, 'age', 20);
             DOM.setAttribute(elem, 'married', '');
@@ -137,6 +149,7 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem.node.getAttribute('age'), '20');
             chai.assert.equal(elem.node.getAttribute('married'), '');
         });
+
         it('should remove attributes', () => {
             DOM.removeAttribute(elem, 'age');
             DOM.removeAttribute(elem, 'married');
@@ -147,8 +160,14 @@ describe('Unit: lib', () => {
     });
 
     describe('bootstrap', () => {
-        let WRAPPER = document.createElement('div');
-        WRAPPER.innerHTML = '<p>Hello <test1-helper-component age="21"></test1-helper-component></p>';
+        let WRAPPER, WRAPPER2;
+        before(() => {
+            WRAPPER = document.createElement('div');
+            WRAPPER.innerHTML = '<p>Hello <test1-helper-component age="21"></test1-helper-component></p>';
+            WRAPPER2 = document.createElement('div');
+            WRAPPER2.innerHTML = '<p>Hello again <test1-helper-component age="21"/><test1-helper-component age="22"/></p>';
+        });
+
         it('should instantiate all components', () => {
             bootstrap(WRAPPER);
             const elem = DOM.getNodeComponent(
@@ -161,8 +180,6 @@ describe('Unit: lib', () => {
             chai.assert.equal(elem.lastName, 'Turing');
         });
 
-        let WRAPPER2 = document.createElement('div');
-        WRAPPER2.innerHTML = '<p>Hello again <test1-helper-component age="21"/><test1-helper-component age="22"/></p>';
         it('should call callback for every component', () => {
             let count = 0;
             bootstrap(WRAPPER2, () => {

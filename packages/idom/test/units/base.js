@@ -16,7 +16,10 @@ define('test-base-idom-component-2', TestBaseIDOMComponent2, {
 });
 
 describe('Unit: Base IDOM Component', () => {
-    const elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
+    let elem;
+    before(() => {
+        elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
+    });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -35,8 +38,8 @@ describe('Unit: Base IDOM Component', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
+            DOM.setAttribute(elem, 'name', 'Alan');
             chai.assert.equal(elem.name, 'Alan');
         });
     });
@@ -56,7 +59,10 @@ describe('Unit: Base IDOM Component', () => {
 });
 
 describe('Unit: Base IDOM Component with native element', () => {
-    const elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing', age: 42 });
+    let elem;
+    before(() => {
+        elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing', age: 42 });
+    });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -76,8 +82,8 @@ describe('Unit: Base IDOM Component with native element', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
+            DOM.setAttribute(elem, 'name', 'Alan');
             chai.assert.equal(elem.name, 'Alan');
         });
     });

@@ -26,8 +26,11 @@ describe('Unit: BaseComponent without definition', () => {
 });
 
 describe('Unit: BaseComponent', () => {
-    const elem = new TestBaseComponent1();
-    elem.lastName = 'Turing';
+    let elem;
+    before(() => {
+        elem = new TestBaseComponent1();
+        elem.lastName = 'Turing';
+    });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -47,8 +50,8 @@ describe('Unit: BaseComponent', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
+            DOM.setAttribute(elem, 'name', 'Alan');
             chai.assert.equal(elem.name, 'Alan');
         });
     });
@@ -68,8 +71,11 @@ describe('Unit: BaseComponent', () => {
 });
 
 describe('Unit: BaseComponent with native element', () => {
-    const elem = new TestBaseComponent2();
-    elem.lastName = 'Turing';
+    let elem;
+    before(() => {
+        elem = new TestBaseComponent2();
+        elem.lastName = 'Turing';
+    });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
@@ -90,8 +96,8 @@ describe('Unit: BaseComponent with native element', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
+            DOM.setAttribute(elem, 'name', 'Alan');
             chai.assert.equal(elem.name, 'Alan');
         });
     });

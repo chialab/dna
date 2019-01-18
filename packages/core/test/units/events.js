@@ -12,7 +12,11 @@ define('test2-events-component', TestInvalidComponent);
 define('test3-events-component', TestPropagationComponent);
 
 describe('Unit: EventsComponent', () => {
-    const elem = render(WRAPPER, TestComponent);
+    let elem;
+    before(() => {
+        elem = render(WRAPPER, TestComponent);
+    });
+
     describe('delegate', () => {
         describe('custom events', () => {
             it('should be handled', () => {
@@ -23,21 +27,25 @@ describe('Unit: EventsComponent', () => {
         });
 
         describe('using api', () => {
-            const span = elem.node.querySelector('span');
             let fired = false;
-            elem.delegate('checkDelegation', 'span', () => fired = true);
-            DOM.dispatchEvent(span, 'checkDelegation');
+            before(() => {
+                let span = elem.node.querySelector('span');
+                elem.delegate('checkDelegation', 'span', () => fired = true);
+                DOM.dispatchEvent(span, 'checkDelegation');
+            });
+
             it('should trigger a function callback', () => {
                 chai.assert(fired);
             });
         });
 
         describe('events', () => {
-            const span = elem.node.querySelector('span');
-            const button = elem.node.querySelector('button');
-            const input = elem.node.querySelector('input');
+            let span, button, input;
 
             before((done) => {
+                span = elem.node.querySelector('span');
+                button = elem.node.querySelector('button');
+                input = elem.node.querySelector('input');
                 DOM.dispatchEvent(span, 'click');
                 DOM.dispatchEvent(button, 'click');
                 input.value = 'DNA Tests';
@@ -74,11 +82,12 @@ describe('Unit: EventsComponent', () => {
         });
 
         describe('undelegate', () => {
-            const span = elem.node.querySelector('span');
-            const button = elem.node.querySelector('button');
-            const input = elem.node.querySelector('input');
+            let span, button, input;
 
             before((done) => {
+                span = elem.node.querySelector('span');
+                button = elem.node.querySelector('button');
+                input = elem.node.querySelector('input');
                 DOM.removeChild(WRAPPER, elem);
                 DOM.dispatchEvent(span, 'click');
                 DOM.dispatchEvent(button, 'click');
@@ -97,6 +106,7 @@ describe('Unit: EventsComponent', () => {
             });
         });
     });
+
     describe('trigger', () => {
         it('should throw when event name is not defined in trigger', () => {
             let wrapper = () => {
@@ -105,6 +115,7 @@ describe('Unit: EventsComponent', () => {
             chai.assert.throws(wrapper, Error, 'Event name is undefined');
         });
     });
+
     describe('delegate invalid callbacks', () => {
         it('should throw', () => {
             let wrapper = () => {
@@ -113,6 +124,7 @@ describe('Unit: EventsComponent', () => {
             chai.assert.throws(wrapper, TypeError, 'Invalid callback for event.');
         });
     });
+
     describe('propagation', () => {
         it('should stop', () => {
             const elem = render(WRAPPER, TestPropagationComponent);

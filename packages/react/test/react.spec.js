@@ -10,7 +10,10 @@ document.body.appendChild(WRAPPER);
 define('test-base-component', ReactTestComponent);
 
 describe('Unit: BaseReactComponent', () => {
-    const elem = render(WRAPPER, ReactTestComponent, { lastName: 'Turing' });
+    let elem;
+    before(() => {
+        elem = render(WRAPPER, ReactTestComponent, { lastName: 'Turing' });
+    });
 
     describe('> created', () => {
         it('check if element is correctly instantiated', () => {
@@ -25,8 +28,8 @@ describe('Unit: BaseReactComponent', () => {
     });
 
     describe('> attributeChanged', () => {
-        DOM.setAttribute(elem, 'name', 'Alan');
         it('check if element is correctly trigger attributeChangedCallback', () => {
+            DOM.setAttribute(elem, 'name', 'Alan');
             chai.assert.equal(elem.name, 'Alan');
         });
     });
