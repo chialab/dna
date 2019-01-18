@@ -22,6 +22,12 @@ export class TrustedData {
 }
 
 /**
+ * Symbol for trusted data.
+ * @private
+ */
+export const TRUSTED_SYM = '__dna_trusted__';
+
+/**
  * Trust some content and render it as HTML.
  * @memberof DNA
  *
