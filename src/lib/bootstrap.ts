@@ -1,4 +1,5 @@
 import * as registry from './registry';
+import { DOM } from './dom';
 
 /**
  * Find and instantiate elements in the page.
@@ -19,7 +20,7 @@ export function bootstrap(root: HTMLElement): HTMLElement[] {
             if (!(node instanceof constructor)) {
                 let elem = new constructor(node as HTMLElement);
                 if (elem.isConnected) {
-                    elem.connectedCallback();
+                    DOM.connect(elem);
                 }
                 elements.push(elem);
             }

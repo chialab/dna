@@ -80,11 +80,7 @@ export class Component extends AbstractElement {
 
         DOM.setAttribute(node, 'is', this.is);
 
-        let childNodes: TemplateItem[] = [];
-        for (let i = 0, len = node.childNodes.length; i < len; i++) {
-            childNodes.push(node.childNodes[i] as TemplateItem);
-        }
-        setSlotted(node, childNodes);
+        setSlotted(node, DOM.getChildNodes(node) as TemplateItem[]);
 
         return node as Component;
     }

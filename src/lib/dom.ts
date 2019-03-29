@@ -96,9 +96,7 @@ export const DOM = {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
         Prototype.appendChild.call(parent, newChild);
-        if (lifeCycle && this.isCustomElement(newChild)) {
-            newChild.connectedCallback();
-        }
+        this.connect(newChild);
         return newChild;
     },
 
@@ -110,9 +108,7 @@ export const DOM = {
      */
     removeChild<T extends Node>(parent: HTMLElement, oldChild: T): T {
         Prototype.removeChild.call(parent, oldChild);
-        if (lifeCycle && this.isCustomElement(oldChild)) {
-            oldChild.disconnectedCallback();
-        }
+        this.disconnect(oldChild);
         return oldChild;
     },
 
@@ -131,9 +127,7 @@ export const DOM = {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
         Prototype.insertBefore.call(parent, newChild, refChild);
-        if (lifeCycle && this.isCustomElement(newChild)) {
-            newChild.connectedCallback();
-        }
+        this.connect(newChild);
         return newChild;
     },
 
@@ -152,14 +146,8 @@ export const DOM = {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
         Prototype.replaceChild.call(parent, newChild, oldChild);
-        if (lifeCycle) {
-            if (this.isCustomElement(oldChild)) {
-                oldChild.disconnectedCallback();
-            }
-            if (this.isCustomElement(newChild)) {
-                newChild.connectedCallback();
-            }
-        }
+        this.disconnect(oldChild);
+        this.connect(newChild);
         return oldChild;
     },
 
@@ -209,6 +197,55 @@ export const DOM = {
         Prototype.removeAttribute.call(element, qualifiedName);
         if (lifeCycle && this.isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
+        }
+    },
+
+    getChildNodes(node: Node): Node[] | undefined {
+        if (!node.childNodes) {
+            return undefined;
+        }
+        let childNodes: Node[] = [];
+        for (let i = 0, len = node.childNodes.length; i < len; i++) {
+            childNodes.push(node.childNodes[i]);
+        }
+        return childNodes;
+    },
+
+    connect(node: Node) {
+        if (!lifeCycle) {
+            return;
+        }
+        let previousNodes = this.getChildNodes(node) || [];
+        if (this.isCustomElement(node)) {
+            node.connectedCallback();
+        }
+        let children = this.getChildNodes(node);
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                let child = children[i];
+                if (previousNodes.indexOf(child) !== -1) {
+                    this.connect(child);
+                }
+            }
+        }
+    },
+
+    disconnect(node: Node) {
+        if (!lifeCycle) {
+            return;
+        }
+        let previousNodes = this.getChildNodes(node) || [];
+        if (this.isCustomElement(node)) {
+            node.disconnectedCallback();
+        }
+        let children = this.getChildNodes(node);
+        if (children) {
+            for (let i = 0, len = children.length; i < len; i++) {
+                let child = children[i];
+                if (previousNodes.indexOf(child) !== -1) {
+                    this.disconnect(child);
+                }
+            }
         }
     },
 };
