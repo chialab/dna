@@ -132,7 +132,7 @@ export const DOM = {
         }
         Prototype.insertBefore.call(parent, newChild, refChild);
         if (lifeCycle && this.isCustomElement(newChild)) {
-            newChild.disconnectedCallback();
+            newChild.connectedCallback();
         }
         return newChild;
     },
