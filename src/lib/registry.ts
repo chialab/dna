@@ -1,12 +1,17 @@
+import { CustomElement } from './CustomElement';
+
+export type DefinitionConstructor = typeof HTMLElement & {
+    new(nodeOrProperties?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }): CustomElement;
+    prototype: CustomElement;
+};
+
 export type DefinitionOptions = {
     extends?: string;
 }
 
 export type Definition = DefinitionOptions & {
     name: string;
-    constructor: typeof HTMLElement & {
-        new(nodeOrProperties?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }): HTMLElement
-    };
+    constructor: DefinitionConstructor;
 }
 
 type Registry = {
@@ -27,7 +32,7 @@ export function entries(): Definition[] {
     return Object.values(REGISTRY);
 }
 
-export function define(name: string, constructor: typeof HTMLElement, options: DefinitionOptions = {}) {
+export function define(name: string, constructor: DefinitionConstructor, options: DefinitionOptions = {}) {
     name = name.toLowerCase();
 
     Object.defineProperty(constructor.prototype, 'is', {

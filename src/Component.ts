@@ -1,9 +1,23 @@
 import * as registry from './lib/registry';
 import { AbstractElement, DOM } from './lib/dom';
-import { Template, render, getScope, setScope, createScope, getSlotted } from './lib/render';
+import { Template, render, getScope, setScope, createScope, getSlotted, setSlotted, TemplateItem } from './lib/render';
 import { AccessorDescriptors, defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
 import { html } from './lib/html';
 import { EventCallback, EventDescriptors, delegate, undelegate } from './lib/events';
+
+function isConnected(element: Node | null): boolean {
+    if (!element || !element.nodeType) {
+        return false;
+    }
+    let nodeType = element.nodeType;
+    if (nodeType === Node.ELEMENT_NODE || nodeType === Node.TEXT_NODE) {
+        return isConnected(element.parentNode);
+    } else if (nodeType === Node.DOCUMENT_FRAGMENT_NODE || nodeType === Node.DOCUMENT_NODE) {
+        return true;
+    }
+
+    return false;
+}
 
 export class Component extends AbstractElement {
     readonly properties?: AccessorDescriptors;
@@ -11,6 +25,10 @@ export class Component extends AbstractElement {
 
     get is(): string | undefined {
         return undefined;
+    }
+
+    get isConnected(): boolean {
+        return isConnected(this);
     }
 
     get template(): Template | undefined {
@@ -71,6 +89,12 @@ export class Component extends AbstractElement {
         }
 
         DOM.setAttribute(node, 'is', this.is);
+
+        let childNodes: TemplateItem[] = [];
+        for (let i = 0, len = node.childNodes.length; i < len; i++) {
+            childNodes.push(node.childNodes[i] as TemplateItem);
+        }
+        setSlotted(node, childNodes);
 
         return node as Component;
     }

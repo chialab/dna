@@ -157,7 +157,7 @@ export function render(node: HTMLElement, input: Template, scope?: Scope, previo
                 }
                 scopeCSS(node, name, scopableInput);
                 inputElement = node.childNodes[0] as Text;
-            } else if (DOM.isElement(scopableInput)) {
+            } else if (DOM.isElement(scopableInput) || DOM.isText(scopableInput)) {
                 inputElement = scopableInput;
             } else {
                 // convert non-Node input into Text

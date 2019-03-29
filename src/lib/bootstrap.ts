@@ -2,7 +2,7 @@ import * as registry from './registry';
 
 /**
  * Find and instantiate elements in the page.
- * It is useful to bootstrap or rehydratate components starting from a plain HTML document. 
+ * It is useful to bootstrap or rehydratate components starting from a plain HTML document.
  *
  * @param root The document root to query.
  * @return A list of instantiated elements.
@@ -17,7 +17,11 @@ export function bootstrap(root: HTMLElement): HTMLElement[] {
         nodes.forEach((node) => {
             // check if already instantiated
             if (!(node instanceof constructor)) {
-                elements.push(new constructor(node as HTMLElement));
+                let elem = new constructor(node as HTMLElement);
+                if (elem.isConnected) {
+                    elem.connectedCallback();
+                }
+                elements.push(elem);
             }
         });
     });

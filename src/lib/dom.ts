@@ -1,12 +1,5 @@
 import { shim } from './shim';
-
-type CustomElement = HTMLElement & {
-    connectedCallback(): void;
-    disconnectedCallback(): void;
-    render(): void;
-    attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string): void;
-    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
-};
+import { CustomElement } from './CustomElement';
 
 let Element = shim(HTMLElement);
 let Prototype = Element.prototype;
@@ -131,7 +124,7 @@ export const DOM = {
      * @param refChild The referred node.
      */
     insertBefore<T extends Node>(parent: HTMLElement, newChild: T, refChild: Node | null): T {
-        if (refChild && refChild.previousSibling !== newChild) {
+        if (refChild && refChild.previousSibling === newChild) {
             return newChild;
         }
         if (newChild.parentNode) {
