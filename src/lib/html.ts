@@ -21,7 +21,11 @@ function innerCompile(template: HTMLTemplateElement | HTMLStyleElement | HTMLEle
         const properties: any = {};
         for (let i = 0; i < template.attributes.length; i++) {
             let attr = template.attributes[i];
-            properties[attr.name] = interpolate(attr.value);
+            if (attr.value === '') {
+                properties[attr.name] = true;
+            } else {
+                properties[attr.name] = interpolate(attr.value);
+            }
         }
 
         let childNodes: NodeList;

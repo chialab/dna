@@ -1,7 +1,20 @@
+import { CustomElement } from './CustomElement';
 import { isInterpolateFunction } from './interpolate';
 import { Template, Scope, TemplateItem, getScope, setScope, getSlotted, setSlotted, createFilterableTemplateItems } from './render';
 import * as registry from './registry';
 import { DOM } from './dom';
+
+const PRIVATE_CONTEXT_SYMBOL = Symbol();
+
+type KeyedElement = HTMLElement & { key?: any };
+
+type WithContext = HTMLElement & {
+    [key: string]: any;
+}
+
+type WithPrivateContext = HTMLElement & {
+    [PRIVATE_CONTEXT_SYMBOL]: WithContext;
+};
 
 /**
  * Compare a child already in the tree with the Node requested by the patch.
@@ -12,19 +25,19 @@ import { DOM } from './dom';
  * @param oldNode The previous Node to compare
  * @return The same old Node instance or a new one
  */
-function getRoot(constructor: string | typeof HTMLElement, oldNode?: HTMLElement): HTMLElement {
+function getRoot(constructor: string | typeof HTMLElement, key: string | undefined, oldNode?: KeyedElement): HTMLElement {
     // start the comparison
     if (typeof constructor === 'function') {
         // the requested Node is a Component and/or the previous Node is it,
         // so, check if the constructors are the same
-        if (oldNode && oldNode instanceof constructor) {
+        if (oldNode && oldNode instanceof constructor && key === oldNode.key) {
             // compatible!
             return oldNode;
         }
         // in this case, we should instantiate a new Component
         return new constructor();
     // check if old node and requested one have the same tag name
-    } else if (oldNode && oldNode.localName === constructor) {
+    } else if (oldNode && oldNode.localName === constructor && key === oldNode.key) {
         // compatible!
         return oldNode;
     }
@@ -145,24 +158,47 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         // or start the comparison between the old node and the requested one
         // if old and the requested are compatible,
         // the`root` contains the old Node or the old Component intance
-        let element = getRoot(Component || tag, previousElement);
+        let element = getRoot(Component || tag, props.key, previousElement);
+        let isCustomElement = DOM.isCustomElement(element);
+        let attributesToSet: { [key: string]: string } = {};
+        let attributesToRemove: string[] = [];
         // update the Node properties
         for (let propertyKey in props) {
             let value = props[propertyKey];
-            if ((element as any)[propertyKey] !== value) {
-                // the property should be update
-                (element as any)[propertyKey] = value;
-                // update the attributes too
-                if (value == null || value === false) {
-                    // falsy values should remove attributes by design
-                    DOM.removeAttribute(element, propertyKey);
-                } else {
-                    if (value === true) {
-                        value = '';
+            let isFalsy = value == null || value === false;
+            let isTrue = value === true;
+            let isProperty = typeof value === 'object' || propertyKey === 'key';
+
+            if (isCustomElement) {
+                if ((element as WithContext)[propertyKey] !== value) {
+                    // the property should be update
+                    (element as WithContext)[propertyKey] = value;
+                    if (isFalsy) {
+                        attributesToRemove.push(propertyKey);
+                    } else if (!isProperty) {
+                        attributesToSet[propertyKey] = isTrue ? '' : value;
                     }
-                    DOM.setAttribute(element, propertyKey, value);
+                }
+            } else {
+                (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] || {};
+                if ((element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL][propertyKey] !== value) {
+                    (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL][propertyKey] = value;
+                    if (isFalsy) {
+                        attributesToRemove.push(propertyKey);
+                    } else if (!isProperty) {
+                        attributesToSet[propertyKey] = isTrue ? '' : value;
+                    } else {
+                        (element as WithContext)[propertyKey] = value;
+                    }
                 }
             }
+
+            // update the attributes too
+            attributesToRemove.forEach((attributeName) => DOM.removeAttribute(element, attributeName));
+            for (let attributeName in attributesToSet) {
+                DOM.setAttribute(element, attributeName, attributesToSet[attributeName]);
+            }
+
             if (propertyKey === 'key') {
                 this[props[propertyKey]] = element;
             }
@@ -174,9 +210,9 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         setScope(childrenInput, this);
         setSlotted(element, childrenInput);
 
-        if (DOM.isCustomElement(element)) {
+        if (isCustomElement) {
             // notify the Component that its slotted Nodes has been updated
-            element.render();
+            (element as CustomElement).render();
         }
 
         // return the updated (or created) Node (or Component)
