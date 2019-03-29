@@ -1,0 +1,20 @@
+# RNA
+# NPM
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# LINT
+.eslintcache
+.stylelintcache
+
+# TEST
+/reports
+
+# BUILD
+dist
+public
+
+# RNA
+
+docs
