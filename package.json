@@ -1,6 +1,6 @@
 {
   "name": "@chialab/dna",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Evolution-based components.",
   "main": "dist/umd/dna.js",
   "module": "dist/esm/dna.js",
