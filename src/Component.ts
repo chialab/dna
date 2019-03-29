@@ -71,16 +71,6 @@ export class Component extends AbstractElement {
             }
         }
 
-        let eventDescriptors = this.events;
-        if (eventDescriptors) {
-            for (let eventPath in eventDescriptors) {
-                let match = eventPath.match(/([^\s]+)(?:\s+(.*))?/);
-                if (match) {
-                    this.delegate(match[1], match[2], eventDescriptors[eventPath]);
-                }
-            }
-        }
-
         if (properties) {
             // setup Component properties
             for (let propertyKey in properties) {
@@ -100,6 +90,18 @@ export class Component extends AbstractElement {
     }
 
     connectedCallback() {
+        // register events
+        this.undelegate();
+        let eventDescriptors = this.events;
+        if (eventDescriptors) {
+            for (let eventPath in eventDescriptors) {
+                let match = eventPath.match(/([^\s]+)(?:\s+(.*))?/);
+                if (match) {
+                    this.delegate(match[1], match[2], eventDescriptors[eventPath]);
+                }
+            }
+        }
+
         // trigger a re-render when the Node is connected
         this.render();
     }
@@ -190,7 +192,7 @@ export class Component extends AbstractElement {
         return delegate(this, event, selector, callback);
     }
 
-    undelegate(event: string, selector: string, callback: EventCallback) {
+    undelegate(event?: string, selector?: string, callback?: EventCallback) {
         return undelegate(this, event, selector, callback);
     }
 
