@@ -17,8 +17,7 @@
   "homepage": "https://dna.chialab.io",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
-    "build": "rm -rf dist && rna build --production --name DNA",
-    "docs": "rm -rf docs && typedoc --out docs dist/dna.d.ts"
+    "build": "rm -rf dist && rna build --production --name DNA"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^1.5.0",

@@ -163,14 +163,6 @@ Run the `test` script:
 $ yarn test
 ```
 
-### Build the documentation
-
-Run the `docs` script:
-
-```
-$ yarn docs
-```
-
 ---
 
 ## License
