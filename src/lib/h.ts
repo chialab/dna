@@ -160,43 +160,27 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         // the`root` contains the old Node or the old Component intance
         let element = getRoot(Component || tag, props.key, previousElement);
         let isCustomElement = DOM.isCustomElement(element);
-        let attributesToSet: { [key: string]: string } = {};
-        let attributesToRemove: string[] = [];
         // update the Node properties
         for (let propertyKey in props) {
             let value = props[propertyKey];
-            let isFalsy = value == null || value === false;
-            let isTrue = value === true;
-            let isProperty = typeof value === 'object' || propertyKey === 'key';
 
             if (isCustomElement) {
                 if ((element as WithContext)[propertyKey] !== value) {
                     // the property should be update
                     (element as WithContext)[propertyKey] = value;
-                    if (isFalsy) {
-                        attributesToRemove.push(propertyKey);
-                    } else if (!isProperty) {
-                        attributesToSet[propertyKey] = isTrue ? '' : value;
-                    }
                 }
             } else {
-                (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] || {};
-                if ((element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL][propertyKey] !== value) {
-                    (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL][propertyKey] = value;
-                    if (isFalsy) {
-                        attributesToRemove.push(propertyKey);
-                    } else if (!isProperty) {
-                        attributesToSet[propertyKey] = isTrue ? '' : value;
-                    } else {
-                        (element as WithContext)[propertyKey] = value;
-                    }
+                let context = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] || {};
+                if (context[propertyKey] !== value) {
+                    context[propertyKey] = value;
+                    (element as WithContext)[propertyKey] = value;
                 }
             }
 
-            // update the attributes too
-            attributesToRemove.forEach((attributeName) => DOM.removeAttribute(element, attributeName));
-            for (let attributeName in attributesToSet) {
-                DOM.setAttribute(element, attributeName, attributesToSet[attributeName]);
+            if (value == null || value === false) {
+                DOM.removeAttribute(element, propertyKey);
+            } else if (typeof value !== 'object' && propertyKey !== 'key') {
+                DOM.setAttribute(element, propertyKey, value === true ? '' : value);
             }
 
             if (propertyKey === 'key') {

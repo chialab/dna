@@ -5,14 +5,16 @@ import { AccessorDescriptors, defineProperty, AccessorDescriptor, AccessorObserv
 import { html } from './lib/html';
 import { EventCallback, EventDescriptors, delegate, undelegate } from './lib/events';
 
+const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = Node;
+
 function isConnected(element: Node | null): boolean {
     if (!element || !element.nodeType) {
         return false;
     }
     let nodeType = element.nodeType;
-    if (nodeType === Node.ELEMENT_NODE || nodeType === Node.TEXT_NODE) {
+    if (nodeType === ELEMENT_NODE || nodeType === TEXT_NODE) {
         return isConnected(element.parentNode);
-    } else if (nodeType === Node.DOCUMENT_FRAGMENT_NODE || nodeType === Node.DOCUMENT_NODE) {
+    } else if (nodeType === DOCUMENT_FRAGMENT_NODE || nodeType === DOCUMENT_NODE) {
         return true;
     }
 
@@ -22,10 +24,7 @@ function isConnected(element: Node | null): boolean {
 export class Component extends AbstractElement {
     readonly properties?: AccessorDescriptors;
     readonly events?: EventDescriptors;
-
-    get is(): string | undefined {
-        return undefined;
-    }
+    readonly is: string | undefined;
 
     get isConnected(): boolean {
         return isConnected(this);
