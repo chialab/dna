@@ -32,11 +32,7 @@
 
 <strong>Extends:</strong> <a href="#abstractelement">AbstractElement</a>
 
-<p>
 
-
-
-</p>
 
 
 
@@ -87,15 +83,11 @@
 
 <strong>Methods</strong>
 
-<h3 id="connectedcallback"><code>method</code>  connectedCallback</h3>
+<strong id="connectedcallback"><code>method</code>  connectedCallback</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -103,9 +95,6 @@
 </summary><br />
 
 
-        </tr>
-    </tbody>
-</table>
 
 <strong>Returns</strong>: <code>void</code> 
 
@@ -116,15 +105,11 @@
 
 
 
-<h3 id="disconnectedcallback"><code>method</code>  disconnectedCallback</h3>
+<strong id="disconnectedcallback"><code>method</code>  disconnectedCallback</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -132,9 +117,6 @@
 </summary><br />
 
 
-        </tr>
-    </tbody>
-</table>
 
 <strong>Returns</strong>: <code>void</code> 
 
@@ -145,15 +127,11 @@
 
 
 
-<h3 id="attributechangedcallback"><code>method</code>  attributeChangedCallback</h3>
+<strong id="attributechangedcallback"><code>method</code>  attributeChangedCallback</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -198,15 +176,11 @@
 
 
 
-<h3 id="propertychangedcallback"><code>method</code>  propertyChangedCallback</h3>
+<strong id="propertychangedcallback"><code>method</code>  propertyChangedCallback</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -251,7 +225,7 @@
 
 
 
-<h3 id="observe"><code>method</code>  observe</h3>
+<strong id="observe"><code>method</code>  observe</strong>
 
 
 
@@ -299,7 +273,7 @@ Observe a Component Property.
 
 
 
-<h3 id="unobserve"><code>method</code>  unobserve</h3>
+<strong id="unobserve"><code>method</code>  unobserve</strong>
 
 
 
@@ -347,15 +321,11 @@ Unobserve a Component Property.
 
 
 
-<h3 id="delegate"><code>method</code>  delegate</h3>
+<strong id="delegate"><code>method</code>  delegate</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -400,15 +370,11 @@ Unobserve a Component Property.
 
 
 
-<h3 id="undelegate"><code>method</code>  undelegate</h3>
+<strong id="undelegate"><code>method</code>  undelegate</strong>
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -453,7 +419,7 @@ Unobserve a Component Property.
 
 
 
-<h3 id="render"><code>method</code>  render</h3>
+<strong id="render"><code>method</code>  render</strong>
 
 
 
@@ -496,7 +462,7 @@ Render method of the Component.
 
 
 
-<h3 id="appendchild"><code>method</code>  appendChild</h3>
+<strong id="appendchild"><code>method</code>  appendChild</strong>
 
 
 
@@ -539,7 +505,7 @@ Append a child to the Component.
 
 
 
-<h3 id="removechild"><code>method</code>  removeChild</h3>
+<strong id="removechild"><code>method</code>  removeChild</strong>
 
 
 
@@ -582,7 +548,7 @@ Remove a child from the Component.
 
 
 
-<h3 id="insertbefore"><code>method</code>  insertBefore</h3>
+<strong id="insertbefore"><code>method</code>  insertBefore</strong>
 
 
 
@@ -630,7 +596,7 @@ Insert a child before another in the Component.
 
 
 
-<h3 id="replacechild"><code>method</code>  replaceChild</h3>
+<strong id="replacechild"><code>method</code>  replaceChild</strong>
 
 
 
@@ -678,7 +644,7 @@ Replace a child with another in the Component.
 
 
 
-<h3 id="setattribute"><code>method</code>  setAttribute</h3>
+<strong id="setattribute"><code>method</code>  setAttribute</strong>
 
 
 
@@ -726,7 +692,7 @@ Set a Component attribute.
 
 
 
-<h3 id="removeattribute"><code>method</code>  removeAttribute</h3>
+<strong id="removeattribute"><code>method</code>  removeAttribute</strong>
 
 
 
@@ -853,11 +819,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1217,11 +1179,7 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1388,11 +1346,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1435,11 +1389,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1487,11 +1437,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1534,11 +1480,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1586,11 +1528,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -1633,11 +1571,7 @@ Remove an Event delegation.
 
 
 
-<p>
 
-
-
-</p>
 
 <details>
 <summary>
@@ -2022,11 +1956,7 @@ It proxies the DOM.Element class.
 
 
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2043,11 +1973,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="customelement"><code>type</code>  CustomElement</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2068,11 +1994,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="template"><code>type</code>  Template</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2087,11 +2009,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="templateitem"><code>type</code>  TemplateItem</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2106,11 +2024,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="hyperfunction"><code>type</code>  HyperFunction</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2125,11 +2039,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="scope"><code>type</code>  Scope</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2150,11 +2060,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="interpolatefunction"><code>type</code>  InterpolateFunction</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2169,11 +2075,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="templatefilter"><code>type</code>  TemplateFilter</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2188,11 +2090,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="definitionconstructor"><code>type</code>  DefinitionConstructor</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2214,11 +2112,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="definitionoptions"><code>type</code>  DefinitionOptions</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2235,11 +2129,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="hyperproperties"><code>type</code>  HyperProperties</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2258,11 +2148,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="accessordescriptor"><code>type</code>  AccessorDescriptor</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2287,11 +2173,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="accessorobserver"><code>type</code>  AccessorObserver</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2306,11 +2188,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="eventcallback"><code>type</code>  EventCallback</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2325,11 +2203,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="accessordescriptors"><code>type</code>  AccessorDescriptors</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2346,11 +2220,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="eventdescriptors"><code>type</code>  EventDescriptors</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
@@ -2367,11 +2237,7 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="filterable"><code>type</code>  Filterable</strong></summary><br />
 
-<p>
 
-
-
-</p>
 
 
 
