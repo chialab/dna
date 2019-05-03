@@ -3,20 +3,48 @@
  */
 const EVENT_CALLBACKS_SYMBOL = Symbol();
 
-export type EventCallback = (event: Event, target?: HTMLElement) => any;
+/**
+ * Describe the signature of a delegated event callback.
+ * @param event The original DOM event.
+ * @param target The matched delegated element.
+ */
+export type DelegatedEventCallback = (event: Event, target?: HTMLElement) => any;
 
-export type EventDescriptor = {
+/**
+ * A descriptor for an event delegation.
+ */
+type DelegatedEventDescriptor = {
+    /**
+     * The name of the delegated event.
+     */
     event: string;
-    callback: EventCallback;
+    /**
+     * The callback for the delegated event.
+     */
+    callback: DelegatedEventCallback;
+    /**
+     * The selector for the delegated event.
+     */
     selector?: string;
 };
 
-export type EventDescriptors = {
-    [key: string]: EventCallback;
+/**
+ * A collector for event delegations.
+ */
+type DelegationList = {
+    /**
+     * A list of delegation descriptors.
+     */
+    descriptors: DelegatedEventDescriptor[],
+    /**
+     * The real event listener.
+     */
+    listener?: EventListenerOrEventListenerObject;
 }
 
-type DelegationList = EventDescriptor[] & { listener: EventCallback }
-
+/**
+ * An object with event delegations.
+ */
 type WithEventDelegations = {
     [EVENT_CALLBACKS_SYMBOL]?: {
         [key: string]: DelegationList;
@@ -31,14 +59,17 @@ type WithEventDelegations = {
  * @param selector The selector to delegate
  * @param callback The callback to trigger when an Event matches the delegation
  */
-export function delegate(element: HTMLElement, eventName: string, selector: string | undefined, callback: EventCallback) {
+export function delegate(element: HTMLElement, eventName: string, selector: string | undefined, callback: DelegatedEventCallback) {
     const delegatedElement: HTMLElement & WithEventDelegations = element;
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
     // initialize the delegation list
-    const callbacks: DelegationList = delegations[eventName] = delegations[eventName] || [];
+    const callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
+        descriptors: [],
+    };
+    const descriptors = callbacks.descriptors;
     // check if the event has already been delegated
-    if (!callbacks.length) {
+    if (!callbacks.listener) {
         // setup the listener
         callbacks.listener = (ev) => {
             if (!ev.target) {
@@ -52,11 +83,16 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
                 // exec the real stopPropagation method
                 return Event.prototype.stopPropagation.call(ev);
             };
+            ev.stopImmediatePropagation = () => {
+                stopped = true;
+                // exec the real stopPropagation method
+                return Event.prototype.stopImmediatePropagation.call(ev);
+            };
 
             // filter matched selector for the event
-            let filtered: { target: HTMLElement; callback: EventCallback; }[] = [];
-            for (let i = 0; i < callbacks.length; i++) {
-                let { selector, callback } = callbacks[i];
+            let filtered: { target: HTMLElement; callback: DelegatedEventCallback; }[] = [];
+            for (let i = 0; i < descriptors.length; i++) {
+                let { selector, callback } = descriptors[i];
                 let target = selector ? eventTarget.closest(selector) as HTMLElement : element;
                 if (target) {
                     filtered.push({
@@ -79,7 +115,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
         element.addEventListener(eventName, callbacks.listener);
     }
     // add the delegation to the list
-    callbacks.push({ event: eventName, callback, selector });
+    descriptors.push({ event: eventName, callback, selector });
 }
 
 /**
@@ -90,7 +126,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
  * @param selector The selector to undelegate
  * @param callback The callback to remove
  */
-export function undelegate(element: HTMLElement, eventName?: string, selector?: string, callback?: EventCallback) {
+export function undelegate(element: HTMLElement, eventName?: string, selector?: string, callback?: DelegatedEventCallback) {
     const delegatedElement: HTMLElement & WithEventDelegations = element;
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL];
@@ -103,20 +139,20 @@ export function undelegate(element: HTMLElement, eventName?: string, selector?: 
     } else {
         // check the delegation to remove exists
         if (delegations && (eventName in delegations)) {
-            const callbacks = delegations[eventName];
+            const { descriptors, listener } = delegations[eventName];
             if (!callback) {
-                callbacks.forEach((descriptor) => {
+                descriptors.forEach((descriptor) => {
                     undelegate(element, eventName, descriptor.selector, descriptor.callback);
                 });
-            } else {
+            } else if (listener) {
                 // get the list of delegations
                 // find the index of the callback to remove in the list
-                for (let i = 0; i < callbacks.length; i++) {
-                    let descriptor = callbacks[i];
+                for (let i = 0; i < descriptors.length; i++) {
+                    let descriptor = descriptors[i];
                     if (descriptor.selector === selector && descriptor.callback === callback) {
-                        callbacks.splice(i, 1);
-                        if (callbacks.length === 0) {
-                            element.removeEventListener(eventName, callbacks.listener);
+                        descriptors.splice(i, 1);
+                        if (descriptors.length === 0) {
+                            element.removeEventListener(eventName, listener);
                         }
                     }
                 }

@@ -30,7 +30,7 @@
     
 
 
-<strong>Extends:</strong> <a href="#abstractelement">AbstractElement</a>
+<strong>Extends:</strong> <a href="#baseelement">BaseElement</a>
 
 
 
@@ -48,12 +48,16 @@
     <tbody>
         <tr>
             <td>properties</td>
-            <td><code><a href="#accessordescriptors">AccessorDescriptors</a></code></td>
+            <td><code>{
+    [key: string]: <a href="#accessordescriptor">AccessorDescriptor</a>;
+}</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>events</td>
-            <td><code><a href="#eventdescriptors">EventDescriptors</a></code></td>
+            <td><code>{
+    [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
+}</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -335,7 +339,7 @@ Unobserve a Component Property.
 
 <details>
 <summary>
-<code>(event: string), selector: string), callback: <a href="#eventcallback">EventCallback</a>)): void</code>
+<code>(event: string), selector: string), callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -360,7 +364,7 @@ Unobserve a Component Property.
             <td></td></tr>
 <tr>
             <td>callback</td>
-            <td><code><a href="#eventcallback">EventCallback</a></code></td>
+            <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
@@ -385,7 +389,7 @@ Unobserve a Component Property.
 
 <details>
 <summary>
-<code>(event?: string), selector?: string), callback?: <a href="#eventcallback">EventCallback</a>)): void</code>
+<code>(event?: string), selector?: string), callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -410,7 +414,7 @@ Unobserve a Component Property.
             <td></td></tr>
 <tr>
             <td>callback</td>
-            <td><code><a href="#eventcallback">EventCallback</a></code></td>
+            <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center">✓</td>
             <td></td>
         </tr>
@@ -761,6 +765,36 @@ Remove a Component attribute.
 <hr />
 
 <details>
+<summary><strong id="baseelement"><code>class</code>  BaseElement</strong></summary><br />
+    
+
+
+<strong>Extends:</strong> <a href="#element">Element</a>
+
+<p>
+
+The abstact HTMLElement that Component extends.
+It proxies the DOM.Element class.
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</details>
+
+<hr />
+
+<details>
 <summary><strong id="render"><code>method</code>  render</strong></summary><br />
 
 
@@ -888,7 +922,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <p>
 
-Create a new Patch instance.
+HyperFunction factory to use as JSX pragma.
 
 </p>
 
@@ -1244,7 +1278,7 @@ Delegate an Event listener.
 
 <details>
 <summary>
-<code>(element: HTMLElement), eventName: string), selector: string|undefined), callback: <a href="#eventcallback">EventCallback</a>)): void</code>
+<code>(element: HTMLElement), eventName: string), selector: string|undefined), callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1274,7 +1308,7 @@ Delegate an Event listener.
             <td>The selector to delegate</td></tr>
 <tr>
             <td>callback</td>
-            <td><code><a href="#eventcallback">EventCallback</a></code></td>
+            <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center"></td>
             <td>The callback to trigger when an Event matches the delegation</td>
         </tr>
@@ -1306,7 +1340,7 @@ Remove an Event delegation.
 
 <details>
 <summary>
-<code>(element: HTMLElement), eventName?: string), selector?: string), callback?: <a href="#eventcallback">EventCallback</a>)): void</code>
+<code>(element: HTMLElement), eventName?: string), selector?: string), callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1336,7 +1370,7 @@ Remove an Event delegation.
             <td>The selector to undelegate</td></tr>
 <tr>
             <td>callback</td>
-            <td><code><a href="#eventcallback">EventCallback</a></code></td>
+            <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center">✓</td>
             <td>The callback to remove</td>
         </tr>
@@ -1360,11 +1394,15 @@ Remove an Event delegation.
 
 
 
+<p>
 
+Create a Scope with an initial prototype.
+
+</p>
 
 <details>
 <summary>
-<code>(prototype: any)): <a href="#scope">Scope</a></code>
+<code>(prototype: HTMLElement)): <a href="#scope">Scope</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1379,62 +1417,14 @@ Remove an Event delegation.
     <tbody>
         <tr>
             <td>prototype</td>
-            <td><code>any</code></td>
+            <td><code>HTMLElement</code></td>
             <td align="center"></td>
-            <td></td>
+            <td>The initial prototype object for the Scope.</td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#scope">Scope</a></code> 
-
-</details>
-
-
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="createfilterabletemplateitems"><code>method</code>  createFilterableTemplateItems</strong></summary><br />
-
-
-
-
-
-<details>
-<summary>
-<code>(items: <a href="#templateitem">TemplateItem</a>[]), filter: <a href="#templatefilter">TemplateFilter</a>)): <a href="#templateitem">TemplateItem</a>[] & <a href="#filterable">Filterable</a></code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>items</td>
-            <td><code><a href="#templateitem">TemplateItem</a>[]</code></td>
-            <td align="center"></td>
-            <td></td></tr>
-<tr>
-            <td>filter</td>
-            <td><code><a href="#templatefilter">TemplateFilter</a></code></td>
-            <td align="center"></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code><a href="#templateitem">TemplateItem</a>[] & <a href="#filterable">Filterable</a></code> 
+<strong>Returns</strong>: <code><a href="#scope">Scope</a></code> An object with the Scope interface.
 
 </details>
 
@@ -1451,11 +1441,15 @@ Remove an Event delegation.
 
 
 
+<p>
 
+Get the Scope attached to an object.
+
+</p>
 
 <details>
 <summary>
-<code>(prototype: any)): <a href="#scope">Scope</a>|undefined</code>
+<code>(target: any)): <a href="#scope">Scope</a>|undefined</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1469,15 +1463,15 @@ Remove an Event delegation.
     </thead>
     <tbody>
         <tr>
-            <td>prototype</td>
+            <td>target</td>
             <td><code>any</code></td>
             <td align="center"></td>
-            <td></td>
+            <td>The scoped object.</td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#scope">Scope</a>|undefined</code> 
+<strong>Returns</strong>: <code><a href="#scope">Scope</a>|undefined</code> The Scope object (if it exists).
 
 </details>
 
@@ -1494,7 +1488,11 @@ Remove an Event delegation.
 
 
 
+<p>
 
+Attach a Scope to an object.
+
+</p>
 
 <details>
 <summary>
@@ -1515,103 +1513,12 @@ Remove an Event delegation.
             <td>target</td>
             <td><code>any</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The object to scope.</td></tr>
 <tr>
             <td>scope</td>
             <td><code><a href="#scope">Scope</a></code></td>
             <td align="center"></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code>void</code> 
-
-</details>
-
-
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="getslotted"><code>method</code>  getSlotted</strong></summary><br />
-
-
-
-
-
-<details>
-<summary>
-<code>(target: any)): <a href="#templateitem">TemplateItem</a>[]</code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>target</td>
-            <td><code>any</code></td>
-            <td align="center"></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code><a href="#templateitem">TemplateItem</a>[]</code> 
-
-</details>
-
-
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="setslotted"><code>method</code>  setSlotted</strong></summary><br />
-
-
-
-
-
-<details>
-<summary>
-<code>(target: any), slotted: <a href="#templateitem">TemplateItem</a>[])): void</code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>target</td>
-            <td><code>any</code></td>
-            <td align="center"></td>
-            <td></td></tr>
-<tr>
-            <td>slotted</td>
-            <td><code><a href="#templateitem">TemplateItem</a>[]</code></td>
-            <td align="center"></td>
-            <td></td>
+            <td>The Scope to set.</td>
         </tr>
     </tbody>
 </table>
@@ -1646,7 +1553,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <strong>Type:</strong>
 
-<pre>{
+<pre class="typescript">{
     Text: {
         constructor(data?: string|undefined): Text;
         prototype: Text;
@@ -1670,7 +1577,7 @@ It also handle element life cycle for custom elements unless otherwise specified
     hasAttribute(element: HTMLElement, qualifiedName: string): boolean;
     setAttribute(element: HTMLElement, qualifiedName: string, value: string): void;
     removeAttribute(element: HTMLElement, qualifiedName: string): void;
-    getChildNodes(node: Node): Node[]|undefined;
+    getChildNodes(node: Node): readonly Node[]|undefined;
     connect(node: Node): void;
     disconnect(node: Node): void;
 }</pre>
@@ -1682,14 +1589,13 @@ It also handle element life cycle for custom elements unless otherwise specified
 <hr />
 
 <details>
-<summary><strong id="abstractelement"><code>constant</code>  AbstractElement</strong></summary><br />
+<summary><strong id="hyper_symbol"><code>constant</code>  HYPER_SYMBOL</strong></summary><br />
 
 
 
 <p>
 
-The abstact HTMLElement that Component extends.
-It proxies the DOM.Element class.
+Symbol for interpolated functions.
 
 </p>
 
@@ -1697,266 +1603,56 @@ It proxies the DOM.Element class.
 
 <strong>Type:</strong>
 
-<pre>{
-    constructor(): {
-        accessKey: string;
-        accessKeyLabel: string;
-        autocapitalize: string;
-        dir: string;
-        draggable: boolean;
-        hidden: boolean;
-        innerText: string;
-        lang: string;
-        offsetHeight: number;
-        offsetLeft: number;
-        offsetParent: Element|null;
-        offsetTop: number;
-        offsetWidth: number;
-        spellcheck: boolean;
-        title: string;
-        translate: boolean;
-        click(): void;
-        addEventListener(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]): any, options?: boolean|AddEventListenerOptions|undefined): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean|AddEventListenerOptions|undefined): void;
-        removeEventListener(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]): any, options?: boolean|EventListenerOptions|undefined): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean|EventListenerOptions|undefined): void;
-        assignedSlot: HTMLSlotElement|null;
-        attributes: NamedNodeMap;
-        classList: DOMTokenList;
-        className: string;
-        clientHeight: number;
-        clientLeft: number;
-        clientTop: number;
-        clientWidth: number;
-        id: string;
-        innerHTML: string;
-        localName: string;
-        namespaceURI: string|null;
-        onfullscreenchange: ((this: Element, ev: Event): any)|null;
-        onfullscreenerror: ((this: Element, ev: Event): any)|null;
-        outerHTML: string;
-        prefix: string|null;
-        scrollHeight: number;
-        scrollLeft: number;
-        scrollTop: number;
-        scrollWidth: number;
-        shadowRoot: ShadowRoot|null;
-        slot: string;
-        tagName: string;
-        attachShadow(init: ShadowRootInit): ShadowRoot;
-        closest(selector: K): HTMLElementTagNameMap[K]|null;
-        closest(selector: K): SVGElementTagNameMap[K]|null;
-        closest(selector: string): Element|null;
-        getAttribute(qualifiedName: string): string|null;
-        getAttributeNS(namespace: string|null, localName: string): string|null;
-        getAttributeNames(): string[];
-        getAttributeNode(name: string): Attr|null;
-        getAttributeNodeNS(namespaceURI: string, localName: string): Attr|null;
-        getBoundingClientRect(): DOMRect|ClientRect;
-        getClientRects(): ClientRectList|DOMRectList;
-        getElementsByClassName(classNames: string): HTMLCollectionOf&lt;Element&gt;;
-        getElementsByTagName(qualifiedName: K): HTMLCollectionOf&lt;HTMLElementTagNameMap[K]&gt;;
-        getElementsByTagName(qualifiedName: K): HTMLCollectionOf&lt;SVGElementTagNameMap[K]&gt;;
-        getElementsByTagName(qualifiedName: string): HTMLCollectionOf&lt;Element&gt;;
-        getElementsByTagNameNS(namespaceURI: "http://www.w3.org/1999/xhtml", localName: string): HTMLCollectionOf&lt;HTMLElement&gt;;
-        getElementsByTagNameNS(namespaceURI: "http://www.w3.org/2000/svg", localName: string): HTMLCollectionOf&lt;SVGElement&gt;;
-        getElementsByTagNameNS(namespaceURI: string, localName: string): HTMLCollectionOf&lt;Element&gt;;
-        hasAttribute(qualifiedName: string): boolean;
-        hasAttributeNS(namespace: string|null, localName: string): boolean;
-        hasAttributes(): boolean;
-        hasPointerCapture(pointerId: number): boolean;
-        insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element|null;
-        insertAdjacentHTML(where: InsertPosition, html: string): void;
-        insertAdjacentText(where: InsertPosition, text: string): void;
-        matches(selectors: string): boolean;
-        msGetRegionContent(): any;
-        releasePointerCapture(pointerId: number): void;
-        removeAttribute(qualifiedName: string): void;
-        removeAttributeNS(namespace: string|null, localName: string): void;
-        removeAttributeNode(attr: Attr): Attr;
-        requestFullscreen(options?: FullscreenOptions|undefined): Promise&lt;void&gt;;
-        requestPointerLock(): void;
-        scroll(options?: ScrollToOptions|undefined): void;
-        scroll(x: number, y: number): void;
-        scrollBy(options?: ScrollToOptions|undefined): void;
-        scrollBy(x: number, y: number): void;
-        scrollIntoView(arg?: boolean|ScrollIntoViewOptions|undefined): void;
-        scrollTo(options?: ScrollToOptions|undefined): void;
-        scrollTo(x: number, y: number): void;
-        setAttribute(qualifiedName: string, value: string): void;
-        setAttributeNS(namespace: string|null, qualifiedName: string, value: string): void;
-        setAttributeNode(attr: Attr): Attr|null;
-        setAttributeNodeNS(attr: Attr): Attr|null;
-        setPointerCapture(pointerId: number): void;
-        toggleAttribute(qualifiedName: string, force?: boolean|undefined): boolean;
-        webkitMatchesSelector(selectors: string): boolean;
-        baseURI: string;
-        childNodes: NodeListOf&lt;ChildNode&gt;;
-        firstChild: ChildNode|null;
-        isConnected: boolean;
-        lastChild: ChildNode|null;
-        nextSibling: ChildNode|null;
-        nodeName: string;
-        nodeType: number;
-        nodeValue: string|null;
-        ownerDocument: Document|null;
-        parentElement: HTMLElement|null;
-        parentNode: (Node & ParentNode)|null;
-        previousSibling: Node|null;
-        textContent: string|null;
-        appendChild(newChild: T): T;
-        cloneNode(deep?: boolean|undefined): Node;
-        compareDocumentPosition(other: Node): number;
-        contains(other: Node|null): boolean;
-        getRootNode(options?: GetRootNodeOptions|undefined): Node;
-        hasChildNodes(): boolean;
-        insertBefore(newChild: T, refChild: Node|null): T;
-        isDefaultNamespace(namespace: string|null): boolean;
-        isEqualNode(otherNode: Node|null): boolean;
-        isSameNode(otherNode: Node|null): boolean;
-        lookupNamespaceURI(prefix: string|null): string|null;
-        lookupPrefix(namespace: string|null): string|null;
-        normalize(): void;
-        removeChild(oldChild: T): T;
-        replaceChild(newChild: Node, oldChild: T): T;
-        ATTRIBUTE_NODE: number;
-        CDATA_SECTION_NODE: number;
-        COMMENT_NODE: number;
-        DOCUMENT_FRAGMENT_NODE: number;
-        DOCUMENT_NODE: number;
-        DOCUMENT_POSITION_CONTAINED_BY: number;
-        DOCUMENT_POSITION_CONTAINS: number;
-        DOCUMENT_POSITION_DISCONNECTED: number;
-        DOCUMENT_POSITION_FOLLOWING: number;
-        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: number;
-        DOCUMENT_POSITION_PRECEDING: number;
-        DOCUMENT_TYPE_NODE: number;
-        ELEMENT_NODE: number;
-        ENTITY_NODE: number;
-        ENTITY_REFERENCE_NODE: number;
-        NOTATION_NODE: number;
-        PROCESSING_INSTRUCTION_NODE: number;
-        TEXT_NODE: number;
-        dispatchEvent(event: Event): boolean;
-        childElementCount: number;
-        children: HTMLCollection;
-        firstElementChild: Element|null;
-        lastElementChild: Element|null;
-        append(nodes: (string|Node)[]): void;
-        prepend(nodes: (string|Node)[]): void;
-        querySelector(selectors: K): HTMLElementTagNameMap[K]|null;
-        querySelector(selectors: K): SVGElementTagNameMap[K]|null;
-        querySelector(selectors: string): E|null;
-        querySelectorAll(selectors: K): NodeListOf&lt;HTMLElementTagNameMap[K]&gt;;
-        querySelectorAll(selectors: K): NodeListOf&lt;SVGElementTagNameMap[K]&gt;;
-        querySelectorAll(selectors: string): NodeListOf&lt;E&gt;;
-        nextElementSibling: Element|null;
-        previousElementSibling: Element|null;
-        after(nodes: (string|Node)[]): void;
-        before(nodes: (string|Node)[]): void;
-        remove(): void;
-        replaceWith(nodes: (string|Node)[]): void;
-        animate(keyframes: PropertyIndexedKeyframes|Keyframe[]|null, options?: number|KeyframeAnimationOptions|undefined): Animation;
-        getAnimations(): Animation[];
-        onabort: ((this: GlobalEventHandlers, ev: UIEvent): any)|null;
-        onanimationcancel: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationend: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationiteration: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationstart: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onauxclick: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onblur: ((this: GlobalEventHandlers, ev: FocusEvent): any)|null;
-        oncancel: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncanplay: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncanplaythrough: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onclick: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onclose: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncontextmenu: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        oncuechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ondblclick: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        ondrag: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragend: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragenter: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragexit: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ondragleave: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragover: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragstart: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondrop: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondurationchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onemptied: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onended: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onerror: OnErrorEventHandler;
-        onfocus: ((this: GlobalEventHandlers, ev: FocusEvent): any)|null;
-        ongotpointercapture: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        oninput: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oninvalid: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onkeydown: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onkeypress: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onkeyup: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onload: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadeddata: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadedmetadata: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadend: ((this: GlobalEventHandlers, ev: ProgressEvent): any)|null;
-        onloadstart: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onlostpointercapture: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onmousedown: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseenter: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseleave: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmousemove: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseout: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseover: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseup: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onpause: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onplay: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onplaying: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onpointercancel: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerdown: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerenter: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerleave: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointermove: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerout: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerover: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerup: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onprogress: ((this: GlobalEventHandlers, ev: ProgressEvent): any)|null;
-        onratechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onreset: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onresize: ((this: GlobalEventHandlers, ev: UIEvent): any)|null;
-        onscroll: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsecuritypolicyviolation: ((this: GlobalEventHandlers, ev: SecurityPolicyViolationEvent): any)|null;
-        onseeked: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onseeking: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselect: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselectionchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselectstart: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onstalled: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsubmit: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsuspend: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontimeupdate: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontoggle: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontouchcancel: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null;
-        ontouchend: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null;
-        ontouchmove: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null;
-        ontouchstart: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null;
-        ontransitioncancel: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionend: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionrun: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionstart: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        onvolumechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onwaiting: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onwheel: ((this: GlobalEventHandlers, ev: WheelEvent): any)|null;
-        oncopy: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        oncut: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        onpaste: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        contentEditable: string;
-        inputMode: string;
-        isContentEditable: boolean;
-        dataset: DOMStringMap;
-        nonce?: string|undefined;
-        tabIndex: number;
-        blur(): void;
-        focus(options?: FocusOptions|undefined): void;
-        style: CSSStyleDeclaration;
-    };
+<pre class="typescript">unique Symbol</pre>
+
+
+
+</details>
+
+<hr />
+
+<details>
+<summary><strong id="interpolated_symbol"><code>constant</code>  INTERPOLATED_SYMBOL</strong></summary><br />
+
+
+
+<p>
+
+Symbol for interpolated functions.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre class="typescript">unique Symbol</pre>
+
+
+
+</details>
+
+<hr />
+
+<details>
+<summary><strong id="element"><code>constant</code>  Element</strong></summary><br />
+
+
+
+<p>
+
+Create a shimmed HTMLElement.
+(in some browsers, HTMLElement construction throw errors when not shimmed).
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre class="typescript">{
+    constructor(): HTMLElement;
+    prototype: HTMLElement;
 }</pre>
 
 
@@ -1966,17 +1662,21 @@ It proxies the DOM.Element class.
 <hr />
 
 <details>
-<summary><strong id="filter_symbol"><code>constant</code>  FILTER_SYMBOL</strong></summary><br />
+<summary><strong id="scope_symbol"><code>constant</code>  SCOPE_SYMBOL</strong></summary><br />
 
 
 
+<p>
 
+The scope symbol.
+
+</p>
 
 
 
 <strong>Type:</strong>
 
-<pre>unique Symbol</pre>
+<pre class="typescript">unique Symbol</pre>
 
 
 
@@ -1987,19 +1687,25 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="customelement"><code>type</code>  CustomElement</strong></summary><br />
 
+<p>
+
+The interface of Custom Element, as described by the W3C.
+
+</p>
 
 
 
-
-<pre>HTMLElement & {
+<pre class="typescript">HTMLElement & {
     connectedCallback(): void;
     disconnectedCallback(): void;
-    render(): void;
     attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
+    render(): void;
 }</pre>
 
+<strong>See also</strong>
 
+* [https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/) W3C specification.
 
 </details>
 
@@ -2012,7 +1718,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitem">TemplateItem</a>[]</pre>
+<pre class="typescript"><a href="#templateitem">TemplateItem</a>|<a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -2027,7 +1733,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>HTMLElement|Text|Function|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|Promise&lt;any&gt;|string|boolean</pre>
+<pre class="typescript">HTMLElement|Text|Function|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|Promise&lt;any&gt;|string|boolean</pre>
 
 
 
@@ -2038,11 +1744,18 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="hyperfunction"><code>type</code>  HyperFunction</strong></summary><br />
 
+<p>
+
+A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
+returns a Template result for a given previous node at the current position in a render context.
+
+</p>
 
 
 
-
-<pre>(this: <a href="#scope">Scope</a>, previousElement?: HTMLElement): <a href="#template">Template</a>|<a href="#template">Template</a>[]</pre>
+<pre class="typescript">((this: <a href="#scope">Scope</a>, previousElement?: HTMLElement): <a href="#template">Template</a>|<a href="#template">Template</a>[]) & {
+    [HYPER_SYMBOL]?: true;
+}</pre>
 
 
 
@@ -2053,17 +1766,23 @@ It proxies the DOM.Element class.
 <details>
 <summary><strong id="scope"><code>type</code>  Scope</strong></summary><br />
 
+<p>
+
+The Scope object set up a chain of scopes for templates in a render context.
+It is possibile to assign properties only to a Component's scope,
+or create a child scope which inherits properties from the current scope.
+
+</p>
 
 
 
-
-<pre>{
+<pre class="typescript">HTMLElement & {
     [key: string]: any;
     $assign(values: {
         [key: string]: any;
     }): void;
     $child(): <a href="#scope">Scope</a>;
-} & HTMLElement</pre>
+}</pre>
 
 
 
@@ -2078,7 +1797,9 @@ It proxies the DOM.Element class.
 
 
 
-<pre>(this: <a href="#scope">Scope</a>): string</pre>
+<pre class="typescript">((this: <a href="#scope">Scope</a>): string) & {
+    [INTERPOLATED_SYMBOL]?: true;
+}</pre>
 
 
 
@@ -2093,7 +1814,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>(item: HTMLElement|Text): boolean</pre>
+<pre class="typescript">(item: HTMLElement|Text): boolean</pre>
 
 
 
@@ -2108,7 +1829,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>HTMLElement & {
+<pre class="typescript">HTMLElement & {
     constructor(nodeOrProperties?: HTMLElement|{
         [key: string]: any;
     }, properties?: {
@@ -2130,7 +1851,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>{
+<pre class="typescript">{
     extends?: string;
 }</pre>
 
@@ -2147,7 +1868,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>{
+<pre class="typescript">{
     is?: string;
     slot?: string;
     [key: string]: any;
@@ -2166,7 +1887,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>PropertyDescriptor & {
+<pre class="typescript">PropertyDescriptor & {
     name?: string;
     attribute?: string|boolean;
     defaultValue?: any;
@@ -2191,7 +1912,7 @@ It proxies the DOM.Element class.
 
 
 
-<pre>(oldValue: any, newValue: any): any</pre>
+<pre class="typescript">(oldValue: any, newValue: any): any</pre>
 
 
 
@@ -2200,30 +1921,17 @@ It proxies the DOM.Element class.
 <hr />
 
 <details>
-<summary><strong id="eventcallback"><code>type</code>  EventCallback</strong></summary><br />
+<summary><strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong></summary><br />
+
+<p>
+
+Describe the signature of a delegated event callback.
+
+</p>
 
 
 
-
-
-<pre>(event: Event, target?: HTMLElement): any</pre>
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="accessordescriptors"><code>type</code>  AccessorDescriptors</strong></summary><br />
-
-
-
-
-
-<pre>{
-    [key: string]: <a href="#accessordescriptor">AccessorDescriptor</a>;
-}</pre>
+<pre class="typescript">(event: Event, target?: HTMLElement): any</pre>
 
 
 
@@ -2232,31 +1940,18 @@ It proxies the DOM.Element class.
 <hr />
 
 <details>
-<summary><strong id="eventdescriptors"><code>type</code>  EventDescriptors</strong></summary><br />
+<summary><strong id="scoped"><code>type</code>  Scoped</strong></summary><br />
+
+<p>
+
+A Scoped object has a Scope instance attached, in order to use it in a render context.
+
+</p>
 
 
 
-
-
-<pre>{
-    [key: string]: <a href="#eventcallback">EventCallback</a>;
-}</pre>
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="filterable"><code>type</code>  Filterable</strong></summary><br />
-
-
-
-
-
-<pre>{
-    [FILTER_SYMBOL]?: <a href="#templatefilter">TemplateFilter</a>;
+<pre class="typescript">{
+    [SCOPE_SYMBOL]?: <a href="#scope">Scope</a>;
 }</pre>
 
 

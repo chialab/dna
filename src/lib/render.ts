@@ -1,6 +1,7 @@
 import { DOM } from './dom';
-import { HyperFunction } from './h';
-import { InterpolateFunction } from './interpolate';
+import { HyperFunction, isHyperFunction } from './h';
+import { Scope, Scoped, createScope, getScope } from './Scope';
+import { InterpolateFunction, isInterpolateFunction } from './interpolate';
 import { scopeCSS } from './style';
 
 /**
@@ -14,11 +15,6 @@ const ITERATOR = Symbol();
 const SLOTTED_SYMBOL = Symbol();
 
 const FILTER_SYMBOL = Symbol();
-
-/**
- * The scope symbol.
- */
-const SCOPE_SYMBOL = Symbol();
 
 export type TemplateFilter = (item: HTMLElement | Text) => boolean;
 
@@ -34,59 +30,12 @@ type Slotted = {
 
 type Filterable = { [FILTER_SYMBOL]?: TemplateFilter };
 
-type Scoped = { [SCOPE_SYMBOL]?: Scope };
-
 export type Template = TemplateItem | TemplateItem[];
-
-export type Scope = {
-    [key: string]: any;
-    /**
-     * Assign values to the Scope.
-     *
-     * @param values A set of values to set to the Scope
-     */
-    $assign(values: { [key: string]: any }): void;
-
-    /**
-     * Create a child Scope.
-     */
-    $child(): Scope;
-} & HTMLElement;
-
-export function createScope(prototype: any) {
-    const scope = {} as Scope;
-    scope.__proto__ = {
-        $assign(this: Scope, values: { [key: string]: any }) {
-            for (let propertyKey in values) {
-                this[propertyKey] = values[propertyKey];
-            }
-        },
-
-        $child() {
-            // create a new Scope inheriting properties from the current one
-            return Object.create(this);
-        },
-
-        __proto__: prototype,
-    };
-
-    return scope;
-}
 
 export function createFilterableTemplateItems(items: TemplateItem[], filter: TemplateFilter) {
     const filterableItems: TemplateItem[] & Filterable = (items || []).slice(0);
     filterableItems[FILTER_SYMBOL] = filter;
     return filterableItems;
-}
-
-export function getScope(prototype: any): Scope | undefined {
-    const scopedPrototype: Scoped = prototype;
-    return scopedPrototype[SCOPE_SYMBOL];
-}
-
-export function setScope(target: any, scope: Scope): void {
-    const scopedTarget: Scoped = target;
-    scopedTarget[SCOPE_SYMBOL] = scope;
 }
 
 export function getSlotted(target: any): TemplateItem[] {
@@ -128,26 +77,14 @@ export function render(node: HTMLElement, input: Template, scope?: Scope, previo
             for (let i = 0, len = scopableInput.length; i < len; i++) {
                 render(iterableNode, scopableInput[i], inputScope, result, scopableInput[FILTER_SYMBOL]);
             }
-        // if it is a Function or a Callable instance
-        } else if (typeof scopableInput === 'function') {
-            render(iterableNode, scopableInput.call(inputScope, iterableNode[ITERATOR], filter), inputScope, result, filter);
+        // if it is an InterpolatedFunction or a HyperFunction
+        } else if (isInterpolateFunction(scopableInput) || isHyperFunction(scopableInput)) {
+            render(iterableNode, (scopableInput as Function).call(inputScope, iterableNode[ITERATOR], filter), inputScope, result, filter);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
 
             // add the input to the result
-            let io = result.push(scopableInput);
-
-            if (scopableInput instanceof Promise) {
-                // wait for Promise resolution
-                scopableInput.then((response) => {
-                    // update the result
-                    result.splice(io - 1, 1, response);
-                    // and trigger a re-render
-                    render(iterableNode, result as Template, undefined, undefined, filter);
-                });
-                // handle the pending Promise as empty text Node
-                scopableInput = '';
-            }
+            result.push(scopableInput);
 
             let inputElement: Template & Slotted;
             if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof scopableInput === 'string') {

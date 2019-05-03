@@ -1,16 +1,27 @@
 import { shim } from './shim';
 import { CustomElement } from './CustomElement';
 
+/**
+ * Create a shimmed HTMLElement.
+ * (in some browsers, HTMLElement construction throw errors when not shimmed).
+ */
 let Element = shim(HTMLElement);
+
+/**
+ * Store the base Element prototype.
+ */
 let Prototype = Element.prototype;
+
+/**
+ * Invoke life cycle methods by default.
+ */
 let lifeCycle = true;
 
 /**
  * The abstact HTMLElement that Component extends.
  * It proxies the DOM.Element class.
- * @private
  */
-export const AbstractElement = class extends Element { };
+export class BaseElement extends Element { };
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -33,23 +44,43 @@ export const DOM = {
     set Element(constructor) {
         Element = constructor;
         Prototype = Element.prototype;
-        Object.setPrototypeOf(AbstractElement, Prototype);
+        Object.setPrototypeOf(BaseElement, Prototype);
     },
 
-    useLifeCycle(use = true) {
+    /**
+     * Set the life cycle mode for DNA.
+     * Disable it (`DOM.useLifeCycle(false)`) if you want to use native Custom Element's.
+     * @param use Should invoke or not life cycle methods.
+     */
+    useLifeCycle(use: boolean = true) {
         lifeCycle = !!use;
     },
 
+    /**
+     * Check if a node is a HTMLElement instance.
+     * @param node The node to check.
+     * @return The node is a HTMLElement instance.
+     */
     isElement(node: any): node is HTMLElement {
         return node instanceof this.Element;
     },
 
+    /**
+     * Check if a node is a Text instance.
+     * @param node The node to check.
+     * @return The node is a Text instance.
+     */
     isText(node: any): node is Text {
         return node instanceof this.Text;
     },
 
+    /**
+     * Check if a node is a Custom Element instance.
+     * @param node The node to check.
+     * @return The node is a Custom Element instance.
+     */
     isCustomElement(node: any): node is CustomElement {
-        return node instanceof AbstractElement;
+        return node instanceof BaseElement;
     },
 
     /**
@@ -200,7 +231,13 @@ export const DOM = {
         }
     },
 
-    getChildNodes(node: Node): Node[] | undefined {
+    /**
+     * Get child nodes for a node.
+     *
+     * @param node The parent node.
+     * @return An array of child nodes (if available).
+     */
+    getChildNodes(node: Node): ReadonlyArray<Node> | undefined {
         if (!node.childNodes) {
             return undefined;
         }
@@ -211,6 +248,12 @@ export const DOM = {
         return childNodes;
     },
 
+    /**
+     * Invoke `connectedCallback` method of a Node (and its descendents).
+     * It does nothing if life cycle is disabled.
+     *
+     * @param node The connected node.
+     */
     connect(node: Node) {
         if (!lifeCycle) {
             return;
@@ -230,6 +273,12 @@ export const DOM = {
         }
     },
 
+    /**
+     * Invoke `disconnectedCallback` method of a Node (and its descendents).
+     * It does nothing if life cycle is disabled.
+     *
+     * @param node The disconnected node.
+     */
     disconnect(node: Node) {
         if (!lifeCycle) {
             return;

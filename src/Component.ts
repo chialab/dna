@@ -1,9 +1,10 @@
 import * as registry from './lib/registry';
-import { AbstractElement, DOM } from './lib/dom';
-import { Template, render, getScope, setScope, createScope, getSlotted, setSlotted, TemplateItem } from './lib/render';
-import { AccessorDescriptors, defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
+import { BaseElement, DOM } from './lib/dom';
+import { createScope, getScope, setScope } from './lib/Scope';
+import { Template, render, getSlotted, setSlotted, TemplateItem } from './lib/render';
+import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
 import { html } from './lib/html';
-import { EventCallback, EventDescriptors, delegate, undelegate } from './lib/events';
+import { DelegatedEventCallback, delegate, undelegate } from './lib/events';
 
 const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = Node;
 
@@ -21,9 +22,13 @@ function isConnected(element: Node | null): boolean {
     return false;
 }
 
-export class Component extends AbstractElement {
-    readonly properties?: AccessorDescriptors;
-    readonly events?: EventDescriptors;
+export class Component extends BaseElement {
+    readonly properties?: {
+        [key: string]: AccessorDescriptor;
+    };
+    readonly events?: {
+        [key: string]: DelegatedEventCallback;
+    };
     readonly is: string | undefined;
 
     get isConnected(): boolean {
@@ -183,11 +188,11 @@ export class Component extends AbstractElement {
         }
     }
 
-    delegate(event: string, selector: string, callback: EventCallback) {
+    delegate(event: string, selector: string, callback: DelegatedEventCallback) {
         return delegate(this, event, selector, callback);
     }
 
-    undelegate(event?: string, selector?: string, callback?: EventCallback) {
+    undelegate(event?: string, selector?: string, callback?: DelegatedEventCallback) {
         return undelegate(this, event, selector, callback);
     }
 

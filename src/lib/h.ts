@@ -1,20 +1,20 @@
 import { CustomElement } from './CustomElement';
+import { Scope, getScope, setScope } from './Scope';
 import { isInterpolateFunction } from './interpolate';
-import { Template, Scope, TemplateItem, getScope, setScope, getSlotted, setSlotted, createFilterableTemplateItems } from './render';
+import { Template, TemplateItem, getSlotted, setSlotted, createFilterableTemplateItems } from './render';
 import * as registry from './registry';
 import { DOM } from './dom';
 
+/**
+ * A symbol to store node properties.
+ */
 const PRIVATE_CONTEXT_SYMBOL = Symbol();
 
+/**
+ * Represent HTML elements with a defined key.
+ * Keys can be **any** value and are used to perform diff checking between two nodes with the same tag.
+ */
 type KeyedElement = HTMLElement & { key?: any };
-
-type WithContext = HTMLElement & {
-    [key: string]: any;
-}
-
-type WithPrivateContext = HTMLElement & {
-    [PRIVATE_CONTEXT_SYMBOL]: WithContext;
-};
 
 /**
  * Compare a child already in the tree with the Node requested by the patch.
@@ -51,10 +51,28 @@ export type HyperProperties = {
     [key: string]: any;
 };
 
-export type HyperFunction = (this: Scope, previousElement?: HTMLElement) => Template | Template[];
+/**
+ * Symbol for interpolated functions.
+ */
+const HYPER_SYMBOL = Symbol();
 
 /**
- * Create a new Patch instance.
+ * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
+ * returns a Template result for a given previous node at the current position in a render context.
+ */
+export type HyperFunction = ((this: Scope, previousElement?: HTMLElement) => Template | Template[]) & { [HYPER_SYMBOL]?: true };
+
+/**
+ * Check if the reference is a HyperFunction.
+ * @param target The reference to check.
+ * @return The reference is a HyperFunction.
+ */
+export function isHyperFunction(target: any): target is HyperFunction {
+    return !!(target as HyperFunction)[HYPER_SYMBOL];
+}
+
+/**
+ * HyperFunction factory to use as JSX pragma.
  *
  * @param tagName The tag name or the constructor of the Node
  * @param properties The set of properties of the Node
@@ -80,7 +98,7 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
     let isTemplate = tag === 'template';
     let isSlot = tag === 'slot';
 
-    return function(this: Scope, previousElement?: HTMLElement) {
+    const result = function(this: Scope, previousElement?: HTMLElement) {
         // update the Node properties
         let props: HyperProperties = {};
         for (let property in properties) {
@@ -165,15 +183,15 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
             let value = props[propertyKey];
 
             if (isCustomElement) {
-                if ((element as WithContext)[propertyKey] !== value) {
+                if ((element as any)[propertyKey] !== value) {
                     // the property should be update
-                    (element as WithContext)[propertyKey] = value;
+                    (element as any)[propertyKey] = value;
                 }
             } else {
-                let context = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] = (element as WithPrivateContext)[PRIVATE_CONTEXT_SYMBOL] || {};
+                let context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
                 if (context[propertyKey] !== value) {
                     context[propertyKey] = value;
-                    (element as WithContext)[propertyKey] = value;
+                    (element as any)[propertyKey] = value;
                 }
             }
 
@@ -202,4 +220,6 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         // return the updated (or created) Node (or Component)
         return element;
     } as HyperFunction;
+    result[HYPER_SYMBOL] = true;
+    return result;
 }

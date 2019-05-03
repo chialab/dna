@@ -1,4 +1,4 @@
-import { Scope } from './render';
+import { Scope } from './Scope';
 
 /**
  * Split a string into chunks, where even indexes are real strings and odd indexes are expressions.
@@ -19,12 +19,10 @@ function escape(text: string): string {
  */
 const INTERPOLATED_SYMBOL = Symbol();
 
-export type InterpolateFunction = (this: Scope) => string;
+export type InterpolateFunction = ((this: Scope) => string) & { [INTERPOLATED_SYMBOL]?: true };
 
-type FunctionWithSymbol = Function & { [INTERPOLATED_SYMBOL]?: true };
-
-export function isInterpolateFunction(fn: Function): fn is InterpolateFunction {
-    return !!(fn as FunctionWithSymbol)[INTERPOLATED_SYMBOL];
+export function isInterpolateFunction(target: any): target is InterpolateFunction {
+    return !!(target as InterpolateFunction)[INTERPOLATED_SYMBOL];
 }
 
 /**
@@ -58,6 +56,6 @@ export function interpolate(expression: string): InterpolateFunction | string {
     body += ';';
 
     const fn = new Function(body) as InterpolateFunction;
-    (fn as FunctionWithSymbol)[INTERPOLATED_SYMBOL] = true;
+    fn[INTERPOLATED_SYMBOL] = true;
     return fn;
 }

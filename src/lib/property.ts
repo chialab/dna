@@ -5,7 +5,7 @@ import { DOM } from './dom';
  */
 const PROPERTIES_SYMBOL = Symbol();
 
-type WithProperties = {
+export type WithProperties = {
     [PROPERTIES_SYMBOL]?: { [key: string]: AccessorDescriptor };
 }
 
@@ -21,10 +21,6 @@ export type AccessorDescriptor = PropertyDescriptor & {
     observe?: (callback: AccessorObserver) => void;
     getter?: (this: HTMLElement, value?: any) => any;
     setter?: (this: HTMLElement, newValue?: any) => any;
-}
-
-export type AccessorDescriptors = {
-    [key: string]: AccessorDescriptor;
 }
 
 function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor {
