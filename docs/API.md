@@ -104,6 +104,7 @@
 
 
 
+<br />
 
 <strong id="disconnectedcallback"><code>method</code>  disconnectedCallback</strong>
 
@@ -126,6 +127,7 @@
 
 
 
+<br />
 
 <strong id="attributechangedcallback"><code>method</code>  attributeChangedCallback</strong>
 
@@ -175,6 +177,7 @@
 
 
 
+<br />
 
 <strong id="propertychangedcallback"><code>method</code>  propertyChangedCallback</strong>
 
@@ -224,6 +227,7 @@
 
 
 
+<br />
 
 <strong id="observe"><code>method</code>  observe</strong>
 
@@ -272,6 +276,7 @@ Observe a Component Property.
 
 
 
+<br />
 
 <strong id="unobserve"><code>method</code>  unobserve</strong>
 
@@ -320,6 +325,7 @@ Unobserve a Component Property.
 
 
 
+<br />
 
 <strong id="delegate"><code>method</code>  delegate</strong>
 
@@ -369,6 +375,7 @@ Unobserve a Component Property.
 
 
 
+<br />
 
 <strong id="undelegate"><code>method</code>  undelegate</strong>
 
@@ -418,6 +425,7 @@ Unobserve a Component Property.
 
 
 
+<br />
 
 <strong id="render"><code>method</code>  render</strong>
 
@@ -461,6 +469,7 @@ Render method of the Component.
 
 
 
+<br />
 
 <strong id="appendchild"><code>method</code>  appendChild</strong>
 
@@ -504,6 +513,7 @@ Append a child to the Component.
 
 
 
+<br />
 
 <strong id="removechild"><code>method</code>  removeChild</strong>
 
@@ -547,6 +557,7 @@ Remove a child from the Component.
 
 
 
+<br />
 
 <strong id="insertbefore"><code>method</code>  insertBefore</strong>
 
@@ -595,6 +606,7 @@ Insert a child before another in the Component.
 
 
 
+<br />
 
 <strong id="replacechild"><code>method</code>  replaceChild</strong>
 
@@ -643,6 +655,7 @@ Replace a child with another in the Component.
 
 
 
+<br />
 
 <strong id="setattribute"><code>method</code>  setAttribute</strong>
 
@@ -691,6 +704,7 @@ Set a Component attribute.
 
 
 
+<br />
 
 <strong id="removeattribute"><code>method</code>  removeAttribute</strong>
 
