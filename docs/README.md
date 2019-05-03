@@ -1,29 +1,52 @@
-# Hello!
+<p align="center">
+    <img alt="DNA" src="https://logos.chialab.io/@chialab/dna.svg" width="100">
+</p>
 
-**DNA** is a 5kb (gizipped) component library which aims to replicate Web Components APIs in a lite cross browser way.
+<h1 align="center">
+    DNA
+</h1>
 
-> DNA 3 is still in beta phase. Please report any issue you encounter in order to help us to reach a stable version.
+<h2 align="center">
+    Evolution-based components.
+</h2>
 
-### Web Components design
+<p align="center">
+    <a href="https://github.com/chialab/dna">
+        <img alt="Source link" src="https://img.shields.io/badge/Source-GitHub-lightgrey.svg?style=flat-square">
+    </a>
+    <a href="https://www.npmjs.com/package/@chialab/dna">
+        <img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square">
+    </a>
+    <a href="https://github.com/chialab/dna/blob/master/LICENSE">
+        <img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg?style=flat-square">
+    </a>
+</p>
 
-**DNA** Components follow the W3C's Custom Element and Shadow DOM specifications, in order to progressively remove this library once all browsers will support the spec. This strategy increases the interoperability with other frameworks without introducing any custom pattern.
+<section>
+
+### Design Web Components
+
+DNA does not introduce any custom pattern for Component definitions, since it is based on the standard Custom Elements specifications, so the life cycle is almost the same, with some helper methods.
+
+</section>
+<section>
 
 ### Fast and reliable
 
-In order to efficiently update the DOM when data changes, **DNA** uses an in-place diffing algorithm which differs from othe Virtual DOM implementations by a top-to-bottom strategy, creating, moving and updating DOM nodes only when needed.
+In order to be fast, simple and predective, DNA uses a custom template engine. Components automatically re-render when the state change, and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
 
-The render engine is also used to replicate the elements' life cycle, so a Custom Element polyfill is not required (Components will work only when used in a render context or through the DNA helpers).
+</section>
+<section>
 
 ### Interpolation and JSX
 
-There are three ways to write **DNA** templates: the simpler one is to write `<template>` tags in your HTML, using interpolation helpers. You can also use the HTML string to the `template` accessor of the Component, as well as JSX syntax through a build step with the `h` pragma.
+If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use [Interpolated Templates]() to avoid the build step in your workflow.
 
-Checkout the [Templating](./templating) section for more informations.
+</section>
+<section>
 
 ### Properties, async render, slots... and more!
 
-**DNA** offers a lot of optional helpers like properties declaration, `<slot>` support like in Shadow DOM specification, async rendering and Component lazy loading.
+DNA comes with a lot of features in a very small (< 5kb gzipped) package. You can use `<slot>` elements like in Shadow DOM contexts, render `Promise`s results, observe properties changes and delegate events.
 
-## Try it
-
-[Get the library](./get-started) and [create your first Component](./define-a-component)!
+</section>

@@ -76,6 +76,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 <details>
     <summary>Expand the code</summary>
+<br />
 
 **Define a template**
 ```html
@@ -109,7 +110,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 ```ts
 import { Component, property, define, render } from '@chialab/dna';
 
-class HelloComponent extends Component {
+class HelloWorld extends Component {
     @property() // define an observable Component property
     name: string;
 
@@ -123,10 +124,10 @@ class HelloComponent extends Component {
 }
 
 // link the Component class to a tag
-define('hello-component', HelloComponent);
+define('hello-world', HelloWorld);
 
 // render the Component
-render(document.body, new HelloComponent);
+render(document.body, new HelloWorld);
 ```
 </details>
 
