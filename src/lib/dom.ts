@@ -2,20 +2,11 @@ import { shim } from './shim';
 import { CustomElement } from './CustomElement';
 
 /**
- * Create a shimmed HTMLElement.
- * (in some browsers, HTMLElement construction throw errors when not shimmed).
- */
-let Element = shim(HTMLElement);
-
-/**
- * Store the base Element prototype.
- */
-let Prototype = Element.prototype;
-
-/**
  * Invoke life cycle methods by default.
  */
 let lifeCycle = true;
+
+let Element: typeof HTMLElement = (typeof HTMLElement !== 'undefined') ? shim(HTMLElement) : (class {} as typeof HTMLElement);
 
 /**
  * The abstact HTMLElement that Component extends.
@@ -33,23 +24,27 @@ export const DOM = {
     /**
      * The document global instance.
      */
-    document,
+    document: (typeof document !== 'undefined' ? document : undefined) as Document,
+
+    /**
+     * The base Node constructor.
+     */
+    Node: (typeof Node !== 'undefined' ? Node : undefined) as typeof Node,
 
     /**
      * The base Text constructor.
      */
-    Text,
+    Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
 
     /**
-     * The base Element constructor.
+     * The base HTMLElement constructor.
      */
-    get Element() {
+    get HTMLElement() {
         return Element;
     },
-    set Element(constructor) {
+    set HTMLElement(constructor: typeof HTMLElement) {
+        Object.setPrototypeOf(Element.prototype, constructor.prototype);
         Element = constructor;
-        Prototype = Element.prototype;
-        Object.setPrototypeOf(BaseElement, Prototype);
     },
 
     /**
@@ -67,7 +62,7 @@ export const DOM = {
      * @return The node is a HTMLElement instance.
      */
     isElement(node: any): node is HTMLElement {
-        return node instanceof this.Element;
+        return node instanceof this.HTMLElement;
     },
 
     /**
@@ -131,7 +126,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
-        Prototype.appendChild.call(parent, newChild);
+        this.HTMLElement.prototype.appendChild.call(parent, newChild);
         this.connect(newChild);
         return newChild;
     },
@@ -143,7 +138,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: HTMLElement, oldChild: T): T {
-        Prototype.removeChild.call(parent, oldChild);
+        this.HTMLElement.prototype.removeChild.call(parent, oldChild);
         this.disconnect(oldChild);
         return oldChild;
     },
@@ -162,7 +157,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
-        Prototype.insertBefore.call(parent, newChild, refChild);
+        this.HTMLElement.prototype.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
         return newChild;
     },
@@ -181,7 +176,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as HTMLElement, newChild);
         }
-        Prototype.replaceChild.call(parent, newChild, oldChild);
+        this.HTMLElement.prototype.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
         this.connect(newChild);
         return oldChild;
@@ -194,7 +189,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: HTMLElement, qualifiedName: string): string | null {
-        return Prototype.getAttribute.call(element, qualifiedName);
+        return this.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -204,7 +199,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: HTMLElement, qualifiedName: string): boolean {
-        return Prototype.hasAttribute.call(element, qualifiedName);
+        return this.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -216,7 +211,7 @@ export const DOM = {
      */
     setAttribute(element: HTMLElement, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
-        Prototype.setAttribute.call(element, qualifiedName, value);
+        this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
         if (lifeCycle && this.isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
@@ -230,7 +225,7 @@ export const DOM = {
      */
     removeAttribute(element: HTMLElement, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
-        Prototype.removeAttribute.call(element, qualifiedName);
+        this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
         if (lifeCycle && this.isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }

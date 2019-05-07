@@ -103,7 +103,7 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         }
     }
 
-    const fn = function (this: Scope, previousElement?: HTMLElement) {
+    const fn = function(this: Scope, previousElement?: HTMLElement) {
         // if the current patch is a JSX Fragment,
         if (isFragment) {
             // just return children

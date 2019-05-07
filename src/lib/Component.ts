@@ -8,8 +8,6 @@ import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } f
 import { html } from './html';
 import { DelegatedEventCallback, delegate, undelegate } from './events';
 
-const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = Node;
-
 /**
  * Check if a Node is connected.
  *
@@ -20,6 +18,8 @@ function isConnected(target: Node | null): boolean {
     if (!target || !target.nodeType) {
         return false;
     }
+    const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = DOM.Node;
+
     let nodeType = target.nodeType;
     if (nodeType === ELEMENT_NODE || nodeType === TEXT_NODE) {
         return isConnected(target.parentNode);

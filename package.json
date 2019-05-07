@@ -17,11 +17,12 @@
   "homepage": "https://dna.chialab.io",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
-    "build": "rm -rf dist && rna build --production --name DNA --typings",
+    "build": "rm -rf dist && rna build --production --name DNA --typings + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
     "docs": "rna documentate --output docs/API.md --header '# DNA'",
     "prepack": "npm run build"
   },
   "devDependencies": {
+    "@types/jsdom": "^12.2.3",
     "@typescript-eslint/eslint-plugin": "^1.5.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.3",
@@ -33,5 +34,8 @@
     "src": "src",
     "lib": "dist",
     "test": "test"
+  },
+  "optionalDependencies": {
+    "jsdom": "^15.0.0"
   }
 }
