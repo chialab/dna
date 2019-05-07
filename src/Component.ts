@@ -1,7 +1,8 @@
 import * as registry from './lib/registry';
 import { BaseElement, DOM } from './lib/dom';
 import { createScope, getScope, setScope } from './lib/Scope';
-import { Template, render, getSlotted, setSlotted, TemplateItem } from './lib/render';
+import { Template, TemplateItems, getSlotted, setSlotted } from './lib/Template';
+import { render } from './lib/render';
 import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
 import { html } from './lib/html';
 import { DelegatedEventCallback, delegate, undelegate } from './lib/events';
@@ -84,7 +85,7 @@ export class Component extends BaseElement {
 
         DOM.setAttribute(node, 'is', this.is);
 
-        setSlotted(node, DOM.getChildNodes(node) as TemplateItem[]);
+        setSlotted(node, DOM.getChildNodes(node) as TemplateItems);
 
         return node as Component;
     }

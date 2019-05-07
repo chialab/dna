@@ -21,7 +21,7 @@ let lifeCycle = true;
  * The abstact HTMLElement that Component extends.
  * It proxies the DOM.Element class.
  */
-export class BaseElement extends Element { };
+export class BaseElement extends Element { }
 
 /**
  * DOM is a singleton that components uses to access DOM methods.

@@ -24,11 +24,6 @@ export type Scope = HTMLElement & {
 };
 
 /**
- * A Scoped object has a Scope instance attached, in order to use it in a render context.
- */
-export type Scoped = { [SCOPE_SYMBOL]?: Scope };
-
-/**
  * Create a Scope with an initial prototype.
  * @param prototype The initial prototype object for the Scope.
  * @return An object with the Scope interface.
@@ -59,8 +54,7 @@ export function createScope(prototype: HTMLElement) {
  * @return The Scope object (if it exists).
  */
 export function getScope(target: any): Scope | undefined {
-    const scopedPrototype: Scoped = target;
-    return scopedPrototype[SCOPE_SYMBOL];
+    return target[SCOPE_SYMBOL];
 }
 
 /**
@@ -69,6 +63,5 @@ export function getScope(target: any): Scope | undefined {
  * @param scope The Scope to set.
  */
 export function setScope(target: any, scope: Scope): void {
-    const scopedTarget: Scoped = target;
-    scopedTarget[SCOPE_SYMBOL] = scope;
+    target[SCOPE_SYMBOL] = scope;
 }

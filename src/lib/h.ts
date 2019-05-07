@@ -1,9 +1,29 @@
 import { CustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
+import { Template, TemplateItems, createFilterableTemplateItems, getSlotted, setSlotted } from './Template';
 import { isInterpolateFunction } from './interpolate';
-import { Template, TemplateItem, getSlotted, setSlotted, createFilterableTemplateItems } from './render';
 import * as registry from './registry';
 import { DOM } from './dom';
+
+/**
+ * Symbol for interpolated functions.
+ */
+const HYPER_SYMBOL = Symbol();
+
+/**
+ * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
+ * returns a Template result for a given previous node at the current position in a render context.
+ */
+export type HyperFunction = (this: Scope, previousElement?: HTMLElement) => Template | TemplateItems;
+
+/**
+ * Check if the reference is a HyperFunction.
+ * @param target The reference to check.
+ * @return The reference is a HyperFunction.
+ */
+export function isHyperFunction(target: any): target is HyperFunction {
+    return !!target[HYPER_SYMBOL];
+}
 
 /**
  * A symbol to store node properties.
@@ -52,33 +72,13 @@ export type HyperProperties = {
 };
 
 /**
- * Symbol for interpolated functions.
- */
-const HYPER_SYMBOL = Symbol();
-
-/**
- * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
- * returns a Template result for a given previous node at the current position in a render context.
- */
-export type HyperFunction = ((this: Scope, previousElement?: HTMLElement) => Template | Template[]) & { [HYPER_SYMBOL]?: true };
-
-/**
- * Check if the reference is a HyperFunction.
- * @param target The reference to check.
- * @return The reference is a HyperFunction.
- */
-export function isHyperFunction(target: any): target is HyperFunction {
-    return !!(target as HyperFunction)[HYPER_SYMBOL];
-}
-
-/**
  * HyperFunction factory to use as JSX pragma.
  *
  * @param tagName The tag name or the constructor of the Node
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export function h(tag: string | typeof HTMLElement, properties: HyperProperties | null, ...children: (TemplateItem[] | TemplateItem)[]): HyperFunction {
+export function h(tag: string | typeof HTMLElement, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction {
     // Patch instances could be generated from the `h` function using JSX,
     // so the first parameter could be the Node constructor
     let Component: typeof HTMLElement | null = null;
@@ -98,7 +98,7 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
     let isTemplate = tag === 'template';
     let isSlot = tag === 'slot';
 
-    const result = function(this: Scope, previousElement?: HTMLElement) {
+    const fn = function(this: Scope, previousElement?: HTMLElement) {
         // update the Node properties
         let props: HyperProperties = {};
         for (let property in properties) {
@@ -139,7 +139,7 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
                         [keyVar]: key,
                         [itemVar]: item,
                     });
-                    const clone = children.slice(0) as TemplateItem[];
+                    const clone = children.slice(0) as TemplateItems;
                     setScope(clone, childScope);
                     newChildren.push(clone);
                 }
@@ -208,7 +208,7 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
 
         // store the Node children in order to reuse them
         // at the next render cycle
-        let childrenInput = children.slice(0) as TemplateItem[];
+        let childrenInput = children.slice(0) as TemplateItems;
         setScope(childrenInput, this);
         setSlotted(element, childrenInput);
 
@@ -219,7 +219,9 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
 
         // return the updated (or created) Node (or Component)
         return element;
-    } as HyperFunction;
-    result[HYPER_SYMBOL] = true;
-    return result;
+    };
+
+    (fn as any)[HYPER_SYMBOL] = true;
+
+    return fn as HyperFunction;
 }

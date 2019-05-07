@@ -1,26 +1,37 @@
-import { interpolate, InterpolateFunction } from './interpolate';
+import { Template } from './Template';
+import { InterpolateFunction, interpolate } from './interpolate';
 import { h, HyperFunction } from './h';
-import { Template } from './render';
 import { DOM } from './dom';
 
+/**
+ * Check if a node is a `<template>` element.
+ * @param node The node to check.
+ * @return The node is a `<template>` element.
+ */
 function isTemplateTag(node: any): node is HTMLTemplateElement {
     return node && node.tagName === 'TEMPLATE';
 }
 
-function innerCompile(template: HTMLElement): HyperFunction;
-function innerCompile(template: Text): InterpolateFunction;
-function innerCompile(template: Node[]): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(template: NodeList): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(template: HTMLTemplateElement | HTMLStyleElement | HTMLElement | Text | NodeList | Node[]): Template | Template[] {
-    if (DOM.isElement(template)) {
+/**
+ * Convert nodes into virtual DOM template.
+ *
+ * @param node The node to convert.
+ * @return The virtual DOM template function.
+ */
+function innerCompile(node: HTMLElement): HyperFunction;
+function innerCompile(node: Text): InterpolateFunction;
+function innerCompile(node: Node[]): Array<HyperFunction | InterpolateFunction>;
+function innerCompile(node: NodeList): Array<HyperFunction | InterpolateFunction>;
+function innerCompile(node: HTMLElement | Text | NodeList | Node[]): Template | Template[] {
+    if (DOM.isElement(node)) {
         // the current node is an element
         // get the tag name
-        const tag = template.localName;
+        const tag = node.localName;
 
         // use node's attributes as properties
         const properties: any = {};
-        for (let i = 0; i < template.attributes.length; i++) {
-            let attr = template.attributes[i];
+        for (let i = 0; i < node.attributes.length; i++) {
+            let attr = node.attributes[i];
             if (attr.value === '') {
                 properties[attr.name] = true;
             } else {
@@ -29,25 +40,25 @@ function innerCompile(template: HTMLTemplateElement | HTMLStyleElement | HTMLEle
         }
 
         let childNodes: NodeList;
-        if (isTemplateTag(template)) {
-            childNodes = template.content.childNodes;
+        if (isTemplateTag(node)) {
+            childNodes = node.content.childNodes;
         } else {
-            childNodes = template.childNodes;
+            childNodes = node.childNodes;
         }
 
         // compile children and use their virtual DOM functions
         return h(tag, properties, ...innerCompile(childNodes));
     }
 
-    if (DOM.isText(template)) {
+    if (DOM.isText(node)) {
         // the current node is text content
-        return interpolate(template.textContent || '');
+        return interpolate(node.textContent || '');
     }
 
     const children: Array<HTMLElement | Text> = [];
-    for (let i = 0, len = template.length; i < len; i++) {
-        let child = template[i];
-        let nextChild = template[i + 1];
+    for (let i = 0, len = node.length; i < len; i++) {
+        let child = node[i];
+        let nextChild = node[i + 1];
         if (DOM.isText(child)) {
             if ((i === 0 || !nextChild || DOM.isElement(nextChild)) && !(child.textContent as string).trim()) {
                 continue;
@@ -63,28 +74,17 @@ function innerCompile(template: HTMLTemplateElement | HTMLStyleElement | HTMLEle
 }
 
 /**
- * Compile a template string into virtual DOM template.
+ * Compile a template element or a template string into virtual DOM template.
  *
- * @param template The template to parse
- * @return The virtual DOM template function
+ * @param template The template to parse.
+ * @return The virtual DOM template function.
  */
-export function html(template: string): InterpolateFunction;
-export function html(template: HTMLTemplateElement): Template;
-export function html(template: HTMLElement): HyperFunction;
-export function html(template: Text): InterpolateFunction;
-export function html(template: NodeList): Array<HyperFunction | InterpolateFunction>;
-export function html(template: string | HTMLTemplateElement | HTMLStyleElement | HTMLElement | Text | NodeList): Template {
+export function html(template: string | HTMLTemplateElement): Template {
     let chunks: Array<HyperFunction | InterpolateFunction>;
     if (isTemplateTag(template)) {
         chunks = innerCompile(template.content.childNodes);
-    } else if (DOM.isElement(template)) {
-        return innerCompile(template as HTMLElement);
-    } else if (DOM.isText(template)) {
-        return innerCompile(template);
-    } else if (typeof template === 'string') {
-        return innerCompile(DOM.parse(template));
     } else {
-        chunks = innerCompile(template);
+        chunks = innerCompile(DOM.parse(template));
     }
 
     if (chunks.length === 1) {

@@ -25,8 +25,7 @@
 
 <hr />
 
-<details>
-<summary><strong id="component"><code>class</code>  Component</strong></summary><br />
+<strong id="component"><code>class</code>  Component</strong>
     
 
 
@@ -760,12 +759,10 @@ Remove a Component attribute.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="baseelement"><code>class</code>  BaseElement</strong></summary><br />
+<strong id="baseelement"><code>class</code>  BaseElement</strong>
     
 
 
@@ -790,12 +787,10 @@ It proxies the DOM.Element class.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="render"><code>method</code>  render</strong></summary><br />
+<strong id="render"><code>method</code>  render</strong>
 
 
 
@@ -808,7 +803,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <details>
 <summary>
-<code>(node: HTMLElement), input: <a href="#template">Template</a>), scope?: <a href="#scope">Scope</a>), previousResult?: <a href="#template">Template</a>[]), filter?: <a href="#templatefilter">TemplateFilter</a>)): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
+<code>(node: HTMLElement), input: <a href="#template">Template</a>), context?: <a href="#rendercontext">RenderContext</a>), previousResult?: <a href="#template">Template</a>[]), filter?: <a href="#templatefilter">TemplateFilter</a>)): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -832,8 +827,8 @@ useless changes in the tree and to mantain or update the state of compatible Nod
             <td align="center"></td>
             <td>The child (or the children) to render in Virtual DOM format or already generated</td></tr>
 <tr>
-            <td>scope</td>
-            <td><code><a href="#scope">Scope</a></code></td>
+            <td>context</td>
+            <td><code><a href="#rendercontext">RenderContext</a></code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -858,12 +853,10 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="define"><code>method</code>  define</strong></summary><br />
+<strong id="define"><code>method</code>  define</strong>
 
 
 
@@ -911,12 +904,10 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="h"><code>method</code>  h</strong></summary><br />
+<strong id="h"><code>method</code>  h</strong>
 
 
 
@@ -928,7 +919,7 @@ HyperFunction factory to use as JSX pragma.
 
 <details>
 <summary>
-<code>(tag: string|HTMLElement), properties: <a href="#hyperproperties">HyperProperties</a>|null), children: (<a href="#templateitem">TemplateItem</a>[]|<a href="#templateitem">TemplateItem</a>)[])): <a href="#hyperfunction">HyperFunction</a></code>
+<code>(tag: string|HTMLElement), properties: <a href="#hyperproperties">HyperProperties</a>|null), children: <a href="#templateitems">TemplateItems</a>)): <a href="#hyperfunction">HyperFunction</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -953,7 +944,7 @@ HyperFunction factory to use as JSX pragma.
             <td>The set of properties of the Node</td></tr>
 <tr>
             <td>children</td>
-            <td><code>(<a href="#templateitem">TemplateItem</a>[]|<a href="#templateitem">TemplateItem</a>)[]</code></td>
+            <td><code><a href="#templateitems">TemplateItems</a></code></td>
             <td align="center"></td>
             <td>The children of the Node</td>
         </tr>
@@ -968,24 +959,22 @@ HyperFunction factory to use as JSX pragma.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="html"><code>method</code>  html</strong></summary><br />
+<strong id="html"><code>method</code>  html</strong>
 
 
 
 <p>
 
-Compile a template string into virtual DOM template.
+Compile a template element or a template string into virtual DOM template.
 
 </p>
 
 <details>
 <summary>
-<code>(template: string)): <a href="#interpolatefunction">InterpolateFunction</a></code>
+<code>(template: string|HTMLTemplateElement)): <a href="#template">Template</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1000,122 +989,14 @@ Compile a template string into virtual DOM template.
     <tbody>
         <tr>
             <td>template</td>
-            <td><code>string</code></td>
+            <td><code>string|HTMLTemplateElement</code></td>
             <td align="center"></td>
-            <td>The template to parse</td>
+            <td>The template to parse.</td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#interpolatefunction">InterpolateFunction</a></code> The virtual DOM template function
-
-</details>
-<details>
-<summary>
-<code>(template: HTMLTemplateElement)): <a href="#template">Template</a></code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>template</td>
-            <td><code>HTMLTemplateElement</code></td>
-            <td align="center"></td>
-            <td>The template to parse</td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function
-
-</details>
-<details>
-<summary>
-<code>(template: HTMLElement)): <a href="#hyperfunction">HyperFunction</a></code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>template</td>
-            <td><code>HTMLElement</code></td>
-            <td align="center"></td>
-            <td>The template to parse</td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code><a href="#hyperfunction">HyperFunction</a></code> The virtual DOM template function
-
-</details>
-<details>
-<summary>
-<code>(template: Text)): <a href="#interpolatefunction">InterpolateFunction</a></code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>template</td>
-            <td><code>Text</code></td>
-            <td align="center"></td>
-            <td>The template to parse</td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code><a href="#interpolatefunction">InterpolateFunction</a></code> The virtual DOM template function
-
-</details>
-<details>
-<summary>
-<code>(template: NodeList)): Array&lt;<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>&gt;</code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
-            <td>template</td>
-            <td><code>NodeList</code></td>
-            <td align="center"></td>
-            <td>The template to parse</td>
-        </tr>
-    </tbody>
-</table>
-
-<strong>Returns</strong>: <code>Array&lt;<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>&gt;</code> The virtual DOM template function
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
 
 </details>
 
@@ -1123,12 +1004,10 @@ Compile a template string into virtual DOM template.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="interpolate"><code>method</code>  interpolate</strong></summary><br />
+<strong id="interpolate"><code>method</code>  interpolate</strong>
 
 
 
@@ -1157,12 +1036,12 @@ Create an interpolated function.
             <td>expression</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td>The expression to interpolate</td>
+            <td>The expression to interpolate.</td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#interpolatefunction">InterpolateFunction</a>|string</code> 
+<strong>Returns</strong>: <code><a href="#interpolatefunction">InterpolateFunction</a>|string</code> A simple string if the expression does not need interpolation, or an InterpolateFunction to generate interpolated content.
 
 </details>
 
@@ -1170,12 +1049,10 @@ Create an interpolated function.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="bootstrap"><code>method</code>  bootstrap</strong></summary><br />
+<strong id="bootstrap"><code>method</code>  bootstrap</strong>
 
 
 
@@ -1218,12 +1095,10 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="property"><code>method</code>  property</strong></summary><br />
+<strong id="property"><code>method</code>  property</strong>
 
 
 
@@ -1261,12 +1136,10 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="delegate"><code>method</code>  delegate</strong></summary><br />
+<strong id="delegate"><code>method</code>  delegate</strong>
 
 
 
@@ -1323,12 +1196,10 @@ Delegate an Event listener.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="undelegate"><code>method</code>  undelegate</strong></summary><br />
+<strong id="undelegate"><code>method</code>  undelegate</strong>
 
 
 
@@ -1385,12 +1256,10 @@ Remove an Event delegation.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="createscope"><code>method</code>  createScope</strong></summary><br />
+<strong id="createscope"><code>method</code>  createScope</strong>
 
 
 
@@ -1432,12 +1301,10 @@ Create a Scope with an initial prototype.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="getscope"><code>method</code>  getScope</strong></summary><br />
+<strong id="getscope"><code>method</code>  getScope</strong>
 
 
 
@@ -1479,12 +1346,10 @@ Get the Scope attached to an object.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="setscope"><code>method</code>  setScope</strong></summary><br />
+<strong id="setscope"><code>method</code>  setScope</strong>
 
 
 
@@ -1531,12 +1396,10 @@ Attach a Scope to an object.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="dom"><code>constant</code>  DOM</strong></summary><br />
+<strong id="dom"><code>constant</code>  DOM</strong>
 
 
 
@@ -1553,7 +1416,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <strong>Type:</strong>
 
-<pre class="typescript">{
+<pre>{
     Text: {
         constructor(data?: string|undefined): Text;
         prototype: Text;
@@ -1569,10 +1432,10 @@ It also handle element life cycle for custom elements unless otherwise specified
     parse(source: string): NodeList;
     createElement(tagName: string): HTMLElement;
     createTextNode(data: string): Text;
-    appendChild(parent: HTMLElement, newChild: T): T;
-    removeChild(parent: HTMLElement, oldChild: T): T;
-    insertBefore(parent: HTMLElement, newChild: T, refChild: Node|null): T;
-    replaceChild(parent: HTMLElement, newChild: Node, oldChild: T): T;
+    appendChild&lt;T extends Node&gt;(parent: HTMLElement, newChild: T): T;
+    removeChild&lt;T extends Node&gt;(parent: HTMLElement, oldChild: T): T;
+    insertBefore&lt;T extends Node&gt;(parent: HTMLElement, newChild: T, refChild: Node|null): T;
+    replaceChild&lt;T extends Node&gt;(parent: HTMLElement, newChild: Node, oldChild: T): T;
     getAttribute(element: HTMLElement, qualifiedName: string): string|null;
     hasAttribute(element: HTMLElement, qualifiedName: string): boolean;
     setAttribute(element: HTMLElement, qualifiedName: string, value: string): void;
@@ -1584,18 +1447,33 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="hyper_symbol"><code>constant</code>  HYPER_SYMBOL</strong></summary><br />
+<strong id="filter_symbol"><code>constant</code>  FILTER_SYMBOL</strong>
+
+
+
+
+
+
+
+<strong>Type:</strong>
+
+<pre>unique Symbol</pre>
+
+
+
+
+<hr />
+
+<strong id="slotted_symbol"><code>constant</code>  SLOTTED_SYMBOL</strong>
 
 
 
 <p>
 
-Symbol for interpolated functions.
+A Symbol which contains slotted children of a Component.
 
 </p>
 
@@ -1603,39 +1481,14 @@ Symbol for interpolated functions.
 
 <strong>Type:</strong>
 
-<pre class="typescript">unique Symbol</pre>
+<pre>unique Symbol</pre>
 
 
 
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="interpolated_symbol"><code>constant</code>  INTERPOLATED_SYMBOL</strong></summary><br />
-
-
-
-<p>
-
-Symbol for interpolated functions.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre class="typescript">unique Symbol</pre>
-
-
-
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="element"><code>constant</code>  Element</strong></summary><br />
+<strong id="element"><code>constant</code>  Element</strong>
 
 
 
@@ -1650,42 +1503,17 @@ Create a shimmed HTMLElement.
 
 <strong>Type:</strong>
 
-<pre class="typescript">{
+<pre>{
     constructor(): HTMLElement;
     prototype: HTMLElement;
 }</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="scope_symbol"><code>constant</code>  SCOPE_SYMBOL</strong></summary><br />
-
-
-
-<p>
-
-The scope symbol.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre class="typescript">unique Symbol</pre>
-
-
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="customelement"><code>type</code>  CustomElement</strong></summary><br />
+<strong id="customelement"><code>type</code>  CustomElement</strong>
 
 <p>
 
@@ -1695,7 +1523,7 @@ The interface of Custom Element, as described by the W3C.
 
 
 
-<pre class="typescript">HTMLElement & {
+<pre>HTMLElement & {
     connectedCallback(): void;
     disconnectedCallback(): void;
     attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
@@ -1707,42 +1535,36 @@ The interface of Custom Element, as described by the W3C.
 
 * [https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/) W3C specification.
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="template"><code>type</code>  Template</strong></summary><br />
+<strong id="template"><code>type</code>  Template</strong>
 
 
 
 
 
-<pre class="typescript"><a href="#templateitem">TemplateItem</a>|<a href="#templateitem">TemplateItem</a>[]</pre>
+<pre>(<a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a>) & <a href="#slotted">Slotted</a></pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="templateitem"><code>type</code>  TemplateItem</strong></summary><br />
+<strong id="templateitem"><code>type</code>  TemplateItem</strong>
 
 
 
 
 
-<pre class="typescript">HTMLElement|Text|Function|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|Promise&lt;any&gt;|string|boolean</pre>
+<pre>HTMLElement|Text|Function|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|string|boolean</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="hyperfunction"><code>type</code>  HyperFunction</strong></summary><br />
+<strong id="hyperfunction"><code>type</code>  HyperFunction</strong>
 
 <p>
 
@@ -1753,18 +1575,14 @@ returns a Template result for a given previous node at the current position in a
 
 
 
-<pre class="typescript">((this: <a href="#scope">Scope</a>, previousElement?: HTMLElement): <a href="#template">Template</a>|<a href="#template">Template</a>[]) & {
-    [HYPER_SYMBOL]?: true;
-}</pre>
+<pre>(this: <a href="#scope">Scope</a>, previousElement?: HTMLElement): <a href="#template">Template</a>|<a href="#templateitems">TemplateItems</a></pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="scope"><code>type</code>  Scope</strong></summary><br />
+<strong id="scope"><code>type</code>  Scope</strong>
 
 <p>
 
@@ -1776,7 +1594,7 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-<pre class="typescript">HTMLElement & {
+<pre>HTMLElement & {
     [key: string]: any;
     $assign(values: {
         [key: string]: any;
@@ -1786,50 +1604,92 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="interpolatefunction"><code>type</code>  InterpolateFunction</strong></summary><br />
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
 
 
 
 
 
-<pre class="typescript">((this: <a href="#scope">Scope</a>): string) & {
-    [INTERPOLATED_SYMBOL]?: true;
+<pre>(<a href="#templateitem">TemplateItem</a>[] & {
+    [FILTER_SYMBOL]?: <a href="#templatefilter">TemplateFilter</a>;
+})</pre>
+
+
+
+
+<hr />
+
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+
+
+
+
+
+<pre>(item: HTMLElement|Text): boolean</pre>
+
+
+
+
+<hr />
+
+<strong id="interpolatefunction"><code>type</code>  InterpolateFunction</strong>
+
+<p>
+
+A function that interpolate content in a string using a render Scope.
+
+</p>
+
+
+
+<pre>(this: <a href="#scope">Scope</a>): string</pre>
+
+
+
+
+<hr />
+
+<strong id="slotted"><code>type</code>  Slotted</strong>
+
+
+
+
+
+<pre>{
+    [SLOTTED_SYMBOL]?: <a href="#templateitems">TemplateItems</a>;
 }</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="templatefilter"><code>type</code>  TemplateFilter</strong></summary><br />
+<strong id="rendercontext"><code>type</code>  RenderContext</strong>
 
 
 
 
 
-<pre class="typescript">(item: HTMLElement|Text): boolean</pre>
+<pre>{
+    scope: <a href="#scope">Scope</a>;
+    currentNode: Node;
+}</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="definitionconstructor"><code>type</code>  DefinitionConstructor</strong></summary><br />
+<strong id="definitionconstructor"><code>type</code>  DefinitionConstructor</strong>
 
 
 
 
 
-<pre class="typescript">HTMLElement & {
+<pre>HTMLElement & {
     constructor(nodeOrProperties?: HTMLElement|{
         [key: string]: any;
     }, properties?: {
@@ -1840,35 +1700,31 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="definitionoptions"><code>type</code>  DefinitionOptions</strong></summary><br />
+<strong id="definitionoptions"><code>type</code>  DefinitionOptions</strong>
 
 
 
 
 
-<pre class="typescript">{
+<pre>{
     extends?: string;
 }</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="hyperproperties"><code>type</code>  HyperProperties</strong></summary><br />
+<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
 
 
 
 
 
-<pre class="typescript">{
+<pre>{
     is?: string;
     slot?: string;
     [key: string]: any;
@@ -1876,18 +1732,16 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="accessordescriptor"><code>type</code>  AccessorDescriptor</strong></summary><br />
+<strong id="accessordescriptor"><code>type</code>  AccessorDescriptor</strong>
 
 
 
 
 
-<pre class="typescript">PropertyDescriptor & {
+<pre>PropertyDescriptor & {
     name?: string;
     attribute?: string|boolean;
     defaultValue?: any;
@@ -1901,27 +1755,23 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="accessorobserver"><code>type</code>  AccessorObserver</strong></summary><br />
+<strong id="accessorobserver"><code>type</code>  AccessorObserver</strong>
 
 
 
 
 
-<pre class="typescript">(oldValue: any, newValue: any): any</pre>
+<pre>(oldValue: any, newValue: any): any</pre>
 
 
 
-</details>
 
 <hr />
 
-<details>
-<summary><strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong></summary><br />
+<strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong>
 
 <p>
 
@@ -1931,29 +1781,6 @@ Describe the signature of a delegated event callback.
 
 
 
-<pre class="typescript">(event: Event, target?: HTMLElement): any</pre>
+<pre>(event: Event, target?: HTMLElement): any</pre>
 
 
-
-</details>
-
-<hr />
-
-<details>
-<summary><strong id="scoped"><code>type</code>  Scoped</strong></summary><br />
-
-<p>
-
-A Scoped object has a Scope instance attached, in order to use it in a render context.
-
-</p>
-
-
-
-<pre class="typescript">{
-    [SCOPE_SYMBOL]?: <a href="#scope">Scope</a>;
-}</pre>
-
-
-
-</details>
