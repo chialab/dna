@@ -13,4 +13,5 @@ package-lock.json
 
 /local
 /src
+/docs
 tsconfig.json
