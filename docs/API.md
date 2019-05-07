@@ -132,6 +132,8 @@ Create a new Component instance.
 })</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -189,6 +191,8 @@ This will happen each time the node is moved, and may happen before the element'
 
 
 
+
+
 <strong>Returns</strong>: <code>void</code> 
 
 <br />
@@ -217,6 +221,8 @@ Invoked each time the Component is disconnected from the document's DOM.
 
 
 
+
+
 <strong>Returns</strong>: <code>void</code> 
 
 <br />
@@ -242,6 +248,8 @@ Invoked each time one of the Component's attributes is added, removed, or change
 <summary>
 <code>(attributeName: string, oldValue: null|string, newValue: null|string): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -298,6 +306,8 @@ Invoked each time one of the Component's properties is added, removed, or change
 <code>(propertyName: string, oldValue: any, newValue: any): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -353,6 +363,8 @@ Observe a Component Property.
 <code>(propertyName: string, callback: <a href="#accessorobserver">AccessorObserver</a>): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -403,6 +415,8 @@ Unobserve a Component Property.
 <code>(propertyName: string, callback?: <a href="#accessorobserver">AccessorObserver</a>): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -452,6 +466,8 @@ Delegate an Event listener.
 <summary>
 <code>(event: string, selector: string, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -508,6 +524,8 @@ Remove an Event delegation.
 <code>(event?: string, selector?: string, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -563,6 +581,8 @@ Render method of the Component.
 <code>(children?: <a href="#template">Template</a>): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -605,8 +625,23 @@ Append a child to the Component.
 
 <details>
 <summary>
-<code>(newChild: T): T</code>
+<code>&lt;T extends Node&gt;(newChild: T): T</code>
 </summary><br />
+
+<strong>Type params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>T</td>
+            <td><code>extends Node</code></td>
+        </tr>
+    </tbody>
+</table>
 
 <strong>Params</strong>
 
@@ -650,8 +685,23 @@ Remove a child from the Component.
 
 <details>
 <summary>
-<code>(oldChild: T): T</code>
+<code>&lt;T extends Node&gt;(oldChild: T): T</code>
 </summary><br />
+
+<strong>Type params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>T</td>
+            <td><code>extends Node</code></td>
+        </tr>
+    </tbody>
+</table>
 
 <strong>Params</strong>
 
@@ -695,8 +745,23 @@ Insert a child before another in the Component.
 
 <details>
 <summary>
-<code>(newChild: T, refChild: Node|null): T</code>
+<code>&lt;T extends Node&gt;(newChild: T, refChild: Node|null): T</code>
 </summary><br />
+
+<strong>Type params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>T</td>
+            <td><code>extends Node</code></td>
+        </tr>
+    </tbody>
+</table>
 
 <strong>Params</strong>
 
@@ -745,8 +810,23 @@ Replace a child with another in the Component.
 
 <details>
 <summary>
-<code>(newChild: Node, oldChild: T): T</code>
+<code>&lt;T extends Node&gt;(newChild: Node, oldChild: T): T</code>
 </summary><br />
+
+<strong>Type params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>T</td>
+            <td><code>extends Node</code></td>
+        </tr>
+    </tbody>
+</table>
 
 <strong>Params</strong>
 
@@ -798,6 +878,8 @@ Set a Component attribute.
 <code>(qualifiedName: string, value: string): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -847,6 +929,8 @@ Remove a Component attribute.
 <summary>
 <code>(qualifiedName: string): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -931,6 +1015,8 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 <code>(node: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#rendercontext">RenderContext</a>): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -988,6 +1074,8 @@ Define a new Custom Element.
     extends?: string;
 }): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -1047,6 +1135,8 @@ HyperFunction factory to use as JSX pragma.
 <code>(tag: string|HTMLElement, properties: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hyperfunction">HyperFunction</a></code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1103,6 +1193,8 @@ Compile a template element or a template string into virtual DOM template.
 <code>(template: string|HTMLTemplateElement): <a href="#template">Template</a></code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1149,6 +1241,8 @@ It also converts `:host` selectors for cross browser compatibility.
 <summary>
 <code>(name: string, text: string): string</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -1201,6 +1295,8 @@ Create an interpolated function.
 <code>(expression: string): <a href="#interpolatefunction">InterpolateFunction</a>|string</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1248,6 +1344,8 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 <code>(root: HTMLElement): HTMLElement[]</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1294,6 +1392,8 @@ A decorator for accessors definition.
 <code>(descriptor?: <a href="#accessordescriptor">AccessorDescriptor</a>): (target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1339,6 +1439,8 @@ Delegate an Event listener.
 <summary>
 <code>(element: HTMLElement, eventName: string, selector: string|undefined, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
@@ -1401,6 +1503,8 @@ Remove an Event delegation.
 <code>(element: HTMLElement, eventName?: string, selector?: string, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1462,6 +1566,8 @@ Create a Scope with an initial prototype.
 <code>(prototype: HTMLElement): <a href="#scope">Scope</a></code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1508,6 +1614,8 @@ Get the Scope attached to an object.
 <code>(target: any): <a href="#scope">Scope</a>|undefined</code>
 </summary><br />
 
+
+
 <strong>Params</strong>
 
 <table>
@@ -1553,6 +1661,8 @@ Attach a Scope to an object.
 <summary>
 <code>(target: any, scope: <a href="#scope">Scope</a>): void</code>
 </summary><br />
+
+
 
 <strong>Params</strong>
 
