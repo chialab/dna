@@ -72,6 +72,8 @@ export type HyperProperties = {
     [key: string]: any;
 };
 
+export const Fragment = function() {} as any as typeof HTMLElement;
+
 /**
  * HyperFunction factory to use as JSX pragma.
  *
@@ -80,13 +82,18 @@ export type HyperProperties = {
  * @param children The children of the Node
  */
 export function h(tag: string | typeof HTMLElement, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction {
+    let isFragment: boolean, isTemplate: boolean, isSlot: boolean;
     // Patch instances could be generated from the `h` function using JSX,
     // so the first parameter could be the Node constructor
     let Component: typeof HTMLElement | null = null;
 
     if (typeof tag === 'function') {
+        isFragment = tag === Fragment;
         Component = tag;
     } else {
+        isTemplate = tag === 'template';
+        isSlot = tag === 'slot';
+
         // Also a real tag name can produce a Component instance,
         // if the tag is registered as Component or the `is` property is defined
         let name = properties && properties.is || tag;
@@ -96,10 +103,13 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         }
     }
 
-    let isTemplate = tag === 'template';
-    let isSlot = tag === 'slot';
+    const fn = function (this: Scope, previousElement?: HTMLElement) {
+        // if the current patch is a JSX Fragment,
+        if (isFragment) {
+            // just return children
+            return children;
+        }
 
-    const fn = function(this: Scope, previousElement?: HTMLElement) {
         // update the Node properties
         let props: HyperProperties = {};
         for (let property in properties) {
@@ -112,7 +122,6 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         }
 
         // if the current patch is a template,
-        // handle the template
         if (isTemplate) {
             // the Template instances are not rendered,
             // so it returns its children
