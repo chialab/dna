@@ -1,4 +1,5 @@
 export { DOM } from './lib/dom';
+export { shim } from './lib/shim';
 export { render } from './lib/render';
 export { define } from './lib/registry';
 export { Fragment, h } from './lib/h';
