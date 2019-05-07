@@ -32,7 +32,7 @@ export function isInterpolateFunction(target: any): target is InterpolateFunctio
 /**
  * Split a string into chunks, where even indexes are real strings and odd indexes are expressions.
  */
-const PARSE_REGEX = /\[\[(.*?)\]\]/g;
+const PARSE_REGEX = /\{\{(.*?)\}\}/g;
 
 /**
  * Escape single quote from expressions.

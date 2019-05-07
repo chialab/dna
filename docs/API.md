@@ -11,7 +11,7 @@
 
 **Methods**
 
-<a href="#render">render</a>, <a href="#define">define</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#interpolate">interpolate</a>, <a href="#bootstrap">bootstrap</a>, <a href="#property">property</a>, <a href="#delegate">delegate</a>, <a href="#undelegate">undelegate</a>
+<a href="#render">render</a>, <a href="#define">define</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#interpolate">interpolate</a>, <a href="#bootstrap">bootstrap</a>, <a href="#property">property</a>, <a href="#delegate">delegate</a>, <a href="#undelegate">undelegate</a>
 
 
 **Constants**
@@ -125,7 +125,9 @@ Create a new Component instance.
 
 <details>
 <summary>
-<code>(node?: HTMLElement), properties?: {
+<code>(node?: HTMLElement|{
+    [key: string]: any;
+}), properties?: {
     [key: string]: any;
 }))</code>
 </summary><br />
@@ -142,42 +144,12 @@ Create a new Component instance.
     <tbody>
         <tr>
             <td>node</td>
-            <td><code>HTMLElement</code></td>
-            <td align="center">✓</td>
-            <td>Instantiate the element using the given node instead of creating a new one.</td></tr>
-<tr>
-            <td>properties</td>
-            <td><code>{
+            <td><code>HTMLElement|{
     [key: string]: any;
 }</code></td>
             <td align="center">✓</td>
-            <td>A set of initial properties for the element.</td>
-        </tr>
-    </tbody>
-</table>
-
-
-
-<br />
-</details>
-<details>
-<summary>
-<code>(properties?: {
-    [key: string]: any;
-}))</code>
-</summary><br />
-
-<strong>Params</strong>
-
-<table>
-    <thead>
-        <th align="left">Name</th>
-        <th align="left">Type</th>
-        <th align="center">Optional</th>
-        <th align="left">Description</th>
-    </thead>
-    <tbody>
-        <tr>
+            <td>Instantiate the element using the given node instead of creating a new one.</td></tr>
+<tr>
             <td>properties</td>
             <td><code>{
     [key: string]: any;
@@ -1162,6 +1134,58 @@ Compile a template element or a template string into virtual DOM template.
 
 <hr />
 
+<strong id="css"><code>method</code>  css</strong>
+
+
+
+<p>
+
+Scope a CSS string, adding a compnent-specific trailing selector to all rules.
+It also converts `:host` selectors for cross browser compatibility.
+
+</p>
+
+<details>
+<summary>
+<code>(name: string), text: string)): string</code>
+</summary><br />
+
+<strong>Params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>name</td>
+            <td><code>string</code></td>
+            <td align="center"></td>
+            <td>The component definition name.</td></tr>
+<tr>
+            <td>text</td>
+            <td><code>string</code></td>
+            <td align="center"></td>
+            <td>The CSS string.</td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code>string</code> A scoped CSS string.
+
+<br />
+</details>
+
+
+
+
+
+
+<hr />
+
 <strong id="interpolate"><code>method</code>  interpolate</strong>
 
 
@@ -1797,9 +1821,11 @@ This represent the state of a render context.
 
 
 <pre>{
-    node: HTMLElement;
+    running?: true;
     scope: <a href="#scope">Scope</a>;
-    currentNode: Node;
+    iterating: {
+        node: Node;
+    };
     result: <a href="#template">Template</a>[];
     filter?: <a href="#templatefilter">TemplateFilter</a>;
 }</pre>

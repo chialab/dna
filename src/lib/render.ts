@@ -4,28 +4,34 @@ import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
 import { getSlotted } from './Slotted';
 import { isHyperFunction } from './h';
 import { isInterpolateFunction } from './interpolate';
-import { scopeCSS } from './style';
+import { css } from './css';
 
 /**
  * This represent the state of a render context.
  */
 export type RenderContext = {
     /**
-     * The root node of the render.
+     * A flag for the running status of the render.
      */
-    node: HTMLElement,
+    running?: true,
+
     /**
      * The scope of the current render.
      */
     scope: Scope,
+
     /**
-     * The current iterated child node of the render.
+     * The current iterating status.
      */
-    currentNode: Node,
+    iterating: {
+        node: Node,
+    },
+
     /**
      * A list of result nodes for the render.
      */
     result: Template[],
+
     /**
      * A template filter for result nodes.
      */
@@ -51,20 +57,23 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * @return The resulting child Nodes.
  */
 export function render(node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void {
-    // `result` is private params for recursive render cycles
-    const isFirstRender = !context;
-    context = context || {
-        node,
+    const renderContext = context || {
         scope: getScope(node) || createScope(node),
-        currentNode: node.firstChild as Node,
         result: [],
+        iterating: {
+            node: node.firstChild as Node,
+        },
     };
 
     if (input != null && input !== false) {
-        let inputContext = Object.assign({}, context, {
-            scope: getScope(input) || context.scope,
-            filter: getTemplateItemsFilter(input),
-        });
+        const inputContext: RenderContext = {
+            running: true,
+            result: renderContext.result,
+            scope: getScope(input) || renderContext.scope,
+            iterating: renderContext.iterating,
+            filter: getTemplateItemsFilter(input) || renderContext.filter,
+        };
+        const { scope, result, iterating } = inputContext;
         // if the input is an Array
         if (Array.isArray(input)) {
             // call the render function for each child
@@ -73,22 +82,22 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
             }
         // if it is an InterpolatedFunction or a HyperFunction
         } else if (isInterpolateFunction(input)) {
-            render(node, input.call(inputContext.scope), inputContext);
+            render(node, input.call(scope), inputContext);
         } else if (isHyperFunction(input)) {
-            render(node, input.call(inputContext.scope, inputContext.currentNode as HTMLElement), inputContext);
+            render(node, input.call(scope, iterating.node as HTMLElement), inputContext);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
 
             // add the input to the result
-            inputContext.result.push(input);
+            result.push(input);
 
             let inputElement: Template;
             if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof input === 'string') {
                 let name: string = DOM.getAttribute(node, 'scoped') as string;
                 if (!name) {
-                    name = inputContext.scope.is as string;
+                    name = scope.is as string;
                 }
-                scopeCSS(node, name, input);
+                node.textContent = css(name, input);
                 inputElement = node.childNodes[0] as Text;
             } else if (DOM.isElement(input) || DOM.isText(input)) {
                 inputElement = input;
@@ -99,7 +108,7 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
 
             if (!inputContext.filter || inputContext.filter(inputElement)) {
                 // get the current iterator for comparison
-                const { currentNode } = context;
+                const currentNode = iterating.node;
 
                 // now, we are confident that if the input is a Node or a Component,
                 // check if Nodes are the same instance
@@ -113,7 +122,7 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
                             if (currentNode.textContent !== content) {
                                 currentNode.textContent = content;
                             }
-                            context.currentNode = currentNode.nextSibling as Node;
+                            iterating.node = currentNode.nextSibling as Node;
                         } else {
                             // if current iterator is defined, insert the Node before it
                             DOM.insertBefore(node, inputElement, currentNode);
@@ -124,22 +133,28 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
                     }
                 } else {
                     // move forward the iterator for comparison
-                    context.currentNode = currentNode.nextSibling as Node;
+                    iterating.node = currentNode.nextSibling as Node;
                 }
 
                 if (DOM.isElement(inputElement)) {
                     const slotted = getSlotted(inputElement);
                     if (slotted && !DOM.isCustomElement(inputElement)) {
                         // the Node has slotted children, trigger a new render context for them
-                        render(inputElement, slotted, inputContext);
+                        render(inputElement, slotted, {
+                            result: [],
+                            scope,
+                            iterating: {
+                                node: inputElement.firstChild as Node,
+                            },
+                        });
                     }
                 }
             }
         }
     }
 
-    const { result } = context;
-    if (isFirstRender && result) {
+    const { running, result } = renderContext;
+    if (!running && result) {
         // all children of the root have been handled,
         // we can start to cleanup the tree
         let len = result.length;

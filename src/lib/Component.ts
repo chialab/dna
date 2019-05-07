@@ -1,12 +1,12 @@
-import * as registry from './lib/registry';
-import { BaseElement, DOM } from './lib/dom';
-import { createScope, getScope, setScope } from './lib/Scope';
-import { Template, TemplateItems } from './lib/Template';
-import { getSlotted, setSlotted } from './lib/Slotted';
-import { render } from './lib/render';
-import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
-import { html } from './lib/html';
-import { DelegatedEventCallback, delegate, undelegate } from './lib/events';
+import * as registry from './registry';
+import { BaseElement, DOM } from './dom';
+import { createScope, getScope, setScope } from './Scope';
+import { Template, TemplateItems } from './Template';
+import { getSlotted, setSlotted } from './Slotted';
+import { render } from './render';
+import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './property';
+import { html } from './html';
+import { DelegatedEventCallback, delegate, undelegate } from './events';
 
 const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = Node;
 
@@ -108,32 +108,27 @@ export class Component extends BaseElement {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    constructor(node?: HTMLElement, properties?: { [key: string]: any; })
-    constructor(properties?: { [key: string]: any; })
-    constructor(nodeOrProperties?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
+    constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
         super();
 
         if (!this.is) {
             throw new Error('Component has not been defined.');
         }
 
-        let node: HTMLElement;
-        if (!DOM.isElement(nodeOrProperties)) {
-            properties = nodeOrProperties;
+        if (!DOM.isElement(node)) {
+            properties = node;
             const definition = registry.get(this.is as string);
             node = DOM.createElement(definition.extends || definition.name) as HTMLElement;
-        } else {
-            node = nodeOrProperties as HTMLElement;
         }
 
         Object.setPrototypeOf(node, Object.getPrototypeOf(this));
 
-        setScope(node, createScope(node));
+        setScope(node, createScope(node as HTMLElement));
 
         let propertyDescriptors = this.properties;
         if (propertyDescriptors) {
             for (let propertyKey in propertyDescriptors) {
-                defineProperty(node, propertyKey, propertyDescriptors[propertyKey]);
+                defineProperty(node as HTMLElement, propertyKey, propertyDescriptors[propertyKey]);
             }
         }
 
@@ -144,9 +139,9 @@ export class Component extends BaseElement {
             }
         }
 
-        DOM.setAttribute(node, 'is', this.is);
+        DOM.setAttribute(node as HTMLElement, 'is', this.is);
 
-        setSlotted(node, DOM.getChildNodes(node) as TemplateItems);
+        setSlotted(node as HTMLElement, DOM.getChildNodes(node as HTMLElement) as TemplateItems);
 
         return node as Component;
     }

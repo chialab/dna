@@ -33,7 +33,7 @@ export const DOM = {
     /**
      * The document global instance.
      */
-    document: Document.prototype,
+    document,
 
     /**
      * The base Text constructor.
