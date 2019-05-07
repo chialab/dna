@@ -127,9 +127,9 @@ Create a new Component instance.
 <summary>
 <code>(node?: HTMLElement|{
     [key: string]: any;
-}), properties?: {
+}, properties?: {
     [key: string]: any;
-}))</code>
+})</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -240,7 +240,7 @@ Invoked each time one of the Component's attributes is added, removed, or change
 
 <details>
 <summary>
-<code>(attributeName: string), oldValue: null|string), newValue: null|string)): void</code>
+<code>(attributeName: string, oldValue: null|string, newValue: null|string): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -295,7 +295,7 @@ Invoked each time one of the Component's properties is added, removed, or change
 
 <details>
 <summary>
-<code>(propertyName: string), oldValue: any), newValue: any)): void</code>
+<code>(propertyName: string, oldValue: any, newValue: any): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -350,7 +350,7 @@ Observe a Component Property.
 
 <details>
 <summary>
-<code>(propertyName: string), callback: <a href="#accessorobserver">AccessorObserver</a>)): void</code>
+<code>(propertyName: string, callback: <a href="#accessorobserver">AccessorObserver</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -400,7 +400,7 @@ Unobserve a Component Property.
 
 <details>
 <summary>
-<code>(propertyName: string), callback?: <a href="#accessorobserver">AccessorObserver</a>)): void</code>
+<code>(propertyName: string, callback?: <a href="#accessorobserver">AccessorObserver</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -450,7 +450,7 @@ Delegate an Event listener.
 
 <details>
 <summary>
-<code>(event: string), selector: string), callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
+<code>(event: string, selector: string, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -505,7 +505,7 @@ Remove an Event delegation.
 
 <details>
 <summary>
-<code>(event?: string), selector?: string), callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
+<code>(event?: string, selector?: string, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -560,7 +560,7 @@ Render method of the Component.
 
 <details>
 <summary>
-<code>(children?: <a href="#template">Template</a>)): void</code>
+<code>(children?: <a href="#template">Template</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -605,7 +605,7 @@ Append a child to the Component.
 
 <details>
 <summary>
-<code>(newChild: T)): T</code>
+<code>(newChild: T): T</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -650,7 +650,7 @@ Remove a child from the Component.
 
 <details>
 <summary>
-<code>(oldChild: T)): T</code>
+<code>(oldChild: T): T</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -695,7 +695,7 @@ Insert a child before another in the Component.
 
 <details>
 <summary>
-<code>(newChild: T), refChild: Node|null)): T</code>
+<code>(newChild: T, refChild: Node|null): T</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -745,7 +745,7 @@ Replace a child with another in the Component.
 
 <details>
 <summary>
-<code>(newChild: Node), oldChild: T)): T</code>
+<code>(newChild: Node, oldChild: T): T</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -795,7 +795,7 @@ Set a Component attribute.
 
 <details>
 <summary>
-<code>(qualifiedName: string), value: string)): void</code>
+<code>(qualifiedName: string, value: string): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -845,7 +845,7 @@ Remove a Component attribute.
 
 <details>
 <summary>
-<code>(qualifiedName: string)): void</code>
+<code>(qualifiedName: string): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -928,7 +928,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <details>
 <summary>
-<code>(node: HTMLElement), input: <a href="#template">Template</a>), context?: <a href="#rendercontext">RenderContext</a>)): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
+<code>(node: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#rendercontext">RenderContext</a>): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -984,9 +984,9 @@ Define a new Custom Element.
 
 <details>
 <summary>
-<code>(name: string), constructor: <a href="#customelement">CustomElement</a>), options?: {
+<code>(name: string, constructor: <a href="#customelement">CustomElement</a>, options?: {
     extends?: string;
-})): void</code>
+}): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1044,7 +1044,7 @@ HyperFunction factory to use as JSX pragma.
 
 <details>
 <summary>
-<code>(tag: string|HTMLElement), properties: <a href="#hyperproperties">HyperProperties</a>|null), children: <a href="#templateitems">TemplateItems</a>)): <a href="#hyperfunction">HyperFunction</a></code>
+<code>(tag: string|HTMLElement, properties: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hyperfunction">HyperFunction</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1100,7 +1100,7 @@ Compile a template element or a template string into virtual DOM template.
 
 <details>
 <summary>
-<code>(template: string|HTMLTemplateElement)): <a href="#template">Template</a></code>
+<code>(template: string|HTMLTemplateElement): <a href="#template">Template</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1147,7 +1147,7 @@ It also converts `:host` selectors for cross browser compatibility.
 
 <details>
 <summary>
-<code>(name: string), text: string)): string</code>
+<code>(name: string, text: string): string</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1198,7 +1198,7 @@ Create an interpolated function.
 
 <details>
 <summary>
-<code>(expression: string)): <a href="#interpolatefunction">InterpolateFunction</a>|string</code>
+<code>(expression: string): <a href="#interpolatefunction">InterpolateFunction</a>|string</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1245,7 +1245,7 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 <details>
 <summary>
-<code>(root: HTMLElement)): HTMLElement[]</code>
+<code>(root: HTMLElement): HTMLElement[]</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1291,7 +1291,7 @@ A decorator for accessors definition.
 
 <details>
 <summary>
-<code>(descriptor?: <a href="#accessordescriptor">AccessorDescriptor</a>)): (target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code>
+<code>(descriptor?: <a href="#accessordescriptor">AccessorDescriptor</a>): (target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1337,7 +1337,7 @@ Delegate an Event listener.
 
 <details>
 <summary>
-<code>(element: HTMLElement), eventName: string), selector: string|undefined), callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
+<code>(element: HTMLElement, eventName: string, selector: string|undefined, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1398,7 +1398,7 @@ Remove an Event delegation.
 
 <details>
 <summary>
-<code>(element: HTMLElement), eventName?: string), selector?: string), callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>)): void</code>
+<code>(element: HTMLElement, eventName?: string, selector?: string, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1459,7 +1459,7 @@ Create a Scope with an initial prototype.
 
 <details>
 <summary>
-<code>(prototype: HTMLElement)): <a href="#scope">Scope</a></code>
+<code>(prototype: HTMLElement): <a href="#scope">Scope</a></code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1505,7 +1505,7 @@ Get the Scope attached to an object.
 
 <details>
 <summary>
-<code>(target: any)): <a href="#scope">Scope</a>|undefined</code>
+<code>(target: any): <a href="#scope">Scope</a>|undefined</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -1551,7 +1551,7 @@ Attach a Scope to an object.
 
 <details>
 <summary>
-<code>(target: any), scope: <a href="#scope">Scope</a>)): void</code>
+<code>(target: any, scope: <a href="#scope">Scope</a>): void</code>
 </summary><br />
 
 <strong>Params</strong>
