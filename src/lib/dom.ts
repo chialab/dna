@@ -31,6 +31,11 @@ export class BaseElement extends Element { }
  */
 export const DOM = {
     /**
+     * The document global instance.
+     */
+    document: Document.prototype,
+
+    /**
      * The base Text constructor.
      */
     Text,
@@ -102,7 +107,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElement(tagName: string): HTMLElement {
-        return document.createElement(tagName);
+        return this.document.createElement(tagName);
     },
 
 
@@ -113,7 +118,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createTextNode(data: string): Text {
-        return document.createTextNode(data);
+        return this.document.createTextNode(data);
     },
 
     /**

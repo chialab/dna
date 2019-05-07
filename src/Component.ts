@@ -10,13 +10,19 @@ import { DelegatedEventCallback, delegate, undelegate } from './lib/events';
 
 const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = Node;
 
-function isConnected(element: Node | null): boolean {
-    if (!element || !element.nodeType) {
+/**
+ * Check if a Node is connected.
+ *
+ * @param target The target element to check.
+ * @return A truthy value for connected targets.
+ */
+function isConnected(target: Node | null): boolean {
+    if (!target || !target.nodeType) {
         return false;
     }
-    let nodeType = element.nodeType;
+    let nodeType = target.nodeType;
     if (nodeType === ELEMENT_NODE || nodeType === TEXT_NODE) {
-        return isConnected(element.parentNode);
+        return isConnected(target.parentNode);
     } else if (nodeType === DOCUMENT_FRAGMENT_NODE || nodeType === DOCUMENT_NODE) {
         return true;
     }
@@ -24,32 +30,86 @@ function isConnected(element: Node | null): boolean {
     return false;
 }
 
+/**
+ * The DNA base Component constructor, a Custom Element constructor with
+ * declarative properties and event delegations, custom template and
+ * a complete life cycle implementation.
+ * All DNA components **must** extends this class.
+ *
+ * @example
+ * ```ts
+ * import { Component, property, define, render } from '@chialab/dna';
+ *
+ * class HelloWorld extends Component {
+ *   @property() // define an observable Component property
+ *   name: string;
+ *
+ *   get events() { // define a list of delegated events
+ *     return {
+ *       'input [name="name"]': (ev, target) => {
+ *         this.name = target.value;
+ *       },
+ *     };
+ *   }
+ * }
+ *
+ * // link the Component class to a tag
+ * define('hello-world', HelloWorld);
+ * ```
+ */
 export class Component extends BaseElement {
+    /**
+     * The tag name used for Component definition.
+     */
+    readonly is: string | undefined;
+
+    /**
+     * A set of properties to define to the node.
+     */
     readonly properties?: {
         [key: string]: AccessorDescriptor;
     };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
     readonly events?: {
         [key: string]: DelegatedEventCallback;
     };
-    readonly is: string | undefined;
 
+    /**
+     * A flag with the connected value of the node.
+     */
     get isConnected(): boolean {
         return isConnected(this);
     }
 
+    /**
+     * A template for the Component.
+     */
     get template(): Template | undefined {
         // try to detect the template searching for template tags named with the component name
-        let templateElement = document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+        let templateElement = DOM.document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
         if (!templateElement) {
             return undefined;
         }
         return html(templateElement);
     }
 
+    /**
+     * The render scope reference of the node.
+     */
     get $scope() {
         return getScope(this);
     }
 
+    /**
+     * Create a new Component instance.
+     * @param node Instantiate the element using the given node instead of creating a new one.
+     * @param properties A set of initial properties for the element.
+     */
+    constructor(node?: HTMLElement, properties?: { [key: string]: any; })
+    constructor(properties?: { [key: string]: any; })
     constructor(nodeOrProperties?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
         super();
 
@@ -91,6 +151,10 @@ export class Component extends BaseElement {
         return node as Component;
     }
 
+    /**
+     * Invoked each time the Component is appended into a document-connected element.
+     * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+     */
     connectedCallback() {
         // register events
         this.undelegate();
@@ -108,11 +172,21 @@ export class Component extends BaseElement {
         this.render();
     }
 
+    /**
+     * Invoked each time the Component is disconnected from the document's DOM.
+     */
     disconnectedCallback() {
         // empty the Node content when disconnected
         this.render([]);
     }
 
+    /**
+     * Invoked each time one of the Component's attributes is added, removed, or changed.
+     *
+     * @param attributeName The name of the updated attribute.
+     * @param oldValue The previous value of the attribute.
+     * @param newValue The new value for the attribute (null if removed).
+     */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string) {
         let property: AccessorDescriptor | undefined;
         let properties = getProperties(this);
@@ -135,6 +209,13 @@ export class Component extends BaseElement {
         }
     }
 
+    /**
+     * Invoked each time one of the Component's properties is added, removed, or changed.
+     *
+     * @param propertyName The name of the changed property.
+     * @param oldValue The previous value of the property.
+     * @param newValue The new value for the property (undefined if removed).
+     */
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
         let property = getProperties(this)[propertyName];
         let attribute = property.attribute as string;
@@ -190,10 +271,24 @@ export class Component extends BaseElement {
         }
     }
 
+    /**
+     * Delegate an Event listener.
+     *
+     * @param eventName The event name to listen
+     * @param selector The selector to delegate
+     * @param callback The callback to trigger when an Event matches the delegation
+     */
     delegate(event: string, selector: string, callback: DelegatedEventCallback) {
         return delegate(this, event, selector, callback);
     }
 
+    /**
+     * Remove an Event delegation.
+     *
+     * @param eventName The Event name to undelegate
+     * @param selector The selector to undelegate
+     * @param callback The callback to remove
+     */
     undelegate(event?: string, selector?: string, callback?: DelegatedEventCallback) {
         return undelegate(this, event, selector, callback);
     }

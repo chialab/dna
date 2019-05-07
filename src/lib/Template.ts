@@ -1,22 +1,54 @@
 import { InterpolateFunction } from './interpolate';
 import { HyperFunction } from './h';
 
+/**
+ * A Symbol which contains a filter function for a list of template items.
+ */
 const FILTER_SYMBOL = Symbol();
 
-export type TemplateItem = HTMLElement | Text | Function | HyperFunction | InterpolateFunction | string | boolean;
+/**
+ * The atomic template item.
+ * It can be a node, a Hyper or Interpolate function or a primitive value.
+ */
+export type TemplateItem = HTMLElement | Text | HyperFunction | InterpolateFunction | string | number | boolean;
 
+/**
+ * A list of template items.
+ */
 export type TemplateItems = TemplateItem[];
 
-export type TemplateFilter = (item: HTMLElement | Text) => boolean;
+/**
+ * A filter function signature for template items.
+ *
+ * @param item The template item to check.
+ * @return A truthy value for valid items, a falsy for value for invalid ones.
+ */
+export type TemplateFilter = (item: TemplateItem) => boolean;
 
+/**
+ * A generic template. Can be a single atomic item or a list of items.
+ */
 export type Template = TemplateItem | TemplateItems;
 
-export function createFilterableTemplateItems(items: TemplateItems, filter: TemplateFilter): TemplateItems {
-    const filterableItems = (items || []).slice(0) as TemplateItems;
+/**
+ * Create a new list of items with a filter.
+ *
+ * @param template A template items list.
+ * @param filter The filter function to bind.
+ * @return A new list with the filter property populated.
+ */
+export function createFilterableTemplateItems(template: TemplateItems, filter: TemplateFilter): TemplateItems {
+    const filterableItems = (template || []).slice(0) as TemplateItems;
     (filterableItems as any)[FILTER_SYMBOL] = filter;
     return filterableItems;
 }
 
+/**
+ * Get the filter function for a template.
+ *
+ * @param template The template target.
+ * @return A filter function (if defined).
+ */
 export function getTemplateItemsFilter(template: Template): TemplateFilter | undefined {
     return (template as any)[FILTER_SYMBOL];
 }

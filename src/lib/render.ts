@@ -6,9 +6,30 @@ import { isHyperFunction } from './h';
 import { isInterpolateFunction } from './interpolate';
 import { scopeCSS } from './style';
 
+/**
+ * This represent the state of a render context.
+ */
 export type RenderContext = {
+    /**
+     * The root node of the render.
+     */
+    node: HTMLElement,
+    /**
+     * The scope of the current render.
+     */
     scope: Scope,
+    /**
+     * The current iterated child node of the render.
+     */
     currentNode: Node,
+    /**
+     * A list of result nodes for the render.
+     */
+    result: Template[],
+    /**
+     * A template filter for result nodes.
+     */
+    filter?: TemplateFilter,
 };
 
 /**
@@ -25,41 +46,47 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
- * @param node The root Node for the render
- * @param input The child (or the children) to render in Virtual DOM format or already generated
- * @return The resulting child Nodes
+ * @param node The root Node for the render.
+ * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @return The resulting child Nodes.
  */
-export function render(node: HTMLElement, input: Template, context?: RenderContext, previousResult?: Template[], filter?: TemplateFilter): Template | Template[] | void {
+export function render(node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void {
     // `result` is private params for recursive render cycles
-    const isFirstRender = !previousResult;
-    const result = previousResult || [];
-
+    const isFirstRender = !context;
+    context = context || {
+        node,
+        scope: getScope(node) || createScope(node),
+        currentNode: node.firstChild as Node,
+        result: [],
+    };
 
     if (input != null && input !== false) {
-        context = context || { scope: getScope(node) || createScope(node), currentNode: node.firstChild as Node };
-        let inputScope = getScope(input) || context.scope;
+        let inputContext = Object.assign({}, context, {
+            scope: getScope(input) || context.scope,
+            filter: getTemplateItemsFilter(input),
+        });
         // if the input is an Array
         if (Array.isArray(input)) {
             // call the render function for each child
             for (let i = 0, len = input.length; i < len; i++) {
-                render(node, input[i], context, result, getTemplateItemsFilter(input));
+                render(node, input[i], inputContext);
             }
         // if it is an InterpolatedFunction or a HyperFunction
         } else if (isInterpolateFunction(input)) {
-            render(node, input.call(inputScope), context, result, filter);
+            render(node, input.call(inputContext.scope), inputContext);
         } else if (isHyperFunction(input)) {
-            render(node, input.call(inputScope, context.currentNode as HTMLElement), context, result, filter);
+            render(node, input.call(inputContext.scope, inputContext.currentNode as HTMLElement), inputContext);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
 
             // add the input to the result
-            result.push(input);
+            inputContext.result.push(input);
 
             let inputElement: Template;
             if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof input === 'string') {
                 let name: string = DOM.getAttribute(node, 'scoped') as string;
                 if (!name) {
-                    name = inputScope.is as string;
+                    name = inputContext.scope.is as string;
                 }
                 scopeCSS(node, name, input);
                 inputElement = node.childNodes[0] as Text;
@@ -70,7 +97,7 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
                 inputElement = DOM.createTextNode(input as string);
             }
 
-            if (!filter || filter(inputElement)) {
+            if (!inputContext.filter || inputContext.filter(inputElement)) {
                 // get the current iterator for comparison
                 const { currentNode } = context;
 
@@ -104,12 +131,14 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
                     const slotted = getSlotted(inputElement);
                     if (slotted && !DOM.isCustomElement(inputElement)) {
                         // the Node has slotted children, trigger a new render context for them
-                        render(inputElement, slotted, context);
+                        render(inputElement, slotted, inputContext);
                     }
                 }
             }
         }
     }
+
+    const { result } = context;
     if (isFirstRender && result) {
         // all children of the root have been handled,
         // we can start to cleanup the tree

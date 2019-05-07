@@ -1,14 +1,24 @@
-import { TemplateItems } from './Template';
+import { TemplateItems, Template } from './Template';
 
 /**
  * A Symbol which contains slotted children of a Component.
  */
 const SLOTTED_SYMBOL = Symbol();
 
-export function getSlotted(target: any): TemplateItems {
-    return target[SLOTTED_SYMBOL];
+/**
+ * Get slotted children of a template item.
+ * @param template The template target with slotted children.
+ * @return A list of child template items.
+ */
+export function getSlotted(template: Template): TemplateItems {
+    return (template as any)[SLOTTED_SYMBOL];
 }
 
-export function setSlotted(target: any, slotted: TemplateItems): void {
-    target[SLOTTED_SYMBOL] = slotted;
+/**
+ * Set slotted children to a template item.
+ * @param template The template target.
+ * @param slotted A list of child template items.
+ */
+export function setSlotted(template: Template, slotted: TemplateItems): void {
+    (template as any)[SLOTTED_SYMBOL] = slotted;
 }

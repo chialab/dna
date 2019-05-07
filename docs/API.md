@@ -31,9 +31,36 @@
 
 <strong>Extends:</strong> <a href="#baseelement">BaseElement</a>
 
+<p>
 
+The DNA base Component constructor, a Custom Element constructor with
+declarative properties and event delegations, custom template and
+a complete life cycle implementation.
+All DNA components **must** extends this class.
 
+</p>
 
+<strong>Examples</strong>
+
+```ts
+ import { Component, property, define, render } from '@chialab/dna';
+
+ class HelloWorld extends Component {
+   @property() // define an observable Component property
+   name: string;
+
+   get events() { // define a list of delegated events
+     return {
+       'input [name="name"]': (ev, target) => {
+         this.name = target.value;
+       },
+     };
+   }
+ }
+
+ // link the Component class to a tag
+ define('hello-world', HelloWorld);
+ ```
 
 <strong>Properties</strong>
 
@@ -46,39 +73,39 @@
     </thead>
     <tbody>
         <tr>
+            <td>is</td>
+            <td><code>string|undefined</code></td>
+            <td align="center">✓</td>
+            <td>The tag name used for Component definition.</td></tr>
+<tr>
             <td>properties</td>
             <td><code>{
     [key: string]: <a href="#accessordescriptor">AccessorDescriptor</a>;
 }</code></td>
             <td align="center">✓</td>
-            <td></td></tr>
+            <td>A set of properties to define to the node.</td></tr>
 <tr>
             <td>events</td>
             <td><code>{
     [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
 }</code></td>
             <td align="center">✓</td>
-            <td></td></tr>
-<tr>
-            <td>is</td>
-            <td><code>string|undefined</code></td>
-            <td align="center">✓</td>
-            <td></td></tr>
+            <td>A set of delegated events to bind to the node.</td></tr>
 <tr>
             <td>isConnected</td>
             <td><code>boolean</code></td>
             <td align="center">✓</td>
-            <td></td></tr>
+            <td>A flag with the connected value of the node.</td></tr>
 <tr>
             <td>template</td>
             <td><code><a href="#template">Template</a>|undefined</code></td>
             <td align="center">✓</td>
-            <td></td></tr>
+            <td>A template for the Component.</td></tr>
 <tr>
             <td>$scope</td>
             <td><code><a href="#scope">Scope</a>|undefined</code></td>
             <td align="center">✓</td>
-            <td></td>
+            <td>The render scope reference of the node.</td>
         </tr>
     </tbody>
 </table>
@@ -86,11 +113,102 @@
 
 <strong>Methods</strong>
 
+<strong><code>method</code>  constructor</strong>
+
+
+
+<p>
+
+Create a new Component instance.
+
+</p>
+
+<details>
+<summary>
+<code>(node?: HTMLElement), properties?: {
+    [key: string]: any;
+}))</code>
+</summary><br />
+
+<strong>Params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>node</td>
+            <td><code>HTMLElement</code></td>
+            <td align="center">✓</td>
+            <td>Instantiate the element using the given node instead of creating a new one.</td></tr>
+<tr>
+            <td>properties</td>
+            <td><code>{
+    [key: string]: any;
+}</code></td>
+            <td align="center">✓</td>
+            <td>A set of initial properties for the element.</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<br />
+</details>
+<details>
+<summary>
+<code>(properties?: {
+    [key: string]: any;
+}))</code>
+</summary><br />
+
+<strong>Params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>properties</td>
+            <td><code>{
+    [key: string]: any;
+}</code></td>
+            <td align="center">✓</td>
+            <td>A set of initial properties for the element.</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<br />
+</details>
+
+
+
+
+
+<br />
+
 <strong id="connectedcallback"><code>method</code>  connectedCallback</strong>
 
 
 
+<p>
 
+Invoked each time the Component is appended into a document-connected element.
+This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+
+</p>
 
 <details>
 <summary>
@@ -101,6 +219,7 @@
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -113,7 +232,11 @@
 
 
 
+<p>
 
+Invoked each time the Component is disconnected from the document's DOM.
+
+</p>
 
 <details>
 <summary>
@@ -124,6 +247,7 @@
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -136,7 +260,11 @@
 
 
 
+<p>
 
+Invoked each time one of the Component's attributes is added, removed, or changed.
+
+</p>
 
 <details>
 <summary>
@@ -157,23 +285,24 @@
             <td>attributeName</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The name of the updated attribute.</td></tr>
 <tr>
             <td>oldValue</td>
             <td><code>null|string</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The previous value of the attribute.</td></tr>
 <tr>
             <td>newValue</td>
             <td><code>null|string</code></td>
             <td align="center"></td>
-            <td></td>
+            <td>The new value for the attribute (null if removed).</td>
         </tr>
     </tbody>
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -186,7 +315,11 @@
 
 
 
+<p>
 
+Invoked each time one of the Component's properties is added, removed, or changed.
+
+</p>
 
 <details>
 <summary>
@@ -207,23 +340,24 @@
             <td>propertyName</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The name of the changed property.</td></tr>
 <tr>
             <td>oldValue</td>
             <td><code>any</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The previous value of the property.</td></tr>
 <tr>
             <td>newValue</td>
             <td><code>any</code></td>
             <td align="center"></td>
-            <td></td>
+            <td>The new value for the property (undefined if removed).</td>
         </tr>
     </tbody>
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -273,6 +407,7 @@ Observe a Component Property.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -322,6 +457,7 @@ Unobserve a Component Property.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -334,7 +470,11 @@ Unobserve a Component Property.
 
 
 
+<p>
 
+Delegate an Event listener.
+
+</p>
 
 <details>
 <summary>
@@ -360,18 +500,19 @@ Unobserve a Component Property.
             <td>selector</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The selector to delegate</td></tr>
 <tr>
             <td>callback</td>
             <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center"></td>
-            <td></td>
+            <td>The callback to trigger when an Event matches the delegation</td>
         </tr>
     </tbody>
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -384,7 +525,11 @@ Unobserve a Component Property.
 
 
 
+<p>
 
+Remove an Event delegation.
+
+</p>
 
 <details>
 <summary>
@@ -410,18 +555,19 @@ Unobserve a Component Property.
             <td>selector</td>
             <td><code>string</code></td>
             <td align="center">✓</td>
-            <td></td></tr>
+            <td>The selector to undelegate</td></tr>
 <tr>
             <td>callback</td>
             <td><code><a href="#delegatedeventcallback">DelegatedEventCallback</a></code></td>
             <td align="center">✓</td>
-            <td></td>
+            <td>The callback to remove</td>
         </tr>
     </tbody>
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -466,6 +612,7 @@ Render method of the Component.
 
 <strong>Returns</strong>: <code>void</code> The instances of the rendered Components and/or Nodes
 
+<br />
 </details>
 
 
@@ -510,6 +657,7 @@ Append a child to the Component.
 
 <strong>Returns</strong>: <code>T</code> 
 
+<br />
 </details>
 
 
@@ -554,6 +702,7 @@ Remove a child from the Component.
 
 <strong>Returns</strong>: <code>T</code> 
 
+<br />
 </details>
 
 
@@ -603,6 +752,7 @@ Insert a child before another in the Component.
 
 <strong>Returns</strong>: <code>T</code> 
 
+<br />
 </details>
 
 
@@ -652,6 +802,7 @@ Replace a child with another in the Component.
 
 <strong>Returns</strong>: <code>T</code> 
 
+<br />
 </details>
 
 
@@ -701,6 +852,7 @@ Set a Component attribute.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -745,6 +897,7 @@ Remove a Component attribute.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -803,7 +956,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <details>
 <summary>
-<code>(node: HTMLElement), input: <a href="#template">Template</a>), context?: <a href="#rendercontext">RenderContext</a>), previousResult?: <a href="#template">Template</a>[]), filter?: <a href="#templatefilter">TemplateFilter</a>)): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
+<code>(node: HTMLElement), input: <a href="#template">Template</a>), context?: <a href="#rendercontext">RenderContext</a>)): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -820,33 +973,24 @@ useless changes in the tree and to mantain or update the state of compatible Nod
             <td>node</td>
             <td><code>HTMLElement</code></td>
             <td align="center"></td>
-            <td>The root Node for the render</td></tr>
+            <td>The root Node for the render.</td></tr>
 <tr>
             <td>input</td>
             <td><code><a href="#template">Template</a></code></td>
             <td align="center"></td>
-            <td>The child (or the children) to render in Virtual DOM format or already generated</td></tr>
+            <td>The child (or the children) to render in Virtual DOM format or already generated.</td></tr>
 <tr>
             <td>context</td>
             <td><code><a href="#rendercontext">RenderContext</a></code></td>
-            <td align="center">✓</td>
-            <td></td></tr>
-<tr>
-            <td>previousResult</td>
-            <td><code><a href="#template">Template</a>[]</code></td>
-            <td align="center">✓</td>
-            <td></td></tr>
-<tr>
-            <td>filter</td>
-            <td><code><a href="#templatefilter">TemplateFilter</a></code></td>
             <td align="center">✓</td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code> The resulting child Nodes
+<strong>Returns</strong>: <code><a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code> The resulting child Nodes.
 
+<br />
 </details>
 
 
@@ -860,11 +1004,17 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 
 
+<p>
 
+Define a new Custom Element.
+
+</p>
 
 <details>
 <summary>
-<code>(name: string), constructor: <a href="#definitionconstructor">DefinitionConstructor</a>), options?: <a href="#definitionoptions">DefinitionOptions</a>)): void</code>
+<code>(name: string), constructor: <a href="#customelement">CustomElement</a>), options?: {
+    extends?: string;
+})): void</code>
 </summary><br />
 
 <strong>Params</strong>
@@ -881,23 +1031,26 @@ useless changes in the tree and to mantain or update the state of compatible Nod
             <td>name</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The tag name for the element.</td></tr>
 <tr>
             <td>constructor</td>
-            <td><code><a href="#definitionconstructor">DefinitionConstructor</a></code></td>
+            <td><code><a href="#customelement">CustomElement</a></code></td>
             <td align="center"></td>
-            <td></td></tr>
+            <td>The Custom Element constructor.</td></tr>
 <tr>
             <td>options</td>
-            <td><code><a href="#definitionoptions">DefinitionOptions</a></code></td>
+            <td><code>{
+    extends?: string;
+}</code></td>
             <td align="center">✓</td>
-            <td></td>
+            <td>A set of definition options, like `extends` for native tag extension.</td>
         </tr>
     </tbody>
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -953,6 +1106,7 @@ HyperFunction factory to use as JSX pragma.
 
 <strong>Returns</strong>: <code><a href="#hyperfunction">HyperFunction</a></code> 
 
+<br />
 </details>
 
 
@@ -998,6 +1152,7 @@ Compile a template element or a template string into virtual DOM template.
 
 <strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
 
+<br />
 </details>
 
 
@@ -1043,6 +1198,7 @@ Create an interpolated function.
 
 <strong>Returns</strong>: <code><a href="#interpolatefunction">InterpolateFunction</a>|string</code> A simple string if the expression does not need interpolation, or an InterpolateFunction to generate interpolated content.
 
+<br />
 </details>
 
 
@@ -1089,6 +1245,7 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 <strong>Returns</strong>: <code>HTMLElement[]</code> A list of instantiated elements.
 
+<br />
 </details>
 
 
@@ -1102,7 +1259,11 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 
 
+<p>
 
+A decorator for accessors definition.
+
+</p>
 
 <details>
 <summary>
@@ -1123,13 +1284,14 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
             <td>descriptor</td>
             <td><code><a href="#accessordescriptor">AccessorDescriptor</a></code></td>
             <td align="center">✓</td>
-            <td></td>
+            <td>The accessor description.</td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>(target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code> 
+<strong>Returns</strong>: <code>(target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code> The decorator initializer.
 
+<br />
 </details>
 
 
@@ -1190,6 +1352,7 @@ Delegate an Event listener.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -1250,6 +1413,7 @@ Remove an Event delegation.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -1295,6 +1459,7 @@ Create a Scope with an initial prototype.
 
 <strong>Returns</strong>: <code><a href="#scope">Scope</a></code> An object with the Scope interface.
 
+<br />
 </details>
 
 
@@ -1340,6 +1505,7 @@ Get the Scope attached to an object.
 
 <strong>Returns</strong>: <code><a href="#scope">Scope</a>|undefined</code> The Scope object (if it exists).
 
+<br />
 </details>
 
 
@@ -1390,6 +1556,7 @@ Attach a Scope to an object.
 
 <strong>Returns</strong>: <code>void</code> 
 
+<br />
 </details>
 
 
@@ -1417,6 +1584,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 <strong>Type:</strong>
 
 <pre>{
+    document: Document;
     Text: {
         constructor(data?: string|undefined): Text;
         prototype: Text;
@@ -1486,6 +1654,12 @@ The interface of Custom Element, as described by the W3C.
 
 
 <pre>HTMLElement & {
+    constructor(node?: HTMLElement, properties?: {
+        [key: string]: any;
+    }): <a href="#customelement">CustomElement</a>;
+    constructor(properties?: {
+        [key: string]: any;
+    }): <a href="#customelement">CustomElement</a>;
     connectedCallback(): void;
     disconnectedCallback(): void;
     attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
@@ -1502,7 +1676,11 @@ The interface of Custom Element, as described by the W3C.
 
 <strong id="template"><code>type</code>  Template</strong>
 
+<p>
 
+A generic template. Can be a single atomic item or a list of items.
+
+</p>
 
 
 
@@ -1515,11 +1693,16 @@ The interface of Custom Element, as described by the W3C.
 
 <strong id="templateitem"><code>type</code>  TemplateItem</strong>
 
+<p>
+
+The atomic template item.
+It can be a node, a Hyper or Interpolate function or a primitive value.
+
+</p>
 
 
 
-
-<pre>HTMLElement|Text|Function|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|string|boolean</pre>
+<pre>HTMLElement|Text|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|string|number|boolean</pre>
 
 
 
@@ -1571,7 +1754,11 @@ or create a child scope which inherits properties from the current scope.
 
 <strong id="templateitems"><code>type</code>  TemplateItems</strong>
 
+<p>
 
+A list of template items.
+
+</p>
 
 
 
@@ -1601,13 +1788,20 @@ A function that interpolate content in a string using a render Scope.
 
 <strong id="rendercontext"><code>type</code>  RenderContext</strong>
 
+<p>
 
+This represent the state of a render context.
+
+</p>
 
 
 
 <pre>{
+    node: HTMLElement;
     scope: <a href="#scope">Scope</a>;
     currentNode: Node;
+    result: <a href="#template">Template</a>[];
+    filter?: <a href="#templatefilter">TemplateFilter</a>;
 }</pre>
 
 
@@ -1617,46 +1811,15 @@ A function that interpolate content in a string using a render Scope.
 
 <strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
 
+<p>
+
+A filter function signature for template items.
+
+</p>
 
 
 
-
-<pre>(item: HTMLElement|Text): boolean</pre>
-
-
-
-
-<hr />
-
-<strong id="definitionconstructor"><code>type</code>  DefinitionConstructor</strong>
-
-
-
-
-
-<pre>HTMLElement & {
-    constructor(nodeOrProperties?: HTMLElement|{
-        [key: string]: any;
-    }, properties?: {
-        [key: string]: any;
-    }): <a href="#customelement">CustomElement</a>;
-    prototype: <a href="#customelement">CustomElement</a>;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="definitionoptions"><code>type</code>  DefinitionOptions</strong>
-
-
-
-
-
-<pre>{
-    extends?: string;
-}</pre>
+<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
 
 
 
@@ -1682,7 +1845,11 @@ A function that interpolate content in a string using a render Scope.
 
 <strong id="accessordescriptor"><code>type</code>  AccessorDescriptor</strong>
 
+<p>
 
+A list of properties for an accessor description.
+
+</p>
 
 
 
@@ -1705,7 +1872,11 @@ A function that interpolate content in a string using a render Scope.
 
 <strong id="accessorobserver"><code>type</code>  AccessorObserver</strong>
 
+<p>
 
+The observer signature for accessors.
+
+</p>
 
 
 
