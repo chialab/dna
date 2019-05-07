@@ -11,6 +11,6 @@ package-lock.json
 
 # RNA
 
-/demo
+/local
 /src
 tsconfig.json
