@@ -1,7 +1,8 @@
 import * as registry from './lib/registry';
 import { BaseElement, DOM } from './lib/dom';
 import { createScope, getScope, setScope } from './lib/Scope';
-import { Template, TemplateItems, getSlotted, setSlotted } from './lib/Template';
+import { Template, TemplateItems } from './lib/Template';
+import { getSlotted, setSlotted } from './lib/Slotted';
 import { render } from './lib/render';
 import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './lib/property';
 import { html } from './lib/html';

@@ -1450,44 +1450,6 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <hr />
 
-<strong id="filter_symbol"><code>constant</code>  FILTER_SYMBOL</strong>
-
-
-
-
-
-
-
-<strong>Type:</strong>
-
-<pre>unique Symbol</pre>
-
-
-
-
-<hr />
-
-<strong id="slotted_symbol"><code>constant</code>  SLOTTED_SYMBOL</strong>
-
-
-
-<p>
-
-A Symbol which contains slotted children of a Component.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>unique Symbol</pre>
-
-
-
-
-<hr />
-
 <strong id="element"><code>constant</code>  Element</strong>
 
 
@@ -1544,7 +1506,7 @@ The interface of Custom Element, as described by the W3C.
 
 
 
-<pre>(<a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a>) & <a href="#slotted">Slotted</a></pre>
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
 
 
 
@@ -1613,22 +1575,7 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-<pre>(<a href="#templateitem">TemplateItem</a>[] & {
-    [FILTER_SYMBOL]?: <a href="#templatefilter">TemplateFilter</a>;
-})</pre>
-
-
-
-
-<hr />
-
-<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
-
-
-
-
-
-<pre>(item: HTMLElement|Text): boolean</pre>
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -1652,21 +1599,6 @@ A function that interpolate content in a string using a render Scope.
 
 <hr />
 
-<strong id="slotted"><code>type</code>  Slotted</strong>
-
-
-
-
-
-<pre>{
-    [SLOTTED_SYMBOL]?: <a href="#templateitems">TemplateItems</a>;
-}</pre>
-
-
-
-
-<hr />
-
 <strong id="rendercontext"><code>type</code>  RenderContext</strong>
 
 
@@ -1677,6 +1609,19 @@ A function that interpolate content in a string using a render Scope.
     scope: <a href="#scope">Scope</a>;
     currentNode: Node;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+
+
+
+
+
+<pre>(item: HTMLElement|Text): boolean</pre>
 
 
 

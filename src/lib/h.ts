@@ -1,6 +1,7 @@
 import { CustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
-import { Template, TemplateItems, createFilterableTemplateItems, getSlotted, setSlotted } from './Template';
+import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
+import { getSlotted, setSlotted } from './Slotted';
 import { isInterpolateFunction } from './interpolate';
 import * as registry from './registry';
 import { DOM } from './dom';

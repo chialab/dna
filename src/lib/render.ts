@@ -1,6 +1,7 @@
 import { DOM } from './dom';
 import { Scope, createScope, getScope } from './Scope';
-import { Template, TemplateFilter, getTemplateItemsFilter, getSlotted } from './Template';
+import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
+import { getSlotted } from './Slotted';
 import { isHyperFunction } from './h';
 import { isInterpolateFunction } from './interpolate';
 import { scopeCSS } from './style';
