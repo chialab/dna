@@ -1,5 +1,22 @@
-[![Chialab logo](https://logos.chialab.io/chialab.svg)](https://www.chialab.it)
+<section>
 
-**Chialab is a design company.**
+[![Chialab logo](https://logos.chialab.io/chialab-mini.svg)](https://www.chialab.it)
+
+**[Chialab]((https://www.chialab.it)) is a design company.**
 
 By developing strategy, design, software and content, we generate exciting relationships between brands and people.
+
+</section>
+<section>
+
+<a href="https://github.com/chialab/dna">
+    <img alt="Source link" src="https://img.shields.io/badge/Source-GitHub-lightgrey.svg?style=flat-square">
+</a>
+<a href="https://www.npmjs.com/package/@chialab/dna">
+    <img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square">
+</a>
+<a href="https://github.com/chialab/dna/blob/master/LICENSE">
+    <img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg?style=flat-square">
+</a>
+
+</section>

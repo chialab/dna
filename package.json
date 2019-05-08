@@ -1,7 +1,7 @@
 {
   "name": "@chialab/dna",
   "version": "3.0.0-alpha.3",
-  "description": "Evolution-based components.",
+  "description": "Progressive Web Components",
   "main": "dist/umd/dna.js",
   "module": "dist/esm/dna.js",
   "license": "MIT",
@@ -18,7 +18,8 @@
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "rm -rf dist && rna build --production --name DNA --typings + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
-    "docs": "rna documentate --output docs/API.md --header '# DNA'",
+    "docs": "rna documentate --output docs/API.md --header '# API References'",
+    "website": "node scripts/website/index.js docs --out public",
     "prepack": "npm run build"
   },
   "devDependencies": {
@@ -28,14 +29,17 @@
     "eslint": "^5.15.3",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-mocha": "^5.3.0",
-    "typescript": "^3.3.4000"
+    "js-beautify": "^1.10.0",
+    "marked": "^0.6.2",
+    "typescript": "^3.3.4000",
+    "yargs": "^13.2.2"
+  },
+  "optionalDependencies": {
+    "jsdom": "^15.0.0"
   },
   "directories": {
     "src": "src",
     "lib": "dist",
     "test": "test"
-  },
-  "optionalDependencies": {
-    "jsdom": "^15.0.0"
   }
 }

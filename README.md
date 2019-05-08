@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    Evolution-based components.
+    Progressive Web Components
 </p>
 
 <p align="center">
