@@ -7,7 +7,8 @@ jobs:
     - stage: 'docs'
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
       os: linux
-      node_js: 10
+      node_js:
+        - "node"
       install:
         - pip install --user awscli
         - aws configure set preview.cloudfront true
