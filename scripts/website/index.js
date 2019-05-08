@@ -73,6 +73,12 @@ function template(content) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>${json.name} | ${json.description}</title>
+    <meta name="description" content="${json.name} | ${json.description}">
+    <meta name="theme-color" content="#263238">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="assets/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="assets/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" href="assets/github.min.css">
     <link rel="stylesheet" href="assets/style.css">
     <title>DNA</title>
