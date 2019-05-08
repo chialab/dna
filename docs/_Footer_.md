@@ -9,9 +9,6 @@ By developing strategy, design, software and content, we generate exciting relat
 </section>
 <section>
 
-<a href="https://github.com/chialab/dna">
-    <img alt="Source link" src="https://img.shields.io/badge/Source-GitHub-lightgrey.svg?style=flat-square">
-</a>
 <a href="https://www.npmjs.com/package/@chialab/dna">
     <img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square">
 </a>
