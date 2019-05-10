@@ -1,10 +1,11 @@
+import { createSymbolKey } from './symbols';
 import { InterpolateFunction } from './interpolate';
 import { HyperFunction } from './h';
 
 /**
  * A Symbol which contains a filter function for a list of template items.
  */
-const FILTER_SYMBOL = Symbol();
+const FILTER_SYMBOL = createSymbolKey();
 
 /**
  * The atomic template item.

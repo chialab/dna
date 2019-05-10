@@ -1,9 +1,10 @@
+import { createSymbolKey } from './symbols';
 import { DOM } from './dom';
 
 /**
  * A Symbol which contains all Property instances of a Component.
  */
-const PROPERTIES_SYMBOL = Symbol();
+const PROPERTIES_SYMBOL = createSymbolKey();
 
 /**
  * The observer signature for accessors.

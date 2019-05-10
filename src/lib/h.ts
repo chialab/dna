@@ -1,3 +1,4 @@
+import { createSymbolKey } from './symbols';
 import { CustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
@@ -9,7 +10,7 @@ import { DOM } from './dom';
 /**
  * Symbol for interpolated functions.
  */
-const HYPER_SYMBOL = Symbol();
+const HYPER_SYMBOL = createSymbolKey();
 
 /**
  * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
@@ -29,7 +30,7 @@ export function isHyperFunction(target: any): target is HyperFunction {
 /**
  * A symbol to store node properties.
  */
-const PRIVATE_CONTEXT_SYMBOL = Symbol();
+const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
 
 /**
  * Represent HTML elements with a defined key.

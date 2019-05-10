@@ -1,9 +1,10 @@
+import { createSymbolKey } from './symbols';
 import { Scope } from './Scope';
 
 /**
  * Symbol for interpolated functions.
  */
-const INTERPOLATED_SYMBOL = Symbol();
+const INTERPOLATED_SYMBOL = createSymbolKey();
 
 /**
  * A function that interpolate content in a string using a render Scope.

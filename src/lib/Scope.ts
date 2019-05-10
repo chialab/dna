@@ -1,7 +1,9 @@
+import { createSymbolKey } from './symbols';
+
 /**
  * The scope symbol.
  */
-const SCOPE_SYMBOL = Symbol();
+const SCOPE_SYMBOL = createSymbolKey();
 
 /**
  * The Scope object set up a chain of scopes for templates in a render context.

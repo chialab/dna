@@ -6,6 +6,19 @@ branches:
 
 jobs:
   include:
+    - stage: test
+      env: CI_BUILD_TYPE=default
+      node_js: 10
+      before_install:
+        - yarn config set registry https://registry.npmjs.org/
+        - yarn add @chialab/rna-cli@beta codecov -D
+      install:
+        - yarn
+      script:
+        - yarn build
+        - yarn test:node
+      after_success:
+        - cat reports/unit/coverage/*/lcov.info | ./node_modules/.bin/codecov
     - stage: 'docs'
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
       os: linux
@@ -13,6 +26,7 @@ jobs:
       install:
         - pip install --user awscli
         - aws configure set preview.cloudfront true
+        - yarn config set registry https://registry.npmjs.org/
         - yarn add @chialab/rna-cli@beta -D
       script:
         - yarn

@@ -1,7 +1,9 @@
+import { createSymbolKey } from './symbols';
+
 /**
  * A symbol to store already shimmed constructors.
  */
-const SHIM_SYMBOL = Symbol();
+const SHIM_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,

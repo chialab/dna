@@ -1,9 +1,10 @@
+import { createSymbolKey } from './symbols';
 import { TemplateItems, Template } from './Template';
 
 /**
  * A Symbol which contains slotted children of a Component.
  */
-const SLOTTED_SYMBOL = Symbol();
+const SLOTTED_SYMBOL = createSymbolKey();
 
 /**
  * Get slotted children of a template item.

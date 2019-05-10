@@ -1,7 +1,9 @@
+import { createSymbolKey } from './symbols';
+
 /**
  * A Symbol which contains all Node delegation.
  */
-const EVENT_CALLBACKS_SYMBOL = Symbol();
+const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * Describe the signature of a delegated event callback.

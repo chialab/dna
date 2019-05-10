@@ -2,8 +2,9 @@
   "name": "@chialab/dna",
   "version": "3.0.0-alpha.3",
   "description": "Progressive Web Components",
-  "main": "dist/umd/dna.js",
+  "main": "dist/cjs/dna.js",
   "module": "dist/esm/dna.js",
+  "browser": "dist/umd/dna.js",
   "license": "MIT",
   "lib": "src/dna.ts",
   "types": "./dist/dna.d.ts",
@@ -18,6 +19,10 @@
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "rm -rf dist && rna build --production --name DNA --typings + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
+    "test": "rna unit 'test/**/*.spec.js' --coverage",
+    "test:node": "rna unit 'test/**/*.spec.js' --node --coverage",
+    "test:browser": "rna unit 'test/**/*.spec.js' --browser --coverage",
+    "test:saucelabs": "rna unit 'test/**/*.spec.js' --saucelabs --coverage",
     "docs": "rna documentate --output docs/API.md --header '# API References'",
     "website": "node scripts/website/index.js docs --out public",
     "prepack": "npm run build"
