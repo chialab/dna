@@ -137,7 +137,7 @@ render(document.body, new HelloWorld);
 
 [![Travis status](https://img.shields.io/travis/chialab/dna/3.0.0.svg?style=flat-square)](https://travis-ci.org/chialab/dna)
 [![Code coverage](https://img.shields.io/codecov/c/github/chialab/dna/3.0.0.svg?style=flat-square)](https://codecov.io/gh/chialab/dna)
-[![Saucelabs](https://badges.herokuapp.com/sauce/chialab-sl-012?labels=none&style=flat-square)](https://saucelabs.com/u/chialab-sl-012)
+[![Saucelabs](https://badges.herokuapp.com/sauce/chialab-sl-003?labels=none&style=flat-square)](https://saucelabs.com/u/chialab-sl-003)
 
 ### Requirements
 
@@ -158,7 +158,7 @@ This will generate the UMD and ESM bundles in the `dist` folder, as well as the 
 
 ### Test the project
 
-Build the project, then run the `test` script:
+Run the `test` script:
 
 ```
 $ yarn test

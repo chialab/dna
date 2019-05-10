@@ -19,10 +19,11 @@
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "rm -rf dist && rna build --production --name DNA --typings + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
-    "test": "rna unit 'test/**/*.spec.js' --coverage",
-    "test:node": "rna unit 'test/**/*.spec.js' --node --coverage",
-    "test:browser": "rna unit 'test/**/*.spec.js' --browser --coverage",
-    "test:saucelabs": "rna unit 'test/**/*.spec.js' --saucelabs --coverage",
+    "build:test": "rm -rf dist && rna build --name DNA + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
+    "test": "npm run build:test && rna unit 'test/**/*.spec.js' --coverage",
+    "test:node": "npm run build:test && rna unit 'test/**/*.spec.js' --node --coverage",
+    "test:browser": "npm run build:test && rna unit 'test/**/*.spec.js' --browser --coverage",
+    "test:saucelabs": "npm run build:test && rna unit 'test/**/*.spec.js' --saucelabs --coverage",
     "docs": "rna documentate --output docs/API.md --header '# API References'",
     "website": "node scripts/website/index.js docs --out public",
     "prepack": "npm run build"
