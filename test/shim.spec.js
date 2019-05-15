@@ -2,9 +2,8 @@
 import { getModule } from './module.js';
 
 describe('shim', () => {
-    const { shim } = getModule();
-
-    it('should create class shim', () => {
+    it('should create class shim', async () => {
+        const { shim } = await getModule();
         const TestObject = class extends Object { };
         const ShimTestObject = shim(TestObject);
 

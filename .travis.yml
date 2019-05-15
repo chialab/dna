@@ -17,7 +17,7 @@ jobs:
       script:
         - yarn test:node
       after_success:
-        - cat reports/unit/coverage/*/lcov.info | ./node_modules/.bin/codecov
+        - cat test/__coverage__/*/lcov.info | ./node_modules/.bin/codecov
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
@@ -30,7 +30,7 @@ jobs:
       script:
         - yarn test:saucelabs
       after_success:
-        - cat reports/unit/coverage/*/lcov.info | ./node_modules/.bin/codecov
+        - cat test/__coverage__/*/lcov.info | ./node_modules/.bin/codecov
     - stage: 'docs'
       env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
       os: linux

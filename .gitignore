@@ -9,13 +9,13 @@ yarn-error.log
 .stylelintcache
 
 # TEST
-/reports
+/test/__coverage__
+/test/__generated__
 
 # BUILD
-dist
-public
+/dist
+/public
 
 # RNA
 
 local
-public
