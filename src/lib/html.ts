@@ -12,24 +12,34 @@ function isTemplateTag(node: any): node is HTMLTemplateElement {
     return node && node.tagName === 'TEMPLATE';
 }
 
+enum Namespaces {
+    SVG = 'http://www.w3.org/2000/svg',
+}
+
 /**
  * Convert nodes into virtual DOM template.
  *
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(node: HTMLElement): HyperFunction;
+function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperFunction;
 function innerCompile(node: Text): InterpolateFunction;
-function innerCompile(node: Node[]): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(node: NodeList): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(node: HTMLElement | Text | NodeList | Node[]): Template | Template[] {
+function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
+function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
+function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (DOM.isElement(node)) {
         // the current node is an element
         // get the tag name
         const tag = node.localName;
 
+        if (tag === 'svg') {
+            namespace = Namespaces.SVG;
+        }
+
         // use node's attributes as properties
-        const properties: any = {};
+        const properties: any = {
+            namespaceURI: namespace,
+        };
         for (let i = 0; i < node.attributes.length; i++) {
             let attr = node.attributes[i];
             if (attr.value === '') {
@@ -47,7 +57,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[]): Template | 
         }
 
         // compile children and use their virtual DOM functions
-        return h(tag, properties, ...innerCompile(childNodes));
+        return h(tag, properties, ...innerCompile(childNodes, namespace));
     }
 
     if (DOM.isText(node)) {
@@ -70,7 +80,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[]): Template | 
     }
 
     // iterate nodes and convert them to virtual DOM using the internal function
-    return children.map((child) => innerCompile(child as any));
+    return children.map((child) => innerCompile(child as any, namespace));
 }
 
 /**

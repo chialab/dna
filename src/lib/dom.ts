@@ -6,13 +6,13 @@ import { CustomElement } from './CustomElement';
  */
 let lifeCycle = true;
 
-let Element: typeof HTMLElement = (typeof HTMLElement !== 'undefined') ? shim(HTMLElement) : (class {} as typeof HTMLElement);
+let ShimElement: typeof HTMLElement = (typeof HTMLElement !== 'undefined') ? shim(HTMLElement) : (class {} as typeof HTMLElement);
 
 /**
  * The abstact HTMLElement that Component extends.
  * It proxies the DOM.Element class.
  */
-export class BaseElement extends Element { }
+export class BaseElement extends ShimElement { }
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -40,11 +40,11 @@ export const DOM = {
      * The base HTMLElement constructor.
      */
     get HTMLElement() {
-        return Element;
+        return ShimElement;
     },
     set HTMLElement(constructor: typeof HTMLElement) {
-        Object.setPrototypeOf(Element.prototype, constructor.prototype);
-        Element = constructor;
+        Object.setPrototypeOf(ShimElement.prototype, constructor.prototype);
+        ShimElement = constructor;
     },
 
     /**
@@ -62,7 +62,7 @@ export const DOM = {
      * @return The node is a HTMLElement instance.
      */
     isElement(node: any): node is HTMLElement {
-        return node instanceof this.HTMLElement;
+        return node && node.nodeType === this.Node.ELEMENT_NODE;
     },
 
     /**
@@ -71,7 +71,7 @@ export const DOM = {
      * @return The node is a Text instance.
      */
     isText(node: any): node is Text {
-        return node instanceof this.Text;
+        return node && node.nodeType === this.Node.TEXT_NODE;
     },
 
     /**
@@ -101,10 +101,20 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement(tagName: string): HTMLElement {
+    createElement(tagName: string): Element {
         return this.document.createElement(tagName);
     },
 
+    /**
+     * Create a new DOM element node for the specified tag using a namespace.
+     *
+     * @param namespaceURI The namespace of the tag.
+     * @param tagName The specified tag.
+     * @return The new DOM element instance.
+     */
+    createElementNS(namespaceURI: string, tagName: string): Element {
+        return this.document.createElementNS(namespaceURI, tagName);
+    },
 
     /**
      * Create a new DOM text node from the specified value.
@@ -122,9 +132,9 @@ export const DOM = {
      * @param parent The parent element.
      * @param newChild The child to add.
      */
-    appendChild<T extends Node>(parent: HTMLElement, newChild: T): T {
+    appendChild<T extends Node>(parent: Element, newChild: T): T {
         if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as HTMLElement, newChild);
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.HTMLElement.prototype.appendChild.call(parent, newChild);
         this.connect(newChild);
@@ -137,7 +147,7 @@ export const DOM = {
      * @param parent The parent element.
      * @param oldChild The child to remove.
      */
-    removeChild<T extends Node>(parent: HTMLElement, oldChild: T): T {
+    removeChild<T extends Node>(parent: Element, oldChild: T): T {
         this.HTMLElement.prototype.removeChild.call(parent, oldChild);
         this.disconnect(oldChild);
         return oldChild;
@@ -150,12 +160,12 @@ export const DOM = {
      * @param newChild The child to insert.
      * @param refChild The referred node.
      */
-    insertBefore<T extends Node>(parent: HTMLElement, newChild: T, refChild: Node | null): T {
+    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
         if (refChild && refChild.previousSibling === newChild) {
             return newChild;
         }
         if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as HTMLElement, newChild);
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.HTMLElement.prototype.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
@@ -169,12 +179,12 @@ export const DOM = {
      * @param newChild The child to insert.
      * @param oldChild The node to replace.
      */
-    replaceChild<T extends Node>(parent: HTMLElement, newChild: Node, oldChild: T): T {
+    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
         if (oldChild === newChild) {
             return oldChild;
         }
         if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as HTMLElement, newChild);
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.HTMLElement.prototype.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
@@ -188,7 +198,7 @@ export const DOM = {
      * @param element The node element
      * @param qualifiedName The attribute name
      */
-    getAttribute(element: HTMLElement, qualifiedName: string): string | null {
+    getAttribute(element: Element, qualifiedName: string): string | null {
         return this.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
@@ -198,7 +208,7 @@ export const DOM = {
      * @param element The node element to check.
      * @param qualifiedName The attribute name to check.
      */
-    hasAttribute(element: HTMLElement, qualifiedName: string): boolean {
+    hasAttribute(element: Element, qualifiedName: string): boolean {
         return this.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
@@ -209,7 +219,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to add/set.
      * @param value The value to set.
      */
-    setAttribute(element: HTMLElement, qualifiedName: string, value: string): void {
+    setAttribute(element: Element, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
         if (lifeCycle && this.isCustomElement(element)) {
@@ -223,7 +233,7 @@ export const DOM = {
      * @param element The element node to update.
      * @param qualifiedName The attribute name to remove.
      */
-    removeAttribute(element: HTMLElement, qualifiedName: string) {
+    removeAttribute(element: Element, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
         if (lifeCycle && this.isCustomElement(element)) {

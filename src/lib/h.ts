@@ -16,7 +16,7 @@ const HYPER_SYMBOL = createSymbolKey();
  * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
  * returns a Template result for a given previous node at the current position in a render context.
  */
-export type HyperFunction = (this: Scope, previousElement?: HTMLElement) => Template | TemplateItems;
+export type HyperFunction = (this: Scope, previousElement?: Element) => Template | TemplateItems;
 
 /**
  * Check if the reference is a HyperFunction.
@@ -36,7 +36,7 @@ const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
  * Represent HTML elements with a defined key.
  * Keys can be **any** value and are used to perform diff checking between two nodes with the same tag.
  */
-type KeyedElement = HTMLElement & { key?: any };
+type KeyedElement = Element & { key?: any };
 
 /**
  * Compare a child already in the tree with the Node requested by the patch.
@@ -47,7 +47,7 @@ type KeyedElement = HTMLElement & { key?: any };
  * @param oldNode The previous Node to compare
  * @return The same old Node instance or a new one
  */
-function getRoot(constructor: string | typeof HTMLElement, key: string | undefined, oldNode?: KeyedElement): HTMLElement {
+function getRoot(constructor: string | typeof Element, key?: string, namespaceURI?: string, oldNode?: KeyedElement): Element {
     // start the comparison
     if (typeof constructor === 'function') {
         // the requested Node is a Component and/or the previous Node is it,
@@ -64,16 +64,21 @@ function getRoot(constructor: string | typeof HTMLElement, key: string | undefin
         return oldNode;
     }
     // create a new Node
+    if (namespaceURI) {
+        return DOM.createElementNS(namespaceURI, constructor);
+    }
     return DOM.createElement(constructor);
 }
 
 export type HyperProperties = {
     is?: string;
     slot?: string;
+    key?: any;
+    namespaceURI?: string;
     [key: string]: any;
 };
 
-export const Fragment = function() {} as any as typeof HTMLElement;
+export const Fragment = function() {} as any as typeof Element;
 
 /**
  * HyperFunction factory to use as JSX pragma.
@@ -82,11 +87,12 @@ export const Fragment = function() {} as any as typeof HTMLElement;
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export function h(tag: string | typeof HTMLElement, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction {
+export function h(tag: string | typeof Element, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction {
     let isFragment: boolean, isTemplate: boolean, isSlot: boolean;
     // Patch instances could be generated from the `h` function using JSX,
     // so the first parameter could be the Node constructor
-    let Component: typeof HTMLElement | null = null;
+    let Component: typeof Element | null = null;
+    let propertiesToSet = properties || {};
 
     if (typeof tag === 'function') {
         isFragment = tag === Fragment;
@@ -97,14 +103,14 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
 
         // Also a real tag name can produce a Component instance,
         // if the tag is registered as Component or the `is` property is defined
-        let name = properties && properties.is || tag;
+        let name = propertiesToSet.is || tag;
         if (registry.has(name)) {
             // get the constructor from the registry
             Component = registry.get(name).constructor;
         }
     }
 
-    const fn = function(this: Scope, previousElement?: HTMLElement) {
+    const fn = function(this: Scope, previousElement?: Element) {
         // if the current patch is a JSX Fragment,
         if (isFragment) {
             // just return children
@@ -113,9 +119,9 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
 
         // update the Node properties
         let props: HyperProperties = {};
-        for (let property in properties) {
-            let value = properties[property];
-            if (isInterpolateFunction(value)) {
+        for (let property in propertiesToSet) {
+            let value = propertiesToSet[property];
+            if (value && isInterpolateFunction(value)) {
                 // resolve interpolated properties
                 value = value.call(this);
             }
@@ -187,9 +193,18 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
         // or start the comparison between the old node and the requested one
         // if old and the requested are compatible,
         // the`root` contains the old Node or the old Component intance
-        let element = getRoot(Component || tag, props.key, previousElement);
+        let namespaceURI = props.namespaceURI;
+        delete props.namespaceURI;
+
+        let element = getRoot(Component || tag, props.key, namespaceURI, previousElement);
+        let context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
         let isCustomElement = DOM.isCustomElement(element);
         // update the Node properties
+        for (let propertyKey in context) {
+            if (!(propertyKey in props)) {
+                props[propertyKey] = null;
+            }
+        }
         for (let propertyKey in props) {
             let value = props[propertyKey];
 
@@ -198,10 +213,9 @@ export function h(tag: string | typeof HTMLElement, properties: HyperProperties 
                     // the property should be update
                     (element as any)[propertyKey] = value;
                 }
-            } else {
-                let context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
-                if (context[propertyKey] !== value) {
-                    context[propertyKey] = value;
+            } else if (context[propertyKey] !== value) {
+                context[propertyKey] = value;
+                if (!namespaceURI) {
                     (element as any)[propertyKey] = value;
                 }
             }
