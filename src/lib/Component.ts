@@ -267,6 +267,27 @@ export class Component extends BaseElement {
     }
 
     /**
+     * Dispatch a custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean) {
+        if (typeof event === 'string') {
+            event = new DOM.CustomEvent(event, {
+                detail,
+                bubbles,
+                cancelable,
+                composed,
+            });
+        }
+        return super.dispatchEvent(event);
+    }
+
+    /**
      * Delegate an Event listener.
      *
      * @param eventName The event name to listen

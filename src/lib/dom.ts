@@ -37,6 +37,11 @@ export const DOM = {
     Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
 
     /**
+     * The base CustomEvent constructor.
+     */
+    CustomEvent: (typeof CustomEvent !== 'undefined' ? CustomEvent : undefined) as typeof CustomEvent,
+
+    /**
      * The base HTMLElement constructor.
      */
     get HTMLElement() {

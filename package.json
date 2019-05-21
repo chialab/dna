@@ -18,8 +18,8 @@
   "homepage": "https://dna.chialab.io",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
-    "build": "rm -rf dist && rna build --production --name DNA --typings + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs",
-    "build:test": "rm -rf dist && rna build --name DNA --map inline + build src/node.ts --output 'dist/node/dna.js' --name DNA --format cjs --map inline",
+    "build": "rna build --production --name DNA --typings + build src/adapters/node.ts --output 'dist/adapters/node.js' --name DNA --format cjs",
+    "build:test": "rna build --name DNA --map inline + build src/adapters/node.ts --output 'dist/adapters/node.js' --name DNA --format cjs --map inline",
     "test": "npm run build:test && rna unit 'test/**/*.spec.js' --coverage",
     "test:node": "npm run build:test && rna unit 'test/**/*.spec.js' --node --coverage",
     "test:browser": "npm run build:test && rna unit 'test/**/*.spec.js' --browser --coverage",

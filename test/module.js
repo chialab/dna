@@ -1,6 +1,9 @@
+import * as DNA from '../dist/esm/dna.js';
+
 export async function getModule() {
-    if (typeof window !== 'undefined') {
-        return await import('../dist/esm/dna.js');
+    if (typeof window === 'undefined') {
+        const { adapter } = await import('../dist/adapters/node.js');
+        adapter(DNA);
     }
-    return await import('../dist/node/dna');
+    return DNA;
 }
