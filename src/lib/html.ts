@@ -22,11 +22,11 @@ enum Namespaces {
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperFunction;
+function innerCompile(node: Element, namespace?: Namespaces): HyperFunction;
 function innerCompile(node: Text): InterpolateFunction;
 function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
 function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
+function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (DOM.isElement(node)) {
         // the current node is an element
         // get the tag name
@@ -65,7 +65,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
         return interpolate(node.textContent || '');
     }
 
-    const children: Array<HTMLElement | Text> = [];
+    const children: Array<Element | Text> = [];
     for (let i = 0, len = node.length; i < len; i++) {
         let child = node[i];
         let nextChild = node[i + 1];

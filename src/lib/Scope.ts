@@ -10,7 +10,7 @@ const SCOPE_SYMBOL = createSymbolKey();
  * It is possibile to assign properties only to a Component's scope,
  * or create a child scope which inherits properties from the current scope.
  */
-export type Scope = HTMLElement & {
+export type Scope = Element & {
     [key: string]: any;
     /**
      * Assign values to the Scope.
@@ -30,7 +30,7 @@ export type Scope = HTMLElement & {
  * @param prototype The initial prototype object for the Scope.
  * @return An object with the Scope interface.
  */
-export function createScope(prototype: HTMLElement) {
+export function createScope(prototype: Element) {
     const scope = {} as Scope;
     scope.__proto__ = {
         $assign(this: Scope, values: { [key: string]: any }) {

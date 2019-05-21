@@ -56,7 +56,7 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @return The resulting child Nodes.
  */
-export function render(node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void {
+export function render(node: Element, input: Template, context?: RenderContext): Template | Template[] | void {
     const renderContext = context || {
         scope: getScope(node) || createScope(node),
         result: [],
@@ -84,7 +84,7 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
         } else if (isInterpolateFunction(input)) {
             render(node, input.call(scope), inputContext);
         } else if (isHyperFunction(input)) {
-            render(node, input.call(scope, iterating.node as HTMLElement), inputContext);
+            render(node, input.call(scope, iterating.node as Element), inputContext);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
 

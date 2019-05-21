@@ -1,4 +1,5 @@
 import * as registry from './registry';
+import { CustomElement } from './CustomElement';
 import { DOM } from './dom';
 
 /**
@@ -8,8 +9,8 @@ import { DOM } from './dom';
  * @param root The document root to query.
  * @return A list of instantiated elements.
  */
-export function bootstrap(root: HTMLElement): HTMLElement[] {
-    let elements: HTMLElement[] = [];
+export function bootstrap(root: HTMLElement): CustomElement[] {
+    let elements: CustomElement[] = [];
     // iterate registry entries in order to retrieve all registered tags
     registry.entries().forEach(({ name, constructor }) => {
         // find all nodes for the current Component configuration

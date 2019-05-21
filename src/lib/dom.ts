@@ -62,11 +62,11 @@ export const DOM = {
     },
 
     /**
-     * Check if a node is a HTMLElement instance.
+     * Check if a node is an Element instance.
      * @param node The node to check.
-     * @return The node is a HTMLElement instance.
+     * @return The node is an Element instance.
      */
-    isElement(node: any): node is HTMLElement {
+    isElement(node: any): node is Element {
         return node && node.nodeType === this.Node.ELEMENT_NODE;
     },
 

@@ -51,14 +51,14 @@ export type AccessorDescriptor = PropertyDescriptor & {
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (this: HTMLElement, value?: any) => any;
+    getter?: (this: Element, value?: any) => any;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (this: HTMLElement, newValue?: any) => any;
+    setter?: (this: Element, newValue?: any) => any;
 }
 
 /**
@@ -77,22 +77,22 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
         value = descriptor.defaultValue;
     }
 
-    let get = function(this: HTMLElement) {
+    let get = function(this: Element) {
         return value;
     };
     if (descriptor.getter) {
         let getter = descriptor.getter;
-        get = function(this: HTMLElement) {
+        get = function(this: Element) {
             return getter.call(this, value);
         };
     }
 
-    let set = function(this: HTMLElement, val: any) {
+    let set = function(this: Element, val: any) {
         return val;
     };
     if (descriptor.setter) {
         let setter = descriptor.setter;
-        set = function(this: HTMLElement, val) {
+        set = function(this: Element, val) {
             return setter.call(this, val);
         };
     }
@@ -107,7 +107,7 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
     let computedAttribute = descriptor.attribute as string;
 
     finalDescriptor.get = get;
-    finalDescriptor.set = function(this: HTMLElement, newValue: any) {
+    finalDescriptor.set = function(this: Element, newValue: any) {
         let oldValue = value;
         newValue = set.call(this, newValue);
         if (oldValue !== newValue) {
@@ -154,7 +154,7 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
  * @param propertyKey The name of the property.
  * @param descriptor The accessor descriptor.
  */
-export function defineProperty(target: HTMLElement, propertyKey: string, descriptor: AccessorDescriptor): void {
+export function defineProperty(target: Element, propertyKey: string, descriptor: AccessorDescriptor): void {
     const descriptors = (target as any)[PROPERTIES_SYMBOL] || {};
     descriptors[propertyKey] = descriptor;
     (target as any)[PROPERTIES_SYMBOL] = descriptors;
@@ -174,7 +174,7 @@ export function defineProperty(target: HTMLElement, propertyKey: string, descrip
  * @param target The target element.
  * @return A list of accessor descriptors keyed by property names.
  */
-export function getProperties(target: HTMLElement): { [key: string]: AccessorDescriptor } {
+export function getProperties(target: Element): { [key: string]: AccessorDescriptor } {
     return (target as any)[PROPERTIES_SYMBOL] || {};
 }
 
@@ -185,7 +185,7 @@ export function getProperties(target: HTMLElement): { [key: string]: AccessorDes
  * @return The decorator initializer.
  */
 export function property(descriptor: AccessorDescriptor = {}) {
-    return (target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+    return (target: Element, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         descriptor.defaultValue = originalDescriptor.value;
         defineProperty(target, propertyKey, descriptor);
     };
