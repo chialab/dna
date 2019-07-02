@@ -44,7 +44,7 @@ If you are familiar with JSX, you can write your templates using the React synta
 
 ### Properties, async render, slots... and more!
 
-DNA comes with a lot of features in a very small (< 5kb gzipped) package. You can use `<slot>` elements like in Shadow DOM contexts, render `Promise`s results, observe properties changes and delegate events.
+DNA comes with a lot of features in a very small (~ 5kb gzipped) package. You can use `<slot>` elements like in Shadow DOM contexts, render async results, observe properties changes and delegate events.
 
 ## Get the library
 
@@ -52,12 +52,15 @@ Usage via [unpkg.com](https://unpkg.com/):
 ```html
 <!-- As UMD package -->
 <script src="https://unpkg.com/@chialab/dna" type="text/javascript"></script>
+<script>
+    class MyComponent extends DNA.Component {}
+</script>
 
 <!-- As module -->
 <script type="module">
     import('https://unpkg.com/@chialab/dna?module')
-        .then((DNA) => {
-            //
+        .then(({ Component }) => {
+            class MyComponent extends Component {}
         });
 </script>
 ```
@@ -69,6 +72,13 @@ $ npm install @chialab/dna
 # Yarn
 $ yarn add @chialab/dna
 ```
+
+```ts
+import { Component } from '@chialab/dna';
+
+class MyComponent extends Component {}
+```
+
 
 ## Define a Component
 

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Mono&display=swap');
+
 html, body {
     margin: 0;
     padding: 0;
@@ -142,6 +144,11 @@ main nav ul {
     list-style: none;
 }
 
+main nav ul li li {
+    margin-left: 1em;
+    font-size: 0.8em;
+}
+
 main {
     background: #fff;
     padding: 0;
@@ -187,8 +194,14 @@ article h3 {
     z-index: 2;
     background: rgba(255, 255, 255, 0.98);
     top: 0;
-    margin: 0 0 0 -1px;
+    margin: 1em 0 0 -1px;
     padding: 0.5em 0;
+}
+
+article h1:first-child,
+article h2:first-child,
+article h3:first-child {
+    margin: 0 0 0 -1px;
 }
 
 article code {
@@ -197,9 +210,9 @@ article code {
     display: inline-block;
     padding: 0.25em;
     background: #f7f3f7;
-    font-family: monospace;
+    font-family: 'Fira Mono', monospace;
     line-height: 1.2em;
-    font-size: 1.1em;
+    font-size: 0.9em;
 }
 
 article pre {
@@ -217,6 +230,7 @@ article pre code.hljs {
     max-width: 100%;
     color: #333;
     background: #f7f3f7;
+    line-height: 2em;
 }
 
 article code.hljs .hljs-keyword {
@@ -259,6 +273,41 @@ article table thead {
 article table code {
     white-space: nowrap;
     overflow-x: auto;
+}
+
+article table thead code {
+    vertical-align: middle;
+}
+
+article blockquote {
+    margin: 0;
+    padding: 1rem;
+    background: #f7f3f7;
+}
+
+article blockquote p:first-child {
+    margin-top: 0;
+}
+
+article blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+article ul {
+    padding: 0;
+    margin: 0 0 1em 0;
+    list-style: none;
+}
+
+article ul li::before {
+    content: '';
+    display: inline-block;
+    margin-right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 100%;
+    vertical-align: middle;
 }
 
 footer {

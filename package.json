@@ -25,7 +25,7 @@
     "test:browser": "npm run build:test && rna unit 'test/**/*.spec.js' --browser --coverage",
     "test:saucelabs": "npm run build:test && rna unit 'test/**/*.spec.js' --saucelabs --coverage",
     "docs": "rna documentate --output docs/API.md --header '# API References'",
-    "website": "node scripts/website/index.js docs --out public",
+    "website": "node scripts/website/index.js docs --out public --title 'DNA'",
     "prepack": "npm run build"
   },
   "devDependencies": {
