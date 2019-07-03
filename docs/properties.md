@@ -96,6 +96,10 @@ You can also pass an array of property observers using the **observers** configu
 
 </aside>
 
+#### event
+
+The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`).
+
 #### getter
 
 Define a custom getter function for the property. It receives the actual property value as argument and it can return the same reference or any new value.
