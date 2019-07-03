@@ -57,4 +57,8 @@ All methods inherit the prototype signature with the context node as first argum
 | `setAttribute(qualifiedName, value)` | `setAttribute(element, qualifiedName, value)` |
 | `removeAttribute(qualifiedName)` | `removeAttribute(element, qualifiedName)` |
 
-> Please note that all DNA Components already wrap those methods with the `DOM` helper.
+<aside class="note">
+
+Please note that all DNA Components already wrap those methods with the `DOM` helper.
+
+</aside>

@@ -189,11 +189,7 @@ article h3 {
 article h1,
 article h2,
 article h3 {
-    position: sticky;
     width: calc(100% + 2px);
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.98);
-    top: 0;
     margin: 1em 0 0 -1px;
     padding: 0.5em 0;
 }
@@ -235,6 +231,11 @@ article pre code.hljs {
 
 article code.hljs .hljs-keyword {
     color: #1E90FF;
+    font-weight: normal;
+}
+
+article code.hljs .hljs-meta {
+    color: #ff1e7c;
     font-weight: normal;
 }
 
@@ -280,18 +281,56 @@ article table thead code {
 }
 
 article blockquote {
-    margin: 0;
-    padding: 1rem;
-    background: #f7f3f7;
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    border-left: solid 6px #f7f3f7;
+    font-style: italic;
 }
 
+article aside {
+    position: relative;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-top: dashed 4px #f7f3f7;
+    border-bottom: dashed 4px #f7f3f7;
+    font-size: 0.9em;
+}
+
+article p {
+    margin-bottom: 0.75em;
+}
+
+article aside[class] {
+    padding-left: 2.5rem;
+}
+
+article aside::before {
+    position: absolute;
+    top: 1rem;
+    left: 0.5rem;
+    line-height: 1em;
+}
+
+article aside.tip::before {
+    content: '♛';
+    font-size: 1.3em;
+}
+
+article aside.note::before {
+    content: '✎';
+    font-size: 1.5em;
+}
+
+article aside p:first-child,
 article blockquote p:first-child {
     margin-top: 0;
 }
 
+article aside p:last-child,
 article blockquote p:last-child {
     margin-bottom: 0;
 }
+
 
 article ul {
     padding: 0;
