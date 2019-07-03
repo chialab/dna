@@ -1,5 +1,7 @@
 # Get the library
 
+DNA is distribuited as UMD package, ES module and CommonJS (Node) module. Follow the [Github release](https://github.com/chialab/dna/releases) page for changelog, new features and bug fixes.
+
 Usage via [unpkg.com](https://unpkg.com/):
 ```html
 <!-- As UMD package -->
@@ -25,8 +27,27 @@ $ npm install @chialab/dna
 $ yarn add @chialab/dna
 ```
 
+If you are using Webpack, Rollup or Parcel:
+
 ```ts
 import { Component } from '@chialab/dna';
 
 class MyComponent extends Component { ... }
+```
+
+If you prefer Browserify:
+
+```ts
+const { Component } = require('@chialab/dna');
+
+class MyComponent extends Component { ... }
+```
+
+In Node:
+
+```js
+const DNA = require('@chialab/dna');
+require('@chialab/dna/dist/adapters/node').adapter(DNA);
+
+class MyComponent extends DNA.Component { ... }
 ```

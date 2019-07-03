@@ -1,4 +1,4 @@
-# DNA
+# API References
 
 
 
@@ -11,12 +11,12 @@
 
 **Methods**
 
-<a href="#render">render</a>, <a href="#define">define</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#interpolate">interpolate</a>, <a href="#bootstrap">bootstrap</a>, <a href="#property">property</a>, <a href="#delegate">delegate</a>, <a href="#undelegate">undelegate</a>
+<a href="#shim">shim</a>, <a href="#render">render</a>, <a href="#define">define</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#interpolate">interpolate</a>, <a href="#bootstrap">bootstrap</a>, <a href="#property">property</a>, <a href="#delegate">delegate</a>, <a href="#undelegate">undelegate</a>
 
 
 **Constants**
 
-<a href="#dom">DOM</a>
+<a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>
 
 
 
@@ -43,24 +43,24 @@ All DNA components **must** extends this class.
 <strong>Examples</strong>
 
 ```ts
- import { Component, property, define, render } from '@chialab/dna';
+import { Component, property, define, render } from '@chialab/dna';
 
- class HelloWorld extends Component {
-   @property() // define an observable Component property
-   name: string;
+class HelloWorld extends Component {
+  @property() // define an observable Component property
+  name: string;
 
-   get events() { // define a list of delegated events
-     return {
-       'input [name="name"]': (ev, target) => {
-         this.name = target.value;
-       },
-     };
-   }
- }
+  get events() { // define a list of delegated events
+    return {
+      'input [name="name"]': (ev, target) => {
+        this.name = target.value;
+      },
+    };
+  }
+}
 
- // link the Component class to a tag
- define('hello-world', HelloWorld);
- ```
+// link the Component class to a tag
+define('hello-world', HelloWorld);
+```
 
 <strong>Properties</strong>
 
@@ -442,6 +442,73 @@ Unobserve a Component Property.
 </table>
 
 <strong>Returns</strong>: <code>void</code> 
+
+<br />
+</details>
+
+
+
+
+
+<br />
+
+<strong id="dispatchevent"><code>method</code>  dispatchEvent</strong>
+
+
+
+<p>
+
+Dispatch a custom Event.
+
+</p>
+
+<details>
+<summary>
+<code>(event: Event|string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean</code>
+</summary><br />
+
+
+
+<strong>Params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>event</td>
+            <td><code>Event|string</code></td>
+            <td align="center"></td>
+            <td>The event to dispatch or the name of the synthetic event to create.</td></tr>
+<tr>
+            <td>detail</td>
+            <td><code>CustomEventInit</code></td>
+            <td align="center">✓</td>
+            <td>Detail object of the event.</td></tr>
+<tr>
+            <td>bubbles</td>
+            <td><code>boolean</code></td>
+            <td align="center">✓</td>
+            <td>Should the event bubble.</td></tr>
+<tr>
+            <td>cancelable</td>
+            <td><code>boolean</code></td>
+            <td align="center">✓</td>
+            <td>Should the event be cancelable.</td></tr>
+<tr>
+            <td>composed</td>
+            <td><code>boolean</code></td>
+            <td align="center">✓</td>
+            <td>Is the event composed.</td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code>boolean</code> 
 
 <br />
 </details>
@@ -975,7 +1042,7 @@ Remove a Component attribute.
     
 
 
-<strong>Extends:</strong> <a href="#element">Element</a>
+<strong>Extends:</strong> <a href="#shimelement">ShimElement</a>
 
 <p>
 
@@ -999,6 +1066,55 @@ It proxies the DOM.Element class.
 
 <hr />
 
+<strong id="shim"><code>method</code>  shim</strong>
+
+
+
+<p>
+
+Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
+because using `new HTMLElement()` in browsers throw `Illegal constructor`.
+
+</p>
+
+<details>
+<summary>
+<code>(Constructor: HTMLElement): HTMLElement</code>
+</summary><br />
+
+
+
+<strong>Params</strong>
+
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Constructor</td>
+            <td><code>HTMLElement</code></td>
+            <td align="center"></td>
+            <td>The constructor or the class to shim.</td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code>HTMLElement</code> A newable constructor with the same prototype.
+
+<br />
+</details>
+
+
+
+
+
+
+<hr />
+
 <strong id="render"><code>method</code>  render</strong>
 
 
@@ -1012,7 +1128,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <details>
 <summary>
-<code>(node: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#rendercontext">RenderContext</a>): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
+<code>(node: Element, input: <a href="#template">Template</a>, context?: <a href="#rendercontext">RenderContext</a>): <a href="#template">Template</a>|<a href="#template">Template</a>[]|void</code>
 </summary><br />
 
 
@@ -1029,7 +1145,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
     <tbody>
         <tr>
             <td>node</td>
-            <td><code>HTMLElement</code></td>
+            <td><code>Element</code></td>
             <td align="center"></td>
             <td>The root Node for the render.</td></tr>
 <tr>
@@ -1132,7 +1248,7 @@ HyperFunction factory to use as JSX pragma.
 
 <details>
 <summary>
-<code>(tag: string|HTMLElement, properties: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hyperfunction">HyperFunction</a></code>
+<code>(tag: string|Element, properties: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hyperfunction">HyperFunction</a></code>
 </summary><br />
 
 
@@ -1149,7 +1265,7 @@ HyperFunction factory to use as JSX pragma.
     <tbody>
         <tr>
             <td>tag</td>
-            <td><code>string|HTMLElement</code></td>
+            <td><code>string|Element</code></td>
             <td align="center"></td>
             <td></td></tr>
 <tr>
@@ -1341,7 +1457,7 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
 
 <details>
 <summary>
-<code>(root: HTMLElement): HTMLElement[]</code>
+<code>(root: HTMLElement): <a href="#customelement">CustomElement</a>[]</code>
 </summary><br />
 
 
@@ -1365,7 +1481,7 @@ It is useful to bootstrap or rehydratate components starting from a plain HTML d
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>HTMLElement[]</code> A list of instantiated elements.
+<strong>Returns</strong>: <code><a href="#customelement">CustomElement</a>[]</code> A list of instantiated elements.
 
 <br />
 </details>
@@ -1389,7 +1505,7 @@ A decorator for accessors definition.
 
 <details>
 <summary>
-<code>(descriptor?: <a href="#accessordescriptor">AccessorDescriptor</a>): (target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code>
+<code>(descriptor?: <a href="#accessordescriptor">AccessorDescriptor</a>): (target: Element, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code>
 </summary><br />
 
 
@@ -1413,7 +1529,7 @@ A decorator for accessors definition.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>(target: HTMLElement, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code> The decorator initializer.
+<strong>Returns</strong>: <code>(target: Element, propertyKey: string, originalDescriptor: PropertyDescriptor): void</code> The decorator initializer.
 
 <br />
 </details>
@@ -1563,7 +1679,7 @@ Create a Scope with an initial prototype.
 
 <details>
 <summary>
-<code>(prototype: HTMLElement): <a href="#scope">Scope</a></code>
+<code>(prototype: Element): <a href="#scope">Scope</a></code>
 </summary><br />
 
 
@@ -1580,7 +1696,7 @@ Create a Scope with an initial prototype.
     <tbody>
         <tr>
             <td>prototype</td>
-            <td><code>HTMLElement</code></td>
+            <td><code>Element</code></td>
             <td align="center"></td>
             <td>The initial prototype object for the Scope.</td>
         </tr>
@@ -1719,29 +1835,56 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <pre>{
     document: Document;
+    Node: {
+        constructor(): Node;
+        prototype: Node;
+        ATTRIBUTE_NODE: number;
+        CDATA_SECTION_NODE: number;
+        COMMENT_NODE: number;
+        DOCUMENT_FRAGMENT_NODE: number;
+        DOCUMENT_NODE: number;
+        DOCUMENT_POSITION_CONTAINED_BY: number;
+        DOCUMENT_POSITION_CONTAINS: number;
+        DOCUMENT_POSITION_DISCONNECTED: number;
+        DOCUMENT_POSITION_FOLLOWING: number;
+        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: number;
+        DOCUMENT_POSITION_PRECEDING: number;
+        DOCUMENT_TYPE_NODE: number;
+        ELEMENT_NODE: number;
+        ENTITY_NODE: number;
+        ENTITY_REFERENCE_NODE: number;
+        NOTATION_NODE: number;
+        PROCESSING_INSTRUCTION_NODE: number;
+        TEXT_NODE: number;
+    };
     Text: {
         constructor(data?: string|undefined): Text;
         prototype: Text;
     };
-    Element: {
+    CustomEvent: {
+        constructor(typeArg: string, eventInitDict?: CustomEventInit&lt;T&gt;|undefined): CustomEvent&lt;T&gt;;
+        prototype: CustomEvent&lt;any&gt;;
+    };
+    HTMLElement: {
         constructor(): HTMLElement;
         prototype: HTMLElement;
     };
     useLifeCycle(use?: boolean): void;
-    isElement(node: any): node is HTMLElement;
+    isElement(node: any): node is Element;
     isText(node: any): node is Text;
     isCustomElement(node: any): node is <a href="#customelement">CustomElement</a>;
     parse(source: string): NodeList;
-    createElement(tagName: string): HTMLElement;
+    createElement(tagName: string): Element;
+    createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode(data: string): Text;
-    appendChild&lt;T extends Node&gt;(parent: HTMLElement, newChild: T): T;
-    removeChild&lt;T extends Node&gt;(parent: HTMLElement, oldChild: T): T;
-    insertBefore&lt;T extends Node&gt;(parent: HTMLElement, newChild: T, refChild: Node|null): T;
-    replaceChild&lt;T extends Node&gt;(parent: HTMLElement, newChild: Node, oldChild: T): T;
-    getAttribute(element: HTMLElement, qualifiedName: string): string|null;
-    hasAttribute(element: HTMLElement, qualifiedName: string): boolean;
-    setAttribute(element: HTMLElement, qualifiedName: string, value: string): void;
-    removeAttribute(element: HTMLElement, qualifiedName: string): void;
+    appendChild&lt;T extends Node&gt;(parent: Element, newChild: T): T;
+    removeChild&lt;T extends Node&gt;(parent: Element, oldChild: T): T;
+    insertBefore&lt;T extends Node&gt;(parent: Element, newChild: T, refChild: Node|null): T;
+    replaceChild&lt;T extends Node&gt;(parent: Element, newChild: Node, oldChild: T): T;
+    getAttribute(element: Element, qualifiedName: string): string|null;
+    hasAttribute(element: Element, qualifiedName: string): boolean;
+    setAttribute(element: Element, qualifiedName: string, value: string): void;
+    removeAttribute(element: Element, qualifiedName: string): void;
     getChildNodes(node: Node): readonly Node[]|undefined;
     connect(node: Node): void;
     disconnect(node: Node): void;
@@ -1752,25 +1895,37 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <hr />
 
-<strong id="element"><code>constant</code>  Element</strong>
+<strong id="fragment"><code>constant</code>  Fragment</strong>
 
 
 
-<p>
 
-Create a shimmed HTMLElement.
-(in some browsers, HTMLElement construction throw errors when not shimmed).
-
-</p>
 
 
 
 <strong>Type:</strong>
 
 <pre>{
-    constructor(): HTMLElement;
-    prototype: HTMLElement;
+    constructor(): Element;
+    prototype: Element;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="shimelement"><code>constant</code>  ShimElement</strong>
+
+
+
+
+
+
+
+<strong>Type:</strong>
+
+<pre>HTMLElement</pre>
 
 
 
@@ -1836,7 +1991,7 @@ It can be a node, a Hyper or Interpolate function or a primitive value.
 
 
 
-<pre>HTMLElement|Text|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|string|number|boolean</pre>
+<pre>Element|Text|<a href="#hyperfunction">HyperFunction</a>|<a href="#interpolatefunction">InterpolateFunction</a>|string|number|boolean</pre>
 
 
 
@@ -1854,7 +2009,7 @@ returns a Template result for a given previous node at the current position in a
 
 
 
-<pre>(this: <a href="#scope">Scope</a>, previousElement?: HTMLElement): <a href="#template">Template</a>|<a href="#templateitems">TemplateItems</a></pre>
+<pre>(this: <a href="#scope">Scope</a>, previousElement?: Element): <a href="#template">Template</a>|<a href="#templateitems">TemplateItems</a></pre>
 
 
 
@@ -1873,7 +2028,7 @@ or create a child scope which inherits properties from the current scope.
 
 
 
-<pre>HTMLElement & {
+<pre>Element & {
     [key: string]: any;
     $assign(values: {
         [key: string]: any;
@@ -1971,6 +2126,8 @@ A filter function signature for template items.
 <pre>{
     is?: string;
     slot?: string;
+    key?: any;
+    namespaceURI?: string;
     [key: string]: any;
 }</pre>
 
@@ -1997,8 +2154,8 @@ A list of properties for an accessor description.
     observers?: <a href="#accessorobserver">AccessorObserver</a>[];
     validate?: (value: any): boolean;
     observe?: (callback: <a href="#accessorobserver">AccessorObserver</a>): void;
-    getter?: (this: HTMLElement, value?: any): any;
-    setter?: (this: HTMLElement, newValue?: any): any;
+    getter?: (this: Element, value?: any): any;
+    setter?: (this: Element, newValue?: any): any;
 }</pre>
 
 

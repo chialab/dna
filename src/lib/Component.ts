@@ -38,10 +38,10 @@ function isConnected(target: Node | null): boolean {
  *
  * @example
  * ```ts
- * import { Component, property, define, render } from '@chialab/dna';
+ * import { Component, property, define, render } from '＠chialab/dna';
  *
  * class HelloWorld extends Component {
- *   @property() // define an observable Component property
+ *   ＠property() // define an observable Component property
  *   name: string;
  *
  *   get events() { // define a list of delegated events

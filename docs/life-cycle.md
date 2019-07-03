@@ -1,10 +1,11 @@
 # Life cycle
 
-DNA Components follow the Custom Element life cycle specification, with the addition of the `propertyChangedCallback`. The complete list of methods is:
+DNA Components follow the Custom Element life cycle specification, with the addition of the `propertyChangedCallback` and `render` method. The complete list of methods is:
 * [connectedCallback](#connectedcallback)
 * [disconnectedCallback](#disconnectedcallback)
 * [attributeChangedCallback](#attributechangedcallback)
 * [propertyChangedCallback](#propertychangedcallback)
+* [render](#render)
 
 Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](#manipulating-the-dom) helper.
 
@@ -37,6 +38,10 @@ The method receives the attribute name as first argument, as well as the new val
 This method is very similar to `attributeChangedCallback` and it is invoked each time one of the element's property is changed.
 
 The signature is equivalent too: it receives the property name as first argument, as well as the new value and the previous value (default `undefined`).
+
+### render
+
+The `render` method is invoked every time the component needs to refresh its tree: after the `connectedCallback` or on every property (state) change.
 
 ## Manipulating the DOM
 

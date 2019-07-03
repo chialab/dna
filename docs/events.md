@@ -113,7 +113,7 @@ const button = new MyButton();
 DOM.appendChild(document.body, element);
 // native dispatch
 const event = new CustomEvent('sendEmail', {
-    detail: { from '...', to: '...', body: '...' },
+    detail: { from: '...', to: '...', body: '...' },
     bubbles: true,
     cancelable: true,
     composed: false,
@@ -121,7 +121,7 @@ const event = new CustomEvent('sendEmail', {
 button.dispatchEvent(event);
 // DNA alternative signature
 button.dispatchEvent('sendEmail',
-    /* detail     */ { from '...', to: '...', body: '...' },
+    /* detail     */ { from: '...', to: '...', body: '...' },
     /* bubbles    */ true,
     /* cancelable */ true,
     /* composed   */ false
