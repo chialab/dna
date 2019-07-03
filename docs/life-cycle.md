@@ -6,7 +6,13 @@ DNA Components follow the Custom Element life cycle specification, with the addi
 * [attributeChangedCallback](#attributechangedcallback)
 * [propertyChangedCallback](#propertychangedcallback)
 
-Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](#manipulating-the-dom) helper. You can disable this behavior and use native Custom Elements life cycle with the instruction `DOM.useLifeCycle(false)`.
+Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](#manipulating-the-dom) helper.
+
+<aside class="tip">
+
+You can disable this behavior and use native Custom Elements life cycle with the instruction `DOM.useLifeCycle(false)`.
+
+</aside>
 
 
 ### connectedCallback

@@ -28,5 +28,5 @@ $ yarn add @chialab/dna
 ```ts
 import { Component } from '@chialab/dna';
 
-class MyComponent extends Component {}
+class MyComponent extends Component { ... }
 ```

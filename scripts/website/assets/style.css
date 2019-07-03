@@ -234,7 +234,10 @@ article code.hljs .hljs-keyword {
     font-weight: normal;
 }
 
-article code.hljs .hljs-meta {
+article code.hljs .hljs-meta,
+article code.hljs .hljs-selector-tag,
+article code.hljs .hljs-selector-pseudo,
+article code.hljs .hljs-selector-attr {
     color: #ff1e7c;
     font-weight: normal;
 }

@@ -48,17 +48,17 @@ Please refer to the [addEventListener](https://developer.mozilla.org/it/docs/Web
 Listeners can be added via a template attribute named as the event with the `on` perfix:
 
 ```html
-<my-dialog>
-    <h2>Title</h2>
+<template name="my-dialog">
+    <h2>[[ title ]]</h2>
     <nav>
         <button onclick="[[ onNavClick ]]">Close</button>
     </nav>
-</my-dialog>
+</template>
 ```
 
 ### Delegation
 
-DNA supports event delegation for both imperatively and declaratively declarations. The listener callback will received the original fired event as first argument and the matched target as secondo argumento.
+DNA supports event delegation for both imperatively and declaratively declarations. The listener callback will receive the original fired event as first argument and the matched target as second argument.
 
 <aside class="note">
 
@@ -87,13 +87,13 @@ class MyDialog extends Component {
 Otherwise, you can use `delegateEventListener` and `undelegateEventListener` methods just like `addEventListener` and `removeEventListener`:
 
 ```ts
-import { Component } from '@chialab/idom';
+import { Component, DOM } from '@chialab/idom';
 
 class MyDialog extends Component { ... }
 
 const element = new MyDialog();
 const closeDialog = (event, target) => { ... };
-
+DOM.appendChild(document.body, element);
 // delegate listener
 element.delegateEventListener('click', 'nav button', closeDialog, { passive: false });
 // undelegate listener
@@ -105,11 +105,12 @@ element.undelegateEventListener('click', 'nav button', closeDialog);
 DNA components overrides the `dispatchEvent` method in order to support an alternative signature for easier [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events) creation:
 
 ```ts
-import { Component } from '@chialab/dna';
+import { Component, DOM } from '@chialab/dna';
 
 class MyButton extends Component { ... }
 
 const button = new MyButton();
+DOM.appendChild(document.body, element);
 // native dispatch
 const event = new CustomEvent('sendEmail', {
     detail: { from '...', to: '...', body: '...' },

@@ -4,7 +4,7 @@ Defining a Component means to link a HTML tag with the element's constructor, as
 In this example we are going to use the `define` method to register the Component in the DNA registry, in order to use it via the `render`:
 
 ```ts
-import { Component, define, render } from '@chialab/dna';
+import { Component, define, render, html } from '@chialab/dna';
 
 // create a Component class
 class HelloWorld extends Component {
@@ -17,7 +17,7 @@ class HelloWorld extends Component {
 define('hello-world', HelloWorld);
 
 // render the element via the HTML tag
-render(document.body, '<hello-world />');
+render(document.body, html`<hello-world />`);
 // or render the element via class initialization
 render(document.body, new HelloWorld());
 ```
@@ -41,5 +41,5 @@ define('blog-post', BlogPost, {
 });
 
 // render the element via the HTML tag
-render(document.body, '<article is="blog-post" title="My first blog post" />');
+render(document.body, html`<article is="blog-post" title="My first blog post" />`);
 ```
