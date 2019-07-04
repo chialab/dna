@@ -7,7 +7,7 @@ DNA Components follow the Custom Element life cycle specification, with the addi
 * [propertyChangedCallback](#propertychangedcallback)
 * [render](#render)
 
-Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](#manipulating-the-dom) helper.
+Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](./render-a-component#manipulating-the-dom) helper.
 
 <aside class="tip">
 
@@ -42,34 +42,3 @@ The signature is equivalent too: it receives the property name as first argument
 ### render
 
 The `render` method is invoked every time the component needs to refresh its tree: after the `connectedCallback` or on every property (state) change.
-
-## Manipulating the DOM
-
-Since DNA does not require any Custom Elements polyfill, the life cycle is delegated to the Virtual DOM which uses the `DOM` helper under the hood. This helper invokes the life cycle methods for each DOM operation like `appendChild`, `removeChild` etc.
-If you want to manipulate the DOM tree outside of a render cycle, always use `DOM` methods instead of the Element prototype:
-
-```ts
-// don't
-parentElement.appendChild(childElement);
-// DO!
-DOM.appendChild(parentElement, childElement);
-```
-
-All methods inherit the prototype signature with the context node as first argument:
-
-| `Element.prototype` | `DOM` helper |
-| :------------------- | :------------ |
-| `appendChild(newChild)` | `appendChild(parent, newChild)` |
-| `removeChild(newChild)` | `removeChild(parent, newChild)` |
-| `insertBefore(newChild, refChild)` | `removeChild(parent, newChild, refChild)` |
-| `replaceChild(newChild, oldChild)` | `removeChild(parent, newChild, oldChild)` |
-| `getAttribute(qualifiedName)` | `getAttribute(element, qualifiedName)` |
-| `hasAttribute(qualifiedName)` | `hasAttribute(element, qualifiedName)` |
-| `setAttribute(qualifiedName, value)` | `setAttribute(element, qualifiedName, value)` |
-| `removeAttribute(qualifiedName)` | `removeAttribute(element, qualifiedName)` |
-
-<aside class="note">
-
-Please note that all DNA Components already wrap those methods with the `DOM` helper.
-
-</aside>

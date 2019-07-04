@@ -29,4 +29,8 @@ indent_size = 2
 indent_style = tab
 indent_size = 4
 
+# Allow trailing whitespaces in markdown for new line statements
+[*.{md,markdown}]
+trim_trailing_whitespace = false
+
 # RNA
