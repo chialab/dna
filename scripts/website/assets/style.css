@@ -106,10 +106,10 @@ header img {
 @media (min-width: 47em) {
     header img {
         position: absolute;
-        top: -100vh;
-        bottom: -100vh;
+        top: 50%;
         right: 2em;
         margin: auto;
+        transform: translateY(-50%);
     }
 }
 
