@@ -134,6 +134,12 @@ main nav {
     }
 }
 
+@media (max-width: 46em) {
+    main nav {
+        margin: 1em 0;
+    }
+}
+
 main nav a {
     text-decoration: none;
 }
@@ -164,7 +170,7 @@ article {
     width: 46em;
     max-width: 100%;
     order: 2;
-    padding: 0 2em;
+    padding: 0 2em 2em 2em;
 }
 
 article a {
@@ -236,6 +242,7 @@ article code.hljs .hljs-keyword {
 
 article code.hljs .hljs-meta,
 article code.hljs .hljs-selector-tag,
+article code.hljs .hljs-selector-class,
 article code.hljs .hljs-selector-pseudo,
 article code.hljs .hljs-selector-attr {
     color: #ff1e7c;
@@ -268,19 +275,40 @@ article table {
 article table th,
 article table td {
     padding: 0.5em 0.5em 0.5em 0;
+    vertical-align: top;
 }
 
 article table thead {
     border-bottom: solid 2px #f7f3f7;
 }
 
+article table tbody td {
+    border-bottom: solid 1px #f7f3f7;
+}
+
 article table code {
+    vertical-align: middle;
     white-space: nowrap;
     overflow-x: auto;
 }
 
 article table thead code {
     vertical-align: middle;
+}
+
+@media (max-width: 46em) {
+    article table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    article table tbody td {
+        padding: 0.25em 0.5em 0.25em 0;
+    }
+
+    article table tbody td:last-child {
+        min-width: 10em;
+    }
 }
 
 article blockquote {

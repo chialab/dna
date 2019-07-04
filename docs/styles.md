@@ -7,7 +7,7 @@ Shadow DOM is a good choice for encapsulating styles which affects only nodes in
 
 <aside class="tip">
 
-You don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS or BEM with styles lazy loading.
+You don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with styles lazy loading.
 
 </aside>
 
@@ -67,5 +67,60 @@ You can also define styles for component states with `:host(*selector*)` rule:
 
 :host(:hover) span {
     color: red;
+}
+```
+
+<aside class="note">
+
+The `:host` selector value change for every element definition: if a component class extends another one and inherits its template with a scoped style, the `:host` will reflect the correct definition for each components instances.
+
+</aside>
+
+### Other styling strategies
+
+Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
+
+```scss
+[is='my-card'] {
+    h1 {
+        color: cadetblue;
+    }
+    .avatar {
+        width: 44px;
+        height: 44px;
+    }
+}
+```
+
+If you are using a transpiler, you can also use [Constructable Stylesheets](https://developers.google.com/web/updates/2019/02/constructable-stylesheets) and CSS imports to bind a stylesheet to a component:
+
+```ts
+import { Component } from '@chialab/dna';
+import styleSheet from './my-card.css';
+
+class MyCard extends Component {
+    constructor(...args) {
+        super(...args);
+        this.adoptedStyleSheets = [styleSheet];
+    }
+}
+```
+
+Another transpiler-based solution is CSS Modules, which imports CSS classes as JavaScript references in order to use them in a template:
+
+```css
+.title {
+    color: cadetblue;
+}
+```
+
+```ts
+import { Component, html } from '@chialab/dna';
+import { title } from './my-card.css';
+
+class MyCard extends Component {
+    get template() {
+        return html`<h1 class="${title}"></h1>`;
+    }
 }
 ```

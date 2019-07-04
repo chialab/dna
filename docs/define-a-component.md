@@ -9,7 +9,7 @@ import { Component, define, render, html } from '@chialab/dna';
 // create a Component class
 class HelloWorld extends Component {
     get template() {
-        return '<h1>Hello!</h1>';
+        return html`<h1>Hello!</h1>`;
     }
 }
 
@@ -29,7 +29,7 @@ import { Component, define, render } from '@chialab/dna';
 
 class BlogPost extends Component {
     get template() {
-        return '<h1>[[ title ]]</h1>';
+        return html`<h1>[[ title ]]</h1>`;
     }
 
     @property
