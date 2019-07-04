@@ -141,7 +141,12 @@ main nav {
 }
 
 main nav a {
+    position: relative;
     text-decoration: none;
+}
+
+main nav > ul > li> a:not(.active) ~ ul {
+    display: none;
 }
 
 main nav ul {

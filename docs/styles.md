@@ -11,7 +11,7 @@ You don't need to use DNA's scoped style if you are already using a styling stra
 
 </aside>
 
-### Scoped styles
+## Scoped styles
 
 In order to create scoped styles, you should add the `scoped` attribute to the tag style:
 
@@ -33,7 +33,7 @@ In order to create scoped styles, you should add the `scoped` attribute to the t
 
 In the resulting HTML of the example above, the first `H1` color will not be affected by the scoped style declaration.
 
-#### How does it work?
+### How does it work?
 
 DNA uses the component definition name to prefix all CSS rules with an unique selector for the element. For example, the rule
 
@@ -47,7 +47,7 @@ is transformed into
 [is="my-card"] h1 { color: cadetblue; }
 ```
 
-#### The `:host` pesudo selector
+### The `:host` pesudo selector
 
 If you need to style the component root itself, you can use the `:host` selector as specified by Shadow DOM:
 
@@ -76,7 +76,7 @@ The `:host` selector value change for every element definition: if a component c
 
 </aside>
 
-### Other styling strategies
+## Other styling strategies
 
 Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
 

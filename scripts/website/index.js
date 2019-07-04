@@ -99,6 +99,7 @@ function template(content) {
     <script src="assets/typescript.min.js"></script>
     <script src="assets/css.min.js"></script>
     <script src="assets/scss.min.js"></script>
+    <script src="assets/script.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>`);

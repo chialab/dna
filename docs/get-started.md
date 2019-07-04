@@ -1,4 +1,4 @@
-# Get the library
+# Get started
 
 DNA is distribuited as UMD package, ES module and CommonJS (Node) module. Follow the [Github release](https://github.com/chialab/dna/releases) page for changelog, new features and bug fixes.
 
@@ -19,7 +19,10 @@ Usage via [unpkg.com](https://unpkg.com/):
 </script>
 ```
 
-Install via NPM:
+## NPM
+
+You can also install DNA using the NPM registry using the `npm` cli or `yarn`.
+
 ```sh
 # NPM
 $ npm install @chialab/dna
