@@ -121,9 +121,13 @@ const event = new CustomEvent('sendEmail', {
 button.dispatchEvent(event);
 // DNA alternative signature
 button.dispatchEvent('sendEmail',
-    /* detail     */ { from: '...', to: '...', body: '...' },
-    /* bubbles    */ true,
-    /* cancelable */ true,
-    /* composed   */ false
+    // detail
+    { from: '...', to: '...', body: '...' },
+    // bubbles
+    true,
+    // cancelable
+    true,
+    // composed
+    false
 );
 ```
