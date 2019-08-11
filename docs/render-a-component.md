@@ -1,4 +1,4 @@
-# Render a Component
+# Render a Component
 
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
