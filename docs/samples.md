@@ -2,7 +2,7 @@
 
 This is a collection of snippets and use cases for DNA 3.
 
-## SSR with Node
+## SSR with Node
 
 First of all, install the DNA package from the NPM registry:
 
