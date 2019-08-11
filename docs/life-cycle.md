@@ -1,4 +1,4 @@
-# Life cycle
+# Life cycle
 
 DNA Components follow the Custom Element life cycle specification, with the addition of the `propertyChangedCallback` and `render` method. The complete list of methods is:
 * [connectedCallback](#connectedcallback)
@@ -16,12 +16,12 @@ You can disable this behavior and use native Custom Elements life cycle with the
 </aside>
 
 
-### connectedCallback
+### connectedCallback
 
 From [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks):
 > Invoked each time the custom element is appended into a document-connected element. This will happen each time the node is moved, and may happen before the element's contents have been fully parsed. `connectedCallback` may be called once your element is no longer connected, use `Node.isConnected` to make sure.
 
-### disconnectedCallback
+### disconnectedCallback
 
 From [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks):
 > Invoked each time the custom element is disconnected from the document's DOM.
@@ -39,6 +39,6 @@ This method is very similar to `attributeChangedCallback` and it is invoked each
 
 The signature is equivalent too: it receives the property name as first argument, as well as the new value and the previous value (default `undefined`).
 
-### render
+### render
 
 The `render` method is invoked every time the component needs to refresh its tree: after the `connectedCallback` or on every property (state) change.
