@@ -31,7 +31,7 @@ class Card extends Component {
 }
 ```
 
-## Property descriptor
+## Property descriptor
 
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
 
@@ -80,7 +80,7 @@ If you are using class fields, probably you won't use this configuration key.
 
 A list of valid constructors for the property value. If the value is not an instance of the specified constructors, an exception is thrown.
 
-### validate
+### validate
 
 A custom validation function for the property value. If the method returns a falsy value, an exception is thrown.
 
@@ -138,7 +138,7 @@ element.unobserve('age');
 
 DOM attributes can be used to update the component properties and viceversa. Every time an attribute is added, removed or changed in a render cycle or using the [`DOM`](./render-a-component#manipulating-the-dom) helper.
 
-### Template and JSX attributes
+### Template and JSX attributes
 
 If you are using `<template>` tags, `html` helper or JSX templates, the value of an attribute will be reflected to the property using the following logic:
 
@@ -196,7 +196,7 @@ Removing the attribute from the template, the property will be set as `undefined
 
 </aside>
 
-### Attribute updates
+### Attribute updates
 
 When the property is bound to an attribute, it will reflect the value to the DOM attribute on every change if the type of the value is of type **string**, **number** or **boolean**.
 Falsy values (`null`, `undefined`, `false`) will completely remove the attribute from the DOM node, while `true` always set the DOM attribute with empty value. For example:
