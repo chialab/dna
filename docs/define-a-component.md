@@ -17,7 +17,7 @@ class HelloWorld extends Component {
 define('hello-world', HelloWorld);
 ```
 
-## Extending native elements
+## Extending native elements
 
 In the Custom Element specification it is possible to define an element using the `is` attribute instead of the tag (unfortunately, no browser vendor had implemented it at the moment). This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. An example:
 
