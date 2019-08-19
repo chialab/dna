@@ -44,9 +44,9 @@ jobs:
         - git config --global user.name "travis-ci"
         - git clone https://${GH_TOKEN}@github.com/chialab/dna.wiki.git wiki
         - git -C wiki checkout -B $TRAVIS_BRANCH
-        - rna documentate --output wiki/API.md --header '# API References'"
+        - ./node_modules/.bin/rna documentate --output wiki/API.md --header '# API References'"
         - git -C wiki add .
         - git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
-        - git -C wiki push origin
+        - git -C wiki push --set-upstream origin $TRAVIS_BRANCH
   allow_failures:
     - env: CI_BUILD_TYPE=docs
