@@ -32,24 +32,21 @@ jobs:
       after_success:
         - cat test/__coverage__/*/lcov.info | ./node_modules/.bin/codecov
     - stage: 'docs'
-      env: CI_BUILD_TYPE=website CNAME=dna.chialab.io
+      env: CI_BUILD_TYPE=docs
       os: linux
       node_js: 10
       install:
-        - pip install --user awscli
-        - aws configure set preview.cloudfront true
         - yarn config set registry https://registry.npmjs.org/
         - yarn add @chialab/rna-cli -D
       script:
         - yarn
-        - yarn run docs
-        - yarn run website
-        - ls -R public
-      after_success:
-        - for file in public/*.html; do mv -- "$file" "${file%%.html}"; done
-        - for file in public/**/*.html; do mv -- "$file" "${file%%.html}"; done
-        - aws s3 sync public s3://$CNAME/v3 --region us-east-1 --size-only --exclude "*" --include "*.*" --delete
-        - aws s3 sync public s3://$CNAME/v3 --region us-east-1 --size-only --content-type text/html --exclude "*.*" --delete
-        - aws cloudfront create-invalidation --paths '/*' --distribution-id $(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Aliases.Items, '${CNAME}')].Id" --output text)
+        - git config --global user.email "travis@travis-ci.org"
+        - git config --global user.name "travis-ci"
+        - git clone https://${GH_TOKEN}@github.com/chialab/dna.wiki.git wiki
+        - git -C wiki checkout -B $TRAVIS_BRANCH
+        - rna documentate --output wiki/API.md --header '# API References'"
+        - git -C wiki add .
+        - git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
+        - git -C wiki push origin
   allow_failures:
-    - env: CI_BUILD_TYPE=website
+    - env: CI_BUILD_TYPE=docs
