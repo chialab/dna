@@ -11,33 +11,33 @@ jobs:
       node_js: 10
       before_install:
         - yarn config set registry https://registry.npmjs.org/
-        - yarn add @chialab/rna-cli codecov -D
+        - yarn global add @chialab/rna-cli codecov
       install:
         - yarn
       script:
         - yarn test:node
       after_success:
-        - cat test/__coverage__/*/lcov.info | ./node_modules/.bin/codecov
+        - cat test/__coverage__/*/lcov.info | codecov
     - stage: test
       os: linux
       env: CI_BUILD_TYPE=saucelabs
       node_js: 10
       before_install:
         - yarn config set registry https://registry.npmjs.org/
-        - yarn add @chialab/rna-cli codecov -D
+        - yarn global add @chialab/rna-cli codecov
       install:
         - yarn
       script:
         - yarn test:saucelabs
       after_success:
-        - cat test/__coverage__/*/lcov.info | ./node_modules/.bin/codecov
+        - cat test/__coverage__/*/lcov.info | codecov
     - stage: 'docs'
       env: CI_BUILD_TYPE=docs
       os: linux
       node_js: 10
       install:
         - yarn config set registry https://registry.npmjs.org/
-        - yarn add @chialab/rna-cli -D
+        - yarn global add @chialab/rna-cli
       script:
         - yarn
         - git config --global user.email "travis@travis-ci.org"
@@ -45,7 +45,7 @@ jobs:
         - git clone https://${GH_TOKEN}@github.com/chialab/dna.wiki.git wiki
         - git -C wiki checkout -B $TRAVIS_BRANCH
         - git -C wiki pull
-        - ./node_modules/.bin/rna documentate --output wiki/API.md --header '# API References'"
+        - rna documentate --output wiki/API.md --header '# API References'"
         - git -C wiki add .
         - git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
         - git -C wiki push --set-upstream origin $TRAVIS_BRANCH
