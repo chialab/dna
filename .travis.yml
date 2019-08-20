@@ -43,8 +43,7 @@ jobs:
         - git config --global user.email "travis@travis-ci.org"
         - git config --global user.name "travis-ci"
         - git clone https://${GH_TOKEN}@github.com/chialab/dna.wiki.git wiki
-        - git -C wiki fetch -p
-        - git -C wiki checkout -B $TRAVIS_BRANCH
+        - git -C wiki checkout $TRAVIS_BRANCH || git -C wiki checkout -b $TRAVIS_BRANCH
         - rna documentate --output wiki/API.md --header '# API References'
         - git -C wiki add .
         - git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
