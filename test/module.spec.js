@@ -23,6 +23,7 @@ describe('module', () => {
         property: 'function',
         delegate: 'function',
         undelegate: 'function',
+        dispatchEvent: 'function',
         Component: 'function',
     };
 

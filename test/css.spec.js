@@ -133,4 +133,14 @@ h3 {
         DNA.css('test-style', ':host { color: red; }');
         // checkout the code coverage
     });
+
+    it('should validate css input', () => {
+        expect(() => {
+            DNA.css(null, null);
+        }).to.throw(TypeError, 'the name provided is not a string');
+
+        expect(() => {
+            DNA.css('test-style', null);
+        }).to.throw(TypeError, 'the CSS text provided is not a string');
+    });
 });

@@ -11,5 +11,5 @@ export { css } from './lib/css';
 export { compile } from './lib/interpolate';
 export { bootstrap } from './lib/bootstrap';
 export { property } from './lib/property';
-export { delegate, undelegate } from './lib/events';
+export { delegate, undelegate, dispatchEvent } from './lib/events';
 export { Component } from './lib/Component';

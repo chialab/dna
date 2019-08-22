@@ -10,6 +10,14 @@ import { has, set } from './registry';
  * @param options A set of definition options, like `extends` for native tag extension.
  */
 export function define(name: string, constructor: CustomElement, options: { extends?: string; } = {}) {
+    if (typeof name !== 'string') {
+        throw new TypeError('the name provided is not a string');
+    }
+
+    if (typeof constructor !== 'function') {
+        throw new TypeError('the constructor provided is not a class');
+    }
+
     name = name.toLowerCase();
 
     if (has(name)) {

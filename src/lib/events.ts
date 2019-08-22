@@ -1,4 +1,5 @@
 import { createSymbolKey } from './symbols';
+import { DOM } from './dom';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -60,9 +61,22 @@ type WithEventDelegations = {
  * @param eventName The event name to listen
  * @param selector The selector to delegate
  * @param callback The callback to trigger when an Event matches the delegation
+ * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
-export function delegate(element: HTMLElement, eventName: string, selector: string | undefined, callback: DelegatedEventCallback) {
+export function delegate(element: HTMLElement, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
     const delegatedElement: HTMLElement & WithEventDelegations = element;
+    if (!(element instanceof DOM.HTMLElement)) {
+        throw new TypeError('the element provided is not a HTMLElement');
+    }
+    if (typeof eventName !== 'string') {
+        throw new TypeError('the event name provided is not a string');
+    }
+    if (typeof selector !== 'string') {
+        throw new TypeError('the selector provided is not a string');
+    }
+    if (typeof callback !== 'function') {
+        throw new TypeError('the callback provided is not a function');
+    }
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
     // initialize the delegation list
@@ -114,7 +128,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
                     }
                 });
         };
-        element.addEventListener(eventName, callbacks.listener);
+        element.addEventListener(eventName, callbacks.listener, options);
     }
     // add the delegation to the list
     descriptors.push({ event: eventName, callback, selector });
@@ -129,6 +143,19 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
  * @param callback The callback to remove
  */
 export function undelegate(element: HTMLElement, eventName?: string, selector?: string, callback?: DelegatedEventCallback) {
+    if (!(element instanceof DOM.HTMLElement)) {
+        throw new TypeError('the element provided is not a HTMLElement');
+    }
+    if (typeof eventName !== 'undefined' && typeof eventName !== 'string') {
+        throw new TypeError('the event name provided is not a string');
+    }
+    if (typeof selector !== 'undefined' && typeof selector !== 'string') {
+        throw new TypeError('the selector provided is not a string');
+    }
+    if (typeof callback !== 'undefined' && typeof callback !== 'function') {
+        throw new TypeError('the callback provided is not a function');
+    }
+
     const delegatedElement: HTMLElement & WithEventDelegations = element;
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL];
@@ -143,7 +170,7 @@ export function undelegate(element: HTMLElement, eventName?: string, selector?: 
         if (delegations && (eventName in delegations)) {
             const { descriptors, listener } = delegations[eventName];
             if (!callback) {
-                descriptors.forEach((descriptor) => {
+                descriptors.slice(0).forEach((descriptor, index) => {
                     undelegate(element, eventName, descriptor.selector, descriptor.callback);
                 });
             } else if (listener) {
@@ -161,4 +188,44 @@ export function undelegate(element: HTMLElement, eventName?: string, selector?: 
             }
         }
     }
+}
+
+/**
+ * Dispatch a custom Event.
+ *
+ * @param event The event to dispatch or the name of the synthetic event to create.
+ * @param detail Detail object of the event.
+ * @param bubbles Should the event bubble.
+ * @param cancelable Should the event be cancelable.
+ * @param composed Is the event composed.
+ */
+export function dispatchEvent(element: HTMLElement, event: Event): boolean;
+export function dispatchEvent(element: HTMLElement, event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+export function dispatchEvent(element: HTMLElement, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
+    if (!(element instanceof DOM.HTMLElement)) {
+        throw new TypeError('the element provided is not a HTMLElement');
+    }
+
+    if (typeof event === 'string') {
+        if (typeof bubbles !== 'boolean') {
+            throw new TypeError('the bubbles option provided is not a boolean');
+        }
+        if (typeof cancelable !== 'boolean') {
+            throw new TypeError('the cancelable option provided is not a boolean');
+        }
+        if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
+            throw new TypeError('the composed option provided is not a boolean');
+        }
+
+        event = new DOM.CustomEvent(event, {
+            detail,
+            bubbles,
+            cancelable,
+            composed,
+        });
+    } else if (!(event instanceof DOM.Event)) {
+        throw new TypeError('the event provided is not an Event');
+    }
+
+    return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
 }

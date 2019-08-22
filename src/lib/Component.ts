@@ -6,7 +6,7 @@ import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
 import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './property';
 import { html } from './html';
-import { DelegatedEventCallback, delegate, undelegate } from './events';
+import { DelegatedEventCallback, delegate, undelegate, dispatchEvent } from './events';
 
 /**
  * Check if a Node is connected.
@@ -275,16 +275,10 @@ export class Component extends BaseElement {
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean) {
-        if (typeof event === 'string') {
-            event = new DOM.CustomEvent(event, {
-                detail,
-                bubbles,
-                cancelable,
-                composed,
-            });
-        }
-        return super.dispatchEvent(event);
+    dispatchEvent(event: Event): boolean;
+    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+        return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
     }
 
     /**

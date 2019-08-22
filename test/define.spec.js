@@ -70,4 +70,14 @@ describe('registry', () => {
             DNA.define('test-define10', TestElement);
         }).to.throw(Error, 'constructor has already been defined');
     });
+
+    it('should validate define input', () => {
+        expect(() => {
+            DNA.define(null, null);
+        }).to.throw(TypeError, 'the name provided is not a string');
+
+        expect(() => {
+            DNA.define('test-define', null);
+        }).to.throw(TypeError, 'the constructor provided is not a class');
+    });
 });

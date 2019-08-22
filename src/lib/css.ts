@@ -27,16 +27,23 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
  * It also converts `:host` selectors for cross browser compatibility.
  *
  * @param name The component definition name.
- * @param text The CSS string.
+ * @param cssText The CSS string.
  * @return A scoped CSS string.
  */
-export function css(name: string, text: string): string {
+export function css(name: string, cssText: string): string {
+    if (typeof name !== 'string') {
+        throw new TypeError('the name provided is not a string');
+    }
+    if (typeof cssText !== 'string') {
+        throw new TypeError('the CSS text provided is not a string');
+    }
+
     const cached = CACHE[name] = CACHE[name] || {};
     const scope = `[is="${name}"]`;
-    if (text in cached) {
-        return cached[text];
+    if (cssText in cached) {
+        return cached[cssText];
     }
-    return cached[text] = text
+    return cached[cssText] = cssText
         .replace(CSS_COMMENTS_REGEX, '\n')
         .replace(HOST_REGEX, (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1) : ''}`)
         .replace(CSS_SELECTORS_REGEX, (match) => {
