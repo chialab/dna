@@ -1,5 +1,5 @@
 import { Template } from './Template';
-import { InterpolateFunction, interpolate } from './interpolate';
+import { InterpolationFunction, compile } from './interpolate';
 import { h, HyperFunction } from './h';
 import { DOM } from './dom';
 
@@ -23,9 +23,9 @@ enum Namespaces {
  * @return The virtual DOM template function.
  */
 function innerCompile(node: Element, namespace?: Namespaces): HyperFunction;
-function innerCompile(node: Text): InterpolateFunction;
-function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
-function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolateFunction>;
+function innerCompile(node: Text): InterpolationFunction;
+function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
+function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
 function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (DOM.isElement(node)) {
         // the current node is an element
@@ -45,7 +45,7 @@ function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Name
             if (attr.value === '') {
                 properties[attr.name] = true;
             } else {
-                properties[attr.name] = interpolate(attr.value);
+                properties[attr.name] = compile(attr.value);
             }
         }
 
@@ -62,7 +62,7 @@ function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Name
 
     if (DOM.isText(node)) {
         // the current node is text content
-        return interpolate(node.textContent || '');
+        return compile(node.textContent || '');
     }
 
     const children: Array<Element | Text> = [];
@@ -90,7 +90,7 @@ function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Name
  * @return The virtual DOM template function.
  */
 export function html(template: string | HTMLTemplateElement): Template {
-    let chunks: Array<HyperFunction | InterpolateFunction>;
+    let chunks: Array<HyperFunction | InterpolationFunction>;
     if (isTemplateTag(template)) {
         chunks = innerCompile(template.content.childNodes);
     } else {

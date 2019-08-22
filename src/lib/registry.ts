@@ -41,7 +41,22 @@ export function has(name: string): boolean {
  * @return The definition for the given tag.
  */
 export function get(name: string): Definition {
-    return REGISTRY[name];
+    return REGISTRY[name] || null;
+}
+
+/**
+ * Add an entry to the registry.
+ *
+ * @param name The tag name for the element.
+ * @param constructor The Custom Element constructor.
+ * @param options A set of definition options, like `extends` for native tag extension.
+ */
+export function set(name: string, constructor: CustomElement, options: { extends?: string; } = {}) {
+    REGISTRY[name] = {
+        name,
+        constructor,
+        extends: options.extends && options.extends.toLowerCase(),
+    };
 }
 
 /**
@@ -54,26 +69,4 @@ export function entries(): Definition[] {
         result.push(REGISTRY[key]);
     }
     return result;
-}
-
-/**
- * Define a new Custom Element.
- *
- * @param name The tag name for the element.
- * @param constructor The Custom Element constructor.
- * @param options A set of definition options, like `extends` for native tag extension.
- */
-export function define(name: string, constructor: CustomElement, options: { extends?: string; } = {}) {
-    name = name.toLowerCase();
-
-    Object.defineProperty(constructor.prototype, 'is', {
-        writable: false,
-        configurable: false,
-        value: name,
-    });
-    REGISTRY[name] = {
-        name,
-        constructor,
-        extends: options.extends,
-    };
 }

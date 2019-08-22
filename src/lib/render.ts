@@ -3,7 +3,7 @@ import { Scope, createScope, getScope } from './Scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
 import { getSlotted } from './Slotted';
 import { isHyperFunction } from './h';
-import { isInterpolateFunction } from './interpolate';
+import { isInterpolationFunction } from './interpolate';
 import { css } from './css';
 
 /**
@@ -81,7 +81,7 @@ export function render(node: Element, input: Template, context?: RenderContext):
                 render(node, input[i], inputContext);
             }
         // if it is an InterpolatedFunction or a HyperFunction
-        } else if (isInterpolateFunction(input)) {
+        } else if (isInterpolationFunction(input)) {
             render(node, input.call(scope), inputContext);
         } else if (isHyperFunction(input)) {
             render(node, input.call(scope, iterating.node as Element), inputContext);

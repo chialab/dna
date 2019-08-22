@@ -1,9 +1,8 @@
-import * as DNA from '../dist/esm/dna.js';
+/* eslint-env mocha */
 
 export async function getModule() {
     if (typeof window === 'undefined') {
-        const { adapter } = await import('../dist/adapters/node.js');
-        adapter(DNA);
+        return await import('../dist/adapters/node.js');
     }
-    return DNA;
+    return await import('../dist/esm/dna.js');
 }

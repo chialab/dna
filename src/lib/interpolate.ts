@@ -2,32 +2,32 @@ import { createSymbolKey } from './symbols';
 import { Scope } from './Scope';
 
 /**
- * Symbol for interpolated functions.
+ * Symbol for interpolation functions.
  */
-const INTERPOLATED_SYMBOL = createSymbolKey();
+const INTERPOLATION_SYMBOL = createSymbolKey();
 
 /**
- * A function that interpolate content in a string using a render Scope.
+ * A function that interpolates content in a string using a render Scope.
  */
-export type InterpolateFunction = (this: Scope) => string;
+export type InterpolationFunction = (this: Scope) => string;
 
 /**
- * Flag a function as InterpolateFunction.
+ * Flag a function as InterpolationFunction.
  * @param fn The function to flag.
  * @return The updated function.
  */
-export function createInterpolationFunction(fn: Function): InterpolateFunction {
-    (fn as any)[INTERPOLATED_SYMBOL] = true;
-    return fn as InterpolateFunction;
+export function createInterpolationFunction(fn: Function): InterpolationFunction {
+    (fn as any)[INTERPOLATION_SYMBOL] = true;
+    return fn as InterpolationFunction;
 }
 
 /**
- * Check if the reference is an InterpolateFunction.
+ * Check if the reference is an InterpolationFunction.
  * @param target The reference to check.
  * @return The reference is a InterpolateFunction.
  */
-export function isInterpolateFunction(target: any): target is InterpolateFunction {
-    return !!target[INTERPOLATED_SYMBOL];
+export function isInterpolationFunction(target: any): target is InterpolationFunction {
+    return !!target[INTERPOLATION_SYMBOL];
 }
 
 /**
@@ -45,12 +45,12 @@ function escape(text: string): string {
 }
 
 /**
- * Create an interpolated function.
+ * Create an InterpolationFunction.
  *
- * @param expression The expression to interpolate.
- * @return A simple string if the expression does not need interpolation, or an InterpolateFunction to generate interpolated content.
+ * @param expression The expression to compile.
+ * @return A simple string if the expression does not need interpolation, or an InterpolationFunction for content generation.
  */
-export function interpolate(expression: string): InterpolateFunction | string {
+export function compile(expression: string): InterpolationFunction | string {
     // split the expression into chunks
     const chunks = expression.trim().split(PARSE_REGEX);
     if (chunks.length === 1) {

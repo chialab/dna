@@ -26,9 +26,7 @@
 
 ---
 
-> Does the world really need another Component library?
-
-> Since its first version, DNA aims to provide a temporarary interface to define Web Components in a simple, light and declarative way until browsers support is complete. Other libraries like [Polymer](https://polymer-library.polymer-project.org/) and [LitElement](https://lit-element.polymer-project.org/) requires heavy Web Components polyfills in order to work in all browsers. Instead, DNA philosophy is to use its template engine to handle Custom Elements life cycle and Shadow DOM flexibility, resulting more efficient, reliable and light.
+DNA is a component library which aims to provide a temporarary interface to define Web Components in a simple, light and declarative way until browsers support is complete. Instead of requiring heavy polyfills in order to work in all browsers, DNA's philosophy is to use its template engine to handle Custom Elements life cycle and Shadow DOM flexibility, resulting more efficient, reliable and light.
 
 ### Design Web Components
 
@@ -40,7 +38,7 @@ In order to be fast, simple and predective, DNA uses a custom template engine. C
 
 ### Interpolation and JSX
 
-If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use [Interpolated Templates]() to avoid the build step in your workflow.
+If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use template strings to avoid the build step in your workflow.
 
 ### Properties, async render, slots... and more!
 

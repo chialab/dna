@@ -118,7 +118,7 @@ export class Component extends BaseElement {
         if (!DOM.isElement(node)) {
             properties = node;
             const definition = registry.get(this.is as string);
-            node = DOM.createElement(definition.extends || definition.name) as HTMLElement;
+            node = DOM.document.createElement(definition.extends || definition.name) as HTMLElement;
         }
 
         Object.setPrototypeOf(node, Object.getPrototypeOf(this));

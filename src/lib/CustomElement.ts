@@ -1,6 +1,6 @@
 /**
  * The interface of Custom Element, as described by the W3C.
- * @see {@link https://w3c.github.io/webcomponents/spec/custom/} W3C specification.
+ * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
 export type CustomElement = HTMLElement & {
     /**

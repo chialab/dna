@@ -3,7 +3,7 @@ import { CustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
-import { isInterpolateFunction } from './interpolate';
+import { isInterpolationFunction } from './interpolate';
 import * as registry from './registry';
 import { DOM } from './dom';
 
@@ -121,7 +121,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         let props: HyperProperties = {};
         for (let property in propertiesToSet) {
             let value = propertiesToSet[property];
-            if (value && isInterpolateFunction(value)) {
+            if (value && isInterpolationFunction(value)) {
                 // resolve interpolated properties
                 value = value.call(this);
             }

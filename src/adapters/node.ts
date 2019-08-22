@@ -1,12 +1,12 @@
-import * as DNA_NS from '../dna';
+import { DOM, shim } from '../dna';
 
-export function adapter(DNA: typeof DNA_NS) {
-    const JSDOM = require('js' + 'dom').JSDOM;
-    const { document, Node, Text, HTMLElement, CustomEvent } = new JSDOM().window;
+const JSDOM = require('js' + 'dom').JSDOM;
+const { document, Node, Text, HTMLElement, CustomEvent } = new JSDOM().window;
 
-    DNA.DOM.Node = Node;
-    DNA.DOM.document = document;
-    DNA.DOM.Text = Text;
-    DNA.DOM.HTMLElement = DNA.shim(HTMLElement);
-    DNA.DOM.CustomEvent = CustomEvent;
-}
+DOM.Node = Node;
+DOM.document = document;
+DOM.Text = Text;
+DOM.HTMLElement = shim(HTMLElement);
+DOM.CustomEvent = CustomEvent;
+
+export * from '../dna';
