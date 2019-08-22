@@ -35,7 +35,9 @@ describe('module', () => {
     it('should not export other references', () => {
         const actual = Object.keys(DNA).sort();
         // default export may be added by the bundler, ignore it.
-        actual.splice(actual.indexOf('default'), 1);
+        if (actual.indexOf('default') !== -1) {
+            actual.splice(actual.indexOf('default'), 1);
+        }
         const expected = Object.keys(EXPECTED_EXPORT_MAP).sort();
         expect(actual).to.deep.equal(expected);
     });

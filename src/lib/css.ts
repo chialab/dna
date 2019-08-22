@@ -15,7 +15,7 @@ const HOST_REGEX = /:host(\(([^({)]+(\([^)]*\))?)+\))?/g;
 /**
  * Match all comments in a CSS string.
  */
-const CSS_COMMENTS_REGEX = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
+const CSS_COMMENTS_REGEX = /\s*\/\*[^*]*\*+([^/*][^*]*\*+)*\/\s*/g;
 
 /**
  * Match all css selectors in a CSS string.
@@ -37,7 +37,7 @@ export function css(name: string, text: string): string {
         return cached[text];
     }
     return cached[text] = text
-        .replace(CSS_COMMENTS_REGEX, '')
+        .replace(CSS_COMMENTS_REGEX, '\n')
         .replace(HOST_REGEX, (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1) : ''}`)
         .replace(CSS_SELECTORS_REGEX, (match) => {
             match = match.trim();
