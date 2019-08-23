@@ -143,6 +143,10 @@ export class Component extends BaseElement {
 
         setSlotted(node as HTMLElement, DOM.getChildNodes(node as HTMLElement) as TemplateItems);
 
+        if (node.isConnected) {
+            DOM.connect(node as Node);
+        }
+
         return node as Component;
     }
 

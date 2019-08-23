@@ -4,7 +4,7 @@ import { Scope, getScope, setScope } from './Scope';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { isInterpolationFunction } from './interpolate';
-import * as registry from './registry';
+import { get } from './registry';
 import { DOM } from './dom';
 
 /**
@@ -104,10 +104,9 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         // Also a real tag name can produce a Component instance,
         // if the tag is registered as Component or the `is` property is defined
         let name = propertiesToSet.is || tag;
-        if (registry.has(name)) {
-            // get the constructor from the registry
-            Component = registry.get(name).constructor;
-        }
+        // get the constructor from the registry
+        let definition = get(name);
+        Component = definition && definition.constructor;
     }
 
     const fn = function(this: Scope, previousElement?: Element) {

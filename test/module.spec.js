@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { getModule } from './module.js';
+import { getModule } from './helpers.js';
 
 let DNA;
 
@@ -12,14 +12,15 @@ describe('module', () => {
         DOM: 'object',
         shim: 'function',
         render: 'function',
-        registry: 'object',
+        get: 'function',
         define: 'function',
+        whenDefined: 'function',
+        upgrade: 'function',
         Fragment: 'function',
         h: 'function',
         html: 'function',
         css: 'function',
         compile: 'function',
-        bootstrap: 'function',
         property: 'function',
         delegate: 'function',
         undelegate: 'function',

@@ -1,17 +1,7 @@
 /* eslint-env mocha */
-import { getModule } from './module.js';
+import { getModule, spyFunction } from './helpers.js';
 
 let DNA;
-
-function spy(fn) {
-    const spied = function(...args) {
-        spied.response = fn.call(this, ...args);
-        spied.invoked = true;
-        spied.count++;
-    };
-    spied.count = 0;
-    return spied;
-}
 
 describe('events', () => {
     before(async () => {
@@ -26,7 +16,7 @@ describe('events', () => {
         const wrapper = DNA.DOM.createElement('div');
         const button = DNA.DOM.createElement('button');
         wrapper.appendChild(button);
-        const listener = spy(() => { });
+        const listener = spyFunction(() => { });
         DNA.delegate(wrapper, 'click', 'button', listener);
         DNA.delegate(wrapper, 'mouseenter', 'button', listener);
         button.click();
@@ -40,8 +30,8 @@ describe('events', () => {
         const wrapper = DNA.DOM.createElement('div');
         const button = DNA.DOM.createElement('button');
         wrapper.appendChild(button);
-        const listener = spy(() => { });
-        const listener2 = spy(() => { });
+        const listener = spyFunction(() => { });
+        const listener2 = spyFunction(() => { });
         DNA.delegate(wrapper, 'click', 'button', listener);
         DNA.delegate(wrapper, 'click', 'button', listener2);
         button.click();
@@ -56,8 +46,8 @@ describe('events', () => {
         const wrapper = DNA.DOM.createElement('div');
         const button = DNA.DOM.createElement('button');
         wrapper.appendChild(button);
-        const listener = spy(() => { });
-        const listener2 = spy(() => { });
+        const listener = spyFunction(() => { });
+        const listener2 = spyFunction(() => { });
         DNA.delegate(wrapper, 'click', 'button', listener);
         DNA.delegate(wrapper, 'click', 'button', listener2);
         DNA.delegate(wrapper, 'mouseenter', 'button', listener);
@@ -75,7 +65,7 @@ describe('events', () => {
         const wrapper = DNA.DOM.createElement('div');
         const button = DNA.DOM.createElement('button');
         wrapper.appendChild(button);
-        const listener = spy(() => { });
+        const listener = spyFunction(() => { });
         DNA.delegate(wrapper, 'click', 'button', listener);
         DNA.delegate(wrapper, 'mouseenter', 'button', listener);
         button.click();
@@ -92,23 +82,23 @@ describe('events', () => {
 
         expect(() => {
             DNA.dispatchEvent(null);
-        }).to.throw(TypeError, 'the element provided is not a HTMLElement');
+        }).to.throw(TypeError, 'The provided element is not a HTMLElement');
 
         expect(() => {
             DNA.dispatchEvent(element, null);
-        }).to.throw(TypeError, 'the event provided is not an Event');
+        }).to.throw(TypeError, 'The provided event is not an Event');
 
         expect(() => {
             DNA.dispatchEvent(element, 'click', null, null, null, null);
-        }).to.throw(TypeError, 'the bubbles option provided is not a boolean');
+        }).to.throw(TypeError, 'The provided bubbles option is not a boolean');
 
         expect(() => {
             DNA.dispatchEvent(element, 'click', null, true, null, null);
-        }).to.throw(TypeError, 'the cancelable option provided is not a boolean');
+        }).to.throw(TypeError, 'The provided cancelable option is not a boolean');
 
         expect(() => {
             DNA.dispatchEvent(element, 'click', null, true, true, null);
-        }).to.throw(TypeError, 'the composed option provided is not a boolean');
+        }).to.throw(TypeError, 'The provided composed option is not a boolean');
     });
 
     it('should validate delegation input', () => {
@@ -116,19 +106,19 @@ describe('events', () => {
 
         expect(() => {
             DNA.delegate(null, null, null, null);
-        }).to.throw(TypeError, 'the element provided is not a HTMLElement');
+        }).to.throw(TypeError, 'The provided element is not a HTMLElement');
 
         expect(() => {
             DNA.delegate(wrapper, null, null, null);
-        }).to.throw(TypeError, 'the event name provided is not a string');
+        }).to.throw(TypeError, 'The provided event name is not a string');
 
         expect(() => {
             DNA.delegate(wrapper, 'click', null, null);
-        }).to.throw(TypeError, 'the selector provided is not a string');
+        }).to.throw(TypeError, 'The provided selector is not a string');
 
         expect(() => {
             DNA.delegate(wrapper, 'click', 'button', null);
-        }).to.throw(TypeError, 'the callback provided is not a function');
+        }).to.throw(TypeError, 'The provided callback is not a function');
     });
 
     it('should validate undelegation input', () => {
@@ -136,18 +126,18 @@ describe('events', () => {
 
         expect(() => {
             DNA.undelegate(null, null, null, null);
-        }).to.throw(TypeError, 'the element provided is not a HTMLElement');
+        }).to.throw(TypeError, 'The provided element is not a HTMLElement');
 
         expect(() => {
             DNA.undelegate(wrapper, null, null, null);
-        }).to.throw(TypeError, 'the event name provided is not a string');
+        }).to.throw(TypeError, 'The provided event name is not a string');
 
         expect(() => {
             DNA.undelegate(wrapper, 'click', null, null);
-        }).to.throw(TypeError, 'the selector provided is not a string');
+        }).to.throw(TypeError, 'The provided selector is not a string');
 
         expect(() => {
             DNA.undelegate(wrapper, 'click', 'button', 1);
-        }).to.throw(TypeError, 'the callback provided is not a function');
+        }).to.throw(TypeError, 'The provided callback is not a function');
     });
 });

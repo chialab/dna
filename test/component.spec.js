@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { getModule } from './module.js';
+import { getModule } from './helpers.js';
 
 let DNA;
 

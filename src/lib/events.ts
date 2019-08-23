@@ -66,16 +66,16 @@ type WithEventDelegations = {
 export function delegate(element: HTMLElement, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
     const delegatedElement: HTMLElement & WithEventDelegations = element;
     if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('the element provided is not a HTMLElement');
+        throw new TypeError('The provided element is not a HTMLElement');
     }
     if (typeof eventName !== 'string') {
-        throw new TypeError('the event name provided is not a string');
+        throw new TypeError('The provided event name is not a string');
     }
     if (typeof selector !== 'string') {
-        throw new TypeError('the selector provided is not a string');
+        throw new TypeError('The provided selector is not a string');
     }
     if (typeof callback !== 'function') {
-        throw new TypeError('the callback provided is not a function');
+        throw new TypeError('The provided callback is not a function');
     }
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
@@ -144,16 +144,16 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
  */
 export function undelegate(element: HTMLElement, eventName?: string, selector?: string, callback?: DelegatedEventCallback) {
     if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('the element provided is not a HTMLElement');
+        throw new TypeError('The provided element is not a HTMLElement');
     }
     if (typeof eventName !== 'undefined' && typeof eventName !== 'string') {
-        throw new TypeError('the event name provided is not a string');
+        throw new TypeError('The provided event name is not a string');
     }
     if (typeof selector !== 'undefined' && typeof selector !== 'string') {
-        throw new TypeError('the selector provided is not a string');
+        throw new TypeError('The provided selector is not a string');
     }
     if (typeof callback !== 'undefined' && typeof callback !== 'function') {
-        throw new TypeError('the callback provided is not a function');
+        throw new TypeError('The provided callback is not a function');
     }
 
     const delegatedElement: HTMLElement & WithEventDelegations = element;
@@ -203,18 +203,18 @@ export function dispatchEvent(element: HTMLElement, event: Event): boolean;
 export function dispatchEvent(element: HTMLElement, event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
 export function dispatchEvent(element: HTMLElement, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
     if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('the element provided is not a HTMLElement');
+        throw new TypeError('The provided element is not a HTMLElement');
     }
 
     if (typeof event === 'string') {
         if (typeof bubbles !== 'boolean') {
-            throw new TypeError('the bubbles option provided is not a boolean');
+            throw new TypeError('The provided bubbles option is not a boolean');
         }
         if (typeof cancelable !== 'boolean') {
-            throw new TypeError('the cancelable option provided is not a boolean');
+            throw new TypeError('The provided cancelable option is not a boolean');
         }
         if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-            throw new TypeError('the composed option provided is not a boolean');
+            throw new TypeError('The provided composed option is not a boolean');
         }
 
         event = new DOM.CustomEvent(event, {
@@ -224,7 +224,7 @@ export function dispatchEvent(element: HTMLElement, event: Event | string, detai
             composed,
         });
     } else if (!(event instanceof DOM.Event)) {
-        throw new TypeError('the event provided is not an Event');
+        throw new TypeError('The provided event is not an Event');
     }
 
     return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
