@@ -95,4 +95,10 @@ describe('registry', function() {
             expect(promise.pending).to.be.true;
         });
     });
+
+    describe('#upgrade', () => {
+        it.skip('should upgrade a node after an element definition', () => {
+            // ...
+        });
+    });
 });

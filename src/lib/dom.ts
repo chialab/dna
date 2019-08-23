@@ -46,6 +46,9 @@ export const DOM = {
      * The base CustomEvent constructor.
      */
     CustomEvent: (() => {
+        if (typeof CustomEvent === 'undefined') {
+            return;
+        }
         try {
             new CustomEvent('test');
             return CustomEvent;

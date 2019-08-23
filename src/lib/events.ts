@@ -91,6 +91,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
             if (!ev.target) {
                 return;
             }
+            const ELEMENT_NODE = DOM.Node.ELEMENT_NODE;
             const eventTarget = ev.target as HTMLElement;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;
@@ -109,10 +110,22 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
             let filtered: { target: HTMLElement; callback: DelegatedEventCallback; }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
                 let { selector, callback } = descriptors[i];
-                let target = selector ? eventTarget.closest(selector) as HTMLElement : element;
-                if (target) {
+                let selectorTarget;
+                if (selector) {
+                    let target = eventTarget;
+                    while (target && target !== element) {
+                        if (target.nodeType === ELEMENT_NODE && target.matches(selector)) {
+                            selectorTarget = target;
+                            break;
+                        }
+                        target = target.parentNode as HTMLElement;
+                    }
+                } else {
+                    selectorTarget = element;
+                }
+                if (selectorTarget) {
                     filtered.push({
-                        target,
+                        target: selectorTarget,
                         callback,
                     });
                 }
