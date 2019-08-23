@@ -3,19 +3,62 @@ import { getModule, spyFunction } from './helpers.js';
 
 let DNA;
 
-describe('events', () => {
+describe('events', function() {
+    this.timeout(10 * 1000);
+
     before(async () => {
         DNA = await getModule();
     });
 
+    let element, button;
+    beforeEach(() => {
+        element = DNA.DOM.createElement('div');
+        button = DNA.DOM.createElement('button');
+        element.appendChild(button);
+        DNA.DOM.document.body.appendChild(element);
+    });
+
+    afterEach(() => {
+        DNA.DOM.document.body.removeChild(element);
+    });
+
     describe('#dispatchEvent', () => {
-        it.skip('should dispatch custom events', () => {
-            // ...
+        it('should dispatch custom events', () => {
+            const listener = spyFunction(() => { });
+            element.addEventListener('click', listener);
+            DNA.dispatchEvent(element, 'click');
+            expect(listener.invoked).to.be.true;
+        });
+
+        it('should dispatch custom events with details', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.detail);
+            element.addEventListener('click', listener);
+            DNA.dispatchEvent(element, 'click', details);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.equal(details);
+        });
+
+        it.skip('should dispatch custom events that does bubble', () => {
+            //
+        });
+
+        it.skip('should dispatch custom events that is canceleable', () => {
+            //
+        });
+
+        it('should dispatch custom events that does not bubble', () => {
+            const listener = spyFunction((event) => event.detail);
+            element.addEventListener('click', listener);
+            DNA.dispatchEvent(button, 'click', null, false);
+            expect(listener.invoked).to.be.false;
+        });
+
+        it.skip('should dispatch custom events that is not canceleable', () => {
+            //
         });
 
         it('should validate dispatch input', () => {
-            const element = DNA.DOM.createElement('div');
-
             expect(() => {
                 DNA.dispatchEvent(null);
             }).to.throw(TypeError, 'The provided element is not a HTMLElement');
@@ -40,12 +83,9 @@ describe('events', () => {
 
     describe('#delegate', () => {
         it('should add delegate a listener', () => {
-            const wrapper = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
-            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
-            DNA.delegate(wrapper, 'click', 'button', listener);
-            DNA.delegate(wrapper, 'mouseenter', 'button', listener);
+            DNA.delegate(element, 'click', 'button', listener);
+            DNA.delegate(element, 'mouseenter', 'button', listener);
             button.click();
             DNA.dispatchEvent(button, 'mouseenter');
 
@@ -54,22 +94,20 @@ describe('events', () => {
         });
 
         it('should validate delegation input', () => {
-            const wrapper = DNA.DOM.createElement('div');
-
             expect(() => {
                 DNA.delegate(null, null, null, null);
             }).to.throw(TypeError, 'The provided element is not a HTMLElement');
 
             expect(() => {
-                DNA.delegate(wrapper, null, null, null);
+                DNA.delegate(element, null, null, null);
             }).to.throw(TypeError, 'The provided event name is not a string');
 
             expect(() => {
-                DNA.delegate(wrapper, 'click', null, null);
+                DNA.delegate(element, 'click', null, null);
             }).to.throw(TypeError, 'The provided selector is not a string');
 
             expect(() => {
-                DNA.delegate(wrapper, 'click', 'button', null);
+                DNA.delegate(element, 'click', 'button', null);
             }).to.throw(TypeError, 'The provided callback is not a function');
         });
 
@@ -84,15 +122,12 @@ describe('events', () => {
 
     describe('#undelegate', () => {
         it('should remove a delegated event listener', () => {
-            const wrapper = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
-            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
             const listener2 = spyFunction(() => { });
-            DNA.delegate(wrapper, 'click', 'button', listener);
-            DNA.delegate(wrapper, 'click', 'button', listener2);
+            DNA.delegate(element, 'click', 'button', listener);
+            DNA.delegate(element, 'click', 'button', listener2);
             button.click();
-            DNA.undelegate(wrapper, 'click', 'button', listener2);
+            DNA.undelegate(element, 'click', 'button', listener2);
             button.click();
 
             expect(listener.count).to.be.equal(2);
@@ -100,17 +135,14 @@ describe('events', () => {
         });
 
         it('should remove all delegated event listeners for an event', () => {
-            const wrapper = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
-            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
             const listener2 = spyFunction(() => { });
-            DNA.delegate(wrapper, 'click', 'button', listener);
-            DNA.delegate(wrapper, 'click', 'button', listener2);
-            DNA.delegate(wrapper, 'mouseenter', 'button', listener);
+            DNA.delegate(element, 'click', 'button', listener);
+            DNA.delegate(element, 'click', 'button', listener2);
+            DNA.delegate(element, 'mouseenter', 'button', listener);
             button.click();
             DNA.dispatchEvent(button, 'mouseenter');
-            DNA.undelegate(wrapper, 'click');
+            DNA.undelegate(element, 'click');
             button.click();
             DNA.dispatchEvent(button, 'mouseenter');
 
@@ -119,15 +151,12 @@ describe('events', () => {
         });
 
         it('should remove all delegated event listeners', () => {
-            const wrapper = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
-            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
-            DNA.delegate(wrapper, 'click', 'button', listener);
-            DNA.delegate(wrapper, 'mouseenter', 'button', listener);
+            DNA.delegate(element, 'click', 'button', listener);
+            DNA.delegate(element, 'mouseenter', 'button', listener);
             button.click();
             DNA.dispatchEvent(button, 'mouseenter');
-            DNA.undelegate(wrapper);
+            DNA.undelegate(element);
             button.click();
             DNA.dispatchEvent(button, 'mouseenter');
 
@@ -135,22 +164,20 @@ describe('events', () => {
         });
 
         it('should validate undelegation input', () => {
-            const wrapper = DNA.DOM.createElement('div');
-
             expect(() => {
                 DNA.undelegate(null, null, null, null);
             }).to.throw(TypeError, 'The provided element is not a HTMLElement');
 
             expect(() => {
-                DNA.undelegate(wrapper, null, null, null);
+                DNA.undelegate(element, null, null, null);
             }).to.throw(TypeError, 'The provided event name is not a string');
 
             expect(() => {
-                DNA.undelegate(wrapper, 'click', null, null);
+                DNA.undelegate(element, 'click', null, null);
             }).to.throw(TypeError, 'The provided selector is not a string');
 
             expect(() => {
-                DNA.undelegate(wrapper, 'click', 'button', 1);
+                DNA.undelegate(element, 'click', 'button', 1);
             }).to.throw(TypeError, 'The provided callback is not a function');
         });
     });

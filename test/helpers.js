@@ -13,6 +13,7 @@ export function spyFunction(fn) {
         spied.invoked = true;
         spied.count++;
     };
+    spied.invoked = false;
     spied.count = 0;
     return spied;
 }

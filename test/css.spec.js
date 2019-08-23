@@ -3,7 +3,9 @@ import { getModule } from './helpers.js';
 
 let DNA;
 
-describe('css', () => {
+describe('css', function() {
+    this.timeout(10 * 1000);
+
     before(async () => {
         DNA = await getModule();
     });

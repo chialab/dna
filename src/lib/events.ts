@@ -91,7 +91,11 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
             if (!ev.target) {
                 return;
             }
+            const PROTOTYPE = DOM.HTMLElement.prototype;
             const ELEMENT_NODE = DOM.Node.ELEMENT_NODE;
+            const MATCH = PROTOTYPE.matches ||
+                PROTOTYPE.webkitMatchesSelector ||
+                (PROTOTYPE as any).msMatchesSelector as typeof DOM.HTMLElement.prototype.matches;
             const eventTarget = ev.target as HTMLElement;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;
@@ -114,7 +118,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
                 if (selector) {
                     let target = eventTarget;
                     while (target && target !== element) {
-                        if (target.nodeType === ELEMENT_NODE && target.matches(selector)) {
+                        if (target.nodeType === ELEMENT_NODE && MATCH.call(target, selector)) {
                             selectorTarget = target;
                             break;
                         }

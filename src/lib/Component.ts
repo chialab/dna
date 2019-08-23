@@ -121,6 +121,7 @@ export class Component extends BaseElement {
             node = DOM.document.createElement(definition.extends || definition.name) as HTMLElement;
         }
 
+        node.setAttribute('is', this.is);
         Object.setPrototypeOf(node, Object.getPrototypeOf(this));
 
         setScope(node, createScope(node as HTMLElement));
@@ -138,8 +139,6 @@ export class Component extends BaseElement {
                 (node as any)[propertyKey] = properties[propertyKey];
             }
         }
-
-        DOM.setAttribute(node as HTMLElement, 'is', this.is);
 
         setSlotted(node as HTMLElement, DOM.getChildNodes(node as HTMLElement) as TemplateItems);
 
@@ -175,8 +174,7 @@ export class Component extends BaseElement {
      * Invoked each time the Component is disconnected from the document's DOM.
      */
     disconnectedCallback() {
-        // empty the Node content when disconnected
-        this.render([]);
+        //
     }
 
     /**
@@ -187,8 +185,8 @@ export class Component extends BaseElement {
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string) {
+        const properties = getProperties(this);
         let property: AccessorDescriptor | undefined;
-        let properties = getProperties(this);
         for (let propertyKey in properties) {
             let prop = properties[propertyKey];
             if (prop.attribute === attributeName) {
