@@ -21,7 +21,7 @@ export type Definition = {
 /**
  * A global registry.
  */
-const REGISTRY: {
+export const REGISTRY: {
     [key: string]: Definition;
 } = {};
 
@@ -48,8 +48,10 @@ export function assertValidateCustomElementName(name: string): boolean {
  * @param name The name of the tag.
  * @return The definition for the given tag.
  */
-export function get(name: string): Definition {
-    return REGISTRY[name] || null;
+export function get(name: string): CustomElement {
+    assertValidateCustomElementName(name);
+
+    return REGISTRY[name] && REGISTRY[name].constructor || null;
 }
 
 /**

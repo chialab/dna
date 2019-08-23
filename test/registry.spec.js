@@ -20,10 +20,7 @@ describe('registry', function() {
         it('should define a tag', () => {
             const TestElement = class extends DNA.Component { };
             DNA.define('test-define2', TestElement);
-
-            expect(DNA.get('test-define2').name).to.be.equal('test-define2');
-            expect(DNA.get('test-define2').constructor).to.be.equal(TestElement);
-            expect(DNA.get('test-define2').extends).to.be.undefined;
+            expect(DNA.get('test-define2')).to.be.equal(TestElement);
         });
 
         it('should extend a native tag', () => {
@@ -31,10 +28,7 @@ describe('registry', function() {
             DNA.define('test-define3', TestElement, {
                 extends: 'article',
             });
-
-            expect(DNA.get('test-define3').name).to.be.equal('test-define3');
-            expect(DNA.get('test-define3').constructor).to.be.equal(TestElement);
-            expect(DNA.get('test-define3').extends).to.be.equal('article');
+            expect(DNA.get('test-define3')).to.be.equal(TestElement);
         });
 
         it('should throw if the tag has been already defined', () => {

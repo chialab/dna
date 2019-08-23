@@ -1,6 +1,6 @@
 import { shim } from './shim';
 import { CustomElement } from './CustomElement';
-import * as registry from './registry';
+import { REGISTRY } from './registry';
 
 /**
  * Invoke life cycle methods by default.
@@ -129,7 +129,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElement(tagName: string): Element {
-        const definition = registry.get(tagName);
+        const definition = REGISTRY[tagName.toLowerCase()];
         if (!definition) {
             return this.document.createElement(tagName);
         }

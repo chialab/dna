@@ -1,4 +1,4 @@
-import * as registry from './registry';
+import { REGISTRY } from './registry';
 import { BaseElement, DOM } from './dom';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -117,11 +117,10 @@ export class Component extends BaseElement {
 
         if (!DOM.isElement(node)) {
             properties = node;
-            const definition = registry.get(this.is as string);
+            const definition = REGISTRY[this.is];
             node = DOM.document.createElement(definition.extends || definition.name) as HTMLElement;
         }
 
-        node.setAttribute('is', this.is);
         Object.setPrototypeOf(node, Object.getPrototypeOf(this));
 
         setScope(node, createScope(node as HTMLElement));
@@ -139,6 +138,8 @@ export class Component extends BaseElement {
                 (node as any)[propertyKey] = properties[propertyKey];
             }
         }
+
+        DOM.setAttribute(node as HTMLElement, 'is', this.is);
 
         setSlotted(node as HTMLElement, DOM.getChildNodes(node as HTMLElement) as TemplateItems);
 

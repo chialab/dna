@@ -4,7 +4,7 @@ import { Scope, getScope, setScope } from './Scope';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { isInterpolationFunction } from './interpolate';
-import { get } from './registry';
+import { REGISTRY } from './registry';
 import { DOM } from './dom';
 
 /**
@@ -105,7 +105,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         // if the tag is registered as Component or the `is` property is defined
         let name = propertiesToSet.is || tag;
         // get the constructor from the registry
-        let definition = get(name);
+        const definition = REGISTRY[name];
         Component = definition && definition.constructor;
     }
 
