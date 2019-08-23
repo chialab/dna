@@ -45,7 +45,20 @@ export const DOM = {
     /**
      * The base CustomEvent constructor.
      */
-    CustomEvent: (typeof CustomEvent !== 'undefined' ? CustomEvent : undefined) as typeof CustomEvent,
+    CustomEvent: (() => {
+        try {
+            new CustomEvent('test');
+            return CustomEvent;
+        } catch {
+            const CustomEventPolyfill = function(eventName: string, params: CustomEventInit = {}) {
+                const event = DOM.document.createEvent('CustomEvent');
+                event.initCustomEvent(eventName, params.bubbles || false, params.cancelable || false, params.detail);
+                return event;
+            };
+            CustomEventPolyfill.prototype = CustomEvent.prototype;
+            return CustomEventPolyfill;
+        }
+    })() as typeof CustomEvent,
 
     /**
      * The base HTMLElement constructor.

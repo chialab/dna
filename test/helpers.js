@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+import 'core-js/es/promise';
 
 export async function getModule() {
     if (typeof window === 'undefined') {
