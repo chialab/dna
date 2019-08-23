@@ -1,4 +1,5 @@
 import { DOM } from './dom';
+import { isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope } from './Scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
 import { getSlotted } from './Slotted';
@@ -138,7 +139,7 @@ export function render(node: Element, input: Template, context?: RenderContext):
 
                 if (DOM.isElement(inputElement)) {
                     const slotted = getSlotted(inputElement);
-                    if (slotted && !DOM.isCustomElement(inputElement)) {
+                    if (slotted && !isCustomElement(inputElement)) {
                         // the Node has slotted children, trigger a new render context for them
                         render(inputElement, slotted, {
                             result: [],

@@ -11,7 +11,7 @@ const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param event The original DOM event.
  * @param target The matched delegated element.
  */
-export type DelegatedEventCallback = (event: Event, target?: HTMLElement) => any;
+export type DelegatedEventCallback = (event: Event, target?: Node) => any;
 
 /**
  * A descriptor for an event delegation.
@@ -63,10 +63,10 @@ type WithEventDelegations = {
  * @param callback The callback to trigger when an Event matches the delegation
  * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
-export function delegate(element: HTMLElement, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
-    const delegatedElement: HTMLElement & WithEventDelegations = element;
-    if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('The provided element is not a HTMLElement');
+export function delegate(element: Node, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
+    const delegatedElement: Node & WithEventDelegations = element;
+    if (!(element instanceof DOM.Node)) {
+        throw new TypeError('The provided element is not a Node');
     }
     if (typeof eventName !== 'string') {
         throw new TypeError('The provided event name is not a string');
@@ -96,7 +96,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
             const MATCH = PROTOTYPE.matches ||
                 PROTOTYPE.webkitMatchesSelector ||
                 (PROTOTYPE as any).msMatchesSelector as typeof DOM.HTMLElement.prototype.matches;
-            const eventTarget = ev.target as HTMLElement;
+            const eventTarget = ev.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;
             ev.stopPropagation = () => {
@@ -111,7 +111,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
             };
 
             // filter matched selector for the event
-            let filtered: { target: HTMLElement; callback: DelegatedEventCallback; }[] = [];
+            let filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
                 let { selector, callback } = descriptors[i];
                 let selectorTarget;
@@ -122,7 +122,7 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
                             selectorTarget = target;
                             break;
                         }
-                        target = target.parentNode as HTMLElement;
+                        target = target.parentNode as Node;
                     }
                 } else {
                     selectorTarget = element;
@@ -159,9 +159,9 @@ export function delegate(element: HTMLElement, eventName: string, selector: stri
  * @param selector The selector to undelegate
  * @param callback The callback to remove
  */
-export function undelegate(element: HTMLElement, eventName?: string, selector?: string, callback?: DelegatedEventCallback) {
-    if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('The provided element is not a HTMLElement');
+export function undelegate(element: Node, eventName?: string, selector?: string, callback?: DelegatedEventCallback) {
+    if (!(element instanceof DOM.Node)) {
+        throw new TypeError('The provided element is not a Node');
     }
     if (typeof eventName !== 'undefined' && typeof eventName !== 'string') {
         throw new TypeError('The provided event name is not a string');
@@ -173,7 +173,7 @@ export function undelegate(element: HTMLElement, eventName?: string, selector?: 
         throw new TypeError('The provided callback is not a function');
     }
 
-    const delegatedElement: HTMLElement & WithEventDelegations = element;
+    const delegatedElement: Node & WithEventDelegations = element;
     // get all delegations
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL];
     if (!eventName) {
@@ -216,11 +216,11 @@ export function undelegate(element: HTMLElement, eventName?: string, selector?: 
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export function dispatchEvent(element: HTMLElement, event: Event): boolean;
-export function dispatchEvent(element: HTMLElement, event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
-export function dispatchEvent(element: HTMLElement, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
-    if (!(element instanceof DOM.HTMLElement)) {
-        throw new TypeError('The provided element is not a HTMLElement');
+export function dispatchEvent(element: Node, event: Event): boolean;
+export function dispatchEvent(element: Node, event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+export function dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
+    if (!(element instanceof DOM.Node)) {
+        throw new TypeError('The provided element is not a Node');
     }
 
     if (typeof event === 'string') {
@@ -244,5 +244,5 @@ export function dispatchEvent(element: HTMLElement, event: Event | string, detai
         throw new TypeError('The provided event is not an Event');
     }
 
-    return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
+    return DOM.Node.prototype.dispatchEvent.call(element, event);
 }

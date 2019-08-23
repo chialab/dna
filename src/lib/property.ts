@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { DOM } from './dom';
+import { isCustomElement } from './CustomElement';
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -138,7 +138,7 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
                 }
             }
             // trigger Property changes
-            if (DOM.isCustomElement(this)) {
+            if (isCustomElement(this)) {
                 this.propertyChangedCallback(descriptor.name as string, oldValue, value);
             }
         }

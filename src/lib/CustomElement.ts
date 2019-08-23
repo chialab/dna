@@ -1,16 +1,35 @@
+import { createSymbolKey } from './symbols';
+import { AccessorObserver, AccessorDescriptor } from './property';
+import { DelegatedEventCallback } from './events';
+import { Template } from './Template';
+
+/**
+ * A symbol which identify a DNA custom element.
+ */
+export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * Check if a node is a DNA Custom Element instance.
+ * @param node The node to check.
+ * @return The node is a Custom Element instance.
+ */
+export function isCustomElement(node: any): node is DNACustomElement {
+    return node[CE_SYMBOL] === true;
+}
+
 /**
  * The interface of Custom Element, as described by the W3C.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
-export type CustomElement = HTMLElement & {
+export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     /**
      * The Custom Element constructor.
      *
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): CustomElement;
-    new(properties?: { [key: string]: any; }): CustomElement;
+    new(node?: T, properties?: { [key: string]: any; }): CustomElement<T>;
+    new(properties?: { [key: string]: any; }): CustomElement<T>;
 
     /**
      * Invoked each time the Custom Element is appended into a document-connected element.
@@ -31,6 +50,41 @@ export type CustomElement = HTMLElement & {
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string): void;
+}
+
+/**
+ * The basic DNA Custom Element interface.
+ * It's a Custom Element, but with some extra useful method.
+ */
+export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElement<T> & {
+    /**
+     * An unique symbol for DNA Custom elements.
+     */
+    readonly [CE_SYMBOL]: true;
+
+    /**
+     * The tag name used for Component definition.
+     */
+    readonly is: string | undefined;
+
+    /**
+     * A set of properties to define to the node.
+     */
+    readonly properties?: {
+        [key: string]: AccessorDescriptor;
+    };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
+    readonly events?: {
+        [key: string]: DelegatedEventCallback;
+    };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
+    readonly template?: Template | undefined;
 
     /**
      * Invoked each time one of the Custom Element's properties is added, removed, or changed.
@@ -45,4 +99,51 @@ export type CustomElement = HTMLElement & {
      * Invoke the Custom Element's rendering.
      */
     render(): void;
-};
+
+    /**
+     * Observe a Component Property.
+     *
+     * @param propertyName The name of the Property to observe
+     * @param callback The callback function
+     */
+    observe(propertyName: string, callback: AccessorObserver): void;
+
+    /**
+     * Unobserve a Component Property.
+     * @memberof PropertiesMixin
+     *
+     * @param propertyName The name of the Property to unobserve
+     * @param callback The callback function to remove
+     */
+    unobserve(propertyName: string, callback ?: AccessorObserver):void;
+
+    /**
+     * Dispatch a custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    dispatchEvent(event: Event): boolean;
+    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+
+    /**
+     * Delegate an Event listener.
+     *
+     * @param eventName The event name to listen
+     * @param selector The selector to delegate
+     * @param callback The callback to trigger when an Event matches the delegation
+     */
+    delegate(event: string, selector: string, callback: DelegatedEventCallback): void;
+
+    /**
+     * Remove an Event delegation.
+     *
+     * @param eventName The Event name to undelegate
+     * @param selector The selector to undelegate
+     * @param callback The callback to remove
+     */
+    undelegate(event?: string, selector?: string, callback?: DelegatedEventCallback): void;
+}

@@ -1,19 +1,10 @@
-import { shim } from './shim';
-import { CustomElement } from './CustomElement';
+import { isCustomElement } from './CustomElement';
 import { REGISTRY } from './registry';
 
 /**
  * Invoke life cycle methods by default.
  */
 let lifeCycle = true;
-
-let ShimElement: typeof HTMLElement = (typeof HTMLElement !== 'undefined') ? shim(HTMLElement) : (class {} as typeof HTMLElement);
-
-/**
- * The abstact HTMLElement that Component extends.
- * It proxies the DOM.Element class.
- */
-export class BaseElement extends ShimElement { }
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -43,6 +34,11 @@ export const DOM = {
     Event: (typeof Event !== 'undefined' ? Event : undefined) as typeof Event,
 
     /**
+     * The base HTMLElement constructor.
+     */
+    HTMLElement: (typeof HTMLElement !== 'undefined' ? HTMLElement : class {}) as typeof HTMLElement,
+
+    /**
      * The base CustomEvent constructor.
      */
     CustomEvent: (() => {
@@ -62,17 +58,6 @@ export const DOM = {
             return CustomEventPolyfill;
         }
     })() as typeof CustomEvent,
-
-    /**
-     * The base HTMLElement constructor.
-     */
-    get HTMLElement() {
-        return ShimElement;
-    },
-    set HTMLElement(constructor: typeof HTMLElement) {
-        Object.setPrototypeOf(ShimElement.prototype, constructor.prototype);
-        ShimElement = constructor;
-    },
 
     /**
      * Set the life cycle mode for DNA.
@@ -99,15 +84,6 @@ export const DOM = {
      */
     isText(node: any): node is Text {
         return node && node.nodeType === this.Node.TEXT_NODE;
-    },
-
-    /**
-     * Check if a node is a Custom Element instance.
-     * @param node The node to check.
-     * @return The node is a Custom Element instance.
-     */
-    isCustomElement(node: any): node is CustomElement {
-        return node instanceof BaseElement;
     },
 
     /**
@@ -254,7 +230,7 @@ export const DOM = {
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
-        if (lifeCycle && this.isCustomElement(element)) {
+        if (lifeCycle && isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
     },
@@ -268,7 +244,7 @@ export const DOM = {
     removeAttribute(element: Element, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
-        if (lifeCycle && this.isCustomElement(element)) {
+        if (lifeCycle && isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
     },
@@ -301,7 +277,7 @@ export const DOM = {
             return;
         }
         let previousNodes = this.getChildNodes(node) || [];
-        if (this.isCustomElement(node)) {
+        if (isCustomElement(node)) {
             node.connectedCallback();
         }
         let children = this.getChildNodes(node);
@@ -326,7 +302,7 @@ export const DOM = {
             return;
         }
         let previousNodes = this.getChildNodes(node) || [];
-        if (this.isCustomElement(node)) {
+        if (isCustomElement(node)) {
             node.disconnectedCallback();
         }
         let children = this.getChildNodes(node);

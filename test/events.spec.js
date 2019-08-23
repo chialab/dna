@@ -61,7 +61,7 @@ describe('events', function() {
         it('should validate dispatch input', () => {
             expect(() => {
                 DNA.dispatchEvent(null);
-            }).to.throw(TypeError, 'The provided element is not a HTMLElement');
+            }).to.throw(TypeError, 'The provided element is not a Node');
 
             expect(() => {
                 DNA.dispatchEvent(element, null);
@@ -96,7 +96,7 @@ describe('events', function() {
         it('should validate delegation input', () => {
             expect(() => {
                 DNA.delegate(null, null, null, null);
-            }).to.throw(TypeError, 'The provided element is not a HTMLElement');
+            }).to.throw(TypeError, 'The provided element is not a Node');
 
             expect(() => {
                 DNA.delegate(element, null, null, null);
@@ -166,7 +166,7 @@ describe('events', function() {
         it('should validate undelegation input', () => {
             expect(() => {
                 DNA.undelegate(null, null, null, null);
-            }).to.throw(TypeError, 'The provided element is not a HTMLElement');
+            }).to.throw(TypeError, 'The provided element is not a Node');
 
             expect(() => {
                 DNA.undelegate(element, null, null, null);

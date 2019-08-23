@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { CustomElement } from './CustomElement';
+import { DNACustomElement, isCustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -197,7 +197,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
 
         let element = getRoot(Component || tag, props.key, namespaceURI, previousElement);
         let context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
-        let isCustomElement = DOM.isCustomElement(element);
+        let isCE = isCustomElement(element);
         // update the Node properties
         for (let propertyKey in context) {
             if (!(propertyKey in props)) {
@@ -207,7 +207,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         for (let propertyKey in props) {
             let value = props[propertyKey];
 
-            if (isCustomElement) {
+            if (isCE) {
                 if ((element as any)[propertyKey] !== value) {
                     // the property should be update
                     (element as any)[propertyKey] = value;
@@ -236,9 +236,9 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         setScope(childrenInput, this);
         setSlotted(element, childrenInput);
 
-        if (isCustomElement) {
+        if (isCE) {
             // notify the Component that its slotted Nodes has been updated
-            (element as CustomElement).render();
+            (element as DNACustomElement).render();
         }
 
         // return the updated (or created) Node (or Component)
