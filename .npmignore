@@ -10,8 +10,5 @@ package-lock.json
 
 # RNA
 
-/local
 /src
-/docs
-/public
 tsconfig.json
