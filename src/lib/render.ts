@@ -1,4 +1,4 @@
-import { DOM } from './dom';
+import { DOM } from './DOM';
 import { isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope } from './Scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';

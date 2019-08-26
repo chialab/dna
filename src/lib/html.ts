@@ -1,7 +1,7 @@
 import { Template } from './Template';
 import { InterpolationFunction, compile } from './interpolate';
 import { h, HyperFunction } from './h';
-import { DOM } from './dom';
+import { DOM } from './DOM';
 
 /**
  * Check if a node is a `<template>` element.

@@ -1,6 +1,6 @@
 import { DNACustomElement, CE_SYMBOL } from './CustomElement';
 import { REGISTRY } from './registry';
-import { DelegatedEventCallback, DOM } from './dom';
+import { DelegatedEventCallback, DOM } from './DOM';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';

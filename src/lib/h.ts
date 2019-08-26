@@ -5,7 +5,7 @@ import { Template, TemplateItems, createFilterableTemplateItems } from './Templa
 import { getSlotted, setSlotted } from './Slotted';
 import { isInterpolationFunction } from './interpolate';
 import { REGISTRY } from './registry';
-import { DOM } from './dom';
+import { DOM } from './DOM';
 
 /**
  * Symbol for interpolated functions.

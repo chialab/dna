@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { AccessorObserver, AccessorDescriptor } from './property';
-import { DelegatedEventCallback } from './dom';
+import { DelegatedEventCallback } from './DOM';
 import { Template } from './Template';
 
 /**

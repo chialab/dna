@@ -1,5 +1,5 @@
 import { mixin } from './lib/mixin';
-import { DOM } from './lib/dom';
+import { DOM } from './lib/DOM';
 
 export { mixin, DOM };
 export { render } from './lib/render';
