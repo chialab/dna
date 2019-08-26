@@ -38,10 +38,9 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
     class Component extends (constructor as typeof HTMLElement) {
         /**
          * An unique symbol for DNA Custom elements.
+         * @ignore
          */
-        get [CE_SYMBOL]() {
-            return true;
-        }
+        readonly [CE_SYMBOL] = true;
 
         /**
          * The tag name used for Component definition.

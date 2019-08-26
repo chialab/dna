@@ -1,4 +1,4 @@
-import { CustomElement } from './CustomElement';
+import { DNACustomElement } from './CustomElement';
 
 /**
  * Describe a Custom Element definition.
@@ -11,7 +11,7 @@ export type Definition = {
     /**
      * The Custom Element constructor.
      */
-    constructor: CustomElement;
+    constructor: DNACustomElement;
     /**
      * The name of the tag to extend.
      */
@@ -48,7 +48,7 @@ export function assertValidateCustomElementName(name: string): boolean {
  * @param name The name of the tag.
  * @return The definition for the given tag.
  */
-export function get(name: string): CustomElement {
+export function get(name: string): DNACustomElement {
     assertValidateCustomElementName(name);
 
     return REGISTRY[name] && REGISTRY[name].constructor || null;
@@ -85,7 +85,7 @@ export function whenDefined(name: string): Promise<void> {
  * @param constructor The Custom Element constructor.
  * @param options A set of definition options, like `extends` for native tag extension.
  */
-export function define(name: string, constructor: CustomElement, options: { extends?: string; } = {}) {
+export function define(name: string, constructor: DNACustomElement, options: { extends?: string; } = {}) {
     assertValidateCustomElementName(name);
 
     if (typeof constructor !== 'function') {
@@ -122,7 +122,7 @@ export function define(name: string, constructor: CustomElement, options: { exte
  * @param root A Node instance with descendant elements that are to be upgraded.
  */
 export function upgrade(root: HTMLElement) {
-    let elements: CustomElement[] = [];
+    let elements: DNACustomElement[] = [];
     // iterate registry entries in order to retrieve all registered tags
     for (let key in REGISTRY) {
         const { name, constructor } = REGISTRY[key];

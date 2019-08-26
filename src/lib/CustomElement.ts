@@ -23,15 +23,6 @@ export function isCustomElement(node: any): node is DNACustomElement {
  */
 export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     /**
-     * The Custom Element constructor.
-     *
-     * @param node Instantiate the element using the given node instead of creating a new one.
-     * @param properties A set of initial properties for the element.
-     */
-    new(node?: T, properties?: { [key: string]: any; }): CustomElement<T>;
-    new(properties?: { [key: string]: any; }): CustomElement<T>;
-
-    /**
      * Invoked each time the Custom Element is appended into a document-connected element.
      * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
      */
@@ -84,7 +75,16 @@ export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElemen
     /**
      * A set of delegated events to bind to the node.
      */
-    readonly template?: Template | undefined;
+    readonly template?: Template;
+
+    /**
+     * The DNA Custom Element constructor.
+     *
+     * @param node Instantiate the element using the given node instead of creating a new one.
+     * @param properties A set of initial properties for the element.
+     */
+    new(node?: T, properties?: { [key: string]: any; }): DNACustomElement<T>;
+    new(properties?: { [key: string]: any; }): DNACustomElement<T>;
 
     /**
      * Invoked each time one of the Custom Element's properties is added, removed, or changed.

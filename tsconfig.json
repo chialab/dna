@@ -11,21 +11,11 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "allowJs": false
   },
   "include": [
     "src/**/*.ts"
   ],
-  "exclude": [],
-  "typedocOptions": {
-    "name": "DNA",
-    "includeDeclarations": true,
-    "ignoreCompilerErrors": true,
-    "excludeExternals": true,
-    "excludePrivate": true,
-    "excludeProtected": true,
-    "mode": "file",
-    "out": "docs",
-    "exclude": "node_modules/**/*.d.ts"
-  }
+  "exclude": []
 }

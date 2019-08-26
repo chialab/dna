@@ -1,5 +1,6 @@
 import { mixin } from './lib/mixin';
 import { DOM } from './lib/DOM';
+import { DNACustomElement } from './lib/CustomElement';
 
 export { mixin, DOM };
 export { render } from './lib/render';
@@ -37,4 +38,4 @@ export { property } from './lib/property';
  * define('hello-world', HelloWorld);
  * ```
  */
-export class Component extends mixin(DOM.get('HTMLElement')) { }
+export const Component = mixin(DOM.get('HTMLElement'));
