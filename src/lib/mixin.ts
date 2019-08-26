@@ -263,9 +263,9 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        dispatchEvent(event: Event): boolean;
-        dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
-        dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+        dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
+        dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
+        dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
             return DOM.dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 

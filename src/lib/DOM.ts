@@ -4,6 +4,34 @@ import { REGISTRY } from './registry';
 import { shim } from './shim';
 
 /**
+ * The global namespace.
+ */
+const GLOBAL_NS = (() => {
+    if (typeof globalThis !== 'undefined') {
+        return globalThis;
+    }
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    return {};
+})() as {
+    document?: Document,
+    Node?: typeof Node,
+    Text?: typeof Text,
+    Element?: typeof Element,
+    Event?: typeof Event,
+    CustomEvent?: typeof CustomEvent,
+} & {
+    [key: string]: typeof HTMLElement;
+};
+
+/**
  * Collect native HTMLElement constructors.
  */
 const CONSTRUCTORS: { [key: string]: typeof HTMLElement } = {};
@@ -76,37 +104,37 @@ export const DOM = {
     /**
      * The document global instance.
      */
-    document: (typeof document !== 'undefined' ? document : undefined) as Document,
+    document: GLOBAL_NS.document as Document,
 
     /**
      * The base Node constructor.
      */
-    Node: (typeof Node !== 'undefined' ? Node : undefined) as typeof Node,
+    Node: GLOBAL_NS.Node as typeof Node,
 
     /**
      * The base Text constructor.
      */
-    Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
+    Text: GLOBAL_NS.Text as typeof Text,
 
     /**
      * The base Element constructor.
      */
-    Element: (typeof Element !== 'undefined' ? Element : undefined) as typeof Element,
+    Element: GLOBAL_NS.Element as typeof Element,
 
     /**
      * The base Event constructor.
      */
-    Event: (typeof Event !== 'undefined' ? Event : undefined) as typeof Event,
+    Event: GLOBAL_NS.Event as typeof Event,
 
     /**
      * The base CustomEvent constructor.
      */
     CustomEvent: (() => {
-        if (typeof CustomEvent === 'undefined') {
+        if (!GLOBAL_NS.CustomEvent) {
             return;
         }
         try {
-            new CustomEvent('test');
+            new GLOBAL_NS.CustomEvent('test');
             return CustomEvent;
         } catch {
             const CustomEventPolyfill = function(eventName: string, params: CustomEventInit = {}) {
@@ -370,8 +398,14 @@ export const DOM = {
         if (PROXIES[name]) {
             return PROXIES[name];
         }
-        const superClass = CONSTRUCTORS[name] || class {};
-        PROXIES[name] = class extends superClass { };
+        if (!CONSTRUCTORS[name]) {
+            if (GLOBAL_NS[name]) {
+                CONSTRUCTORS[name] = shim(GLOBAL_NS[name]);
+            } else {
+                CONSTRUCTORS[name] = class { } as typeof HTMLElement;
+            }
+        }
+        PROXIES[name] = class extends CONSTRUCTORS[name] { };
         return PROXIES[name];
     },
 
