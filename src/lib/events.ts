@@ -91,11 +91,11 @@ export function delegate(element: Node, eventName: string, selector: string, cal
             if (!ev.target) {
                 return;
             }
-            const PROTOTYPE = DOM.HTMLElement.prototype;
+            const PROTOTYPE = DOM.Element.prototype;
             const ELEMENT_NODE = DOM.Node.ELEMENT_NODE;
             const MATCH = PROTOTYPE.matches ||
                 PROTOTYPE.webkitMatchesSelector ||
-                (PROTOTYPE as any).msMatchesSelector as typeof DOM.HTMLElement.prototype.matches;
+                (PROTOTYPE as any).msMatchesSelector as typeof HTMLElement.prototype.matches;
             const eventTarget = ev.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;

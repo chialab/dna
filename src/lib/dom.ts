@@ -1,10 +1,16 @@
 import { isCustomElement } from './CustomElement';
 import { REGISTRY } from './registry';
+import { shim } from './shim';
 
 /**
- * Invoke life cycle methods by default.
+ * Collect native HTMLElement constructors.
  */
-let lifeCycle = true;
+const CONSTRUCTORS: { [key: string]: typeof HTMLElement } = {};
+
+/**
+ * Collect proxied HTMLElement constructors.
+ */
+const PROXIES: { [key: string]: typeof HTMLElement } = {};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -29,14 +35,14 @@ export const DOM = {
     Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
 
     /**
+     * The base Element constructor.
+     */
+    Element: (typeof Element !== 'undefined' ? Element : undefined) as typeof Element,
+
+    /**
      * The base Event constructor.
      */
     Event: (typeof Event !== 'undefined' ? Event : undefined) as typeof Event,
-
-    /**
-     * The base HTMLElement constructor.
-     */
-    HTMLElement: (typeof HTMLElement !== 'undefined' ? HTMLElement : class {}) as typeof HTMLElement,
 
     /**
      * The base CustomEvent constructor.
@@ -60,21 +66,12 @@ export const DOM = {
     })() as typeof CustomEvent,
 
     /**
-     * Set the life cycle mode for DNA.
-     * Disable it (`DOM.useLifeCycle(false)`) if you want to use native Custom Element's.
-     * @param use Should invoke or not life cycle methods.
-     */
-    useLifeCycle(use: boolean = true) {
-        lifeCycle = !!use;
-    },
-
-    /**
      * Check if a node is an Element instance.
      * @param node The node to check.
      * @return The node is an Element instance.
      */
     isElement(node: any): node is Element {
-        return node && node.nodeType === this.Node.ELEMENT_NODE;
+        return node && node instanceof this.Element;
     },
 
     /**
@@ -83,7 +80,7 @@ export const DOM = {
      * @return The node is a Text instance.
      */
     isText(node: any): node is Text {
-        return node && node.nodeType === this.Node.TEXT_NODE;
+        return node && node instanceof this.Text;
     },
 
     /**
@@ -144,7 +141,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.HTMLElement.prototype.appendChild.call(parent, newChild);
+        this.Node.prototype.appendChild.call(parent, newChild);
         this.connect(newChild);
         return newChild;
     },
@@ -156,7 +153,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
-        this.HTMLElement.prototype.removeChild.call(parent, oldChild);
+        this.Node.prototype.removeChild.call(parent, oldChild);
         this.disconnect(oldChild);
         return oldChild;
     },
@@ -175,7 +172,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.HTMLElement.prototype.insertBefore.call(parent, newChild, refChild);
+        this.Node.prototype.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
         return newChild;
     },
@@ -194,7 +191,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.HTMLElement.prototype.replaceChild.call(parent, newChild, oldChild);
+        this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
         this.connect(newChild);
         return oldChild;
@@ -207,7 +204,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return this.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
+        return this.Element.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -217,7 +214,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return this.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
+        return this.Element.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -229,8 +226,8 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
-        this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
-        if (lifeCycle && isCustomElement(element)) {
+        this.Element.prototype.setAttribute.call(element, qualifiedName, value);
+        if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
     },
@@ -243,8 +240,8 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
-        this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
-        if (lifeCycle && isCustomElement(element)) {
+        this.Element.prototype.removeAttribute.call(element, qualifiedName);
+        if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
     },
@@ -273,9 +270,6 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
-        if (!lifeCycle) {
-            return;
-        }
         let previousNodes = this.getChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.connectedCallback();
@@ -298,9 +292,6 @@ export const DOM = {
      * @param node The disconnected node.
      */
     disconnect(node: Node) {
-        if (!lifeCycle) {
-            return;
-        }
         let previousNodes = this.getChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.disconnectedCallback();
@@ -314,5 +305,36 @@ export const DOM = {
                 }
             }
         }
+    },
+
+    /**
+     * Get a native HTMLElement constructor by its name.
+     * @param name The name of the constructor (eg. "HTMLAnchorElement").
+     * @return A proxy that extends the native constructor (if available).
+     */
+    get(name: string): typeof HTMLElement {
+        if (PROXIES[name]) {
+            return PROXIES[name];
+        }
+        const superClass = CONSTRUCTORS[name] || class {};
+        PROXIES[name] = class extends superClass { };
+        return PROXIES[name];
+    },
+
+    /**
+     * Define a native HTMLElement constructor. It also update already getted proxy classes prototype.
+     * @param name The name of the constructor (eg. "HTMLAnchorElement").
+     * @param constructor The constructor function reference.
+     * @return A proxy that extends the native constructor (if available).
+     */
+    define<T extends typeof HTMLElement = typeof HTMLElement>(name: string, constructor: T): T {
+        constructor = CONSTRUCTORS[name] = shim(constructor);
+        if (PROXIES[name]) {
+            Object.setPrototypeOf(
+                Object.getPrototypeOf(PROXIES[name]).prototype,
+                constructor.prototype
+            );
+        }
+        return constructor;
     },
 };

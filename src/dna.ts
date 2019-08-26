@@ -1,8 +1,7 @@
 import { mixin } from './lib/mixin';
 import { DOM } from './lib/dom';
 
-export { DOM };
-export { extend } from './lib/extend';
+export { mixin, DOM };
 export { render } from './lib/render';
 export { get, define, upgrade, whenDefined } from './lib/registry';
 export { Fragment, h } from './lib/h';
@@ -39,4 +38,4 @@ export { delegate, undelegate, dispatchEvent } from './lib/events';
  * define('hello-world', HelloWorld);
  * ```
  */
-export class Component extends mixin(DOM.HTMLElement) { }
+export class Component extends mixin(DOM.get('HTMLElement')) { }

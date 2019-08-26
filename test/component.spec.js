@@ -16,7 +16,7 @@ describe('Component', function() {
             DNA.define('test-component', TestElement);
 
             const elem = new TestElement();
-            expect(elem).to.be.an.instanceof(DNA.DOM.HTMLElement);
+            expect(elem).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
             expect(elem.is).to.be.equal('test-component');
             expect(elem.tagName).to.be.equal('TEST-COMPONENT');
         });
@@ -28,7 +28,7 @@ describe('Component', function() {
             });
 
             const elem = new TestElement();
-            expect(elem).to.be.an.instanceof(DNA.DOM.HTMLElement);
+            expect(elem).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
             expect(elem.is).to.be.equal('test-component2');
             expect(elem.tagName).to.be.equal('ARTICLE');
             expect(elem.getAttribute('is')).to.be.equal('test-component2');

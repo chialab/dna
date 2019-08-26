@@ -32,4 +32,24 @@ describe('DOM', function() {
             expect(elem2.getAttribute('is')).to.be.equal('test-domcreate2');
         });
     });
+
+    describe('#get', () => {
+        it('should retrieve an already defined class', () => {
+            //
+        });
+
+        it('should retrieve a proxy class', () => {
+            //
+        });
+    });
+
+    describe('#define', () => {
+        it('should define a native constructor', () => {
+            //
+        });
+
+        it('should update an already proxies class', () => {
+            //
+        });
+    });
 });
