@@ -1,12 +1,11 @@
 import { DNACustomElement, CE_SYMBOL } from './CustomElement';
 import { REGISTRY } from './registry';
-import { DOM } from './dom';
+import { DelegatedEventCallback, DOM } from './dom';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
 import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './property';
-import { DelegatedEventCallback, delegate, undelegate, dispatchEvent } from './events';
 import { html } from './html';
 
 /**
@@ -142,7 +141,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          */
         connectedCallback() {
             // register events
-            this.undelegate();
+            DOM.undelegateAllEventListeners(this);
             let eventDescriptors = this.events;
             if (eventDescriptors) {
                 for (let eventPath in eventDescriptors) {
@@ -267,7 +266,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         dispatchEvent(event: Event): boolean;
         dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
         dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
-            return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+            return DOM.dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
         /**
@@ -278,7 +277,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param callback The callback to trigger when an Event matches the delegation
          */
         delegate(event: string, selector: string, callback: DelegatedEventCallback) {
-            return delegate(this, event, selector, callback);
+            return DOM.delegateEventListener(this, event, selector, callback);
         }
 
         /**
@@ -288,8 +287,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param selector The selector to undelegate
          * @param callback The callback to remove
          */
-        undelegate(event?: string, selector?: string, callback?: DelegatedEventCallback) {
-            return undelegate(this, event, selector, callback);
+        undelegate(event: string, selector: string, callback: DelegatedEventCallback) {
+            return DOM.undelegateEventListener(this, event, selector, callback);
         }
 
         /**

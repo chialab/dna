@@ -9,7 +9,6 @@ export { html } from './lib/html';
 export { css } from './lib/css';
 export { compile } from './lib/interpolate';
 export { property } from './lib/property';
-export { delegate, undelegate, dispatchEvent } from './lib/events';
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with

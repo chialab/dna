@@ -24,9 +24,6 @@ describe('module', function() {
         css: 'function',
         compile: 'function',
         property: 'function',
-        delegate: 'function',
-        undelegate: 'function',
-        dispatchEvent: 'function',
         Component: 'function',
     };
 
