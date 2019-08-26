@@ -1,6 +1,5 @@
 import { mixin } from './lib/mixin';
 import { DOM } from './lib/DOM';
-import { DNACustomElement } from './lib/CustomElement';
 
 export { mixin, DOM };
 export { render } from './lib/render';
