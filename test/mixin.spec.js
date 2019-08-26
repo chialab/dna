@@ -20,9 +20,12 @@ describe('mixin', function() {
 
     it('should create a base class starting from the anchor base class with DNA component prototype', () => {
         const BaseClass = DNA.DOM.get('HTMLAnchorElement');
-        const TestClass = class extends DNA.mixin(BaseClass) {};
+        const TestClass = class extends DNA.mixin(BaseClass) { };
+        DNA.define('test-mixin', TestClass, { extends: 'a' });
+        const element = new TestClass();
+        element.href = 'https://www.webcomponents.org/introduction';
         expect(TestClass).to.not.equal(BaseClass);
-        expect(TestClass.prototype).to.be.an.instanceof(BaseClass);
-        expect('href' in TestClass.prototype).to.be.true;
+        expect(element).to.be.an.instanceof(BaseClass);
+        expect('href' in element).to.be.true;
     });
 });
