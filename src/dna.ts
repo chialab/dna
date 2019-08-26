@@ -22,16 +22,19 @@ export { property } from './lib/property';
  * import { Component, property, define, render } from '＠chialab/dna';
  *
  * class HelloWorld extends Component {
- *   ＠property() // define an observable Component property
+ *   // define an observable property
+ *   ＠property()
  *   name: string;
  *
- *   get events() { // define a list of delegated events
- *     return {
- *       'input [name="name"]': (ev, target) => {
- *         this.name = target.value;
- *       },
- *     };
- *   }
+ *   // define the template
+ *   readonly template = () => html`<div>${this.name}</div>`;
+ *
+ *   // define a list of delegated events
+ *   readonly events = {
+ *     'input [name="name"]': (ev, target) => {
+ *       this.name = target.value;
+ *     },
+ *   };
  * }
  *
  * // link the Component class to a tag
