@@ -3,6 +3,7 @@ import { DOM } from '../dna';
 const JSDOM = require('js' + 'dom').JSDOM;
 const {
     document,
+    Document,
     Node,
     Text,
     Element,
@@ -83,12 +84,27 @@ const {
     HTMLVideoElement,
 } = new JSDOM().window;
 
-DOM.document = document;
-DOM.Node = Node;
-DOM.Text = Text;
-DOM.Element = Element;
-DOM.Event = Event;
-DOM.CustomEvent = CustomEvent;
+DOM.env({
+    Document,
+    Node,
+    Text,
+    Element,
+    Event,
+    CustomEvent,
+    createElement: document.createElement.bind(document),
+    createElementNS: document.createElementNS.bind(document),
+    createTextNode: document.createTextNode.bind(document),
+    appendChild: Node.prototype.appendChild,
+    removeChild: Node.prototype.removeChild,
+    insertBefore: Node.prototype.insertBefore,
+    replaceChild: Node.prototype.replaceChild,
+    dispatchEvent: Node.prototype.dispatchEvent,
+    getAttribute: Element.prototype.getAttribute,
+    hasAttribute: Element.prototype.hasAttribute,
+    setAttribute: Element.prototype.setAttribute,
+    removeAttribute: Element.prototype.removeAttribute,
+    matches: Element.prototype.matches,
+});
 
 HTMLAnchorElement && DOM.define('HTMLAnchorElement', HTMLAnchorElement);
 HTMLAreaElement && DOM.define('HTMLAreaElement', HTMLAreaElement);

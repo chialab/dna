@@ -15,11 +15,11 @@ describe('DOM', function() {
         element = DNA.DOM.createElement('div');
         button = DNA.DOM.createElement('button');
         element.appendChild(button);
-        DNA.DOM.document.body.appendChild(element);
+        element.ownerDocument.body.appendChild(element);
     });
 
     afterEach(() => {
-        DNA.DOM.document.body.removeChild(element);
+        element.ownerDocument.body.removeChild(element);
     });
 
     describe('#createElement', () => {
@@ -38,7 +38,7 @@ describe('DOM', function() {
                 extends: 'article',
             });
 
-            const elem2 = DNA.DOM.createElement('test-domcreate2');
+            const elem2 = DNA.DOM.createElement('article', { is: 'test-domcreate2' });
             expect(elem2.is).to.be.equal('test-domcreate2');
             expect(elem2.tagName).to.be.equal('ARTICLE');
             expect(elem2.getAttribute('is')).to.be.equal('test-domcreate2');

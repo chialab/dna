@@ -21,12 +21,13 @@ const GLOBAL_NS = (() => {
     }
     return {};
 })() as {
-    document?: Document,
-    Node?: typeof Node,
-    Text?: typeof Text,
-    Element?: typeof Element,
-    Event?: typeof Event,
-    CustomEvent?: typeof CustomEvent,
+    document: Document,
+    Document: typeof Document,
+    Node: typeof Node,
+    Text: typeof Text,
+    Element: typeof Element,
+    Event: typeof Event,
+    CustomEvent: typeof CustomEvent,
 } & {
     [key: string]: typeof HTMLElement;
 };
@@ -94,6 +95,28 @@ type WithEventDelegations = {
     };
 }
 
+const ENV = {
+    Document: undefined as unknown as typeof Document,
+    Node: undefined as unknown as typeof Node,
+    Text: undefined as unknown as typeof Text,
+    Element: undefined as unknown as typeof Element,
+    Event: undefined as unknown as typeof Event,
+    CustomEvent: undefined as unknown as typeof CustomEvent,
+    createElement: undefined as unknown as typeof document.createElement,
+    createElementNS: undefined as unknown as typeof document.createElementNS,
+    createTextNode: undefined as unknown as typeof document.createTextNode,
+    appendChild: undefined as unknown as typeof Node.prototype.appendChild,
+    removeChild: undefined as unknown as typeof Node.prototype.removeChild,
+    insertBefore: undefined as unknown as typeof Node.prototype.insertBefore,
+    replaceChild: undefined as unknown as typeof Node.prototype.replaceChild,
+    dispatchEvent: undefined as unknown as typeof EventTarget.prototype.dispatchEvent,
+    getAttribute: undefined as unknown as typeof Element.prototype.getAttribute,
+    hasAttribute: undefined as unknown as typeof Element.prototype.hasAttribute,
+    setAttribute: undefined as unknown as typeof Element.prototype.setAttribute,
+    removeAttribute: undefined as unknown as typeof Element.prototype.removeAttribute,
+    matches: undefined as unknown as typeof Element.prototype.matches,
+};
+
 /**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.
@@ -102,58 +125,12 @@ type WithEventDelegations = {
  */
 export const DOM = {
     /**
-     * The document global instance.
-     */
-    document: GLOBAL_NS.document as Document,
-
-    /**
-     * The base Node constructor.
-     */
-    Node: GLOBAL_NS.Node as typeof Node,
-
-    /**
-     * The base Text constructor.
-     */
-    Text: GLOBAL_NS.Text as typeof Text,
-
-    /**
-     * The base Element constructor.
-     */
-    Element: GLOBAL_NS.Element as typeof Element,
-
-    /**
-     * The base Event constructor.
-     */
-    Event: GLOBAL_NS.Event as typeof Event,
-
-    /**
-     * The base CustomEvent constructor.
-     */
-    CustomEvent: (() => {
-        if (!GLOBAL_NS.CustomEvent) {
-            return;
-        }
-        try {
-            new GLOBAL_NS.CustomEvent('test');
-            return CustomEvent;
-        } catch {
-            const CustomEventPolyfill = function(eventName: string, params: CustomEventInit = {}) {
-                const event = DOM.document.createEvent('CustomEvent');
-                event.initCustomEvent(eventName, params.bubbles || false, params.cancelable || false, params.detail);
-                return event;
-            };
-            CustomEventPolyfill.prototype = CustomEvent.prototype;
-            return CustomEventPolyfill;
-        }
-    })() as typeof CustomEvent,
-
-    /**
      * Check if a node is an Element instance.
      * @param node The node to check.
      * @return The node is an Element instance.
      */
     isElement(node: any): node is Element {
-        return node && node instanceof this.Element;
+        return node && node instanceof ENV.Element;
     },
 
     /**
@@ -162,7 +139,7 @@ export const DOM = {
      * @return The node is a Text instance.
      */
     isText(node: any): node is Text {
-        return node && node instanceof this.Text;
+        return node && node instanceof ENV.Text;
     },
 
     /**
@@ -183,12 +160,12 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement(tagName: string): Element {
-        const definition = REGISTRY[tagName.toLowerCase()];
-        if (!definition) {
-            return this.document.createElement(tagName);
+    createElement(tagName: string, options?: ElementCreationOptions): Element {
+        const definition = REGISTRY[options && options.is || tagName.toLowerCase()];
+        const node = ENV.createElement(tagName);
+        if (!definition || (options && (options as any).plain)) {
+            return node;
         }
-        const node = this.document.createElement(definition.extends || definition.name);
         return new definition.constructor(node);
     },
 
@@ -200,7 +177,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
-        return this.document.createElementNS(namespaceURI, tagName);
+        return ENV.createElementNS(namespaceURI, tagName);
     },
 
     /**
@@ -210,7 +187,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createTextNode(data: string): Text {
-        return this.document.createTextNode(data);
+        return ENV.createTextNode(data);
     },
 
     /**
@@ -223,7 +200,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.Node.prototype.appendChild.call(parent, newChild);
+        ENV.appendChild.call(parent, newChild);
         this.connect(newChild);
         return newChild;
     },
@@ -235,7 +212,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
-        this.Node.prototype.removeChild.call(parent, oldChild);
+        ENV.removeChild.call(parent, oldChild);
         this.disconnect(oldChild);
         return oldChild;
     },
@@ -254,7 +231,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.Node.prototype.insertBefore.call(parent, newChild, refChild);
+        ENV.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
         return newChild;
     },
@@ -273,7 +250,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
+        ENV.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
         this.connect(newChild);
         return oldChild;
@@ -286,7 +263,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return this.Element.prototype.getAttribute.call(element, qualifiedName);
+        return ENV.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -296,7 +273,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return this.Element.prototype.hasAttribute.call(element, qualifiedName);
+        return ENV.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -308,7 +285,7 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
-        this.Element.prototype.setAttribute.call(element, qualifiedName, value);
+        ENV.setAttribute.call(element, qualifiedName, value);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
@@ -322,7 +299,7 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
-        this.Element.prototype.removeAttribute.call(element, qualifiedName);
+        ENV.removeAttribute.call(element, qualifiedName);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
@@ -343,6 +320,26 @@ export const DOM = {
             childNodes.push(node.childNodes[i]);
         }
         return childNodes;
+    },
+
+    /**
+     * Check if a Node is connected.
+     *
+     * @param target The target element to check.
+     * @return A truthy value for connected targets.
+     */
+    isConnected(target: Node | null): boolean {
+        if (!target || !(target instanceof ENV.Node)) {
+            return false;
+        }
+
+        if (target instanceof ENV.Element || target instanceof ENV.Text) {
+            return this.isConnected(target.parentNode);
+        } else if (target instanceof ENV.Document) {
+            return true;
+        }
+
+        return false;
     },
 
     /**
@@ -437,7 +434,7 @@ export const DOM = {
      */
     delegateEventListener(element: Node, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
         const delegatedElement: Node & WithEventDelegations = element;
-        if (!(element instanceof this.Node)) {
+        if (!(element instanceof ENV.Node)) {
             throw new TypeError('The provided element is not a Node');
         }
         if (typeof eventName !== 'string') {
@@ -463,23 +460,20 @@ export const DOM = {
                 if (!ev.target) {
                     return;
                 }
-                const PROTOTYPE = this.Element.prototype;
-                const ELEMENT_NODE = this.Node.ELEMENT_NODE;
-                const MATCH = PROTOTYPE.matches ||
-                    PROTOTYPE.webkitMatchesSelector ||
-                    (PROTOTYPE as any).msMatchesSelector as typeof HTMLElement.prototype.matches;
                 const eventTarget = ev.target as Node;
                 // wrap the Event's stopPropagation in order to prevent other delegations from the same root
                 let stopped = false;
+                const originalStopPropagation = ev.stopPropagation;
+                const originalImmediatePropagation = ev.stopImmediatePropagation;
                 ev.stopPropagation = () => {
                     stopped = true;
                     // exec the real stopPropagation method
-                    return Event.prototype.stopPropagation.call(ev);
+                    return originalStopPropagation.call(ev);
                 };
                 ev.stopImmediatePropagation = () => {
                     stopped = true;
                     // exec the real stopPropagation method
-                    return Event.prototype.stopImmediatePropagation.call(ev);
+                    return originalImmediatePropagation.call(ev);
                 };
 
                 // filter matched selector for the event
@@ -490,7 +484,7 @@ export const DOM = {
                     if (selector) {
                         let target = eventTarget;
                         while (target && target !== element) {
-                            if (target.nodeType === ELEMENT_NODE && MATCH.call(target, selector)) {
+                            if (ENV.matches.call(target, selector)) {
                                 selectorTarget = target;
                                 break;
                             }
@@ -532,7 +526,7 @@ export const DOM = {
      * @param callback The callback to remove
      */
     undelegateEventListener(element: Node, eventName: string, selector: string, callback: DelegatedEventCallback) {
-        if (!(element instanceof this.Node)) {
+        if (!(element instanceof ENV.Node)) {
             throw new TypeError('The provided element is not a Node');
         }
         if (typeof eventName !== 'string') {
@@ -573,7 +567,7 @@ export const DOM = {
      * @param element The root element of the delegation
      */
     undelegateAllEventListeners(element: Node) {
-        if (!(element instanceof this.Node)) {
+        if (!(element instanceof ENV.Node)) {
             throw new TypeError('The provided element is not a Node');
         }
 
@@ -602,7 +596,7 @@ export const DOM = {
      * @param composed Is the event composed.
      */
     dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
-        if (!(element instanceof this.Node)) {
+        if (!(element instanceof ENV.Node)) {
             throw new TypeError('The provided element is not a Node');
         }
 
@@ -617,16 +611,71 @@ export const DOM = {
                 throw new TypeError('The provided composed option is not a boolean');
             }
 
-            event = new this.CustomEvent(event, {
+            event = new ENV.CustomEvent(event, {
                 detail,
                 bubbles,
                 cancelable,
                 composed,
             });
-        } else if (!(event instanceof DOM.Event)) {
+        } else if (!(event instanceof ENV.Event)) {
             throw new TypeError('The provided event is not an Event');
         }
 
-        return this.Node.prototype.dispatchEvent.call(element, event);
+        return ENV.dispatchEvent.call(element, event);
+    },
+
+    /**
+     * Supply DOM compatible environment.
+     * @param env A list of DOM compatible refrences used by DNA.
+     */
+    env(env: typeof ENV) {
+        for (let ref in env) {
+            ENV[ref as keyof typeof ENV] = env[ref as keyof typeof ENV] as any;
+        }
     },
 };
+
+if (GLOBAL_NS.document) {
+    const document = GLOBAL_NS.document as unknown as Document;
+    const nodePrototype = GLOBAL_NS.Node.prototype;
+    const elementPrototype = GLOBAL_NS.Element.prototype;
+    const CustomEventCtr: typeof CustomEvent = (() => {
+        if (!GLOBAL_NS.CustomEvent) {
+            return;
+        }
+        try {
+            new GLOBAL_NS.CustomEvent('test');
+            return GLOBAL_NS.CustomEvent;
+        } catch {
+            const CustomEventPolyfill = function(eventName: string, params: CustomEventInit = {}) {
+                const event = document.createEvent('CustomEvent');
+                event.initCustomEvent(eventName, params.bubbles || false, params.cancelable || false, params.detail);
+                return event;
+            };
+            CustomEventPolyfill.prototype = GLOBAL_NS.CustomEvent.prototype;
+            return CustomEventPolyfill;
+        }
+    })() as unknown as typeof CustomEvent;
+
+    DOM.env({
+        Document: GLOBAL_NS.Document,
+        Node: GLOBAL_NS.Node,
+        Element: GLOBAL_NS.Element,
+        Text: GLOBAL_NS.Text,
+        Event: GLOBAL_NS.Event,
+        CustomEvent: CustomEventCtr,
+        createElement: document.createElement.bind(document),
+        createElementNS: document.createElementNS.bind(document),
+        createTextNode: document.createTextNode.bind(document),
+        appendChild: nodePrototype.appendChild,
+        removeChild: nodePrototype.removeChild,
+        insertBefore: nodePrototype.insertBefore,
+        replaceChild: nodePrototype.replaceChild,
+        dispatchEvent: nodePrototype.dispatchEvent,
+        getAttribute: elementPrototype.getAttribute,
+        hasAttribute: elementPrototype.hasAttribute,
+        setAttribute: elementPrototype.setAttribute,
+        removeAttribute: elementPrototype.removeAttribute,
+        matches: elementPrototype.matches || elementPrototype.webkitMatchesSelector || (elementPrototype as any).msMatchesSelector as typeof Element.prototype.matches,
+    });
+}

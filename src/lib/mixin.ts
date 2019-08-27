@@ -6,29 +6,6 @@ import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
 import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './property';
-import { html } from './html';
-
-/**
- * Check if a Node is connected.
- *
- * @param target The target element to check.
- * @return A truthy value for connected targets.
- */
-function isConnected(target: Node | null): boolean {
-    if (!target || !target.nodeType) {
-        return false;
-    }
-    const { ELEMENT_NODE, TEXT_NODE, DOCUMENT_FRAGMENT_NODE, DOCUMENT_NODE } = DOM.Node;
-
-    let nodeType = target.nodeType;
-    if (nodeType === ELEMENT_NODE || nodeType === TEXT_NODE) {
-        return isConnected(target.parentNode);
-    } else if (nodeType === DOCUMENT_FRAGMENT_NODE || nodeType === DOCUMENT_NODE) {
-        return true;
-    }
-
-    return false;
-}
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -62,22 +39,15 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         };
 
         /**
+         * A set of delegated events to bind to the node.
+         */
+        readonly template?: Template;
+
+        /**
          * A flag with the connected value of the node.
          */
         get isConnected(): boolean {
-            return isConnected(this);
-        }
-
-        /**
-         * A template for the Component.
-         */
-        get template(): Template | undefined {
-            // try to detect the template searching for template tags named with the component name
-            let templateElement = DOM.document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
-            if (!templateElement) {
-                return undefined;
-            }
-            return html(templateElement);
+            return DOM.isConnected(this);
         }
 
         /**
@@ -102,7 +72,10 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
             if (!DOM.isElement(node)) {
                 properties = node;
                 const definition = REGISTRY[this.is];
-                node = DOM.document.createElement(definition.extends || definition.name) as HTMLElement;
+                node = DOM.createElement(definition.extends || definition.name, {
+                    is: definition.name,
+                    plain: true,
+                } as unknown as ElementCreationOptions) as HTMLElement;
             }
 
             Object.setPrototypeOf(node, Object.getPrototypeOf(this));
