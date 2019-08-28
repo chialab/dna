@@ -12,6 +12,7 @@ describe('module', function() {
 
     const EXPECTED_EXPORT_MAP = {
         DOM: 'object',
+        isCustomElement: 'function',
         mixin: 'function',
         render: 'function',
         get: 'function',

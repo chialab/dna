@@ -2,8 +2,9 @@ import { mixin } from './lib/mixin';
 import { DOM } from './lib/DOM';
 
 export { mixin, DOM };
-export { render } from './lib/render';
+export { isCustomElement } from './lib/CustomElement';
 export { get, define, upgrade, whenDefined } from './lib/registry';
+export { render } from './lib/render';
 export { Fragment, h } from './lib/h';
 export { html } from './lib/html';
 export { css } from './lib/css';

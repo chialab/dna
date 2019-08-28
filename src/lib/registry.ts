@@ -49,8 +49,6 @@ export function assertValidateCustomElementName(name: string): boolean {
  * @return The definition for the given tag.
  */
 export function get(name: string): DNACustomElement {
-    assertValidateCustomElementName(name);
-
     return REGISTRY[name] && REGISTRY[name].constructor || null;
 }
 

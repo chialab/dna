@@ -1,4 +1,4 @@
-import { DOM } from '../dna';
+import { DOM, get, isCustomElement } from '../dna';
 
 const JSDOM = require('js' + 'dom').JSDOM;
 const {
@@ -84,26 +84,127 @@ const {
     HTMLVideoElement,
 } = new JSDOM().window;
 
-DOM.env({
-    Document,
-    Node,
-    Text,
-    Element,
-    Event,
-    CustomEvent,
-    createElement: document.createElement.bind(document),
-    createElementNS: document.createElementNS.bind(document),
-    createTextNode: document.createTextNode.bind(document),
-    appendChild: Node.prototype.appendChild,
-    removeChild: Node.prototype.removeChild,
-    insertBefore: Node.prototype.insertBefore,
-    replaceChild: Node.prototype.replaceChild,
-    dispatchEvent: Node.prototype.dispatchEvent,
-    getAttribute: Element.prototype.getAttribute,
-    hasAttribute: Element.prototype.hasAttribute,
-    setAttribute: Element.prototype.setAttribute,
-    removeAttribute: Element.prototype.removeAttribute,
-    matches: Element.prototype.matches,
+Object.assign(DOM, {
+    isDocument(node: any): node is Document {
+        return node && node instanceof Document;
+    },
+    isNode(node: any): node is Node {
+        return node && node instanceof Node;
+    },
+    isText(node: any): node is Text {
+        return node && node instanceof Text;
+    },
+    isElement(node: any): node is Element {
+        return node && node instanceof Element;
+    },
+    isEvent(event: any): event is Event {
+        return event && event instanceof Event;
+    },
+    createElement(tagName: string, options?: ElementCreationOptions): Element {
+        const constructor = get(options && options.is || tagName.toLowerCase());
+        const node = document.createElement(tagName);
+        if (!constructor || (options && (options as any).plain)) {
+            return node;
+        }
+        return new constructor(node);
+    },
+    createElementNS(namespaceURI: string, tagName: string): Element {
+        return document.createElementNS(namespaceURI, tagName);
+    },
+    createTextNode(data: string): Text {
+        return document.createTextNode(data);
+    },
+    createEvent(typeArg: string, eventInitDict?: CustomEventInit<unknown>): CustomEvent<unknown> {
+        return new CustomEvent(typeArg, eventInitDict);
+    },
+    appendChild<T extends Node>(parent: Element, newChild: T): T {
+        if (newChild.parentNode) {
+            this.removeChild(newChild.parentNode as Element, newChild);
+        }
+        Node.prototype.appendChild.call(parent, newChild);
+        (this as unknown as typeof DOM).connect(newChild);
+        return newChild;
+    },
+    removeChild<T extends Node>(parent: Element, oldChild: T): T {
+        Node.prototype.removeChild.call(parent, oldChild);
+        (this as unknown as typeof DOM).disconnect(oldChild);
+        return oldChild;
+    },
+    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
+        if (refChild && refChild.previousSibling === newChild) {
+            return newChild;
+        }
+        if (newChild.parentNode) {
+            this.removeChild(newChild.parentNode as Element, newChild);
+        }
+        Node.prototype.insertBefore.call(parent, newChild, refChild);
+        (this as unknown as typeof DOM).connect(newChild);
+        return newChild;
+    },
+    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
+        if (oldChild === newChild) {
+            return oldChild;
+        }
+        if (newChild.parentNode) {
+            this.removeChild(newChild.parentNode as Element, newChild);
+        }
+        Node.prototype.replaceChild.call(parent, newChild, oldChild);
+        (this as unknown as typeof DOM).disconnect(oldChild);
+        (this as unknown as typeof DOM).connect(newChild);
+        return oldChild;
+    },
+    getAttribute(element: Element, qualifiedName: string): string | null {
+        return Element.prototype.getAttribute.call(element, qualifiedName);
+    },
+    hasAttribute(element: Element, qualifiedName: string): boolean {
+        return Element.prototype.hasAttribute.call(element, qualifiedName);
+    },
+    setAttribute(element: Element, qualifiedName: string, value: string): void {
+        let oldValue = this.getAttribute(element, qualifiedName);
+        Element.prototype.setAttribute.call(element, qualifiedName, value);
+        if (isCustomElement(element)) {
+            element.attributeChangedCallback(qualifiedName, oldValue, value);
+        }
+    },
+    removeAttribute(element: Element, qualifiedName: string) {
+        let oldValue = this.getAttribute(element, qualifiedName);
+        Element.prototype.removeAttribute.call(element, qualifiedName);
+        if (isCustomElement(element)) {
+            element.attributeChangedCallback(qualifiedName, oldValue, null);
+        }
+    },
+    matches(element: Element, selectorString: string): boolean {
+        const match = Element.prototype.matches || Element.prototype.webkitMatchesSelector || (Element.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+        return match.call(element, selectorString);
+    },
+    dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
+        if (!this.isNode(element)) {
+            throw new TypeError('The provided element is not a Node');
+        }
+
+        if (typeof event === 'string') {
+            if (typeof bubbles !== 'boolean') {
+                throw new TypeError('The provided bubbles option is not a boolean');
+            }
+            if (typeof cancelable !== 'boolean') {
+                throw new TypeError('The provided cancelable option is not a boolean');
+            }
+            if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
+                throw new TypeError('The provided composed option is not a boolean');
+            }
+
+            event = this.createEvent(event, {
+                detail,
+                bubbles,
+                cancelable,
+                composed,
+            });
+        } else if (!this.isEvent(event)) {
+            throw new TypeError('The provided event is not an Event');
+        }
+
+        return Node.prototype.dispatchEvent.call(element, event);
+    },
 });
 
 HTMLAnchorElement && DOM.define('HTMLAnchorElement', HTMLAnchorElement);
