@@ -101,9 +101,7 @@ export function h(element, props, ...children) {
                         component[k] = props[k];
                     }
                 }
-                if (!isFalsy(component.template)) {
-                    component.render();
-                }
+                component.requestRender();
             });
         }
 

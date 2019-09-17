@@ -39,9 +39,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     connectedCallback() {
         super.connectedCallback();
-        if (!isFalsy(this.template)) {
-            this.render();
-        }
+        this.requestRender();
     }
     /**
      * Trigger rerender on property changes.
@@ -51,9 +49,7 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
      */
     propertyChangedCallback(propName, oldValue, newValue) {
         super.propertyChangedCallback(propName, oldValue, newValue);
-        if (!isFalsy(this.template)) {
-            this.render();
-        }
+        this.requestRender();
     }
     /**
      * Update Component child nodes.
@@ -73,5 +69,16 @@ export const TemplateMixin = (SuperClass) => class extends SuperClass {
             this.__innerHTML = root.innerHTML;
         }
         root.innerHTML = `${this.__innerHTML}${tpl}`;
+    }
+    /**
+     * Request a re-render.
+     * @method requestRender
+     * @memberof DNA.MIXINS.TemplateMixin
+     * @instance
+     */
+    requestRender() {
+        if (!isFalsy(this.template)) {
+            this.render();
+        }
     }
 };
