@@ -14,10 +14,11 @@ jobs:
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 10
+      services:
+        - xvfb
       before_install:
         - export DISPLAY=:99.0
         - export CHROME_BIN=chromium-browser
-        - sh -e /etc/init.d/xvfb start
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli
         - yarn global add codecov
@@ -38,32 +39,6 @@ jobs:
         - yarn install
       script:
         - yarn run test-saucelabs
-    - stage: test
-      os: linux
-      env: CI_BUILD_TYPE=electron
-      node_js: 10
-      before_install:
-        - export DISPLAY=':99.0'
-        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - yarn config set registry https://registry.npmjs.org/
-        - yarn global add @chialab/rna-cli electron
-      install:
-        - yarn install
-      script:
-        - yarn run test-electron
-    - stage: test
-      os: osx
-      env: CI_BUILD_TYPE=electron
-      node_js: 10
-      before_install:
-        - export DISPLAY=':99.0'
-        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - yarn config set registry https://registry.npmjs.org/
-        - yarn global add @chialab/rna-cli electron
-      install:
-        - yarn install
-      script:
-        - yarn run test-electron
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
@@ -83,8 +58,3 @@ jobs:
   allow_failures:
     - env: CI_BUILD_TYPE=electron
     - env: CI_BUILD_TYPE=saucelabs
-
-addons:
-  apt:
-    packages:
-      - xvfb
