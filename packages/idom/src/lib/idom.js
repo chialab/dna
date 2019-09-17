@@ -101,6 +101,7 @@ export function h(element, props, ...children) {
                         component[k] = props[k];
                     }
                 }
+                component.requestRender();
             });
         }
 
