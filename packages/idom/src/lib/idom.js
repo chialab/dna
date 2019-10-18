@@ -63,22 +63,21 @@ function interpolate(template, data) {
 
 
 export function h(element, props, ...children) {
-    return () => {
-        if (!isObject(props)) {
-            if (props) {
-                children.unshift(props);
-            }
-            props = {};
+    if (!isObject(props)) {
+        if (props) {
+            children.unshift(props);
         }
-        let key = props.key;
-        delete props.key;
-
+        props = {};
+    }
+    const key = props.key;
+    delete props.key;
+    return () => {
         const Component = registry.get(props.is || element);
         elementOpenStart(element, key);
 
         for (let k in props) {
             let val = props[k];
-            if (!isFalsy(val) && (!Component || isString(val) || !isNaN(val) || val === true)) {
+            if (!isFalsy(val)) {
                 attr(k, val);
             }
         }
@@ -93,13 +92,10 @@ export function h(element, props, ...children) {
         }
         elementClose(element);
 
-        if (component && isObject(component.properties)) {
+        if (component) {
             patch.current.after(() => {
-                let componentProperties = component.properties;
                 for (let k in props) {
-                    if (componentProperties.hasOwnProperty(k)) {
-                        component[k] = props[k];
-                    }
+                    component[k] = props[k];
                 }
                 component.requestRender();
             });
