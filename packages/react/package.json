@@ -2,7 +2,7 @@
   "name": "@dnajs/react",
   "version": "2.9.7",
   "description": "Evolution-based components with React implementation.",
-  "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
+  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "lib": "index.js",
   "main": "dist/cjs/react.js",
   "module": "dist/esm/react.js",

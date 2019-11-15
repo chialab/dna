@@ -2,7 +2,7 @@
   "name": "@dnajs/core",
   "version": "2.9.7",
   "description": "Evolution-based components.",
-  "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
+  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "lib": "index.js",
   "main": "dist/cjs/core.js",
   "module": "dist/esm/core.js",

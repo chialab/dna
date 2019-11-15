@@ -1,5 +1,5 @@
 import { isFunction } from '@chialab/proteins';
-import { registry } from '@dnajs/core/src/lib/registry.js';
+import { registry } from '@dnajs/core';
 
 /**
  * Attach a component prototype to an already instantiated HTMLElement.

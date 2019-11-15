@@ -1,26 +1,39 @@
 /**
  * DNA
- * (c) 2015-2017 Chialab (http://www.chialab.it) <dev@chialab.io>
- * http://dna.chialab.io
+ * (c) 2015-2019 Chialab (https://www.chialab.it) <dev@chialab.io>
+ * http://chialab.io/p/dna
  *
  * Evolution-based components.
  * Use with Custom Elements spec.
  */
 import './src/lib/observer.js';
-import { mix } from '@dnajs/core/src/core.js';
-import { MIXINS } from '@dnajs/core/src/mixins/index.js';
-import * as IDOM from '@dnajs/idom/src/lib/idom.js';
-import { IDOMMixin } from '@dnajs/idom/src/mixins/idom.js';
+import { mix, MIXINS, IDOMMixin } from '@dnajs/idom';
 import { CustomElementMixin } from './src/mixins/custom-element.js';
 import { shim } from './src/lib/shim.js';
 
 MIXINS.CustomElementMixin = CustomElementMixin;
-MIXINS.IDOMMixin = IDOMMixin;
 
-export * from '@dnajs/core/src/core.js';
-export { trust } from '@dnajs/idom/src/lib/trust.js';
-export { shim, mix, MIXINS, IDOM };
-export const h = IDOM.h;
+export {
+    mix,
+    MIXINS,
+    proxy,
+    DOM,
+    DNA_SYMBOL,
+    COMPONENT_SYMBOL,
+    NODE_SYMBOL,
+    STYLE_SYMBOL,
+    CONNECTED_SYMBOL,
+    namespace,
+    prop,
+    render,
+    bootstrap,
+    scopeStyle,
+    IDOM,
+    IDOMMixin,
+    h,
+    trust,
+} from '@dnajs/idom';
+export { shim };
 export { registry } from './src/lib/registry.js';
 export { define } from './src/lib/define.js';
 

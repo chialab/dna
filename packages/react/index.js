@@ -1,24 +1,34 @@
 /**
  * DNA
- * (c) 2015-2017 Chialab (http://www.chialab.it) <dev@chialab.io>
- * http://dna.chialab.io
+ * (c) 2015-2019 Chialab (https://www.chialab.it) <dev@chialab.io>
+ * http://chialab.io/p/dna
  *
  * Evolution-based components.
  * Use with React.
  */
 import React from 'react';
-import { mix } from '@dnajs/core/src/core.js';
-import { MIXINS } from '@dnajs/core/src/mixins/index.js';
-import { registry } from '@dnajs/core/src/lib/registry.js';
-import { proxy } from '@dnajs/core/src/lib/proxy.js';
+import { mix, MIXINS, proxy } from '@dnajs/core';
 import { ReactMixin } from './src/mixins/react.js';
 
 MIXINS.ReactMixin = ReactMixin;
 
-export { registry };
-export * from '@dnajs/core/src/core.js';
-export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
-export { define } from '@dnajs/core/src/lib/define.js';
+export {
+    mix,
+    MIXINS,
+    proxy,
+    registry,
+    DOM,
+    DNA_SYMBOL,
+    COMPONENT_SYMBOL,
+    NODE_SYMBOL,
+    STYLE_SYMBOL,
+    CONNECTED_SYMBOL,
+    namespace,
+    prop,
+    bootstrap,
+    define,
+    scopeStyle,
+} from '@dnajs/core';
 export { render } from './src/lib/render.js';
 
 const Component = proxy(React.Component);

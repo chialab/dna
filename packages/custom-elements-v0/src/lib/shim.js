@@ -1,5 +1,5 @@
 import { isString } from '@chialab/proteins';
-import { registry } from '@dnajs/core/src/lib/registry.js';
+import { registry } from '@dnajs/core';
 
 /**
  * Check if a node is already instantiated HTMLElement for programmatically `constructor` calls.

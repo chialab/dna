@@ -1,8 +1,6 @@
 import { isFalsy, isObject, isFunction, isArray, isString, has } from '@chialab/proteins';
-import { DOM } from '@dnajs/core/src/core.js';
-import { registry } from '@dnajs/core/src/lib/registry.js';
+import { DOM, registry, bootstrap } from '@dnajs/core';
 import { TrustedData, TRUSTED_SYM } from './trust.js';
-import { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
 import {
     skip,
     text,

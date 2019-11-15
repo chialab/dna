@@ -1,7 +1,7 @@
 /**
  * DNA
- * (c) 2015-2017 Chialab (http://www.chialab.it) <dev@chialab.io>
- * http://dna.chialab.io
+ * (c) 2015-2019 Chialab (https://www.chialab.it) <dev@chialab.io>
+ * http://chialab.io/p/dna
  *
  * Evolution-based components.
  * Use with IncrementalDOM templates.
@@ -9,23 +9,30 @@
 import './src/lib/observer.js';
 import * as IDOM from './src/lib/idom.js';
 import { IDOMMixin } from './src/mixins/idom.js';
-import { mix } from '@dnajs/core/src/core.js';
-import { MIXINS } from '@dnajs/core/src/mixins/index.js';
-import DOM from '@dnajs/core/src/lib/dom.js';
-import { proxy } from '@dnajs/core/src/lib/proxy.js';
-import { registry } from '@dnajs/core/src/lib/registry.js';
+import { mix, MIXINS, DOM, proxy } from '@dnajs/core';
 
 MIXINS.IDOMMixin = IDOMMixin;
 
-export * from '@dnajs/core/src/core.js';
-export { proxy };
-export { registry };
-export { bootstrap } from '@dnajs/core/src/lib/bootstrap.js';
-export { define } from '@dnajs/core/src/lib/define.js';
-export { render } from '@dnajs/core/src/lib/render.js';
-export { scopeStyle } from '@dnajs/core/src/lib/scope-style.js';
+export {
+    mix,
+    MIXINS,
+    proxy,
+    registry,
+    DOM,
+    DNA_SYMBOL,
+    COMPONENT_SYMBOL,
+    NODE_SYMBOL,
+    STYLE_SYMBOL,
+    CONNECTED_SYMBOL,
+    namespace,
+    prop,
+    render,
+    bootstrap,
+    define,
+    scopeStyle,
+} from '@dnajs/core';
+export { IDOM, IDOMMixin };
 export { trust } from './src/lib/trust.js';
-export { IDOM };
 export const h = IDOM.h;
 
 DOM.lifeCycle(true);

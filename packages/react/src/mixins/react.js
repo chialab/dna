@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DOM } from '@dnajs/core/src/core.js';
+import { DOM } from '@dnajs/core';
 
 function convertProps(elem) {
     let res = {};
