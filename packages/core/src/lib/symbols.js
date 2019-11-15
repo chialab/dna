@@ -1,4 +1,4 @@
-import Symbolic from '@chialab/proteins/src/symbolic.js';
+import { Symbolic } from '@chialab/proteins';
 
 /**
  * Symbol for DNA component mixin.
