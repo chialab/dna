@@ -1,4 +1,4 @@
-import { isFalsy } from '@chialab/proteins';
+import { isFalsy, has } from '@chialab/proteins';
 import { symbols, attributes, notifications } from 'incremental-dom/index.js';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
@@ -49,7 +49,7 @@ attributes[symbols.default] = function(node, attrName, attrValue) {
             if (attrs.indexOf(attrName) !== -1) {
                 attrValue = (isFalsy(attrValue)) ? null : attrValue;
                 DOM.update(elem, attrName, oldValue, attrValue);
-            } else if (elem.properties && elem.properties.hasOwnProperty(attrName)) {
+            } else if (elem.properties && has(elem.properties, attrName)) {
                 elem[attrName] = attrValue;
             }
         });

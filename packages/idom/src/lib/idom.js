@@ -1,4 +1,4 @@
-import { isFalsy, isObject, isFunction, isArray, isString } from '@chialab/proteins';
+import { isFalsy, isObject, isFunction, isArray, isString, has } from '@chialab/proteins';
 import { DOM } from '@dnajs/core/src/core.js';
 import { registry } from '@dnajs/core/src/lib/registry.js';
 import { TrustedData, TRUSTED_SYM } from './trust.js';
@@ -97,7 +97,7 @@ export function h(element, props, ...children) {
             patch.current.after(() => {
                 let componentProperties = component.properties;
                 for (let k in props) {
-                    if (componentProperties.hasOwnProperty(k)) {
+                    if (has(componentProperties, k)) {
                         component[k] = props[k];
                     }
                 }

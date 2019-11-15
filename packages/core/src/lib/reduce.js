@@ -1,3 +1,5 @@
+import { has } from '@chialab/proteins';
+
 /**
  * Reduce an object prototype chain to a single value.
  * @method reducePrototype
@@ -26,12 +28,12 @@ export function reducePrototype(obj, callback, value) {
  */
 export function reduceProperty(obj, key) {
     return reducePrototype(obj, (properties, proto) => {
-        if (proto.hasOwnProperty(key)) {
+        if (has(proto, key)) {
             let desc = Object.getOwnPropertyDescriptor(proto, key);
             let res;
-            if (desc.hasOwnProperty('value')) {
+            if (has(desc, 'value')) {
                 res = desc.value;
-            } else if (desc.hasOwnProperty('get')) {
+            } else if (has(desc, 'get')) {
                 res = desc.get.call(obj);
             }
             properties.push(res);
@@ -52,7 +54,7 @@ export function reduceObjectProperty(scope, prop) {
     let protoProp = reduceProperty(scope, prop);
     return protoProp.reduce((res, proto) => {
         for (let k in proto) {
-            if (!res.hasOwnProperty(k)) {
+            if (!has(res, k)) {
                 res[k] = proto[k];
             }
         }

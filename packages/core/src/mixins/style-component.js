@@ -1,4 +1,4 @@
-import { isString } from '@chialab/proteins';
+import { isString, has } from '@chialab/proteins';
 import DOM from '../lib/dom.js';
 import { reduceProperty } from '../lib/reduce.js';
 import { scopeStyle, HOST_REGEX } from '../lib/scope-style.js';
@@ -64,7 +64,7 @@ export const StyleMixin = (SuperClass) => class extends SuperClass {
                     style.textContent = this.css;
                     this.shadowRoot.appendChild(style);
                 }
-            } else if (!this.constructor.hasOwnProperty(STYLE_SYMBOL)) {
+            } else if (!has(this.constructor, STYLE_SYMBOL)) {
                 let doc = this.node.ownerDocument || document;
                 let style = doc.createElement('style');
                 let scope = `.${this.is}`;
