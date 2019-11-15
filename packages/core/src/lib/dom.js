@@ -1,5 +1,6 @@
-import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
 import { isString } from '@chialab/proteins';
+import { DNA_SYMBOL, COMPONENT_SYMBOL } from './symbols.js';
+import { namespace } from './namespace.js';
 
 let TRIGGER_LIFE_CYCLE_METHODS = false;
 
@@ -16,7 +17,7 @@ function lifeCycle(enabled) {
  * @type {Function}
  * @memberof DNA.DOM
  */
-const Node = self.Node;
+const Node = namespace.Node;
 
 /**
  * Retrieve a HTMLElement instance from a component instance.
@@ -298,7 +299,7 @@ function removeAttribute(element, name) {
     return update(element, name, oldValue, null);
 }
 
-let CustomEvent = self.CustomEvent;
+let CustomEvent = namespace.CustomEvent;
 
 try {
     // eslint-disable-next-line
@@ -309,7 +310,7 @@ try {
         evt.initCustomEvent(ev, params.bubbles, params.cancelable, params.detail);
         return evt;
     };
-    CustomEvent.prototype = self.CustomEvent.prototype;
+    CustomEvent.prototype = namespace.CustomEvent.prototype;
 }
 
 /**

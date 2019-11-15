@@ -1,1 +1,3 @@
-export const registry = self.customElements;
+import { namespace } from '@dnajs/core';
+
+export const registry = namespace.customElements;

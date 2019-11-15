@@ -14,10 +14,12 @@ jobs:
     - stage: test
       env: CI_BUILD_TYPE=default
       node_js: 10
+      services:
+        - xvfb
+      addons:
+        chrome: stable
       before_install:
         - export DISPLAY=:99.0
-        - export CHROME_BIN=chromium-browser
-        - sh -e /etc/init.d/xvfb start
         - yarn config set registry https://registry.npmjs.org/
         - yarn global add @chialab/rna-cli
         - yarn global add codecov
@@ -38,32 +40,6 @@ jobs:
         - yarn install
       script:
         - yarn run test-saucelabs
-    - stage: test
-      os: linux
-      env: CI_BUILD_TYPE=electron
-      node_js: 10
-      before_install:
-        - export DISPLAY=':99.0'
-        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - yarn config set registry https://registry.npmjs.org/
-        - yarn global add @chialab/rna-cli electron
-      install:
-        - yarn install
-      script:
-        - yarn run test-electron
-    - stage: test
-      os: osx
-      env: CI_BUILD_TYPE=electron
-      node_js: 10
-      before_install:
-        - export DISPLAY=':99.0'
-        - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        - yarn config set registry https://registry.npmjs.org/
-        - yarn global add @chialab/rna-cli electron
-      install:
-        - yarn install
-      script:
-        - yarn run test-electron
     - stage: deploy
       os: linux
       env: CI_BUILD_TYPE=docs
@@ -80,36 +56,6 @@ jobs:
         - git add .
         - git diff-index --quiet HEAD || git commit -m "Lastest api reference on successful travis build ${TRAVIS_BUILD_NUMBER} auto-pushed to wiki"
         - git push origin
-    - stage: deploy
-      os: linux
-      env: CI_BUILD_TYPE=website CNAME=dna.chialab.io S3_BUCKET=chialab-static-sites
-      node_js: 10
-      install:
-        - pip install --user awscli
-        - aws configure set preview.cloudfront true
-      before_script:
-        - mkdir -p public
-      script:
-        - git config --global user.email "travis@travis-ci.org"
-        - git config --global user.name "travis-ci"
-        - git clone https://gitlab.com/chialab/project-pages.git pages
-        - cd pages
-        - npm install
-        - cd ..
-        - node ./pages/index.js . --extra.ga 'UA-149131-70'
-        - ls -R public
-      after_success:
-        - for file in public/*.html; do mv -- "$file" "${file%%.html}"; done
-        - for file in public/**/*.html; do mv -- "$file" "${file%%.html}"; done
-        - sed -i 's/\.html//g' public/service-worker.js
-        - aws s3 sync public s3://$S3_BUCKET/$CNAME/ --region eu-west-1 --size-only --exclude "*" --include "*.*" --delete
-        - aws s3 sync public s3://$S3_BUCKET/$CNAME/ --region eu-west-1 --size-only --content-type text/html --exclude "*.*" --delete
-        - aws cloudfront create-invalidation --paths '/*' --distribution-id $(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Aliases.Items, '${CNAME}')].Id" --output text)
   allow_failures:
     - env: CI_BUILD_TYPE=electron
     - env: CI_BUILD_TYPE=saucelabs
-
-addons:
-  apt:
-    packages:
-      - xvfb
