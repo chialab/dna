@@ -3,6 +3,7 @@ extends:
   - eslint:recommended
 
 globals:
+  globalThis: true
   assert: true
   expect: true
   should: true
@@ -103,8 +104,9 @@ rules:
   no-plusplus: 0
   no-unused-vars:
     - 1
-    - varsIgnorePattern: (IDOM|process)
   no-console:
     - 1
+  require-atomic-updates:
+    - 0
 
 # RNA

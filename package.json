@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chialab/dna.git"
+    "url": "git@github.com:Chialab/dna.git"
   },
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "license": "MIT",
@@ -14,11 +14,11 @@
   },
   "homepage": "https://dna.chialab.io",
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.0.3",
     "chai": "^4.1.2",
-    "eslint": "^5.9.0",
+    "eslint": "^6.6.0",
     "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-mocha": "^5.2.0"
+    "eslint-plugin-mocha": "^6.2.1"
   },
   "workspaces": [
     "packages/*"

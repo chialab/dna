@@ -1,8 +1,6 @@
 # RNA
 # NPM
 /node_modules
-npm-debug.log
-yarn-error.log
 
 # LINT
 .eslintcache
@@ -12,10 +10,7 @@ yarn-error.log
 /test/__coverage__
 /test/__generated__
 
-# BUILD
 /dist
 /public
 
 # RNA
-
-packages/*/dist
