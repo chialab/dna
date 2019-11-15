@@ -3,8 +3,10 @@
   "version": "2.9.6",
   "description": "Evolution-based components with React implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
-  "main": "dist/react.js",
-  "module": "index.js",
+  "lib": "index.js",
+  "main": "dist/cjs/react.js",
+  "module": "dist/esm/react.js",
+  "browser": "dist/umd/react.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"

@@ -3,8 +3,10 @@
   "version": "2.9.6",
   "description": "Evolution-based components with IncrementalDOM templates.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
-  "main": "dist/idom.js",
-  "module": "index.js",
+  "lib": "index.js",
+  "main": "dist/cjs/idom.js",
+  "module": "dist/esm/idom.js",
+  "browser": "dist/umd/idom.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"

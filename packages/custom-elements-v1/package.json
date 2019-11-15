@@ -3,8 +3,10 @@
   "version": "2.9.6",
   "description": "Evolution-based components with Custom Elements v1 implementation.",
   "author": "Chialab <dev@chialab.io> (http://www.chialab.it)",
-  "main": "dist/custom-elements-v1.js",
-  "module": "index.js",
+  "lib": "index.js",
+  "main": "dist/cjs/custom-elements-v1.js",
+  "module": "dist/esm/custom-elements-v1.js",
+  "browser": "dist/umd/custom-elements-v1.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"
