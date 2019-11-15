@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/core",
-  "version": "2.9.7",
+  "version": "2.9.8",
   "description": "Evolution-based components.",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "lib": "index.js",
