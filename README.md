@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="DNA" src="https://logos.chialab.io/@chialab/dna.svg" width="100">
+    <img alt="DNA" src="logo.svg" width="100">
 </p>
 
 <p align="center">
