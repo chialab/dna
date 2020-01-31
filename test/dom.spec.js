@@ -293,17 +293,17 @@ describe('DOM', function() {
             const DNAHTMLElementShim = DNA.DOM.define('DNAHTMLElement', DNAHTMLElement);
             expect(DNAHTMLElementShim.prototype).to.be.equal(DNAHTMLElement.prototype);
             const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim);
+            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim);
         });
 
         it('should update an already proxied class', () => {
             const DNAHTMLElementShim1 = DNA.DOM.define('DNAHTMLElement', class { });
             const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim1);
+            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim1);
             const DNAHTMLElementShim2 = DNA.DOM.define('DNAHTMLElement', class { });
             expect(DNAHTMLElementShim1).to.not.equal(DNAHTMLElementShim2);
-            expect(Object.create(Proxy.prototype)).to.not.be.an.instanceof(DNAHTMLElementShim1);
-            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim2);
+            expect(new Proxy).to.not.be.an.instanceof(DNAHTMLElementShim1);
+            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim2);
         });
     });
 
@@ -324,25 +324,50 @@ describe('DOM', function() {
             expect(listener.response).to.be.equal(details);
         });
 
-        it.skip('should dispatch custom events that does bubble', () => {
-            //
+        it('should dispatch custom events that does bubble', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.bubbles);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(element, child);
+            element.addEventListener('click', listener);
+            DNA.DOM.dispatchEvent(child, 'click', details, true);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.true;
         });
 
-        it.skip('should dispatch custom events that is canceleable', () => {
-            //
+        it('should dispatch custom events that is canceleable', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.cancelable);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(element, child);
+            element.addEventListener('click', listener);
+            DNA.DOM.dispatchEvent(child, 'click', details, true, true);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.true;
         });
 
         it('should dispatch custom events that does not bubble', () => {
             const button = DNA.DOM.createElement('button');
             element.appendChild(button);
-            const listener = spyFunction((event) => event.detail);
-            element.addEventListener('click', listener);
+            const listener1 = spyFunction((event) => event.bubbles);
+            const listener2 = spyFunction((event) => event.bubbles);
+            element.addEventListener('click', listener1);
+            button.addEventListener('click', listener2);
             DNA.DOM.dispatchEvent(button, 'click', null, false);
-            expect(listener.invoked).to.be.false;
+            expect(listener1.invoked).to.be.false;
+            expect(listener2.invoked).to.be.true;
+            expect(listener2.response).to.be.false;
         });
 
-        it.skip('should dispatch custom events that is not canceleable', () => {
-            //
+        it('should dispatch custom events that is not canceleable', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.cancelable);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(element, child);
+            element.addEventListener('click', listener);
+            DNA.DOM.dispatchEvent(child, 'click', details, true, false);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.false;
         });
 
         it('should validate dispatch input', () => {
@@ -400,12 +425,50 @@ describe('DOM', function() {
             }).to.throw(TypeError, 'The provided callback is not a function');
         });
 
-        it.skip('should stop propagation', () => {
-            // ...
+        it('should stop propagation', () => {
+            const wrapper = DNA.DOM.createElement('div');
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(wrapper);
+            wrapper.appendChild(button);
+            const listener1 = spyFunction(() => { });
+            const listener2 = spyFunction((event) => {
+                event.stopPropagation();
+            });
+            const listener3 = spyFunction(() => { });
+            const listener4 = spyFunction(() => { });
+            DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
+            DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
+            DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
+            DNA.DOM.delegateEventListener(element, 'click', 'div', listener4);
+            button.click();
+
+            expect(listener1.invoked).to.be.false;
+            expect(listener2.invoked).to.be.true;
+            expect(listener3.invoked).to.be.true;
+            expect(listener4.invoked).to.be.false;
         });
 
-        it.skip('should immediately stop propagation', () => {
-            // ...
+        it('should immediately stop propagation', () => {
+            const wrapper = DNA.DOM.createElement('div');
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(wrapper);
+            wrapper.appendChild(button);
+            const listener1 = spyFunction(() => { });
+            const listener2 = spyFunction((event) => {
+                event.stopImmediatePropagation();
+            });
+            const listener3 = spyFunction(() => { });
+            const listener4 = spyFunction(() => { });
+            DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
+            DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
+            DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
+            DNA.DOM.delegateEventListener(element, 'click', 'div', listener4);
+            button.click();
+
+            expect(listener1.invoked).to.be.false;
+            expect(listener2.invoked).to.be.true;
+            expect(listener3.invoked).to.be.false;
+            expect(listener4.invoked).to.be.false;
         });
     });
 

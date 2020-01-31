@@ -455,6 +455,7 @@ export const DOM = {
                 const eventTarget = ev.target as Node;
                 // wrap the Event's stopPropagation in order to prevent other delegations from the same root
                 let stopped = false;
+                let stoppedImmediated = false;
                 const originalStopPropagation = ev.stopPropagation;
                 const originalImmediatePropagation = ev.stopImmediatePropagation;
                 ev.stopPropagation = () => {
@@ -464,6 +465,7 @@ export const DOM = {
                 };
                 ev.stopImmediatePropagation = () => {
                     stopped = true;
+                    stoppedImmediated = true;
                     // exec the real stopPropagation method
                     return originalImmediatePropagation.call(ev);
                 };
@@ -493,12 +495,19 @@ export const DOM = {
                     }
                 }
 
+                let lastTarget: Node;
                 filtered
                     // reorder targets by position in the dom tree.
-                    .sort(({ target: target1 }, { target: target2 }) => (target1.contains(target2) ? 1 : -1))
+                    .sort((match1, match2) => {
+                        if (match1.target === match2.target) {
+                            return filtered.indexOf(match1) - filtered.indexOf(match2);
+                        }
+                        return match1.target.contains(match2.target) ? 1 : -1;
+                    })
                     // trigger the callback
                     .forEach(({ callback, target }) => {
-                        if (!stopped) {
+                        if (!stoppedImmediated && (!stopped || target === lastTarget)) {
+                            lastTarget = target;
                             callback.call(element, ev, target);
                         }
                     });
