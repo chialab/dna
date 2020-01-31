@@ -508,6 +508,13 @@ eslint-plugin-babel@^5.3.0:
   dependencies:
     eslint-rule-composer "^0.3.0"
 
+eslint-plugin-mocha-no-only@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/eslint-plugin-mocha-no-only/-/eslint-plugin-mocha-no-only-1.1.0.tgz#5200c5b22ab27155b30ab2cf1ed43440d4acb1d8"
+  integrity sha512-YdeWE2KpZxsRs72SFfQobvf9G5Cv25sTbely9AEdn7trstDlhcgCyWl6wH/wYf2a0tJ6At5/BOJO/+9C6QYbVQ==
+  dependencies:
+    requireindex "~1.1.0"
+
 eslint-plugin-mocha@^6.2.2:
   version "6.2.2"
   resolved "https://registry.npmjs.org/eslint-plugin-mocha/-/eslint-plugin-mocha-6.2.2.tgz#6ef4b78bd12d744beb08a06e8209de330985100d"
@@ -1218,6 +1225,11 @@ request@^2.88.0:
     tough-cookie "~2.4.3"
     tunnel-agent "^0.6.0"
     uuid "^3.3.2"
+
+requireindex@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/requireindex/-/requireindex-1.1.0.tgz#e5404b81557ef75db6e49c5a72004893fe03e162"
+  integrity sha1-5UBLgVV+91225JxacgBIk/4D4WI=
 
 resolve-from@^4.0.0:
   version "4.0.0"

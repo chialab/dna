@@ -15,7 +15,6 @@ env:
   node: true
 
 plugins:
-  - mocha
   - babel
 
 parser: babel-eslint
@@ -109,6 +108,61 @@ rules:
   require-atomic-updates:
     - 0
 
+overrides:
+  - files:
+      - '*.spec.js'
+      - '*.spec.jsx'
+      - '*.spec.ts'
+      - '*.spec.tsx'
+      - '*.specs.js'
+      - '*.specs.jsx'
+      - '*.specs.ts'
+      - '*.specs.tsx'
+      - '*.test.js'
+      - '*.test.jsx'
+      - '*.test.ts'
+      - '*.test.tsx'
+      - '*.tests.js'
+      - '*.tests.jsx'
+      - '*.tests.ts'
+      - '*.tests.tsx'
+      - '*.unit.js'
+      - '*.unit.jsx'
+      - '*.unit.ts'
+      - '*.unit.tsx'
+      - '*.e2e.js'
+      - '*.e2e.jsx'
+      - '*.e2e.ts'
+      - '*.e2e.tsx'
+      - 'test/**/*.js'
+      - 'test/**/*.jsx'
+      - 'test/**/*.ts'
+      - 'test/**/*.tsx'
+      - 'tests/**/*.js'
+      - 'tests/**/*.jsx'
+      - 'tests/**/*.ts'
+      - 'tests/**/*.tsx'
+      - 'unit/**/*.js'
+      - 'unit/**/*.jsx'
+      - 'unit/**/*.ts'
+      - 'unit/**/*.tsx'
+      - 'e2e/**/*.js'
+      - 'e2e/**/*.jsx'
+      - 'e2e/**/*.ts'
+      - 'e2e/**/*.tsx'
+    env:
+      es6: true
+      browser: true
+      node: true
+      mocha: true
+    plugins:
+      - babel
+      - mocha
+      - mocha-no-only
+    rules:
+      mocha-no-only/mocha-no-only:
+        - 1
+
 # RNA
 
 overrides: [
@@ -117,10 +171,6 @@ overrides: [
     "parser": '@typescript-eslint/parser',
     "plugins": [
       '@typescript-eslint'
-    ],
-    "rules": {
-      # https://github.com/typescript-eslint/typescript-eslint/issues/363
-      "no-unused-vars": 0
-    }
+    ]
   }
 ]

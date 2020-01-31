@@ -1,7 +1,9 @@
 # RNA
 .*
 /node_modules
+/reports
 /test
+/stories
 rollup.config.js
 sauce.browsers.js
 karma.conf.js
