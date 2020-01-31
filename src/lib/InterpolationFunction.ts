@@ -50,12 +50,9 @@ function escape(text: string): string {
  * @param expression The expression to compile.
  * @return A simple string if the expression does not need interpolation, or an InterpolationFunction for content generation.
  */
-export function compile(expression: string): InterpolationFunction | string {
+export function compile(expression: string): InterpolationFunction {
     // split the expression into chunks
     const chunks = expression.trim().split(PARSE_REGEX);
-    if (chunks.length === 1) {
-        return expression;
-    }
     // the generated function body
     let body = 'with(this) return ';
 

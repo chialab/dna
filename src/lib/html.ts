@@ -1,6 +1,7 @@
 import { Template } from './Template';
-import { InterpolationFunction, compile } from './interpolate';
-import { h, HyperFunction } from './h';
+import { InterpolationFunction, compile } from './InterpolationFunction';
+import { HyperFunction } from './HyperFunction';
+import { h } from './h';
 import { DOM } from './DOM';
 
 /**

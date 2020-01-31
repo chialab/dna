@@ -75,7 +75,7 @@ export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElemen
     /**
      * A set of delegated events to bind to the node.
      */
-    readonly template?: Template;
+    readonly template?: HTMLTemplateElement;
 
     /**
      * The DNA Custom Element constructor.
@@ -98,7 +98,7 @@ export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElemen
     /**
      * Invoke the Custom Element's rendering.
      */
-    render(): void;
+    render(): Template;
 
     /**
      * Observe a Component Property.

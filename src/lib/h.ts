@@ -1,31 +1,13 @@
 import { createSymbolKey } from './symbols';
 import { DNACustomElement, isCustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
+import { HyperFunction, createHyperFunction } from './HyperFunction';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
-import { isInterpolationFunction } from './interpolate';
+import { isInterpolationFunction } from './InterpolationFunction';
 import { REGISTRY } from './registry';
 import { DOM } from './DOM';
-
-/**
- * Symbol for interpolated functions.
- */
-const HYPER_SYMBOL = createSymbolKey();
-
-/**
- * A HyperFunction (built by the `h` method with a tag name, a list of properties and children)
- * returns a Template result for a given previous node at the current position in a render context.
- */
-export type HyperFunction = (this: Scope, previousElement?: Element) => Template | TemplateItems;
-
-/**
- * Check if the reference is a HyperFunction.
- * @param target The reference to check.
- * @return The reference is a HyperFunction.
- */
-export function isHyperFunction(target: any): target is HyperFunction {
-    return !!target[HYPER_SYMBOL];
-}
+import { render } from './render';
 
 /**
  * A symbol to store node properties.
@@ -117,7 +99,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         }
 
         // update the Node properties
-        let props: HyperProperties = {};
+        const props: HyperProperties = {};
         for (let property in propertiesToSet) {
             let value = propertiesToSet[property];
             if (value && isInterpolationFunction(value)) {
@@ -192,12 +174,12 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         // or start the comparison between the old node and the requested one
         // if old and the requested are compatible,
         // the`root` contains the old Node or the old Component intance
-        let namespaceURI = props.namespaceURI;
+        const namespaceURI = props.namespaceURI;
         delete props.namespaceURI;
 
-        let element = getRoot(Component || tag, props.key, namespaceURI, previousElement);
-        let context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
-        let isCE = isCustomElement(element);
+        const element = getRoot(Component || tag, props.key, namespaceURI, previousElement);
+        const context = (element as any)[PRIVATE_CONTEXT_SYMBOL] = (element as any)[PRIVATE_CONTEXT_SYMBOL] || {};
+        const isCE = isCustomElement(element);
         // update the Node properties
         for (let propertyKey in context) {
             if (!(propertyKey in props)) {
@@ -232,20 +214,18 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
 
         // store the Node children in order to reuse them
         // at the next render cycle
-        let childrenInput = children.slice(0) as TemplateItems;
+        const childrenInput = children.slice(0) as TemplateItems;
         setScope(childrenInput, this);
         setSlotted(element, childrenInput);
 
         if (isCE) {
             // notify the Component that its slotted Nodes has been updated
-            (element as DNACustomElement).render();
+            render(element, (element as DNACustomElement).render());
         }
 
         // return the updated (or created) Node (or Component)
         return element;
     };
 
-    (fn as any)[HYPER_SYMBOL] = true;
-
-    return fn as HyperFunction;
+    return createHyperFunction(fn);
 }

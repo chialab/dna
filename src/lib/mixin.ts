@@ -41,7 +41,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * A set of delegated events to bind to the node.
          */
-        readonly template?: Template;
+        readonly template?: HTMLTemplateElement;
 
         /**
          * A flag with the connected value of the node.
@@ -125,7 +125,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
             }
 
             // trigger a re-render when the Node is connected
-            this.render();
+            render(this, this.render());
         }
 
         /**
@@ -186,7 +186,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
             if (property.observers) {
                 property.observers.forEach((observer) => observer(oldValue, newValue));
             }
-            this.render();
+
+            render(this, this.render());
         }
 
         /**
@@ -266,16 +267,11 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * Render method of the Component.
          *
-         * @param children The children to render into the Component
          * @return The instances of the rendered Components and/or Nodes
          */
-        render(children?: Template) {
+        render(): Template {
             // if no children are provided use the Component template or its slotted Nodes using the upper scope
-            children = children || this.template || getSlotted(this);
-            if (children) {
-                // trigger the Virtual DOM render
-                render(this, children);
-            }
+            return this.template || getSlotted(this);
         }
 
         /**

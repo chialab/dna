@@ -45,22 +45,68 @@ describe('DOM', function() {
         });
     });
 
-    describe('#get', () => {
-        it('should retrieve an already defined class', () => {
+    describe('#createElementNS', () => {
+        it.skip('should create SVG element', () => {
+            //
+        });
+    });
+
+    describe('#appendChild', () => {
+        it.skip('should append a child to a parent', () => {
             //
         });
 
-        it('should retrieve a proxy class', () => {
+        it.skip('should move a child from a parent to another parent', () => {
+            //
+        });
+    });
+
+    describe('#removeChild', () => {
+        it.skip('should remove a child from a parent', () => {
+            //
+        });
+    });
+
+    describe('#replaceChild', () => {
+        it.skip('should reaplce a child in a parent', () => {
+            //
+        });
+    });
+
+    describe('#getAttribute', () => {
+        it.skip('should get a node attribute', () => {
+            //
+        });
+    });
+
+    describe('#setAttribute', () => {
+        it.skip('should set a node attribute', () => {
+            //
+        });
+    });
+
+    describe('#hasAttribute', () => {
+        it.skip('should check if node has an attribute', () => {
+            //
+        });
+    });
+
+    describe('#get', () => {
+        it.skip('should retrieve an already defined class', () => {
+            //
+        });
+
+        it.skip('should retrieve a proxy class', () => {
             //
         });
     });
 
     describe('#define', () => {
-        it('should define a native constructor', () => {
+        it.skip('should define a native constructor', () => {
             //
         });
 
-        it('should update an already proxies class', () => {
+        it.skip('should update an already proxies class', () => {
             //
         });
     });

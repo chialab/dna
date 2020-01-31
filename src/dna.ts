@@ -8,7 +8,7 @@ export { render } from './lib/render';
 export { Fragment, h } from './lib/h';
 export { html } from './lib/html';
 export { css } from './lib/css';
-export { compile } from './lib/interpolate';
+export { compile } from './lib/InterpolationFunction';
 export { property } from './lib/property';
 
 /**
@@ -26,15 +26,17 @@ export { property } from './lib/property';
  *   ＠property()
  *   name: string;
  *
- *   // define the template
- *   readonly template = () => html`<div>${this.name}</div>`;
- *
  *   // define a list of delegated events
  *   readonly events = {
  *     'input [name="name"]': (ev, target) => {
  *       this.name = target.value;
  *     },
  *   };
+ *
+ *   // define the template
+ *   render() {
+ *      return html`<div>${this.name}</div>`;
+ *   }
  * }
  *
  * // link the Component class to a tag

@@ -3,8 +3,8 @@ import { isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope } from './Scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
 import { getSlotted } from './Slotted';
-import { isHyperFunction } from './h';
-import { isInterpolationFunction } from './interpolate';
+import { isHyperFunction } from './HyperFunction';
+import { isInterpolationFunction } from './InterpolationFunction';
 import { css } from './css';
 
 /**
@@ -58,12 +58,13 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * @return The resulting child Nodes.
  */
 export function render(node: Element, input: Template, context?: RenderContext): Template | Template[] | void {
-    const renderContext = context || {
+    const renderContext: RenderContext = {
         scope: getScope(node) || createScope(node),
         result: [],
         iterating: {
             node: node.firstChild as Node,
         },
+        ...(context || {}),
     };
 
     if (input != null && input !== false) {
@@ -88,10 +89,6 @@ export function render(node: Element, input: Template, context?: RenderContext):
             render(node, input.call(scope, iterating.node as Element), inputContext);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
-
-            // add the input to the result
-            result.push(input);
-
             let inputElement: Template;
             if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof input === 'string') {
                 let name: string = DOM.getAttribute(node, 'scoped') as string;
@@ -108,6 +105,9 @@ export function render(node: Element, input: Template, context?: RenderContext):
             }
 
             if (!inputContext.filter || inputContext.filter(inputElement)) {
+                // add the input to the result
+                result.push(input);
+
                 // get the current iterator for comparison
                 const currentNode = iterating.node;
 
@@ -167,7 +167,8 @@ export function render(node: Element, input: Template, context?: RenderContext):
         if (len === 0) {
             // no results, return void
             return;
-        } else if (len === 1) {
+        }
+        if (len === 1) {
             // single result, return the single entry
             return result[0];
         }
