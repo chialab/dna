@@ -56,7 +56,7 @@ describe('DOM', function() {
         });
     });
 
-    describe('parse', () => {
+    describe('#parse', () => {
         it('should return dom for html', () => {
             const nodes = DNA.DOM.parse('<h1>hello</h1>');
             expect(nodes).to.have.lengthOf(1);
@@ -302,8 +302,8 @@ describe('DOM', function() {
             expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim1);
             const DNAHTMLElementShim2 = DNA.DOM.define('DNAHTMLElement', class { });
             expect(DNAHTMLElementShim1).to.not.equal(DNAHTMLElementShim2);
-            expect(new Proxy).to.not.be.an.instanceof(DNAHTMLElementShim1);
             expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim2);
+            expect(new Proxy).to.not.be.an.instanceof(DNAHTMLElementShim1);
         });
     });
 
@@ -390,6 +390,12 @@ describe('DOM', function() {
             expect(() => {
                 DNA.DOM.dispatchEvent(element, 'click', null, true, true, null);
             }).to.throw(TypeError, 'The provided composed option must be a boolean');
+        });
+    });
+
+    describe('#dispatchAyncEvent', () => {
+        it.skip('should trigger an event and return a Promise', () => {
+            //
         });
     });
 

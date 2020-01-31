@@ -120,20 +120,23 @@ export function define(name: string, constructor: CustomElement, options: { exte
  * @param root A Node instance with descendant elements that are to be upgraded.
  */
 export function upgrade(root: HTMLElement) {
-    let elements: CustomElement[] = [];
+    const elements: CustomElement[] = [];
     // iterate registry entries in order to retrieve all registered tags
     for (let key in REGISTRY) {
         const { name, constructor } = REGISTRY[key];
         // find all nodes for the current Component configuration
         const nodes = root.querySelectorAll(`${name}, [is="${name}"]`);
         // iterate all nodes found
-        nodes.forEach((node) => {
+        for (let i = 0, len = nodes.length; i < len; i++) {
+            const node = nodes[i];
             // check if already instantiated
-            if (!(node instanceof constructor)) {
-                let elem = new constructor(node as HTMLElement);
-                elements.push(elem);
+            if (node instanceof constructor) {
+                continue;
             }
-        });
+            elements.push(
+                new constructor(node as HTMLElement)
+            );
+        }
     }
 
     return elements;
