@@ -13,41 +13,16 @@ export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param node The node to check.
  * @return The node is a Custom Element instance.
  */
-export function isCustomElement(node: any): node is DNACustomElement {
+export function isCustomElement(node: any): node is CustomElement {
     return node[CE_SYMBOL] === true;
 }
 
 /**
- * The interface of Custom Element, as described by the W3C.
+ * The basic Custom Element interface.
+ * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
 export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
-    /**
-     * Invoked each time the Custom Element is appended into a document-connected element.
-     * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
-     */
-    connectedCallback(): void;
-
-    /**
-     * Invoked each time the Custom Element is disconnected from the document's DOM.
-     */
-    disconnectedCallback(): void;
-
-    /**
-     * Invoked each time one of the Custom Element's attributes is added, removed, or changed.
-     *
-     * @param attributeName The name of the updated attribute.
-     * @param oldValue The previous value of the attribute.
-     * @param newValue The new value for the attribute (null if removed).
-     */
-    attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string): void;
-}
-
-/**
- * The basic DNA Custom Element interface.
- * It's a Custom Element, but with some extra useful method.
- */
-export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElement<T> & {
     /**
      * An unique symbol for DNA Custom elements.
      */
@@ -83,8 +58,28 @@ export type DNACustomElement<T extends HTMLElement = HTMLElement> = CustomElemen
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    new(node?: T, properties?: { [key: string]: any; }): DNACustomElement<T>;
-    new(properties?: { [key: string]: any; }): DNACustomElement<T>;
+    new(node?: T, properties?: { [key: string]: any; }): CustomElement<T>;
+    new(properties?: { [key: string]: any; }): CustomElement<T>;
+
+    /**
+     * Invoked each time the Custom Element is appended into a document-connected element.
+     * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+     */
+    connectedCallback(): void;
+
+    /**
+     * Invoked each time the Custom Element is disconnected from the document's DOM.
+     */
+    disconnectedCallback(): void;
+
+    /**
+     * Invoked each time one of the Custom Element's attributes is added, removed, or changed.
+     *
+     * @param attributeName The name of the updated attribute.
+     * @param oldValue The previous value of the attribute.
+     * @param newValue The new value for the attribute (null if removed).
+     */
+    attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string): void;
 
     /**
      * Invoked each time one of the Custom Element's properties is added, removed, or changed.

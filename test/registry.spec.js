@@ -91,8 +91,15 @@ describe('registry', function() {
     });
 
     describe('#upgrade', () => {
-        it.skip('should upgrade a node after an element definition', () => {
-            // ...
+        it('should upgrade a node after an element definition', () => {
+            const MyCard = class extends DNA.Component { };
+            const wrapper = DNA.DOM.createElement('div');
+            const card = DNA.DOM.createElement('my-card');
+            wrapper.appendChild(card);
+            expect(card).to.not.be.an.instanceof(MyCard);
+            DNA.define('my-card', MyCard);
+            DNA.upgrade(wrapper);
+            expect(card).to.be.an.instanceof(MyCard);
         });
     });
 });

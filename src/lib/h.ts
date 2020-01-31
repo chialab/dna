@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { DNACustomElement, isCustomElement } from './CustomElement';
+import { CustomElement, isCustomElement } from './CustomElement';
 import { Scope, getScope, setScope } from './Scope';
 import { HyperFunction, createHyperFunction } from './HyperFunction';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
@@ -220,7 +220,7 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
 
         if (isCE) {
             // notify the Component that its slotted Nodes has been updated
-            render(element, (element as DNACustomElement).render());
+            render(element, (element as CustomElement).render());
         }
 
         // return the updated (or created) Node (or Component)

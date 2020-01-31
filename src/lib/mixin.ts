@@ -1,4 +1,4 @@
-import { DNACustomElement, CE_SYMBOL } from './CustomElement';
+import { CustomElement, CE_SYMBOL } from './CustomElement';
 import { REGISTRY } from './registry';
 import { DelegatedEventCallback, DOM } from './DOM';
 import { createScope, getScope, setScope } from './Scope';
@@ -11,7 +11,7 @@ import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } f
  * Create a base Component class which extends a native constructor.
  * @
  */
-export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): DNACustomElement<T>, prototype: DNACustomElement<T> } {
+export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } {
     class Component extends (constructor as typeof HTMLElement) {
         /**
          * An unique symbol for DNA Custom elements.
@@ -333,5 +333,5 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         }
     }
 
-    return Component as unknown as { new(): DNACustomElement<T>, prototype: DNACustomElement<T> };
+    return Component as unknown as { new(): CustomElement<T>, prototype: CustomElement<T> };
 }
