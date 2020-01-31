@@ -46,21 +46,24 @@ DNA comes with a lot of features in a very small (~ 5kb gzipped) package. You ca
 
 ## Get the library
 
-Usage via [unpkg.com](https://unpkg.com/):
+Usage via [unpkg.com](https://unpkg.com/), as UMD package:
 ```html
-<!-- As UMD package -->
 <script src="https://unpkg.com/@chialab/dna" type="text/javascript"></script>
 <script>
     class MyComponent extends DNA.Component {}
-</script>
 
-<!-- As module -->
-<script type="module">
-    import('https://unpkg.com/@chialab/dna?module')
-        .then(({ Component }) => {
-            class MyComponent extends Component {}
-        });
+    DNA.define('my-component', MyComponent);
 </script>
+```
+
+or as ES6 module:
+
+```js
+import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
+
+class MyComponent extends Component {}
+
+define('my-component', MyComponent);
 ```
 
 Install via NPM:
@@ -72,9 +75,11 @@ $ yarn add @chialab/dna
 ```
 
 ```ts
-import { Component } from '@chialab/dna';
+import { Component, define } from '@chialab/dna';
 
 class MyComponent extends Component {}
+
+define('my-component', MyComponent);
 ```
 
 
