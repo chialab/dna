@@ -49,19 +49,19 @@ describe('registry', function() {
         it('should validate define input', () => {
             expect(() => {
                 DNA.define(null, null);
-            }).to.throw(SyntaxError, 'The provided name is not a valid Custom Element name');
+            }).to.throw(SyntaxError, 'The provided name must be a valid Custom Element name');
 
             expect(() => {
                 DNA.define('test', null);
-            }).to.throw(SyntaxError, 'The provided name is not a valid Custom Element name');
+            }).to.throw(SyntaxError, 'The provided name must be a valid Custom Element name');
 
             expect(() => {
                 DNA.define('2-test', null);
-            }).to.throw(SyntaxError, 'The provided name is not a valid Custom Element name');
+            }).to.throw(SyntaxError, 'The provided name must be a valid Custom Element name');
 
             expect(() => {
                 DNA.define('test-define', null);
-            }).to.throw(TypeError, 'The referenced constructor is not a constructor');
+            }).to.throw(TypeError, 'The referenced constructor must be a constructor');
         });
     });
 

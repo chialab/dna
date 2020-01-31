@@ -162,15 +162,14 @@ overrides:
     rules:
       mocha-no-only/mocha-no-only:
         - 1
+  - files:
+      - '*.ts'
+      - '*.tsx'
+    parser: '@typescript-eslint/parser'
+    plugins:
+      - '@typescript-eslint'
+    rules:
+      # https://github.com/typescript-eslint/typescript-eslint/issues/363
+      no-unused-vars: 0
 
 # RNA
-
-overrides: [
-  {
-    "files": ['*.ts', '*.tsx'],
-    "parser": '@typescript-eslint/parser',
-    "plugins": [
-      '@typescript-eslint'
-    ]
-  }
-]

@@ -373,23 +373,23 @@ describe('DOM', function() {
         it('should validate dispatch input', () => {
             expect(() => {
                 DNA.DOM.dispatchEvent(null);
-            }).to.throw(TypeError, 'The provided element is not a Node');
+            }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, null);
-            }).to.throw(TypeError, 'The provided event is not an Event');
+            }).to.throw(TypeError, 'The provided event must be an Event');
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, 'click', null, null, null, null);
-            }).to.throw(TypeError, 'The provided bubbles option is not a boolean');
+            }).to.throw(TypeError, 'The provided bubbles option must be a boolean');
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, 'click', null, true, null, null);
-            }).to.throw(TypeError, 'The provided cancelable option is not a boolean');
+            }).to.throw(TypeError, 'The provided cancelable option must be a boolean');
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, 'click', null, true, true, null);
-            }).to.throw(TypeError, 'The provided composed option is not a boolean');
+            }).to.throw(TypeError, 'The provided composed option must be a boolean');
         });
     });
 
@@ -409,20 +409,20 @@ describe('DOM', function() {
 
         it('should validate delegation input', () => {
             expect(() => {
-                DNA.DOM.delegateEventListener(null, null, null, null);
-            }).to.throw(TypeError, 'The provided element is not a Node');
+                DNA.DOM.delegateEventListener(false, false, false, false);
+            }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, null, null, null);
-            }).to.throw(TypeError, 'The provided event name is not a string');
+                DNA.DOM.delegateEventListener(element, false, false, false);
+            }).to.throw(TypeError, 'The provided event name must be a string');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, 'click', null, null);
-            }).to.throw(TypeError, 'The provided selector is not a string');
+                DNA.DOM.delegateEventListener(element, 'click', false, false);
+            }).to.throw(TypeError, 'The provided selector must be a string');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, 'click', 'button', null);
-            }).to.throw(TypeError, 'The provided callback is not a function');
+                DNA.DOM.delegateEventListener(element, 'click', 'button', false);
+            }).to.throw(TypeError, 'The provided callback must be a function');
         });
 
         it('should stop propagation', () => {
@@ -439,7 +439,7 @@ describe('DOM', function() {
             DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
-            DNA.DOM.delegateEventListener(element, 'click', 'div', listener4);
+            DNA.DOM.delegateEventListener(element, 'click', null, listener4);
             button.click();
 
             expect(listener1.invoked).to.be.false;
@@ -462,7 +462,7 @@ describe('DOM', function() {
             DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
-            DNA.DOM.delegateEventListener(element, 'click', 'div', listener4);
+            DNA.DOM.delegateEventListener(element, 'click', null, listener4);
             button.click();
 
             expect(listener1.invoked).to.be.false;
@@ -490,20 +490,20 @@ describe('DOM', function() {
 
         it('should validate undelegateEventListener input', () => {
             expect(() => {
-                DNA.DOM.undelegateEventListener(null, null, null, null);
-            }).to.throw(TypeError, 'The provided element is not a Node');
+                DNA.DOM.undelegateEventListener(false, false, false, false);
+            }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, null, null, null);
-            }).to.throw(TypeError, 'The provided event name is not a string');
+                DNA.DOM.undelegateEventListener(element, false, false, false);
+            }).to.throw(TypeError, 'The provided event name must be a string');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, 'click', null, null);
-            }).to.throw(TypeError, 'The provided selector is not a string');
+                DNA.DOM.undelegateEventListener(element, 'click', false, false);
+            }).to.throw(TypeError, 'The provided selector must be a string');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, 'click', 'button', 1);
-            }).to.throw(TypeError, 'The provided callback is not a function');
+                DNA.DOM.undelegateEventListener(element, 'click', 'button', false);
+            }).to.throw(TypeError, 'The provided callback must be a function');
         });
     });
 
@@ -526,7 +526,7 @@ describe('DOM', function() {
         it('should validate undelegateAllEventListeners input', () => {
             expect(() => {
                 DNA.DOM.undelegateEventListener(null, null, null, null);
-            }).to.throw(TypeError, 'The provided element is not a Node');
+            }).to.throw(TypeError, 'The provided element must be a Node');
         });
     });
 });

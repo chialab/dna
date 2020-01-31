@@ -37,7 +37,7 @@ const VALIDATION_REGEX = /^[a-z](?:[-.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u
  */
 export function assertValidateCustomElementName(name: string): boolean {
     if (!name || !name.match(VALIDATION_REGEX)) {
-        throw new SyntaxError('The provided name is not a valid Custom Element name');
+        throw new SyntaxError('The provided name must be a valid Custom Element name');
     }
     return true;
 }
@@ -87,7 +87,7 @@ export function define(name: string, constructor: DNACustomElement, options: { e
     assertValidateCustomElementName(name);
 
     if (typeof constructor !== 'function') {
-        throw new TypeError('The referenced constructor is not a constructor');
+        throw new TypeError('The referenced constructor must be a constructor');
     }
 
     if (get(name)) {

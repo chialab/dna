@@ -139,10 +139,10 @@ h3 {
     it('should validate css input', () => {
         expect(() => {
             DNA.css(null, null);
-        }).to.throw(TypeError, 'The provided name is not a string');
+        }).to.throw(TypeError, 'The provided name must be a string');
 
         expect(() => {
             DNA.css('test-style', null);
-        }).to.throw(TypeError, 'The provided CSS text is not a string');
+        }).to.throw(TypeError, 'The provided CSS text must be a string');
     });
 });

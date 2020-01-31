@@ -40,7 +40,7 @@ type DelegatedEventDescriptor = {
     /**
      * The selector for the delegated event.
      */
-    selector: string;
+    selector: string|null;
 };
 
 /**
@@ -424,19 +424,19 @@ export const DOM = {
      * @param callback The callback to trigger when an Event matches the delegation
      * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
      */
-    delegateEventListener(element: Node, eventName: string, selector: string, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
+    delegateEventListener(element: Node, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
         const delegatedElement: Node & WithEventDelegations = element;
         if (!this.isNode(element)) {
-            throw new TypeError('The provided element is not a Node');
+            throw new TypeError('The provided element must be a Node');
         }
         if (typeof eventName !== 'string') {
-            throw new TypeError('The provided event name is not a string');
+            throw new TypeError('The provided event name must be a string');
         }
-        if (typeof selector !== 'string') {
-            throw new TypeError('The provided selector is not a string');
+        if (selector !== null && typeof selector !== 'string') {
+            throw new TypeError('The provided selector must be a string or null');
         }
         if (typeof callback !== 'function') {
-            throw new TypeError('The provided callback is not a function');
+            throw new TypeError('The provided callback must be a function');
         }
         // get all delegations
         const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
@@ -526,18 +526,18 @@ export const DOM = {
      * @param selector The selector to undelegate
      * @param callback The callback to remove
      */
-    undelegateEventListener(element: Node, eventName: string, selector: string, callback: DelegatedEventCallback) {
+    undelegateEventListener(element: Node, eventName: string, selector: string|null, callback: DelegatedEventCallback) {
         if (!this.isNode(element)) {
-            throw new TypeError('The provided element is not a Node');
+            throw new TypeError('The provided element must be a Node');
         }
         if (typeof eventName !== 'string') {
-            throw new TypeError('The provided event name is not a string');
+            throw new TypeError('The provided event name must be a string');
         }
-        if (typeof selector !== 'string') {
-            throw new TypeError('The provided selector is not a string');
+        if (selector !== null && typeof selector !== 'string') {
+            throw new TypeError('The provided selector must be a string or null');
         }
         if (typeof callback !== 'function') {
-            throw new TypeError('The provided callback is not a function');
+            throw new TypeError('The provided callback must be a function');
         }
 
         const delegatedElement: Node & WithEventDelegations = element;
@@ -569,7 +569,7 @@ export const DOM = {
      */
     undelegateAllEventListeners(element: Node) {
         if (!this.isNode(element)) {
-            throw new TypeError('The provided element is not a Node');
+            throw new TypeError('The provided element must be a Node');
         }
 
         const delegatedElement: Node & WithEventDelegations = element;
@@ -581,9 +581,10 @@ export const DOM = {
         }
         for (let eventName in delegations) {
             const { descriptors } = delegations[eventName];
-            descriptors.slice(0).forEach((descriptor) => {
+            while (descriptors.length) {
+                const descriptor = descriptors[descriptors.length - 1];
                 this.undelegateEventListener(element, eventName, descriptor.selector, descriptor.callback);
-            });
+            }
         }
     },
 
@@ -598,18 +599,18 @@ export const DOM = {
      */
     dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
         if (!this.isNode(element)) {
-            throw new TypeError('The provided element is not a Node');
+            throw new TypeError('The provided element must be a Node');
         }
 
         if (typeof event === 'string') {
             if (typeof bubbles !== 'boolean') {
-                throw new TypeError('The provided bubbles option is not a boolean');
+                throw new TypeError('The provided bubbles option must be a boolean');
             }
             if (typeof cancelable !== 'boolean') {
-                throw new TypeError('The provided cancelable option is not a boolean');
+                throw new TypeError('The provided cancelable option must be a boolean');
             }
             if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-                throw new TypeError('The provided composed option is not a boolean');
+                throw new TypeError('The provided composed option must be a boolean');
             }
 
             event = this.createEvent(event, {
@@ -619,7 +620,7 @@ export const DOM = {
                 composed,
             });
         } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided event is not an Event');
+            throw new TypeError('The provided event must be an Event');
         }
 
         return Node.prototype.dispatchEvent.call(element, event);

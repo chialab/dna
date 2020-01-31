@@ -32,10 +32,10 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
  */
 export function css(name: string, cssText: string): string {
     if (typeof name !== 'string') {
-        throw new TypeError('The provided name is not a string');
+        throw new TypeError('The provided name must be a string');
     }
     if (typeof cssText !== 'string') {
-        throw new TypeError('The provided CSS text is not a string');
+        throw new TypeError('The provided CSS text must be a string');
     }
 
     const cached = CACHE[name] = CACHE[name] || {};

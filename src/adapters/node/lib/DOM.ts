@@ -181,18 +181,18 @@ Object.assign(DOM, {
     },
     dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
         if (!this.isNode(element)) {
-            throw new TypeError('The provided element is not a Node');
+            throw new TypeError('The provided element must be a Node');
         }
 
         if (typeof event === 'string') {
             if (typeof bubbles !== 'boolean') {
-                throw new TypeError('The provided bubbles option is not a boolean');
+                throw new TypeError('The provided bubbles option must be a boolean');
             }
             if (typeof cancelable !== 'boolean') {
-                throw new TypeError('The provided cancelable option is not a boolean');
+                throw new TypeError('The provided cancelable option must be a boolean');
             }
             if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-                throw new TypeError('The provided composed option is not a boolean');
+                throw new TypeError('The provided composed option must be a boolean');
             }
 
             event = this.createEvent(event, {
@@ -202,7 +202,7 @@ Object.assign(DOM, {
                 composed,
             });
         } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided event is not an Event');
+            throw new TypeError('The provided event must be an Event');
         }
 
         return Node.prototype.dispatchEvent.call(element, event);
