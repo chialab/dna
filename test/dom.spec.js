@@ -34,6 +34,46 @@ describe('DOM', function() {
         });
     });
 
+    describe('#isText', () => {
+        it('should return `true` to for texts', () => {
+            const node = DNA.DOM.createTextNode('hello');
+            expect(DNA.DOM.isText(node)).to.be.equal(true);
+        });
+
+        it('should return `false` to for elements', () => {
+            const element = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isText(element)).to.be.equal(false);
+        });
+    });
+
+    describe('#isElement', () => {
+        it('should return `true` to for elements', () => {
+            const element = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isElement(element)).to.be.equal(true);
+        });
+
+        it('should return `false` to for texts', () => {
+            const node = DNA.DOM.createTextNode('hello');
+            expect(DNA.DOM.isElement(node)).to.be.equal(false);
+        });
+    });
+
+    describe('parse', () => {
+        it('should return dom for html', () => {
+            const nodes = DNA.DOM.parse('<h1>hello</h1>');
+            expect(nodes).to.have.lengthOf(1);
+            const element = nodes[0];
+            expect(DNA.DOM.isElement(element)).to.be.equal(true);
+            expect(element.tagName).to.be.equal('H1');
+            expect(element.textContent).to.be.equal('hello');
+        });
+
+        it('should return `false` to for texts', () => {
+            const node = DNA.DOM.createTextNode('hello');
+            expect(DNA.DOM.isElement(node)).to.be.equal(false);
+        });
+    });
+
     describe('#createElement', () => {
         it('should create a defined element', () => {
             const TestElement = class extends DNA.Component { };
