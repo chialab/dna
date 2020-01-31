@@ -64,8 +64,13 @@ export function render(node: Element, input: Template, context?: RenderContext):
         iterating: {
             node: node.firstChild as Node,
         },
-        ...(context || {}),
     };
+
+    if (context) {
+        for (let key in context) {
+            renderContext[key as keyof RenderContext] = context[key as keyof RenderContext] as unknown as any;
+        }
+    }
 
     if (input != null && input !== false) {
         const inputContext: RenderContext = {

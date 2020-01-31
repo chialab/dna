@@ -293,17 +293,17 @@ describe('DOM', function() {
             const DNAHTMLElementShim = DNA.DOM.define('DNAHTMLElement', DNAHTMLElement);
             expect(DNAHTMLElementShim.prototype).to.be.equal(DNAHTMLElement.prototype);
             const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim);
+            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim);
         });
 
         it('should update an already proxied class', () => {
             const DNAHTMLElementShim1 = DNA.DOM.define('DNAHTMLElement', class { });
             const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim1);
+            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim1);
             const DNAHTMLElementShim2 = DNA.DOM.define('DNAHTMLElement', class { });
             expect(DNAHTMLElementShim1).to.not.equal(DNAHTMLElementShim2);
-            expect(Proxy.prototype).to.not.be.an.instanceof(DNAHTMLElementShim1);
-            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim2);
+            expect(Object.create(Proxy.prototype)).to.not.be.an.instanceof(DNAHTMLElementShim1);
+            expect(Object.create(Proxy.prototype)).to.be.an.instanceof(DNAHTMLElementShim2);
         });
     });
 

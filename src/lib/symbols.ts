@@ -1,4 +1,4 @@
-const symbols = [];
+let symbols = 0;
 
 /**
  * Create a symbolic key.
@@ -9,5 +9,5 @@ export function createSymbolKey() {
     if (typeof Symbol !== 'undefined') {
         return Symbol();
     }
-    return `$sym_${symbols.push()}` as unknown as symbol;
+    return `$sym_${symbols++}` as unknown as symbol;
 }
