@@ -134,10 +134,10 @@ describe('render', function() {
         it('should add nodes', () => {
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
             const list = wrapper.querySelector('ul.list');
-            const children = [...list.childNodes];
+            const children = list.childNodes;
             expect(children).to.have.lengthOf(2);
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
-            const newChildren = [...list.childNodes];
+            const newChildren = list.childNodes;
             expect(newChildren).to.have.lengthOf(4);
             expect(children[0]).to.be.equal(newChildren[0]);
             expect(children[1]).to.be.equal(newChildren[1]);
@@ -146,10 +146,10 @@ describe('render', function() {
         it('should remove nodes', () => {
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
             const list = wrapper.querySelector('ul.list');
-            const children = [...list.childNodes];
+            const children = list.childNodes;
             expect(children).to.have.lengthOf(4);
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
-            const newChildren = [...list.childNodes];
+            const newChildren = list.childNodes;
             expect(newChildren).to.have.lengthOf(2);
             expect(children[0]).to.be.equal(newChildren[0]);
             expect(children[1]).to.be.equal(newChildren[1]);
@@ -158,13 +158,13 @@ describe('render', function() {
         it('should update nodes', () => {
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
             const list = wrapper.querySelector('ul.list');
-            const children = [...list.childNodes];
+            const children = list.childNodes;
             expect(children[0].textContent).to.be.equal('One');
             expect(children[1].textContent).to.be.equal('Two');
             expect(children[2].textContent).to.be.equal('Three');
             expect(children[3].textContent).to.be.equal('Four');
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'Five'), DNA.h('li', null, 'Six'), DNA.h('li', null, 'Seven'), DNA.h('li', null, 'Height')));
-            const newChildren = [...list.childNodes];
+            const newChildren = list.childNodes;
             expect(children[0]).to.be.equal(newChildren[0]);
             expect(children[1]).to.be.equal(newChildren[1]);
             expect(children[2]).to.be.equal(newChildren[2]);
