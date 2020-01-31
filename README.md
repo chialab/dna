@@ -114,7 +114,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
         <input type="text" name="name" />
     </form>
     <span class="message">
-        <span class="icon">👋🏻</span> Hello [[ name ]]
+        <span class="icon">👋🏻</span> Hello {{ name }}
     </span>
 </template>
 ```
