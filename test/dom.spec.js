@@ -22,6 +22,18 @@ describe('DOM', function() {
         element.ownerDocument.body.removeChild(element);
     });
 
+    describe('#isDocument', () => {
+        it('should return `true` to for documents', () => {
+            const element = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isDocument(element.ownerDocument)).to.be.equal(true);
+        });
+
+        it('should return `false` to for nodes', () => {
+            const element = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isDocument(element)).to.be.equal(false);
+        });
+    });
+
     describe('#createElement', () => {
         it('should create a defined element', () => {
             const TestElement = class extends DNA.Component { };

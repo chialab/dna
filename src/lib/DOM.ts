@@ -4,44 +4,6 @@ import { get } from './registry';
 import { shim } from './shim';
 
 /**
- * The global namespace.
- */
-const GLOBAL_NS = (() => {
-    if (typeof globalThis !== 'undefined') {
-        return globalThis;
-    }
-    if (typeof self !== 'undefined') {
-        return self;
-    }
-    if (typeof window !== 'undefined') {
-        return window;
-    }
-    if (typeof global !== 'undefined') {
-        return global;
-    }
-    return {};
-})() as typeof globalThis;
-
-const NODE_PROTOTYPE = GLOBAL_NS.Node && GLOBAL_NS.Node.prototype;
-const ELEMENT_PROTOTYPE = GLOBAL_NS.Element && GLOBAL_NS.Element.prototype;
-const CustomEventCtr: typeof CustomEvent = (() => {
-    try {
-        new CustomEvent('test');
-        return CustomEvent;
-    } catch {
-        const CustomEventPolyfill = function(eventName: string, params: CustomEventInit = {}) {
-            const event = document.createEvent('CustomEvent');
-            event.initCustomEvent(eventName, params.bubbles || false, params.cancelable || false, params.detail);
-            return event;
-        };
-        if (typeof CustomEvent !== 'undefined') {
-            CustomEventPolyfill.prototype = CustomEvent.prototype;
-        }
-        return CustomEventPolyfill;
-    }
-})() as unknown as typeof CustomEvent;
-
-/**
  * Collect native HTMLElement constructors.
  */
 const CONSTRUCTORS: { [key: string]: typeof HTMLElement } = {};
@@ -210,8 +172,15 @@ export const DOM = {
      * @param typeArg The name of the event.
      * @param eventInitDict A set of options for the event, such as detail and bubbling.
      */
-    createEvent(typeArg: string, eventInitDict?: CustomEventInit<unknown>): CustomEvent<unknown> {
-        return new CustomEventCtr(typeArg, eventInitDict);
+    createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> {
+        let event;
+        try {
+            event = new CustomEvent(typeArg, eventInitDict);
+        } catch {
+            event = document.createEvent('CustomEvent');
+            event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
+        }
+        return event;
     },
 
     /**
@@ -224,7 +193,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        NODE_PROTOTYPE.appendChild.call(parent, newChild);
+        Node.prototype.appendChild.call(parent, newChild);
         this.connect(newChild);
         return newChild;
     },
@@ -236,7 +205,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
-        NODE_PROTOTYPE.removeChild.call(parent, oldChild);
+        Node.prototype.removeChild.call(parent, oldChild);
         this.disconnect(oldChild);
         return oldChild;
     },
@@ -255,7 +224,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        NODE_PROTOTYPE.insertBefore.call(parent, newChild, refChild);
+        Node.prototype.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
         return newChild;
     },
@@ -274,7 +243,7 @@ export const DOM = {
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
-        NODE_PROTOTYPE.replaceChild.call(parent, newChild, oldChild);
+        Node.prototype.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
         this.connect(newChild);
         return oldChild;
@@ -287,7 +256,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return ELEMENT_PROTOTYPE.getAttribute.call(element, qualifiedName);
+        return HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -297,7 +266,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return ELEMENT_PROTOTYPE.hasAttribute.call(element, qualifiedName);
+        return HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -309,7 +278,7 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         let oldValue = this.getAttribute(element, qualifiedName);
-        ELEMENT_PROTOTYPE.setAttribute.call(element, qualifiedName, value);
+        HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
@@ -323,7 +292,7 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string) {
         let oldValue = this.getAttribute(element, qualifiedName);
-        ELEMENT_PROTOTYPE.removeAttribute.call(element, qualifiedName);
+        HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
@@ -351,7 +320,7 @@ export const DOM = {
      * @param selectorString The selector to match.
      */
     matches(element: Element, selectorString: string): boolean {
-        const match = ELEMENT_PROTOTYPE.matches || ELEMENT_PROTOTYPE.webkitMatchesSelector || (ELEMENT_PROTOTYPE as any).msMatchesSelector as typeof Element.prototype.matches;
+        const match = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
         return match.call(element, selectorString);
     },
 
@@ -429,12 +398,7 @@ export const DOM = {
             return PROXIES[name];
         }
         if (!CONSTRUCTORS[name]) {
-            const Ctr = (GLOBAL_NS as any)[name] as typeof HTMLElement;
-            if (Ctr) {
-                CONSTRUCTORS[name] = shim(Ctr);
-            } else {
-                CONSTRUCTORS[name] = class { } as typeof HTMLElement;
-            }
+            CONSTRUCTORS[name] = typeof window !== 'undefined' && shim((window as any)[name]);
         }
         PROXIES[name] = class extends CONSTRUCTORS[name] { };
         return PROXIES[name];
@@ -655,6 +619,6 @@ export const DOM = {
             throw new TypeError('The provided event is not an Event');
         }
 
-        return NODE_PROTOTYPE.dispatchEvent.call(element, event);
+        return Node.prototype.dispatchEvent.call(element, event);
     },
 };

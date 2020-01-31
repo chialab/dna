@@ -1,4 +1,6 @@
-import { DOM, get, isCustomElement } from '../dna';
+import { DOM } from '../../../lib/DOM';
+import { get } from '../../../lib/registry';
+import { isCustomElement } from '../../../lib/CustomElement';
 
 const JSDOM = require('js' + 'dom').JSDOM;
 const {
@@ -280,5 +282,3 @@ HTMLTrackElement && DOM.define('HTMLTrackElement', HTMLTrackElement);
 HTMLUListElement && DOM.define('HTMLUListElement', HTMLUListElement);
 HTMLUnknownElement && DOM.define('HTMLUnknownElement', HTMLUnknownElement);
 HTMLVideoElement && DOM.define('HTMLVideoElement', HTMLVideoElement);
-
-export * from '../dna';
