@@ -75,6 +75,12 @@ describe('DOM', function() {
     });
 
     describe('#createElement', () => {
+        it('should create an element', () => {
+            const elem = DNA.DOM.createElement('div');
+            expect(elem.tagName).to.be.equal('DIV');
+            expect(elem.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
+        });
+
         it('should create a defined element', () => {
             const TestElement = class extends DNA.Component { };
             DNA.define('test-domcreate', TestElement);
@@ -98,8 +104,10 @@ describe('DOM', function() {
     });
 
     describe('#createElementNS', () => {
-        it.skip('should create SVG element', () => {
-            //
+        it('should create SVG element', () => {
+            const elem = DNA.DOM.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            expect(elem.tagName).to.be.equal('svg');
+            expect(elem.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
         });
     });
 
@@ -119,6 +127,12 @@ describe('DOM', function() {
         });
     });
 
+    describe('#insertBefore', () => {
+        it.skip('should insert a child before another', () => {
+            //
+        });
+    });
+
     describe('#replaceChild', () => {
         it.skip('should reaplce a child in a parent', () => {
             //
@@ -126,20 +140,39 @@ describe('DOM', function() {
     });
 
     describe('#getAttribute', () => {
-        it.skip('should get a node attribute', () => {
-            //
+        it('should get an empty node attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            expect(DNA.DOM.getAttribute(element, 'type')).to.be.null;
+        });
+
+        it('should get a node attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            element.setAttribute('type', '1');
+            expect(DNA.DOM.getAttribute(element, 'type')).to.be.equal('1');
         });
     });
 
     describe('#setAttribute', () => {
-        it.skip('should set a node attribute', () => {
-            //
+        it('should set a node attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            DNA.DOM.setAttribute(element, 'type', '1');
+            expect(element.getAttribute('type')).to.be.equal('1');
         });
     });
 
     describe('#hasAttribute', () => {
         it.skip('should check if node has an attribute', () => {
             //
+        });
+    });
+
+    describe('#removeAttribute', () => {
+        it('should remove a node attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            DNA.DOM.setAttribute(element, 'type', '1');
+            expect(DNA.DOM.getAttribute(element, 'type')).to.be.equal('1');
+            DNA.DOM.removeAttribute(element, 'type');
+            expect(DNA.DOM.getAttribute(element, 'type')).to.be.null;
         });
     });
 
