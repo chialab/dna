@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    Progressive Web Components
+    <strong>DNA</strong> • Progressive Web Components
 </p>
 
 <p align="center">

@@ -304,11 +304,8 @@ export const DOM = {
      * @param node The parent node.
      * @return An array of child nodes (if available).
      */
-    getChildNodes(node: Node): ReadonlyArray<Node> | undefined {
-        if (!node.childNodes) {
-            return undefined;
-        }
-        let childNodes: Node[] = [];
+    getChildNodes(node: Node): ReadonlyArray<Node> {
+        const childNodes: Node[] = [];
         for (let i = 0, len = node.childNodes.length; i < len; i++) {
             childNodes.push(node.childNodes[i]);
         }
@@ -331,13 +328,10 @@ export const DOM = {
      * @return A truthy value for connected targets.
      */
     isConnected(target: Node | null): boolean {
-        if (!this.isNode(target)) {
-            return false;
-        }
-
         if (this.isElement(target) || this.isText(target)) {
             return this.isConnected(target.parentNode);
-        } else if (this.isDocument(target)) {
+        }
+        if (this.isDocument(target)) {
             return true;
         }
 

@@ -10,11 +10,9 @@ describe('DOM', function() {
         DNA = await getModule();
     });
 
-    let element, button;
+    let element;
     beforeEach(() => {
         element = DNA.DOM.createElement('div');
-        button = DNA.DOM.createElement('button');
-        element.appendChild(button);
         element.ownerDocument.body.appendChild(element);
     });
 
@@ -25,36 +23,36 @@ describe('DOM', function() {
     describe('#isDocument', () => {
         it('should return `true` to for documents', () => {
             const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isDocument(element.ownerDocument)).to.be.equal(true);
+            expect(DNA.DOM.isDocument(element.ownerDocument)).to.be.true;
         });
 
         it('should return `false` to for nodes', () => {
             const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isDocument(element)).to.be.equal(false);
+            expect(DNA.DOM.isDocument(element)).to.be.false;
         });
     });
 
     describe('#isText', () => {
         it('should return `true` to for texts', () => {
             const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isText(node)).to.be.equal(true);
+            expect(DNA.DOM.isText(node)).to.be.true;
         });
 
         it('should return `false` to for elements', () => {
             const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isText(element)).to.be.equal(false);
+            expect(DNA.DOM.isText(element)).to.be.false;
         });
     });
 
     describe('#isElement', () => {
         it('should return `true` to for elements', () => {
             const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isElement(element)).to.be.equal(true);
+            expect(DNA.DOM.isElement(element)).to.be.true;
         });
 
         it('should return `false` to for texts', () => {
             const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isElement(node)).to.be.equal(false);
+            expect(DNA.DOM.isElement(node)).to.be.false;
         });
     });
 
@@ -63,31 +61,31 @@ describe('DOM', function() {
             const nodes = DNA.DOM.parse('<h1>hello</h1>');
             expect(nodes).to.have.lengthOf(1);
             const element = nodes[0];
-            expect(DNA.DOM.isElement(element)).to.be.equal(true);
+            expect(DNA.DOM.isElement(element)).to.be.true;
             expect(element.tagName).to.be.equal('H1');
             expect(element.textContent).to.be.equal('hello');
         });
 
         it('should return `false` to for texts', () => {
             const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isElement(node)).to.be.equal(false);
+            expect(DNA.DOM.isElement(node)).to.be.false;
         });
     });
 
     describe('#createElement', () => {
         it('should create an element', () => {
-            const elem = DNA.DOM.createElement('div');
-            expect(elem.tagName).to.be.equal('DIV');
-            expect(elem.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
+            const element = DNA.DOM.createElement('div');
+            expect(element.tagName).to.be.equal('DIV');
+            expect(element.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
         });
 
         it('should create a defined element', () => {
             const TestElement = class extends DNA.Component { };
             DNA.define('test-domcreate', TestElement);
 
-            const elem2 = DNA.DOM.createElement('test-domcreate');
-            expect(elem2.is).to.be.equal('test-domcreate');
-            expect(elem2.tagName).to.be.equal('TEST-DOMCREATE');
+            const element = DNA.DOM.createElement('test-domcreate');
+            expect(element.is).to.be.equal('test-domcreate');
+            expect(element.tagName).to.be.equal('TEST-DOMCREATE');
         });
 
         it('should create and extend a native element', () => {
@@ -96,46 +94,126 @@ describe('DOM', function() {
                 extends: 'article',
             });
 
-            const elem2 = DNA.DOM.createElement('article', { is: 'test-domcreate2' });
-            expect(elem2.is).to.be.equal('test-domcreate2');
-            expect(elem2.tagName).to.be.equal('ARTICLE');
-            expect(elem2.getAttribute('is')).to.be.equal('test-domcreate2');
+            const element = DNA.DOM.createElement('article', { is: 'test-domcreate2' });
+            expect(element.is).to.be.equal('test-domcreate2');
+            expect(element.tagName).to.be.equal('ARTICLE');
+            expect(element.getAttribute('is')).to.be.equal('test-domcreate2');
         });
     });
 
     describe('#createElementNS', () => {
         it('should create SVG element', () => {
-            const elem = DNA.DOM.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            expect(elem.tagName).to.be.equal('svg');
-            expect(elem.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
+            const element = DNA.DOM.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            expect(element.tagName).to.be.equal('svg');
+            expect(element.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
         });
     });
 
     describe('#appendChild', () => {
-        it.skip('should append a child to a parent', () => {
-            //
+        it('should append a child to a parent', () => {
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child);
+            expect(child.parentNode).to.be.equal(element);
         });
 
-        it.skip('should move a child from a parent to another parent', () => {
-            //
+        it('should move a child from a parent to another parent', () => {
+            const parent = DNA.DOM.createElement('div');
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(parent, child);
+            expect(child.parentNode).to.be.equal(parent);
+            DNA.DOM.appendChild(element, child);
+            expect(parent.childNodes).to.have.lengthOf(0);
+            expect(child.parentNode).to.be.equal(element);
         });
     });
 
     describe('#removeChild', () => {
-        it.skip('should remove a child from a parent', () => {
-            //
+        it('should remove a child from a parent', () => {
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child);
+            expect(child.parentNode).to.be.equal(element);
+            DNA.DOM.removeChild(element, child);
+            expect(child.parentNode).to.be.null;
+            expect(element.childNodes).to.have.lengthOf(0);
         });
     });
 
     describe('#insertBefore', () => {
-        it.skip('should insert a child before another', () => {
-            //
+        it('should insert a child before another', () => {
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child1);
+            DNA.DOM.insertBefore(element, child2, child1);
+            expect(child1.parentNode).to.be.equal(element);
+            expect(child2.parentNode).to.be.equal(element);
+            expect(element.childNodes[0]).to.be.equal(child2);
+            expect(element.childNodes[1]).to.be.equal(child1);
+        });
+
+        it('should insert a child (and remove it from the previous parent) before another', () => {
+            const parent = DNA.DOM.createElement('div');
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(parent, child2);
+            expect(child2.parentNode).to.be.equal(parent);
+            DNA.DOM.appendChild(element, child1);
+            DNA.DOM.insertBefore(element, child2, child1);
+            expect(parent.childNodes).to.have.lengthOf(0);
+            expect(child1.parentNode).to.be.equal(element);
+            expect(child2.parentNode).to.be.equal(element);
+            expect(element.childNodes[0]).to.be.equal(child2);
+            expect(element.childNodes[1]).to.be.equal(child1);
+        });
+
+        it('should do nothing when child is already before another', () => {
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child1);
+            DNA.DOM.appendChild(element, child2);
+            DNA.DOM.insertBefore(element, child1, child2);
+            expect(child1.parentNode).to.be.equal(element);
+            expect(child2.parentNode).to.be.equal(element);
+            expect(element.childNodes[0]).to.be.equal(child1);
+            expect(element.childNodes[1]).to.be.equal(child2);
         });
     });
 
     describe('#replaceChild', () => {
-        it.skip('should reaplce a child in a parent', () => {
-            //
+        it('should reaplce a child in a parent', () => {
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child1);
+            expect(child1.parentNode).to.be.equal(element);
+            DNA.DOM.replaceChild(element, child2, child1);
+            expect(child1.parentNode).to.be.null;
+            expect(child2.parentNode).to.be.equal(element);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0]).to.be.equal(child2);
+        });
+
+        it('should reaplce a child (and remove it from the previous parent) in a parent', () => {
+            const parent = DNA.DOM.createElement('div');
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(parent, child2);
+            expect(child2.parentNode).to.be.equal(parent);
+            DNA.DOM.appendChild(element, child1);
+            expect(child1.parentNode).to.be.equal(element);
+            DNA.DOM.replaceChild(element, child2, child1);
+            expect(parent.childNodes).to.have.lengthOf(0);
+            expect(child1.parentNode).to.be.null;
+            expect(child2.parentNode).to.be.equal(element);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0]).to.be.equal(child2);
+        });
+
+        it('should do nothing if the node is the same', () => {
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child);
+            expect(child.parentNode).to.be.equal(element);
+            DNA.DOM.replaceChild(element, child, child);
+            expect(child.parentNode).to.be.equal(element);
+            expect(element.childNodes).to.have.lengthOf(1);
         });
     });
 
@@ -161,8 +239,15 @@ describe('DOM', function() {
     });
 
     describe('#hasAttribute', () => {
-        it.skip('should check if node has an attribute', () => {
-            //
+        it('should return `true` if node has an attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            DNA.DOM.setAttribute(element, 'type', '1');
+            expect(DNA.DOM.hasAttribute(element, 'type')).to.be.true;
+        });
+
+        it('should return `false` if node has an attribute', () => {
+            const element = DNA.DOM.createElement('button');
+            expect(DNA.DOM.hasAttribute(element, 'type')).to.be.false;
         });
     });
 
@@ -176,23 +261,49 @@ describe('DOM', function() {
         });
     });
 
-    describe('#get', () => {
-        it.skip('should retrieve an already defined class', () => {
-            //
+    describe('#isConnected', () => {
+        it('return `true` if element is connected', () => {
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child);
+            expect(DNA.DOM.isConnected(child)).to.be.true;
         });
 
-        it.skip('should retrieve a proxy class', () => {
-            //
+        it('return `true` if element is disconnected', () => {
+            const child = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isConnected(child)).to.be.false;
+        });
+    });
+
+    describe('#isConnected', () => {
+        it('return `true` if element is connected', () => {
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(element, child);
+            expect(DNA.DOM.isConnected(child)).to.be.true;
+        });
+
+        it('return `true` if element is disconnected', () => {
+            const child = DNA.DOM.createElement('div');
+            expect(DNA.DOM.isConnected(child)).to.be.false;
         });
     });
 
     describe('#define', () => {
-        it.skip('should define a native constructor', () => {
-            //
+        it('should define a native constructor', () => {
+            const DNAHTMLElement = class { };
+            const DNAHTMLElementShim = DNA.DOM.define('DNAHTMLElement', DNAHTMLElement);
+            expect(DNAHTMLElementShim.prototype).to.be.equal(DNAHTMLElement.prototype);
+            const Proxy = DNA.DOM.get('DNAHTMLElement');
+            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim);
         });
 
-        it.skip('should update an already proxies class', () => {
-            //
+        it('should update an already proxied class', () => {
+            const DNAHTMLElementShim1 = DNA.DOM.define('DNAHTMLElement', class { });
+            const Proxy = DNA.DOM.get('DNAHTMLElement');
+            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim1);
+            const DNAHTMLElementShim2 = DNA.DOM.define('DNAHTMLElement', class { });
+            expect(DNAHTMLElementShim1).to.not.equal(DNAHTMLElementShim2);
+            expect(Proxy.prototype).to.not.be.an.instanceof(DNAHTMLElementShim1);
+            expect(Proxy.prototype).to.be.an.instanceof(DNAHTMLElementShim2);
         });
     });
 
@@ -222,6 +333,8 @@ describe('DOM', function() {
         });
 
         it('should dispatch custom events that does not bubble', () => {
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(button);
             const listener = spyFunction((event) => event.detail);
             element.addEventListener('click', listener);
             DNA.DOM.dispatchEvent(button, 'click', null, false);
@@ -257,6 +370,8 @@ describe('DOM', function() {
 
     describe('#delegateEventListener', () => {
         it('should add delegate a listener', () => {
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(button);
             const listener = spyFunction(() => { });
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
             DNA.DOM.delegateEventListener(element, 'mouseenter', 'button', listener);
@@ -296,6 +411,8 @@ describe('DOM', function() {
 
     describe('#undelegateEventListener', () => {
         it('should remove a delegated event listener', () => {
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(button);
             const listener = spyFunction(() => { });
             const listener2 = spyFunction(() => { });
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
@@ -329,6 +446,8 @@ describe('DOM', function() {
 
     describe('#undelegateAllEventListeners', () => {
         it('should remove all delegated event listeners', () => {
+            const button = DNA.DOM.createElement('button');
+            element.appendChild(button);
             const listener = spyFunction(() => { });
             DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
             DNA.DOM.delegateEventListener(element, 'mouseenter', 'button', listener);
