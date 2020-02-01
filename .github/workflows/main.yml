@@ -25,12 +25,16 @@ jobs:
         run: yarn install
       - name: Run build script
         run: yarn run build
+      - name: Cache distribution files
+        uses: actions/cache@v1
+        with:
+          path: dist
+          key: build-${{ github.sha }}
       - name: Upload distribution files
         uses: actions/upload-artifact@v1
         with:
           name: DNA
           path: dist
-          key: build-${{ github.sha }}
   # TEST
   test-node:
     name: Test Node
