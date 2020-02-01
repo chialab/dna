@@ -148,9 +148,13 @@ render(document.body, new HelloWorld);
 
 ## Development
 
-[![Travis status](https://img.shields.io/travis/chialab/dna/3.0.0.svg?style=flat-square)](https://travis-ci.org/chialab/dna)
-[![Code coverage](https://img.shields.io/codecov/c/github/chialab/dna/3.0.0.svg?style=flat-square)](https://codecov.io/gh/chialab/dna)
-[![Saucelabs](https://badges.herokuapp.com/sauce/chialab-sl-003?labels=none&style=flat-square)](https://saucelabs.com/u/chialab-sl-003)
+[![Build status](https://github.com/chialab/dna/workflows/Build/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
+[![Test status](https://github.com/chialab/dna/workflows/Test/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ATest)
+[![codecov](https://codecov.io/gh/chialab/dna/branch/3.0.0/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
+
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://saucelabs.com/u/chialab-sl-003)
+
 
 ### Requirements
 

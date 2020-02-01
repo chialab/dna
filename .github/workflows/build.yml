@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
-        with:
-          ref: '3.0.0'
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache

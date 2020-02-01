@@ -8,8 +8,6 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
-        with:
-          ref: '3.0.0'
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -30,5 +28,5 @@ jobs:
           git clone https://${{ secrets.GITHUB_WIKI_TOKEN }}@github.com/chialab/dna.wiki.git wiki
           rna documentate --output wiki/API.md --header '# API References'
           git -C wiki add .
-          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${{ GITHUB_REF }} auto-pushed to wiki"
-          git -C wiki push --set-upstream origin $GITHUB_REF
+          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference ${{ github.ref }} auto-pushed to wiki"
+          git -C wiki push --set-upstream origin ${{ github.ref }}
