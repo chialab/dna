@@ -20,7 +20,7 @@ jobs:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        run: yarn add @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
       - name: Download wiki
@@ -31,4 +31,4 @@ jobs:
           rna documentate --output wiki/API.md --header '# API References'
           git -C wiki add .
           git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${{ GITHUB_REF }} auto-pushed to wiki"
-          git -C wiki push --set-upstream origin ${GITHUB_REF}
+          git -C wiki push --set-upstream origin $GITHUB_REF

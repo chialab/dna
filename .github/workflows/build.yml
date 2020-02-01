@@ -23,7 +23,7 @@ jobs:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        run: yarn add @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
       - name: Run build script

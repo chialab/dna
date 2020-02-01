@@ -12,18 +12,19 @@ jobs:
           ref: '3.0.0'
       - name: Setup Node
         uses: actions/setup-node@v1
+      - name: Config Yarn cache
+        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
+      - name: Set up Yarn cache
+        uses: actions/cache@v1
+        with:
+          path: .yarn
+          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: global add @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+        run: yarn install
       - name: Run tests
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: run test:node
+        run: yarn run test:node
       - name: Upload coverage files
         uses: actions/upload-artifact@v1
         with:
@@ -52,7 +53,7 @@ jobs:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        run: yarn add @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
       - name: Run tests
