@@ -202,7 +202,7 @@ Object.assign(DOM, {
                 composed,
             });
         } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided event must be an Event');
+            throw new TypeError('The provided object must be an Event');
         }
 
         return Node.prototype.dispatchEvent.call(element, event);

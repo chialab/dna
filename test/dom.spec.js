@@ -377,7 +377,7 @@ describe('DOM', function() {
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, null);
-            }).to.throw(TypeError, 'The provided event must be an Event');
+            }).to.throw(TypeError, 'The provided object must be an Event');
 
             expect(() => {
                 DNA.DOM.dispatchEvent(element, 'click', null, null, null, null);

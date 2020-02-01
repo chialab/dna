@@ -444,30 +444,30 @@ export const DOM = {
         // check if the event has already been delegated
         if (!callbacks.listener) {
             // setup the listener
-            callbacks.listener = (ev) => {
-                if (!ev.target) {
+            callbacks.listener = (event) => {
+                if (!event.target) {
                     return;
                 }
-                const eventTarget = ev.target as Node;
+                const eventTarget = event.target as Node;
                 // wrap the Event's stopPropagation in order to prevent other delegations from the same root
                 let stopped = false;
                 let stoppedImmediated = false;
-                const originalStopPropagation = ev.stopPropagation;
-                const originalImmediatePropagation = ev.stopImmediatePropagation;
-                ev.stopPropagation = () => {
+                const originalStopPropagation = event.stopPropagation;
+                const originalImmediatePropagation = event.stopImmediatePropagation;
+                event.stopPropagation = () => {
                     stopped = true;
                     // exec the real stopPropagation method
-                    return originalStopPropagation.call(ev);
+                    return originalStopPropagation.call(event);
                 };
-                ev.stopImmediatePropagation = () => {
+                event.stopImmediatePropagation = () => {
                     stopped = true;
                     stoppedImmediated = true;
                     // exec the real stopPropagation method
-                    return originalImmediatePropagation.call(ev);
+                    return originalImmediatePropagation.call(event);
                 };
 
                 // filter matched selector for the event
-                let filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
+                const filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
                 for (let i = 0; i < descriptors.length; i++) {
                     let { selector, callback } = descriptors[i];
                     let selectorTarget;
@@ -493,23 +493,31 @@ export const DOM = {
 
                 let lastTarget: Node;
                 filtered
+                    // clone the array in order to correctly sort callbacks in old browsers
+                    .slice(0)
                     // reorder targets by position in the dom tree.
                     .sort((match1, match2) => {
                         if (match1.target === match2.target) {
                             return filtered.indexOf(match1) - filtered.indexOf(match2);
                         }
-                        return match1.target.contains(match2.target) ? 1 : -1;
+                        return match1.target.contains(match2.target) ? filtered.length : -filtered.length;
                     })
                     // trigger the callback
-                    .forEach(({ callback, target }) => {
-                        if (!stoppedImmediated && (!stopped || target === lastTarget)) {
-                            lastTarget = target;
-                            callback.call(element, ev, target);
+                    .some(({ callback, target }) => {
+                        if (stoppedImmediated) {
+                            return true;
                         }
+                        if (stopped && target !== lastTarget) {
+                            return true;
+                        }
+                        lastTarget = target;
+                        return callback.call(element, event, target) === false;
                     });
             };
+
             element.addEventListener(eventName, callbacks.listener, options);
         }
+
         // add the delegation to the list
         descriptors.push({ event: eventName, callback, selector });
     },
@@ -616,7 +624,7 @@ export const DOM = {
                 composed,
             });
         } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided event must be an Event');
+            throw new TypeError('The provided object must be an Event');
         }
 
         return Node.prototype.dispatchEvent.call(element, event);
