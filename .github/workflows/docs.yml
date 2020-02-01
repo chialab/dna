@@ -32,8 +32,3 @@ jobs:
           git -C wiki add .
           git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${{ GITHUB_REF##*/ }} auto-pushed to wiki"
           git -C wiki push --set-upstream origin ${GITHUB_REF##*/}
-      - name: Upload distribution files
-        uses: actions/upload-artifact@v1
-        with:
-          name: DNA
-          path: dist
