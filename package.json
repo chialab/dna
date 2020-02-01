@@ -21,13 +21,10 @@
     "build": "npm run build:browser && npm run build:node",
     "build:browser": "rna build --production --name DNA --typings",
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs",
-    "build:test": "npm run build:test:browser && npm run build:test:node",
-    "build:test:browser": "rna build --name DNA --map inline",
-    "build:test:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs --map inline",
-    "test": "npm run build:test && rna unit 'test/**/*.spec.js' --coverage",
-    "test:browser": "npm run build:test && rna unit 'test/**/*.spec.js' --browser --coverage",
-    "test:saucelabs": "npm run build:test && rna unit 'test/**/*.spec.js' --saucelabs --coverage",
-    "test:node": "npm run build:test && rna unit 'test/**/*.spec.js' --node --coverage",
+    "test": "rna unit 'test/**/*.spec.js' --coverage",
+    "test:browser": "rna unit 'test/**/*.spec.js' --browser --coverage",
+    "test:saucelabs": "rna unit 'test/**/*.spec.js' --saucelabs --coverage",
+    "test:node": "rna unit 'test/**/*.spec.js' --node --coverage",
     "prepack": "npm run build"
   },
   "devDependencies": {
