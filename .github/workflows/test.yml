@@ -1,0 +1,73 @@
+name: Test
+on: [push]
+
+env:
+  NPM_REGISTRY_URL: https://registry.npmjs.org/
+  SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+  SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+jobs:
+  test-node:
+    name: Test Node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          ref: '3.0.0'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Install RNA
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: global add @chialab/rna-cli
+      - name: Install project dependencies
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+      - name: Run tests
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test:node
+      - name: Upload coverage files
+        uses: actions/upload-artifact@v1
+        with:
+          name: Coverage
+          path: test/__coverage__
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info
+  test-saucelabs:
+    name: Test SauceLabs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          ref: '3.0.0'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Install RNA
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: global add @chialab/rna-cli
+      - name: Install project dependencies
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+      - name: Run tests
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run test:saucelabs
+      - name: Upload coverage files
+        uses: actions/upload-artifact@v1
+        with:
+          name: Coverage
+          path: test/__coverage__
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info

@@ -1,0 +1,39 @@
+name: Docs
+on: [push]
+
+env:
+  NPM_REGISTRY_URL: https://registry.npmjs.org/
+
+jobs:
+  api:
+    name: API references
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          ref: '3.0.0'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Install RNA
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: global add @chialab/rna-cli
+      - name: Install project dependencies
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+      - name: Download wiki
+        run: |
+          git config --global user.email "dev@chialab.io"
+          git config --global user.name "chialab-io"
+          git clone https://${{ secrets.GITHUB_WIKI_TOKEN }}@github.com/chialab/dna.wiki.git wiki
+          rna documentate --output wiki/API.md --header '# API References'
+          git -C wiki add .
+          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference on successful travis build ${{ GITHUB_REF##*/ }} auto-pushed to wiki"
+          git -C wiki push --set-upstream origin ${GITHUB_REF##*/}
+      - name: Upload distribution files
+        uses: actions/upload-artifact@v1
+        with:
+          name: DNA
+          path: dist

@@ -1,0 +1,34 @@
+name: Build
+on: [push]
+
+env:
+  NPM_REGISTRY_URL: https://registry.npmjs.org/
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+        with:
+          ref: '3.0.0'
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Install RNA
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: global add @chialab/rna-cli
+      - name: Install project dependencies
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+      - name: Run build script
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run build
+      - name: Upload distribution files
+        uses: actions/upload-artifact@v1
+        with:
+          name: DNA
+          path: dist
