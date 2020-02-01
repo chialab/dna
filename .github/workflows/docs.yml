@@ -5,6 +5,7 @@ jobs:
   api:
     name: API references
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -21,12 +22,21 @@ jobs:
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
-      - name: Download wiki
+      - name: Checkout the wiki
+        uses: actions/checkout@v1
+        with:
+          repository: chialab/dna.wiki
+          ref: ${{ github.ref }}
+          path: 'wiki'
+          token: ${{ secrets.GITHUB_WIKI_TOKEN }}
+      - name: Generate API references
+        run: rna documentate --output wiki/API.md --header '# API References'
+      - name: Push API references
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
         run: |
           git config --global user.email "dev@chialab.io"
           git config --global user.name "chialab-io"
-          git clone https://${{ secrets.GITHUB_WIKI_TOKEN }}@github.com/chialab/dna.wiki.git wiki
-          rna documentate --output wiki/API.md --header '# API References'
           git -C wiki add .
-          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference ${{ github.ref }} auto-pushed to wiki"
-          git -C wiki push --set-upstream origin ${{ github.ref }}
+          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
+          git -C wiki push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git" HEAD:${GITHUB_REF#refs/heads/} --follow-tags --force

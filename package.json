@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
-  "homepage": "https://dna.chialab.io",
+  "homepage": "https://www.chialab.io/p/dna",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "npm run build:browser && npm run build:node",

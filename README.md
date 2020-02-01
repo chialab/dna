@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="DNA" src="logo.svg" width="100">
+    <a href="https://www.chialab.io/p/dna"><img alt="DNA" src="logo.svg" width="100"></a>
 </p>
 
 <p align="center">
@@ -7,21 +7,11 @@
 </p>
 
 <p align="center">
-    <a href="https://dna.chialab.io">
-        <img alt="Documentation link" src="https://img.shields.io/badge/Docs-dna.chialab.io-lightgrey.svg?style=flat-square">
-    </a>
-    <a href="https://github.com/chialab/dna">
-        <img alt="Source link" src="https://img.shields.io/badge/Source-GitHub-lightgrey.svg?style=flat-square">
-    </a>
-    <a href="https://www.chialab.it">
-        <img alt="Authors link" src="https://img.shields.io/badge/Authors-Chialab-lightgrey.svg?style=flat-square">
-    </a>
-    <a href="https://www.npmjs.com/package/@chialab/dna">
-        <img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square">
-    </a>
-    <a href="https://github.com/chialab/dna/blob/master/LICENSE">
-        <img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg?style=flat-square">
-    </a>
+    <a href="https://www.chialab.io/p/dna"><img alt="Documentation link" src="https://img.shields.io/badge/Docs-chialab.io-lightgrey.svg?style=flat-square"></a>
+    <a href="https://github.com/chialab/dna"><img alt="Source link" src="https://img.shields.io/badge/Source-GitHub-lightgrey.svg?style=flat-square"></a>
+    <a href="https://www.chialab.it"><img alt="Authors link" src="https://img.shields.io/badge/Authors-Chialab-lightgrey.svg?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square"></a>
+    <a href="https://github.com/chialab/dna/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg?style=flat-square"></a>
 </p>
 
 ---
@@ -85,7 +75,7 @@ define('my-component', MyComponent);
 
 ## Define a Component
 
-This is an example of Component defined via DNA. Please refer to the [documentation](https://dna.chialab.io) for more examples and cases of use.
+This is an example of Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
 
 <details>
     <summary>Expand the code</summary>
@@ -103,10 +93,6 @@ This is an example of Component defined via DNA. Please refer to the [documentat
         .message {
             display: flex;
             align-items: center;
-        }
-
-        .icon {
-            font-size: 50px;
         }
     </style>
     <form>
@@ -127,12 +113,11 @@ class HelloWorld extends Component {
     @property() // define an observable Component property
     name: string;
 
-    get events() { // define a list of delegated events
-        return {
-            'input [name="name"]': (ev, target) => {
-                this.name = target.value;
-            },
-        };
+    // define a list of delegated events
+    readonly events = {
+        'input [name="name"]': (event, target) => {
+            this.name = target.value;
+        },
     }
 }
 

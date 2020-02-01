@@ -15,3 +15,5 @@ package-lock.json
 /src
 /samples
 tsconfig.json
+logo.svg
+yarn.lock

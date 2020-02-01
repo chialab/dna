@@ -28,7 +28,7 @@ export { property } from './lib/property';
  *
  *   // define a list of delegated events
  *   readonly events = {
- *     'input [name="name"]': (ev, target) => {
+ *     'input [name="name"]': (event, target) => {
  *       this.name = target.value;
  *     },
  *   };
