@@ -1,10 +1,5 @@
 name: Test
-on: [push]
-
-env:
-  NPM_REGISTRY_URL: https://registry.npmjs.org/
-  SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-  SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+on: push
 
 jobs:
   test-node:
@@ -49,18 +44,22 @@ jobs:
           ref: '3.0.0'
       - name: Setup Node
         uses: actions/setup-node@v1
+      - name: Config Yarn cache
+        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
+      - name: Set up Yarn cache
+        uses: actions/cache@v1
+        with:
+          path: .yarn
+          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: global add @chialab/rna-cli
+        run: yarn add @chialab/rna-cli
       - name: Install project dependencies
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+        run: yarn install
       - name: Run tests
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: run test:saucelabs
+        run: yarn run test:saucelabs
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
       - name: Upload coverage files
         uses: actions/upload-artifact@v1
         with:

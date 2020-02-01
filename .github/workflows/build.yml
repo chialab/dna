@@ -1,5 +1,5 @@
 name: Build
-on: [push]
+on: push
 
 env:
   NPM_REGISTRY_URL: https://registry.npmjs.org/
@@ -15,18 +15,19 @@ jobs:
           ref: '3.0.0'
       - name: Setup Node
         uses: actions/setup-node@v1
+      - name: Config Yarn cache
+        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
+      - name: Set up Yarn cache
+        uses: actions/cache@v1
+        with:
+          path: .yarn
+          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: global add @chialab/rna-cli
+        run: yarn add @chialab/rna-cli
       - name: Install project dependencies
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
+        run: yarn install
       - name: Run build script
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: run build
+        run: yarn run build
       - name: Upload distribution files
         uses: actions/upload-artifact@v1
         with:
