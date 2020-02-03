@@ -107,7 +107,7 @@ jobs:
           file: test/__coverage__/*/lcov.info
   # DOCS
   api:
-    name: Generate API documentation
+    name: Documentation
     needs:
       - build
     runs-on: ubuntu-latest
@@ -133,10 +133,10 @@ jobs:
         run: |
           mkdir wiki
           cd wiki
-          git init
           git config --global user.email "dev@chialab.io"
           git config --global user.name "chialab-io"
-          git pull https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git
+          git clone https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git
+          git checkout -B ${GITHUB_REF#refs/heads/}
           cd ..
       - name: Generate API reference
         run: rna documentate --output wiki/API.md --header '# API Reference'
