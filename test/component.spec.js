@@ -33,6 +33,22 @@ describe('Component', function() {
             expect(elem.tagName).to.be.equal('ARTICLE');
             expect(elem.getAttribute('is')).to.be.equal('test-component2');
         });
+
+        it.skip('should throw if element is not defined', () => {
+            //
+        });
+
+        it.skip('should setup properties', () => {
+            //
+        });
+
+        it.skip('should initialize properties', () => {
+            //
+        });
+
+        it.skip('should connect already connected nodes', () => {
+            //
+        });
     });
 
     describe('#connectedCallback', () => {
