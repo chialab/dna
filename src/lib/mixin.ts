@@ -326,7 +326,6 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * Remove a Component attribute.
          *
          * @param qualifiedName The attribute name
-         * @param nullVal The value to use as null value
          */
         removeAttribute(qualifiedName: string) {
             return DOM.removeAttribute(this, qualifiedName);

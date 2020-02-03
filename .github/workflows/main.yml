@@ -135,7 +135,7 @@ jobs:
           git config --global user.name "chialab-io"
           git clone https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git wiki
           cd wiki
-          git checkout -B ${GITHUB_REF#refs/heads/}
+          git checkout ${GITHUB_REF#refs/heads/} || git checkout -B ${GITHUB_REF#refs/heads/}
           cd ..
       - name: Generate API reference
         run: rna documentate --output wiki/API.md --header '# API Reference'
@@ -146,5 +146,5 @@ jobs:
           cd wiki
           git add .
           git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
-          git push --follow-tags
+          git push --set-upstream origin ${GITHUB_REF#refs/heads/} --follow-tags
           cd ..
