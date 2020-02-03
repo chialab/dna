@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import { getModule, spyFunction } from './helpers.js';
 
 let DNA;

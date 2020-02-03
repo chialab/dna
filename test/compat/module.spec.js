@@ -1,15 +1,10 @@
-import { getModule } from './helpers.js';
+import * as DNA from '../../dist/adapters/compat/dna.js';
 
-let DNA;
-
-describe('module', function() {
+describe('[Compat ]module', function() {
     this.timeout(10 * 1000);
 
-    before(async () => {
-        DNA = await getModule();
-    });
-
     const EXPECTED_EXPORT_MAP = {
+        IDOM: 'object',
         DOM: 'object',
         isCustomElement: 'function',
         mixin: 'function',
@@ -18,12 +13,16 @@ describe('module', function() {
         define: 'function',
         whenDefined: 'function',
         upgrade: 'function',
+        bootstrap: 'function',
         Fragment: 'function',
         h: 'function',
         html: 'function',
         css: 'function',
         compile: 'function',
+        trust: 'function',
+        prop: 'function',
         property: 'function',
+        BaseComponent: 'function',
         Component: 'function',
     };
 

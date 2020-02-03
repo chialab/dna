@@ -96,6 +96,11 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     render(): Template;
 
     /**
+     * Force an element to re-render.
+     */
+    forceUpdate(): void;
+
+    /**
      * Observe a Component Property.
      *
      * @param propertyName The name of the Property to observe

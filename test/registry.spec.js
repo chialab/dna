@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import { getModule, wait, spyPromise } from './helpers.js';
 
 let DNA;

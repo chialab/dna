@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import { getModule } from './helpers.js';
 
 let DNA;
@@ -111,6 +110,10 @@ describe('Component', function() {
         });
 
         it.skip('should handle property changes on deletion', () => {
+            //
+        });
+
+        it.skip('should should re-render on property changes', () => {
             //
         });
 

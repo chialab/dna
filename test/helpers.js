@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 export async function getModule() {
     if (typeof window === 'undefined') {
         return await import('../dist/adapters/node/dna.js');

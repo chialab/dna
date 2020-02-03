@@ -125,7 +125,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
             }
 
             // trigger a re-render when the Node is connected
-            render(this, this.render());
+            this.forceUpdate();
         }
 
         /**
@@ -187,7 +187,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
                 property.observers.forEach((observer) => observer(oldValue, newValue));
             }
 
-            render(this, this.render());
+            this.forceUpdate();
         }
 
         /**
@@ -272,6 +272,13 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         render(): Template {
             // if no children are provided use the Component template or its slotted Nodes using the upper scope
             return this.template || getSlotted(this);
+        }
+
+        /**
+         * Force an element to re-render.
+         */
+        forceUpdate() {
+            render(this, this.render());
         }
 
         /**

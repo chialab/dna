@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import { getModule } from './helpers.js';
 
 let DNA;
