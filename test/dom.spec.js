@@ -494,6 +494,14 @@ describe('DOM', function() {
             expect(listener2.count).to.be.equal(1);
         });
 
+        it.skip('should do nothing if there are no delegations', () => {
+            //
+        });
+
+        it.skip('should do nothing if there are no delegations for an event', () => {
+            //
+        });
+
         it('should validate undelegateEventListener input', () => {
             expect(() => {
                 DNA.DOM.undelegateEventListener(false, false, false, false);
@@ -533,6 +541,10 @@ describe('DOM', function() {
             expect(() => {
                 DNA.DOM.undelegateEventListener(null, null, null, null);
             }).to.throw(TypeError, 'The provided element must be a Node');
+        });
+
+        it.skip('should throw if argument is not a Node', () => {
+            //
         });
     });
 });

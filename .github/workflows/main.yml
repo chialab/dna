@@ -128,21 +128,24 @@ jobs:
       - name: Install project dependencies
         run: yarn install
       - name: Checkout the wiki
-        uses: actions/checkout@v1
-        with:
-          repository: chialab/dna.wiki
-          ref: ${{ github.ref }}
-          path: 'wiki'
-          token: ${{ secrets.GITHUB_WIKI_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
+        run: |
+          mkdir wiki
+          cd wiki
+          git init
+          git config --global user.email "dev@chialab.io"
+          git config --global user.name "chialab-io"
+          git pull https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git
+          cd ..
       - name: Generate API reference
         run: rna documentate --output wiki/API.md --header '# API Reference'
       - name: Push API references
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
         run: |
-          git config --global user.email "dev@chialab.io"
-          git config --global user.name "chialab-io"
           cd wiki
           git add .
           git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
           git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git" HEAD:${GITHUB_REF#refs/heads/} --follow-tags
+          cd ..

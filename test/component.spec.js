@@ -34,4 +34,54 @@ describe('Component', function() {
             expect(elem.getAttribute('is')).to.be.equal('test-component2');
         });
     });
+
+    describe('#connectedCallback', () => {
+        it.skip('should connect on appendChild', () => {
+            //
+        });
+
+        it.skip('should connect on replaceChild', () => {
+            //
+        });
+
+        it.skip('should connect on insertBefore', () => {
+            //
+        });
+
+        it.skip('should NOT connect if not moved', () => {
+            //
+        });
+    });
+
+    describe('#disconnectedCallback', () => {
+        it.skip('should disconnect on removeChild', () => {
+            //
+        });
+
+        it.skip('should disconnect and reconnect on replaceChild', () => {
+            //
+        });
+
+        it.skip('should disconnect and reconnect on insertBefore', () => {
+            //
+        });
+
+        it.skip('should NOT disconnect if not moved', () => {
+            //
+        });
+    });
+
+    describe('#attributeChangedCallback', () => {
+        it.skip('should handle attribute changes on setAttribute', () => {
+            //
+        });
+
+        it.skip('should handle attribute changes on removeAttribute', () => {
+            //
+        });
+
+        it.skip('should NOT handle attribute if nothing changed on setAttribute', () => {
+            //
+        });
+    });
 });
