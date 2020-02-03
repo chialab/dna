@@ -133,6 +133,8 @@ jobs:
           key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:compat
+        env:
+          DISPLAY: :99.0
   # DOCS
   api:
     name: Documentation
