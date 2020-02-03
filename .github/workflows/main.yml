@@ -142,6 +142,7 @@ jobs:
         run: |
           git config --global user.email "dev@chialab.io"
           git config --global user.name "chialab-io"
-          git -C wiki add .
-          git -C wiki diff-index --quiet HEAD || git -C wiki commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
-          git -C wiki push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git" HEAD:${GITHUB_REF#refs/heads/} --follow-tags --force
+          cd wiki
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
+          git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git" HEAD:${GITHUB_REF#refs/heads/} --follow-tags
