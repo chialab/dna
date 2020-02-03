@@ -23,10 +23,10 @@
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --name DNA --format esm",
     "test": "rna unit 'test/*.spec.js' --coverage",
-    "test:browser": "rna unit 'test/*.spec.js' --browser --coverage",
-    "test:saucelabs": "rna unit 'test/*.spec.js' --saucelabs --coverage",
-    "test:node": "rna unit 'test/*.spec.js' --node --coverage",
-    "test:compat": "rna unit 'test/compat/*.spec.js' --browser --coverage",
+    "test:browser": "rna unit 'test/*.spec.js' --coverage --browser",
+    "test:saucelabs": "rna unit 'test/*.spec.js' --coverage --saucelabs",
+    "test:node": "rna unit 'test/*.spec.js' --coverage --node",
+    "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
     "prepack": "npm run build"
   },
   "devDependencies": {
