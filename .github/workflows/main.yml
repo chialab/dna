@@ -109,7 +109,7 @@ jobs:
     name: Test compat library
     needs:
       - build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -133,8 +133,6 @@ jobs:
           key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:compat
-        env:
-          DISPLAY: :99.0
   # DOCS
   api:
     name: Documentation
