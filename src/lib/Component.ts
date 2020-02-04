@@ -176,24 +176,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-            const property = getProperties(this.constructor)[propertyName];
-            const attribute = property.attribute as string;
-            if (attribute) {
-                if (newValue == null || newValue === false) {
-                    // if the Property value is falsy, remove the related attribute
-                    this.removeAttribute(attribute);
-                } else if (typeof newValue !== 'object') {
-                    // update the related attribute value
-                    this.setAttribute(attribute, newValue);
-                }
-            }
-            if (property.observers) {
-                property.observers.forEach((observer) => observer(oldValue, newValue));
-            }
-
-            this.forceUpdate();
-        }
+        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {}
 
         /**
          * Observe a Component Property.

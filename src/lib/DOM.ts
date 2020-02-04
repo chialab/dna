@@ -191,6 +191,10 @@ export const DOM = {
      */
     appendChild<T extends Node>(parent: Element, newChild: T): T {
         if (newChild.parentNode) {
+            if (newChild.parentNode.lastChild as unknown as Node === newChild) {
+                // the child is already the last element of the parent
+                return newChild;
+            }
             this.removeChild(newChild.parentNode as Element, newChild);
         }
         Node.prototype.appendChild.call(parent, newChild);

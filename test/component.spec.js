@@ -1,4 +1,4 @@
-import { getModule } from './helpers.js';
+import { getModule, spyFunction } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -113,20 +113,103 @@ describe('Component', function() {
     });
 
     describe('#connectedCallback', () => {
-        it.skip('should connect on appendChild', () => {
-            //
+        it('should connect on appendChild', () => {
+            const connectedCallback = spyFunction(() => { });
+            const TestElement = class extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+            };
+
+            DNA.define('test-component6', TestElement);
+
+            const element = new TestElement();
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.appendChild(wrapper, element);
+            expect(connectedCallback.invoked).to.be.true;
         });
 
-        it.skip('should connect on replaceChild', () => {
-            //
+        it('should connect on replaceChild', () => {
+            const connectedCallback = spyFunction(() => { });
+            const disconnectedCallback = spyFunction(() => { });
+            const TestElement = class extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+
+                disconnectedCallback() {
+                    super.disconnectedCallback();
+                    disconnectedCallback();
+                }
+            };
+
+            DNA.define('test-component7', TestElement);
+
+            const element = new TestElement();
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(wrapper, child);
+            expect(disconnectedCallback.invoked).to.be.false;
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.replaceChild(wrapper, element, child);
+            expect(disconnectedCallback.invoked).to.be.false;
+            expect(connectedCallback.invoked).to.be.true;
+            DNA.DOM.replaceChild(wrapper, child, element);
+            expect(disconnectedCallback.invoked).to.be.true;
+            expect(connectedCallback.invoked).to.be.true;
+            expect(disconnectedCallback.count).to.be.equal(1);
+            expect(connectedCallback.count).to.be.equal(1);
         });
 
-        it.skip('should connect on insertBefore', () => {
-            //
+        it('should connect on insertBefore', () => {
+            const connectedCallback = spyFunction(() => { });
+            const disconnectedCallback = spyFunction(() => { });
+            const TestElement = class extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+
+                disconnectedCallback() {
+                    super.disconnectedCallback();
+                    disconnectedCallback();
+                }
+            };
+
+            DNA.define('test-component8', TestElement);
+
+            const element = new TestElement();
+            const child = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(wrapper, child);
+            expect(disconnectedCallback.invoked).to.be.false;
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.insertBefore(wrapper, element, child);
+            expect(disconnectedCallback.invoked).to.be.false;
+            expect(connectedCallback.invoked).to.be.true;
+            DNA.DOM.insertBefore(wrapper, child, element);
+            expect(disconnectedCallback.invoked).to.be.false;
+            expect(connectedCallback.invoked).to.be.true;
+            expect(connectedCallback.count).to.be.equal(1);
         });
 
-        it.skip('should NOT connect if not moved', () => {
-            //
+        it('should NOT connect if not moved', () => {
+            const connectedCallback = spyFunction(() => { });
+            const TestElement = class extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+            };
+
+            DNA.define('test-component9', TestElement);
+
+            const element = new TestElement();
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.appendChild(wrapper, element);
+            expect(connectedCallback.invoked).to.be.true;
+            DNA.DOM.appendChild(wrapper, element);
+            expect(connectedCallback.count).to.be.equal(1);
         });
 
         it.skip('should render on connect', () => {
@@ -270,7 +353,7 @@ describe('Component', function() {
                 @DNA.property({ attribute: 'title' }) title = '';
             };
 
-            DNA.define('test-component9', TestElement);
+            DNA.define('test-component36', TestElement);
         });
 
         beforeEach(() => {
@@ -302,22 +385,24 @@ describe('Component', function() {
         });
 
         describe('#hasAttribute', () => {
-            it.skip('should return `true` if element has an attribute', () => {
-                //
+            it('should return `true` if element has an attribute', () => {
+                expect(element.hasAttribute('title')).to.be.true;
             });
 
-            it.skip('should return `false` if element has an attribute', () => {
-                //
+            it('should return `false` if element has an attribute', () => {
+                expect(element.hasAttribute('missing')).to.be.false;
             });
         });
 
         describe('#removeAttribute', () => {
-            it.skip('should remove an attribute', () => {
-                //
+            it('should remove an attribute', () => {
+                element.removeAttribute('title');
+                expect(element.hasAttribute('title')).to.be.false;
             });
 
             it('should remove an attribute and update the property', () => {
-                //
+                element.removeAttribute('title');
+                expect(element.title).to.be.null;
             });
         });
     });

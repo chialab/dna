@@ -159,9 +159,15 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol):
                 this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
             }
         }
+
+        if (descriptor.observers) {
+            descriptor.observers.forEach((observer) => observer(oldValue, newValue));
+        }
+
         // trigger Property changes
         if (isCustomElement(this)) {
             this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
+            this.forceUpdate();
         }
     };
 
