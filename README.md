@@ -114,10 +114,12 @@ class HelloWorld extends Component {
     name: string;
 
     // define a list of delegated events
-    readonly events = {
-        'input [name="name"]': (event, target) => {
-            this.name = target.value;
-        },
+    get events() {
+        return {
+            'input [name="name"]': (event, target) => {
+                this.name = target.value;
+            },
+        };
     }
 }
 

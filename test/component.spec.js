@@ -1,12 +1,18 @@
 import { getModule } from './helpers.js';
 
-let DNA;
+let DNA, wrapper;
 
 describe('Component', function() {
     this.timeout(10 * 1000);
 
     before(async () => {
         DNA = await getModule();
+        wrapper = DNA.DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+    });
+
+    beforeEach(() => {
+        wrapper.innerHTML = '';
     });
 
     describe('#new', () => {
@@ -33,20 +39,76 @@ describe('Component', function() {
             expect(elem.getAttribute('is')).to.be.equal('test-component2');
         });
 
-        it.skip('should throw if element is not defined', () => {
-            //
+        it('should throw if element is not defined', () => {
+            const TestElement = class extends DNA.Component { };
+
+            expect(() => new TestElement).to.throw(TypeError, 'Illegal constructor.');
         });
 
-        it.skip('should setup properties', () => {
-            //
+        it('should setup properties', () => {
+            const TestElement = class extends DNA.Component {
+                get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                @DNA.property() myCustomProp2 = '';
+                @DNA.property() myCustomProp3 = '';
+            };
+
+            DNA.define('test-component3', TestElement);
+
+            const element = new TestElement();
+
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.not.have.property('myCustomProp4');
         });
 
-        it.skip('should initialize properties', () => {
-            //
+        it('should initialize properties', () => {
+            const TestElement = class extends DNA.Component {
+                get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                @DNA.property() myCustomProp2 = 'test';
+                @DNA.property() myCustomProp3 = '';
+            };
+
+            DNA.define('test-component4', TestElement);
+
+            const element = new TestElement({
+                myCustomProp1: 42,
+                myCustomProp2: 'toast',
+            });
+
+            expect(element.myCustomProp1, 42);
+            expect(element.myCustomProp2, 'toast');
         });
 
-        it.skip('should connect already connected nodes', () => {
-            //
+        it('should connect already connected nodes', () => {
+            let connected = false;
+            const TestElement = class extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connected = true;
+                }
+            };
+
+            wrapper.innerHTML = '<test-component5></test-component5>';
+            expect(connected).to.be.false;
+            DNA.define('test-component5', TestElement);
+            DNA.upgrade(wrapper);
+            expect(connected).to.be.true;
+
         });
     });
 
@@ -200,43 +262,63 @@ describe('Component', function() {
         });
     });
 
-    describe('#getAttribute', () => {
-        it.skip('should get an empty attribute', () => {
-            //
+    describe('attributes', () => {
+        let element, TestElement;
+
+        before(() => {
+            TestElement = class extends DNA.Component {
+                @DNA.property({ attribute: 'title' }) title = '';
+            };
+
+            DNA.define('test-component9', TestElement);
         });
 
-        it.skip('should get an attribute', () => {
-            //
-        });
-    });
-
-    describe('#setAttribute', () => {
-        it('should set an attribute', () => {
-            //
+        beforeEach(() => {
+            element = new TestElement({
+                title: 'DNA',
+            });
         });
 
-        it('should set an attribute and update the property', () => {
-            //
-        });
-    });
+        describe('#getAttribute', () => {
+            it('should get an empty attribute', () => {
+                expect(element.getAttribute('missing')).to.be.null;
+            });
 
-    describe('#hasAttribute', () => {
-        it.skip('should return `true` if element has an attribute', () => {
-            //
-        });
-
-        it.skip('should return `false` if element has an attribute', () => {
-            //
-        });
-    });
-
-    describe('#removeAttribute', () => {
-        it.skip('should remove an attribute', () => {
-            //
+            it('should get an attribute', () => {
+                expect(element.getAttribute('title')).to.be.equal('DNA');
+            });
         });
 
-        it('should remove an attribute and update the property', () => {
-            //
+        describe('#setAttribute', () => {
+            it('should set an attribute', () => {
+                element.setAttribute('missing', 'DNA');
+                expect(element.getAttribute('missing')).to.be.equal('DNA');
+            });
+
+            it('should set an attribute and update the property', () => {
+                element.setAttribute('title', 'WebComponents');
+                expect(element.title).to.be.equal('WebComponents');
+            });
+        });
+
+        describe('#hasAttribute', () => {
+            it.skip('should return `true` if element has an attribute', () => {
+                //
+            });
+
+            it.skip('should return `false` if element has an attribute', () => {
+                //
+            });
+        });
+
+        describe('#removeAttribute', () => {
+            it.skip('should remove an attribute', () => {
+                //
+            });
+
+            it('should remove an attribute and update the property', () => {
+                //
+            });
         });
     });
 });

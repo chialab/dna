@@ -5,7 +5,7 @@ import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
-import { defineProperty, AccessorDescriptor, AccessorObserver, getProperties } from './property';
+import { defineProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -17,7 +17,9 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * An unique symbol for DNA Custom elements.
          * @ignore
          */
-        readonly [CE_SYMBOL] = true;
+        get [CE_SYMBOL]() {
+            return true;
+        }
 
         /**
          * The tag name used for Component definition.
@@ -28,7 +30,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * A set of properties to define to the node.
          */
         readonly properties?: {
-            [key: string]: AccessorDescriptor;
+            [key: string]: ClassFieldDescriptor;
         };
 
         /**
@@ -66,7 +68,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
             super();
 
             if (!this.is) {
-                throw new Error('Component has not been defined.');
+                throw new TypeError('Illegal constructor.');
             }
 
             if (!DOM.isElement(node)) {
@@ -82,7 +84,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
 
             setScope(node, createScope(node as HTMLElement));
 
-            let propertyDescriptors = this.properties;
+            const propertyDescriptors = this.properties;
             if (propertyDescriptors) {
                 for (let propertyKey in propertyDescriptors) {
                     defineProperty(node as HTMLElement, propertyKey, propertyDescriptors[propertyKey]);
@@ -143,8 +145,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param newValue The new value for the attribute (null if removed).
          */
         attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string) {
-            const properties = getProperties(this);
-            let property: AccessorDescriptor | undefined;
+            const properties = getProperties(this.constructor);
+            let property: ClassFieldDescriptor | undefined;
             for (let propertyKey in properties) {
                 let prop = properties[propertyKey];
                 if (prop.attribute === attributeName) {
@@ -172,8 +174,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param newValue The new value for the property (undefined if removed).
          */
         propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-            let property = getProperties(this)[propertyName];
-            let attribute = property.attribute as string;
+            const property = getProperties(this.constructor)[propertyName];
+            const attribute = property.attribute as string;
             if (attribute) {
                 if (newValue == null || newValue === false) {
                     // if the Property value is falsy, remove the related attribute
@@ -196,8 +198,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param propertyName The name of the Property to observe
          * @param callback The callback function
          */
-        observe(propertyName: string, callback: AccessorObserver) {
-            let property = getProperties(this)[propertyName];
+        observe(propertyName: string, callback: ClassFieldObserver) {
+            let property = getProperties(this.constructor)[propertyName];
             if (!property) {
                 throw new Error(`missing property ${propertyName}`);
             }
@@ -212,8 +214,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param propertyName The name of the Property to unobserve
          * @param callback The callback function to remove
          */
-        unobserve(propertyName: string, callback ?: AccessorObserver) {
-            let property = getProperties(this)[propertyName];
+        unobserve(propertyName: string, callback ?: ClassFieldObserver) {
+            let property = getProperties(this.constructor)[propertyName];
             if (!property) {
                 throw new Error(`missing property ${propertyName}`);
             }

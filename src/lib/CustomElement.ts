@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { AccessorObserver, AccessorDescriptor } from './property';
+import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './DOM';
 import { Template } from './Template';
 
@@ -37,7 +37,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * A set of properties to define to the node.
      */
     readonly properties?: {
-        [key: string]: AccessorDescriptor;
+        [key: string]: ClassFieldDescriptor;
     };
 
     /**
@@ -106,7 +106,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param propertyName The name of the Property to observe
      * @param callback The callback function
      */
-    observe(propertyName: string, callback: AccessorObserver): void;
+    observe(propertyName: string, callback: ClassFieldObserver): void;
 
     /**
      * Unobserve a Component Property.
@@ -115,7 +115,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param propertyName The name of the Property to unobserve
      * @param callback The callback function to remove
      */
-    unobserve(propertyName: string, callback ?: AccessorObserver):void;
+    unobserve(propertyName: string, callback ?: ClassFieldObserver):void;
 
     /**
      * Dispatch a custom Event.

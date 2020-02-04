@@ -7,21 +7,47 @@ import { isCustomElement } from './CustomElement';
 const PROPERTIES_SYMBOL = createSymbolKey();
 
 /**
- * The observer signature for accessors.
+ * Decorator class element descriptor.
+ */
+interface ClassElement {
+    /**
+     * The kind of the class element.
+     */
+    kind: 'field' | 'method';
+    /**
+     * The name of the element.
+     */
+    key: PropertyKey;
+    /**
+     * The type of the element.
+     */
+    placement: 'static' | 'prototype' | 'own';
+    /**
+     * An initializer function.
+     */
+    initializer?: Function;
+    /**
+     * The element property descriptor.
+     */
+    descriptor?: PropertyDescriptor;
+}
+
+/**
+ * The observer signature for class fields.
  *
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
  */
-export type AccessorObserver = (oldValue: any, newValue: any) => any;
+export type ClassFieldObserver = (oldValue: any, newValue: any) => any;
 
 /**
- * A list of properties for an accessor description.
+ * A list of properties for an class field description.
  */
-export type AccessorDescriptor = PropertyDescriptor & {
+export type ClassFieldDescriptor = PropertyDescriptor & {
     /**
-     * The name of the property accessor.
+     * The property name of the field.
      */
-    name?: string;
+    name?: PropertyKey;
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
@@ -35,9 +61,9 @@ export type AccessorDescriptor = PropertyDescriptor & {
      */
     types?: Function | Function[],
     /**
-     * A list of accessor observables.
+     * A list of field observables.
      */
-    observers?: AccessorObserver[],
+    observers?: ClassFieldObserver[],
     /**
      * A custom validation function for the property.
      * Property assignement throws when this function returns falsy values.
@@ -46,7 +72,7 @@ export type AccessorDescriptor = PropertyDescriptor & {
     /**
      * Define a property observable.
      */
-    observe?: (callback: AccessorObserver) => void;
+    observe?: (callback: ClassFieldObserver) => void;
     /**
      * Define custom getter for the property.
      * @param value The current property value.
@@ -62,40 +88,38 @@ export type AccessorDescriptor = PropertyDescriptor & {
 }
 
 /**
- * Transform an accessor descriptor to the native property descriptor.
+ * Transform a class field descriptor to the native property descriptor.
  *
- * @param descriptor The accessor descriptor.
+ * @param descriptor The class field descriptor.
  * @return The native property descriptor.
  */
-function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor {
-    let finalDescriptor: PropertyDescriptor = {
+function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): PropertyDescriptor {
+    const finalDescriptor: PropertyDescriptor = {
         enumerable: true,
     };
 
-    let value = descriptor.value;
-    if ('defaultValue' in descriptor) {
-        value = descriptor.defaultValue;
-    }
-
-    let get = function(this: Element) {
-        return value;
+    const innerValue = function(this: Element) {
+        if (symbol in this) {
+            return (this as any)[symbol];
+        }
+        if ('value' in descriptor) {
+            return descriptor.value;
+        }
+        if ('defaultValue' in descriptor) {
+            return descriptor.defaultValue;
+        }
+        return;
     };
-    if (descriptor.getter) {
-        let getter = descriptor.getter;
-        get = function(this: Element) {
-            return getter.call(this, value);
-        };
-    }
 
-    let set = function(this: Element, val: any) {
-        return val;
+    const getter = descriptor.getter || ((value) => value);
+    const get = function get(this: Element) {
+        return getter.call(this, innerValue.call(this));
     };
-    if (descriptor.setter) {
-        let setter = descriptor.setter;
-        set = function(this: Element, val) {
-            return setter.call(this, val);
-        };
-    }
+
+    const setter = descriptor.setter || ((value) => value);
+    const set = function(this: Element, value: any) {
+        return setter.call(this, value);
+    };
 
     let computedTypes: Function[] = [];
     if (Array.isArray(descriptor.types)) {
@@ -104,43 +128,49 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
         computedTypes = [descriptor.types];
     }
 
-    let computedAttribute = descriptor.attribute as string;
+    const computedAttribute = descriptor.attribute as string;
 
     finalDescriptor.get = get;
     finalDescriptor.set = function(this: Element, newValue: any) {
-        let oldValue = value;
+        const oldValue = innerValue.call(this);
         newValue = set.call(this, newValue);
-        if (oldValue !== newValue) {
-            let falsy = newValue == null || newValue === false;
-            // if types or custom validator has been set, check the value validity
-            if (!falsy) {
-                let valid = true;
-                if (computedTypes.length) {
-                    // check if the value is an instanceof of at least one constructor
-                    valid = computedTypes.some((Type) => (value instanceof Type || (value.constructor && value.constructor === Type)));
-                }
-                if (valid && descriptor.validate) {
-                    valid = descriptor.validate(value);
-                }
-                if (!valid) {
-                    throw new TypeError(`Invalid \`${value}\` value for \`${descriptor.name}\` property`);
-                }
+
+        if (oldValue === newValue) {
+            // no changes
+            return;
+        }
+
+        const falsy = newValue == null || newValue === false;
+        // if types or custom validator has been set, check the value validity
+        if (!falsy) {
+            let valid = true;
+            if (computedTypes.length) {
+                // check if the value is an instanceof of at least one constructor
+                valid = computedTypes.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
             }
-            value = newValue;
-            if (descriptor.attribute) {
-                // update the bound attribute
-                if (falsy) {
-                    // a falsy value should remove the attribute
-                    this.removeAttribute(computedAttribute);
-                } else if (typeof value !== 'object') {
-                    // if the value is `true` should set an empty attribute, otherwise just set the value
-                    this.setAttribute(computedAttribute, value === true ? '' : value);
-                }
+            if (valid && typeof descriptor.validate === 'function') {
+                valid = descriptor.validate(newValue);
             }
-            // trigger Property changes
-            if (isCustomElement(this)) {
-                this.propertyChangedCallback(descriptor.name as string, oldValue, value);
+            if (!valid) {
+                throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
             }
+        }
+
+        (this as any)[symbol] = newValue;
+
+        if (descriptor.attribute) {
+            // update the bound attribute
+            if (falsy) {
+                // a falsy value should remove the attribute
+                this.removeAttribute(computedAttribute);
+            } else if (typeof newValue !== 'object') {
+                // if the value is `true` should set an empty attribute, otherwise just set the value
+                this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
+            }
+        }
+        // trigger Property changes
+        if (isCustomElement(this)) {
+            this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
         }
     };
 
@@ -152,41 +182,82 @@ function accessorToProperty(descriptor: AccessorDescriptor): PropertyDescriptor 
  *
  * @param target The target element of the definition.
  * @param propertyKey The name of the property.
- * @param descriptor The accessor descriptor.
+ * @param descriptor The class field descriptor.
  */
-export function defineProperty(target: Element, propertyKey: string, descriptor: AccessorDescriptor): void {
-    const descriptors = (target as any)[PROPERTIES_SYMBOL] || {};
+export function defineProperty(target: Object, propertyKey: PropertyKey, descriptor: ClassFieldDescriptor, symbol?: symbol): void {
+    const constructor = target.constructor;
+    const descriptors = (constructor as any)[PROPERTIES_SYMBOL] = (constructor as any)[PROPERTIES_SYMBOL] || {};
     descriptors[propertyKey] = descriptor;
-    (target as any)[PROPERTIES_SYMBOL] = descriptors;
     descriptor.name = propertyKey;
     if (descriptor.attribute === true) {
-        descriptor.attribute = propertyKey;
+        descriptor.attribute = String(propertyKey);
     }
     if (descriptor.observe) {
         descriptor.observers = [descriptor.observe];
     }
-    Object.defineProperty(target, propertyKey, accessorToProperty(descriptor));
+    Object.defineProperty(target, propertyKey, classFieldToProperty(descriptor, symbol));
 }
 
 /**
- * Get a list of accessor descriptors for a target.
+ * Get a list of class field descriptors for a target.
  *
- * @param target The target element.
- * @return A list of accessor descriptors keyed by property names.
+ * @param target The class constructor.
+ * @return A list of class field descriptors keyed by property names.
  */
-export function getProperties(target: Element): { [key: string]: AccessorDescriptor } {
+export function getProperties(target: Function): { [key: string]: ClassFieldDescriptor } {
     return (target as any)[PROPERTIES_SYMBOL] || {};
 }
 
 /**
- * A decorator for accessors definition.
+ * A decorator for class fields definition.
  *
- * @param descriptor The accessor description.
+ * @param descriptor The class field description.
  * @return The decorator initializer.
  */
-export function property(descriptor: AccessorDescriptor = {}) {
-    return (target: Element, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
-        descriptor.defaultValue = originalDescriptor.value;
-        defineProperty(target, propertyKey, descriptor);
+export function property(descriptor: ClassFieldDescriptor = {}) {
+    return (targetOrClassElement: Object | ClassElement, propertyKey: PropertyKey, originalDescriptor: PropertyDescriptor) => {
+        let element: ClassElement;
+        if (propertyKey !== undefined) {
+            if (propertyKey in getProperties(targetOrClassElement.constructor)) {
+                // already defined
+                return;
+            }
+            descriptor.defaultValue = originalDescriptor.value;
+            const prototype = Object.getPrototypeOf(targetOrClassElement);
+            defineProperty(prototype, propertyKey, descriptor);
+            return;
+        } else {
+            element = targetOrClassElement as ClassElement;
+        }
+
+        if (element.kind !== 'field' || element.placement !== 'own') {
+            return element;
+        }
+
+        if (element.descriptor) {
+            descriptor.defaultValue = element.descriptor.value;
+        }
+
+        const symbol = createSymbolKey();
+        return {
+            kind: 'field',
+            key: symbol,
+            placement: 'own',
+            descriptor: {
+                writable: true,
+            },
+            initializer(this: Object) {
+                if (symbol in this) {
+                    // already initialized
+                    return;
+                }
+                if (typeof element.initializer === 'function') {
+                    (this as any)[element.key] = element.initializer.call(this);
+                }
+            },
+            finisher(Constructor: Function) {
+                defineProperty(Constructor.prototype, element.key, descriptor, symbol);
+            },
+        } as ClassElement;
     };
 }

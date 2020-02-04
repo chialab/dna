@@ -345,11 +345,11 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
-        let previousNodes = this.getChildNodes(node) || [];
+        const previousNodes = this.getChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.connectedCallback();
         }
-        let children = this.getChildNodes(node);
+        const children = this.getChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 let child = children[i];
