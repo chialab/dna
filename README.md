@@ -141,8 +141,7 @@ render(document.body, new HelloWorld);
 
 ## Development
 
-[![Build status](https://github.com/chialab/dna/workflows/Build/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
-[![Test status](https://github.com/chialab/dna/workflows/Test/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ATest)
+[![Build status](https://github.com/chialab/dna/workflows/Main/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
 [![codecov](https://codecov.io/gh/chialab/dna/branch/3.0.0/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
 
 

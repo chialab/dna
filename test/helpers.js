@@ -1,4 +1,6 @@
-import 'https://cdn.polyfill.io/v3/polyfill.min.js?features=Symbol%2CArray.prototype.find%2CObject.assign';
+import 'symbol-es6';
+import 'core-js/es/object/assign';
+import 'core-js/es/array/find';
 
 export async function getModule() {
     if (typeof window === 'undefined') {
