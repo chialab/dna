@@ -9,7 +9,7 @@ const PROPERTIES_SYMBOL = createSymbolKey();
 /**
  * Decorator class element descriptor.
  */
-interface ClassElement {
+export interface ClassElement {
     /**
      * The kind of the class element.
      */
@@ -61,6 +61,10 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      */
     types?: Function | Function[],
     /**
+     * Define a property observable.
+     */
+    observe?: ClassFieldObserver;
+    /**
      * A list of field observables.
      */
     observers?: ClassFieldObserver[],
@@ -69,10 +73,6 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * Property assignement throws when this function returns falsy values.
      */
     validate?: (value: any) => boolean;
-    /**
-     * Define a property observable.
-     */
-    observe?: (callback: ClassFieldObserver) => void;
     /**
      * Define custom getter for the property.
      * @param value The current property value.
@@ -85,6 +85,10 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * @param newValue The value to set.
      */
     setter?: (this: Element, newValue?: any) => any;
+    /**
+     * The property private symbol.
+     */
+    symbol?: symbol;
 }
 
 /**
@@ -93,31 +97,18 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @param descriptor The class field descriptor.
  * @return The native property descriptor.
  */
-function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): PropertyDescriptor {
+function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol): PropertyDescriptor {
     const finalDescriptor: PropertyDescriptor = {
         enumerable: true,
     };
 
-    const innerValue = function(this: Element) {
-        if (symbol in this) {
-            return (this as any)[symbol];
-        }
-        if ('value' in descriptor) {
-            return descriptor.value;
-        }
-        if ('defaultValue' in descriptor) {
-            return descriptor.defaultValue;
-        }
-        return;
-    };
-
     const getter = descriptor.getter || ((value) => value);
-    const get = function get(this: Element) {
-        return getter.call(this, innerValue.call(this));
+    const get = function get(this: any) {
+        return getter.call(this, this[symbol]);
     };
 
     const setter = descriptor.setter || ((value) => value);
-    const set = function(this: Element, value: any) {
+    const set = function set(this: any, value: any) {
         return setter.call(this, value);
     };
 
@@ -131,8 +122,8 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol =
     const computedAttribute = descriptor.attribute as string;
 
     finalDescriptor.get = get;
-    finalDescriptor.set = function(this: Element, newValue: any) {
-        const oldValue = innerValue.call(this);
+    finalDescriptor.set = function(this: any, newValue: any) {
+        const oldValue = this[symbol];
         newValue = set.call(this, newValue);
 
         if (oldValue === newValue) {
@@ -156,7 +147,7 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol =
             }
         }
 
-        (this as any)[symbol] = newValue;
+        this[symbol] = newValue;
 
         if (descriptor.attribute) {
             // update the bound attribute
@@ -183,29 +174,61 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol =
  * @param target The target element of the definition.
  * @param propertyKey The name of the property.
  * @param descriptor The class field descriptor.
+ * @return The property symbol.
  */
-export function defineProperty(target: Object, propertyKey: PropertyKey, descriptor: ClassFieldDescriptor, symbol?: symbol): void {
+export function defineProperty(target: Object, propertyKey: PropertyKey, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
     const constructor = target.constructor;
-    const descriptors = (constructor as any)[PROPERTIES_SYMBOL] = (constructor as any)[PROPERTIES_SYMBOL] || {};
-    descriptors[propertyKey] = descriptor;
+    const descriptors: { [key: string]: ClassFieldDescriptor } = (constructor as any)[PROPERTIES_SYMBOL] = (constructor as any)[PROPERTIES_SYMBOL] || {};
+
+    if (propertyKey in descriptors) {
+        return descriptors[String(propertyKey)].symbol as symbol;
+    }
+
+    descriptors[String(propertyKey)] = descriptor;
     descriptor.name = propertyKey;
+    descriptor.symbol = symbol;
     if (descriptor.attribute === true) {
         descriptor.attribute = String(propertyKey);
     }
     if (descriptor.observe) {
-        descriptor.observers = [descriptor.observe];
+        descriptor.observers = [descriptor.observe, ...(descriptor.observers || [])];
     }
-    Object.defineProperty(target, propertyKey, classFieldToProperty(descriptor, symbol));
+    Object.defineProperty(constructor.prototype, propertyKey, classFieldToProperty(descriptor, symbol));
+
+    return symbol;
 }
 
 /**
  * Get a list of class field descriptors for a target.
  *
- * @param target The class constructor.
+ * @param constructor The class constructor.
  * @return A list of class field descriptors keyed by property names.
  */
-export function getProperties(target: Function): { [key: string]: ClassFieldDescriptor } {
-    return (target as any)[PROPERTIES_SYMBOL] || {};
+export function getProperties(constructor: Function): { [key: string]: ClassFieldDescriptor } {
+    return (constructor as any)[PROPERTIES_SYMBOL] || {};
+}
+
+/**
+ * Initialize instance property.
+ *
+ * @param target The class instance.
+ * @param symbol The property symbolic key.
+ * @param descriptor The property descriptor.
+ * @param initializer The initializer function of the decorator.
+ * @return The current property value.
+ */
+export function initProperty(target: any, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any {
+    if (typeof target[symbol] !== 'undefined') {
+        return target[symbol];
+    }
+    if (typeof initializer === 'function') {
+        target[symbol] = initializer.call(target);
+    } else if ('value' in descriptor) {
+        target[symbol] = descriptor.value;
+    } else if ('defaultValue' in descriptor) {
+        target[symbol] = descriptor.defaultValue;
+    }
+    return target[symbol];
 }
 
 /**
@@ -216,15 +239,13 @@ export function getProperties(target: Function): { [key: string]: ClassFieldDesc
  */
 export function property(descriptor: ClassFieldDescriptor = {}) {
     return (targetOrClassElement: Object | ClassElement, propertyKey: PropertyKey, originalDescriptor: PropertyDescriptor) => {
+        const symbol = createSymbolKey();
+
         let element: ClassElement;
         if (propertyKey !== undefined) {
-            if (propertyKey in getProperties(targetOrClassElement.constructor)) {
-                // already defined
-                return;
-            }
             descriptor.defaultValue = originalDescriptor.value;
-            const prototype = Object.getPrototypeOf(targetOrClassElement);
-            defineProperty(prototype, propertyKey, descriptor);
+            defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
+            initProperty(targetOrClassElement, symbol, descriptor);
             return;
         } else {
             element = targetOrClassElement as ClassElement;
@@ -238,25 +259,20 @@ export function property(descriptor: ClassFieldDescriptor = {}) {
             descriptor.defaultValue = element.descriptor.value;
         }
 
-        const symbol = createSymbolKey();
         return {
             kind: 'field',
             key: symbol,
             placement: 'own',
             descriptor: {
+                configurable: false,
                 writable: true,
+                enumerable: false,
             },
-            initializer(this: Object) {
-                if (symbol in this) {
-                    // already initialized
-                    return;
-                }
-                if (typeof element.initializer === 'function') {
-                    (this as any)[element.key] = element.initializer.call(this);
-                }
+            initializer(this: any) {
+                return initProperty(this, symbol, descriptor, element.initializer);
             },
-            finisher(Constructor: Function) {
-                defineProperty(Constructor.prototype, element.key, descriptor, symbol);
+            finisher(constructor: Function) {
+                defineProperty(constructor.prototype, element.key, descriptor, symbol);
             },
         } as ClassElement;
     };

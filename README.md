@@ -34,6 +34,12 @@ If you are familiar with JSX, you can write your templates using the React synta
 
 DNA comes with a lot of features in a very small (~ 5kb gzipped) package. You can use `<slot>` elements like in Shadow DOM contexts, render async results, observe properties changes and delegate events.
 
+## Browsers support
+
+Tests are run against all modern browsers and primary legacy ones, like Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements) and as UMD module (targeting ES5), but some Babel helpers if you want to use decorators needs support for `Symbol`, `Oject.assign` and `Array.prototype.find`. Also, a polyfill for `Promise`s is required in IE11 if you are using async methods.
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://saucelabs.com/u/chialab-sl-003)
+
 ## Get the library
 
 Usage via [unpkg.com](https://unpkg.com/), as UMD package:
@@ -138,9 +144,6 @@ render(document.body, new HelloWorld);
 [![Build status](https://github.com/chialab/dna/workflows/Build/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
 [![Test status](https://github.com/chialab/dna/workflows/Test/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ATest)
 [![codecov](https://codecov.io/gh/chialab/dna/branch/3.0.0/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
-
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://saucelabs.com/u/chialab-sl-003)
 
 
 ### Requirements

@@ -1,4 +1,3 @@
-export { mixin } from './lib/mixin';
 export { DOM } from './lib/DOM';
 export { isCustomElement } from './lib/CustomElement';
 export { get, define, upgrade, whenDefined } from './lib/registry';
@@ -8,4 +7,4 @@ export { html } from './lib/html';
 export { css } from './lib/css';
 export { compile } from './lib/InterpolationFunction';
 export { property } from './lib/property';
-export { Component } from './lib/Component';
+export { mixin, Component } from './lib/Component';

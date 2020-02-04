@@ -1,3 +1,5 @@
+import 'https://cdn.polyfill.io/v3/polyfill.min.js?features=Symbol%2CArray.prototype.find%2CObject.assign';
+
 export async function getModule() {
     if (typeof window === 'undefined') {
         return await import('../dist/adapters/node/dna.js');

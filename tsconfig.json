@@ -12,7 +12,8 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "allowJs": false
+    "allowJs": false,
+    "experimentalDecorators": true
   },
   "include": [
     "src/**/*.ts"

@@ -400,15 +400,15 @@ export const DOM = {
     /**
      * Define a native HTMLElement constructor. It also update already getted proxy classes prototype.
      * @param name The name of the constructor (eg. "HTMLAnchorElement").
-     * @param Constructor The constructor function reference.
+     * @param constructor The constructor function reference.
      * @return A proxy that extends the native constructor (if available).
      */
-    define<T extends typeof HTMLElement = typeof HTMLElement>(name: string, Constructor: T): T {
-        Constructor = CONSTRUCTORS[name] = Constructor;
+    define<T extends typeof HTMLElement = typeof HTMLElement>(name: string, constructor: T): T {
+        constructor = CONSTRUCTORS[name] = constructor;
         if (PROXIES[name]) {
-            PROXIES[name].prototype = Constructor.prototype;
+            PROXIES[name].prototype = constructor.prototype;
         }
-        return Constructor;
+        return constructor;
     },
 
     /**
