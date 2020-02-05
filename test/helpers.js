@@ -1,6 +1,15 @@
-import 'symbol-es6';
+import 'core-js/es/symbol';
 import 'core-js/es/object/assign';
 import 'core-js/es/array/find';
+
+if (typeof Symbol() !== 'symbol') {
+    /**
+     * IE11/Decorators workaround
+     * @see https://github.com/babel/babel/issues/9999
+     */
+    let num = 0;
+    Symbol.prototype[Symbol.toPrimitive] = () => `__sym__${num++}__`;
+}
 
 export async function getModule() {
     if (typeof window === 'undefined') {

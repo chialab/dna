@@ -120,16 +120,20 @@ Object.assign(DOM, {
         return new CustomEvent(typeArg, eventInitDict);
     },
     appendChild<T extends Node>(parent: Element, newChild: T): T {
+        if (parent.lastChild as unknown as Node === newChild) {
+            // the child is already the last element of the parent
+            return newChild;
+        }
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
         Node.prototype.appendChild.call(parent, newChild);
-        (this as unknown as typeof DOM).connect(newChild);
+        (this as typeof DOM).connect(newChild);
         return newChild;
     },
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
         Node.prototype.removeChild.call(parent, oldChild);
-        (this as unknown as typeof DOM).disconnect(oldChild);
+        (this as typeof DOM).disconnect(oldChild);
         return oldChild;
     },
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
@@ -140,7 +144,7 @@ Object.assign(DOM, {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
         Node.prototype.insertBefore.call(parent, newChild, refChild);
-        (this as unknown as typeof DOM).connect(newChild);
+        (this as typeof DOM).connect(newChild);
         return newChild;
     },
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
@@ -151,8 +155,8 @@ Object.assign(DOM, {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
         Node.prototype.replaceChild.call(parent, newChild, oldChild);
-        (this as unknown as typeof DOM).disconnect(oldChild);
-        (this as unknown as typeof DOM).connect(newChild);
+        (this as typeof DOM).disconnect(oldChild);
+        (this as typeof DOM).connect(newChild);
         return oldChild;
     },
     getAttribute(element: Element, qualifiedName: string): string | null {
