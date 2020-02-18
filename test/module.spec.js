@@ -25,6 +25,7 @@ describe('module', function() {
         compile: 'function',
         property: 'function',
         Component: 'function',
+        CustomElementRegistry: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {

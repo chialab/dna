@@ -23,11 +23,11 @@ enum Namespaces {
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(node: Element, namespace?: Namespaces): HyperFunction;
+function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperFunction;
 function innerCompile(node: Text): InterpolationFunction;
 function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
 function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
-function innerCompile(node: Element | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
+function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (DOM.isElement(node)) {
         // the current node is an element
         // get the tag name

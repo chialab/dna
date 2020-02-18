@@ -1,18 +1,24 @@
 import { getModule, spyFunction } from './helpers.js';
 
-let DNA, wrapper;
+let DNA;
 
 describe('Component', function() {
     this.timeout(10 * 1000);
 
     before(async () => {
         DNA = await getModule();
+    });
+
+    let wrapper;
+    beforeEach(() => {
         wrapper = DNA.DOM.createElement('div');
         wrapper.ownerDocument.body.appendChild(wrapper);
     });
 
-    beforeEach(() => {
-        wrapper.innerHTML = '';
+    afterEach(() => {
+        if (wrapper.parentNode) {
+            wrapper.ownerDocument.body.removeChild(wrapper);
+        }
     });
 
     describe('#new', () => {
@@ -20,10 +26,10 @@ describe('Component', function() {
             const TestElement = class extends DNA.Component { };
             DNA.define('test-component', TestElement);
 
-            const elem = new TestElement();
-            expect(elem).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
-            expect(elem.is).to.be.equal('test-component');
-            expect(elem.tagName).to.be.equal('TEST-COMPONENT');
+            const element = new TestElement();
+            expect(element).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
+            expect(element.is).to.be.equal('test-component');
+            expect(element.tagName).to.be.equal('TEST-COMPONENT');
         });
 
         it('should extend a native node', () => {
@@ -32,17 +38,17 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            const elem = new TestElement();
-            expect(elem).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
-            expect(elem.is).to.be.equal('test-component2');
-            expect(elem.tagName).to.be.equal('ARTICLE');
-            expect(elem.getAttribute('is')).to.be.equal('test-component2');
+            const element = new TestElement();
+            expect(element).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
+            expect(element.is).to.be.equal('test-component2');
+            expect(element.tagName).to.be.equal('ARTICLE');
+            expect(element.getAttribute('is')).to.be.equal('test-component2');
         });
 
-        it('should throw if element is not defined', () => {
+        it.skip('should throw if element is not defined', () => {
             const TestElement = class extends DNA.Component { };
 
-            expect(() => new TestElement).to.throw(TypeError, 'Illegal constructor.');
+            expect(() => new TestElement).to.throw(TypeError, 'Illegal constructor');
         });
 
         it('should setup properties', () => {
@@ -193,7 +199,7 @@ describe('Component', function() {
             expect(connectedCallback.count).to.be.equal(1);
         });
 
-        it('should NOT connect if not moved', () => {
+        it('should connect if not moved', () => {
             const connectedCallback = spyFunction(() => { });
             const TestElement = class extends DNA.Component {
                 connectedCallback() {
@@ -209,7 +215,7 @@ describe('Component', function() {
             DNA.DOM.appendChild(wrapper, element);
             expect(connectedCallback.invoked).to.be.true;
             DNA.DOM.appendChild(wrapper, element);
-            expect(connectedCallback.count).to.be.equal(1);
+            expect(connectedCallback.count).to.be.equal(2);
         });
 
         it.skip('should render on connect', () => {
@@ -350,6 +356,18 @@ describe('Component', function() {
 
         before(() => {
             TestElement = class extends DNA.Component {
+                static get observedAttributes() {
+                    return ['title', 'age'];
+                }
+
+                get properties() {
+                    return {
+                        age: {
+                            types: [Number],
+                        },
+                    };
+                }
+
                 @DNA.property({ attribute: 'title' }) title = '';
             };
 
@@ -359,6 +377,7 @@ describe('Component', function() {
         beforeEach(() => {
             element = new TestElement({
                 title: 'DNA',
+                age: 42,
             });
         });
 
@@ -367,24 +386,33 @@ describe('Component', function() {
                 expect(element.getAttribute('missing')).to.be.null;
             });
 
-            it('should get an attribute', () => {
+            it('should get a string attribute', () => {
                 expect(element.getAttribute('title')).to.be.equal('DNA');
+            });
+
+            it('should get a numeric attribute', () => {
+                expect(element.getAttribute('age')).to.be.equal('42');
             });
         });
 
-        describe('#setAttribute', () => {
+        describe.skip('#setAttribute', () => {
             it('should set an attribute', () => {
                 element.setAttribute('missing', 'DNA');
                 expect(element.getAttribute('missing')).to.be.equal('DNA');
             });
 
-            it('should set an attribute and update the property', () => {
+            it('should set a string attribute and update the property', () => {
                 element.setAttribute('title', 'WebComponents');
                 expect(element.title).to.be.equal('WebComponents');
             });
+
+            it('should set a numeric attribute and update the property', () => {
+                element.setAttribute('age', '42');
+                expect(element.age).to.be.equal(42);
+            });
         });
 
-        describe('#hasAttribute', () => {
+        describe.skip('#hasAttribute', () => {
             it('should return `true` if element has an attribute', () => {
                 expect(element.hasAttribute('title')).to.be.true;
             });
@@ -394,15 +422,20 @@ describe('Component', function() {
             });
         });
 
-        describe('#removeAttribute', () => {
+        describe.skip('#removeAttribute', () => {
             it('should remove an attribute', () => {
                 element.removeAttribute('title');
                 expect(element.hasAttribute('title')).to.be.false;
             });
 
-            it('should remove an attribute and update the property', () => {
+            it('should remove a string attribute and update the property', () => {
                 element.removeAttribute('title');
                 expect(element.title).to.be.null;
+            });
+
+            it('should remove a numeric attribute and update the property', () => {
+                element.removeAttribute('age');
+                expect(element.age).to.be.null;
             });
         });
     });

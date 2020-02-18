@@ -18,6 +18,13 @@ export function isCustomElement(node: any): node is CustomElement {
 }
 
 /**
+ * Check if the environment supports Custom Elements.
+ */
+export function checkNativeSupport() {
+    return typeof customElements !== 'undefined';
+}
+
+/**
  * The basic Custom Element interface.
  * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.

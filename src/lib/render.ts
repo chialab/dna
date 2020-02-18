@@ -57,7 +57,7 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @return The resulting child Nodes.
  */
-export function render(node: Element, input: Template, context?: RenderContext): Template | Template[] | void {
+export function render(node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void {
     const renderContext: RenderContext = {
         scope: getScope(node) || createScope(node),
         result: [],

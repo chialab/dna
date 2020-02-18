@@ -1,6 +1,12 @@
+import { registry } from './lib/CustomElementRegistry';
+
+export const get = registry.get.bind(registry);
+export const define = registry.define.bind(registry);
+export const upgrade = registry.upgrade.bind(registry);
+export const whenDefined = registry.whenDefined.bind(registry);
 export { DOM } from './lib/DOM';
 export { isCustomElement } from './lib/CustomElement';
-export { get, define, upgrade, whenDefined } from './lib/registry';
+export { CustomElementRegistry } from './lib/CustomElementRegistry';
 export { render } from './lib/render';
 export { Fragment, h } from './lib/h';
 export { html } from './lib/html';

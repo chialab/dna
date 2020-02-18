@@ -11,7 +11,7 @@ describe('registry', function() {
 
     describe('#get', () => {
         it('should not return undefined component', () => {
-            expect(DNA.get('test-define1')).to.be.null;
+            expect(DNA.get('test-define1')).to.be.undefined;
         });
     });
 

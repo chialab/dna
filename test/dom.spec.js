@@ -9,14 +9,16 @@ describe('DOM', function() {
         DNA = await getModule();
     });
 
-    let element;
+    let wrapper;
     beforeEach(() => {
-        element = DNA.DOM.createElement('div');
-        element.ownerDocument.body.appendChild(element);
+        wrapper = DNA.DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
     });
 
     afterEach(() => {
-        element.ownerDocument.body.removeChild(element);
+        if (wrapper.parentNode) {
+            wrapper.ownerDocument.body.removeChild(wrapper);
+        }
     });
 
     describe('#isDocument', () => {
@@ -111,8 +113,8 @@ describe('DOM', function() {
     describe('#appendChild', () => {
         it('should append a child to a parent', () => {
             const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child);
-            expect(child.parentNode).to.be.equal(element);
+            DNA.DOM.appendChild(wrapper, child);
+            expect(child.parentNode).to.be.equal(wrapper);
         });
 
         it('should move a child from a parent to another parent', () => {
@@ -120,20 +122,20 @@ describe('DOM', function() {
             const child = DNA.DOM.createElement('div');
             DNA.DOM.appendChild(parent, child);
             expect(child.parentNode).to.be.equal(parent);
-            DNA.DOM.appendChild(element, child);
+            DNA.DOM.appendChild(wrapper, child);
             expect(parent.childNodes).to.have.lengthOf(0);
-            expect(child.parentNode).to.be.equal(element);
+            expect(child.parentNode).to.be.equal(wrapper);
         });
     });
 
     describe('#removeChild', () => {
         it('should remove a child from a parent', () => {
             const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child);
-            expect(child.parentNode).to.be.equal(element);
-            DNA.DOM.removeChild(element, child);
+            DNA.DOM.appendChild(wrapper, child);
+            expect(child.parentNode).to.be.equal(wrapper);
+            DNA.DOM.removeChild(wrapper, child);
             expect(child.parentNode).to.be.null;
-            expect(element.childNodes).to.have.lengthOf(0);
+            expect(wrapper.childNodes).to.have.lengthOf(0);
         });
     });
 
@@ -141,12 +143,12 @@ describe('DOM', function() {
         it('should insert a child before another', () => {
             const child1 = DNA.DOM.createElement('div');
             const child2 = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child1);
-            DNA.DOM.insertBefore(element, child2, child1);
-            expect(child1.parentNode).to.be.equal(element);
-            expect(child2.parentNode).to.be.equal(element);
-            expect(element.childNodes[0]).to.be.equal(child2);
-            expect(element.childNodes[1]).to.be.equal(child1);
+            DNA.DOM.appendChild(wrapper, child1);
+            DNA.DOM.insertBefore(wrapper, child2, child1);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes[0]).to.be.equal(child2);
+            expect(wrapper.childNodes[1]).to.be.equal(child1);
         });
 
         it('should insert a child (and remove it from the previous parent) before another', () => {
@@ -155,25 +157,25 @@ describe('DOM', function() {
             const child2 = DNA.DOM.createElement('div');
             DNA.DOM.appendChild(parent, child2);
             expect(child2.parentNode).to.be.equal(parent);
-            DNA.DOM.appendChild(element, child1);
-            DNA.DOM.insertBefore(element, child2, child1);
+            DNA.DOM.appendChild(wrapper, child1);
+            DNA.DOM.insertBefore(wrapper, child2, child1);
             expect(parent.childNodes).to.have.lengthOf(0);
-            expect(child1.parentNode).to.be.equal(element);
-            expect(child2.parentNode).to.be.equal(element);
-            expect(element.childNodes[0]).to.be.equal(child2);
-            expect(element.childNodes[1]).to.be.equal(child1);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes[0]).to.be.equal(child2);
+            expect(wrapper.childNodes[1]).to.be.equal(child1);
         });
 
         it('should do nothing when child is already before another', () => {
             const child1 = DNA.DOM.createElement('div');
             const child2 = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child1);
-            DNA.DOM.appendChild(element, child2);
-            DNA.DOM.insertBefore(element, child1, child2);
-            expect(child1.parentNode).to.be.equal(element);
-            expect(child2.parentNode).to.be.equal(element);
-            expect(element.childNodes[0]).to.be.equal(child1);
-            expect(element.childNodes[1]).to.be.equal(child2);
+            DNA.DOM.appendChild(wrapper, child1);
+            DNA.DOM.appendChild(wrapper, child2);
+            DNA.DOM.insertBefore(wrapper, child1, child2);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes[0]).to.be.equal(child1);
+            expect(wrapper.childNodes[1]).to.be.equal(child2);
         });
     });
 
@@ -181,13 +183,13 @@ describe('DOM', function() {
         it('should reaplce a child in a parent', () => {
             const child1 = DNA.DOM.createElement('div');
             const child2 = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child1);
-            expect(child1.parentNode).to.be.equal(element);
-            DNA.DOM.replaceChild(element, child2, child1);
+            DNA.DOM.appendChild(wrapper, child1);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            DNA.DOM.replaceChild(wrapper, child2, child1);
             expect(child1.parentNode).to.be.null;
-            expect(child2.parentNode).to.be.equal(element);
-            expect(element.childNodes).to.have.lengthOf(1);
-            expect(element.childNodes[0]).to.be.equal(child2);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes).to.have.lengthOf(1);
+            expect(wrapper.childNodes[0]).to.be.equal(child2);
         });
 
         it('should reaplce a child (and remove it from the previous parent) in a parent', () => {
@@ -196,23 +198,23 @@ describe('DOM', function() {
             const child2 = DNA.DOM.createElement('div');
             DNA.DOM.appendChild(parent, child2);
             expect(child2.parentNode).to.be.equal(parent);
-            DNA.DOM.appendChild(element, child1);
-            expect(child1.parentNode).to.be.equal(element);
-            DNA.DOM.replaceChild(element, child2, child1);
+            DNA.DOM.appendChild(wrapper, child1);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            DNA.DOM.replaceChild(wrapper, child2, child1);
             expect(parent.childNodes).to.have.lengthOf(0);
             expect(child1.parentNode).to.be.null;
-            expect(child2.parentNode).to.be.equal(element);
-            expect(element.childNodes).to.have.lengthOf(1);
-            expect(element.childNodes[0]).to.be.equal(child2);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes).to.have.lengthOf(1);
+            expect(wrapper.childNodes[0]).to.be.equal(child2);
         });
 
         it('should do nothing if the node is the same', () => {
             const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child);
-            expect(child.parentNode).to.be.equal(element);
-            DNA.DOM.replaceChild(element, child, child);
-            expect(child.parentNode).to.be.equal(element);
-            expect(element.childNodes).to.have.lengthOf(1);
+            DNA.DOM.appendChild(wrapper, child);
+            expect(child.parentNode).to.be.equal(wrapper);
+            DNA.DOM.replaceChild(wrapper, child, child);
+            expect(child.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes).to.have.lengthOf(1);
         });
     });
 
@@ -263,7 +265,7 @@ describe('DOM', function() {
     describe('#isConnected', () => {
         it('return `true` if element is connected', () => {
             const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child);
+            DNA.DOM.appendChild(wrapper, child);
             expect(DNA.DOM.isConnected(child)).to.be.true;
         });
 
@@ -276,7 +278,7 @@ describe('DOM', function() {
     describe('#isConnected', () => {
         it('return `true` if element is connected', () => {
             const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(element, child);
+            DNA.DOM.appendChild(wrapper, child);
             expect(DNA.DOM.isConnected(child)).to.be.true;
         });
 
@@ -309,16 +311,16 @@ describe('DOM', function() {
     describe('#dispatchEvent', () => {
         it('should dispatch custom events', () => {
             const listener = spyFunction(() => { });
-            element.addEventListener('click', listener);
-            DNA.DOM.dispatchEvent(element, 'click');
+            wrapper.addEventListener('click', listener);
+            DNA.DOM.dispatchEvent(wrapper, 'click');
             expect(listener.invoked).to.be.true;
         });
 
         it('should dispatch custom events with details', () => {
             const details = {};
             const listener = spyFunction((event) => event.detail);
-            element.addEventListener('click', listener);
-            DNA.DOM.dispatchEvent(element, 'click', details);
+            wrapper.addEventListener('click', listener);
+            DNA.DOM.dispatchEvent(wrapper, 'click', details);
             expect(listener.invoked).to.be.true;
             expect(listener.response).to.be.equal(details);
         });
@@ -327,8 +329,8 @@ describe('DOM', function() {
             const details = {};
             const listener = spyFunction((event) => event.bubbles);
             const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(element, child);
-            element.addEventListener('click', listener);
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
             DNA.DOM.dispatchEvent(child, 'click', details, true);
             expect(listener.invoked).to.be.true;
             expect(listener.response).to.be.true;
@@ -338,8 +340,8 @@ describe('DOM', function() {
             const details = {};
             const listener = spyFunction((event) => event.cancelable);
             const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(element, child);
-            element.addEventListener('click', listener);
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
             DNA.DOM.dispatchEvent(child, 'click', details, true, true);
             expect(listener.invoked).to.be.true;
             expect(listener.response).to.be.true;
@@ -347,10 +349,10 @@ describe('DOM', function() {
 
         it('should dispatch custom events that does not bubble', () => {
             const button = DNA.DOM.createElement('button');
-            element.appendChild(button);
+            wrapper.appendChild(button);
             const listener1 = spyFunction((event) => event.bubbles);
             const listener2 = spyFunction((event) => event.bubbles);
-            element.addEventListener('click', listener1);
+            wrapper.addEventListener('click', listener1);
             button.addEventListener('click', listener2);
             DNA.DOM.dispatchEvent(button, 'click', null, false);
             expect(listener1.invoked).to.be.false;
@@ -362,8 +364,8 @@ describe('DOM', function() {
             const details = {};
             const listener = spyFunction((event) => event.cancelable);
             const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(element, child);
-            element.addEventListener('click', listener);
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
             DNA.DOM.dispatchEvent(child, 'click', details, true, false);
             expect(listener.invoked).to.be.true;
             expect(listener.response).to.be.false;
@@ -375,19 +377,19 @@ describe('DOM', function() {
             }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
-                DNA.DOM.dispatchEvent(element, null);
+                DNA.DOM.dispatchEvent(wrapper, null);
             }).to.throw(TypeError, 'The provided object must be an Event');
 
             expect(() => {
-                DNA.DOM.dispatchEvent(element, 'click', null, null, null, null);
+                DNA.DOM.dispatchEvent(wrapper, 'click', null, null, null, null);
             }).to.throw(TypeError, 'The provided bubbles option must be a boolean');
 
             expect(() => {
-                DNA.DOM.dispatchEvent(element, 'click', null, true, null, null);
+                DNA.DOM.dispatchEvent(wrapper, 'click', null, true, null, null);
             }).to.throw(TypeError, 'The provided cancelable option must be a boolean');
 
             expect(() => {
-                DNA.DOM.dispatchEvent(element, 'click', null, true, true, null);
+                DNA.DOM.dispatchEvent(wrapper, 'click', null, true, true, null);
             }).to.throw(TypeError, 'The provided composed option must be a boolean');
         });
     });
@@ -401,10 +403,10 @@ describe('DOM', function() {
     describe('#delegateEventListener', () => {
         it('should add delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
-            element.appendChild(button);
+            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
-            DNA.DOM.delegateEventListener(element, 'mouseenter', 'button', listener);
+            DNA.DOM.delegateEventListener(wrapper, 'click', 'button', listener);
+            DNA.DOM.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
             button.click();
             DNA.DOM.dispatchEvent(button, 'mouseenter');
 
@@ -418,33 +420,33 @@ describe('DOM', function() {
             }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, false, false, false);
+                DNA.DOM.delegateEventListener(wrapper, false, false, false);
             }).to.throw(TypeError, 'The provided event name must be a string');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, 'click', false, false);
+                DNA.DOM.delegateEventListener(wrapper, 'click', false, false);
             }).to.throw(TypeError, 'The provided selector must be a string');
 
             expect(() => {
-                DNA.DOM.delegateEventListener(element, 'click', 'button', false);
+                DNA.DOM.delegateEventListener(wrapper, 'click', 'button', false);
             }).to.throw(TypeError, 'The provided callback must be a function');
         });
 
         it('should stop propagation', () => {
-            const wrapper = DNA.DOM.createElement('div');
+            const child = DNA.DOM.createElement('div');
             const button = DNA.DOM.createElement('button');
-            element.appendChild(wrapper);
-            wrapper.appendChild(button);
+            wrapper.appendChild(child);
+            child.appendChild(button);
             const listener1 = spyFunction(() => { });
             const listener2 = spyFunction((event) => {
                 event.stopPropagation();
             });
             const listener3 = spyFunction(() => { });
             const listener4 = spyFunction(() => { });
-            DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
-            DNA.DOM.delegateEventListener(element, 'click', null, listener4);
+            DNA.DOM.delegateEventListener(child, 'click', 'div', listener1);
+            DNA.DOM.delegateEventListener(child, 'click', 'button', listener2);
+            DNA.DOM.delegateEventListener(child, 'click', 'button', listener3);
+            DNA.DOM.delegateEventListener(child, 'click', null, listener4);
             button.click();
 
             expect(listener1.invoked).to.be.false;
@@ -454,20 +456,20 @@ describe('DOM', function() {
         });
 
         it('should immediately stop propagation', () => {
-            const wrapper = DNA.DOM.createElement('div');
+            const child = DNA.DOM.createElement('div');
             const button = DNA.DOM.createElement('button');
-            element.appendChild(wrapper);
-            wrapper.appendChild(button);
+            wrapper.appendChild(child);
+            child.appendChild(button);
             const listener1 = spyFunction(() => { });
             const listener2 = spyFunction((event) => {
                 event.stopImmediatePropagation();
             });
             const listener3 = spyFunction(() => { });
             const listener4 = spyFunction(() => { });
-            DNA.DOM.delegateEventListener(element, 'click', 'div', listener1);
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener3);
-            DNA.DOM.delegateEventListener(element, 'click', null, listener4);
+            DNA.DOM.delegateEventListener(child, 'click', 'div', listener1);
+            DNA.DOM.delegateEventListener(child, 'click', 'button', listener2);
+            DNA.DOM.delegateEventListener(child, 'click', 'button', listener3);
+            DNA.DOM.delegateEventListener(child, 'click', null, listener4);
             button.click();
 
             expect(listener1.invoked).to.be.false;
@@ -480,13 +482,13 @@ describe('DOM', function() {
     describe('#undelegateEventListener', () => {
         it('should remove a delegated event listener', () => {
             const button = DNA.DOM.createElement('button');
-            element.appendChild(button);
+            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
             const listener2 = spyFunction(() => { });
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener2);
+            DNA.DOM.delegateEventListener(wrapper, 'click', 'button', listener);
+            DNA.DOM.delegateEventListener(wrapper, 'click', 'button', listener2);
             button.click();
-            DNA.DOM.undelegateEventListener(element, 'click', 'button', listener2);
+            DNA.DOM.undelegateEventListener(wrapper, 'click', 'button', listener2);
             button.click();
 
             expect(listener.count).to.be.equal(2);
@@ -507,15 +509,15 @@ describe('DOM', function() {
             }).to.throw(TypeError, 'The provided element must be a Node');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, false, false, false);
+                DNA.DOM.undelegateEventListener(wrapper, false, false, false);
             }).to.throw(TypeError, 'The provided event name must be a string');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, 'click', false, false);
+                DNA.DOM.undelegateEventListener(wrapper, 'click', false, false);
             }).to.throw(TypeError, 'The provided selector must be a string');
 
             expect(() => {
-                DNA.DOM.undelegateEventListener(element, 'click', 'button', false);
+                DNA.DOM.undelegateEventListener(wrapper, 'click', 'button', false);
             }).to.throw(TypeError, 'The provided callback must be a function');
         });
     });
@@ -523,13 +525,13 @@ describe('DOM', function() {
     describe('#undelegateAllEventListeners', () => {
         it('should remove all delegated event listeners', () => {
             const button = DNA.DOM.createElement('button');
-            element.appendChild(button);
+            wrapper.appendChild(button);
             const listener = spyFunction(() => { });
-            DNA.DOM.delegateEventListener(element, 'click', 'button', listener);
-            DNA.DOM.delegateEventListener(element, 'mouseenter', 'button', listener);
+            DNA.DOM.delegateEventListener(wrapper, 'click', 'button', listener);
+            DNA.DOM.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
             button.click();
             DNA.DOM.dispatchEvent(button, 'mouseenter');
-            DNA.DOM.undelegateAllEventListeners(element);
+            DNA.DOM.undelegateAllEventListeners(wrapper);
             button.click();
             DNA.DOM.dispatchEvent(button, 'mouseenter');
 

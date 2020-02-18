@@ -5,7 +5,7 @@ import { HyperFunction, createHyperFunction } from './HyperFunction';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { isInterpolationFunction } from './InterpolationFunction';
-import { REGISTRY } from './registry';
+import { registry } from './CustomElementRegistry';
 import { DOM } from './DOM';
 
 /**
@@ -82,12 +82,8 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
         isTemplate = tag === 'template';
         isSlot = tag === 'slot';
 
-        // Also a real tag name can produce a Component instance,
-        // if the tag is registered as Component or the `is` property is defined
-        let name = propertiesToSet.is || tag;
         // get the constructor from the registry
-        const definition = REGISTRY[name];
-        Component = definition && definition.constructor;
+        Component = registry.get(propertiesToSet.is || tag);
     }
 
     const fn = function(this: Scope, previousElement?: Element) {

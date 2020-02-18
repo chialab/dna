@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
-import { isCustomElement } from './CustomElement';
-import { get } from './registry';
+import { isCustomElement, checkNativeSupport } from './CustomElement';
+import { registry } from './CustomElementRegistry';
 import { shim } from './shim';
 
 /**
@@ -105,8 +105,8 @@ export const DOM = {
      * @param node The node to check.
      * @return The node is an Element instance.
      */
-    isElement(node: any): node is Element {
-        return node && node instanceof Element;
+    isElement(node: any): node is HTMLElement {
+        return node && node instanceof HTMLElement;
     },
 
     /**
@@ -136,14 +136,17 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement(tagName: string, options?: ElementCreationOptions): Element {
+    createElement(tagName: string, options?: ElementCreationOptions & { plain?: boolean }): Element {
         const name = options && options.is || tagName.toLowerCase();
-        const constructor = get(name);
         const node = document.createElement(tagName);
-        if (!constructor || (options && (options as any).plain)) {
+        const constructor = registry.get(name);
+        if (options && options.plain) {
             return node;
         }
-        return new constructor(node);
+        if (constructor && !(node instanceof constructor)) {
+            new constructor(node);
+        }
+        return node;
     },
 
     /**
@@ -190,15 +193,16 @@ export const DOM = {
      * @param newChild The child to add.
      */
     appendChild<T extends Node>(parent: Element, newChild: T): T {
-        if (parent.lastChild as unknown as Node === newChild) {
-            // the child is already the last element of the parent
-            return newChild;
-        }
-        if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const NATIVE_SUPPORT = checkNativeSupport();
+        if (!NATIVE_SUPPORT) {
+            if (newChild.parentNode) {
+                this.removeChild(newChild.parentNode as Element, newChild);
+            }
         }
         Node.prototype.appendChild.call(parent, newChild);
-        this.connect(newChild);
+        if (!NATIVE_SUPPORT) {
+            this.connect(newChild);
+        }
         return newChild;
     },
 
@@ -209,8 +213,11 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
+        const NATIVE_SUPPORT = checkNativeSupport();
         Node.prototype.removeChild.call(parent, oldChild);
-        this.disconnect(oldChild);
+        if (!NATIVE_SUPPORT) {
+            this.disconnect(oldChild);
+        }
         return oldChild;
     },
 
@@ -222,14 +229,16 @@ export const DOM = {
      * @param refChild The referred node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
-        if (refChild && refChild.previousSibling === newChild) {
-            return newChild;
-        }
-        if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const NATIVE_SUPPORT = checkNativeSupport();
+        if (!NATIVE_SUPPORT) {
+            if (newChild.parentNode) {
+                this.removeChild(newChild.parentNode as Element, newChild);
+            }
         }
         Node.prototype.insertBefore.call(parent, newChild, refChild);
-        this.connect(newChild);
+        if (!NATIVE_SUPPORT) {
+            this.connect(newChild);
+        }
         return newChild;
     },
 
@@ -241,15 +250,17 @@ export const DOM = {
      * @param oldChild The node to replace.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
-        if (oldChild === newChild) {
-            return oldChild;
-        }
-        if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const NATIVE_SUPPORT = checkNativeSupport();
+        if (!NATIVE_SUPPORT) {
+            if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
+                this.removeChild(newChild.parentNode as Element, newChild);
+            }
         }
         Node.prototype.replaceChild.call(parent, newChild, oldChild);
-        this.disconnect(oldChild);
-        this.connect(newChild);
+        if (!NATIVE_SUPPORT) {
+            this.disconnect(oldChild);
+            this.connect(newChild);
+        }
         return oldChild;
     },
 
@@ -281,9 +292,9 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        let oldValue = this.getAttribute(element, qualifiedName);
+        const oldValue = this.getAttribute(element, qualifiedName);
         HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
-        if (isCustomElement(element)) {
+        if (isCustomElement(element) && !checkNativeSupport()) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
     },
@@ -295,9 +306,9 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        let oldValue = this.getAttribute(element, qualifiedName);
+        const oldValue = this.getAttribute(element, qualifiedName);
         HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
-        if (isCustomElement(element)) {
+        if (isCustomElement(element) && !checkNativeSupport()) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
     },
@@ -349,6 +360,9 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
+        if (checkNativeSupport()) {
+            return;
+        }
         const previousNodes = this.getChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.connectedCallback();
@@ -371,11 +385,14 @@ export const DOM = {
      * @param node The disconnected node.
      */
     disconnect(node: Node) {
-        let previousNodes = this.getChildNodes(node) || [];
+        if (checkNativeSupport()) {
+            return;
+        }
+        const previousNodes = this.getChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.disconnectedCallback();
         }
-        let children = this.getChildNodes(node);
+        const children = this.getChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 let child = children[i];
@@ -395,10 +412,11 @@ export const DOM = {
         if (PROXIES[name]) {
             return PROXIES[name];
         }
-        if (!CONSTRUCTORS[name]) {
-            CONSTRUCTORS[name] = typeof window !== 'undefined' && (window as any)[name];
+        let constructor = CONSTRUCTORS[name];
+        if (!constructor) {
+            constructor = CONSTRUCTORS[name] = typeof window !== 'undefined' && (window as any)[name];
         }
-        return PROXIES[name] = shim(CONSTRUCTORS[name]);
+        return PROXIES[name] = class extends shim(constructor) {};
     },
 
     /**
@@ -409,8 +427,12 @@ export const DOM = {
      */
     define<T extends typeof HTMLElement = typeof HTMLElement>(name: string, constructor: T): T {
         constructor = CONSTRUCTORS[name] = constructor;
-        if (PROXIES[name]) {
-            PROXIES[name].prototype = constructor.prototype;
+        const oldProxy = PROXIES[name];
+        if (oldProxy) {
+            delete PROXIES[name];
+            const newProxy = this.get(name);
+            Object.setPrototypeOf(oldProxy, newProxy);
+            Object.setPrototypeOf(oldProxy.prototype, newProxy.prototype);
         }
         return constructor;
     },

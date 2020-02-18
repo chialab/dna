@@ -1,5 +1,5 @@
 import { DOM } from '../../../lib/DOM';
-import { get } from '../../../lib/registry';
+import { registry } from '../../../lib/CustomElementRegistry';
 import { isCustomElement } from '../../../lib/CustomElement';
 
 const JSDOM = require('js' + 'dom').JSDOM;
@@ -103,7 +103,7 @@ Object.assign(DOM, {
         return event && event instanceof Event;
     },
     createElement(tagName: string, options?: ElementCreationOptions): Element {
-        const constructor = get(options && options.is || tagName.toLowerCase());
+        const constructor = registry.get(options && options.is || tagName.toLowerCase());
         const node = document.createElement(tagName);
         if (!constructor || (options && (options as any).plain)) {
             return node;
@@ -120,10 +120,6 @@ Object.assign(DOM, {
         return new CustomEvent(typeArg, eventInitDict);
     },
     appendChild<T extends Node>(parent: Element, newChild: T): T {
-        if (parent.lastChild as unknown as Node === newChild) {
-            // the child is already the last element of the parent
-            return newChild;
-        }
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
@@ -137,9 +133,6 @@ Object.assign(DOM, {
         return oldChild;
     },
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
-        if (refChild && refChild.previousSibling === newChild) {
-            return newChild;
-        }
         if (newChild.parentNode) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
@@ -148,10 +141,7 @@ Object.assign(DOM, {
         return newChild;
     },
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
-        if (oldChild === newChild) {
-            return oldChild;
-        }
-        if (newChild.parentNode) {
+        if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
             this.removeChild(newChild.parentNode as Element, newChild);
         }
         Node.prototype.replaceChild.call(parent, newChild, oldChild);
@@ -166,14 +156,14 @@ Object.assign(DOM, {
         return Element.prototype.hasAttribute.call(element, qualifiedName);
     },
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        let oldValue = this.getAttribute(element, qualifiedName);
+        const oldValue = this.getAttribute(element, qualifiedName);
         Element.prototype.setAttribute.call(element, qualifiedName, value);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
     },
     removeAttribute(element: Element, qualifiedName: string) {
-        let oldValue = this.getAttribute(element, qualifiedName);
+        const oldValue = this.getAttribute(element, qualifiedName);
         Element.prototype.removeAttribute.call(element, qualifiedName);
         if (isCustomElement(element)) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);

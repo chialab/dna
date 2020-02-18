@@ -1,11 +1,13 @@
-import { CustomElement, CE_SYMBOL } from './CustomElement';
-import { REGISTRY } from './registry';
+import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
+import { registry } from './CustomElementRegistry';
 import { DelegatedEventCallback, DOM } from './DOM';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
 import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
+
+export type Properties = { [key: string]: any; };
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -14,6 +16,11 @@ import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver,
  */
 export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } {
     class Component extends (constructor as typeof HTMLElement) {
+        /**
+         * An array containing the names of the attributes to observe.
+         */
+        static readonly observedAttributes: string[] = [];
+
         /**
          * An unique symbol for DNA Custom elements.
          * @ignore
@@ -25,7 +32,9 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * The tag name used for Component definition.
          */
-        readonly is: string | undefined;
+        get is(): string {
+            return '';
+        }
 
         /**
          * A set of properties to define to the node.
@@ -65,51 +74,63 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
          */
-        constructor(node?: HTMLElement | { [key: string]: any; }, properties: { [key: string]: any; } = {}) {
+        constructor(node?: HTMLElement | Properties, properties: Properties = {}) {
+            const NATIVE_SUPPORT = checkNativeSupport();
             super();
 
             if (!this.is) {
-                throw new TypeError('Illegal constructor.');
+                throw new TypeError('Illegal constructor');
             }
 
-            if (!DOM.isElement(node)) {
-                properties = node || {};
-                const definition = REGISTRY[this.is];
-                node = DOM.createElement(definition.extends || definition.name, {
-                    is: definition.name,
-                    plain: true,
-                } as unknown as ElementCreationOptions) as HTMLElement;
+            let element: CustomElement<T> = node as CustomElement<T>;
+            let props: Properties = properties as Properties;
+
+            if (!DOM.isElement(element)) {
+                props = node || {};
+                const constructor = registry.get(this.is);
+                const extend = constructor.prototype.extends;
+                const is = constructor.prototype.is;
+                if (NATIVE_SUPPORT && !extend) {
+                    element = this as unknown as CustomElement<T>;
+                } else {
+                    element = DOM.createElement(extend || is, {
+                        is,
+                        plain: true,
+                    }) as CustomElement<T>;
+                    DOM.setAttribute(element, 'is', this.is);
+                }
+            } else {
+                DOM.setAttribute(element, 'is', this.is);
             }
 
-            Object.setPrototypeOf(node, Object.getPrototypeOf(this));
+            const constructor = this.constructor;
+            const prototype = constructor.prototype;
+            Object.setPrototypeOf(element, prototype);
 
-            setScope(node, createScope(node as HTMLElement));
+            setScope(element, createScope(element));
+            setSlotted(element, DOM.getChildNodes(element) as TemplateItems);
 
             const propertyDescriptors = this.properties;
             if (propertyDescriptors) {
                 for (let propertyKey in propertyDescriptors) {
                     const descriptor = propertyDescriptors[propertyKey];
-                    const symbol = defineProperty(node as HTMLElement, propertyKey, descriptor);
-                    if (!(propertyKey in properties)) {
-                        initProperty(node, symbol, descriptor);
+                    const symbol = defineProperty(element as HTMLElement, propertyKey, descriptor);
+                    if (!(propertyKey in props)) {
+                        initProperty(element, symbol, descriptor);
                     }
                 }
             }
 
             // setup Component properties
-            for (let propertyKey in properties) {
-                (node as any)[propertyKey] = properties[propertyKey];
+            for (let propertyKey in props) {
+                (element as any)[propertyKey] = props[propertyKey];
             }
 
-            DOM.setAttribute(node as HTMLElement, 'is', this.is);
-
-            setSlotted(node as HTMLElement, DOM.getChildNodes(node as HTMLElement) as TemplateItems);
-
-            if (node.isConnected) {
-                DOM.connect(node as Node);
+            if (element.isConnected && !NATIVE_SUPPORT) {
+                DOM.connect(element);
             }
 
-            return node as this;
+            return element as unknown as this;
         }
 
         /**
@@ -147,26 +168,47 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param oldValue The previous value of the attribute.
          * @param newValue The new value for the attribute (null if removed).
          */
-        attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: null | string) {
+        attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
+            const constructor = this.constructor as typeof Component;
+            const observedAttributes = constructor.observedAttributes;
             const properties = getProperties(this.constructor);
+
             let property: ClassFieldDescriptor | undefined;
             for (let propertyKey in properties) {
                 let prop = properties[propertyKey];
-                if (prop.attribute === attributeName) {
+                if (prop.attribute) {
+                    if (prop.attribute === attributeName) {
+                        property = prop;
+                        break;
+                    }
+                    continue;
+                }
+                if (observedAttributes.indexOf(prop.name as string) !== -1) {
                     property = prop;
                     break;
                 }
             }
-            if (property) {
-                const propName = property.name as string;
-                // if the attribute value is empty or it is equal to the attribute name
-                // consider it as a positive boolean
-                let value = (newValue === '' || newValue === attributeName) ? true : newValue;
-                if ((this as any)[propName] != value) {
-                    // update the Component Property value
-                    (this as any)[propName] = value;
-                }
+
+            if (!property) {
+                return;
             }
+
+            let value: any;
+            if (newValue === '' || newValue === attributeName) {
+                // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
+                value = true;
+            } else if (newValue) {
+                try {
+                    value = JSON.parse(newValue as string);
+                } catch {
+                    value = newValue;
+                }
+            } else {
+                value = newValue;
+            }
+
+            // update the Component Property value
+            (this as any)[property.name as string] = value;
         }
 
         /**
@@ -176,7 +218,40 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {}
+        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
+            const constructor = this.constructor as typeof Component;
+            const observedAttributes = constructor.observedAttributes;
+            const properties = getProperties(constructor);
+            const falsy = newValue == null || newValue === false;
+
+            let property: ClassFieldDescriptor | undefined;
+            for (let propertyKey in properties) {
+                let prop = properties[propertyKey];
+                if (prop.name === propertyName) {
+                    property = prop;
+                    break;
+                }
+            }
+
+            if (!property) {
+                return;
+            }
+
+            const propAttribute = property.attribute || observedAttributes.indexOf(property.name as string) !== -1;
+            if (!propAttribute) {
+                return;
+            }
+
+            const computedAttribute = (propAttribute === true ? property.name : propAttribute) as string;
+            // update the bound attribute
+            if (falsy) {
+                // a falsy value should remove the attribute
+                this.removeAttribute(computedAttribute);
+            } else if (typeof newValue !== 'object') {
+                // if the value is `true` should set an empty attribute, otherwise just set the value
+                this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
+            }
+        }
 
         /**
          * Observe a Component Property.
@@ -195,7 +270,6 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
 
         /**
          * Unobserve a Component Property.
-         * @memberof PropertiesMixin
          *
          * @param propertyName The name of the Property to unobserve
          * @param callback The callback function to remove
