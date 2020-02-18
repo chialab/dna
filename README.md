@@ -113,19 +113,15 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 **Define the Component**
 ```ts
-import { Component, property, define, render } from '@chialab/dna';
+import { Component, property, listener, define, render } from '@chialab/dna';
 
 class HelloWorld extends Component {
     @property() // define an observable Component property
     name: string;
 
-    // define a list of delegated events
-    get events() {
-        return {
-            'input [name="name"]': (event, target) => {
-                this.name = target.value;
-            },
-        };
+    @listener('input', '[name="name"]') // define a delegated event
+    setName(event, target) {
+        this.name = target.value;
     }
 }
 

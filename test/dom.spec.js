@@ -495,12 +495,19 @@ describe('DOM', function() {
             expect(listener2.count).to.be.equal(1);
         });
 
-        it.skip('should do nothing if there are no delegations', () => {
-            //
+        it('should do nothing if there are no delegations', () => {
+            const button = DNA.DOM.createElement('button');
+            expect(() => {
+                DNA.DOM.undelegateEventListener(button, 'click', null, () => { });
+            }).to.not.throw();
         });
 
-        it.skip('should do nothing if there are no delegations for an event', () => {
-            //
+        it('should do nothing if there are no delegations for an event', () => {
+            const button = DNA.DOM.createElement('button');
+            DNA.DOM.delegateEventListener(button, 'click', null, () => {});
+            expect(() => {
+                DNA.DOM.undelegateEventListener(button, 'missing', null, () => { });
+            }).to.not.throw();
         });
 
         it('should validate undelegateEventListener input', () => {
@@ -540,12 +547,8 @@ describe('DOM', function() {
 
         it('should validate undelegateAllEventListeners input', () => {
             expect(() => {
-                DNA.DOM.undelegateEventListener(null, null, null, null);
+                DNA.DOM.undelegateAllEventListeners(null, null, null, null);
             }).to.throw(TypeError, 'The provided element must be a Node');
-        });
-
-        it.skip('should throw if argument is not a Node', () => {
-            //
         });
     });
 });

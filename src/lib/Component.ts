@@ -408,7 +408,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
  *
  * @example
  * ```ts
- * import { Component, property, define, render } from '＠chialab/dna';
+ * import { Component, property, listener, define, render } from '＠chialab/dna';
  *
  * class HelloWorld extends Component {
  *   // define an observable property
@@ -416,17 +416,14 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
  *   name: string;
  *
  *   // define a list of delegated events
- *   get events {
- *     return {
- *       'input [name="name"]': (event, target) => {
- *         this.name = target.value;
- *       },
- *     };
- *   };
+ *   @listener('input', '[name="name"]') // define a delegated event
+ *   setName(event, target) {
+ *       this.name = target.value;
+ *   }
  *
  *   // define the template
  *   render() {
- *      return html`<div>${this.name}</div>`;
+ *       return html`<div>${this.name}</div>`;
  *   }
  * }
  *
