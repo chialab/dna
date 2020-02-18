@@ -18,16 +18,14 @@ export type HyperFunction = (this: Scope, previousElement?: Element) => Template
  * @param target The reference to check.
  * @return The reference is a HyperFunction.
  */
-export function isHyperFunction(target: any): target is HyperFunction {
-    return !!target[HYPER_SYMBOL];
-}
+export const isHyperFunction = (target: any): target is HyperFunction => !!target[HYPER_SYMBOL];
 
 /**
  * Flag a function as HyperFunction.
  * @param fn The function to flag.
  * @return The updated function.
  */
-export function createHyperFunction(fn: Function): HyperFunction {
+export const createHyperFunction = (fn: Function): HyperFunction => {
     (fn as any)[HYPER_SYMBOL] = true;
     return fn as HyperFunction;
-}
+};

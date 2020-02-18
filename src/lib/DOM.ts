@@ -1,7 +1,7 @@
 import { createSymbolKey } from './symbols';
 import { isCustomElement, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
-import { shim } from './shim';
+import { shim, setPrototypeOf } from './shim';
 
 /**
  * Collect native HTMLElement constructors.
@@ -65,6 +65,54 @@ type WithEventDelegations = {
         [key: string]: DelegationList;
     };
 }
+
+export const assertNode = (element: any) => {
+    if (!DOM.isNode(element)) {
+        throw new TypeError('The provided element must be a Node');
+    }
+};
+
+export const assertEvent = (event: any) => {
+    if (!DOM.isEvent(event)) {
+        throw new TypeError('The provided object must be an Event');
+    }
+};
+
+export const assertEventName = (eventName: any) => {
+    if (typeof eventName !== 'string') {
+        throw new TypeError('The provided event name must be a string');
+    }
+};
+
+export const assertEventSelector = (selector: any) => {
+    if (selector !== null && typeof selector !== 'string') {
+        throw new TypeError('The provided selector must be a string or null');
+    }
+};
+
+export const assertEventCallback = (callback: any) => {
+    if (typeof callback !== 'function') {
+        throw new TypeError('The provided callback must be a function');
+    }
+};
+
+export const assertEventBubbles = (bubbles: any) => {
+    if (typeof bubbles !== 'boolean') {
+        throw new TypeError('The provided bubbles option must be a boolean');
+    }
+};
+
+export const assertEventCancelable = (cancelable: any) => {
+    if (typeof cancelable !== 'boolean') {
+        throw new TypeError('The provided cancelable option must be a boolean');
+    }
+};
+
+export const assertEventComposed = (composed: any) => {
+    if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
+        throw new TypeError('The provided composed option must be a boolean');
+    }
+};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -431,8 +479,8 @@ export const DOM = {
         if (oldProxy) {
             delete PROXIES[name];
             const newProxy = this.get(name);
-            Object.setPrototypeOf(oldProxy, newProxy);
-            Object.setPrototypeOf(oldProxy.prototype, newProxy.prototype);
+            setPrototypeOf(oldProxy, newProxy);
+            setPrototypeOf(oldProxy.prototype, newProxy.prototype);
         }
         return constructor;
     },
@@ -448,18 +496,12 @@ export const DOM = {
      */
     delegateEventListener(element: Node, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
         const delegatedElement: Node & WithEventDelegations = element;
-        if (!this.isNode(element)) {
-            throw new TypeError('The provided element must be a Node');
-        }
-        if (typeof eventName !== 'string') {
-            throw new TypeError('The provided event name must be a string');
-        }
-        if (selector !== null && typeof selector !== 'string') {
-            throw new TypeError('The provided selector must be a string or null');
-        }
-        if (typeof callback !== 'function') {
-            throw new TypeError('The provided callback must be a function');
-        }
+
+        assertNode(element);
+        assertEventName(eventName);
+        assertEventSelector(selector);
+        assertEventCallback(callback);
+
         // get all delegations
         const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
         // initialize the delegation list
@@ -557,18 +599,10 @@ export const DOM = {
      * @param callback The callback to remove
      */
     undelegateEventListener(element: Node, eventName: string, selector: string|null, callback: DelegatedEventCallback) {
-        if (!this.isNode(element)) {
-            throw new TypeError('The provided element must be a Node');
-        }
-        if (typeof eventName !== 'string') {
-            throw new TypeError('The provided event name must be a string');
-        }
-        if (selector !== null && typeof selector !== 'string') {
-            throw new TypeError('The provided selector must be a string or null');
-        }
-        if (typeof callback !== 'function') {
-            throw new TypeError('The provided callback must be a function');
-        }
+        assertNode(element);
+        assertEventName(eventName);
+        assertEventSelector(selector);
+        assertEventCallback(callback);
 
         const delegatedElement: Node & WithEventDelegations = element;
         // get all delegations
@@ -598,9 +632,7 @@ export const DOM = {
      * @param element The root element of the delegation
      */
     undelegateAllEventListeners(element: Node) {
-        if (!this.isNode(element)) {
-            throw new TypeError('The provided element must be a Node');
-        }
+        assertNode(element);
 
         const delegatedElement: Node & WithEventDelegations = element;
         // get all delegations
@@ -628,20 +660,12 @@ export const DOM = {
      * @param composed Is the event composed.
      */
     dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
-        if (!this.isNode(element)) {
-            throw new TypeError('The provided element must be a Node');
-        }
+        assertNode(element);
 
         if (typeof event === 'string') {
-            if (typeof bubbles !== 'boolean') {
-                throw new TypeError('The provided bubbles option must be a boolean');
-            }
-            if (typeof cancelable !== 'boolean') {
-                throw new TypeError('The provided cancelable option must be a boolean');
-            }
-            if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-                throw new TypeError('The provided composed option must be a boolean');
-            }
+            assertEventBubbles(bubbles);
+            assertEventCancelable(cancelable);
+            assertEventComposed(composed);
 
             event = this.createEvent(event, {
                 detail,
@@ -649,8 +673,8 @@ export const DOM = {
                 cancelable,
                 composed,
             });
-        } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided object must be an Event');
+        } else {
+            assertEvent(event);
         }
 
         return Node.prototype.dispatchEvent.call(element, event);

@@ -10,12 +10,12 @@ const VALIDATION_REGEX = /^[a-z](?:[-.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u
  * Check the validity of a Custom Element name.
  * @param name The name to validate.
  */
-function assertValidateCustomElementName(name: string): boolean {
+const assertValidateCustomElementName = (name: string): boolean => {
     if (!name || !name.match(VALIDATION_REGEX)) {
         throw new SyntaxError('The provided name must be a valid Custom Element name');
     }
     return true;
-}
+};
 
 /**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.

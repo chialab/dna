@@ -11,15 +11,13 @@ const SLOTTED_SYMBOL = createSymbolKey();
  * @param template The template target with slotted children.
  * @return A list of child template items.
  */
-export function getSlotted(template: Template): TemplateItems {
-    return (template as any)[SLOTTED_SYMBOL];
-}
+export const getSlotted = (template: Template): TemplateItems => (template as any)[SLOTTED_SYMBOL];
 
 /**
  * Set slotted children to a template item.
  * @param template The template target.
  * @param slotted A list of child template items.
  */
-export function setSlotted(template: Template, slotted: TemplateItems): void {
+export const setSlotted = (template: Template, slotted: TemplateItems): void => {
     (template as any)[SLOTTED_SYMBOL] = slotted;
-}
+};

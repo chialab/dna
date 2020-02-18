@@ -21,28 +21,28 @@ define('test-base-html-component', TestBaseHTMLComponent);
 DOM.lifeCycle(true);
 
 describe.skip('[Compat] Base HTML Component', () => {
-    describe.skip('> inject simple content', () => {
+    describe('> inject simple content', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello' });
         });
 
-        it.skip('check if element has the correct content', () => {
+        it('check if element has the correct content', () => {
             assert.equal(elem.node.innerHTML, '<p>Hello</p>');
         });
     });
 
-    describe.skip('> inject complex content', () => {
+    describe('> inject complex content', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello <strong>world!</strong>' });
         });
 
-        it.skip('check if element has the correct content', () => {
+        it('check if element has the correct content', () => {
             assert.equal(elem.node.innerHTML, '<p>Hello <strong>world!</strong></p>');
         });
 
-        it.skip('check if element has all children', () => {
+        it('check if element has all children', () => {
             expect(elem.node.querySelector('strong')).to.exist;
         });
     });

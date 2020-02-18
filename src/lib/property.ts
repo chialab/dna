@@ -97,7 +97,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @param descriptor The class field descriptor.
  * @return The native property descriptor.
  */
-function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol): PropertyDescriptor {
+const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol): PropertyDescriptor => {
     const finalDescriptor: PropertyDescriptor = {
         enumerable: true,
     };
@@ -159,7 +159,7 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol):
     };
 
     return finalDescriptor;
-}
+};
 
 /**
  * Define a property on a target.
@@ -169,10 +169,12 @@ function classFieldToProperty(descriptor: ClassFieldDescriptor, symbol: symbol):
  * @param descriptor The class field descriptor.
  * @return The property symbol.
  */
-export function defineProperty(target: Object, propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
-    const constructor = target.constructor as Function & { [PROPERTIES_SYMBOL]?: {
+export const defineProperty = (target: Object, propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol => {
+    const constructor = target.constructor as Function & {
+    [PROPERTIES_SYMBOL]?: {
         [key: string]: ClassFieldDescriptor;
-    }};
+    }
+    };
     const descriptors = constructor[PROPERTIES_SYMBOL] = constructor[PROPERTIES_SYMBOL] || {};
 
     if (propertyKey in descriptors) {
@@ -188,7 +190,7 @@ export function defineProperty(target: Object, propertyKey: string, descriptor: 
     Object.defineProperty(constructor.prototype, propertyKey, classFieldToProperty(descriptor, symbol));
 
     return symbol;
-}
+};
 
 /**
  * Get a list of class field descriptors for a target.
@@ -196,9 +198,7 @@ export function defineProperty(target: Object, propertyKey: string, descriptor: 
  * @param constructor The class constructor.
  * @return A list of class field descriptors keyed by property names.
  */
-export function getProperties(constructor: Function): { [key: string]: ClassFieldDescriptor } {
-    return (constructor as any)[PROPERTIES_SYMBOL] || {};
-}
+export const getProperties = (constructor: Function): { [key: string]: ClassFieldDescriptor } => (constructor as any)[PROPERTIES_SYMBOL] || {};
 
 /**
  * Initialize instance property.
@@ -209,7 +209,7 @@ export function getProperties(constructor: Function): { [key: string]: ClassFiel
  * @param initializer The initializer function of the decorator.
  * @return The current property value.
  */
-export function initProperty(target: any, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any {
+export const initProperty = (target: any, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any => {
     if (typeof target[symbol] !== 'undefined') {
         return target[symbol];
     }
@@ -221,7 +221,7 @@ export function initProperty(target: any, symbol: symbol, descriptor: ClassField
         target[symbol] = descriptor.defaultValue;
     }
     return target[symbol];
-}
+};
 
 /**
  * A decorator for class fields definition.
@@ -229,8 +229,8 @@ export function initProperty(target: any, symbol: symbol, descriptor: ClassField
  * @param descriptor The class field description.
  * @return The decorator initializer.
  */
-export function property(descriptor: ClassFieldDescriptor = {}) {
-    return (targetOrClassElement: Object | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+export const property = (descriptor: ClassFieldDescriptor = {}) =>
+    (targetOrClassElement: Object | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
 
         let element: ClassElement;
@@ -268,4 +268,3 @@ export function property(descriptor: ClassFieldDescriptor = {}) {
             },
         } as ClassElement;
     };
-}

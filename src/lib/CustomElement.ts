@@ -13,16 +13,12 @@ export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param node The node to check.
  * @return The node is a Custom Element instance.
  */
-export function isCustomElement(node: any): node is CustomElement {
-    return node[CE_SYMBOL] === true;
-}
+export const isCustomElement = (node: any): node is CustomElement => node[CE_SYMBOL] === true;
 
 /**
  * Check if the environment supports Custom Elements.
  */
-export function checkNativeSupport() {
-    return typeof customElements !== 'undefined';
-}
+export const checkNativeSupport = () => typeof customElements !== 'undefined';
 
 /**
  * The basic Custom Element interface.

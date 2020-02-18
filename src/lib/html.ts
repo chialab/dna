@@ -9,9 +9,7 @@ import { DOM } from './DOM';
  * @param node The node to check.
  * @return The node is a `<template>` element.
  */
-function isTemplateTag(node: any): node is HTMLTemplateElement {
-    return node && node.tagName === 'TEMPLATE';
-}
+const isTemplateTag = (node: any): node is HTMLTemplateElement => node && node.tagName === 'TEMPLATE';
 
 enum Namespaces {
     SVG = 'http://www.w3.org/2000/svg',
@@ -90,7 +88,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
  * @param template The template to parse.
  * @return The virtual DOM template function.
  */
-export function html(template: string | HTMLTemplateElement): Template {
+export const html = (template: string | HTMLTemplateElement): Template => {
     let chunks: Array<HyperFunction | InterpolationFunction>;
     if (isTemplateTag(template)) {
         chunks = innerCompile(template.content.childNodes);
@@ -103,4 +101,4 @@ export function html(template: string | HTMLTemplateElement): Template {
     }
 
     return chunks;
-}
+};

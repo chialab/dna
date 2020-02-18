@@ -163,7 +163,7 @@ describe.skip('[Compat] StyleComponent', () => {
         elem4 = render(WRAPPER, TestComponent4);
     });
 
-    it.skip('should handle `css` getter property', () => {
+    it('should handle `css` getter property', () => {
         let style = window.getComputedStyle((elem1.node.shadowRoot || elem1.node).querySelector('h1'));
         let styleH3 = window.getComputedStyle((elem1.node.shadowRoot || elem1.node).querySelector('h3'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
@@ -173,13 +173,13 @@ describe.skip('[Compat] StyleComponent', () => {
         assert.equal(styleOutside.color, 'rgb(0, 0, 0)');
     });
 
-    it.skip('should handle `css` getter property with state', () => {
+    it('should handle `css` getter property with state', () => {
         let style = window.getComputedStyle((elem2.node.shadowRoot || elem2.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
     });
 
-    it.skip('should handle `css` with content getter property', () => {
+    it('should handle `css` with content getter property', () => {
         let root = elem3.node.shadowRoot || elem3.node;
         let before1 = window.getComputedStyle(root.querySelector('#before1'), ':before');
         let before2 = window.getComputedStyle(root.querySelector('#before2'), ':before');
@@ -195,7 +195,7 @@ describe.skip('[Compat] StyleComponent', () => {
         assert.equal(normalizeContent(before6.content), 'hello-world');
     });
 
-    it.skip('should handle `css` comments', () => {
+    it('should handle `css` comments', () => {
         let style = window.getComputedStyle((elem4.node.shadowRoot || elem4.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');

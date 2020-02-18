@@ -16,19 +16,17 @@ export type InterpolationFunction = (this: Scope) => string;
  * @param fn The function to flag.
  * @return The updated function.
  */
-export function createInterpolationFunction(fn: Function): InterpolationFunction {
+export const createInterpolationFunction = (fn: Function): InterpolationFunction => {
     (fn as any)[INTERPOLATION_SYMBOL] = true;
     return fn as InterpolationFunction;
-}
+};
 
 /**
  * Check if the reference is an InterpolationFunction.
  * @param target The reference to check.
  * @return The reference is a InterpolateFunction.
  */
-export function isInterpolationFunction(target: any): target is InterpolationFunction {
-    return !!target[INTERPOLATION_SYMBOL];
-}
+export const isInterpolationFunction = (target: any): target is InterpolationFunction => !!target[INTERPOLATION_SYMBOL];
 
 /**
  * Split a string into chunks, where even indexes are real strings and odd indexes are expressions.
@@ -40,9 +38,7 @@ const PARSE_REGEX = /\{\{(.*?)\}\}/g;
  *
  * @param text The text to escape
  */
-function escape(text: string): string {
-    return text.replace(/'/g, '\\\'').replace(/\n/g, '\\n');
-}
+const escape = (text: string): string => text.replace(/'/g, '\\\'').replace(/\n/g, '\\n');
 
 /**
  * Create an InterpolationFunction.
@@ -50,7 +46,7 @@ function escape(text: string): string {
  * @param expression The expression to compile.
  * @return A simple string if the expression does not need interpolation, or an InterpolationFunction for content generation.
  */
-export function compile(expression: string): InterpolationFunction {
+export const compile = (expression: string): InterpolationFunction => {
     // split the expression into chunks
     const chunks = expression.trim().split(PARSE_REGEX);
     // the generated function body
@@ -73,4 +69,4 @@ export function compile(expression: string): InterpolationFunction {
     body += ';';
 
     return createInterpolationFunction(new Function(body));
-}
+};

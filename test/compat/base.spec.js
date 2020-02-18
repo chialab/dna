@@ -96,8 +96,8 @@ define('test-base-idom-component-2', TestBaseIDOMComponent2, {
 DOM.lifeCycle(true);
 
 describe.skip('[Compat] BaseComponent without definition', () => {
-    describe.skip('> constructor', () => {
-        it.skip('should throw', () => {
+    describe('> constructor', () => {
+        it('should throw', () => {
             assert.throws(() => new TestBaseComponent3(), 'Component has not been defined');
         });
     });
@@ -110,38 +110,38 @@ describe.skip('[Compat] BaseComponent', () => {
         elem.lastName = 'Turing';
     });
 
-    describe.skip('> created', () => {
-        it.skip('check if element has the correct tag', () => {
+    describe('> created', () => {
+        it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'test-base-component');
         });
 
-        it.skip('check if element is correctly instantiated', () => {
+        it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);
         });
     });
 
-    describe.skip('> attached', () => {
-        it.skip('check if element is correctly attached to the tree', () => {
+    describe('> attached', () => {
+        it('check if element is correctly attached to the tree', () => {
             DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });
 
-    describe.skip('> attributeChanged', () => {
-        it.skip('check if element is correctly trigger attributeChangedCallback', () => {
+    describe('> attributeChanged', () => {
+        it('check if element is correctly trigger attributeChangedCallback', () => {
             DOM.setAttribute(elem, 'name', 'Alan');
             assert.equal(elem.name, 'Alan');
         });
     });
 
-    describe.skip('> render', () => {
-        it.skip('check if element has been correctly rendered', () => {
+    describe('> render', () => {
+        it('check if element has been correctly rendered', () => {
             assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
         });
     });
 
-    describe.skip('> detached', () => {
-        it.skip('check if element is correctly detached from the tree', () => {
+    describe('> detached', () => {
+        it('check if element is correctly detached from the tree', () => {
             DOM.removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });
@@ -155,39 +155,39 @@ describe.skip('[Compat] BaseComponent with native element', () => {
         elem.lastName = 'Turing';
     });
 
-    describe.skip('> created', () => {
-        it.skip('check if element has the correct tag', () => {
+    describe('> created', () => {
+        it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
             assert.equal(elem.node.getAttribute('is').toLowerCase(), 'test-base-component-2');
         });
 
-        it.skip('check if element is correctly instantiated', () => {
+        it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);
         });
     });
 
-    describe.skip('> attached', () => {
-        it.skip('check if element is correctly attached to the tree', () => {
+    describe('> attached', () => {
+        it('check if element is correctly attached to the tree', () => {
             DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.attached, true);
         });
     });
 
-    describe.skip('> attributeChanged', () => {
-        it.skip('check if element is correctly trigger attributeChangedCallback', () => {
+    describe('> attributeChanged', () => {
+        it('check if element is correctly trigger attributeChangedCallback', () => {
             DOM.setAttribute(elem, 'name', 'Alan');
             assert.equal(elem.name, 'Alan');
         });
     });
 
-    describe.skip('> render', () => {
-        it.skip('check if element has been correctly rendered', () => {
+    describe('> render', () => {
+        it('check if element has been correctly rendered', () => {
             assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing');
         });
     });
 
-    describe.skip('> detached', () => {
-        it.skip('check if element is correctly detached from the tree', () => {
+    describe('> detached', () => {
+        it('check if element is correctly detached from the tree', () => {
             DOM.removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });
@@ -200,37 +200,37 @@ describe.skip('[Compat] Base IDOM Component', () => {
         elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
     });
 
-    describe.skip('> created', () => {
-        it.skip('check if element has the correct tag', () => {
+    describe('> created', () => {
+        it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'test-base-idom-component');
         });
 
-        it.skip('check if element is correctly instantiated', () => {
+        it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);
         });
     });
 
-    describe.skip('> attached', () => {
-        it.skip('check if element is correctly attached to the tree', () => {
+    describe('> attached', () => {
+        it('check if element is correctly attached to the tree', () => {
             assert.equal(elem.attached, true);
         });
     });
 
-    describe.skip('> attributeChanged', () => {
-        it.skip('check if element is correctly trigger attributeChangedCallback', () => {
+    describe('> attributeChanged', () => {
+        it('check if element is correctly trigger attributeChangedCallback', () => {
             DOM.setAttribute(elem, 'name', 'Alan');
             assert.equal(elem.name, 'Alan');
         });
     });
 
-    describe.skip('> render', () => {
-        it.skip('check if element has been correctly rendered', () => {
+    describe('> render', () => {
+        it('check if element has been correctly rendered', () => {
             assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing 42');
         });
     });
 
-    describe.skip('> detached', () => {
-        it.skip('check if element is correctly detached from the tree', () => {
+    describe('> detached', () => {
+        it('check if element is correctly detached from the tree', () => {
             DOM.removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });
@@ -243,38 +243,38 @@ describe.skip('[Compat] Base IDOM Component with native element', () => {
         elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing', age: 42 });
     });
 
-    describe.skip('> created', () => {
-        it.skip('check if element has the correct tag', () => {
+    describe('> created', () => {
+        it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
             assert.equal(elem.node.getAttribute('is'), 'test-base-idom-component-2');
         });
 
-        it.skip('check if element is correctly instantiated', () => {
+        it('check if element is correctly instantiated', () => {
             assert.equal(elem.created, true);
         });
     });
 
-    describe.skip('> attached', () => {
-        it.skip('check if element is correctly attached to the tree', () => {
+    describe('> attached', () => {
+        it('check if element is correctly attached to the tree', () => {
             assert.equal(elem.attached, true);
         });
     });
 
-    describe.skip('> attributeChanged', () => {
-        it.skip('check if element is correctly trigger attributeChangedCallback', () => {
+    describe('> attributeChanged', () => {
+        it('check if element is correctly trigger attributeChangedCallback', () => {
             DOM.setAttribute(elem, 'name', 'Alan');
             assert.equal(elem.name, 'Alan');
         });
     });
 
-    describe.skip('> render', () => {
-        it.skip('check if element has been correctly rendered', () => {
+    describe('> render', () => {
+        it('check if element has been correctly rendered', () => {
             assert.equal(elem.node.querySelector('span').textContent, 'Alan Turing 42');
         });
     });
 
-    describe.skip('> detached', () => {
-        it.skip('check if element is correctly detached from the tree', () => {
+    describe('> detached', () => {
+        it('check if element is correctly detached from the tree', () => {
             DOM.removeChild(WRAPPER, elem);
             assert.equal(elem.attached, false);
         });

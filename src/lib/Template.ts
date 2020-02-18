@@ -38,11 +38,11 @@ export type Template = TemplateItem | TemplateItems;
  * @param filter The filter function to bind.
  * @return A new list with the filter property populated.
  */
-export function createFilterableTemplateItems(template: TemplateItems, filter: TemplateFilter): TemplateItems {
+export const createFilterableTemplateItems = (template: TemplateItems, filter: TemplateFilter): TemplateItems => {
     const filterableItems = (template || []).slice(0) as TemplateItems;
     (filterableItems as any)[FILTER_SYMBOL] = filter;
     return filterableItems;
-}
+};
 
 /**
  * Get the filter function for a template.
@@ -50,6 +50,4 @@ export function createFilterableTemplateItems(template: TemplateItems, filter: T
  * @param template The template target.
  * @return A filter function (if defined).
  */
-export function getTemplateItemsFilter(template: Template): TemplateFilter | undefined {
-    return (template as any)[FILTER_SYMBOL];
-}
+export const getTemplateItemsFilter = (template: Template): TemplateFilter | undefined => (template as any)[FILTER_SYMBOL];

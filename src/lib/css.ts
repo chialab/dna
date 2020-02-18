@@ -30,7 +30,7 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
  * @param cssText The CSS string.
  * @return A scoped CSS string.
  */
-export function css(name: string, cssText: string): string {
+export const css = (name: string, cssText: string): string => {
     if (typeof name !== 'string') {
         throw new TypeError('The provided name must be a string');
     }
@@ -62,4 +62,4 @@ export function css(name: string, cssText: string): string {
                 })
                 .join(',');
         });
-}
+};

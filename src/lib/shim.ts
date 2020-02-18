@@ -1,16 +1,10 @@
-import { checkNativeSupport } from './CustomElement';
-
 /**
- * Make constructor newable.
+ * Sets the prototype of a specified object o to object proto or null.
  *
- * @param constructor The constructor or the class to shim.
- * @return A newable constructor with the same prototype.
+ * @param target The object to change its prototype.
+ * @param source The value of the new prototype or null.
  */
-function shimPrototype<T extends typeof HTMLElement>(constructor: T): T {
-    const shim = function() { } as any as T;
-    shim.prototype = constructor.prototype;
-    return shim;
-}
+export const setPrototypeOf = (target: any, source: object | null) => Object.setPrototypeOf(target, source);
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -19,22 +13,17 @@ function shimPrototype<T extends typeof HTMLElement>(constructor: T): T {
  * @param constructor The constructor or the class to shim.
  * @return A newable constructor with the same prototype.
  */
-export function shim<T extends typeof HTMLElement>(constructor: T): T {
-    if (typeof Reflect === 'undefined' || !checkNativeSupport()) {
-        return shimPrototype(constructor);
-    }
-
-    let originalConstructor = constructor;
+export const shim = <T extends typeof HTMLElement>(constructor: T): T => {
     // compatibility with Babel transpiled class
     const shim = function(this: any, ...args: any[]) {
         try {
-            return Reflect.construct(originalConstructor, [], this.constructor);
-        } catch (error) {
-            originalConstructor = shimPrototype(originalConstructor);
+            return Reflect.construct(constructor, args, this.constructor);
+        } catch {
+            //
         }
-        return Reflect.construct(originalConstructor, args, this.constructor);
+        return this;
     } as any as T;
-    Object.setPrototypeOf(shim, originalConstructor);
-    Object.setPrototypeOf(shim.prototype, originalConstructor.prototype);
+    setPrototypeOf(shim, constructor);
+    setPrototypeOf(shim.prototype, constructor.prototype);
     return shim;
-}
+};

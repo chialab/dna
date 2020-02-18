@@ -182,7 +182,7 @@ define('test2-idom-placeholder', Test2IDOMPlaceholder, {
 DOM.lifeCycle(true);
 
 describe.skip('[Compat] TemplateComponent', () => {
-    it.skip('should handle `template` getter property as function with interpolation', () => {
+    it('should handle `template` getter property as function with interpolation', () => {
         const elem = render(WRAPPER, TestComponent1);
 
         assert.equal(elem.node.innerHTML, 'Hello, ');
@@ -192,19 +192,19 @@ describe.skip('[Compat] TemplateComponent', () => {
         assert.equal(elem.node.innerHTML, '<h1>Title</h1><br>Hello, Alan Turing');
     });
 
-    it.skip('should handle `template` getter property as string', () => {
+    it('should handle `template` getter property as string', () => {
         const elem = render(WRAPPER, TestComponent2);
 
         assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
-    it.skip('should handle `template` getter property as number', () => {
+    it('should handle `template` getter property as number', () => {
         const elem = render(WRAPPER, TestComponent3);
 
         assert.equal(elem.node.innerHTML, '4');
     });
 
-    it.skip('should handle templates with <svg>', () => {
+    it('should handle templates with <svg>', () => {
         const elem = render(WRAPPER, TestComponent4);
 
         elem.radius = 40;
@@ -216,7 +216,7 @@ describe.skip('[Compat] TemplateComponent', () => {
 });
 
 describe.skip('[Compat] IDOMTemplateComponent', () => {
-    it.skip('should handle `template` with IDOM calls', () => {
+    it('should handle `template` with IDOM calls', () => {
         const elem = render(WRAPPER, TestIDOMComponent1);
 
         assert.equal(elem.node.innerHTML, '<span>Hello, </span>');
@@ -226,13 +226,13 @@ describe.skip('[Compat] IDOMTemplateComponent', () => {
         assert.equal(elem.node.innerHTML, '<h1>Title</h1><br><span>Hello, Alan Turing</span>');
     });
 
-    it.skip('should handle `template` with JSX IDOM calls', () => {
+    it('should handle `template` with JSX IDOM calls', () => {
         const elem = render(WRAPPER, TestIDOMComponent2);
 
         assert.equal(elem.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
     });
 
-    it.skip('should handle templates with <svg>', () => {
+    it('should handle templates with <svg>', () => {
         const elem = render(WRAPPER, TestIDOMComponent4);
 
         elem.radius = 40;
@@ -243,31 +243,31 @@ describe.skip('[Compat] IDOMTemplateComponent', () => {
         assert.equal(circle.getAttribute('r'), '40');
     });
 
-    describe.skip('should handle sub components', () => {
+    describe('should handle sub components', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestIDOMComponent5);
         });
 
-        it.skip('and their callbacks', () => {
+        it('and their callbacks', () => {
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             const testElement2 = elem.node.querySelector('figure');
             assert.equal(DOM.getNodeComponent(testElement1).value, 6);
             assert.equal(DOM.getNodeComponent(testElement2).value, 11);
         });
 
-        it.skip('and their life cycle (connected)', () => {
+        it('and their life cycle (connected)', () => {
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             assert.equal(DOM.getNodeComponent(testElement1).attached, true);
         });
 
-        it.skip('and their life cycle (disconnected)', () => {
+        it('and their life cycle (disconnected)', () => {
             DOM.removeChild(WRAPPER, elem);
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             assert.equal(DOM.getNodeComponent(testElement1).attached, false);
         });
 
-        it.skip('and their life cycle (riconnected)', () => {
+        it('and their life cycle (riconnected)', () => {
             DOM.appendChild(WRAPPER, elem);
             const testElement1 = elem.node.querySelector('test-idom-placeholder');
             assert.equal(DOM.getNodeComponent(testElement1).attached, true);

@@ -30,7 +30,7 @@ export type Scope = HTMLElement & {
  * @param prototype The initial prototype object for the Scope.
  * @return An object with the Scope interface.
  */
-export function createScope(prototype: HTMLElement) {
+export const createScope = (prototype: HTMLElement) => {
     const scope = {} as Scope;
     scope.__proto__ = {
         $assign(this: Scope, values: { [key: string]: any }) {
@@ -48,22 +48,20 @@ export function createScope(prototype: HTMLElement) {
     };
 
     return scope;
-}
+};
 
 /**
  * Get the Scope attached to an object.
  * @param target The scoped object.
  * @return The Scope object (if it exists).
  */
-export function getScope(target: any): Scope | undefined {
-    return target[SCOPE_SYMBOL];
-}
+export const getScope = (target: any): Scope | undefined => target[SCOPE_SYMBOL];
 
 /**
  * Attach a Scope to an object.
  * @param target The object to scope.
  * @param scope The Scope to set.
  */
-export function setScope(target: any, scope: Scope): void {
+export const setScope = (target: any, scope: Scope): void => {
     target[SCOPE_SYMBOL] = scope;
-}
+};

@@ -23,36 +23,35 @@ describe('Component', function() {
 
     describe('#new', () => {
         it('should create a node', () => {
-            const TestElement = class extends DNA.Component { };
-            DNA.define('test-component', TestElement);
+            const TestElement1 = class extends DNA.Component { };
+            DNA.define('test-component', TestElement1);
 
-            const element = new TestElement();
+            const element = new TestElement1();
             expect(element).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
             expect(element.is).to.be.equal('test-component');
             expect(element.tagName).to.be.equal('TEST-COMPONENT');
         });
 
         it('should extend a native node', () => {
-            const TestElement = class extends DNA.Component { };
-            DNA.define('test-component2', TestElement, {
+            const TestElement2 = class extends DNA.Component { };
+            DNA.define('test-component2', TestElement2, {
                 extends: 'article',
             });
 
-            const element = new TestElement();
+            const element = new TestElement2();
             expect(element).to.be.an.instanceof(DNA.DOM.get('HTMLElement'));
             expect(element.is).to.be.equal('test-component2');
             expect(element.tagName).to.be.equal('ARTICLE');
             expect(element.getAttribute('is')).to.be.equal('test-component2');
         });
 
-        it.skip('should throw if element is not defined', () => {
-            const TestElement = class extends DNA.Component { };
-
-            expect(() => new TestElement).to.throw(TypeError, 'Illegal constructor');
+        it('should throw if element is not defined', () => {
+            const TestElementUndefined = class extends DNA.Component { };
+            expect(() => new TestElementUndefined()).to.throw(TypeError);
         });
 
         it('should setup properties', () => {
-            const TestElement = class extends DNA.Component {
+            const TestElement3 = class extends DNA.Component {
                 get properties() {
                     return {
                         myCustomProp1: {
@@ -65,9 +64,9 @@ describe('Component', function() {
                 @DNA.property() myCustomProp3 = '';
             };
 
-            DNA.define('test-component3', TestElement);
+            DNA.define('test-component3', TestElement3);
 
-            const element = new TestElement();
+            const element = new TestElement3();
 
             expect(element).to.have.property('myCustomProp1');
             expect(element).to.have.property('myCustomProp2');
@@ -76,7 +75,7 @@ describe('Component', function() {
         });
 
         it('should initialize properties', () => {
-            const TestElement = class extends DNA.Component {
+            const TestElement4 = class extends DNA.Component {
                 get properties() {
                     return {
                         myCustomProp1: {
@@ -89,9 +88,9 @@ describe('Component', function() {
                 @DNA.property() myCustomProp3 = '';
             };
 
-            DNA.define('test-component4', TestElement);
+            DNA.define('test-component4', TestElement4);
 
-            const element = new TestElement({
+            const element = new TestElement4({
                 myCustomProp1: 42,
                 myCustomProp2: 'toast',
             });
@@ -102,7 +101,7 @@ describe('Component', function() {
 
         it('should connect already connected nodes', () => {
             let connected = false;
-            const TestElement = class extends DNA.Component {
+            const TestElement5 = class extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connected = true;
@@ -111,10 +110,9 @@ describe('Component', function() {
 
             wrapper.innerHTML = '<test-component5></test-component5>';
             expect(connected).to.be.false;
-            DNA.define('test-component5', TestElement);
+            DNA.define('test-component5', TestElement5);
             DNA.upgrade(wrapper);
             expect(connected).to.be.true;
-
         });
     });
 
@@ -223,74 +221,74 @@ describe('Component', function() {
         });
     });
 
-    describe('#disconnectedCallback', () => {
-        it.skip('should disconnect on removeChild', () => {
+    describe.skip('#disconnectedCallback', () => {
+        it('should disconnect on removeChild', () => {
             //
         });
 
-        it.skip('should disconnect and reconnect on replaceChild', () => {
+        it('should disconnect and reconnect on replaceChild', () => {
             //
         });
 
-        it.skip('should disconnect and reconnect on insertBefore', () => {
+        it('should disconnect and reconnect on insertBefore', () => {
             //
         });
 
-        it.skip('should NOT disconnect if not moved', () => {
-            //
-        });
-    });
-
-    describe('#attributeChangedCallback', () => {
-        it.skip('should handle attribute changes on setAttribute', () => {
-            //
-        });
-
-        it.skip('should handle attribute changes on removeAttribute', () => {
-            //
-        });
-
-        it.skip('should NOT handle attribute if nothing changed on setAttribute', () => {
+        it('should NOT disconnect if not moved', () => {
             //
         });
     });
 
-    describe('#propertyChangedCallback', () => {
-        it.skip('should handle property changes on assignment', () => {
+    describe.skip('#attributeChangedCallback', () => {
+        it('should handle attribute changes on setAttribute', () => {
             //
         });
 
-        it.skip('should handle property changes on deletion', () => {
+        it('should handle attribute changes on removeAttribute', () => {
             //
         });
 
-        it.skip('should should re-render on property changes', () => {
-            //
-        });
-
-        it.skip('should NOT handle property if nothing changed on assignment', () => {
+        it('should NOT handle attribute if nothing changed on setAttribute', () => {
             //
         });
     });
 
-    describe('#appendChild', () => {
-        it.skip('should append and connect child', () => {
+    describe.skip('#propertyChangedCallback', () => {
+        it('should handle property changes on assignment', () => {
             //
         });
 
-        it.skip('should move and connect a child from a parent', () => {
+        it('should handle property changes on deletion', () => {
+            //
+        });
+
+        it('should should re-render on property changes', () => {
+            //
+        });
+
+        it('should NOT handle property if nothing changed on assignment', () => {
             //
         });
     });
 
-    describe('#removeChild', () => {
-        it.skip('should remove and disconnect a child', () => {
+    describe.skip('#appendChild', () => {
+        it('should append and connect child', () => {
+            //
+        });
+
+        it('should move and connect a child from a parent', () => {
             //
         });
     });
 
-    describe('#insertBefore', () => {
-        it.skip('should insert and connect a child before another', () => {
+    describe.skip('#removeChild', () => {
+        it('should remove and disconnect a child', () => {
+            //
+        });
+    });
+
+    describe.skip('#insertBefore', () => {
+        it('should insert and connect a child before another', () => {
             //
         });
 
@@ -303,50 +301,50 @@ describe('Component', function() {
         });
     });
 
-    describe('#replaceChild', () => {
-        it.skip('should reaplce and connect child in a parent', () => {
+    describe.skip('#replaceChild', () => {
+        it('should reaplce and connect child in a parent', () => {
             //
         });
 
-        it.skip('should reaplce and connect a child (and remove it from the previous parent) in a parent', () => {
+        it('should reaplce and connect a child (and remove it from the previous parent) in a parent', () => {
             //
         });
 
-        it.skip('should do nothing if the node is the same', () => {
-            //
-        });
-    });
-
-    describe('#observe', () => {
-        it.skip('should observe property changes', () => {
+        it('should do nothing if the node is the same', () => {
             //
         });
     });
 
-    describe('#unobserve', () => {
-        it.skip('should unobserve property changes', () => {
+    describe.skip('#observe', () => {
+        it('should observe property changes', () => {
             //
         });
     });
 
-    describe('#dispatchEvent', () => {
-        it.skip('should dispatch an event', () => {
-            //
-        });
-
-        it.skip('should create and dispatch a custom event', () => {
+    describe.skip('#unobserve', () => {
+        it('should unobserve property changes', () => {
             //
         });
     });
 
-    describe('#delegate', () => {
-        it.skip('should delegate an event', () => {
+    describe.skip('#dispatchEvent', () => {
+        it('should dispatch an event', () => {
+            //
+        });
+
+        it('should create and dispatch a custom event', () => {
             //
         });
     });
 
-    describe('#undelegate', () => {
-        it.skip('should undelegate an event', () => {
+    describe.skip('#delegate', () => {
+        it('should delegate an event', () => {
+            //
+        });
+    });
+
+    describe.skip('#undelegate', () => {
+        it('should undelegate an event', () => {
             //
         });
     });
@@ -395,7 +393,7 @@ describe('Component', function() {
             });
         });
 
-        describe.skip('#setAttribute', () => {
+        describe('#setAttribute', () => {
             it('should set an attribute', () => {
                 element.setAttribute('missing', 'DNA');
                 expect(element.getAttribute('missing')).to.be.equal('DNA');
@@ -412,7 +410,7 @@ describe('Component', function() {
             });
         });
 
-        describe.skip('#hasAttribute', () => {
+        describe('#hasAttribute', () => {
             it('should return `true` if element has an attribute', () => {
                 expect(element.hasAttribute('title')).to.be.true;
             });
@@ -422,7 +420,7 @@ describe('Component', function() {
             });
         });
 
-        describe.skip('#removeAttribute', () => {
+        describe('#removeAttribute', () => {
             it('should remove an attribute', () => {
                 element.removeAttribute('title');
                 expect(element.hasAttribute('title')).to.be.false;

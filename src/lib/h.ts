@@ -28,7 +28,7 @@ type KeyedElement = Element & { key?: any };
  * @param oldNode The previous Node to compare
  * @return The same old Node instance or a new one
  */
-function getRoot(constructor: string | typeof Element, key?: string, namespaceURI?: string, oldNode?: KeyedElement): Element {
+const getRoot = (constructor: string | typeof Element, key?: string, namespaceURI?: string, oldNode?: KeyedElement): Element => {
     // start the comparison
     if (typeof constructor === 'function') {
         // the requested Node is a Component and/or the previous Node is it,
@@ -39,7 +39,7 @@ function getRoot(constructor: string | typeof Element, key?: string, namespaceUR
         }
         // in this case, we should instantiate a new Component
         return new constructor();
-    // check if old node and requested one have the same tag name
+        // check if old node and requested one have the same tag name
     } else if (oldNode && oldNode.localName === constructor && key === oldNode.key) {
         // compatible!
         return oldNode;
@@ -49,7 +49,7 @@ function getRoot(constructor: string | typeof Element, key?: string, namespaceUR
         return DOM.createElementNS(namespaceURI, constructor);
     }
     return DOM.createElement(constructor);
-}
+};
 
 export type HyperProperties = {
     is?: string;
@@ -68,7 +68,7 @@ export const Fragment = function() {} as any as typeof Element;
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export function h(tag: string | typeof Element, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction {
+export const h = (tag: string | typeof Element, properties: HyperProperties | null, ...children: TemplateItems): HyperFunction => {
     let isFragment: boolean, isTemplate: boolean, isSlot: boolean;
     // Patch instances could be generated from the `h` function using JSX,
     // so the first parameter could be the Node constructor
@@ -223,4 +223,4 @@ export function h(tag: string | typeof Element, properties: HyperProperties | nu
     };
 
     return createHyperFunction(fn);
-}
+};

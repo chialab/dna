@@ -54,7 +54,7 @@ const render = (data) => {
 };
 
 describe.skip('[Compat] IDOM observer', () => {
-    describe.skip('callbacks', () => {
+    describe('callbacks', () => {
         let node, elem;
         before(() => {
             IDOM.patch(WRAPPER, render, { show: true, age: 20, married: false });
@@ -62,12 +62,12 @@ describe.skip('[Compat] IDOM observer', () => {
             elem = DOM.getNodeComponent(node);
         });
 
-        it.skip('should create a component instance', () => {
+        it('should create a component instance', () => {
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
         });
 
-        it.skip('should update a component', () => {
+        it('should update a component', () => {
             IDOM.patch(WRAPPER, render, { show: true, age: 21, married: true });
             assert.equal(elem.node.getAttribute('age'), '21');
             assert.equal(elem.age, 21);
@@ -75,7 +75,7 @@ describe.skip('[Compat] IDOM observer', () => {
             assert.equal(elem.married, true);
         });
 
-        it.skip('should remove a component', () => {
+        it('should remove a component', () => {
             IDOM.patch(WRAPPER, render, { show: false });
             assert.equal(elem.node.parentNode, undefined);
             assert.equal(elem.disconnectedTimes, 1);

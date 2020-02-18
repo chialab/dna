@@ -77,23 +77,23 @@ define('test2-properties-component', TestComponent2);
 DOM.lifeCycle(true);
 
 describe.skip('[Compat] PropertiesComponent', () => {
-    describe.skip('handle property validation', () => {
+    describe('handle property validation', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestComponent1);
         });
 
-        it.skip('should throw if invalid type', () => {
+        it('should throw if invalid type', () => {
             let fn = () => elem.age = 'Hello';
             assert.throws(fn, 'Invalid `Hello` value for `age` property for `test1-properties-component`.');
         });
 
-        it.skip('should throw if invalid value', () => {
+        it('should throw if invalid value', () => {
             let fn = () => elem.age = -1;
             assert.throws(fn, 'Invalid `-1` value for `age` property for `test1-properties-component`.');
         });
 
-        it.skip('should accept null/undefined values', () => {
+        it('should accept null/undefined values', () => {
             elem.age = 51;
             assert.equal(elem.age, 51);
             elem.age = null;
@@ -102,12 +102,13 @@ describe.skip('[Compat] PropertiesComponent', () => {
             assert.equal(elem.age, undefined);
         });
 
-        it.skip('should accept string value as boolean when string equals property name or empty string', () => {
+        it('should accept string value as boolean when string equals property name or empty string', () => {
             DOM.setAttribute(elem, 'validbool', 'validbool');
             assert.equal(elem.validbool, true);
         });
     });
-    describe.skip('handle properties on initialization', () => {
+
+    describe('handle properties on initialization', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestComponent1, {
@@ -118,7 +119,7 @@ describe.skip('[Compat] PropertiesComponent', () => {
             });
         });
 
-        it.skip('init element\'s properties', () => {
+        it('init element\'s properties', () => {
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
             assert.equal(elem.married, true);
@@ -126,7 +127,7 @@ describe.skip('[Compat] PropertiesComponent', () => {
             assert.equal(elem.type, 2);
         });
 
-        it.skip('observe property changes', () => {
+        it('observe property changes', () => {
             let changedSingle = 0;
             let callback = () => {
                 changedSingle++;
@@ -141,37 +142,37 @@ describe.skip('[Compat] PropertiesComponent', () => {
         });
     });
 
-    describe.skip('handle props 2 attrs', () => {
+    describe('handle props 2 attrs', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestComponent2);
         });
 
-        it.skip('check sync between property and attribute', () => {
+        it('check sync between property and attribute', () => {
             elem.title = 'DNA Test';
             assert.equal(elem.node.getAttribute('title'), 'DNA Test');
         });
 
-        it.skip('check sync between custom property and attribute', () => {
+        it('check sync between custom property and attribute', () => {
             elem.var = 1234;
             elem.id = 'dna-test';
             assert.equal(elem.node.getAttribute('var'), '1234');
             assert.equal(elem.node.getAttribute('id'), 'dna-test');
         });
 
-        it.skip('check sync between custom computed property and attribute', () => {
+        it('check sync between custom computed property and attribute', () => {
             elem.myVar = true;
             assert.equal(elem.node.getAttribute('my-var'), '');
             elem.myVar = false;
             assert.equal(elem.node.getAttribute('my-var'), null);
         });
 
-        it.skip('check sync between custom computed property with setter and attribute', () => {
+        it('check sync between custom computed property with setter and attribute', () => {
             elem.myVar3 = true;
             assert.equal(elem.node.getAttribute('my-var3'), 'DNA Test');
         });
 
-        it.skip('dispatch event', () => {
+        it('dispatch event', () => {
             let triggered = 0;
             elem.node.addEventListener('changed', (ev) => {
                 let data = ev.detail;
@@ -188,7 +189,7 @@ describe.skip('[Compat] PropertiesComponent', () => {
         });
     });
 
-    describe.skip('handle attrs 2 props', () => {
+    describe('handle attrs 2 props', () => {
         let elem;
         before(() => {
             elem = render(WRAPPER, TestComponent2);
@@ -197,23 +198,23 @@ describe.skip('[Compat] PropertiesComponent', () => {
             DOM.setAttribute(elem, 'my-var2', '');
         });
 
-        it.skip('check sync between attribute and property', () => {
+        it('check sync between attribute and property', () => {
             assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
 
-        it.skip('check sync between custom attribute and property', () => {
+        it('check sync between custom attribute and property', () => {
             assert.equal(elem.node.getAttribute('mine'), 1234);
             assert.equal(elem.mine, 1234);
         });
 
-        it.skip('check sync between custom computed attribute and property', () => {
+        it('check sync between custom computed attribute and property', () => {
             assert.equal(elem.node.getAttribute('my-var2'), '');
             assert.equal(elem.myVar2, true);
         });
     });
 
-    describe.skip('handle attrs 2 props on initialization', () => {
+    describe('handle attrs 2 props on initialization', () => {
         let elem;
         before(() => {
             elem = new TestComponent2();
@@ -223,17 +224,17 @@ describe.skip('[Compat] PropertiesComponent', () => {
             DOM.appendChild(WRAPPER, elem);
         });
 
-        it.skip('check sync between attribute and property', () => {
+        it('check sync between attribute and property', () => {
             assert.equal(elem.node.getAttribute('alt'), 'DNA Test 2');
             assert.equal(elem.alt, 'DNA Test 2');
         });
 
-        it.skip('check sync between custom attribute and property', () => {
+        it('check sync between custom attribute and property', () => {
             assert.equal(elem.node.getAttribute('mine'), 1234);
             assert.equal(elem.mine, 1234);
         });
 
-        it.skip('check sync between custom computed attribute and property', () => {
+        it('check sync between custom computed attribute and property', () => {
             assert.equal(elem.node.getAttribute('my-var2'), '');
             assert.equal(elem.myVar2, true);
         });

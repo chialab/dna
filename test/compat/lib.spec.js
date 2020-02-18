@@ -38,9 +38,9 @@ define('test1-helper-component', TestComponent);
 define('helper-define-component', TestComponent2, { extends: 'div' });
 
 describe.skip('[Compat] lib', () => {
-    describe.skip('define', () => {
-        describe.skip('a simple element', () => {
-            it.skip('should define a custom element', () => {
+    describe('define', () => {
+        describe('a simple element', () => {
+            it('should define a custom element', () => {
                 const elem = new TestComponent();
                 assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
                 assert.equal(elem.name, 'Alan');
@@ -48,8 +48,8 @@ describe.skip('[Compat] lib', () => {
             });
         });
 
-        describe.skip('an element with extends field', () => {
-            it.skip('a custom element with extends field', () => {
+        describe('an element with extends field', () => {
+            it('a custom element with extends field', () => {
                 const elem = render(WRAPPER, TestComponent2);
                 assert.equal(elem.node.localName.toLowerCase(), 'div');
                 assert.equal(elem.name, 'Alan');
@@ -58,26 +58,26 @@ describe.skip('[Compat] lib', () => {
         });
     });
 
-    describe.skip('DOM helpers', () => {
+    describe('DOM helpers', () => {
         let elem, elem2;
         before(() => {
             elem = new TestComponent();
             elem2 = render(WRAPPER, TestComponent2);
         });
 
-        it.skip('should do nothing', () => {
+        it('should do nothing', () => {
             const tmp = document.createElement('div');
             assert(!DOM.connect(tmp));
             assert(!DOM.disconnect(tmp));
         });
 
-        it.skip('should create a component instance', () => {
+        it('should create a component instance', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
         });
 
-        it.skip('should append a component', () => {
+        it('should append a component', () => {
             DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 0);
@@ -86,7 +86,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should append a component before another', () => {
+        it('should append a component before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem2.node.parentNode, WRAPPER);
@@ -97,7 +97,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should do nothing if already before another', () => {
+        it('should do nothing if already before another', () => {
             DOM.insertBefore(WRAPPER, elem, elem2);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem2.node.parentNode, WRAPPER);
@@ -108,7 +108,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should append again a component', () => {
+        it('should append again a component', () => {
             DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 2);
@@ -117,7 +117,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should do nothing if already last child of parent', () => {
+        it('should do nothing if already last child of parent', () => {
             DOM.appendChild(WRAPPER, elem);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 2);
@@ -126,7 +126,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should replace a child', () => {
+        it('should replace a child', () => {
             DOM.replaceChild(WRAPPER, elem, elem2);
             assert.equal(elem.node.parentNode, WRAPPER);
             assert.equal(elem.disconnectedTimes, 3);
@@ -135,7 +135,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem2.connectedTimes, 1);
         });
 
-        it.skip('should set attributes', () => {
+        it('should set attributes', () => {
             DOM.setAttribute(elem, 'age', 20);
             DOM.setAttribute(elem, 'married', '');
             assert.equal(elem.attributeChanges, 1);
@@ -143,7 +143,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem.node.getAttribute('married'), '');
         });
 
-        it.skip('should remove attributes', () => {
+        it('should remove attributes', () => {
             DOM.removeAttribute(elem, 'age');
             DOM.removeAttribute(elem, 'married');
             assert.equal(elem.attributeChanges, 2);
@@ -152,7 +152,7 @@ describe.skip('[Compat] lib', () => {
         });
     });
 
-    describe.skip('bootstrap', () => {
+    describe('bootstrap', () => {
         let WRAPPER, WRAPPER2;
         before(() => {
             WRAPPER = document.createElement('div');
@@ -161,7 +161,7 @@ describe.skip('[Compat] lib', () => {
             WRAPPER2.innerHTML = '<p>Hello again <test1-helper-component age="21"/><test1-helper-component age="22"/></p>';
         });
 
-        it.skip('should instantiate all components', () => {
+        it('should instantiate all components', () => {
             bootstrap(WRAPPER);
             const elem = DOM.getNodeComponent(
                 WRAPPER.querySelector('.test1-helper-component')
@@ -173,7 +173,7 @@ describe.skip('[Compat] lib', () => {
             assert.equal(elem.lastName, 'Turing');
         });
 
-        it.skip('should call callback for every component', () => {
+        it('should call callback for every component', () => {
             let count = 0;
             bootstrap(WRAPPER2, () => {
                 count++;

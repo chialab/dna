@@ -1,5 +1,6 @@
 import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
+import { setPrototypeOf } from './shim';
 import { DelegatedEventCallback, DOM } from './DOM';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -14,7 +15,7 @@ export type Properties = { [key: string]: any; };
  * @param constructor The base HTMLElement constructor to extend.
  * @return The extend class.
  */
-export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } {
+export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } =>
     class Component extends (constructor as typeof HTMLElement) {
         /**
          * An array containing the names of the attributes to observe.
@@ -75,10 +76,11 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param properties A set of initial properties for the element.
          */
         constructor(node?: HTMLElement | Properties, properties: Properties = {}) {
-            const NATIVE_SUPPORT = checkNativeSupport();
             super();
+            const NATIVE_SUPPORT = checkNativeSupport();
+            const is = this.is;
 
-            if (!this.is) {
+            if (!is) {
                 throw new TypeError('Illegal constructor');
             }
 
@@ -87,9 +89,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
 
             if (!DOM.isElement(element)) {
                 props = node || {};
-                const constructor = registry.get(this.is);
+                const constructor = registry.get(is);
                 const extend = constructor.prototype.extends;
-                const is = constructor.prototype.is;
                 if (NATIVE_SUPPORT && !extend) {
                     element = this as unknown as CustomElement<T>;
                 } else {
@@ -97,16 +98,13 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
                         is,
                         plain: true,
                     }) as CustomElement<T>;
-                    DOM.setAttribute(element, 'is', this.is);
+                    DOM.setAttribute(element, 'is', is);
                 }
             } else {
-                DOM.setAttribute(element, 'is', this.is);
+                DOM.setAttribute(element, 'is', is);
             }
 
-            const constructor = this.constructor;
-            const prototype = constructor.prototype;
-            Object.setPrototypeOf(element, prototype);
-
+            setPrototypeOf(element, this.constructor.prototype);
             setScope(element, createScope(element));
             setSlotted(element, DOM.getChildNodes(element) as TemplateItems);
 
@@ -274,7 +272,7 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param propertyName The name of the Property to unobserve
          * @param callback The callback function to remove
          */
-        unobserve(propertyName: string, callback ?: ClassFieldObserver) {
+        unobserve(propertyName: string, callback?: ClassFieldObserver) {
             let property = getProperties(this.constructor)[propertyName];
             if (!property) {
                 throw new Error(`missing property ${propertyName}`);
@@ -399,10 +397,8 @@ export function mixin<T extends HTMLElement = HTMLElement>(constructor: { new():
         removeAttribute(qualifiedName: string) {
             return DOM.removeAttribute(this, qualifiedName);
         }
-    }
+    } as unknown as { new(): CustomElement<T>, prototype: CustomElement<T> };
 
-    return Component as unknown as { new(): CustomElement<T>, prototype: CustomElement<T> };
-}
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with

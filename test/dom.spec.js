@@ -382,20 +382,20 @@ describe('DOM', function() {
 
             expect(() => {
                 DNA.DOM.dispatchEvent(wrapper, 'click', null, null, null, null);
-            }).to.throw(TypeError, 'The provided bubbles option must be a boolean');
+            }).to.throw(TypeError);
 
             expect(() => {
                 DNA.DOM.dispatchEvent(wrapper, 'click', null, true, null, null);
-            }).to.throw(TypeError, 'The provided cancelable option must be a boolean');
+            }).to.throw(TypeError);
 
             expect(() => {
                 DNA.DOM.dispatchEvent(wrapper, 'click', null, true, true, null);
-            }).to.throw(TypeError, 'The provided composed option must be a boolean');
+            }).to.throw(TypeError);
         });
     });
 
-    describe('#dispatchAyncEvent', () => {
-        it.skip('should trigger an event and return a Promise', () => {
+    describe.skip('#dispatchAyncEvent', () => {
+        it('should trigger an event and return a Promise', () => {
             //
         });
     });

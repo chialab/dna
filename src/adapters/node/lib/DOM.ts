@@ -1,4 +1,4 @@
-import { DOM } from '../../../lib/DOM';
+import { DOM, assertNode, assertEvent, assertEventBubbles, assertEventCancelable, assertEventComposed } from '../../../lib/DOM';
 import { registry } from '../../../lib/CustomElementRegistry';
 import { isCustomElement } from '../../../lib/CustomElement';
 
@@ -174,20 +174,12 @@ Object.assign(DOM, {
         return match.call(element, selectorString);
     },
     dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
-        if (!this.isNode(element)) {
-            throw new TypeError('The provided element must be a Node');
-        }
+        assertNode(element);
 
         if (typeof event === 'string') {
-            if (typeof bubbles !== 'boolean') {
-                throw new TypeError('The provided bubbles option must be a boolean');
-            }
-            if (typeof cancelable !== 'boolean') {
-                throw new TypeError('The provided cancelable option must be a boolean');
-            }
-            if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-                throw new TypeError('The provided composed option must be a boolean');
-            }
+            assertEventBubbles(bubbles);
+            assertEventCancelable(cancelable);
+            assertEventComposed(composed);
 
             event = this.createEvent(event, {
                 detail,
@@ -195,8 +187,8 @@ Object.assign(DOM, {
                 cancelable,
                 composed,
             });
-        } else if (!this.isEvent(event)) {
-            throw new TypeError('The provided object must be an Event');
+        } else {
+            assertEvent(event);
         }
 
         return Node.prototype.dispatchEvent.call(element, event);

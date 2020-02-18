@@ -45,9 +45,7 @@ export type RenderContext = {
  * @param node The node to check.
  * @return The node is a `<style>` element.
  */
-function isStyleTag(node: any): node is HTMLStyleElement {
-    return node && node.tagName === 'STYLE';
-}
+const isStyleTag = (node: any): node is HTMLStyleElement => node && node.tagName === 'STYLE';
 
 /**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
@@ -57,7 +55,7 @@ function isStyleTag(node: any): node is HTMLStyleElement {
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @return The resulting child Nodes.
  */
-export function render(node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void {
+export const render = (node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void => {
     const renderContext: RenderContext = {
         scope: getScope(node) || createScope(node),
         result: [],
@@ -87,7 +85,7 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
             for (let i = 0, len = input.length; i < len; i++) {
                 render(node, input[i], inputContext);
             }
-        // if it is an InterpolatedFunction or a HyperFunction
+            // if it is an InterpolatedFunction or a HyperFunction
         } else if (isInterpolationFunction(input)) {
             render(node, input.call(scope), inputContext);
         } else if (isHyperFunction(input)) {
@@ -179,4 +177,4 @@ export function render(node: HTMLElement, input: Template, context?: RenderConte
         }
     }
     return result;
-}
+};

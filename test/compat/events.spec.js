@@ -73,22 +73,22 @@ define('test3-events-component', TestPropagationComponent);
 
 DOM.lifeCycle(true);
 
-describe.skip('[Unit] EventsComponent', () => {
+describe.skip('[Compat] EventsComponent', () => {
     let elem;
     before(() => {
         elem = render(WRAPPER, TestComponent);
     });
 
-    describe.skip('delegate', () => {
-        describe.skip('custom events', () => {
-            it.skip('should be handled', () => {
+    describe('delegate', () => {
+        describe('custom events', () => {
+            it('should be handled', () => {
                 assert.equal(elem.customElement, elem.node);
                 assert.equal(elem.custom instanceof Event, true);
                 assert.equal(elem.custom.detail.data, 1234);
             });
         });
 
-        describe.skip('using api', () => {
+        describe('using api', () => {
             let fired = false;
             before(() => {
                 let span = elem.node.querySelector('span');
@@ -96,12 +96,12 @@ describe.skip('[Unit] EventsComponent', () => {
                 DOM.dispatchEvent(span, 'checkDelegation');
             });
 
-            it.skip('should trigger a function callback', () => {
+            it('should trigger a function callback', () => {
                 assert(fired);
             });
         });
 
-        describe.skip('events', () => {
+        describe('events', () => {
             let span, button, input;
 
             before((done) => {
@@ -124,26 +124,26 @@ describe.skip('[Unit] EventsComponent', () => {
                 delete elem.changed;
             });
 
-            it.skip('should trigger a function callback', () => {
+            it('should trigger a function callback', () => {
                 assert.equal(elem.clickedSpan, span);
                 assert.equal(elem.clickedSpanEvent instanceof Event, true);
                 assert.equal(elem.clickedSpanEvent.type, 'click');
             });
 
-            it.skip('should track click on button element', () => {
+            it('should track click on button element', () => {
                 assert.equal(elem.clickedElement, button);
                 assert.equal(elem.clicked instanceof Event, true);
                 assert.equal(elem.clicked.type, 'click');
             });
 
-            it.skip('should track changes on input element', () => {
+            it('should track changes on input element', () => {
                 assert.equal(elem.changedElement, input);
                 assert.equal(elem.changed instanceof Event, true);
                 assert.equal(elem.changed.type, 'change');
             });
         });
 
-        describe.skip('undelegate', () => {
+        describe('undelegate', () => {
             let span, button, input;
 
             before((done) => {
@@ -158,7 +158,7 @@ describe.skip('[Unit] EventsComponent', () => {
                 setTimeout(() => done(), 500);
             });
 
-            it.skip('should stop to delegate on component detached', () => {
+            it('should stop to delegate on component detached', () => {
                 assert.equal(elem.clickedSpan, undefined);
                 assert.equal(elem.clickedSpanEvent, undefined);
                 assert.equal(elem.clickedElement, undefined);
@@ -169,8 +169,8 @@ describe.skip('[Unit] EventsComponent', () => {
         });
     });
 
-    describe.skip('trigger', () => {
-        it.skip('should throw when event name is not defined in trigger', () => {
+    describe('trigger', () => {
+        it('should throw when event name is not defined in trigger', () => {
             let wrapper = () => {
                 elem.trigger();
             };
@@ -178,8 +178,8 @@ describe.skip('[Unit] EventsComponent', () => {
         });
     });
 
-    describe.skip('delegate invalid callbacks', () => {
-        it.skip('should throw', () => {
+    describe('delegate invalid callbacks', () => {
+        it('should throw', () => {
             let wrapper = () => {
                 render(WRAPPER, TestInvalidComponent);
             };
@@ -187,8 +187,8 @@ describe.skip('[Unit] EventsComponent', () => {
         });
     });
 
-    describe.skip('propagation', () => {
-        it.skip('should stop', () => {
+    describe('propagation', () => {
+        it('should stop', () => {
             const elem = render(WRAPPER, TestPropagationComponent);
             const checks = {
                 click1: false,
