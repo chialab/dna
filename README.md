@@ -36,7 +36,7 @@ DNA comes with a lot of features in a very small (~ 5kb gzipped) package. You ca
 
 ## Browsers support
 
-Tests are run against all modern browsers and primary legacy ones, like Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements) and as UMD module (targeting ES5), but some Babel helpers if you want to use decorators needs support for `Symbol`, `Oject.assign` and `Array.prototype.find`. Also, a polyfill for `Promise`s is required in IE11 if you are using async methods.
+Tests are run against all ever green browsers, Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements) and as UMD module (targeting ES5), but some Babel helpers if you want to use decorators need support for `Symbol`, `Object.assign` and `Array.prototype.find`. Also, a polyfill for `Promise`s is required in IE11 if you are using async methods.
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://saucelabs.com/u/chialab-sl-003)
 

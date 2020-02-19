@@ -6,11 +6,6 @@ import { shim } from './shim';
 type GlobalNamespace = Window & typeof globalThis;
 
 /**
- * Collect native HTMLElement constructors.
- */
-const CONSTRUCTORS: { [key: string]: typeof HTMLElement } = {};
-
-/**
  * Collect proxied HTMLElement constructors.
  */
 const PROXIES: { [key: string]: typeof HTMLElement } = {};
@@ -492,10 +487,7 @@ export const DOM = {
         if (PROXIES[name]) {
             return PROXIES[name];
         }
-        let constructor = CONSTRUCTORS[name];
-        if (!constructor) {
-            constructor = CONSTRUCTORS[name] = this.window[name];
-        }
+        const constructor = this.window[name];
         return PROXIES[name] = class extends shim(constructor) {};
     },
 

@@ -14,6 +14,11 @@ export const setPrototypeOf = (target: any, source: object | null) => Object.set
  * @return A newable constructor with the same prototype.
  */
 export const shim = <T extends typeof HTMLElement>(constructor: T): T => {
+    if (typeof constructor !== 'function') {
+        const originalConstructor = constructor as T;
+        constructor = function() {} as unknown as T;
+        constructor.prototype = originalConstructor.prototype;
+    }
     // compatibility with Babel transpiled class
     const shim = function(this: any, ...args: any[]) {
         try {
@@ -21,7 +26,6 @@ export const shim = <T extends typeof HTMLElement>(constructor: T): T => {
         } catch {
             //
         }
-        return this;
     } as any as T;
     setPrototypeOf(shim, constructor);
     setPrototypeOf(shim.prototype, constructor.prototype);

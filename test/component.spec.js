@@ -314,8 +314,8 @@ describe('Component', function() {
     });
 
     describe('#propertyChangedCallback', () => {
-        it.skip('should handle property changes on assignment', () => {
-            const properyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+        it('should handle property changes on assignment', () => {
+            const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
                 get properties() {
                     return {
@@ -327,37 +327,89 @@ describe('Component', function() {
 
                 @DNA.property() title = '';
 
-                properyChangedCallback(...args) {
-                    super.properyChangedCallback(...args);
-                    properyChangedCallback(...args);
+                propertyChangedCallback(...args) {
+                    super.propertyChangedCallback(...args);
+                    propertyChangedCallback(...args);
                 }
             }
 
             DNA.define('test-component14', TestElement);
 
             const element = new TestElement();
-            expect(properyChangedCallback.invoked).to.be.false;
+            expect(propertyChangedCallback.invoked).to.be.false;
             element.title = 'test';
-            expect(properyChangedCallback.invoked).to.be.true;
-            expect(properyChangedCallback.response).to.be.deep.equal(['title', undefined, 'test']);
+            expect(propertyChangedCallback.invoked).to.be.true;
+            expect(propertyChangedCallback.response).to.be.deep.equal(['title', '', 'test']);
             element.title = 'test2';
-            expect(properyChangedCallback.response).to.be.deep.equal(['title', 'test', 'test2']);
+            expect(propertyChangedCallback.response).to.be.deep.equal(['title', 'test', 'test2']);
             element.age = 42;
-            expect(properyChangedCallback.response).to.be.deep.equal(['age', undefined, '42']);
+            expect(propertyChangedCallback.response).to.be.deep.equal(['age', undefined, 42]);
             element.setAttribute('title', 'test');
-            expect(properyChangedCallback.count).to.be.equal(3);
+            expect(propertyChangedCallback.count).to.be.equal(3);
         });
 
-        it.skip('should handle property changes on deletion', () => {
-            //
+        it('should NOT handle property changes on delete', () => {
+            const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+            class TestElement extends DNA.Component {
+                get properties() {
+                    return {
+                        age: {
+                            types: [Number],
+                        },
+                    };
+                }
+
+                @DNA.property() title = '';
+
+                propertyChangedCallback(...args) {
+                    super.propertyChangedCallback(...args);
+                    propertyChangedCallback(...args);
+                }
+            }
+
+            DNA.define('test-component15', TestElement);
+
+            const element = new TestElement();
+            expect(propertyChangedCallback.invoked).to.be.false;
+            element.title = 'test';
+            expect(propertyChangedCallback.invoked).to.be.true;
+            expect(propertyChangedCallback.response).to.be.deep.equal(['title', '', 'test']);
+            delete element.title;
+            expect(propertyChangedCallback.count).to.be.equal(1);
         });
 
         it.skip('should should re-render on property changes', () => {
             //
         });
 
-        it.skip('should NOT handle property if nothing changed on assignment', () => {
-            //
+        it('should NOT handle property if nothing changed on assignment', () => {
+            const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+            class TestElement extends DNA.Component {
+                get properties() {
+                    return {
+                        age: {
+                            types: [Number],
+                        },
+                    };
+                }
+
+                @DNA.property() title = '';
+
+                propertyChangedCallback(...args) {
+                    super.propertyChangedCallback(...args);
+                    propertyChangedCallback(...args);
+                }
+            }
+
+            DNA.define('test-component17', TestElement);
+
+            const element = new TestElement();
+            expect(propertyChangedCallback.invoked).to.be.false;
+            element.title = 'test';
+            expect(propertyChangedCallback.invoked).to.be.true;
+            expect(propertyChangedCallback.response).to.be.deep.equal(['title', '', 'test']);
+            element.title = 'test';
+            expect(propertyChangedCallback.count).to.be.equal(1);
         });
     });
 
