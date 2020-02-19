@@ -1,7 +1,9 @@
 import { createSymbolKey } from './symbols';
 import { isCustomElement, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
-import { shim, setPrototypeOf } from './shim';
+import { shim } from './shim';
+
+type GlobalNamespace = Window & typeof globalThis;
 
 /**
  * Collect native HTMLElement constructors.
@@ -122,12 +124,42 @@ export const assertEventComposed = (composed: any) => {
  */
 export const DOM = {
     /**
+     * The window instance.
+     */
+    window: (typeof window !== 'undefined' ? window : undefined) as GlobalNamespace,
+
+    /**
+     * The document instance.
+     */
+    document: (typeof document !== 'undefined' ? document : undefined) as Document,
+
+    get Document() {
+        return this.window.Document;
+    },
+
+    get Node() {
+        return this.window.Node;
+    },
+
+    get Text() {
+        return this.window.Text;
+    },
+
+    get HTMLElement() {
+        return this.window.HTMLElement;
+    },
+
+    get CustomEvent() {
+        return this.window.CustomEvent;
+    },
+
+    /**
      * Check if a node is a Document instance.
      * @param node The node to check.
      * @return The node is a Document instance.
      */
     isDocument(node: any): node is Document {
-        return node && node instanceof Document;
+        return node && node instanceof this.Document;
     },
 
     /**
@@ -136,7 +168,7 @@ export const DOM = {
      * @return The node is a Node instance.
      */
     isNode(node: any): node is Node {
-        return node && node instanceof Node;
+        return node && node instanceof this.Node;
     },
 
     /**
@@ -145,7 +177,7 @@ export const DOM = {
      * @return The node is a Text instance.
      */
     isText(node: any): node is Text {
-        return node && node instanceof Text;
+        return node && node instanceof this.Text;
     },
 
     /**
@@ -154,7 +186,7 @@ export const DOM = {
      * @return The node is an Element instance.
      */
     isElement(node: any): node is HTMLElement {
-        return node && node instanceof HTMLElement;
+        return node && node instanceof this.HTMLElement;
     },
 
     /**
@@ -163,7 +195,7 @@ export const DOM = {
      * @return The object is an Event instance.
      */
     isEvent(event: any): event is Event {
-        return event && event instanceof Event;
+        return event && event instanceof this.window.Event;
     },
 
     /**
@@ -186,7 +218,7 @@ export const DOM = {
      */
     createElement(tagName: string, options?: ElementCreationOptions & { plain?: boolean }): Element {
         const name = options && options.is || tagName.toLowerCase();
-        const node = document.createElement(tagName);
+        const node = this.document.createElement(tagName);
         const constructor = registry.get(name);
         if (options && options.plain) {
             return node;
@@ -205,7 +237,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
-        return document.createElementNS(namespaceURI, tagName);
+        return this.document.createElementNS(namespaceURI, tagName);
     },
 
     /**
@@ -215,7 +247,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createTextNode(data: string): Text {
-        return document.createTextNode(data);
+        return this.document.createTextNode(data);
     },
 
     /**
@@ -226,9 +258,9 @@ export const DOM = {
     createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> {
         let event;
         try {
-            event = new CustomEvent(typeArg, eventInitDict);
+            event = new this.CustomEvent(typeArg, eventInitDict);
         } catch {
-            event = document.createEvent('CustomEvent');
+            event = this.document.createEvent('CustomEvent');
             event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
         }
         return event;
@@ -247,7 +279,7 @@ export const DOM = {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
-        Node.prototype.appendChild.call(parent, newChild);
+        this.Node.prototype.appendChild.call(parent, newChild);
         if (!NATIVE_SUPPORT) {
             this.connect(newChild);
         }
@@ -262,7 +294,7 @@ export const DOM = {
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
         const NATIVE_SUPPORT = checkNativeSupport();
-        Node.prototype.removeChild.call(parent, oldChild);
+        this.Node.prototype.removeChild.call(parent, oldChild);
         if (!NATIVE_SUPPORT) {
             this.disconnect(oldChild);
         }
@@ -283,7 +315,7 @@ export const DOM = {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
-        Node.prototype.insertBefore.call(parent, newChild, refChild);
+        this.Node.prototype.insertBefore.call(parent, newChild, refChild);
         if (!NATIVE_SUPPORT) {
             this.connect(newChild);
         }
@@ -304,7 +336,7 @@ export const DOM = {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
-        Node.prototype.replaceChild.call(parent, newChild, oldChild);
+        this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
         if (!NATIVE_SUPPORT) {
             this.disconnect(oldChild);
             this.connect(newChild);
@@ -319,7 +351,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return HTMLElement.prototype.getAttribute.call(element, qualifiedName);
+        return this.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -329,7 +361,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
+        return this.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -341,7 +373,7 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         const oldValue = this.getAttribute(element, qualifiedName);
-        HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
+        this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
         if (isCustomElement(element) && !checkNativeSupport()) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
@@ -355,7 +387,7 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string) {
         const oldValue = this.getAttribute(element, qualifiedName);
-        HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
+        this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
         if (isCustomElement(element) && !checkNativeSupport()) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
@@ -380,7 +412,7 @@ export const DOM = {
      * @param selectorString The selector to match.
      */
     matches(element: Element, selectorString: string): boolean {
-        const match = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+        const match = this.HTMLElement.prototype.matches || this.HTMLElement.prototype.webkitMatchesSelector || (this.HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
         return match.call(element, selectorString);
     },
 
@@ -456,33 +488,15 @@ export const DOM = {
      * @param name The name of the constructor (eg. "HTMLAnchorElement").
      * @return A proxy that extends the native constructor (if available).
      */
-    get(name: string): typeof HTMLElement {
+    get(name: 'HTMLElement'): typeof HTMLElement {
         if (PROXIES[name]) {
             return PROXIES[name];
         }
         let constructor = CONSTRUCTORS[name];
         if (!constructor) {
-            constructor = CONSTRUCTORS[name] = typeof window !== 'undefined' && (window as any)[name];
+            constructor = CONSTRUCTORS[name] = this.window[name];
         }
         return PROXIES[name] = class extends shim(constructor) {};
-    },
-
-    /**
-     * Define a native HTMLElement constructor. It also update already getted proxy classes prototype.
-     * @param name The name of the constructor (eg. "HTMLAnchorElement").
-     * @param constructor The constructor function reference.
-     * @return A proxy that extends the native constructor (if available).
-     */
-    define<T extends typeof HTMLElement = typeof HTMLElement>(name: string, constructor: T): T {
-        constructor = CONSTRUCTORS[name] = constructor;
-        const oldProxy = PROXIES[name];
-        if (oldProxy) {
-            delete PROXIES[name];
-            const newProxy = this.get(name);
-            setPrototypeOf(oldProxy, newProxy);
-            setPrototypeOf(oldProxy.prototype, newProxy.prototype);
-        }
-        return constructor;
     },
 
     /**
@@ -677,6 +691,6 @@ export const DOM = {
             assertEvent(event);
         }
 
-        return Node.prototype.dispatchEvent.call(element, event);
+        return this.Node.prototype.dispatchEvent.call(element, event);
     },
 };

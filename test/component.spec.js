@@ -23,7 +23,7 @@ describe('Component', function() {
 
     describe('#new', () => {
         it('should create a node', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-component', TestElement);
 
             const element = new TestElement();
@@ -33,7 +33,7 @@ describe('Component', function() {
         });
 
         it('should extend a native node', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-component2', TestElement, {
                 extends: 'article',
             });
@@ -46,12 +46,12 @@ describe('Component', function() {
         });
 
         it('should throw if element is not defined', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             expect(() => new TestElement()).to.throw(TypeError);
         });
 
         it('should setup properties', () => {
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 get properties() {
                     return {
                         myCustomProp1: {
@@ -62,7 +62,7 @@ describe('Component', function() {
 
                 @DNA.property() myCustomProp2 = '';
                 @DNA.property() myCustomProp3 = '';
-            };
+            }
 
             DNA.define('test-component3', TestElement);
 
@@ -75,7 +75,7 @@ describe('Component', function() {
         });
 
         it('should initialize properties', () => {
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 get properties() {
                     return {
                         myCustomProp1: {
@@ -86,7 +86,7 @@ describe('Component', function() {
 
                 @DNA.property() myCustomProp2 = 'test';
                 @DNA.property() myCustomProp3 = '';
-            };
+            }
 
             DNA.define('test-component4', TestElement);
 
@@ -101,12 +101,12 @@ describe('Component', function() {
 
         it('should connect already connected nodes', () => {
             let connected = false;
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connected = true;
                 }
-            };
+            }
 
             wrapper.innerHTML = '<test-component5></test-component5>';
             expect(connected).to.be.false;
@@ -120,7 +120,7 @@ describe('Component', function() {
         it('should connect on appendChild and disconnect on removeChild', () => {
             const connectedCallback = spyFunction(() => { });
             const disconnectedCallback = spyFunction(() => { });
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connectedCallback();
@@ -129,7 +129,7 @@ describe('Component', function() {
                     super.disconnectedCallback();
                     disconnectedCallback();
                 }
-            };
+            }
 
             DNA.define('test-component6', TestElement);
 
@@ -146,7 +146,7 @@ describe('Component', function() {
         it('should connect on replaceChild', () => {
             const connectedCallback = spyFunction(() => { });
             const disconnectedCallback = spyFunction(() => { });
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connectedCallback();
@@ -156,7 +156,7 @@ describe('Component', function() {
                     super.disconnectedCallback();
                     disconnectedCallback();
                 }
-            };
+            }
 
             DNA.define('test-component7', TestElement);
 
@@ -178,7 +178,7 @@ describe('Component', function() {
         it('should connect on insertBefore', () => {
             const connectedCallback = spyFunction(() => { });
             const disconnectedCallback = spyFunction(() => { });
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connectedCallback();
@@ -188,7 +188,7 @@ describe('Component', function() {
                     super.disconnectedCallback();
                     disconnectedCallback();
                 }
-            };
+            }
 
             DNA.define('test-component8', TestElement);
 
@@ -209,7 +209,7 @@ describe('Component', function() {
         it('should connect if not moved', () => {
             const connectedCallback = spyFunction(() => { });
             const disconnectedCallback = spyFunction(() => { });
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
                     connectedCallback();
@@ -219,7 +219,7 @@ describe('Component', function() {
                     super.disconnectedCallback();
                     disconnectedCallback();
                 }
-            };
+            }
 
             DNA.define('test-component9', TestElement);
 
@@ -242,7 +242,7 @@ describe('Component', function() {
     describe('#attributeChangedCallback', () => {
         it('should handle attribute changes on setAttribute', () => {
             const attributeChangedCallback = spyFunction((name, old, value) => [name, old, value]);
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
                 }
@@ -251,7 +251,7 @@ describe('Component', function() {
                     super.attributeChangedCallback(...args);
                     attributeChangedCallback(...args);
                 }
-            };
+            }
 
             DNA.define('test-component11', TestElement);
 
@@ -266,7 +266,7 @@ describe('Component', function() {
 
         it('should handle attribute changes on removeAttribute', () => {
             const attributeChangedCallback = spyFunction((name, old, value) => [name, old, value]);
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
                 }
@@ -275,7 +275,7 @@ describe('Component', function() {
                     super.attributeChangedCallback(...args);
                     attributeChangedCallback(...args);
                 }
-            };
+            }
 
             DNA.define('test-component12', TestElement);
 
@@ -290,7 +290,7 @@ describe('Component', function() {
 
         it('should handle attribute if nothing changed on setAttribute', () => {
             const attributeChangedCallback = spyFunction((name, old, value) => [name, old, value]);
-            const TestElement = class extends DNA.Component {
+            class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
                 }
@@ -299,7 +299,7 @@ describe('Component', function() {
                     super.attributeChangedCallback(...args);
                     attributeChangedCallback(...args);
                 }
-            };
+            }
 
             DNA.define('test-component13', TestElement);
 
@@ -313,20 +313,50 @@ describe('Component', function() {
         });
     });
 
-    describe.skip('#propertyChangedCallback', () => {
-        it('should handle property changes on assignment', () => {
+    describe('#propertyChangedCallback', () => {
+        it.skip('should handle property changes on assignment', () => {
+            const properyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+            class TestElement extends DNA.Component {
+                get properties() {
+                    return {
+                        age: {
+                            types: [Number],
+                        },
+                    };
+                }
+
+                @DNA.property() title = '';
+
+                properyChangedCallback(...args) {
+                    super.properyChangedCallback(...args);
+                    properyChangedCallback(...args);
+                }
+            }
+
+            DNA.define('test-component14', TestElement);
+
+            const element = new TestElement();
+            expect(properyChangedCallback.invoked).to.be.false;
+            element.title = 'test';
+            expect(properyChangedCallback.invoked).to.be.true;
+            expect(properyChangedCallback.response).to.be.deep.equal(['title', undefined, 'test']);
+            element.title = 'test2';
+            expect(properyChangedCallback.response).to.be.deep.equal(['title', 'test', 'test2']);
+            element.age = 42;
+            expect(properyChangedCallback.response).to.be.deep.equal(['age', undefined, '42']);
+            element.setAttribute('title', 'test');
+            expect(properyChangedCallback.count).to.be.equal(3);
+        });
+
+        it.skip('should handle property changes on deletion', () => {
             //
         });
 
-        it('should handle property changes on deletion', () => {
+        it.skip('should should re-render on property changes', () => {
             //
         });
 
-        it('should should re-render on property changes', () => {
-            //
-        });
-
-        it('should NOT handle property if nothing changed on assignment', () => {
+        it.skip('should NOT handle property if nothing changed on assignment', () => {
             //
         });
     });

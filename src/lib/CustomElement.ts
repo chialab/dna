@@ -46,7 +46,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     /**
      * A set of delegated events to bind to the node.
      */
-    readonly events?: {
+    readonly listeners?: {
         [key: string]: DelegatedEventCallback;
     };
 

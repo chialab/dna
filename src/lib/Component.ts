@@ -47,7 +47,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * A set of delegated events to bind to the node.
          */
-        readonly events?: {
+        readonly listeners?: {
             [key: string]: DelegatedEventCallback;
         };
 
@@ -138,12 +138,12 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         connectedCallback() {
             // register events
             DOM.undelegateAllEventListeners(this);
-            let eventDescriptors = this.events;
-            if (eventDescriptors) {
-                for (let eventPath in eventDescriptors) {
+            const listenerDescriptors = this.listeners;
+            if (listenerDescriptors) {
+                for (let eventPath in listenerDescriptors) {
                     let match = eventPath.match(/([^\s]+)(?:\s+(.*))?/);
                     if (match) {
-                        this.delegate(match[1], match[2], eventDescriptors[eventPath]);
+                        this.delegate(match[1], match[2], listenerDescriptors[eventPath]);
                     }
                 }
             }
@@ -167,8 +167,6 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param newValue The new value for the attribute (null if removed).
          */
         attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-            const constructor = this.constructor as typeof Component;
-            const observedAttributes = constructor.observedAttributes;
             const properties = getProperties(this.constructor);
 
             let property: ClassFieldDescriptor | undefined;
@@ -180,8 +178,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                         break;
                     }
                     continue;
-                }
-                if (observedAttributes.indexOf(prop.name as string) !== -1) {
+                } else if ((prop.name as string) === attributeName) {
                     property = prop;
                     break;
                 }

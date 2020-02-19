@@ -288,26 +288,6 @@ describe('DOM', function() {
         });
     });
 
-    describe('#define', () => {
-        it('should define a native constructor', () => {
-            const DNAHTMLElement = class { };
-            const DNAHTMLElementShim = DNA.DOM.define('DNAHTMLElement', DNAHTMLElement);
-            expect(DNAHTMLElementShim.prototype).to.be.equal(DNAHTMLElement.prototype);
-            const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim);
-        });
-
-        it('should update an already proxied class', () => {
-            const DNAHTMLElementShim1 = DNA.DOM.define('DNAHTMLElement', class { });
-            const Proxy = DNA.DOM.get('DNAHTMLElement');
-            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim1);
-            const DNAHTMLElementShim2 = DNA.DOM.define('DNAHTMLElement', class { });
-            expect(DNAHTMLElementShim1).to.not.equal(DNAHTMLElementShim2);
-            expect(new Proxy).to.be.an.instanceof(DNAHTMLElementShim2);
-            expect(new Proxy).to.not.be.an.instanceof(DNAHTMLElementShim1);
-        });
-    });
-
     describe('#dispatchEvent', () => {
         it('should dispatch custom events', () => {
             const listener = spyFunction(() => { });

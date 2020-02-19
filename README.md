@@ -45,21 +45,12 @@ Tests are run against all modern browsers and primary legacy ones, like Internet
 Usage via [unpkg.com](https://unpkg.com/), as UMD package:
 ```html
 <script src="https://unpkg.com/@chialab/dna" type="text/javascript"></script>
-<script>
-    class MyComponent extends DNA.Component {}
-
-    DNA.define('my-component', MyComponent);
-</script>
 ```
 
 or as ES6 module:
 
 ```js
-import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
-
-class MyComponent extends Component {}
-
-define('my-component', MyComponent);
+import { Component, define, html, ... } from 'https://unpkg.com/@chialab/dna?module';
 ```
 
 Install via NPM:
@@ -71,11 +62,7 @@ $ yarn add @chialab/dna
 ```
 
 ```ts
-import { Component, define } from '@chialab/dna';
-
-class MyComponent extends Component {}
-
-define('my-component', MyComponent);
+import { Component, define, html, ... } from '@chialab/dna';
 ```
 
 
@@ -83,45 +70,30 @@ define('my-component', MyComponent);
 
 This is an example of Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
 
-<details>
-    <summary>Expand the code</summary>
-<br />
-
-**Define a template**
-```html
-<template name="hello-component">
-    <style scoped>
-        :host {
-            display: block;
-            padding: 10px;
-        }
-
-        .message {
-            display: flex;
-            align-items: center;
-        }
-    </style>
-    <form>
-        <label>What's your name?</label>
-        <input type="text" name="name" />
-    </form>
-    <span class="message">
-        <span class="icon">👋🏻</span> Hello {{ name }}
-    </span>
-</template>
-```
-
 **Define the Component**
 ```ts
-import { Component, property, listener, define, render } from '@chialab/dna';
+import { Component, define, html, property, listener, render } from '@chialab/dna';
 
 class HelloWorld extends Component {
-    @property() // define an observable Component property
+    static get observedAttributes() {
+        return ['name'];
+    }
+
+    // define an observable property
+    @property()
     name: string;
 
-    @listener('input', '[name="name"]') // define a delegated event
+    // delegate an event
+    @listener('change', 'input[name="firstName"]')
     setName(event, target) {
         this.name = target.value;
+    }
+
+    render() {
+        return html`
+            <input name="firstName" value="${this.name}" />
+            <h1>Hello ${this.name || 'World'}!</h1>
+        `;
     }
 }
 
@@ -131,7 +103,12 @@ define('hello-world', HelloWorld);
 // render the Component
 render(document.body, new HelloWorld);
 ```
-</details>
+
+Then use the element in your HTML:
+
+```html
+<hello-world />
+```
 
 ---
 
