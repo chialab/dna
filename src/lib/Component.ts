@@ -1,7 +1,8 @@
 import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { setPrototypeOf } from './shim';
-import { DelegatedEventCallback, DOM } from './DOM';
+import { DOM } from './DOM';
+import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, undelegateAllEventListeners } from './listener';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -137,13 +138,13 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          */
         connectedCallback() {
             // register events
-            DOM.undelegateAllEventListeners(this);
+            undelegateAllEventListeners(this);
             const listenerDescriptors = this.listeners;
             if (listenerDescriptors) {
                 for (let eventPath in listenerDescriptors) {
                     let match = eventPath.match(/([^\s]+)(?:\s+(.*))?/);
                     if (match) {
-                        this.delegate(match[1], match[2], listenerDescriptors[eventPath]);
+                        this.delegateEventListener(match[1], match[2], listenerDescriptors[eventPath]);
                     }
                 }
             }
@@ -306,8 +307,8 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param selector The selector to delegate
          * @param callback The callback to trigger when an Event matches the delegation
          */
-        delegate(event: string, selector: string, callback: DelegatedEventCallback) {
-            return DOM.delegateEventListener(this, event, selector, callback);
+        delegateEventListener(event: string, selector: string, callback: DelegatedEventCallback) {
+            return delegateEventListener(this, event, selector, callback);
         }
 
         /**
@@ -317,8 +318,8 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param selector The selector to undelegate
          * @param callback The callback to remove
          */
-        undelegate(event: string, selector: string, callback: DelegatedEventCallback) {
-            return DOM.undelegateEventListener(this, event, selector, callback);
+        undelegateEventListener(event: string, selector: string, callback: DelegatedEventCallback) {
+            return undelegateEventListener(this, event, selector, callback);
         }
 
         /**

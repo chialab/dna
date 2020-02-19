@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
-import { DelegatedEventCallback } from './DOM';
+import { DelegatedEventCallback } from './listener';
 import { Template } from './Template';
 
 /**
@@ -139,7 +139,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param selector The selector to delegate
      * @param callback The callback to trigger when an Event matches the delegation
      */
-    delegate(event: string, selector: string, callback: DelegatedEventCallback): void;
+    delegateEventListener(event: string, selector: string, callback: DelegatedEventCallback): void;
 
     /**
      * Remove an Event delegation.
@@ -148,5 +148,5 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param selector The selector to undelegate
      * @param callback The callback to remove
      */
-    undelegate(event?: string, selector?: string, callback?: DelegatedEventCallback): void;
+    undelegateEventListener(event?: string, selector?: string, callback?: DelegatedEventCallback): void;
 }
