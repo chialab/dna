@@ -118,8 +118,8 @@ describe('Component', function() {
 
     describe('#connectedCallback|disconnectedCallback', () => {
         it('should connect on appendChild and disconnect on removeChild', () => {
-            const connectedCallback = spyFunction(() => { });
-            const disconnectedCallback = spyFunction(() => { });
+            const connectedCallback = spyFunction();
+            const disconnectedCallback = spyFunction();
             class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
@@ -144,8 +144,8 @@ describe('Component', function() {
         });
 
         it('should connect on replaceChild', () => {
-            const connectedCallback = spyFunction(() => { });
-            const disconnectedCallback = spyFunction(() => { });
+            const connectedCallback = spyFunction();
+            const disconnectedCallback = spyFunction();
             class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
@@ -176,8 +176,8 @@ describe('Component', function() {
         });
 
         it('should connect on insertBefore', () => {
-            const connectedCallback = spyFunction(() => { });
-            const disconnectedCallback = spyFunction(() => { });
+            const connectedCallback = spyFunction();
+            const disconnectedCallback = spyFunction();
             class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
@@ -207,8 +207,8 @@ describe('Component', function() {
         });
 
         it('should connect if not moved', () => {
-            const connectedCallback = spyFunction(() => { });
-            const disconnectedCallback = spyFunction(() => { });
+            const connectedCallback = spyFunction();
+            const disconnectedCallback = spyFunction();
             class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
@@ -413,9 +413,24 @@ describe('Component', function() {
         });
     });
 
-    describe.skip('#appendChild', () => {
+    describe('#appendChild', () => {
         it('should append and connect child', () => {
-            //
+            const connectedCallback = spyFunction();
+            class TestElement extends DNA.Component {}
+            class TestChild extends DNA.Component {
+                connectedCallback() { connectedCallback(); }
+            }
+
+            DNA.define('test-component18', TestElement);
+            DNA.define('test-child18', TestChild);
+
+            const element = new TestElement();
+            const child = new TestChild();
+
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendChild(child);
+            expect(connectedCallback.invoked).to.be.true;
         });
 
         it('should move and connect a child from a parent', () => {

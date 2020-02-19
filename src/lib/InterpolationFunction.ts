@@ -1,23 +1,22 @@
 import { createSymbolKey } from './symbols';
-import { Scope } from './Scope';
 
 /**
  * Symbol for interpolation functions.
  */
-const INTERPOLATION_SYMBOL = createSymbolKey();
+const INTERPOLATION_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * A function that interpolates content in a string using a render Scope.
  */
-export type InterpolationFunction = (this: Scope) => string;
+export type InterpolationFunction = (this: object) => string;
 
 /**
  * Flag a function as InterpolationFunction.
  * @param fn The function to flag.
  * @return The updated function.
  */
-export const createInterpolationFunction = (fn: Function): InterpolationFunction => {
-    (fn as any)[INTERPOLATION_SYMBOL] = true;
+export const createInterpolationFunction = (fn: Function & { [INTERPOLATION_SYMBOL]?: true }): InterpolationFunction => {
+    fn[INTERPOLATION_SYMBOL] = true;
     return fn as InterpolationFunction;
 };
 

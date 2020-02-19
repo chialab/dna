@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { CustomElement, isCustomElement } from './CustomElement';
-import { Scope, getScope, setScope } from './Scope';
+import { Scope, createScope, getScope, setScope } from './scope';
 import { HyperFunction, createHyperFunction } from './HyperFunction';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -86,7 +86,7 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
         Component = registry.get(propertiesToSet.is || tag);
     }
 
-    const fn = function(this: Scope, previousElement?: Element) {
+    return createHyperFunction(function(this: Scope, previousElement?: Element) {
         // if the current patch is a JSX Fragment,
         if (isFragment) {
             // just return children
@@ -109,11 +109,9 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
             // the Template instances are not rendered,
             // so it returns its children
             // check if the Template should handle the `if` property
-            if ('if' in props) {
-                if (props.if == null || props.if === false) {
-                    // the condition is a falsy value, so it should not render anything
-                    return null;
-                }
+            if ('if' in props && !props.if) {
+                // the condition is a falsy value, so it should not render anything
+                return null;
             }
             // check if the Template should handle the `repeat` property
             if (props.repeat && children.length) {
@@ -127,8 +125,7 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
                 for (let key in array) {
                     let item = array[key];
                     // augment the scope of the child
-                    const childScope = this.$child();
-                    childScope.$assign({
+                    const childScope = createScope(this, {
                         [keyVar]: key,
                         [itemVar]: item,
                     });
@@ -220,7 +217,5 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
 
         // return the updated (or created) Node (or Component)
         return element;
-    };
-
-    return createHyperFunction(fn);
+    });
 };

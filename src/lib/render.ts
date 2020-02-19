@@ -1,6 +1,6 @@
 import { DOM } from './DOM';
 import { isCustomElement } from './CustomElement';
-import { Scope, createScope, getScope } from './Scope';
+import { Scope, createScope, getScope } from './scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
 import { getSlotted } from './Slotted';
 import { isHyperFunction } from './HyperFunction';
@@ -15,11 +15,6 @@ export type RenderContext = {
      * A flag for the running status of the render.
      */
     running?: true,
-
-    /**
-     * The scope of the current render.
-     */
-    scope: Scope,
 
     /**
      * The current iterating status.
@@ -53,50 +48,46 @@ const isStyleTag = (node: any): node is HTMLStyleElement => node && node.tagName
  *
  * @param node The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @param scope The render scope object.
  * @return The resulting child Nodes.
  */
-export const render = (node: HTMLElement, input: Template, context?: RenderContext): Template | Template[] | void => {
+export const render = (node: HTMLElement, input: Template, scope?: Scope, context?: RenderContext): Template | Template[] | void => {
+    const renderScope = scope && createScope(scope) || getScope(node) || createScope(node);
     const renderContext: RenderContext = {
-        scope: getScope(node) || createScope(node),
         result: [],
         iterating: {
             node: node.firstChild as Node,
         },
+        ...context,
     };
 
-    if (context) {
-        for (let key in context) {
-            renderContext[key as keyof RenderContext] = context[key as keyof RenderContext] as unknown as any;
-        }
-    }
-
     if (input != null && input !== false) {
+        const inputScope = getScope(input) || renderScope;
         const inputContext: RenderContext = {
             running: true,
             result: renderContext.result,
-            scope: getScope(input) || renderContext.scope,
             iterating: renderContext.iterating,
             filter: getTemplateItemsFilter(input) || renderContext.filter,
         };
-        const { scope, result, iterating } = inputContext;
+        const { result, iterating } = inputContext;
         // if the input is an Array
         if (Array.isArray(input)) {
             // call the render function for each child
             for (let i = 0, len = input.length; i < len; i++) {
-                render(node, input[i], inputContext);
+                render(node, input[i], inputScope, inputContext);
             }
             // if it is an InterpolatedFunction or a HyperFunction
         } else if (isInterpolationFunction(input)) {
-            render(node, input.call(scope), inputContext);
+            render(node, input.call(inputScope), inputScope, inputContext);
         } else if (isHyperFunction(input)) {
-            render(node, input.call(scope, iterating.node as Element), inputContext);
+            render(node, input.call(inputScope, iterating.node as Element), inputScope, inputContext);
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
             let inputElement: Template;
             if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof input === 'string') {
                 let name: string = DOM.getAttribute(node, 'scoped') as string;
                 if (!name) {
-                    name = scope.is as string;
+                    name = inputScope.is as string;
                 }
                 node.textContent = css(name, input);
                 inputElement = node.childNodes[0] as Text;
@@ -144,9 +135,8 @@ export const render = (node: HTMLElement, input: Template, context?: RenderConte
                     const slotted = getSlotted(inputElement);
                     if (slotted && !isCustomElement(inputElement)) {
                         // the Node has slotted children, trigger a new render context for them
-                        render(inputElement, slotted, {
+                        render(inputElement, slotted, inputScope, {
                             result: [],
-                            scope,
                             iterating: {
                                 node: inputElement.firstChild as Node,
                             },

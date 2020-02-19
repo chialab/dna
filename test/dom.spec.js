@@ -57,22 +57,6 @@ describe('DOM', function() {
         });
     });
 
-    describe('#parse', () => {
-        it('should return dom for html', () => {
-            const nodes = DNA.DOM.parse('<h1>hello</h1>');
-            expect(nodes).to.have.lengthOf(1);
-            const element = nodes[0];
-            expect(DNA.DOM.isElement(element)).to.be.true;
-            expect(element.tagName).to.be.equal('H1');
-            expect(element.textContent).to.be.equal('hello');
-        });
-
-        it('should return `false` to for texts', () => {
-            const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isElement(node)).to.be.false;
-        });
-    });
-
     describe('#createElement', () => {
         it('should create an element', () => {
             const element = DNA.DOM.createElement('div');
@@ -81,7 +65,7 @@ describe('DOM', function() {
         });
 
         it('should create a defined element', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-domcreate', TestElement);
 
             const element = DNA.DOM.createElement('test-domcreate');
@@ -90,7 +74,7 @@ describe('DOM', function() {
         });
 
         it('should create and extend a native element', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-domcreate2', TestElement, {
                 extends: 'article',
             });
@@ -290,7 +274,7 @@ describe('DOM', function() {
 
     describe('#dispatchEvent', () => {
         it('should dispatch custom events', () => {
-            const listener = spyFunction(() => { });
+            const listener = spyFunction();
             wrapper.addEventListener('click', listener);
             DNA.DOM.dispatchEvent(wrapper, 'click');
             expect(listener.invoked).to.be.true;

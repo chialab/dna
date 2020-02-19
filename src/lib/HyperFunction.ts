@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
-import { Scope } from './Scope';
 import { Template, TemplateItems } from './Template';
+import { Scope } from './scope';
 
 /**
  * Symbol for interpolated functions.

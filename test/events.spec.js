@@ -45,7 +45,7 @@ describe('events', function() {
         it('should add delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
-            const listener = spyFunction(() => { });
+            const listener = spyFunction();
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
             button.click();
@@ -78,12 +78,12 @@ describe('events', function() {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(child);
             child.appendChild(button);
-            const listener1 = spyFunction(() => { });
+            const listener1 = spyFunction();
             const listener2 = spyFunction((event) => {
                 event.stopPropagation();
             });
-            const listener3 = spyFunction(() => { });
-            const listener4 = spyFunction(() => { });
+            const listener3 = spyFunction();
+            const listener4 = spyFunction();
             DNA.delegateEventListener(child, 'click', 'div', listener1);
             DNA.delegateEventListener(child, 'click', 'button', listener2);
             DNA.delegateEventListener(child, 'click', 'button', listener3);
@@ -101,12 +101,12 @@ describe('events', function() {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(child);
             child.appendChild(button);
-            const listener1 = spyFunction(() => { });
+            const listener1 = spyFunction();
             const listener2 = spyFunction((event) => {
                 event.stopImmediatePropagation();
             });
-            const listener3 = spyFunction(() => { });
-            const listener4 = spyFunction(() => { });
+            const listener3 = spyFunction();
+            const listener4 = spyFunction();
             DNA.delegateEventListener(child, 'click', 'div', listener1);
             DNA.delegateEventListener(child, 'click', 'button', listener2);
             DNA.delegateEventListener(child, 'click', 'button', listener3);
@@ -124,8 +124,8 @@ describe('events', function() {
         it('should remove a delegated event listener', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
-            const listener = spyFunction(() => { });
-            const listener2 = spyFunction(() => { });
+            const listener = spyFunction();
+            const listener2 = spyFunction();
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'click', 'button', listener2);
             button.click();
@@ -174,7 +174,7 @@ describe('events', function() {
         it('should remove all delegated event listeners', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
-            const listener = spyFunction(() => { });
+            const listener = spyFunction();
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
             button.click();

@@ -1,3 +1,4 @@
+import htm from 'htm/mini';
 import { Template } from './Template';
 import { InterpolationFunction, compile } from './InterpolationFunction';
 import { HyperFunction } from './HyperFunction';
@@ -83,22 +84,16 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
 }
 
 /**
- * Compile a template element or a template string into virtual DOM template.
+ * Compile a template element into virtual DOM template.
  *
  * @param template The template to parse.
  * @return The virtual DOM template function.
  */
-export const html = (template: string | HTMLTemplateElement): Template => {
-    let chunks: Array<HyperFunction | InterpolationFunction>;
-    if (isTemplateTag(template)) {
-        chunks = innerCompile(template.content.childNodes);
-    } else {
-        chunks = innerCompile(DOM.parse(template));
-    }
+export const template = (template: HTMLTemplateElement): Template => innerCompile(template.content.childNodes);
 
-    if (chunks.length === 1) {
-        return chunks[0];
-    }
-
-    return chunks;
-};
+/**
+ * Compile a template string into virtual DOM template.
+ *
+ * @return The virtual DOM template function.
+ */
+export const html = htm.bind(h);

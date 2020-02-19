@@ -18,7 +18,7 @@ export async function getModule() {
     return await import('../dist/esm/dna.js');
 }
 
-export function spyFunction(fn) {
+export function spyFunction(fn = () => {}) {
     const spied = function(...args) {
         spied.response = fn.call(this, ...args);
         spied.invoked = true;

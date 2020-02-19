@@ -9,7 +9,7 @@ export { isCustomElement } from './lib/CustomElement';
 export { CustomElementRegistry } from './lib/CustomElementRegistry';
 export { render } from './lib/render';
 export { Fragment, h } from './lib/h';
-export { html } from './lib/html';
+export { html, template } from './lib/html';
 export { css } from './lib/css';
 export { compile } from './lib/InterpolationFunction';
 export { delegateEventListener, undelegateEventListener, undelegateAllEventListeners } from './lib/listener';

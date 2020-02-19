@@ -8,6 +8,12 @@
   "license": "MIT",
   "lib": "src/dna.ts",
   "types": "./dist/dna.d.ts",
+  "directories": {
+    "src": "src",
+    "lib": "dist",
+    "test": "test",
+    "dist": "dist"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"
@@ -19,7 +25,7 @@
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "npm run build:browser && npm run build:node && npm run build:compat",
-    "build:browser": "rna build --production --name DNA --typings",
+    "build:browser": "rna build --production --name DNA --typings --bundle",
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --name DNA --format esm",
     "test": "rna unit 'test/*.spec.js' --coverage",
@@ -28,6 +34,10 @@
     "test:node": "rna unit 'test/*.spec.js' --coverage --node",
     "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
     "prepack": "npm run build"
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "jsdom": "^16.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "^12.2.3",
@@ -39,16 +49,7 @@
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-mocha-no-only": "^1.1.0",
+    "htm": "^3.0.3",
     "typescript": "^3.7.5"
-  },
-  "optionalDependencies": {
-    "jsdom": "^16.0.0"
-  },
-  "directories": {
-    "src": "src",
-    "lib": "dist",
-    "test": "test",
-    "dist": "dist"
-  },
-  "dependencies": {}
+  }
 }

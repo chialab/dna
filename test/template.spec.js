@@ -2,7 +2,7 @@ import { getModule } from './helpers.js';
 
 let DNA, wrapper;
 
-describe.skip('template', function() {
+describe('template', function() {
     this.timeout(10 * 1000);
 
     before(async () => {
@@ -14,6 +14,7 @@ describe.skip('template', function() {
     });
 
     describe('simple', () => {
+        const scope = {};
         const TEMPLATES = {
             JSX() {
                 return DNA.h('h1', null, 'Hello world!');
@@ -24,13 +25,13 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = '<h1>Hello world!</h1>';
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]());
+                DNA.render(wrapper, TEMPLATES[type](), scope);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
@@ -39,6 +40,10 @@ describe.skip('template', function() {
     });
 
     describe('content interpolation', () => {
+        const scope = {
+            name: 'Alan',
+            num: 42,
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h('h1', null, 'Hello! My name is ', this.name, ' and my favorite number is ', this.num);
@@ -49,16 +54,13 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = '<h1>Hello! My name is {{name}} and my favorite number is {{num}}</h1>';
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    name: 'Alan',
-                    num: 42,
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello! My name is Alan and my favorite number is 42');
@@ -67,6 +69,10 @@ describe.skip('template', function() {
     });
 
     describe('attribute interpolation', () => {
+        const scope = {
+            name: 'filter',
+            disabled: true,
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h('input', {
@@ -81,16 +87,13 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = '<input name={{name}} disabled={{disabled}} required />';
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    name: 'filter',
-                    disabled: true,
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('INPUT');
                 expect(wrapper.childNodes[0].outerHTML).to.be.equal('<input name="filter" disabled="" required="">');
@@ -99,6 +102,9 @@ describe.skip('template', function() {
     });
 
     describe('loops', () => {
+        const scope = {
+            items: ['Alan', 'Brian', 'Carl'],
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h('ul', null, this.items.map((item, index) =>
@@ -113,19 +119,17 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = `<ul>
-                    <template repeat={items} item="item" key="index">
+                    <template repeat={{items}} item="item" key="index">
                         <li>{{index}}. {{item}}</li>
                     </template>
                 </ul>`;
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    items: ['Alan', 'Brian', 'Carl'],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('UL');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(3);
@@ -140,6 +144,11 @@ describe.skip('template', function() {
     });
 
     describe('conditionals', () => {
+        const scope = {
+            avatar: 'cat.png',
+            title: 'Romeo',
+            members: [],
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h(DNA.Fragment, null,
@@ -161,24 +170,20 @@ describe.skip('template', function() {
                 template.innerHTML = `<template if={{avatar}}>
                     <img src={{avatar}} />
                 </template>
-                <h1>{title || 'Untitled'}</h1>
+                <h1>{{title || 'Untitled'}}</h1>
                 <template if={{members.length}}>
                     {{members.length}} members
                 </template>
                 <template if={{!members.length}}>
                     No members
                 </template>`;
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    avatar: 'cat.png',
-                    title: 'Romeo',
-                    members: [],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes).to.have.lengthOf(3);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('IMG');
                 expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal('cat.png');
@@ -215,7 +220,7 @@ describe.skip('template', function() {
                 <div class="layout-body">
                     <slot />
                 </div>`;
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
@@ -227,7 +232,7 @@ describe.skip('template', function() {
                     }
                 }
 
-                DNA.define(`my-element-${type}`, MyElement);
+                DNA.define(`my-element-${type.toLowerCase()}`, MyElement);
 
                 const element = DNA.render(wrapper, DNA.h(`my-element-${type}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
@@ -236,27 +241,33 @@ describe.skip('template', function() {
                 ));
 
                 expect(element.childNodes).to.have.lengthOf(2);
-                expect(element.childNodes[0].tagName).to.be.equal('div');
+                expect(element.childNodes[0].tagName).to.be.equal('DIV');
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
                 expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
-                expect(element.childNodes[1].tagName).to.be.equal('div');
+                expect(element.childNodes[1].tagName).to.be.equal('DIV');
                 expect(element.childNodes[1].className).to.be.equal('layout-body');
                 expect(element.childNodes[1].childNodes[0].tagName).to.be.equal('IMG');
                 expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal('cat.png');
-                expect(element.childNodes[1].childNodes[2].tagName).to.be.equal('P');
-                expect(element.childNodes[1].childNodes[2].textContent).to.be.equal('Body');
+                expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
+                expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
             });
         }
     });
 
     describe('not keyed', () => {
+        const scope = {
+            items: ['Alan', 'Brian', 'Carl'],
+        };
+        const scope2 = {
+            items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h('select', null,
                     this.items.map((item) => DNA.h('option', { value: item }, item)),
-                    DNA.h('option', { value: 'other' }),
+                    DNA.h('option', { value: 'other' }, 'Other'),
                 );
             },
             HTML() {
@@ -272,20 +283,18 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = `<select>
-                    <template repeat={items} item="item">
+                    <template repeat={{items}} item="item">
                         <option value={{item}}>{{item}}</option>
                     </template>
                     <option value="other">Other</option>
                 </select>`;
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    items: ['Alan', 'Brian', 'Carl'],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
 
@@ -305,9 +314,7 @@ describe.skip('template', function() {
                 expect(otherOption.tagName).to.be.equal('OPTION');
                 expect(otherOption.textContent).to.be.equal('Other');
 
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope2), scope2);
 
                 expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
@@ -330,17 +337,23 @@ describe.skip('template', function() {
 
                 expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
                 expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
-                expect(wrapper.childNodes[0].childNodes[3]).to.not.be.equal(otherOption);
+                expect(wrapper.childNodes[0].childNodes[4]).to.not.be.equal(otherOption);
             });
         }
     });
 
     describe('keyed', () => {
+        const scope = {
+            items: ['Alan', 'Brian', 'Carl'],
+        };
+        const scope2 = {
+            items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
+        };
         const TEMPLATES = {
             JSX() {
                 return DNA.h('select', null,
                     this.items.map((item) => DNA.h('option', { value: item }, item)),
-                    DNA.h('option', { key: 'last', value: 'other' }),
+                    DNA.h('option', { key: 'last', value: 'other' }, 'Other'),
                 );
             },
             HTML() {
@@ -356,20 +369,18 @@ describe.skip('template', function() {
             TEMPLATE() {
                 const template = DNA.DOM.createElement('template');
                 template.innerHTML = `<select>
-                    <template repeat={items} item="item">
+                    <template repeat={{items}} item="item">
                         <option value={{item}}>{{item}}</option>
                     </template>
                     <option key="last" value="other">Other</option>
                 </select>`;
-                return DNA.html(template);
+                return DNA.template(template);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    items: ['Alan', 'Brian', 'Carl'],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
 
@@ -389,9 +400,7 @@ describe.skip('template', function() {
                 expect(otherOption.tagName).to.be.equal('OPTION');
                 expect(otherOption.textContent).to.be.equal('Other');
 
-                DNA.render(wrapper, TEMPLATES[type].call({
-                    items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
-                }));
+                DNA.render(wrapper, TEMPLATES[type].call(scope2), scope2);
 
                 expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
@@ -414,7 +423,7 @@ describe.skip('template', function() {
 
                 expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
                 expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
-                expect(wrapper.childNodes[0].childNodes[3]).to.be.equal(otherOption);
+                expect(wrapper.childNodes[0].childNodes[4]).to.be.equal(otherOption);
             });
         }
 
@@ -432,7 +441,7 @@ describe.skip('template', function() {
 
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('INPUT');
-            expect(element.childNodes[0]).to.be.equal(element.$.firstName);
+            expect(element.childNodes[0]).to.be.equal(element.$scope.firstName);
         });
     });
 });

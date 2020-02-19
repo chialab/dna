@@ -49,10 +49,8 @@ describe('render', function() {
 
         it('should render interpolated function', () => {
             DNA.render(wrapper, DNA.compile('hello {{name}}! do you like {{food}}?'), {
-                scope: {
-                    name: 'Snow White',
-                    food: 'apples',
-                },
+                name: 'Snow White',
+                food: 'apples',
             });
             expect(wrapper.innerHTML).to.be.equal('hello Snow White! do you like apples?');
         });
@@ -86,9 +84,7 @@ describe('render', function() {
 
         it('should render a style node (context scope)', () => {
             DNA.render(wrapper, DNA.h('style', { scoped: true }, '.test {}'), {
-                scope: {
-                    is: 'my-card',
-                },
+                is: 'my-card',
             });
             expect(wrapper.childNodes).to.have.lengthOf(1);
             expect(wrapper.childNodes[0].tagName).to.be.equal('STYLE');
@@ -104,10 +100,8 @@ describe('render', function() {
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
             ], {
-                scope: {
-                    name: 'Snow White',
-                    food: 'apples',
-                },
+                name: 'Snow White',
+                food: 'apples',
             });
             expect(wrapper.childNodes).to.have.lengthOf(6);
         });
@@ -121,10 +115,10 @@ describe('render', function() {
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
             ], {
-                scope: {
-                    name: 'Snow White',
-                    food: 'apples',
-                },
+                name: 'Snow White',
+                food: 'apples',
+            },
+            {
                 filter: (node) => !!node.tagName,
             });
             expect(wrapper.childNodes).to.have.lengthOf(2);

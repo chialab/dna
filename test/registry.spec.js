@@ -17,13 +17,13 @@ describe('registry', function() {
 
     describe('#define', () => {
         it('should define a tag', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-define2', TestElement);
             expect(DNA.get('test-define2')).to.be.equal(TestElement);
         });
 
         it('should extend a native tag', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-define3', TestElement, {
                 extends: 'article',
             });
@@ -38,7 +38,7 @@ describe('registry', function() {
         });
 
         it('should throw if the Component has been already defined', () => {
-            const TestElement = class extends DNA.Component { };
+            class TestElement extends DNA.Component { }
             DNA.define('test-define5', TestElement);
             expect(() => {
                 DNA.define('test-define6', TestElement);

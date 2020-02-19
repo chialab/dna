@@ -3,7 +3,7 @@ import { registry } from './CustomElementRegistry';
 import { setPrototypeOf } from './shim';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, undelegateAllEventListeners } from './listener';
-import { createScope, getScope, setScope } from './Scope';
+import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';

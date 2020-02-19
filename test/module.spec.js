@@ -21,6 +21,7 @@ describe('module', function() {
         Fragment: 'function',
         h: 'function',
         html: 'function',
+        template: 'function',
         css: 'function',
         compile: 'function',
         delegateEventListener: 'function',

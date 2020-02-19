@@ -162,18 +162,6 @@ export const DOM = {
     },
 
     /**
-     * Parse a HTML string into a list of DOM nodes.
-     *
-     * @param source The HTML string to parse.
-     * @return The list of generated nodes.
-     */
-    parse(source: string): NodeList {
-        let wrapper = this.createElement('div');
-        wrapper.innerHTML = source;
-        return wrapper.childNodes;
-    },
-
-    /**
      * Create a new DOM element node for the specified tag.
      *
      * @param tagName The specified tag.
@@ -337,7 +325,11 @@ export const DOM = {
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         const oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
-        if (isCustomElement(element) && !checkNativeSupport()) {
+
+        const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
+        if (isCustomElement(element) &&
+            !checkNativeSupport() &&
+            observedAttributes.indexOf(qualifiedName) !== -1) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
     },
@@ -351,7 +343,11 @@ export const DOM = {
     removeAttribute(element: Element, qualifiedName: string) {
         const oldValue = this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
-        if (isCustomElement(element) && !checkNativeSupport()) {
+
+        const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
+        if (isCustomElement(element) &&
+            !checkNativeSupport() &&
+            observedAttributes.indexOf(qualifiedName) !== -1) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
     },
