@@ -234,8 +234,19 @@ describe('Component', function() {
             expect(disconnectedCallback.invoked).to.be.true;
         });
 
-        it.skip('should render on connect', () => {
-            //
+        it('should render on connect', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<h1>test</h1>`;
+                }
+            }
+
+            DNA.define('test-component10', TestElement);
+
+            const element = new TestElement();
+            expect(element.innerHTML).to.be.equal('');
+            DNA.DOM.appendChild(wrapper, element);
+            expect(element.innerHTML).to.be.equal('<h1>test</h1>');
         });
     });
 
@@ -378,8 +389,22 @@ describe('Component', function() {
             expect(propertyChangedCallback.count).to.be.equal(1);
         });
 
-        it.skip('should should re-render on property changes', () => {
-            //
+        it('should should re-render on property changes', () => {
+            class TestElement extends DNA.Component {
+                @DNA.property() title = '';
+
+                render() {
+                    return DNA.html`<h1>${this.title}</h1>`;
+                }
+            }
+
+            DNA.define('test-component16', TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(element.innerHTML).to.be.equal('<h1></h1>');
+            element.title = 'test';
+            expect(element.innerHTML).to.be.equal('<h1>test</h1>');
         });
 
         it('should NOT handle property if nothing changed on assignment', () => {

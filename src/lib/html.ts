@@ -1,4 +1,4 @@
-import htm from 'htm/mini';
+import htm from 'htm';
 import { Template } from './Template';
 import { InterpolationFunction, compile } from './InterpolationFunction';
 import { HyperFunction } from './HyperFunction';
@@ -11,6 +11,18 @@ import { DOM } from './DOM';
  * @return The node is a `<template>` element.
  */
 const isTemplateTag = (node: any): node is HTMLTemplateElement => node && node.tagName === 'TEMPLATE';
+
+/**
+ * Get child of a template element.
+ * @param node The template node.
+ * @return The template children.
+ */
+const getTemplateChildren = (node: HTMLTemplateElement) => {
+    if (node.content) {
+        return node.content.childNodes;
+    }
+    return node.childNodes;
+};
 
 enum Namespaces {
     SVG = 'http://www.w3.org/2000/svg',
@@ -51,7 +63,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
 
         let childNodes: NodeList;
         if (isTemplateTag(node)) {
-            childNodes = node.content.childNodes;
+            childNodes = getTemplateChildren(node);
         } else {
             childNodes = node.childNodes;
         }
@@ -89,7 +101,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
  * @param template The template to parse.
  * @return The virtual DOM template function.
  */
-export const template = (template: HTMLTemplateElement): Template => innerCompile(template.content.childNodes);
+export const template = (template: HTMLTemplateElement): Template => innerCompile(getTemplateChildren(template));
 
 /**
  * Compile a template string into virtual DOM template.

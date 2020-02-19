@@ -114,7 +114,7 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
                 return null;
             }
             // check if the Template should handle the `repeat` property
-            if (props.repeat && children.length) {
+            if ('repeat' in props && children.length) {
                 const newChildren = [] as Template[];
                 // extract the `key` variable to use in the template
                 const keyVar = props.key || '$key';

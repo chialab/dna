@@ -1,3 +1,4 @@
+import htm from 'htm/mini';
 import { getModule } from './helpers.js';
 
 let DNA, wrapper;
@@ -13,6 +14,28 @@ describe('template', function() {
         wrapper = DNA.DOM.createElement('div');
     });
 
+    const generate = htm.bind((tag, attrs, ...children) => {
+        const elem = DNA.DOM.createElement(tag);
+        if (attrs) {
+            for (let key in attrs) {
+                elem.setAttribute(key, attrs[key] === true ? '' : attrs[key]);
+            }
+        }
+        children.forEach((child) => {
+            if (typeof child === 'string') {
+                child = DNA.DOM.createTextNode(child);
+            }
+            if (tag === 'template' && 'content' in elem) {
+                elem.content.appendChild(child);
+            } else {
+                elem.appendChild(child);
+            }
+        });
+        return elem;
+    });
+
+    const html = (string) => generate([string]);
+
     describe('simple', () => {
         const scope = {};
         const TEMPLATES = {
@@ -23,8 +46,7 @@ describe('template', function() {
                 return DNA.html`<h1>Hello world!</h1>`;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = '<h1>Hello world!</h1>';
+                const template = html('<template><h1>Hello world!</h1></template>');
                 return DNA.template(template);
             },
         };
@@ -52,8 +74,7 @@ describe('template', function() {
                 return DNA.html`<h1>Hello! My name is ${this.name} and my favorite number is ${this.num}</h1>`;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = '<h1>Hello! My name is {{name}} and my favorite number is {{num}}</h1>';
+                const template = html('<template><h1>Hello! My name is {{name}} and my favorite number is {{num}}</h1></template>');
                 return DNA.template(template);
             },
         };
@@ -85,8 +106,7 @@ describe('template', function() {
                 return DNA.html`<input name=${this.name} disabled=${this.disabled} required />`;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = '<input name={{name}} disabled={{disabled}} required />';
+                const template = html('<template><input name={{name}} disabled={{disabled}} required /></template>');
                 return DNA.template(template);
             },
         };
@@ -117,12 +137,13 @@ describe('template', function() {
                 </ul>`;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = `<ul>
-                    <template repeat={{items}} item="item" key="index">
-                        <li>{{index}}. {{item}}</li>
-                    </template>
-                </ul>`;
+                const template = html(`<template>
+                    <ul>
+                        <template repeat={{items}} item="item" key="index">
+                            <li>{{index}}. {{item}}</li>
+                        </template>
+                    </ul>
+                </template>`);
                 return DNA.template(template);
             },
         };
@@ -166,17 +187,18 @@ describe('template', function() {
                     ${this.members.length ? DNA.html`${this.members.length} members` : 'No members'}`;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = `<template if={{avatar}}>
-                    <img src={{avatar}} />
-                </template>
-                <h1>{{title || 'Untitled'}}</h1>
-                <template if={{members.length}}>
-                    {{members.length}} members
-                </template>
-                <template if={{!members.length}}>
-                    No members
-                </template>`;
+                const template = html(`<template>
+                    <template if={{avatar}}>
+                        <img src={{avatar}} />
+                    </template>
+                    <h1>{{title || 'Untitled'}}</h1>
+                    <template if={{members.length}}>
+                        {{members.length}} members
+                    </template>
+                    <template if={{!members.length}}>
+                        No members
+                    </template>
+                </template>`);
                 return DNA.template(template);
             },
         };
@@ -213,13 +235,14 @@ describe('template', function() {
                 `;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = `<div class="layout-header">
-                    <slot name="title" />
-                </div>
-                <div class="layout-body">
-                    <slot />
-                </div>`;
+                const template = html(`<template>
+                    <div class="layout-header">
+                        <slot name="title" />
+                    </div>
+                    <div class="layout-body">
+                        <slot />
+                    </div>
+                </template>`);
                 return DNA.template(template);
             },
         };
@@ -281,13 +304,14 @@ describe('template', function() {
                 `;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = `<select>
-                    <template repeat={{items}} item="item">
-                        <option value={{item}}>{{item}}</option>
-                    </template>
-                    <option value="other">Other</option>
-                </select>`;
+                const template = html(`<template>
+                    <select>
+                        <template repeat={{items}} item="item">
+                            <option value={{item}}>{{item}}</option>
+                        </template>
+                        <option value="other">Other</option>
+                    </select>
+                </template>`);
                 return DNA.template(template);
             },
         };
@@ -367,13 +391,14 @@ describe('template', function() {
                 `;
             },
             TEMPLATE() {
-                const template = DNA.DOM.createElement('template');
-                template.innerHTML = `<select>
-                    <template repeat={{items}} item="item">
-                        <option value={{item}}>{{item}}</option>
-                    </template>
-                    <option key="last" value="other">Other</option>
-                </select>`;
+                const template = html(`<template>
+                    <select>
+                        <template repeat={{items}} item="item">
+                            <option value={{item}}>{{item}}</option>
+                        </template>
+                        <option key="last" value="other">Other</option>
+                    </select>
+                </template>`);
                 return DNA.template(template);
             },
         };
