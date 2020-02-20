@@ -1,5 +1,5 @@
 import htm from 'htm/mini';
-import { getModule } from './helpers.js';
+import { getModule, getComponentName } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -44,6 +44,9 @@ describe('template', function() {
             },
             HTML() {
                 return DNA.html`<h1>Hello world!</h1>`;
+            },
+            PLAIN_HTML() {
+                return DNA.html('<h1>Hello world!</h1');
             },
             TEMPLATE() {
                 const template = html('<template><h1>Hello world!</h1></template>');
@@ -459,7 +462,7 @@ describe('template', function() {
                 }
             }
 
-            DNA.define('my-element-keytest', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
             element.forceUpdate();

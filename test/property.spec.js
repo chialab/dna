@@ -1,4 +1,4 @@
-import { getModule, spyFunction } from './helpers.js';
+import { getModule, spyFunction, getComponentName } from './helpers.js';
 
 let DNA;
 
@@ -19,7 +19,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop1', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', undefined);
         });
@@ -35,7 +35,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop2', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
@@ -52,7 +52,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop3', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
         });
@@ -68,7 +68,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop4', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
@@ -93,7 +93,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop5', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
@@ -115,7 +115,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop6', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 84);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
@@ -135,7 +135,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop7', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
@@ -154,7 +154,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop8', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             // expect(new MyElement()).to.have.property('testProp', 42);
             // expect(listener.invoked).to.be.false;
@@ -177,7 +177,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.define('test-component-prop9', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener1.invoked).to.be.false;
@@ -196,7 +196,7 @@ describe('property', function() {
                 @DNA.property() testProp = undefined;
             };
 
-            DNA.define('test-component-prop10', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', undefined);
         });
@@ -206,7 +206,7 @@ describe('property', function() {
                 @DNA.property() testProp = 42;
             };
 
-            DNA.define('test-component-prop12', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
@@ -220,7 +220,7 @@ describe('property', function() {
                 testProp = undefined;
             };
 
-            DNA.define('test-component-prop13', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
         });
@@ -233,7 +233,7 @@ describe('property', function() {
                 testProp = undefined;
             };
 
-            DNA.define('test-component-prop14', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
@@ -255,7 +255,7 @@ describe('property', function() {
                 testProp = undefined;
             };
 
-            DNA.define('test-component-prop15', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
@@ -273,7 +273,7 @@ describe('property', function() {
                 testProp = 42;
             };
 
-            DNA.define('test-component-prop16', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 84);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
@@ -289,7 +289,7 @@ describe('property', function() {
                 testProp = 42;
             };
 
-            DNA.define('test-component-prop17', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
@@ -304,7 +304,7 @@ describe('property', function() {
                 testProp = 42;
             };
 
-            DNA.define('test-component-prop18', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener.invoked).to.be.false;
@@ -323,7 +323,7 @@ describe('property', function() {
                 testProp = 42;
             };
 
-            DNA.define('test-component-prop19', MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener1.invoked).to.be.false;

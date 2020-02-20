@@ -1,4 +1,4 @@
-import { getModule, spyFunction } from './helpers.js';
+import { getModule, spyFunction, getComponentName } from './helpers.js';
 
 let DNA;
 
@@ -65,24 +65,26 @@ describe('DOM', function() {
         });
 
         it('should create a defined element', () => {
+            const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define('test-domcreate', TestElement);
+            DNA.define(is, TestElement);
 
-            const element = DNA.DOM.createElement('test-domcreate');
-            expect(element.is).to.be.equal('test-domcreate');
-            expect(element.tagName).to.be.equal('TEST-DOMCREATE');
+            const element = DNA.DOM.createElement(is);
+            expect(element.is).to.be.equal(is);
+            expect(element.tagName).to.be.equal(is.toUpperCase());
         });
 
         it('should create and extend a native element', () => {
+            const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define('test-domcreate2', TestElement, {
+            DNA.define(is, TestElement, {
                 extends: 'article',
             });
 
-            const element = DNA.DOM.createElement('article', { is: 'test-domcreate2' });
-            expect(element.is).to.be.equal('test-domcreate2');
+            const element = DNA.DOM.createElement('article', { is });
+            expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
-            expect(element.getAttribute('is')).to.be.equal('test-domcreate2');
+            expect(element.getAttribute('is')).to.be.equal(is);
         });
     });
 

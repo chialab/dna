@@ -103,9 +103,18 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
  */
 export const template = (template: HTMLTemplateElement): Template => innerCompile(getTemplateChildren(template));
 
+const innerHtml = htm.bind(h);
+
 /**
  * Compile a template string into virtual DOM template.
  *
  * @return The virtual DOM template function.
  */
-export const html = htm.bind(h);
+export const html = (string: string | TemplateStringsArray, ...values: any[]): Template => {
+    if (typeof string === 'string') {
+        const array = [string];
+        (array as any).raw = [string];
+        string = array as unknown as TemplateStringsArray;
+    }
+    return innerHtml(string, ...values);
+};

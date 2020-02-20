@@ -194,10 +194,15 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                 return;
             }
 
+            const types = property.types as Function[];
             let value: any;
-            if (newValue === '' || newValue === attributeName) {
-                // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
-                value = true;
+            if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attributeName)) {
+                if (newValue === '' || newValue === attributeName) {
+                    // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
+                    value = true;
+                } else {
+                    value = false;
+                }
             } else if (newValue) {
                 try {
                     value = JSON.parse(newValue as string);
@@ -224,19 +229,15 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
             const observedAttributes = constructor.observedAttributes;
             const properties = getProperties(constructor);
             const falsy = newValue == null || newValue === false;
-
-            let property: ClassFieldDescriptor | undefined;
-            for (let propertyKey in properties) {
-                let prop = properties[propertyKey];
-                if (prop.name === propertyName) {
-                    property = prop;
-                    break;
+            const property = (() => {
+                for (let propertyKey in properties) {
+                    let prop = properties[propertyKey];
+                    if (prop.name === propertyName) {
+                        return prop;
+                    }
                 }
-            }
-
-            if (!property) {
                 return;
-            }
+            })() as ClassFieldDescriptor;
 
             const propAttribute = property.attribute || observedAttributes.indexOf(property.name as string) !== -1;
             if (!propAttribute) {

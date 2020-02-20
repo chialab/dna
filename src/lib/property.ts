@@ -98,6 +98,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @return The native property descriptor.
  */
 const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol): PropertyDescriptor => {
+    const computedTypes = descriptor.types as Function[];
     const finalDescriptor: PropertyDescriptor = {
         enumerable: true,
     };
@@ -111,13 +112,6 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
     const set = function set(this: any, value: any) {
         return setter.call(this, value);
     };
-
-    let computedTypes: Function[] = [];
-    if (Array.isArray(descriptor.types)) {
-        computedTypes = descriptor.types;
-    } else if (descriptor.types) {
-        computedTypes = [descriptor.types];
-    }
 
     finalDescriptor.get = get;
     finalDescriptor.set = function(this: any, newValue: any) {
@@ -184,6 +178,13 @@ export const defineProperty = (target: Object, propertyKey: string, descriptor: 
     descriptors[propertyKey] = descriptor;
     descriptor.name = propertyKey;
     descriptor.symbol = symbol;
+
+    let types = descriptor.types || [];
+    if (!Array.isArray(types)) {
+        types = [types];
+    }
+    descriptor.types = types;
+
     if (descriptor.observe) {
         descriptor.observers = [descriptor.observe, ...(descriptor.observers || [])];
     }

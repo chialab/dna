@@ -21,16 +21,6 @@ describe('events', function() {
         }
     });
 
-    describe.skip('#listenersGetter', () => {
-        it('should add a listener', () => {
-            //
-        });
-
-        it('should add a delegated listener', () => {
-            //
-        });
-    });
-
     describe.skip('#listenerDecorator', () => {
         it('should add a listener', () => {
             //

@@ -1,4 +1,5 @@
 import { define, DOM, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { getComponentName } from './helpers.js';
 
 const WRAPPER = document.body;
 
@@ -28,7 +29,7 @@ class TestComponent extends BaseComponent {
     }
 }
 
-define('test-component', TestComponent);
+define(getComponentName(), TestComponent);
 
 DOM.lifeCycle(true);
 

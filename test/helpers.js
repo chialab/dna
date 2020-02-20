@@ -56,3 +56,8 @@ export function wait(time = 1000) {
         setTimeout(() => resolve(), time);
     });
 }
+
+let count = 0;
+export function getComponentName() {
+    return `test-element-${count++}`;
+}
