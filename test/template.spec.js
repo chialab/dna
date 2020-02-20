@@ -469,7 +469,7 @@ describe('template', function() {
 
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('INPUT');
-            expect(element.childNodes[0]).to.be.equal(element.$scope.firstName);
+            expect(element.childNodes[0]).to.be.equal(element.$.firstName);
         });
     });
 });

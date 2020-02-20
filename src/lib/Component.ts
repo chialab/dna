@@ -72,7 +72,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * The render scope reference of the node.
          */
-        get $scope() {
+        get $() {
             return getScope(this);
         }
 

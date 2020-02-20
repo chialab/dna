@@ -687,7 +687,7 @@ describe('Component', function() {
             DNA.DOM.appendChild(wrapper, element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback.invoked).to.be.false;
-            element.$scope.trigger.click();
+            element.$.trigger.click();
             expect(callback.invoked).to.be.true;
         });
     });
@@ -707,10 +707,10 @@ describe('Component', function() {
             DNA.DOM.appendChild(wrapper, element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback.invoked).to.be.false;
-            element.$scope.trigger.click();
+            element.$.trigger.click();
             expect(callback.invoked).to.be.true;
             element.undelegateEventListener('click', 'button', callback);
-            element.$scope.trigger.click();
+            element.$.trigger.click();
             expect(callback.count).to.be.equal(1);
         });
     });
