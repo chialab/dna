@@ -147,9 +147,9 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
             const listenerDescriptors = this.listeners;
             if (listenerDescriptors) {
                 for (let eventPath in listenerDescriptors) {
-                    let match = eventPath.match(/([^\s]+)(?:\s+(.*))?/);
+                    let match = eventPath.split(' ');
                     if (match) {
-                        this.delegateEventListener(match[1], match[2], listenerDescriptors[eventPath]);
+                        this.delegateEventListener(match.shift() as string, match.join(' '), listenerDescriptors[eventPath]);
                     }
                 }
             }

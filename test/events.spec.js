@@ -183,13 +183,67 @@ describe('events', function() {
         });
     });
 
-    describe.skip('get listeners()', () => {
+    describe('get listeners()', () => {
         it('should add a listener', () => {
-            //
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            class TestElement extends DNA.Component {
+                get listeners() {
+                    return {
+                        click: this.method,
+                        change: callback,
+                    };
+                }
+
+                method(event, target) {
+                    callback(event, target);
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.dispatchEvent(DNA.DOM.createEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback.invoked).to.be.true;
+            element.dispatchEvent(DNA.DOM.createEvent('change', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback.count).to.be.equal(2);
         });
 
         it('should add a delegated listener', () => {
-            //
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            class TestElement extends DNA.Component {
+                get listeners() {
+                    return {
+                        'click button': this.method,
+                        'change': callback,
+                    };
+                }
+
+                method(event, target) {
+                    callback(event, target);
+                }
+
+                render() {
+                    return DNA.html('<button key="trigger"></button>');
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.$.trigger.click();
+            expect(callback.invoked).to.be.true;
         });
     });
 
