@@ -1,4 +1,4 @@
-import { getModule, spyFunction } from './helpers.js';
+import { getModule, spyFunction, getComponentName } from './helpers.js';
 
 let DNA;
 
@@ -21,17 +21,7 @@ describe('events', function() {
         }
     });
 
-    describe.skip('#listenerDecorator', () => {
-        it('should add a listener', () => {
-            //
-        });
-
-        it('should add a delegated listener', () => {
-            //
-        });
-    });
-
-    describe('#delegateEventListener', () => {
+    describe('delegateEventListener', () => {
         it('should add delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
@@ -110,7 +100,7 @@ describe('events', function() {
         });
     });
 
-    describe('#undelegateEventListener', () => {
+    describe('undelegateEventListener', () => {
         it('should remove a delegated event listener', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
@@ -160,7 +150,7 @@ describe('events', function() {
         });
     });
 
-    describe('#undelegateAllEventListeners', () => {
+    describe('undelegateAllEventListeners', () => {
         it('should remove all delegated event listeners', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
@@ -180,6 +170,79 @@ describe('events', function() {
             expect(() => {
                 DNA.undelegateAllEventListeners(null, null, null, null);
             }).to.throw(TypeError, 'The provided element must be a Node');
+        });
+    });
+
+    describe.skip('@listener', () => {
+        it('should add a listener', () => {
+            //
+        });
+
+        it('should add a delegated listener', () => {
+            //
+        });
+    });
+
+    describe.skip('get listeners()', () => {
+        it('should add a listener', () => {
+            //
+        });
+
+        it('should add a delegated listener', () => {
+            //
+        });
+    });
+
+    describe.skip('#dispatchEvent', () => {
+        it('should dispatch an event', () => {
+            //
+        });
+
+        it('should create and dispatch a custom event', () => {
+            //
+        });
+    });
+
+    describe('#delegateEventListener', () => {
+        it('should delegate an event', () => {
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<button key="trigger"></button>`;
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            element.delegateEventListener('click', 'button', callback);
+            expect(callback.invoked).to.be.false;
+            element.$.trigger.click();
+            expect(callback.invoked).to.be.true;
+        });
+    });
+
+    describe('#undelegateEventListener', () => {
+        it('should undelegate an event', () => {
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<button key="trigger"></button>`;
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            element.delegateEventListener('click', 'button', callback);
+            expect(callback.invoked).to.be.false;
+            element.$.trigger.click();
+            expect(callback.invoked).to.be.true;
+            element.undelegateEventListener('click', 'button', callback);
+            element.$.trigger.click();
+            expect(callback.count).to.be.equal(1);
         });
     });
 });

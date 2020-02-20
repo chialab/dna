@@ -185,9 +185,12 @@ export const defineProperty = (target: Object, propertyKey: string, descriptor: 
     }
     descriptor.types = types;
 
+    let observers = descriptor.observers || [];
     if (descriptor.observe) {
-        descriptor.observers = [descriptor.observe, ...(descriptor.observers || [])];
+        observers = [descriptor.observe, ...observers];
     }
+    descriptor.observers = observers;
+
     Object.defineProperty(constructor.prototype, propertyKey, classFieldToProperty(descriptor, symbol));
 
     return symbol;

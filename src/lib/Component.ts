@@ -227,17 +227,8 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
             const constructor = this.constructor as typeof Component;
             const observedAttributes = constructor.observedAttributes;
-            const properties = getProperties(constructor);
             const falsy = newValue == null || newValue === false;
-            const property = (() => {
-                for (let propertyKey in properties) {
-                    let prop = properties[propertyKey];
-                    if (prop.name === propertyName) {
-                        return prop;
-                    }
-                }
-                return;
-            })() as ClassFieldDescriptor;
+            const property = getProperties(constructor)[propertyName];
 
             const propAttribute = property.attribute || observedAttributes.indexOf(property.name as string) !== -1;
             if (!propAttribute) {
@@ -262,12 +253,12 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param callback The callback function
          */
         observe(propertyName: string, callback: ClassFieldObserver) {
-            let property = getProperties(this.constructor)[propertyName];
+            const property = getProperties(this.constructor)[propertyName];
             if (!property) {
                 throw new Error(`missing property ${propertyName}`);
             }
-            property.observers = property.observers || [];
-            property.observers.push(callback);
+            const observers = property.observers as Function[];
+            observers.push(callback);
         }
 
         /**
@@ -276,18 +267,15 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param propertyName The name of the Property to unobserve
          * @param callback The callback function to remove
          */
-        unobserve(propertyName: string, callback?: ClassFieldObserver) {
-            let property = getProperties(this.constructor)[propertyName];
+        unobserve(propertyName: string, callback: ClassFieldObserver) {
+            const property = getProperties(this.constructor)[propertyName];
             if (!property) {
                 throw new Error(`missing property ${propertyName}`);
             }
-            if (callback && property.observers) {
-                let io = property.observers.indexOf(callback);
-                if (io !== -1) {
-                    property.observers.splice(io, 1);
-                }
-            } else {
-                property.observers = [];
+            const observers = property.observers as Function[];
+            const io = observers.indexOf(callback);
+            if (io !== -1) {
+                observers.splice(io, 1);
             }
         }
 

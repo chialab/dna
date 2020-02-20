@@ -113,8 +113,8 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     /**
      * Observe a Component Property.
      *
-     * @param propertyName The name of the Property to observe
-     * @param callback The callback function
+     * @param propertyName The name of the Property to observe.
+     * @param callback The callback function.
      */
     observe(propertyName: string, callback: ClassFieldObserver): void;
 
@@ -122,10 +122,10 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * Unobserve a Component Property.
      * @memberof PropertiesMixin
      *
-     * @param propertyName The name of the Property to unobserve
-     * @param callback The callback function to remove
+     * @param propertyName The name of the Property to unobserve.
+     * @param callback The callback function to remove.
      */
-    unobserve(propertyName: string, callback ?: ClassFieldObserver):void;
+    unobserve(propertyName: string, callback: ClassFieldObserver):void;
 
     /**
      * Dispatch a custom Event.
