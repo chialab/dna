@@ -2,7 +2,7 @@ import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { setPrototypeOf } from './shim';
 import { DOM, cloneChildNodes } from './DOM';
-import { DelegatedEventCallback, delegateEventListener, undelegateEventListener } from './listener';
+import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent } from './events';
 import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -288,7 +288,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
         dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
         dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
-            return DOM.dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+            return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
         /**

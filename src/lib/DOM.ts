@@ -9,63 +9,15 @@ type GlobalNamespace = Window & typeof globalThis;
  */
 const PROXIES: { [key: string]: typeof HTMLElement } = {};
 
-export const assertNode = (element: any) => {
-    if (!DOM.isNode(element)) {
-        throw new TypeError('The provided element must be a Node');
-    }
-};
-
-export const assertEvent = (event: any) => {
-    if (!DOM.isEvent(event)) {
-        throw new TypeError('The provided object must be an Event');
-    }
-};
-
-export const assertEventName = (eventName: any) => {
-    if (typeof eventName !== 'string') {
-        throw new TypeError('The provided event name must be a string');
-    }
-};
-
-export const assertEventSelector = (selector: any) => {
-    if (selector !== null && typeof selector !== 'string') {
-        throw new TypeError('The provided selector must be a string or null');
-    }
-};
-
-export const assertEventCallback = (callback: any) => {
-    if (typeof callback !== 'function') {
-        throw new TypeError('The provided callback must be a function');
-    }
-};
-
-export const assertEventBubbles = (bubbles: any) => {
-    if (typeof bubbles !== 'boolean') {
-        throw new TypeError('The provided bubbles option must be a boolean');
-    }
-};
-
-export const assertEventCancelable = (cancelable: any) => {
-    if (typeof cancelable !== 'boolean') {
-        throw new TypeError('The provided cancelable option must be a boolean');
-    }
-};
-
-export const assertEventComposed = (composed: any) => {
-    if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-        throw new TypeError('The provided composed option must be a boolean');
-    }
-};
-
 /**
  * Make a readonly copy of the child nodes collection.
  * @param node The parent node.
  * @return A frozen list of child nodes.
  */
-export function cloneChildNodes(node: Node): ReadonlyArray<Node> {
+export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => {
     const children = node.childNodes || [];
     return [].map.call(children, (child) => child) as ReadonlyArray<Node>;
-}
+};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -455,29 +407,8 @@ export const DOM = {
      * Dispatch a custom Event.
      *
      * @param event The event to dispatch or the name of the synthetic event to create.
-     * @param detail Detail object of the event.
-     * @param bubbles Should the event bubble.
-     * @param cancelable Should the event be cancelable.
-     * @param composed Is the event composed.
      */
-    dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean {
-        assertNode(element);
-
-        if (typeof event === 'string') {
-            assertEventBubbles(bubbles);
-            assertEventCancelable(cancelable);
-            assertEventComposed(composed);
-
-            event = this.createEvent(event, {
-                detail,
-                bubbles,
-                cancelable,
-                composed,
-            });
-        } else {
-            assertEvent(event);
-        }
-
+    dispatchEvent(element: Node, event: Event): boolean {
         return this.Node.prototype.dispatchEvent.call(element, event);
     },
 };

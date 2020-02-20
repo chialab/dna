@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
-import { DelegatedEventCallback } from './listener';
+import { DelegatedEventCallback } from './events';
 import { Template } from './Template';
 
 /**

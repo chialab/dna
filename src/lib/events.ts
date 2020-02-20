@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { ClassElement } from './ClassElement';
-import { DOM, assertNode, assertEventName, assertEventSelector, assertEventCallback } from './DOM';
+import { DOM } from './DOM';
 import { CustomElement } from './CustomElement';
 
 /**
@@ -239,3 +239,82 @@ export const listener = (descriptor: DelegatedEventDescriptor) =>
             },
         } as ClassElement;
     };
+
+
+const assertNode = (element: any) => {
+    if (!DOM.isNode(element)) {
+        throw new TypeError('The provided element must be a Node');
+    }
+};
+
+const assertEvent = (event: any) => {
+    if (!DOM.isEvent(event)) {
+        throw new TypeError('The provided object must be an Event');
+    }
+};
+
+const assertEventName = (eventName: any) => {
+    if (typeof eventName !== 'string') {
+        throw new TypeError('The provided event name must be a string');
+    }
+};
+
+const assertEventSelector = (selector: any) => {
+    if (selector !== null && typeof selector !== 'string') {
+        throw new TypeError('The provided selector must be a string or null');
+    }
+};
+
+const assertEventCallback = (callback: any) => {
+    if (typeof callback !== 'function') {
+        throw new TypeError('The provided callback must be a function');
+    }
+};
+
+const assertEventBubbles = (bubbles: any) => {
+    if (typeof bubbles !== 'boolean') {
+        throw new TypeError('The provided bubbles option must be a boolean');
+    }
+};
+
+const assertEventCancelable = (cancelable: any) => {
+    if (typeof cancelable !== 'boolean') {
+        throw new TypeError('The provided cancelable option must be a boolean');
+    }
+};
+
+const assertEventComposed = (composed: any) => {
+    if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
+        throw new TypeError('The provided composed option must be a boolean');
+    }
+};
+
+/**
+ * Dispatch a custom Event.
+ *
+ * @param event The event to dispatch or the name of the synthetic event to create.
+ * @param detail Detail object of the event.
+ * @param bubbles Should the event bubble.
+ * @param cancelable Should the event be cancelable.
+ * @param composed Is the event composed.
+ */
+export const dispatchEvent = (element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
+    assertNode(element);
+
+    if (typeof event === 'string') {
+        assertEventBubbles(bubbles);
+        assertEventCancelable(cancelable);
+        assertEventComposed(composed);
+
+        event = DOM.createEvent(event, {
+            detail,
+            bubbles,
+            cancelable,
+            composed,
+        });
+    } else {
+        assertEvent(event);
+    }
+
+    return DOM.dispatchEvent(element, event);
+};

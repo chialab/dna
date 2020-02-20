@@ -21,6 +21,92 @@ describe('events', function() {
         }
     });
 
+    describe('dispatchEvent', () => {
+        it('should dispatch custom events', () => {
+            const listener = spyFunction();
+            wrapper.addEventListener('click', listener);
+            DNA.dispatchEvent(wrapper, 'click');
+            expect(listener.invoked).to.be.true;
+        });
+
+        it('should dispatch custom events with details', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.detail);
+            wrapper.addEventListener('click', listener);
+            DNA.dispatchEvent(wrapper, 'click', details);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.equal(details);
+        });
+
+        it('should dispatch custom events that does bubble', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.bubbles);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
+            DNA.dispatchEvent(child, 'click', details, true);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.true;
+        });
+
+        it('should dispatch custom events that is canceleable', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.cancelable);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
+            DNA.dispatchEvent(child, 'click', details, true, true);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.true;
+        });
+
+        it('should dispatch custom events that does not bubble', () => {
+            const button = DNA.DOM.createElement('button');
+            wrapper.appendChild(button);
+            const listener1 = spyFunction((event) => event.bubbles);
+            const listener2 = spyFunction((event) => event.bubbles);
+            wrapper.addEventListener('click', listener1);
+            button.addEventListener('click', listener2);
+            DNA.dispatchEvent(button, 'click', null, false);
+            expect(listener1.invoked).to.be.false;
+            expect(listener2.invoked).to.be.true;
+            expect(listener2.response).to.be.false;
+        });
+
+        it('should dispatch custom events that is not canceleable', () => {
+            const details = {};
+            const listener = spyFunction((event) => event.cancelable);
+            const child = DNA.DOM.createElement('button');
+            DNA.DOM.appendChild(wrapper, child);
+            wrapper.addEventListener('click', listener);
+            DNA.dispatchEvent(child, 'click', details, true, false);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.false;
+        });
+
+        it('should validate dispatch input', () => {
+            expect(() => {
+                DNA.dispatchEvent(null);
+            }).to.throw(TypeError, 'The provided element must be a Node');
+
+            expect(() => {
+                DNA.dispatchEvent(wrapper, null);
+            }).to.throw(TypeError, 'The provided object must be an Event');
+
+            expect(() => {
+                DNA.dispatchEvent(wrapper, 'click', null, null, null, null);
+            }).to.throw(TypeError);
+
+            expect(() => {
+                DNA.dispatchEvent(wrapper, 'click', null, true, null, null);
+            }).to.throw(TypeError);
+
+            expect(() => {
+                DNA.dispatchEvent(wrapper, 'click', null, true, true, null);
+            }).to.throw(TypeError);
+        });
+    });
+
     describe('delegateEventListener', () => {
         it('should add delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
@@ -29,7 +115,7 @@ describe('events', function() {
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
             button.click();
-            DNA.DOM.dispatchEvent(button, 'mouseenter');
+            DNA.dispatchEvent(button, 'mouseenter');
 
             expect(listener.invoked).to.be.true;
             expect(listener.count).to.be.equal(2);
