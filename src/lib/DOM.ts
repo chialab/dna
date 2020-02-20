@@ -460,7 +460,7 @@ export const DOM = {
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed?: boolean): boolean {
+    dispatchEvent(element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean {
         assertNode(element);
 
         if (typeof event === 'string') {

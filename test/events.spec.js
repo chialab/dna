@@ -193,13 +193,39 @@ describe('events', function() {
         });
     });
 
-    describe.skip('#dispatchEvent', () => {
+    describe('#dispatchEvent', () => {
         it('should dispatch an event', () => {
-            //
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {}
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            wrapper.addEventListener('click', callback);
+            expect(callback.invoked).to.be.false;
+            element.dispatchEvent(DNA.DOM.createEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback.invoked).to.be.true;
+            wrapper.removeEventListener('click', callback);
         });
 
         it('should create and dispatch a custom event', () => {
-            //
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {}
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            wrapper.addEventListener('click', callback);
+            expect(callback.invoked).to.be.false;
+            element.dispatchEvent('click');
+            expect(callback.invoked).to.be.true;
+            wrapper.removeEventListener('click', callback);
         });
     });
 
