@@ -1,7 +1,7 @@
 import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { setPrototypeOf } from './shim';
-import { DOM } from './DOM';
+import { DOM, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, undelegateAllEventListeners } from './listener';
 import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
@@ -112,7 +112,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
 
             setPrototypeOf(element, this.constructor.prototype);
             setScope(element, createScope(element));
-            setSlotted(element, DOM.getChildNodes(element) as TemplateItems);
+            setSlotted(element, cloneChildNodes(element) as TemplateItems);
 
             const propertyDescriptors = this.properties;
             if (propertyDescriptors) {

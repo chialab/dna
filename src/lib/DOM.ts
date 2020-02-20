@@ -58,6 +58,16 @@ export const assertEventComposed = (composed: any) => {
 };
 
 /**
+ * Make a readonly copy of the child nodes collection.
+ * @param node The parent node.
+ * @return A frozen list of child nodes.
+ */
+export function cloneChildNodes(node: Node): ReadonlyArray<Node> {
+    const children = node.childNodes || [];
+    return [].map.call(children, (child) => child) as ReadonlyArray<Node>;
+}
+
+/**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.
  * For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
@@ -353,20 +363,6 @@ export const DOM = {
     },
 
     /**
-     * Get child nodes for a node.
-     *
-     * @param node The parent node.
-     * @return An array of child nodes (if available).
-     */
-    getChildNodes(node: Node): ReadonlyArray<Node> {
-        const childNodes: Node[] = [];
-        for (let i = 0, len = node.childNodes.length; i < len; i++) {
-            childNodes.push(node.childNodes[i]);
-        }
-        return childNodes;
-    },
-
-    /**
      * The method checks to see if the Element would be selected by the provided selectorString.
      * @param selectorString The selector to match.
      */
@@ -402,11 +398,11 @@ export const DOM = {
         if (checkNativeSupport()) {
             return;
         }
-        const previousNodes = this.getChildNodes(node) || [];
+        const previousNodes = cloneChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.connectedCallback();
         }
-        const children = this.getChildNodes(node);
+        const children = cloneChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 let child = children[i];
@@ -427,11 +423,11 @@ export const DOM = {
         if (checkNativeSupport()) {
             return;
         }
-        const previousNodes = this.getChildNodes(node) || [];
+        const previousNodes = cloneChildNodes(node) || [];
         if (isCustomElement(node)) {
             node.disconnectedCallback();
         }
-        const children = this.getChildNodes(node);
+        const children = cloneChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
                 let child = children[i];
