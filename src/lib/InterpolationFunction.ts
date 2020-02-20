@@ -12,11 +12,12 @@ export type InterpolationFunction = (this: object) => string;
 
 /**
  * Flag a function as InterpolationFunction.
+ * @ignore
  * @param fn The function to flag.
  * @return The updated function.
  */
-export const createInterpolationFunction = (fn: Function & { [INTERPOLATION_SYMBOL]?: true }): InterpolationFunction => {
-    fn[INTERPOLATION_SYMBOL] = true;
+export const createInterpolationFunction = (fn: Function): InterpolationFunction => {
+    (fn as any)[INTERPOLATION_SYMBOL] = true;
     return fn as InterpolationFunction;
 };
 

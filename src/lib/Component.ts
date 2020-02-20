@@ -58,6 +58,11 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         readonly template?: HTMLTemplateElement;
 
         /**
+         * A list of CSSStyleSheet to apply to the component.
+         */
+        adoptedStyleSheets?: CSSStyleSheet[];
+
+        /**
          * A flag with the connected value of the node.
          */
         get isConnected(): boolean {
@@ -403,30 +408,5 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
  * declarative properties and event delegations, custom template and
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
- *
- * @example
- * ```ts
- * import { Component, property, listener, define, render } from '＠chialab/dna';
- *
- * class HelloWorld extends Component {
- *   // define an observable property
- *   ＠property()
- *   name: string;
- *
- *   // define a list of delegated events
- *   @listener('input', '[name="name"]') // define a delegated event
- *   setName(event, target) {
- *       this.name = target.value;
- *   }
- *
- *   // define the template
- *   render() {
- *       return html`<div>${this.name}</div>`;
- *   }
- * }
- *
- * // link the Component class to a tag
- * define('hello-world', HelloWorld);
- * ```
  */
 export const Component = mixin(DOM.get('HTMLElement'));

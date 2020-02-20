@@ -22,6 +22,7 @@ export const isHyperFunction = (target: any): target is HyperFunction => !!targe
 
 /**
  * Flag a function as HyperFunction.
+ * @ignore
  * @param fn The function to flag.
  * @return The updated function.
  */

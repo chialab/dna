@@ -33,6 +33,7 @@ export type Template = TemplateItem | TemplateItems;
 
 /**
  * Create a new list of items with a filter.
+ * @ignore
  *
  * @param template A template items list.
  * @param filter The filter function to bind.
@@ -46,6 +47,7 @@ export const createFilterableTemplateItems = (template: TemplateItems, filter: T
 
 /**
  * Get the filter function for a template.
+ * @ignore
  *
  * @param template The template target.
  * @return A filter function (if defined).

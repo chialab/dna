@@ -145,3 +145,13 @@ h3 {
         }).to.throw(TypeError, 'The provided CSS text must be a string');
     });
 });
+
+describe.skip('adoptedStyleSheets', () => {
+    it('should handle style in adoptedStyleSheets', () => {
+        //
+    });
+
+    it('should handle multiple styles in adoptedStyleSheets', () => {
+        //
+    });
+});

@@ -10,6 +10,7 @@ export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * Check if a node is a DNA Custom Element instance.
+ * @ignore
  * @param node The node to check.
  * @return The node is a Custom Element instance.
  */
@@ -17,6 +18,7 @@ export const isCustomElement = (node: any): node is CustomElement => node[CE_SYM
 
 /**
  * Check if the environment supports Custom Elements.
+ * @ignore
  */
 export const checkNativeSupport = () => typeof customElements !== 'undefined';
 
@@ -54,6 +56,11 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * A set of delegated events to bind to the node.
      */
     readonly template?: HTMLTemplateElement;
+
+    /**
+     * A list of CSSStyleSheet to apply to the component.
+     */
+    adoptedStyleSheets?: CSSStyleSheet[];
 
     /**
      * The DNA Custom Element constructor.

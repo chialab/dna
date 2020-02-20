@@ -548,7 +548,7 @@ describe('Component', function() {
                     };
                 }
 
-                @DNA.property({ attribute: 'title' }) title = '';
+                @DNA.property() title = '';
             };
 
             DNA.define('test-component36', TestElement);

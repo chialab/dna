@@ -261,6 +261,8 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 enumerable: false,
             },
             initializer(this: any) {
+                // remove old prototype property definition Chrome < 40
+                delete this[element.key];
                 return initProperty(this, symbol, descriptor, element.initializer);
             },
             finisher(constructor: Function) {
