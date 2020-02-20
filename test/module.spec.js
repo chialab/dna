@@ -26,8 +26,8 @@ describe('module', function() {
         compile: 'function',
         delegateEventListener: 'function',
         undelegateEventListener: 'function',
-        undelegateAllEventListeners: 'function',
         property: 'function',
+        listener: 'function',
         Component: 'function',
         CustomElementRegistry: 'function',
     };

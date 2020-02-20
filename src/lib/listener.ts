@@ -1,5 +1,7 @@
 import { createSymbolKey } from './symbols';
+import { ClassElement } from './ClassElement';
 import { DOM, assertNode, assertEventName, assertEventSelector, assertEventCallback } from './DOM';
+import { CustomElement } from './CustomElement';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -22,13 +24,13 @@ type DelegatedEventDescriptor = {
      */
     event: string;
     /**
-     * The callback for the delegated event.
-     */
-    callback: DelegatedEventCallback;
-    /**
      * The selector for the delegated event.
      */
-    selector: string|null;
+    selector: string | null;
+    /**
+     * The callback for the delegated event.
+     */
+    callback?: DelegatedEventCallback;
 };
 
 /**
@@ -123,7 +125,7 @@ export const delegateEventListener = (element: Node, eventName: string, selector
                 if (selectorTarget) {
                     filtered.push({
                         target: selectorTarget,
-                        callback,
+                        callback: callback as DelegatedEventCallback,
                     });
                 }
             }
@@ -197,24 +199,43 @@ export const undelegateEventListener = (element: Node, eventName: string, select
 };
 
 /**
- * Remove all event delegations.
- * @param element The root element of the delegation
+ * Bind a method to an event listener.
+ *
+ * @param descriptor The listener description.
+ * @return The decorator initializer.
  */
-export const undelegateAllEventListeners = (element: Node) => {
-    assertNode(element);
-
-    const delegatedElement: Node & WithEventDelegations = element;
-    // get all delegations
-    const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL];
-
-    if (!delegations) {
-        return;
-    }
-    for (let eventName in delegations) {
-        const { descriptors } = delegations[eventName];
-        while (descriptors.length) {
-            const descriptor = descriptors[descriptors.length - 1];
-            undelegateEventListener(element, eventName, descriptor.selector, descriptor.callback);
+export const listener = (descriptor: DelegatedEventDescriptor) =>
+    (targetOrClassElement: CustomElement | ClassElement, methodKey: string, originalDescriptor: PropertyDescriptor) => {
+        let element: ClassElement;
+        if (methodKey !== undefined) {
+            (targetOrClassElement as CustomElement).delegateEventListener(
+                descriptor.event,
+                descriptor.selector,
+                (targetOrClassElement as any)[methodKey] as DelegatedEventCallback
+            );
+            return;
         }
-    }
-};
+
+        element = targetOrClassElement as ClassElement;
+
+        if (element.kind !== 'method' || element.placement !== 'prototype') {
+            return element;
+        }
+
+        return {
+            kind: 'method',
+            key: element.key,
+            placement: 'prototype',
+            descriptor: element.descriptor,
+            finisher(constructor: Function) {
+                const prototype = constructor.prototype;
+                const listeners = prototype.listeners || {};
+                listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[element.key];
+                Object.defineProperty(prototype, 'listeners', {
+                    value: listeners,
+                    configurable: true,
+                    writable: false,
+                });
+            },
+        } as ClassElement;
+    };

@@ -1,36 +1,11 @@
 import { createSymbolKey } from './symbols';
-import { isCustomElement } from './CustomElement';
+import { isCustomElement, CustomElement } from './CustomElement';
+import { ClassElement } from './ClassElement';
 
 /**
  * A Symbol which contains all Property instances of a Component.
  */
 const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
-
-/**
- * Decorator class element descriptor.
- */
-export interface ClassElement {
-    /**
-     * The kind of the class element.
-     */
-    kind: 'field' | 'method';
-    /**
-     * The name of the element.
-     */
-    key: PropertyKey;
-    /**
-     * The type of the element.
-     */
-    placement: 'static' | 'prototype' | 'own';
-    /**
-     * An initializer function.
-     */
-    initializer?: Function;
-    /**
-     * The element property descriptor.
-     */
-    descriptor?: PropertyDescriptor;
-}
 
 /**
  * The observer signature for class fields.
@@ -234,7 +209,7 @@ export const initProperty = (target: any, symbol: symbol, descriptor: ClassField
  * @return The decorator initializer.
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
-    (targetOrClassElement: Object | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+    (targetOrClassElement: CustomElement | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
 
         let element: ClassElement;
@@ -243,9 +218,9 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
             defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
             initProperty(targetOrClassElement, symbol, descriptor);
             return;
-        } else {
-            element = targetOrClassElement as ClassElement;
         }
+
+        element = targetOrClassElement as ClassElement;
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
@@ -264,9 +239,9 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 writable: true,
                 enumerable: false,
             },
-            initializer(this: any) {
+            initializer(this: CustomElement) {
                 // remove old prototype property definition Chrome < 40
-                delete this[element.key];
+                delete (this as any)[element.key];
                 return initProperty(this, symbol, descriptor, element.initializer);
             },
             finisher(constructor: Function) {

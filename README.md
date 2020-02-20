@@ -84,7 +84,10 @@ class HelloWorld extends Component {
     name: string;
 
     // delegate an event
-    @listener('change', 'input[name="firstName"]')
+    @listener({
+        event: 'change',
+        selector: 'input[name="firstName"]'
+    })
     setName(event, target) {
         this.name = target.value;
     }

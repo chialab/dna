@@ -2,7 +2,7 @@ import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { setPrototypeOf } from './shim';
 import { DOM, cloneChildNodes } from './DOM';
-import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, undelegateAllEventListeners } from './listener';
+import { DelegatedEventCallback, delegateEventListener, undelegateEventListener } from './listener';
 import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -130,6 +130,15 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                 (element as any)[propertyKey] = props[propertyKey];
             }
 
+            // register events
+            const listenerDescriptors = this.listeners;
+            if (listenerDescriptors) {
+                for (let eventPath in listenerDescriptors) {
+                    let paths = eventPath.trim().split(' ');
+                    this.delegateEventListener(paths.shift() as string, paths.join(' '), listenerDescriptors[eventPath]);
+                }
+            }
+
             if (element.isConnected && !NATIVE_SUPPORT) {
                 DOM.connect(element);
             }
@@ -142,18 +151,6 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            // register events
-            undelegateAllEventListeners(this);
-            const listenerDescriptors = this.listeners;
-            if (listenerDescriptors) {
-                for (let eventPath in listenerDescriptors) {
-                    let match = eventPath.split(' ');
-                    if (match) {
-                        this.delegateEventListener(match.shift() as string, match.join(' '), listenerDescriptors[eventPath]);
-                    }
-                }
-            }
-
             // trigger a re-render when the Node is connected
             this.forceUpdate();
         }
@@ -301,7 +298,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param selector The selector to delegate
          * @param callback The callback to trigger when an Event matches the delegation
          */
-        delegateEventListener(event: string, selector: string, callback: DelegatedEventCallback) {
+        delegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback) {
             return delegateEventListener(this, event, selector, callback);
         }
 
@@ -312,7 +309,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * @param selector The selector to undelegate
          * @param callback The callback to remove
          */
-        undelegateEventListener(event: string, selector: string, callback: DelegatedEventCallback) {
+        undelegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback) {
             return undelegateEventListener(this, event, selector, callback);
         }
 

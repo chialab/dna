@@ -146,7 +146,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param selector The selector to delegate
      * @param callback The callback to trigger when an Event matches the delegation
      */
-    delegateEventListener(event: string, selector: string, callback: DelegatedEventCallback): void;
+    delegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback): void;
 
     /**
      * Remove an Event delegation.
@@ -155,5 +155,5 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param selector The selector to undelegate
      * @param callback The callback to remove
      */
-    undelegateEventListener(event?: string, selector?: string, callback?: DelegatedEventCallback): void;
+    undelegateEventListener(event?: string, selector?: string|null, callback?: DelegatedEventCallback): void;
 }
