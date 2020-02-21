@@ -1,6 +1,6 @@
 import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
 import { DOM, cloneChildNodes } from './DOM';
-import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent } from './events';
+import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
@@ -275,6 +275,21 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
         dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
             return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+        }
+
+        /**
+         * Dispatch an async custom Event.
+         *
+         * @param event The event to dispatch or the name of the synthetic event to create.
+         * @param detail Detail object of the event.
+         * @param bubbles Should the event bubble.
+         * @param cancelable Should the event be cancelable.
+         * @param composed Is the event composed.
+         */
+        dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
+        dispatchAsyncEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
+        dispatchAsyncEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+            return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
         /**

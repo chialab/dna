@@ -27,6 +27,7 @@ describe('module', function() {
         delegateEventListener: 'function',
         undelegateEventListener: 'function',
         dispatchEvent: 'function',
+        dispatchAsyncEvent: 'function',
         property: 'function',
         listener: 'function',
         Component: 'function',

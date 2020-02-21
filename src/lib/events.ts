@@ -8,6 +8,10 @@ import { CustomElement } from './CustomElement';
  */
 const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
 
+export type AsyncEvent = Event & {
+    respondWith(callback: () => Promise<any>): void;
+};
+
 /**
  * Describe the signature of a delegated event callback.
  * @param event The original DOM event.
@@ -247,8 +251,36 @@ const assertEventComposed = (composed: any) => {
 };
 
 /**
+ * Create custom Event.
+ *
+ * @param event The event to dispatch or the name of the synthetic event to create.
+ * @param detail Detail object of the event.
+ * @param bubbles Should the event bubble.
+ * @param cancelable Should the event be cancelable.
+ * @param composed Is the event composed.
+ */
+function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+    if (typeof event !== 'string') {
+        assertEvent(event);
+        return event;
+    }
+
+    assertEventBubbles(bubbles);
+    assertEventCancelable(cancelable);
+    assertEventComposed(composed);
+
+    return DOM.createEvent(event, {
+        detail,
+        bubbles,
+        cancelable,
+        composed,
+    });
+}
+
+/**
  * Dispatch a custom Event.
  *
+ * @param element The dispatcher node.
  * @param event The event to dispatch or the name of the synthetic event to create.
  * @param detail Detail object of the event.
  * @param bubbles Should the event bubble.
@@ -257,25 +289,31 @@ const assertEventComposed = (composed: any) => {
  */
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
-
-    if (typeof event === 'string') {
-        assertEventBubbles(bubbles);
-        assertEventCancelable(cancelable);
-        assertEventComposed(composed);
-
-        event = DOM.createEvent(event, {
-            detail,
-            bubbles,
-            cancelable,
-            composed,
-        });
-    } else {
-        assertEvent(event);
-    }
-
+    event = initEvent(event, detail, bubbles, cancelable, composed);
     return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
 };
 
+/**
+ * Dispatch an async custom Event.
+ *
+ * @param element The dispatcher node.
+ * @param event The event to dispatch or the name of the synthetic event to create.
+ * @param detail Detail object of the event.
+ * @param bubbles Should the event bubble.
+ * @param cancelable Should the event be cancelable.
+ * @param composed Is the event composed.
+ */
+export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<any[]> => {
+    const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
+    const promises: any[] = [];
+    asyncEvent.respondWith = function(callback) {
+        promises.push(callback());
+    };
+    if (!dispatchEvent(element, asyncEvent)) {
+        throw new Error('event has been canceled');
+    }
+    return await Promise.all(promises);
+};
 
 /**
  * Bind a method to an event listener.

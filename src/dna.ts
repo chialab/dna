@@ -12,6 +12,6 @@ export { Fragment, h } from './lib/h';
 export { html, template } from './lib/html';
 export { css } from './lib/css';
 export { compile } from './lib/InterpolationFunction';
-export { listener, delegateEventListener, undelegateEventListener, dispatchEvent } from './lib/events';
+export { listener, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { property } from './lib/property';
 export { mixin, Component } from './lib/Component';

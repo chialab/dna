@@ -107,6 +107,19 @@ describe('events', function() {
         });
     });
 
+    describe('dispatchAyncEvent', () => {
+        it('should trigger an event and return a Promise', async () => {
+            wrapper.addEventListener('click', (event) => {
+                event.respondWith(async () => event.type);
+            });
+            wrapper.addEventListener('click', (event) => {
+                event.respondWith(async () => event.target.tagName);
+            });
+            const response = await DNA.dispatchAsyncEvent(wrapper, 'click');
+            expect(response).to.be.deep.equal(['click', 'DIV']);
+        });
+    });
+
     describe('delegateEventListener', () => {
         it('should add delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
@@ -384,6 +397,25 @@ describe('events', function() {
             element.dispatchEvent('click');
             expect(callback.invoked).to.be.true;
             wrapper.removeEventListener('click', callback);
+        });
+    });
+
+    describe('#dispatchAyncEvent', () => {
+        it('should trigger an event and return a Promise', async () => {
+            const is = getComponentName();
+            class TestElement extends DNA.Component {
+                @DNA.listener({ event: 'click' })
+                method(event) {
+                    event.respondWith(async () => event.type);
+                    event.respondWith(async () => event.target.tagName);
+                }
+            }
+
+            DNA.define(is, TestElement);
+
+            const element = new TestElement();
+            const response = await element.dispatchAsyncEvent('click');
+            expect(response).to.be.deep.equal(['click', is.toUpperCase()]);
         });
     });
 

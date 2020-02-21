@@ -273,10 +273,4 @@ describe('DOM', function() {
             expect(DNA.DOM.isConnected(child)).to.be.false;
         });
     });
-
-    describe.skip('#dispatchAyncEvent', () => {
-        it('should trigger an event and return a Promise', () => {
-            //
-        });
-    });
 });
