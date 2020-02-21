@@ -19,6 +19,11 @@ jobs:
         with:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
@@ -53,6 +58,11 @@ jobs:
         with:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
@@ -86,6 +96,11 @@ jobs:
         with:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
@@ -122,6 +137,11 @@ jobs:
         with:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
@@ -151,6 +171,11 @@ jobs:
         with:
           path: .yarn
           key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
