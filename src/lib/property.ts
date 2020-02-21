@@ -211,8 +211,6 @@ export const initProperty = (target: any, symbol: symbol, descriptor: ClassField
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
     (targetOrClassElement: CustomElement | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
-
-        let element: ClassElement;
         if (propertyKey !== undefined) {
             descriptor.defaultValue = originalDescriptor.value;
             defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
@@ -220,7 +218,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
             return;
         }
 
-        element = targetOrClassElement as ClassElement;
+        const element = targetOrClassElement as ClassElement;
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
@@ -231,9 +229,9 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
         }
 
         return {
-            kind: 'field',
+            kind: element.kind,
             key: symbol,
-            placement: 'own',
+            placement: element.placement,
             descriptor: {
                 configurable: false,
                 writable: true,

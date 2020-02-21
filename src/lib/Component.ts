@@ -1,6 +1,4 @@
 import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
-import { registry } from './CustomElementRegistry';
-import { setPrototypeOf } from './shim';
 import { DOM, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent } from './events';
 import { createScope, getScope, setScope } from './scope';
@@ -8,6 +6,7 @@ import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './Slotted';
 import { render } from './render';
 import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
+import { template } from './html';
 
 export type Properties = { [key: string]: any; };
 
@@ -35,7 +34,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * The tag name used for Component definition.
          */
         get is(): string {
-            return '';
+            return undefined as unknown as string;
         }
 
         /**
@@ -55,7 +54,12 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         /**
          * A set of delegated events to bind to the node.
          */
-        readonly template?: HTMLTemplateElement;
+        get template(): HTMLTemplateElement | undefined {
+            if (!this.ownerDocument) {
+                return undefined;
+            }
+            return this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+        }
 
         /**
          * A list of CSSStyleSheet to apply to the component.
@@ -83,37 +87,21 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          */
         constructor(node?: HTMLElement | Properties, properties: Properties = {}) {
             super();
-            const NATIVE_SUPPORT = checkNativeSupport();
-            const is = this.is;
-
-            if (!is) {
-                throw new TypeError('Illegal constructor');
-            }
 
             let element: CustomElement<T> = node as CustomElement<T>;
             let props: Properties = properties as Properties;
-
             if (!DOM.isElement(element)) {
                 props = node || {};
-                const constructor = registry.get(is);
-                const extend = constructor.prototype.extends;
-                if (NATIVE_SUPPORT && !extend) {
-                    element = this as unknown as CustomElement<T>;
-                } else {
-                    element = DOM.createElement(extend || is, {
-                        is,
-                        plain: true,
-                    }) as CustomElement<T>;
-                    DOM.setAttribute(element, 'is', is);
-                }
+                element = this as unknown as CustomElement<T>;
             } else {
-                DOM.setAttribute(element, 'is', is);
+                DOM.setAttribute(element, 'is', this.is);
+                Object.setPrototypeOf(element, this);
             }
 
-            setPrototypeOf(element, this.constructor.prototype);
             setScope(element, createScope(element));
             setSlotted(element, cloneChildNodes(element) as TemplateItems);
 
+            // setup Component properties
             const propertyDescriptors = this.properties;
             if (propertyDescriptors) {
                 for (let propertyKey in propertyDescriptors) {
@@ -124,13 +112,11 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                     }
                 }
             }
-
-            // setup Component properties
             for (let propertyKey in props) {
                 (element as any)[propertyKey] = props[propertyKey];
             }
 
-            // register events
+            // register listeners
             const listenerDescriptors = this.listeners;
             if (listenerDescriptors) {
                 for (let eventPath in listenerDescriptors) {
@@ -139,7 +125,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                 }
             }
 
-            if (element.isConnected && !NATIVE_SUPPORT) {
+            if (element.isConnected && !checkNativeSupport()) {
                 DOM.connect(element);
             }
 
@@ -318,16 +304,26 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          *
          * @return The instances of the rendered Components and/or Nodes
          */
-        render(): Template {
-            // if no children are provided use the Component template or its slotted Nodes using the upper scope
-            return this.template || getSlotted(this);
+        render(): Template | undefined {
+            const tpl = this.template;
+            if (tpl) {
+                return template(tpl);
+            }
+            const children = getSlotted(this);
+            if (children) {
+                return children;
+            }
+            return undefined;
         }
 
         /**
          * Force an element to re-render.
          */
         forceUpdate() {
-            render(this, this.render());
+            const template = this.render();
+            if (template) {
+                render(this, this.render());
+            }
         }
 
         /**

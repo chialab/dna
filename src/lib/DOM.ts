@@ -1,6 +1,5 @@
 import { isCustomElement, checkNativeSupport } from './CustomElement';
 import { registry } from './CustomElementRegistry';
-import { shim } from './shim';
 
 type GlobalNamespace = Window & typeof globalThis;
 
@@ -18,6 +17,43 @@ export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => {
     const children = node.childNodes || [];
     return [].map.call(children, (child) => child) as ReadonlyArray<Node>;
 };
+
+/**
+ * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
+ * because using `new HTMLElement()` in browsers throw `Illegal constructor`.
+ *
+ * @param base The constructor or the class to shim.
+ * @return A newable constructor with the same prototype.
+ */
+export const shim = <T extends typeof HTMLElement>(base: T): T => {
+    const shim = function(this: any, ...args: any[]) {
+        try {
+            if (!(new.target as any).extends) {
+                return Reflect.construct(base, args, new.target);
+            }
+        } catch {
+            //
+        }
+
+        const constructor = this.constructor;
+        const is = this.is;
+        const extend = constructor.extends;
+
+        if (!is) {
+            throw new TypeError('Illegal constructor');
+        }
+
+        const element = DOM.document.createElement(extend || is) as HTMLElement;
+        if (extend) {
+            element.setAttribute('is', is);
+        }
+        Object.setPrototypeOf(element, constructor.prototype);
+        return element;
+    } as any as T;
+    shim.prototype = base.prototype;
+    return shim;
+};
+
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -129,13 +165,11 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement(tagName: string, options?: ElementCreationOptions & { plain?: boolean }): Element {
-        const name = options && options.is || tagName.toLowerCase();
+    createElement(tagName: string, options?: ElementCreationOptions): Element {
+        const is = options && options.is;
+        const name = is || tagName.toLowerCase();
         const node = this.document.createElement(tagName);
         const constructor = registry.get(name);
-        if (options && options.plain) {
-            return node;
-        }
         if (constructor && !(node instanceof constructor)) {
             new constructor(node);
         }
@@ -401,14 +435,5 @@ export const DOM = {
         }
         const constructor = this.window[name];
         return PROXIES[name] = class extends shim(constructor) {};
-    },
-
-    /**
-     * Dispatch a custom Event.
-     *
-     * @param event The event to dispatch or the name of the synthetic event to create.
-     */
-    dispatchEvent(element: Node, event: Event): boolean {
-        return this.Node.prototype.dispatchEvent.call(element, event);
     },
 };

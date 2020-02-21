@@ -22,4 +22,8 @@ export interface ClassElement {
      * The element property descriptor.
      */
     descriptor?: PropertyDescriptor;
+    /**
+     * The descriptor finisher method.
+     */
+    finisher?: (constructor: Function) => void;
 }

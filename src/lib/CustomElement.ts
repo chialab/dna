@@ -34,9 +34,14 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     readonly [CE_SYMBOL]: true;
 
     /**
-     * The tag name used for Component definition.
+     * The defined component name.
      */
     readonly is: string | undefined;
+
+    /**
+     * The native tag to extend.
+     */
+    readonly extends: string | undefined;
 
     /**
      * A set of properties to define to the node.

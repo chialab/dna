@@ -1,4 +1,4 @@
-import { getModule, spyFunction, getComponentName } from './helpers.js';
+import { getModule, getComponentName } from './helpers.js';
 
 let DNA;
 

@@ -65,7 +65,7 @@ type WithEventDelegations = {
  * @param callback The callback to trigger when an Event matches the delegation
  * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
-export const delegateEventListener = (element: Node, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) => {
+export const delegateEventListener = (element: Element, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) => {
     const delegatedElement: Node & WithEventDelegations = element;
 
     assertNode(element);
@@ -169,7 +169,7 @@ export const delegateEventListener = (element: Node, eventName: string, selector
  * @param selector The selector to undelegate
  * @param callback The callback to remove
  */
-export const undelegateEventListener = (element: Node, eventName: string, selector: string | null, callback: DelegatedEventCallback) => {
+export const undelegateEventListener = (element: Element, eventName: string, selector: string | null, callback: DelegatedEventCallback) => {
     assertNode(element);
     assertEventName(eventName);
     assertEventSelector(selector);
@@ -197,49 +197,6 @@ export const undelegateEventListener = (element: Node, eventName: string, select
         }
     }
 };
-
-/**
- * Bind a method to an event listener.
- *
- * @param descriptor The listener description.
- * @return The decorator initializer.
- */
-export const listener = (descriptor: DelegatedEventDescriptor) =>
-    (targetOrClassElement: CustomElement | ClassElement, methodKey: string, originalDescriptor: PropertyDescriptor) => {
-        let element: ClassElement;
-        if (methodKey !== undefined) {
-            (targetOrClassElement as CustomElement).delegateEventListener(
-                descriptor.event,
-                descriptor.selector,
-                (targetOrClassElement as any)[methodKey] as DelegatedEventCallback
-            );
-            return;
-        }
-
-        element = targetOrClassElement as ClassElement;
-
-        if (element.kind !== 'method' || element.placement !== 'prototype') {
-            return element;
-        }
-
-        return {
-            kind: 'method',
-            key: element.key,
-            placement: 'prototype',
-            descriptor: element.descriptor,
-            finisher(constructor: Function) {
-                const prototype = constructor.prototype;
-                const listeners = prototype.listeners || {};
-                listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[element.key];
-                Object.defineProperty(prototype, 'listeners', {
-                    value: listeners,
-                    configurable: true,
-                    writable: false,
-                });
-            },
-        } as ClassElement;
-    };
-
 
 const assertNode = (element: any) => {
     if (!DOM.isNode(element)) {
@@ -298,7 +255,7 @@ const assertEventComposed = (composed: any) => {
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchEvent = (element: Node, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
+export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
 
     if (typeof event === 'string') {
@@ -316,5 +273,40 @@ export const dispatchEvent = (element: Node, event: Event | string, detail?: Cus
         assertEvent(event);
     }
 
-    return DOM.dispatchEvent(element, event);
+    return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
 };
+
+
+/**
+ * Bind a method to an event listener.
+ *
+ * @param descriptor The listener description.
+ * @return The decorator initializer.
+ */
+export const listener = (descriptor: DelegatedEventDescriptor) =>
+    (targetOrClassElement: CustomElement | ClassElement, methodKey: string, originalDescriptor: PropertyDescriptor) => {
+        if (methodKey !== undefined) {
+            (targetOrClassElement as CustomElement).delegateEventListener(
+                descriptor.event,
+                descriptor.selector,
+                (targetOrClassElement as any)[methodKey] as DelegatedEventCallback
+            );
+            return;
+        }
+
+        const element = targetOrClassElement as ClassElement;
+        if (element.kind === 'method' && element.placement === 'prototype') {
+            element.finisher = (constructor: Function) => {
+                const prototype = constructor.prototype;
+                const listeners = prototype.listeners || {};
+                listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[element.key];
+                Object.defineProperty(prototype, 'listeners', {
+                    value: listeners,
+                    configurable: true,
+                    writable: false,
+                });
+            };
+        }
+
+        return element;
+    };

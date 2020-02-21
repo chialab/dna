@@ -73,7 +73,7 @@ export class CustomElementRegistry {
                 value: name,
             });
             if (options.extends) {
-                Object.defineProperty(constructor.prototype, 'extends', {
+                Object.defineProperty(constructor, 'extends', {
                     writable: false,
                     configurable: false,
                     value: options.extends.toLowerCase(),
