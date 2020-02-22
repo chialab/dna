@@ -3,7 +3,7 @@ import { CustomElement, isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope, setScope } from './scope';
 import { HyperFunction, createHyperFunction } from './HyperFunction';
 import { Template, TemplateItems, createFilterableTemplateItems } from './Template';
-import { getSlotted, setSlotted } from './Slotted';
+import { getSlotted, setSlotted } from './slotted';
 import { isInterpolationFunction } from './InterpolationFunction';
 import { registry } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -194,9 +194,14 @@ export const h = (tag: string | typeof Element, properties: HyperProperties | nu
             }
 
             if (value == null || value === false) {
-                DOM.removeAttribute(element, propertyKey);
-            } else if (typeof value !== 'object' && propertyKey !== 'key') {
-                DOM.setAttribute(element, propertyKey, value === true ? '' : value);
+                if (DOM.hasAttribute(element, propertyKey)) {
+                    DOM.removeAttribute(element, propertyKey);
+                }
+            } else if (typeof value !== 'object' && typeof value !== 'function' && propertyKey !== 'key') {
+                let attrValue = value === true ? '' : value;
+                if (DOM.getAttribute(element, propertyKey) !== attrValue) {
+                    DOM.setAttribute(element, propertyKey, attrValue);
+                }
             }
 
             if (propertyKey === 'key') {

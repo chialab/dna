@@ -1,4 +1,4 @@
-import { CustomElement, checkNativeSupport } from './CustomElement';
+import { CustomElement } from './CustomElement';
 
 /**
  * A regex for Custom Element.
@@ -42,9 +42,6 @@ export class CustomElementRegistry {
      * @return The definition for the given tag.
      */
     get(name: string): CustomElement {
-        if (checkNativeSupport()) {
-            return customElements.get(name);
-        }
         return this.registry[name];
     }
 
@@ -62,7 +59,7 @@ export class CustomElementRegistry {
             throw new TypeError('The referenced constructor must be a constructor');
         }
 
-        if (this.get(name)) {
+        if (this.registry[name]) {
             throw new Error('The registry already contains an entry with the same name');
         }
 
@@ -85,7 +82,7 @@ export class CustomElementRegistry {
 
         this.registry[name] = constructor;
 
-        if (checkNativeSupport()) {
+        if (typeof customElements !== 'undefined') {
             return customElements.define(name, constructor, options);
         }
 
@@ -101,10 +98,10 @@ export class CustomElementRegistry {
      * @return A Promise that resolves when the named element is defined.
      */
     whenDefined(name: string): Promise<void> {
-        if (checkNativeSupport()) {
+        if (typeof customElements !== 'undefined') {
             return customElements.whenDefined(name);
         }
-        if (this.get(name)) {
+        if (this.registry[name]) {
             return Promise.resolve();
         }
         const queue = this.queue;
@@ -121,14 +118,14 @@ export class CustomElementRegistry {
      * @param root A Node instance with descendant elements that are to be upgraded.
      */
     upgrade(root: HTMLElement) {
-        if (checkNativeSupport() && 'upgrade' in customElements) {
+        if (typeof customElements !== 'undefined' && 'upgrade' in customElements) {
             return customElements.upgrade(root);
         }
         const elements: CustomElement[] = [];
         // iterate registry entries in order to retrieve all registered tags
         const registry = this.registry;
         for (let key in registry) {
-            const constructor = this.get(key);
+            const constructor = registry[key];
             // find all nodes for the current Component configuration
             const nodes = root.querySelectorAll(`${key}, [is="${key}"]`);
             // iterate all nodes found

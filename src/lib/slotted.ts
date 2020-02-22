@@ -18,6 +18,4 @@ export const getSlotted = (template: Template): TemplateItems => (template as an
  * @param template The template target.
  * @param slotted A list of child template items.
  */
-export const setSlotted = (template: Template, slotted: TemplateItems): void => {
-    (template as any)[SLOTTED_SYMBOL] = slotted;
-};
+export const setSlotted = (template: Template, slotted: TemplateItems): TemplateItems => (template as any)[SLOTTED_SYMBOL] = slotted;

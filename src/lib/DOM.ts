@@ -1,4 +1,4 @@
-import { isCustomElement, checkNativeSupport } from './CustomElement';
+import { isCustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 
 type GlobalNamespace = Window & typeof globalThis;
@@ -71,6 +71,11 @@ export const DOM = {
      * The document instance.
      */
     document: (typeof document !== 'undefined' ? document : undefined) as Document,
+
+    /**
+     * Check if the environment should emulate Custom Elements life cycle.
+     */
+    emulate: typeof customElements === 'undefined',
 
     /**
      * The adapter Document constructor.
@@ -220,16 +225,13 @@ export const DOM = {
      * @param newChild The child to add.
      */
     appendChild<T extends Node>(parent: Element, newChild: T): T {
-        const NATIVE_SUPPORT = checkNativeSupport();
-        if (!NATIVE_SUPPORT) {
+        if (this.emulate) {
             if (newChild.parentNode) {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
         this.Node.prototype.appendChild.call(parent, newChild);
-        if (!NATIVE_SUPPORT) {
-            this.connect(newChild);
-        }
+        this.connect(newChild);
         return newChild;
     },
 
@@ -240,11 +242,8 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
-        const NATIVE_SUPPORT = checkNativeSupport();
         this.Node.prototype.removeChild.call(parent, oldChild);
-        if (!NATIVE_SUPPORT) {
-            this.disconnect(oldChild);
-        }
+        this.disconnect(oldChild);
         return oldChild;
     },
 
@@ -256,16 +255,13 @@ export const DOM = {
      * @param refChild The referred node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
-        const NATIVE_SUPPORT = checkNativeSupport();
-        if (!NATIVE_SUPPORT) {
+        if (this.emulate) {
             if (newChild.parentNode) {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
         this.Node.prototype.insertBefore.call(parent, newChild, refChild);
-        if (!NATIVE_SUPPORT) {
-            this.connect(newChild);
-        }
+        this.connect(newChild);
         return newChild;
     },
 
@@ -277,17 +273,14 @@ export const DOM = {
      * @param oldChild The node to replace.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
-        const NATIVE_SUPPORT = checkNativeSupport();
-        if (!NATIVE_SUPPORT) {
+        if (this.emulate) {
             if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
                 this.removeChild(newChild.parentNode as Element, newChild);
             }
         }
         this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
-        if (!NATIVE_SUPPORT) {
-            this.disconnect(oldChild);
-            this.connect(newChild);
-        }
+        this.disconnect(oldChild);
+        this.connect(newChild);
         return oldChild;
     },
 
@@ -324,7 +317,7 @@ export const DOM = {
 
         const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
         if (isCustomElement(element) &&
-            !checkNativeSupport() &&
+            this.emulate &&
             observedAttributes.indexOf(qualifiedName) !== -1) {
             element.attributeChangedCallback(qualifiedName, oldValue, value);
         }
@@ -342,7 +335,7 @@ export const DOM = {
 
         const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
         if (isCustomElement(element) &&
-            !checkNativeSupport() &&
+            this.emulate &&
             observedAttributes.indexOf(qualifiedName) !== -1) {
             element.attributeChangedCallback(qualifiedName, oldValue, null);
         }
@@ -381,7 +374,7 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
-        if (checkNativeSupport()) {
+        if (!this.emulate) {
             return;
         }
         const previousNodes = cloneChildNodes(node) || [];
@@ -406,7 +399,7 @@ export const DOM = {
      * @param node The disconnected node.
      */
     disconnect(node: Node) {
-        if (checkNativeSupport()) {
+        if (!this.emulate) {
             return;
         }
         const previousNodes = cloneChildNodes(node) || [];

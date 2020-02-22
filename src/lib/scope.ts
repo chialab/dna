@@ -17,15 +17,10 @@ export type Scope = HTMLElement & ScopeValues;
  * @param prototype The initial prototype object for the scope.
  * @return An scope object with prototype.
  */
-export const createScope = (prototype: any, values?: ScopeValues): Scope => {
-    const scope = Object.create(prototype);
-    if (values) {
-        for (let propertyKey in values) {
-            scope[propertyKey] = values[propertyKey];
-        }
-    }
-    return scope;
-};
+export const createScope = (prototype: any, values?: ScopeValues): Scope => ({
+    ...(values || {}),
+    __proto__: prototype,
+} as unknown as Scope);
 
 /**
  * Get the Scope attached to an object.
@@ -39,6 +34,4 @@ export const getScope = (target: any): Scope | undefined => target[SCOPE_SYMBOL]
  * @param target The object to scope.
  * @param scope The Scope to set.
  */
-export const setScope = (target: any, scope: Scope): void => {
-    target[SCOPE_SYMBOL] = scope;
-};
+export const setScope = (target: any, scope: Scope): Scope => target[SCOPE_SYMBOL] = scope;

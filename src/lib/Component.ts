@@ -1,9 +1,9 @@
-import { CustomElement, CE_SYMBOL, checkNativeSupport } from './CustomElement';
+import { CustomElement, CE_SYMBOL } from './CustomElement';
 import { DOM, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './scope';
 import { Template, TemplateItems } from './Template';
-import { getSlotted, setSlotted } from './Slotted';
+import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
 import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
 import { template } from './html';
@@ -125,7 +125,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
                 }
             }
 
-            if (element.isConnected && !checkNativeSupport()) {
+            if (element.isConnected && DOM.emulate) {
                 DOM.connect(element);
             }
 

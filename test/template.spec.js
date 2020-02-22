@@ -472,4 +472,10 @@ describe('template', function() {
             expect(element.childNodes[0]).to.be.equal(element.$.firstName);
         });
     });
+
+    describe.skip('events', () => {
+        it('should add an event listener', () => {
+            //
+        });
+    });
 });

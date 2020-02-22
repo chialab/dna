@@ -2,7 +2,7 @@ import { DOM } from './DOM';
 import { isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope } from './scope';
 import { Template, TemplateFilter, getTemplateItemsFilter } from './Template';
-import { getSlotted } from './Slotted';
+import { getSlotted } from './slotted';
 import { isHyperFunction } from './HyperFunction';
 import { isInterpolationFunction } from './InterpolationFunction';
 import { css } from './css';
@@ -84,11 +84,8 @@ export const render = (node: HTMLElement, input: Template, scope?: Scope, contex
         } else {
             // if it is "something" (eg a Node, a Component, a text etc)
             let inputElement: Template;
-            if (isStyleTag(node) && DOM.hasAttribute(node, 'scoped') && typeof input === 'string') {
-                let name: string = DOM.getAttribute(node, 'scoped') as string;
-                if (!name) {
-                    name = inputScope.is as string;
-                }
+            if (isStyleTag(node) && typeof input === 'string') {
+                const name: string = inputScope.is as string;
                 node.textContent = css(name, input);
                 inputElement = node.childNodes[0] as Text;
             } else if (DOM.isElement(input) || DOM.isText(input)) {
@@ -99,9 +96,6 @@ export const render = (node: HTMLElement, input: Template, scope?: Scope, contex
             }
 
             if (!inputContext.filter || inputContext.filter(inputElement)) {
-                // add the input to the result
-                result.push(input);
-
                 // get the current iterator for comparison
                 const currentNode = iterating.node;
 
@@ -117,6 +111,7 @@ export const render = (node: HTMLElement, input: Template, scope?: Scope, contex
                             if (currentNode.textContent !== content) {
                                 currentNode.textContent = content;
                             }
+                            inputElement = currentNode as Text;
                             iterating.node = currentNode.nextSibling as Node;
                         } else {
                             // if current iterator is defined, insert the Node before it
@@ -127,9 +122,13 @@ export const render = (node: HTMLElement, input: Template, scope?: Scope, contex
                         DOM.appendChild(node, inputElement);
                     }
                 } else {
+                    inputElement = currentNode as HTMLElement;
                     // move forward the iterator for comparison
                     iterating.node = currentNode.nextSibling as Node;
                 }
+
+                // add the input to the result
+                result.push(inputElement);
 
                 if (DOM.isElement(inputElement)) {
                     const slotted = getSlotted(inputElement);
@@ -152,10 +151,10 @@ export const render = (node: HTMLElement, input: Template, scope?: Scope, contex
         // all children of the root have been handled,
         // we can start to cleanup the tree
         let len = result.length;
-        let childNodes = node.childNodes;
+        let last = result[len - 1];
         // remove all Nodes that are outside the result range
-        while (childNodes.length > len) {
-            DOM.removeChild(node, childNodes[childNodes.length - 1]);
+        while (node.lastChild != last) {
+            DOM.removeChild(node, node.lastChild as Node);
         }
         if (len === 0) {
             // no results, return void
