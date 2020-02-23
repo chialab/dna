@@ -62,6 +62,10 @@ describe('template', function() {
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
             });
         }
+
+        it.skip('should handle uppercase tag names', () => {
+            //
+        });
     });
 
     describe('content interpolation', () => {
@@ -454,6 +458,14 @@ describe('template', function() {
                 expect(wrapper.childNodes[0].childNodes[4]).to.be.equal(otherOption);
             });
         }
+
+        it.skip('should swap rows', () => {
+            //
+        });
+
+        it.skip('should delete a row', () => {
+            //
+        });
 
         it('should access keyed element in scope', () => {
             class MyElement extends DNA.Component {

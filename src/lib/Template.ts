@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { InterpolationFunction } from './InterpolationFunction';
-import { HyperFunction } from './HyperFunction';
+import { HyperNode } from './HyperNode';
 
 /**
  * A Symbol which contains a filter function for a list of template items.
@@ -11,7 +11,7 @@ const FILTER_SYMBOL = createSymbolKey();
  * The atomic template item.
  * It can be a node, a Hyper or Interpolate function or a primitive value.
  */
-export type TemplateItem = Element | Text | HyperFunction | InterpolationFunction | string | number | boolean | undefined | null;
+export type TemplateItem = Element | Text | HyperNode | InterpolationFunction | string | number | boolean | undefined | null;
 
 /**
  * A list of template items.

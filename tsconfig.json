@@ -13,7 +13,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "allowJs": false,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "moduleResolution": "node"
   },
   "include": [
     "src/**/*.ts"

@@ -16,7 +16,7 @@ export type InterpolationFunction = (this: object) => string;
  * @param fn The function to flag.
  * @return The updated function.
  */
-export const createInterpolationFunction = (fn: Function): InterpolationFunction => {
+const createInterpolationFunction = (fn: Function): InterpolationFunction => {
     (fn as any)[INTERPOLATION_SYMBOL] = true;
     return fn as InterpolationFunction;
 };

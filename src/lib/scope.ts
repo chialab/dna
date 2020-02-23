@@ -17,10 +17,13 @@ export type Scope = HTMLElement & ScopeValues;
  * @param prototype The initial prototype object for the scope.
  * @return An scope object with prototype.
  */
-export const createScope = (prototype: any, values?: ScopeValues): Scope => ({
-    ...(values || {}),
-    __proto__: prototype,
-} as unknown as Scope);
+export const createScope = (prototype: any, values: ScopeValues = {}): Scope => {
+    const scope = Object.create(prototype);
+    for (let propertyKey in values) {
+        scope[propertyKey] = values[propertyKey];
+    }
+    return scope as Scope;
+};
 
 /**
  * Get the Scope attached to an object.

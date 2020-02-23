@@ -1,8 +1,7 @@
 import htm from 'htm';
 import { Template } from './Template';
 import { InterpolationFunction, compile } from './InterpolationFunction';
-import { HyperFunction } from './HyperFunction';
-import { h } from './h';
+import { h, HyperNode } from './HyperNode';
 import { DOM } from './DOM';
 
 /**
@@ -34,10 +33,10 @@ enum Namespaces {
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperFunction;
+function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperNode;
 function innerCompile(node: Text): InterpolationFunction;
-function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
-function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperFunction | InterpolationFunction>;
+function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperNode | InterpolationFunction>;
+function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperNode | InterpolationFunction>;
 function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (DOM.isElement(node)) {
         // the current node is an element

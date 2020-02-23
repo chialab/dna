@@ -337,7 +337,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         forceUpdate() {
             const template = this.render();
             if (template) {
-                render(this, this.render());
+                render(this, template);
             }
         }
 

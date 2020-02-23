@@ -75,15 +75,8 @@ describe('render', function() {
             expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
         });
 
-        it('should render a style node (inline scope)', () => {
-            DNA.render(wrapper, DNA.h('style', { scoped: 'my-element' }, '.test {}'));
-            expect(wrapper.childNodes).to.have.lengthOf(1);
-            expect(wrapper.childNodes[0].tagName).to.be.equal('STYLE');
-            expect(wrapper.childNodes[0].textContent).to.be.equal('[is="my-element"] .test {}');
-        });
-
         it('should render a style node (context scope)', () => {
-            DNA.render(wrapper, DNA.h('style', { scoped: true }, '.test {}'), {
+            DNA.render(wrapper, DNA.h('style', {}, '.test {}'), {
                 is: 'my-card',
             });
             expect(wrapper.childNodes).to.have.lengthOf(1);
@@ -118,9 +111,7 @@ describe('render', function() {
                 name: 'Snow White',
                 food: 'apples',
             },
-            {
-                filter: (node) => !!node.tagName,
-            });
+            (node) => !!node.tagName);
             expect(wrapper.childNodes).to.have.lengthOf(2);
         });
 
