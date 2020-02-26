@@ -209,16 +209,18 @@ export const initProperty = (target: any, symbol: symbol, descriptor: ClassField
  * @return The decorator initializer.
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
-    (targetOrClassElement: CustomElement | ClassElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+    ((targetOrClassElement: CustomElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
         if (propertyKey !== undefined) {
-            descriptor.defaultValue = originalDescriptor.value;
+            if (originalDescriptor) {
+                descriptor.defaultValue = originalDescriptor.value;
+            }
             defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
             initProperty(targetOrClassElement, symbol, descriptor);
-            return;
+            return targetOrClassElement as CustomElement;
         }
 
-        const element = targetOrClassElement as ClassElement;
+        const element = targetOrClassElement as unknown as  ClassElement;
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
@@ -245,5 +247,5 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
             finisher(constructor: Function) {
                 defineProperty(constructor.prototype, String(element.key), descriptor, symbol);
             },
-        } as ClassElement;
-    };
+        };
+    }) as any;

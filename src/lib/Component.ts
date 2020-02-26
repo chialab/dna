@@ -457,4 +457,4 @@ export const extend = (name: 'HTMLElement') => {
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend('HTMLElement');
+export const Component = extend('HTMLElement') as CustomElement<HTMLElement>;

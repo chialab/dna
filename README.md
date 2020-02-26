@@ -81,7 +81,7 @@ class HelloWorld extends Component {
 
     // define an observable property
     @property()
-    name: string;
+    name: string = '';
 
     // delegate an event
     @listener({

@@ -322,17 +322,17 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
  * @return The decorator initializer.
  */
 export const listener = (descriptor: DelegatedEventDescriptor) =>
-    (targetOrClassElement: CustomElement | ClassElement, methodKey: string, originalDescriptor: PropertyDescriptor) => {
+    ((targetOrClassElement: CustomElement, methodKey: string) => {
         if (methodKey !== undefined) {
             (targetOrClassElement as CustomElement).delegateEventListener(
                 descriptor.event,
                 descriptor.selector,
                 (targetOrClassElement as any)[methodKey] as DelegatedEventCallback
             );
-            return;
+            return targetOrClassElement as CustomElement;
         }
 
-        const element = targetOrClassElement as ClassElement;
+        const element = targetOrClassElement as unknown as ClassElement;
         if (element.kind === 'method' && element.placement === 'prototype') {
             element.finisher = (constructor: Function) => {
                 const prototype = constructor.prototype;
@@ -347,4 +347,4 @@ export const listener = (descriptor: DelegatedEventDescriptor) =>
         }
 
         return element;
-    };
+    }) as any;
