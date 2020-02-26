@@ -1,4 +1,4 @@
-import { isCustomElement } from './CustomElement';
+import { CustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 
 type GlobalNamespace = Window & typeof globalThis;
@@ -54,6 +54,33 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
     return shim;
 };
 
+/**
+ * Check if a node is a Document instance.
+ * @param node The node to check.
+ * @return The node is a Document instance.
+ */
+export const isDocument = (node: any): node is Document => node && node.nodeType === DOM.Node.DOCUMENT_NODE;
+
+/**
+ * Check if a node is a Text instance.
+ * @param node The node to check.
+ * @return The node is a Text instance.
+ */
+export const isText = (node: any): node is Text => node && node.nodeType === DOM.Node.TEXT_NODE;
+
+/**
+ * Check if a node is an Element instance.
+ * @param node The node to check.
+ * @return The node is an Element instance.
+ */
+export const isElement = (node: any): node is HTMLElement => node && node.nodeType === DOM.Node.ELEMENT_NODE;
+
+/**
+ * Check if an object is an Event instance.
+ * @param node The node to check.
+ * @return The object is an Event instance.
+ */
+export const isEvent = (event: any): event is Event => event instanceof DOM.Event;
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -80,89 +107,32 @@ export const DOM = {
     /**
      * The adapter Document constructor.
      */
-    get Document() {
-        return this.window.Document;
-    },
+    Document: (typeof Document !== 'undefined' ? Document : undefined) as typeof Document,
 
     /**
      * The adapter Node constructor.
      */
-    get Node() {
-        return this.window.Node;
-    },
+    Node: (typeof Node !== 'undefined' ? Node : undefined) as typeof Node,
 
     /**
      * The adapter Text constructor.
      */
-    get Text() {
-        return this.window.Text;
-    },
+    Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
 
     /**
      * The adapter HTMLElement constructor.
      */
-    get HTMLElement() {
-        return this.window.HTMLElement;
-    },
+    HTMLElement: (typeof HTMLElement !== 'undefined' ? HTMLElement : undefined) as typeof HTMLElement,
 
     /**
      * The adapter Event constructor.
      */
-    get Event() {
-        return this.window.Event;
-    },
+    Event: (typeof Event !== 'undefined' ? Event : undefined) as typeof Event,
 
     /**
      * The adapter CustomEvent constructor.
      */
-    get CustomEvent() {
-        return this.window.CustomEvent;
-    },
-
-    /**
-     * Check if a node is a Document instance.
-     * @param node The node to check.
-     * @return The node is a Document instance.
-     */
-    isDocument(node: any): node is Document {
-        return node && node instanceof this.Document;
-    },
-
-    /**
-     * Check if a node is a Node instance.
-     * @param node The node to check.
-     * @return The node is a Node instance.
-     */
-    isNode(node: any): node is Node {
-        return node && node instanceof this.Node;
-    },
-
-    /**
-     * Check if a node is a Text instance.
-     * @param node The node to check.
-     * @return The node is a Text instance.
-     */
-    isText(node: any): node is Text {
-        return node && node instanceof this.Text;
-    },
-
-    /**
-     * Check if a node is an Element instance.
-     * @param node The node to check.
-     * @return The node is an Element instance.
-     */
-    isElement(node: any): node is HTMLElement {
-        return node && node instanceof this.HTMLElement;
-    },
-
-    /**
-     * Check if an object is an Event instance.
-     * @param node The node to check.
-     * @return The object is an Event instance.
-     */
-    isEvent(event: any): event is Event {
-        return event && event instanceof this.Event;
-    },
+    CustomEvent: (typeof CustomEvent !== 'undefined' ? CustomEvent : undefined) as typeof CustomEvent,
 
     /**
      * Create a new DOM element node for the specified tag.
@@ -312,14 +282,14 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        const oldValue = this.getAttribute(element, qualifiedName);
+        const emulate = this.emulate &&
+            typeof (element as CustomElement).attributeChangedCallback === 'function' &&
+            (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+        const oldValue = emulate && this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
 
-        const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
-        if (isCustomElement(element) &&
-            this.emulate &&
-            observedAttributes.indexOf(qualifiedName) !== -1) {
-            element.attributeChangedCallback(qualifiedName, oldValue, value);
+        if (emulate) {
+            (element as CustomElement).attributeChangedCallback(qualifiedName, oldValue as string, value);
         }
     },
 
@@ -330,14 +300,14 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        const oldValue = this.getAttribute(element, qualifiedName);
+        const emulate = this.emulate &&
+            typeof (element as CustomElement).attributeChangedCallback === 'function' &&
+            (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+        const oldValue = emulate && this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
 
-        const observedAttributes = (element.constructor as Function & { observedAttributes?: string[] }).observedAttributes || [];
-        if (isCustomElement(element) &&
-            this.emulate &&
-            observedAttributes.indexOf(qualifiedName) !== -1) {
-            element.attributeChangedCallback(qualifiedName, oldValue, null);
+        if (emulate) {
+            (element as CustomElement).attributeChangedCallback(qualifiedName, oldValue as string, null);
         }
     },
 
@@ -357,10 +327,10 @@ export const DOM = {
      * @return A truthy value for connected targets.
      */
     isConnected(target: Node | null): boolean {
-        if (this.isElement(target) || this.isText(target)) {
+        if (isElement(target) || isText(target)) {
             return this.isConnected(target.parentNode);
         }
-        if (this.isDocument(target)) {
+        if (isDocument(target)) {
             return true;
         }
 
@@ -378,8 +348,8 @@ export const DOM = {
             return;
         }
         const previousNodes = cloneChildNodes(node) || [];
-        if (isCustomElement(node)) {
-            node.connectedCallback();
+        if (typeof (node as CustomElement).connectedCallback === 'function') {
+            (node as CustomElement).connectedCallback();
         }
         const children = cloneChildNodes(node);
         if (children) {
@@ -403,8 +373,8 @@ export const DOM = {
             return;
         }
         const previousNodes = cloneChildNodes(node) || [];
-        if (isCustomElement(node)) {
-            node.disconnectedCallback();
+        if (typeof (node as CustomElement).disconnectedCallback === 'function') {
+            (node as CustomElement).disconnectedCallback();
         }
         const children = cloneChildNodes(node);
         if (children) {

@@ -21,42 +21,6 @@ describe('DOM', function() {
         }
     });
 
-    describe('#isDocument', () => {
-        it('should return `true` to for documents', () => {
-            const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isDocument(element.ownerDocument)).to.be.true;
-        });
-
-        it('should return `false` to for nodes', () => {
-            const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isDocument(element)).to.be.false;
-        });
-    });
-
-    describe('#isText', () => {
-        it('should return `true` to for texts', () => {
-            const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isText(node)).to.be.true;
-        });
-
-        it('should return `false` to for elements', () => {
-            const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isText(element)).to.be.false;
-        });
-    });
-
-    describe('#isElement', () => {
-        it('should return `true` to for elements', () => {
-            const element = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isElement(element)).to.be.true;
-        });
-
-        it('should return `false` to for texts', () => {
-            const node = DNA.DOM.createTextNode('hello');
-            expect(DNA.DOM.isElement(node)).to.be.false;
-        });
-    });
-
     describe('#createElement', () => {
         it('should create an element', () => {
             const element = DNA.DOM.createElement('div');

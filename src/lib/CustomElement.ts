@@ -1,20 +1,6 @@
-import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
 import { Template } from './Template';
-
-/**
- * A symbol which identify a DNA custom element.
- */
-export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
-
-/**
- * Check if a node is a DNA Custom Element instance.
- * @ignore
- * @param node The node to check.
- * @return The node is a Custom Element instance.
- */
-export const isCustomElement = (node: any): node is CustomElement => node[CE_SYMBOL] === true;
 
 /**
  * The basic Custom Element interface.
@@ -22,11 +8,6 @@ export const isCustomElement = (node: any): node is CustomElement => node[CE_SYM
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
 export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
-    /**
-     * An unique symbol for DNA Custom elements.
-     */
-    readonly [CE_SYMBOL]: true;
-
     /**
      * The defined component name.
      */

@@ -51,7 +51,7 @@ describe.skip('[Compat] lib', () => {
         describe('an element with extends field', () => {
             it('a custom element with extends field', () => {
                 const elem = render(WRAPPER, TestComponent2);
-                assert.equal(elem.node.localName.toLowerCase(), 'div');
+                assert.equal(elem.node.localName, 'div');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
             });
@@ -166,7 +166,7 @@ describe.skip('[Compat] lib', () => {
             const elem = DOM.getNodeComponent(
                 WRAPPER.querySelector('.test1-helper-component')
             );
-            assert.equal(elem.node.localName.toLowerCase(), 'test1-helper-component');
+            assert.equal(elem.node.localName, 'test1-helper-component');
             assert.equal(elem.node.getAttribute('age'), '21');
             assert.equal(elem.node.getAttribute('class'), 'test1-helper-component');
             assert.equal(elem.name, 'Alan');

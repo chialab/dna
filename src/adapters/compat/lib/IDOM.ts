@@ -1,3 +1,3 @@
-export { h } from '../../../lib/h';
+export { h } from '../../../lib/HyperNode';
 
 export function patch() {}

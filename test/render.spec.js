@@ -48,10 +48,10 @@ describe('render', function() {
         });
 
         it('should render interpolated function', () => {
-            DNA.render(wrapper, DNA.compile('hello {{name}}! do you like {{food}}?'), {
+            DNA.render(wrapper, DNA.interpolate('hello {{name}}! do you like {{food}}?', {
                 name: 'Snow White',
                 food: 'apples',
-            });
+            }));
             expect(wrapper.innerHTML).to.be.equal('hello Snow White! do you like apples?');
         });
 
@@ -75,7 +75,7 @@ describe('render', function() {
             expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
         });
 
-        it('should render a style node (context scope)', () => {
+        it('should render a style node with scope', () => {
             DNA.render(wrapper, DNA.h('style', {}, '.test {}'), {
                 is: 'my-card',
             });
@@ -88,14 +88,14 @@ describe('render', function() {
             DNA.render(wrapper, [
                 'hello',
                 true,
-                DNA.compile('hello {{name}}! do you like {{food}}?'),
+                DNA.interpolate('hello {{name}}! do you like {{food}}?', {
+                    name: 'Snow White',
+                    food: 'apples',
+                }),
                 DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
-            ], {
-                name: 'Snow White',
-                food: 'apples',
-            });
+            ]);
             expect(wrapper.childNodes).to.have.lengthOf(6);
         });
 
@@ -103,14 +103,15 @@ describe('render', function() {
             DNA.render(wrapper, [
                 'hello',
                 true,
-                DNA.compile('hello {{name}}! do you like {{food}}?'),
+                DNA.interpolate('hello {{name}}! do you like {{food}}?', {
+                    name: 'Snow White',
+                    food: 'apples',
+                }),
                 DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
-            ], {
-                name: 'Snow White',
-                food: 'apples',
-            },
+            ],
+            null,
             (node) => !!node.tagName);
             expect(wrapper.childNodes).to.have.lengthOf(2);
         });

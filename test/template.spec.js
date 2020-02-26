@@ -50,7 +50,7 @@ describe('template', function() {
             },
             TEMPLATE() {
                 const template = html('<template><h1>Hello world!</h1></template>');
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -64,6 +64,14 @@ describe('template', function() {
         }
 
         it.skip('should handle uppercase tag names', () => {
+            //
+        });
+
+        it.skip('should reuse compatible elements', () => {
+            //
+        });
+
+        it.skip('should reuse compatible text nodes', () => {
             //
         });
     });
@@ -82,13 +90,13 @@ describe('template', function() {
             },
             TEMPLATE() {
                 const template = html('<template><h1>Hello! My name is {{name}} and my favorite number is {{num}}</h1></template>');
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
+                DNA.render(wrapper, TEMPLATES[type].call(scope));
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello! My name is Alan and my favorite number is 42');
@@ -114,7 +122,7 @@ describe('template', function() {
             },
             TEMPLATE() {
                 const template = html('<template><input name={{name}} disabled={{disabled}} required /></template>');
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -151,7 +159,7 @@ describe('template', function() {
                         </template>
                     </ul>
                 </template>`);
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -206,7 +214,7 @@ describe('template', function() {
                         No members
                     </template>
                 </template>`);
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -250,7 +258,7 @@ describe('template', function() {
                         <slot />
                     </div>
                 </template>`);
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -319,7 +327,7 @@ describe('template', function() {
                         <option value="other">Other</option>
                     </select>
                 </template>`);
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 
@@ -406,7 +414,7 @@ describe('template', function() {
                         <option key="last" value="other">Other</option>
                     </select>
                 </template>`);
-                return DNA.template(template);
+                return DNA.template(template, this);
             },
         };
 

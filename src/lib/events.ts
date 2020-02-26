@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { ClassElement } from './ClassElement';
-import { DOM } from './DOM';
+import { DOM, isElement, isEvent } from './DOM';
 import { CustomElement } from './CustomElement';
 
 /**
@@ -117,7 +117,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
                 if (selector) {
                     let target = eventTarget;
                     while (target && target !== element) {
-                        if (DOM.isElement(target) && DOM.matches(target, selector)) {
+                        if (isElement(target) && DOM.matches(target, selector)) {
                             selectorTarget = target;
                             break;
                         }
@@ -203,13 +203,13 @@ export const undelegateEventListener = (element: Element, eventName: string, sel
 };
 
 const assertNode = (element: any) => {
-    if (!DOM.isNode(element)) {
+    if (!isElement(element)) {
         throw new TypeError('The provided element must be a Node');
     }
 };
 
 const assertEvent = (event: any) => {
-    if (!DOM.isEvent(event)) {
+    if (!isEvent(event)) {
         throw new TypeError('The provided object must be an Event');
     }
 };

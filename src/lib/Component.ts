@@ -1,7 +1,7 @@
-import { CustomElement, CE_SYMBOL } from './CustomElement';
-import { DOM, cloneChildNodes } from './DOM';
+import { CustomElement } from './CustomElement';
+import { DOM, isElement, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
-import { createScope, getScope, setScope } from './scope';
+import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
@@ -21,14 +21,6 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes: string[] = [];
-
-        /**
-         * An unique symbol for DNA Custom elements.
-         * @ignore
-         */
-        get [CE_SYMBOL]() {
-            return true;
-        }
 
         /**
          * The tag name used for Component definition.
@@ -90,7 +82,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
 
             let element: CustomElement<T> = node as CustomElement<T>;
             let props: Properties = properties as Properties;
-            if (!DOM.isElement(element)) {
+            if (!isElement(element)) {
                 props = node || {};
                 element = this as unknown as CustomElement<T>;
             } else {
@@ -322,7 +314,7 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         render(): Template | undefined {
             const tpl = this.template;
             if (tpl) {
-                return template(tpl);
+                return template(tpl, this);
             }
             const children = getSlotted(this);
             if (children) {

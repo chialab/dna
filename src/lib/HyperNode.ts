@@ -1,5 +1,4 @@
 import { createSymbolKey } from './symbols';
-import { CustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { TemplateItems } from './Template';
 import { Fragment } from './Fragment';
@@ -30,8 +29,6 @@ export type HyperNode = {
     key?: any,
     isFragment?: boolean,
     isSlot?: boolean,
-    isTemplate?: boolean,
-    isCustomElement?: boolean,
     namespaceURI?: string,
     properties?: any,
     children: TemplateItems,
@@ -42,18 +39,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => !!target[HYPER_SYMBOL];
-
-/**
- * Flag a node as HyperNode.
- * @ignore
- * @param node The node to flag.
- * @return The updated node.
- */
-export const createHyperNode = (node: HyperNode): HyperNode => {
-    (node as any)[HYPER_SYMBOL] = true;
-    return node as HyperNode;
-};
+export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
 
 /**
  * HyperFunction factory to use as JSX pragma.
@@ -65,50 +51,42 @@ export const createHyperNode = (node: HyperNode): HyperNode => {
 export const h = (tagOrComponent: string | typeof Element, properties: HyperProperties | null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
-        isTemplate: boolean = tag === 'template',
         isSlot: boolean = tag === 'slot',
-        isCustomElement: boolean,
         is: string | undefined,
         key: any | undefined,
+        propertiesToSet: any = {},
         Component: typeof Element | undefined;
 
-    // Patch instances could be generated from the `h` function using JSX,
-    // so the first parameter could be the Node constructor
-    let props = properties || {};
-
-    let propertiesToSet: any = {};
-    for (let propertyKey in props) {
-        let value = props[propertyKey];
-        if (propertyKey === 'is') {
-            is = value;
-        } else if (propertyKey === 'key' && !isTemplate) {
-            key = value;
-        } else {
-            propertiesToSet[propertyKey] = value;
+    if (properties) {
+        for (let propertyKey in properties) {
+            let value = properties[propertyKey];
+            if (propertyKey === 'is') {
+                is = value;
+            } else if (propertyKey === 'key') {
+                key = value;
+            } else {
+                propertiesToSet[propertyKey] = value;
+            }
         }
     }
 
     if (!tag) {
         Component = tagOrComponent as typeof Element;
-        isCustomElement = !!(Component as CustomElement).prototype.is;
-        tag = undefined;
     } else {
         // get the constructor from the registry
         Component = registry.get(is as string || tag as string);
-        isCustomElement = !!Component;
     }
 
-    return createHyperNode({
+    return {
         Component,
         tag,
         is,
         key,
         isFragment,
         isSlot,
-        isTemplate,
-        isCustomElement,
-        namespaceURI: props.namespaceURI,
+        namespaceURI: propertiesToSet.namespaceURI,
         properties: propertiesToSet,
         children,
-    });
+        [HYPER_SYMBOL]: true,
+    } as HyperNode;
 };

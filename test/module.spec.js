@@ -11,7 +11,6 @@ describe('module', function() {
 
     const EXPECTED_EXPORT_MAP = {
         DOM: 'object',
-        isCustomElement: 'function',
         mixin: 'function',
         render: 'function',
         get: 'function',
@@ -23,7 +22,7 @@ describe('module', function() {
         html: 'function',
         template: 'function',
         css: 'function',
-        compile: 'function',
+        interpolate: 'function',
         delegateEventListener: 'function',
         undelegateEventListener: 'function',
         dispatchEvent: 'function',

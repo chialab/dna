@@ -1,10 +1,10 @@
 import { DOM } from '../../../lib/DOM';
-import { isCustomElement } from '../../../lib/CustomElement';
+import { CustomElement } from '../../../lib/CustomElement';
 
 (DOM as any).lifeCycle = function lifeCycle() {};
 
 (DOM as any).getNodeComponent = function getNodeComponent(node: Element) {
-    if (!isCustomElement(node)) {
+    if (!(node as CustomElement).is) {
         return null;
     }
     return node;

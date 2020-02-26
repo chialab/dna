@@ -1,15 +1,12 @@
 import htm from 'htm';
 import { Template } from './Template';
-import { InterpolationFunction, compile } from './InterpolationFunction';
+import { Scope, createScope } from './Scope';
 import { h, HyperNode } from './HyperNode';
-import { DOM } from './DOM';
+import { isElement, isText } from './DOM';
 
-/**
- * Check if a node is a `<template>` element.
- * @param node The node to check.
- * @return The node is a `<template>` element.
- */
-const isTemplateTag = (node: any): node is HTMLTemplateElement => node && node.tagName === 'TEMPLATE';
+enum Namespaces {
+    SVG = 'http://www.w3.org/2000/svg',
+}
 
 /**
  * Get child of a template element.
@@ -23,9 +20,49 @@ const getTemplateChildren = (node: HTMLTemplateElement) => {
     return node.childNodes;
 };
 
-enum Namespaces {
-    SVG = 'http://www.w3.org/2000/svg',
-}
+
+/**
+ * Split a string into chunks, where even indexes are real strings and odd indexes are expressions.
+ */
+const PARSE_REGEX = /\{\{(.*?)\}\}/g;
+
+/**
+ * Escape single quote from expressions.
+ *
+ * @param text The text to escape
+ */
+const escape = (text: string): string => text.replace(/'/g, '\\\'').replace(/\n/g, '\\n');
+
+/**
+ * Create an InterpolationFunction.
+ *
+ * @param expression The expression to compile.
+ * @return The result of the interpolation.
+ */
+export const interpolate = (expression: string, scope: Scope): any => {
+    // split the expression into chunks
+    const chunks = expression.trim().split(PARSE_REGEX);
+    // the generated function body
+    let body = 'with(this) return ';
+
+    body += chunks
+        .map((match, index) => {
+            if (!match) {
+                return;
+            }
+            if (index % 2 === 0) {
+                // even indexes are just strings
+                return `'${escape(match)}'`;
+            }
+            return `(${match})`;
+        })
+        .filter((statement) => !!statement)
+        .join('+');
+
+    body += ';';
+
+    return new Function(body).call(scope);
+};
 
 /**
  * Convert nodes into virtual DOM template.
@@ -33,15 +70,48 @@ enum Namespaces {
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(node: HTMLElement, namespace?: Namespaces): HyperNode;
-function innerCompile(node: Text): InterpolationFunction;
-function innerCompile(node: Node[], namespace?: Namespaces): Array<HyperNode | InterpolationFunction>;
-function innerCompile(node: NodeList, namespace?: Namespaces): Array<HyperNode | InterpolationFunction>;
-function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
-    if (DOM.isElement(node)) {
+function innerCompile(scope: Scope, node: HTMLElement, namespace?: Namespaces): HyperNode;
+function innerCompile(scope: Scope, node: Text): string;
+function innerCompile(scope: Scope, node: Node[], namespace?: Namespaces): HyperNode[];
+function innerCompile(scope: Scope, node: NodeList, namespace?: Namespaces): HyperNode[];
+function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
+    if (isElement(node)) {
         // the current node is an element
         // get the tag name
         const tag = node.localName;
+
+        if (tag === 'template') {
+            if (node.hasAttribute('if')) {
+                const ifStatemenet = interpolate(node.getAttribute('if') as string, scope);
+                if (!ifStatemenet) {
+                    return [];
+                }
+            }
+
+            const children = getTemplateChildren(node as HTMLTemplateElement);
+
+            let newChildren: Template[] = [];
+            if (node.hasAttribute('repeat')) {
+                // extract the `key` variable to use in the template
+                const keyVar = node.getAttribute('key') || '$key';
+                // extract the `item` variable to use in the template
+                const itemVar = node.getAttribute('item') || '$item';
+                const array = interpolate(node.getAttribute('repeat') as string, scope);
+                for (let key in array) {
+                    let item = array[key];
+                    // augment the scope of the child
+                    let childScope = createScope(scope, {
+                        [keyVar]: key,
+                        [itemVar]: item,
+                    });
+
+                    newChildren.push(innerCompile(childScope, children));
+                }
+            } else {
+                newChildren = innerCompile(scope, children);
+            }
+            return newChildren;
+        }
 
         if (tag === 'svg') {
             namespace = Namespaces.SVG;
@@ -56,42 +126,35 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
             if (attr.value === '') {
                 properties[attr.name] = true;
             } else {
-                properties[attr.name] = compile(attr.value);
+                properties[attr.name] = interpolate(attr.value, scope);
             }
         }
 
-        let childNodes: NodeList;
-        if (isTemplateTag(node)) {
-            childNodes = getTemplateChildren(node);
-        } else {
-            childNodes = node.childNodes;
-        }
-
         // compile children and use their virtual DOM functions
-        return h(tag, properties, ...innerCompile(childNodes, namespace));
+        return h(tag, properties, ...innerCompile(scope, node.childNodes, namespace));
     }
 
-    if (DOM.isText(node)) {
+    if (isText(node)) {
         // the current node is text content
-        return compile(node.textContent || '');
+        return interpolate(node.textContent || '', scope);
     }
 
     const children: Array<Element | Text> = [];
     for (let i = 0, len = node.length; i < len; i++) {
         let child = node[i];
         let nextChild = node[i + 1];
-        if (DOM.isText(child)) {
-            if ((i === 0 || !nextChild || DOM.isElement(nextChild)) && !(child.textContent as string).trim()) {
+        if (isText(child)) {
+            if ((i === 0 || !nextChild || isElement(nextChild)) && !(child.textContent as string).trim()) {
                 continue;
             }
             children.push(child);
-        } else if (DOM.isElement(child)) {
+        } else if (isElement(child)) {
             children.push(child);
         }
     }
 
     // iterate nodes and convert them to virtual DOM using the internal function
-    return children.map((child) => innerCompile(child as any, namespace));
+    return children.map((child) => innerCompile(scope, child as any, namespace));
 }
 
 /**
@@ -100,7 +163,7 @@ function innerCompile(node: HTMLElement | Text | NodeList | Node[], namespace?: 
  * @param template The template to parse.
  * @return The virtual DOM template function.
  */
-export const template = (template: HTMLTemplateElement): Template => innerCompile(getTemplateChildren(template));
+export const template = (template: HTMLTemplateElement, scope: Scope): Template => innerCompile(scope, getTemplateChildren(template));
 
 const innerHtml = htm.bind(h);
 
