@@ -212,14 +212,16 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
     ((targetOrClassElement: CustomElement, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
         if (propertyKey !== undefined) {
+            // decorators spec 1
             if (originalDescriptor) {
                 descriptor.defaultValue = originalDescriptor.value;
             }
             defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
             initProperty(targetOrClassElement, symbol, descriptor);
-            return targetOrClassElement as CustomElement;
+            return targetOrClassElement;
         }
 
+        // decorators spec 2
         const element = targetOrClassElement as unknown as  ClassElement;
 
         if (element.kind !== 'field' || element.placement !== 'own') {

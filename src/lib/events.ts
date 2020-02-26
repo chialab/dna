@@ -316,6 +316,23 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
 };
 
 /**
+ * Add a listener to the listeners accessor.
+ * @param constructor The element constructor.
+ * @param methodKey The name of the method to invoke.
+ * @param descriptor The event descriptor.
+ */
+const addListener = (constructor: Function, methodKey: PropertyKey, descriptor: DelegatedEventDescriptor) => {
+    const prototype = constructor.prototype;
+    const listeners = prototype.listeners || {};
+    listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[methodKey];
+    Object.defineProperty(prototype, 'listeners', {
+        value: listeners,
+        configurable: true,
+        writable: false,
+    });
+};
+
+/**
  * Bind a method to an event listener.
  *
  * @param descriptor The listener description.
@@ -324,25 +341,16 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
 export const listener = (descriptor: DelegatedEventDescriptor) =>
     ((targetOrClassElement: CustomElement, methodKey: string) => {
         if (methodKey !== undefined) {
-            (targetOrClassElement as CustomElement).delegateEventListener(
-                descriptor.event,
-                descriptor.selector,
-                (targetOrClassElement as any)[methodKey] as DelegatedEventCallback
-            );
-            return targetOrClassElement as CustomElement;
+            // decorators spec 1
+            addListener(targetOrClassElement.constructor, methodKey, descriptor);
+            return targetOrClassElement;
         }
 
+        // decorators spec 2
         const element = targetOrClassElement as unknown as ClassElement;
         if (element.kind === 'method' && element.placement === 'prototype') {
             element.finisher = (constructor: Function) => {
-                const prototype = constructor.prototype;
-                const listeners = prototype.listeners || {};
-                listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[element.key];
-                Object.defineProperty(prototype, 'listeners', {
-                    value: listeners,
-                    configurable: true,
-                    writable: false,
-                });
+                addListener(constructor, element.key, descriptor);
             };
         }
 
