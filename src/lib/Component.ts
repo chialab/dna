@@ -15,7 +15,7 @@ export type Properties = { [key: string]: any; };
  * @param constructor The base HTMLElement constructor to extend.
  * @return The extend class.
  */
-export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } =>
+const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } =>
     class Component extends (constructor as typeof HTMLElement) {
         /**
          * An array containing the names of the attributes to observe.
@@ -391,6 +391,65 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
         }
     } as unknown as { new(): CustomElement<T>, prototype: CustomElement<T> };
 
+/**
+ * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
+ * because using `new HTMLElement()` in browsers throw `Illegal constructor`.
+ *
+ * @param base The constructor or the class to shim.
+ * @return A newable constructor with the same prototype.
+ */
+const shim = <T extends typeof HTMLElement>(base: T): T => {
+    const shim = function(this: any, ...args: any[]) {
+        const constructor = this.constructor;
+        const extend = constructor.extends;
+        const is = this.is;
+
+        let element: HTMLElement;
+        try {
+            element = Reflect.construct(base, args, constructor);
+            if (!extend) {
+                return element;
+            }
+            if (extend === element.localName) {
+                element.setAttribute('is', is);
+                return element;
+            }
+        } catch {
+            //
+        }
+
+        if (!is) {
+            throw new TypeError('Illegal constructor');
+        }
+
+        element = DOM.document.createElement(extend || is) as HTMLElement;
+        if (extend) {
+            element.setAttribute('is', is);
+        }
+        Object.setPrototypeOf(element, constructor.prototype);
+        return element;
+    } as any as T;
+    shim.prototype = base.prototype;
+    return shim;
+};
+
+/**
+ * Collect proxied HTMLElement constructors.
+ */
+const PROXIES: { [key: string]: typeof HTMLElement } = {};
+
+/**
+ * Get a native HTMLElement constructor to extend by its name.
+ * @param name The name of the constructor (eg. "HTMLAnchorElement").
+ * @return A proxy that extends the native constructor.
+ */
+export const extend = (name: 'HTMLElement') => {
+    if (PROXIES[name]) {
+        return PROXIES[name];
+    }
+    const constructor = DOM.window[name];
+    return PROXIES[name] = class extends mixin(shim(constructor)) {};
+};
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with
@@ -398,4 +457,4 @@ export const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new():
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = mixin(DOM.get('HTMLElement'));
+export const Component = extend('HTMLElement');

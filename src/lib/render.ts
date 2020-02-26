@@ -125,14 +125,8 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
                 }
             }
 
-            let childContext: any = {};
-            if (PRIVATE_CONTEXT_SYMBOL in newNode) {
-                childContext = (newNode as any)[PRIVATE_CONTEXT_SYMBOL];
-            } else {
-                (newNode as any)[PRIVATE_CONTEXT_SYMBOL] = childContext;
-            }
-
             // update the Node properties
+            const childContext: any = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] || {};
             for (let propertyKey in childContext) {
                 if (!(propertyKey in properties)) {
                     properties[propertyKey] = null;

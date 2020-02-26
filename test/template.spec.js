@@ -46,7 +46,7 @@ describe('template', function() {
                 return DNA.html`<h1>Hello world!</h1>`;
             },
             PLAIN_HTML() {
-                return DNA.html('<h1>Hello world!</h1');
+                return DNA.html('<h1>Hello world!</h1>');
             },
             TEMPLATE() {
                 const template = html('<template><h1>Hello world!</h1></template>');

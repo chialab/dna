@@ -4,11 +4,6 @@ import { registry } from './CustomElementRegistry';
 type GlobalNamespace = Window & typeof globalThis;
 
 /**
- * Collect proxied HTMLElement constructors.
- */
-const PROXIES: { [key: string]: typeof HTMLElement } = {};
-
-/**
  * Make a readonly copy of the child nodes collection.
  * @param node The parent node.
  * @return A frozen list of child nodes.
@@ -16,42 +11,6 @@ const PROXIES: { [key: string]: typeof HTMLElement } = {};
 export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => {
     const children = node.childNodes || [];
     return [].map.call(children, (child) => child) as ReadonlyArray<Node>;
-};
-
-/**
- * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
- * because using `new HTMLElement()` in browsers throw `Illegal constructor`.
- *
- * @param base The constructor or the class to shim.
- * @return A newable constructor with the same prototype.
- */
-export const shim = <T extends typeof HTMLElement>(base: T): T => {
-    const shim = function(this: any, ...args: any[]) {
-        try {
-            if (!(new.target as any).extends) {
-                return Reflect.construct(base, args, new.target);
-            }
-        } catch {
-            //
-        }
-
-        const constructor = this.constructor;
-        const is = this.is;
-        const extend = constructor.extends;
-
-        if (!is) {
-            throw new TypeError('Illegal constructor');
-        }
-
-        const element = DOM.document.createElement(extend || is) as HTMLElement;
-        if (extend) {
-            element.setAttribute('is', is);
-        }
-        Object.setPrototypeOf(element, constructor.prototype);
-        return element;
-    } as any as T;
-    shim.prototype = base.prototype;
-    return shim;
 };
 
 /**
@@ -385,18 +344,5 @@ export const DOM = {
                 }
             }
         }
-    },
-
-    /**
-     * Get a native HTMLElement constructor by its name.
-     * @param name The name of the constructor (eg. "HTMLAnchorElement").
-     * @return A proxy that extends the native constructor (if available).
-     */
-    get(name: 'HTMLElement'): typeof HTMLElement {
-        if (PROXIES[name]) {
-            return PROXIES[name];
-        }
-        const constructor = this.window[name];
-        return PROXIES[name] = class extends shim(constructor) {};
     },
 };

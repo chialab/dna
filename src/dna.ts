@@ -13,4 +13,4 @@ export { html, template, interpolate } from './lib/html';
 export { css } from './lib/css';
 export { AsyncEvent, listener, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { property } from './lib/property';
-export { mixin, Component } from './lib/Component';
+export { extend, Component } from './lib/Component';
