@@ -21,27 +21,6 @@ describe('Component', function() {
         }
     });
 
-    describe('extend', () => {
-        it.skip('should instantiate an extended class', () => {
-            //
-        });
-
-        it.skip('should inherit DNA component prototype', () => {
-            //
-        });
-
-        it('should create a base class starting from the anchor base class with DNA component prototype', () => {
-            const HTMLAnchorElement = DNA.extend('HTMLAnchorElement');
-            class TestElement extends HTMLAnchorElement { }
-            DNA.define(getComponentName(), TestElement, { extends: 'a' });
-            const element = new TestElement();
-            element.href = 'https://www.webcomponents.org/introduction';
-            expect(TestElement).to.not.equal(DNA.DOM.window.HTMLAnchorElement);
-            expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLAnchorElement);
-            expect('href' in element).to.be.true;
-        });
-    });
-
     describe('#new', () => {
         it('should create a node', () => {
             const is = getComponentName();
@@ -66,6 +45,17 @@ describe('Component', function() {
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
             expect(element.getAttribute('is')).to.be.equal(is);
+        });
+
+        it('should create a base class starting from the anchor base class', () => {
+            const HTMLAnchorElement = DNA.extend('HTMLAnchorElement');
+            class TestElement extends HTMLAnchorElement { }
+            DNA.define(getComponentName(), TestElement, { extends: 'a' });
+            const element = new TestElement();
+            element.href = 'https://www.webcomponents.org/introduction';
+            expect(TestElement).to.not.equal(DNA.DOM.window.HTMLAnchorElement);
+            expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLAnchorElement);
+            expect('href' in element).to.be.true;
         });
 
         it('should throw if element is not defined', () => {

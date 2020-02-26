@@ -1,5 +1,5 @@
 import htm from 'htm/mini';
-import { getModule, getComponentName } from './helpers.js';
+import { getModule, spyFunction } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -15,6 +15,7 @@ describe('template', function() {
     });
 
     const generate = htm.bind((tag, attrs, ...children) => {
+        tag = tag.toLowerCase();
         const elem = DNA.DOM.createElement(tag);
         if (attrs) {
             for (let key in attrs) {
@@ -37,7 +38,6 @@ describe('template', function() {
     const html = (string) => generate([string]);
 
     describe('simple', () => {
-        const scope = {};
         const TEMPLATES = {
             JSX() {
                 return DNA.h('h1', null, 'Hello world!');
@@ -56,24 +56,36 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type](), scope);
+                DNA.render(wrapper, TEMPLATES[type]());
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
             });
         }
+    });
 
-        it.skip('should handle uppercase tag names', () => {
-            //
-        });
+    describe('simple with uppercase', () => {
+        const TEMPLATES = {
+            JSX() {
+                return DNA.h('H1', null, 'Hello world!');
+            },
+            HTML() {
+                return DNA.html`<H1>Hello world!</H1>`;
+            },
+            TEMPLATE() {
+                const template = html('<TEMPLATE><H1>Hello world!</H1></TEMPLATE>');
+                return DNA.template(template, this);
+            },
+        };
 
-        it.skip('should reuse compatible elements', () => {
-            //
-        });
-
-        it.skip('should reuse compatible text nodes', () => {
-            //
-        });
+        for (let type in TEMPLATES) {
+            it(type, () => {
+                DNA.render(wrapper, TEMPLATES[type]());
+                expect(wrapper.childNodes).to.have.lengthOf(1);
+                expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
+                expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
+            });
+        }
     });
 
     describe('content interpolation', () => {
@@ -294,208 +306,33 @@ describe('template', function() {
         }
     });
 
-    describe('not keyed', () => {
-        const scope = {
-            items: ['Alan', 'Brian', 'Carl'],
-        };
-        const scope2 = {
-            items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
-        };
-        const TEMPLATES = {
-            JSX() {
-                return DNA.h('select', null,
-                    this.items.map((item) => DNA.h('option', { value: item }, item)),
-                    DNA.h('option', { value: 'other' }, 'Other'),
-                );
-            },
-            HTML() {
-                return DNA.html`
-                    <select>
-                        ${this.items.map((item) => DNA.html`
-                            <option value=${item}>${item}</option>
-                        `)}
-                        <option value="other">Other</option>
-                    </select>
-                `;
-            },
-            TEMPLATE() {
-                const template = html(`<template>
-                    <select>
-                        <template repeat={{items}} item="item">
-                            <option value={{item}}>{{item}}</option>
-                        </template>
-                        <option value="other">Other</option>
-                    </select>
-                </template>`);
-                return DNA.template(template, this);
-            },
-        };
+    describe('events', () => {
+        describe('should add an event listener', () => {
+            const TEMPLATES = {
+                JSX() {
+                    return DNA.h('button', { onclick: this.listener });
+                },
+                HTML() {
+                    return DNA.html`<button onclick=${this.listener}></button>`;
+                },
+                TEMPLATE() {
+                    const template = html('<template><button onclick={{listener}}></button></template>');
+                    return DNA.template(template, this);
+                },
+            };
 
-        for (let type in TEMPLATES) {
-            it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
-                expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
-                expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
-
-                const first = wrapper.childNodes[0].childNodes[0];
-                expect(first.tagName).to.be.equal('OPTION');
-                expect(first.textContent).to.be.equal('Alan');
-
-                const second = wrapper.childNodes[0].childNodes[1];
-                expect(second.tagName).to.be.equal('OPTION');
-                expect(second.textContent).to.be.equal('Brian');
-
-                const third = wrapper.childNodes[0].childNodes[2];
-                expect(third.tagName).to.be.equal('OPTION');
-                expect(third.textContent).to.be.equal('Carl');
-
-                const otherOption = wrapper.childNodes[0].childNodes[3];
-                expect(otherOption.tagName).to.be.equal('OPTION');
-                expect(otherOption.textContent).to.be.equal('Other');
-
-                DNA.render(wrapper, TEMPLATES[type].call(scope2), scope2);
-
-                expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
-                expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
-
-                expect(wrapper.childNodes[0].childNodes[0].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[0].textContent).to.be.equal('Daniel');
-                expect(wrapper.childNodes[0].childNodes[0]).to.be.equal(first);
-
-                expect(wrapper.childNodes[0].childNodes[1].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[1].textContent).to.be.equal('Eduardo');
-                expect(wrapper.childNodes[0].childNodes[1]).to.be.equal(second);
-
-                expect(wrapper.childNodes[0].childNodes[2].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[2].textContent).to.be.equal('Francesca');
-                expect(wrapper.childNodes[0].childNodes[2]).to.be.equal(third);
-
-                expect(wrapper.childNodes[0].childNodes[3].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[3].textContent).to.be.equal('Gabriella');
-                expect(wrapper.childNodes[0].childNodes[3]).to.be.equal(otherOption);
-
-                expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
-                expect(wrapper.childNodes[0].childNodes[4]).to.not.be.equal(otherOption);
-            });
-        }
-    });
-
-    describe('keyed', () => {
-        const scope = {
-            items: ['Alan', 'Brian', 'Carl'],
-        };
-        const scope2 = {
-            items: ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'],
-        };
-        const TEMPLATES = {
-            JSX() {
-                return DNA.h('select', null,
-                    this.items.map((item) => DNA.h('option', { value: item }, item)),
-                    DNA.h('option', { key: 'last', value: 'other' }, 'Other'),
-                );
-            },
-            HTML() {
-                return DNA.html`
-                    <select>
-                        ${this.items.map((item) => DNA.html`
-                            <option value=${item}>${item}</option>
-                        `)}
-                        <option key="last" value="other">Other</option>
-                    </select>
-                `;
-            },
-            TEMPLATE() {
-                const template = html(`<template>
-                    <select>
-                        <template repeat={{items}} item="item">
-                            <option value={{item}}>{{item}}</option>
-                        </template>
-                        <option key="last" value="other">Other</option>
-                    </select>
-                </template>`);
-                return DNA.template(template, this);
-            },
-        };
-
-        for (let type in TEMPLATES) {
-            it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
-                expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
-                expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
-
-                const first = wrapper.childNodes[0].childNodes[0];
-                expect(first.tagName).to.be.equal('OPTION');
-                expect(first.textContent).to.be.equal('Alan');
-
-                const second = wrapper.childNodes[0].childNodes[1];
-                expect(second.tagName).to.be.equal('OPTION');
-                expect(second.textContent).to.be.equal('Brian');
-
-                const third = wrapper.childNodes[0].childNodes[2];
-                expect(third.tagName).to.be.equal('OPTION');
-                expect(third.textContent).to.be.equal('Carl');
-
-                const otherOption = wrapper.childNodes[0].childNodes[3];
-                expect(otherOption.tagName).to.be.equal('OPTION');
-                expect(otherOption.textContent).to.be.equal('Other');
-
-                DNA.render(wrapper, TEMPLATES[type].call(scope2), scope2);
-
-                expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
-                expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
-
-                expect(wrapper.childNodes[0].childNodes[0].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[0].textContent).to.be.equal('Daniel');
-                expect(wrapper.childNodes[0].childNodes[0]).to.be.equal(first);
-
-                expect(wrapper.childNodes[0].childNodes[1].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[1].textContent).to.be.equal('Eduardo');
-                expect(wrapper.childNodes[0].childNodes[1]).to.be.equal(second);
-
-                expect(wrapper.childNodes[0].childNodes[2].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[2].textContent).to.be.equal('Francesca');
-                expect(wrapper.childNodes[0].childNodes[2]).to.be.equal(third);
-
-                expect(wrapper.childNodes[0].childNodes[3].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[3].textContent).to.be.equal('Gabriella');
-                expect(wrapper.childNodes[0].childNodes[3]).to.not.be.equal(otherOption);
-
-                expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
-                expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
-                expect(wrapper.childNodes[0].childNodes[4]).to.be.equal(otherOption);
-            });
-        }
-
-        it.skip('should swap rows', () => {
-            //
-        });
-
-        it.skip('should delete a row', () => {
-            //
-        });
-
-        it('should access keyed element in scope', () => {
-            class MyElement extends DNA.Component {
-                render() {
-                    return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;
-                }
+            for (let type in TEMPLATES) {
+                it(type, () => {
+                    const listener = spyFunction();
+                    const scope = {
+                        listener,
+                    };
+                    DNA.render(wrapper, TEMPLATES[type].call(scope));
+                    const button = wrapper.childNodes[0];
+                    button.click();
+                    expect(listener.invoked).to.be.true;
+                });
             }
-
-            DNA.define(getComponentName(), MyElement);
-
-            const element = new MyElement();
-            element.forceUpdate();
-
-            expect(element.childNodes).to.have.lengthOf(1);
-            expect(element.childNodes[0].tagName).to.be.equal('INPUT');
-            expect(element.childNodes[0]).to.be.equal(element.$.firstName);
-        });
-    });
-
-    describe.skip('events', () => {
-        it('should add an event listener', () => {
-            //
         });
     });
 });

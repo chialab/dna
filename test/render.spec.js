@@ -1,4 +1,4 @@
-import { getModule } from './helpers.js';
+import { getModule, getComponentName } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -158,6 +158,302 @@ describe('render', function() {
             expect(children[1].textContent).to.be.equal('Six');
             expect(children[2].textContent).to.be.equal('Seven');
             expect(children[3].textContent).to.be.equal('Height');
+        });
+    });
+
+    describe('not keyed', () => {
+        const items = ['Alan', 'Brian', 'Carl'];
+        const items2 = ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'];
+
+        it('should reuse elements', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                    <option value="other">Other</option>
+                </select>
+            `);
+            expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
+            expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
+
+            const first = wrapper.childNodes[0].childNodes[0];
+            expect(first.tagName).to.be.equal('OPTION');
+            expect(first.textContent).to.be.equal('Alan');
+
+            const second = wrapper.childNodes[0].childNodes[1];
+            expect(second.tagName).to.be.equal('OPTION');
+            expect(second.textContent).to.be.equal('Brian');
+
+            const third = wrapper.childNodes[0].childNodes[2];
+            expect(third.tagName).to.be.equal('OPTION');
+            expect(third.textContent).to.be.equal('Carl');
+
+            const otherOption = wrapper.childNodes[0].childNodes[3];
+            expect(otherOption.tagName).to.be.equal('OPTION');
+            expect(otherOption.textContent).to.be.equal('Other');
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items2.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                    <option value="other">Other</option>
+                </select>
+            `);
+
+            expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
+            expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
+
+            expect(wrapper.childNodes[0].childNodes[0].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[0].textContent).to.be.equal('Daniel');
+            expect(wrapper.childNodes[0].childNodes[0]).to.be.equal(first);
+
+            expect(wrapper.childNodes[0].childNodes[1].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[1].textContent).to.be.equal('Eduardo');
+            expect(wrapper.childNodes[0].childNodes[1]).to.be.equal(second);
+
+            expect(wrapper.childNodes[0].childNodes[2].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[2].textContent).to.be.equal('Francesca');
+            expect(wrapper.childNodes[0].childNodes[2]).to.be.equal(third);
+
+            expect(wrapper.childNodes[0].childNodes[3].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[3].textContent).to.be.equal('Gabriella');
+            expect(wrapper.childNodes[0].childNodes[3]).to.be.equal(otherOption);
+
+            expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
+            expect(wrapper.childNodes[0].childNodes[4]).to.not.be.equal(otherOption);
+        });
+
+        it('should swap rows', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option1 = wrapper.childNodes[0].childNodes[0];
+            const option2 = wrapper.childNodes[0].childNodes[1];
+            const option3 = wrapper.childNodes[0].childNodes[2];
+
+            expect(option1.textContent).to.be.equal(items[0]);
+            expect(option2.textContent).to.be.equal(items[1]);
+            expect(option3.textContent).to.be.equal(items[2]);
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.slice(0).reverse().map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option4 = wrapper.childNodes[0].childNodes[0];
+            const option5 = wrapper.childNodes[0].childNodes[1];
+            const option6 = wrapper.childNodes[0].childNodes[2];
+
+            expect(option4.textContent).to.be.equal(items[2]);
+            expect(option5.textContent).to.be.equal(items[1]);
+            expect(option6.textContent).to.be.equal(items[0]);
+
+            expect(option1).to.be.equal(option4);
+            expect(option2).to.be.equal(option5);
+            expect(option3).to.be.equal(option6);
+        });
+
+        it('should delete a row', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option1 = wrapper.childNodes[0].childNodes[0];
+            const option2 = wrapper.childNodes[0].childNodes[1];
+            const option3 = wrapper.childNodes[0].childNodes[2];
+
+            expect(option1.textContent).to.be.equal(items[0]);
+            expect(option2.textContent).to.be.equal(items[1]);
+            expect(option3.textContent).to.be.equal(items[2]);
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.slice(1).map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option4 = wrapper.childNodes[0].childNodes[0];
+            const option5 = wrapper.childNodes[0].childNodes[1];
+
+            expect(option1.textContent).to.be.equal(items[1]);
+            expect(option2.textContent).to.be.equal(items[2]);
+            expect(option4.textContent).to.be.equal(items[1]);
+            expect(option5.textContent).to.be.equal(items[2]);
+
+            expect(option1).to.be.equal(option4);
+            expect(option2).to.be.equal(option5);
+        });
+    });
+
+    describe('keyed', () => {
+        const items = ['Alan', 'Brian', 'Carl'];
+        const items2 = ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'];
+
+        it('should resuse non keyed elements', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                    <option key="last" value="other">Other</option>
+                </select>
+            `);
+            expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
+            expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
+
+            const first = wrapper.childNodes[0].childNodes[0];
+            expect(first.tagName).to.be.equal('OPTION');
+            expect(first.textContent).to.be.equal('Alan');
+
+            const second = wrapper.childNodes[0].childNodes[1];
+            expect(second.tagName).to.be.equal('OPTION');
+            expect(second.textContent).to.be.equal('Brian');
+
+            const third = wrapper.childNodes[0].childNodes[2];
+            expect(third.tagName).to.be.equal('OPTION');
+            expect(third.textContent).to.be.equal('Carl');
+
+            const otherOption = wrapper.childNodes[0].childNodes[3];
+            expect(otherOption.tagName).to.be.equal('OPTION');
+            expect(otherOption.textContent).to.be.equal('Other');
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items2.map((item) => DNA.html`
+                        <option value=${item}>${item}</option>
+                    `)}
+                    <option key="last" value="other">Other</option>
+                </select>
+            `);
+
+            expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
+            expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
+
+            expect(wrapper.childNodes[0].childNodes[0].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[0].textContent).to.be.equal('Daniel');
+            expect(wrapper.childNodes[0].childNodes[0]).to.be.equal(first);
+
+            expect(wrapper.childNodes[0].childNodes[1].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[1].textContent).to.be.equal('Eduardo');
+            expect(wrapper.childNodes[0].childNodes[1]).to.be.equal(second);
+
+            expect(wrapper.childNodes[0].childNodes[2].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[2].textContent).to.be.equal('Francesca');
+            expect(wrapper.childNodes[0].childNodes[2]).to.be.equal(third);
+
+            expect(wrapper.childNodes[0].childNodes[3].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[3].textContent).to.be.equal('Gabriella');
+            expect(wrapper.childNodes[0].childNodes[3]).to.not.be.equal(otherOption);
+
+            expect(wrapper.childNodes[0].childNodes[4].tagName).to.be.equal('OPTION');
+            expect(wrapper.childNodes[0].childNodes[4].textContent).to.be.equal('Other');
+            expect(wrapper.childNodes[0].childNodes[4]).to.be.equal(otherOption);
+        });
+
+        it('should swap rows', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option1 = wrapper.childNodes[0].childNodes[0];
+            const option2 = wrapper.childNodes[0].childNodes[1];
+            const option3 = wrapper.childNodes[0].childNodes[2];
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.slice(0).reverse().map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option4 = wrapper.childNodes[0].childNodes[0];
+            const option5 = wrapper.childNodes[0].childNodes[1];
+            const option6 = wrapper.childNodes[0].childNodes[2];
+
+            expect(option1.textContent).to.be.equal(items[0]);
+            expect(option2.textContent).to.be.equal(items[1]);
+            expect(option3.textContent).to.be.equal(items[2]);
+            expect(option4.textContent).to.be.equal(items[2]);
+            expect(option5.textContent).to.be.equal(items[1]);
+            expect(option6.textContent).to.be.equal(items[0]);
+
+            expect(option1).to.be.not.equal(option4);
+            expect(option2).to.be.equal(option5);
+            expect(option3).to.be.not.equal(option6);
+        });
+
+        it('should delete a row', () => {
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option1 = wrapper.childNodes[0].childNodes[0];
+            const option2 = wrapper.childNodes[0].childNodes[1];
+            const option3 = wrapper.childNodes[0].childNodes[2];
+
+            DNA.render(wrapper, DNA.html`
+                <select>
+                    ${items.slice(1).map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `);
+
+            const option4 = wrapper.childNodes[0].childNodes[0];
+            const option5 = wrapper.childNodes[0].childNodes[1];
+
+            expect(option1.textContent).to.be.equal(items[0]);
+            expect(option2.textContent).to.be.equal(items[1]);
+            expect(option3.textContent).to.be.equal(items[2]);
+            expect(option4.textContent).to.be.equal(items[1]);
+            expect(option5.textContent).to.be.equal(items[2]);
+
+            expect(option1).to.be.not.equal(option4);
+            expect(option2).to.be.equal(option4);
+            expect(option3).to.be.equal(option5);
+        });
+
+        it('should access keyed element in scope', () => {
+            class MyElement extends DNA.Component {
+                render() {
+                    return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;
+                }
+            }
+
+            DNA.define(getComponentName(), MyElement);
+
+            const element = new MyElement();
+            element.forceUpdate();
+
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0]).to.be.equal(element.$.firstName);
         });
     });
 });
