@@ -192,13 +192,9 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         // (patch result should return same Node instances for compatible types)
         if (newNode !== currentNode) {
             // they are different, so we need to insert the new Node into the tree
-            if (currentNode) {
-                // if current iterator is defined, insert the Node before it
-                DOM.insertBefore(root, newNode, currentNode);
-            } else {
-                // append the new Node at the end of the parent
-                DOM.appendChild(root, newNode);
-            }
+            // if current iterator is defined, insert the Node before it
+            // otherwise append the new Node at the end of the parent
+            DOM.insertBefore(root, newNode, currentNode);
         } else {
             currentNode = currentNode.nextSibling as Node;
         }
