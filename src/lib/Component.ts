@@ -1,5 +1,5 @@
 import { CustomElement } from './CustomElement';
-import { DOM, isElement, cloneChildNodes } from './DOM';
+import { DOM, isElement, cloneChildNodes, EMULATE_SYMBOL } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -33,7 +33,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * A set of properties to define to the node.
          */
         readonly properties?: {
-            [key: string]: ClassFieldDescriptor;
+            [key: string]: ClassFieldDescriptor|Function|Function[];
         };
 
         /**
@@ -97,8 +97,11 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             const propertyDescriptors = this.properties;
             if (propertyDescriptors) {
                 for (let propertyKey in propertyDescriptors) {
-                    const descriptor = propertyDescriptors[propertyKey];
-                    const symbol = defineProperty(element as HTMLElement, propertyKey, descriptor);
+                    let descriptor = propertyDescriptors[propertyKey];
+                    if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
+                        descriptor = { types: descriptor };
+                    }
+                    let symbol = defineProperty(element as HTMLElement, propertyKey, descriptor);
                     if (!(propertyKey in props)) {
                         initProperty(element, symbol, descriptor);
                     }
@@ -117,7 +120,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 }
             }
 
-            if (element.isConnected && DOM.emulate) {
+            if (element.isConnected) {
                 DOM.connect(element);
             }
 
@@ -400,8 +403,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
  */
 const shim = <T extends typeof HTMLElement>(base: T): T => {
     const shim = function(this: any, ...args: any[]) {
-        const constructor = this.constructor;
-        const extend = constructor.extends;
+        const constructor = this.constructor as T;
+        const extend = (constructor as any).extends;
         const is = this.is;
 
         let element: HTMLElement;
@@ -423,6 +426,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = DOM.document.createElement(extend || is) as HTMLElement;
+        (element as any)[EMULATE_SYMBOL] = true;
         if (extend) {
             element.setAttribute('is', is);
         }
@@ -434,22 +438,11 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
 };
 
 /**
- * Collect proxied HTMLElement constructors.
- */
-const PROXIES: { [key: string]: typeof HTMLElement } = {};
-
-/**
  * Get a native HTMLElement constructor to extend by its name.
  * @param name The name of the constructor (eg. "HTMLAnchorElement").
  * @return A proxy that extends the native constructor.
  */
-export const extend = (name: 'HTMLElement') => {
-    if (PROXIES[name]) {
-        return PROXIES[name];
-    }
-    const constructor = DOM.window[name];
-    return PROXIES[name] = class extends mixin(shim(constructor)) {};
-};
+export const extend = (constructor: typeof HTMLElement) => class extends mixin(shim(constructor)) {};
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with
@@ -457,4 +450,4 @@ export const extend = (name: 'HTMLElement') => {
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend('HTMLElement') as CustomElement<HTMLElement>;
+export const Component = extend(DOM.window.HTMLElement) as CustomElement<HTMLElement>;

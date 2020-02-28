@@ -1,48 +1,56 @@
 import { DOM, define, bootstrap, render, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { getComponentName } from '../helpers.js';
 
-const WRAPPER = document.body;
+describe('[Compat] lib', () => {
+    let wrapper, TestComponent1, TestComponent2, name1 = getComponentName(), name2 = getComponentName();
 
-class TestComponent extends BaseComponent {
-    static get observedAttributes() {
-        return ['age'];
-    }
+    before(() => {
+        DOM.lifeCycle(true);
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
 
-    constructor(node) {
-        super(node);
-        this.name = 'Alan';
-        this.lastName = 'Turing';
-        this.connectedTimes = 0;
-        this.disconnectedTimes = 0;
-        this.attributeChanges = 0;
-    }
+        class TestComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['age'];
+            }
 
-    connectedCallback() {
-        super.connectedCallback();
-        this.connectedTimes++;
-    }
+            constructor(node) {
+                super(node);
+                this.name = 'Alan';
+                this.lastName = 'Turing';
+                this.connectedTimes = 0;
+                this.disconnectedTimes = 0;
+                this.attributeChanges = 0;
+            }
 
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.disconnectedTimes++;
-    }
+            connectedCallback() {
+                super.connectedCallback();
+                this.connectedTimes++;
+            }
 
-    attributeChangedCallback(...args) {
-        super.attributeChangedCallback(...args);
-        this.attributeChanges++;
-    }
-}
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.disconnectedTimes++;
+            }
 
-class TestComponent2 extends TestComponent {}
+            attributeChangedCallback(...args) {
+                super.attributeChangedCallback(...args);
+                this.attributeChanges++;
+            }
+        }
 
-define('test1-helper-component', TestComponent);
-define('helper-define-component', TestComponent2, { extends: 'div' });
+        TestComponent1 = class TestComponent1 extends TestComponent {};
+        TestComponent2 = class TestComponent2 extends TestComponent {};
 
-describe.skip('[Compat] lib', () => {
+        define(name1, TestComponent1);
+        define(name2, TestComponent2, { extends: 'div' });
+    });
+
     describe('define', () => {
         describe('a simple element', () => {
             it('should define a custom element', () => {
-                const elem = new TestComponent();
-                assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
+                const elem = new TestComponent1();
+                assert.equal(elem.node.tagName.toLowerCase(), name1);
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
             });
@@ -50,7 +58,7 @@ describe.skip('[Compat] lib', () => {
 
         describe('an element with extends field', () => {
             it('a custom element with extends field', () => {
-                const elem = render(WRAPPER, TestComponent2);
+                const elem = render(wrapper, TestComponent2);
                 assert.equal(elem.node.localName, 'div');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
@@ -59,10 +67,10 @@ describe.skip('[Compat] lib', () => {
     });
 
     describe('DOM helpers', () => {
-        let elem, elem2;
+        let elem1, elem2;
         before(() => {
-            elem = new TestComponent();
-            elem2 = render(WRAPPER, TestComponent2);
+            elem1 = new TestComponent1();
+            elem2 = render(wrapper, TestComponent2);
         });
 
         it('should do nothing', () => {
@@ -72,110 +80,110 @@ describe.skip('[Compat] lib', () => {
         });
 
         it('should create a component instance', () => {
-            assert.equal(elem.node.tagName.toLowerCase(), 'test1-helper-component');
-            assert.equal(elem.name, 'Alan');
-            assert.equal(elem.lastName, 'Turing');
+            assert.equal(elem1.node.tagName.toLowerCase(), name1);
+            assert.equal(elem1.name, 'Alan');
+            assert.equal(elem1.lastName, 'Turing');
         });
 
         it('should append a component', () => {
-            DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 0);
-            assert.equal(elem.connectedTimes, 1);
+            DOM.appendChild(wrapper, elem1);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem1.disconnectedTimes, 0);
+            assert.equal(elem1.connectedTimes, 1);
             assert.equal(elem2.disconnectedTimes, 0);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should append a component before another', () => {
-            DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem2.node.parentNode, WRAPPER);
-            assert.equal(elem.node.nextSibling, elem2.node);
-            assert.equal(elem.disconnectedTimes, 1);
-            assert.equal(elem.connectedTimes, 2);
+            DOM.insertBefore(wrapper, elem1, elem2);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem2.node.parentNode, wrapper);
+            assert.equal(elem1.node.nextSibling, elem2.node);
+            assert.equal(elem1.disconnectedTimes, 1);
+            assert.equal(elem1.connectedTimes, 2);
             assert.equal(elem2.disconnectedTimes, 0);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should do nothing if already before another', () => {
-            DOM.insertBefore(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem2.node.parentNode, WRAPPER);
-            assert.equal(elem.node.nextSibling, elem2.node);
-            assert.equal(elem.disconnectedTimes, 1);
-            assert.equal(elem.connectedTimes, 2);
+            DOM.insertBefore(wrapper, elem1, elem2);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem2.node.parentNode, wrapper);
+            assert.equal(elem1.node.nextSibling, elem2.node);
+            assert.equal(elem1.disconnectedTimes, 2);
+            assert.equal(elem1.connectedTimes, 3);
             assert.equal(elem2.disconnectedTimes, 0);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should append again a component', () => {
-            DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 2);
-            assert.equal(elem.connectedTimes, 3);
+            DOM.appendChild(wrapper, elem1);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem1.disconnectedTimes, 3);
+            assert.equal(elem1.connectedTimes, 4);
             assert.equal(elem2.disconnectedTimes, 0);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should do nothing if already last child of parent', () => {
-            DOM.appendChild(WRAPPER, elem);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 2);
-            assert.equal(elem.connectedTimes, 3);
+            DOM.appendChild(wrapper, elem1);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem1.disconnectedTimes, 4);
+            assert.equal(elem1.connectedTimes, 5);
             assert.equal(elem2.disconnectedTimes, 0);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should replace a child', () => {
-            DOM.replaceChild(WRAPPER, elem, elem2);
-            assert.equal(elem.node.parentNode, WRAPPER);
-            assert.equal(elem.disconnectedTimes, 3);
-            assert.equal(elem.connectedTimes, 4);
+            DOM.replaceChild(wrapper, elem1, elem2);
+            assert.equal(elem1.node.parentNode, wrapper);
+            assert.equal(elem1.disconnectedTimes, 5);
+            assert.equal(elem1.connectedTimes, 6);
             assert.equal(elem2.disconnectedTimes, 1);
             assert.equal(elem2.connectedTimes, 1);
         });
 
         it('should set attributes', () => {
-            DOM.setAttribute(elem, 'age', 20);
-            DOM.setAttribute(elem, 'married', '');
-            assert.equal(elem.attributeChanges, 1);
-            assert.equal(elem.node.getAttribute('age'), '20');
-            assert.equal(elem.node.getAttribute('married'), '');
+            DOM.setAttribute(elem1, 'age', 20);
+            DOM.setAttribute(elem1, 'married', '');
+            assert.equal(elem1.attributeChanges, 1);
+            assert.equal(elem1.node.getAttribute('age'), '20');
+            assert.equal(elem1.node.getAttribute('married'), '');
         });
 
         it('should remove attributes', () => {
-            DOM.removeAttribute(elem, 'age');
-            DOM.removeAttribute(elem, 'married');
-            assert.equal(elem.attributeChanges, 2);
-            assert.equal(elem.node.getAttribute('age'), null);
-            assert.equal(elem.node.getAttribute('married'), null);
+            DOM.removeAttribute(elem1, 'age');
+            DOM.removeAttribute(elem1, 'married');
+            assert.equal(elem1.attributeChanges, 2);
+            assert.equal(elem1.node.getAttribute('age'), null);
+            assert.equal(elem1.node.getAttribute('married'), null);
         });
     });
 
     describe('bootstrap', () => {
-        let WRAPPER, WRAPPER2;
+        let wrapper, wrapper2;
         before(() => {
-            WRAPPER = document.createElement('div');
-            WRAPPER.innerHTML = '<p>Hello <test1-helper-component age="21"></test1-helper-component></p>';
-            WRAPPER2 = document.createElement('div');
-            WRAPPER2.innerHTML = '<p>Hello again <test1-helper-component age="21"/><test1-helper-component age="22"/></p>';
+            wrapper = document.createElement('div');
+            wrapper.innerHTML = `<p>Hello <${name1} age="21"></${name1}></p>`;
+            wrapper2 = document.createElement('div');
+            wrapper2.innerHTML = `<p>Hello again <${name1} age="21"/><${name1} age="22"/></p>`;
         });
 
         it('should instantiate all components', () => {
-            bootstrap(WRAPPER);
+            bootstrap(wrapper);
             const elem = DOM.getNodeComponent(
-                WRAPPER.querySelector('.test1-helper-component')
+                wrapper.querySelector(`.${name1}`)
             );
-            assert.equal(elem.node.localName, 'test1-helper-component');
+            assert.equal(elem.node.localName, name1);
             assert.equal(elem.node.getAttribute('age'), '21');
-            assert.equal(elem.node.getAttribute('class'), 'test1-helper-component');
+            assert.equal(elem.node.getAttribute('class'), name1);
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
         });
 
         it('should call callback for every component', () => {
             let count = 0;
-            bootstrap(WRAPPER2, () => {
+            bootstrap(wrapper2, () => {
                 count++;
             });
             assert.equal(count, 2);

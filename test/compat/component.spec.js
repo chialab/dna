@@ -1,41 +1,40 @@
 import { define, DOM, BaseComponent } from '../../dist/adapters/compat/dna.js';
-import { getComponentName } from './helpers.js';
+import { getComponentName } from '../helpers.js';
 
-const WRAPPER = document.body;
-
-class TestComponent extends BaseComponent {
-    static get observedAttributes() {
-        return ['test-callback'];
-    }
-
-    constructor(...args) {
-        super(...args);
-        this.created = true;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        this.attached = true;
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.attached = false;
-    }
-
-    attributeChangedCallback(attr, oldVal, newVal) {
-        super.attributeChangedCallback(attr, oldVal, newVal);
-        this[attr] = newVal;
-    }
-}
-
-define(getComponentName(), TestComponent);
-
-DOM.lifeCycle(true);
-
-describe.skip('[Compat] Component', () => {
-    let elem;
+describe('[Compat] Component', () => {
+    let elem, wrapper;
     before(() => {
+        DOM.lifeCycle(true);
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+
+        class TestComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['test-callback'];
+            }
+
+            constructor(...args) {
+                super(...args);
+                this.created = true;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.attached = true;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attached = false;
+            }
+
+            attributeChangedCallback(attr, oldVal, newVal) {
+                super.attributeChangedCallback(attr, oldVal, newVal);
+                this[attr] = newVal;
+            }
+        }
+
+        define(getComponentName(), TestComponent);
         elem = new TestComponent();
     });
 
@@ -47,7 +46,7 @@ describe.skip('[Compat] Component', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
-            DOM.appendChild(WRAPPER, elem);
+            DOM.appendChild(wrapper, elem);
             assert.equal(elem.attached, true);
         });
     });
@@ -61,7 +60,7 @@ describe.skip('[Compat] Component', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            DOM.removeChild(WRAPPER, elem);
+            DOM.removeChild(wrapper, elem);
             assert.equal(elem.attached, false);
         });
     });

@@ -14,11 +14,6 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     readonly is: string | undefined;
 
     /**
-     * The native tag to extend.
-     */
-    readonly extends: string | undefined;
-
-    /**
      * A set of properties to define to the node.
      */
     readonly properties?: {

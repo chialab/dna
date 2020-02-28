@@ -1,118 +1,63 @@
 import { define, render, DOM, IDOM, prop, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { getComponentName } from '../helpers.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;
-const WRAPPER = document.body;
 
-class TestBaseComponent extends BaseComponent {
-    static get observedAttributes() {
-        return ['name'];
-    }
+describe('[Compat] BaseComponent', () => {
+    let elem, wrapper, tag = getComponentName();
 
-    get properties() {
-        return {
-            name: String,
-            lastName: prop.STRING.attribute('last-name'),
-        };
-    }
-
-    get template() {
-        return `<span>${this.name} ${this.lastName}</span>`;
-    }
-
-    constructor(...args) {
-        super(...args);
-        this.created = true;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        this.attached = true;
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.attached = false;
-    }
-
-    attributeChangedCallback(attr, oldVal, newVal) {
-        super.attributeChangedCallback(attr, oldVal, newVal);
-        this[attr] = newVal;
-    }
-}
-
-class TestBaseIDOMComponent extends BaseComponent {
-    static get observedAttributes() {
-        return ['name'];
-    }
-
-    get properties() {
-        return {
-            name: String,
-            lastName: prop.STRING.attribute('last-name'),
-            age: Number,
-        };
-    }
-
-    get template() {
-        return () => <span>{this.name} {this.lastName} {this.age}{this.undefinedProp}{false}{0}</span>;
-    }
-
-    constructor(node) {
-        super(node);
-        this.created = true;
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        this.attached = true;
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.attached = false;
-    }
-
-    attributeChangedCallback(attr, oldVal, newVal) {
-        super.attributeChangedCallback(attr, oldVal, newVal);
-        this[attr] = newVal;
-    }
-}
-
-class TestBaseComponent1 extends TestBaseComponent { }
-class TestBaseComponent2 extends TestBaseComponent { }
-class TestBaseComponent3 extends TestBaseComponent { }
-class TestBaseIDOMComponent2 extends TestBaseIDOMComponent { }
-
-define('test-base-component', TestBaseComponent1);
-define('test-base-component-2', TestBaseComponent2, {
-    extends: 'button',
-});
-define('test-base-idom-component', TestBaseIDOMComponent);
-define('test-base-idom-component-2', TestBaseIDOMComponent2, {
-    extends: 'button',
-});
-
-DOM.lifeCycle(true);
-
-describe.skip('[Compat] BaseComponent without definition', () => {
-    describe('> constructor', () => {
-        it('should throw', () => {
-            assert.throws(() => new TestBaseComponent3(), 'Component has not been defined');
-        });
-    });
-});
-
-describe.skip('[Compat] BaseComponent', () => {
-    let elem;
     before(() => {
-        elem = new TestBaseComponent1();
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+        DOM.lifeCycle(true);
+
+        class TestBaseComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['name'];
+            }
+
+            get properties() {
+                return {
+                    name: String,
+                    lastName: prop.STRING.attribute('last-name'),
+                };
+            }
+
+            get template() {
+                return `<span>${this.name} ${this.lastName}</span>`;
+            }
+
+            constructor(...args) {
+                super(...args);
+                this.created = true;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.attached = true;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attached = false;
+            }
+
+            attributeChangedCallback(attr, oldVal, newVal) {
+                super.attributeChangedCallback(attr, oldVal, newVal);
+                this[attr] = newVal;
+            }
+        }
+
+        define(tag, TestBaseComponent);
+
+        elem = new TestBaseComponent();
         elem.lastName = 'Turing';
     });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
-            assert.equal(elem.node.tagName.toLowerCase(), 'test-base-component');
+            assert.equal(elem.node.tagName.toLowerCase(), tag);
         });
 
         it('check if element is correctly instantiated', () => {
@@ -122,7 +67,7 @@ describe.skip('[Compat] BaseComponent', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
-            DOM.appendChild(WRAPPER, elem);
+            DOM.appendChild(wrapper, elem);
             assert.equal(elem.attached, true);
         });
     });
@@ -142,23 +87,69 @@ describe.skip('[Compat] BaseComponent', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            DOM.removeChild(WRAPPER, elem);
+            DOM.removeChild(wrapper, elem);
             assert.equal(elem.attached, false);
         });
     });
 });
 
-describe.skip('[Compat] BaseComponent with native element', () => {
-    let elem;
+describe('[Compat] BaseComponent with native element', () => {
+    let elem, wrapper, tag = getComponentName();
+
     before(() => {
-        elem = new TestBaseComponent2();
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+        DOM.lifeCycle(true);
+
+        class TestBaseComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['name'];
+            }
+
+            get properties() {
+                return {
+                    name: String,
+                    lastName: prop.STRING.attribute('last-name'),
+                };
+            }
+
+            get template() {
+                return `<span>${this.name} ${this.lastName}</span>`;
+            }
+
+            constructor(...args) {
+                super(...args);
+                this.created = true;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.attached = true;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attached = false;
+            }
+
+            attributeChangedCallback(attr, oldVal, newVal) {
+                super.attributeChangedCallback(attr, oldVal, newVal);
+                this[attr] = newVal;
+            }
+        }
+
+        define(tag, TestBaseComponent, {
+            extends: 'button',
+        });
+
+        elem = new TestBaseComponent();
         elem.lastName = 'Turing';
     });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
-            assert.equal(elem.node.getAttribute('is').toLowerCase(), 'test-base-component-2');
+            assert.equal(elem.node.getAttribute('is').toLowerCase(), tag);
         });
 
         it('check if element is correctly instantiated', () => {
@@ -168,7 +159,7 @@ describe.skip('[Compat] BaseComponent with native element', () => {
 
     describe('> attached', () => {
         it('check if element is correctly attached to the tree', () => {
-            DOM.appendChild(WRAPPER, elem);
+            DOM.appendChild(wrapper, elem);
             assert.equal(elem.attached, true);
         });
     });
@@ -188,21 +179,66 @@ describe.skip('[Compat] BaseComponent with native element', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            DOM.removeChild(WRAPPER, elem);
+            DOM.removeChild(wrapper, elem);
             assert.equal(elem.attached, false);
         });
     });
 });
 
-describe.skip('[Compat] Base IDOM Component', () => {
-    let elem;
+describe('[Compat] Base IDOM Component', () => {
+    let elem, wrapper, tag = getComponentName();
+
     before(() => {
-        elem = render(WRAPPER, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
+        DOM.lifeCycle(true);
+
+        class TestBaseIDOMComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['name'];
+            }
+
+            get properties() {
+                return {
+                    name: String,
+                    lastName: prop.STRING.attribute('last-name'),
+                    age: Number,
+                };
+            }
+
+            get template() {
+                return () => <span>{this.name} {this.lastName} {this.age}{this.undefinedProp}{false}{0}</span>;
+            }
+
+            constructor(node) {
+                super(node);
+                this.created = true;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.attached = true;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attached = false;
+            }
+
+            attributeChangedCallback(attr, oldVal, newVal) {
+                super.attributeChangedCallback(attr, oldVal, newVal);
+                this[attr] = newVal;
+            }
+        }
+
+        define(tag, TestBaseIDOMComponent);
+
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+        elem = render(wrapper, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
     });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
-            assert.equal(elem.node.tagName.toLowerCase(), 'test-base-idom-component');
+            assert.equal(elem.node.tagName.toLowerCase(), tag);
         });
 
         it('check if element is correctly instantiated', () => {
@@ -231,22 +267,69 @@ describe.skip('[Compat] Base IDOM Component', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            DOM.removeChild(WRAPPER, elem);
+            DOM.removeChild(wrapper, elem);
             assert.equal(elem.attached, false);
         });
     });
 });
 
-describe.skip('[Compat] Base IDOM Component with native element', () => {
-    let elem;
+describe('[Compat] Base IDOM Component with native element', () => {
+    let elem, wrapper, tag = getComponentName();
+
     before(() => {
-        elem = render(WRAPPER, TestBaseIDOMComponent2, { lastName: 'Turing', age: 42 });
+        DOM.lifeCycle(true);
+
+        class TestBaseIDOMComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['name'];
+            }
+
+            get properties() {
+                return {
+                    name: String,
+                    lastName: prop.STRING.attribute('last-name'),
+                    age: Number,
+                };
+            }
+
+            get template() {
+                return () => <span>{this.name} {this.lastName} {this.age}{this.undefinedProp}{false}{0}</span>;
+            }
+
+            constructor(node) {
+                super(node);
+                this.created = true;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.attached = true;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attached = false;
+            }
+
+            attributeChangedCallback(attr, oldVal, newVal) {
+                super.attributeChangedCallback(attr, oldVal, newVal);
+                this[attr] = newVal;
+            }
+        }
+
+        define(tag, TestBaseIDOMComponent, {
+            extends: 'button',
+        });
+
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+        elem = render(wrapper, TestBaseIDOMComponent, { lastName: 'Turing', age: 42 });
     });
 
     describe('> created', () => {
         it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
-            assert.equal(elem.node.getAttribute('is'), 'test-base-idom-component-2');
+            assert.equal(elem.node.getAttribute('is'), tag);
         });
 
         it('check if element is correctly instantiated', () => {
@@ -275,7 +358,7 @@ describe.skip('[Compat] Base IDOM Component with native element', () => {
 
     describe('> detached', () => {
         it('check if element is correctly detached from the tree', () => {
-            DOM.removeChild(WRAPPER, elem);
+            DOM.removeChild(wrapper, elem);
             assert.equal(elem.attached, false);
         });
     });

@@ -1,7 +1,11 @@
+import { createSymbolKey } from './symbols';
 import { CustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 
-type GlobalNamespace = Window & typeof globalThis;
+/**
+ * A symbol which identify emulated custom elements.
+ */
+export const EMULATE_SYMBOL = createSymbolKey();
 
 /**
  * Make a readonly copy of the child nodes collection.
@@ -51,17 +55,12 @@ export const DOM = {
     /**
      * The window instance.
      */
-    window: (typeof window !== 'undefined' ? window : undefined) as GlobalNamespace,
+    window: (typeof window !== 'undefined' ? window : undefined) as Window & typeof globalThis,
 
     /**
      * The document instance.
      */
     document: (typeof document !== 'undefined' ? document : undefined) as Document,
-
-    /**
-     * Check if the environment should emulate Custom Elements life cycle.
-     */
-    emulate: typeof customElements === 'undefined',
 
     /**
      * The adapter Document constructor.
@@ -154,10 +153,8 @@ export const DOM = {
      * @param newChild The child to add.
      */
     appendChild<T extends Node>(parent: Element, newChild: T): T {
-        if (this.emulate) {
-            if (newChild.parentNode) {
-                this.removeChild(newChild.parentNode as Element, newChild);
-            }
+        if (newChild.parentNode) {
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.Node.prototype.appendChild.call(parent, newChild);
         this.connect(newChild);
@@ -184,10 +181,8 @@ export const DOM = {
      * @param refChild The referred node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
-        if (this.emulate) {
-            if (newChild.parentNode) {
-                this.removeChild(newChild.parentNode as Element, newChild);
-            }
+        if (newChild.parentNode) {
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.Node.prototype.insertBefore.call(parent, newChild, refChild);
         this.connect(newChild);
@@ -202,10 +197,8 @@ export const DOM = {
      * @param oldChild The node to replace.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
-        if (this.emulate) {
-            if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
-                this.removeChild(newChild.parentNode as Element, newChild);
-            }
+        if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
+            this.removeChild(newChild.parentNode as Element, newChild);
         }
         this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
         this.disconnect(oldChild);
@@ -241,8 +234,7 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        const emulate = this.emulate &&
-            typeof (element as CustomElement).attributeChangedCallback === 'function' &&
+        const emulate = (element as any)[EMULATE_SYMBOL] &&
             (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
         const oldValue = emulate && this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
@@ -259,8 +251,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        const emulate = this.emulate &&
-            typeof (element as CustomElement).attributeChangedCallback === 'function' &&
+        const emulate = (element as any)[EMULATE_SYMBOL] &&
             (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
         const oldValue = emulate && this.getAttribute(element, qualifiedName);
         this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
@@ -303,11 +294,8 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
-        if (!this.emulate) {
-            return;
-        }
         const previousNodes = cloneChildNodes(node) || [];
-        if (typeof (node as CustomElement).connectedCallback === 'function') {
+        if ((node as any)[EMULATE_SYMBOL]) {
             (node as CustomElement).connectedCallback();
         }
         const children = cloneChildNodes(node);
@@ -328,11 +316,8 @@ export const DOM = {
      * @param node The disconnected node.
      */
     disconnect(node: Node) {
-        if (!this.emulate) {
-            return;
-        }
         const previousNodes = cloneChildNodes(node) || [];
-        if (typeof (node as CustomElement).disconnectedCallback === 'function') {
+        if ((node as any)[EMULATE_SYMBOL]) {
             (node as CustomElement).disconnectedCallback();
         }
         const children = cloneChildNodes(node);

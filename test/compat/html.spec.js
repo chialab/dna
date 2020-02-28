@@ -1,30 +1,32 @@
-import { render, define, DOM, IDOM, trust, BaseComponent } from  '../../dist/adapters/compat/dna.js';
+import { render, define, DOM, IDOM, trust, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { getComponentName } from '../helpers.js';
 
-// eslint-disable-next-line
-const h = IDOM.h;
-const WRAPPER = document.body;
+describe('[Compat] Base HTML Component', () => {
+    let elem, wrapper, TestComponent;
 
-class TestBaseHTMLComponent extends BaseComponent {
-    get properties() {
-        return {
-            content: String,
+    before(() => {
+        DOM.lifeCycle(true);
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
+
+        TestComponent = class TestComponent extends BaseComponent {
+            get properties() {
+                return {
+                    content: String,
+                };
+            }
+
+            get template() {
+                return () => IDOM.h('p', {}, trust(this.content));
+            }
         };
-    }
 
-    get template() {
-        return () => <p>{trust(this.content)}</p>;
-    }
-}
+        define(getComponentName(), TestComponent);
+    });
 
-define('test-base-html-component', TestBaseHTMLComponent);
-
-DOM.lifeCycle(true);
-
-describe.skip('[Compat] Base HTML Component', () => {
     describe('> inject simple content', () => {
-        let elem;
         before(() => {
-            elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello' });
+            elem = render(wrapper, TestComponent, { content: 'Hello' });
         });
 
         it('check if element has the correct content', () => {
@@ -33,9 +35,8 @@ describe.skip('[Compat] Base HTML Component', () => {
     });
 
     describe('> inject complex content', () => {
-        let elem;
         before(() => {
-            elem = render(WRAPPER, TestBaseHTMLComponent, { content: 'Hello <strong>world!</strong>' });
+            elem = render(wrapper, TestComponent, { content: 'Hello <strong>world!</strong>' });
         });
 
         it('check if element has the correct content', () => {

@@ -1,29 +1,37 @@
 import * as DNA from '../../dist/adapters/compat/dna.js';
 
-describe('[Compat ]module', function() {
+describe('[Compat] module', function() {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {
-        IDOM: 'object',
         DOM: 'object',
-        isCustomElement: 'function',
-        mixin: 'function',
+        extend: 'function',
         render: 'function',
         get: 'function',
         define: 'function',
         whenDefined: 'function',
         upgrade: 'function',
-        bootstrap: 'function',
         Fragment: 'function',
         h: 'function',
         html: 'function',
+        template: 'function',
         css: 'function',
-        compile: 'function',
+        interpolate: 'function',
+        delegateEventListener: 'function',
+        undelegateEventListener: 'function',
+        dispatchEvent: 'function',
+        dispatchAsyncEvent: 'function',
+        property: 'function',
+        listener: 'function',
+        Component: 'function',
+        CustomElementRegistry: 'function',
+        // COMPAT
+        IDOM: 'object',
+        mixin: 'function',
+        BaseComponent: 'function',
         trust: 'function',
         prop: 'function',
-        property: 'function',
-        BaseComponent: 'function',
-        Component: 'function',
+        bootstrap: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {

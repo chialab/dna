@@ -9,15 +9,18 @@ class CompatProperty {
         return this;
     }
 
-    attribute() {
+    attribute(attributeName: string) {
+        (this as any).attribute = attributeName;
         return this;
     }
 
-    getter() {
+    getter(getter: Function) {
+        (this as any).getter = getter;
         return this;
     }
 
-    setter() {
+    setter(setter: Function) {
+        (this as any).setter = setter;
         return this;
     }
 }
@@ -29,6 +32,20 @@ export function prop(types: Function | Function[]) {
     return new CompatProperty(types);
 }
 
-prop.STRING = new CompatProperty([String]);
-prop.NUMBER = new CompatProperty([Number]);
-prop.BOOLEAN = new CompatProperty([Boolean]);
+Object.defineProperty(prop, 'STRING', {
+    get() {
+        return new CompatProperty([String]);
+    },
+});
+
+Object.defineProperty(prop, 'NUMBER', {
+    get() {
+        return new CompatProperty([Number]);
+    },
+});
+
+Object.defineProperty(prop, 'BOOLEAN', {
+    get() {
+        return new CompatProperty([Boolean]);
+    },
+});

@@ -48,7 +48,7 @@ describe('Component', function() {
         });
 
         it('should create a base class starting from the anchor base class', () => {
-            const HTMLAnchorElement = DNA.extend('HTMLAnchorElement');
+            const HTMLAnchorElement = DNA.extend(DNA.DOM.window.HTMLAnchorElement);
             class TestElement extends HTMLAnchorElement { }
             DNA.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
@@ -145,7 +145,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(connectedCallback.invoked).to.be.false;
@@ -172,7 +174,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             const child = DNA.DOM.createElement('div');
@@ -204,7 +208,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             const child = DNA.DOM.createElement('div');
@@ -235,7 +241,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(connectedCallback.invoked).to.be.false;
@@ -255,7 +263,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(element.innerHTML).to.be.equal('');
@@ -278,7 +288,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(attributeChangedCallback.invoked).to.be.false;
@@ -302,7 +314,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(attributeChangedCallback.invoked).to.be.false;
@@ -326,7 +340,9 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement, {
+                extends: 'article',
+            });
 
             const element = new TestElement();
             expect(attributeChangedCallback.invoked).to.be.false;

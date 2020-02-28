@@ -24,7 +24,7 @@ export class CustomElementRegistry {
     /**
      * A global registry.
      */
-    private registry: {
+    readonly registry: {
         [key: string]: CustomElement;
     } = {};
 
@@ -121,7 +121,6 @@ export class CustomElementRegistry {
         if (typeof customElements !== 'undefined' && 'upgrade' in customElements) {
             return customElements.upgrade(root);
         }
-        const elements: CustomElement[] = [];
         // iterate registry entries in order to retrieve all registered tags
         const registry = this.registry;
         for (let key in registry) {
@@ -135,13 +134,9 @@ export class CustomElementRegistry {
                 if (node instanceof constructor) {
                     continue;
                 }
-                elements.push(
-                    new constructor(node as HTMLElement)
-                );
+                new constructor(node as HTMLElement);
             }
         }
-
-        return elements;
     }
 }
 

@@ -74,6 +74,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  */
 const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol): PropertyDescriptor => {
     const computedTypes = descriptor.types as Function[];
+    const validate = typeof descriptor.validate === 'function' && descriptor.validate;
     const finalDescriptor: PropertyDescriptor = {
         enumerable: true,
     };
@@ -106,8 +107,8 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
                 // check if the value is an instanceof of at least one constructor
                 valid = computedTypes.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
             }
-            if (valid && typeof descriptor.validate === 'function') {
-                valid = descriptor.validate(newValue);
+            if (valid && validate) {
+                valid = validate(newValue);
             }
             if (!valid) {
                 throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
@@ -165,6 +166,7 @@ export const defineProperty = (target: Object, propertyKey: string, descriptor: 
         observers = [descriptor.observe, ...observers];
     }
     descriptor.observers = observers;
+    (descriptor as any).__proto__ = null;
 
     Object.defineProperty(constructor.prototype, propertyKey, classFieldToProperty(descriptor, symbol));
 
