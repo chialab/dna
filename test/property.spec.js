@@ -368,7 +368,7 @@ describe('property', function() {
             DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
-            expect(() => element.observe('testProp', listener)).to.throw(Error, 'missing property testProp');
+            expect(() => element.observe('testProp', listener)).to.throw(Error, 'Missing property testProp');
         });
     });
 
@@ -404,7 +404,7 @@ describe('property', function() {
             DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
-            expect(() => element.unobserve('testProp', listener)).to.throw(Error, 'missing property testProp');
+            expect(() => element.unobserve('testProp', listener)).to.throw(Error, 'Missing property testProp');
         });
     });
 });

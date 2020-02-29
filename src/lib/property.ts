@@ -16,6 +16,13 @@ const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
 export type ClassFieldObserver = (oldValue: any, newValue: any) => any;
 
 /**
+ * A validation function for the class field.
+ *
+ * @param value The value to set.
+ */
+export type ClassFieldValidator = (value: any) => boolean;
+
+/**
  * A list of properties for an class field description.
  */
 export type ClassFieldDescriptor = PropertyDescriptor & {
@@ -47,7 +54,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * A custom validation function for the property.
      * Property assignement throws when this function returns falsy values.
      */
-    validate?: (value: any) => boolean;
+    validate?: ClassFieldValidator;
     /**
      * Define custom getter for the property.
      * @param value The current property value.
@@ -118,7 +125,7 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
         this[symbol] = newValue;
 
         if (descriptor.observers) {
-            descriptor.observers.forEach((observer) => observer(oldValue, newValue));
+            descriptor.observers.forEach((observer) => observer.call(this, oldValue, newValue));
         }
 
         // trigger Property changes
@@ -141,13 +148,13 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
  */
 export const defineProperty = (target: Object, propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol => {
     const constructor = target.constructor as Function & {
-    [PROPERTIES_SYMBOL]?: {
-        [key: string]: ClassFieldDescriptor;
-    }
+        [PROPERTIES_SYMBOL]?: {
+            [key: string]: ClassFieldDescriptor;
+        }
     };
     const descriptors = constructor[PROPERTIES_SYMBOL] = constructor[PROPERTIES_SYMBOL] || {};
 
-    if (propertyKey in descriptors) {
+    if (Object.prototype.hasOwnProperty.call(descriptors, propertyKey)) {
         return descriptors[propertyKey].symbol as symbol;
     }
 

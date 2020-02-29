@@ -1,11 +1,24 @@
-class CompatProperty {
-    types: Function[];
+import { ClassFieldObserver, ClassFieldValidator } from '../../../lib/property';
 
-    constructor(types: Function[]) {
-        this.types = types;
+class CompatProperty {
+    name?: string;
+    types?: Function[];
+    defaultValue?: any;
+    observers?: ClassFieldObserver[];
+
+    constructor(types?: Function[]) {
+        if (types) {
+            this.types = types;
+        }
     }
 
-    validate() {
+    default(defaultValue: any) {
+        this.defaultValue = defaultValue;
+        return this;
+    }
+
+    validate(validate: ClassFieldValidator) {
+        (this as any).validate = validate;
         return this;
     }
 
@@ -23,9 +36,42 @@ class CompatProperty {
         (this as any).setter = setter;
         return this;
     }
+
+    observe(observer: ClassFieldObserver|string) {
+        this.observers = this.observers || [];
+        if (typeof observer === 'string') {
+            /* eslint-disable-next-line */
+            console.warn('string method reference for property observer has been deprecated in DNA 3.0');
+            let methodKey = observer;
+            observer = function(this: any, oldValue: any, newValue: any) {
+                return this[methodKey](oldValue, newValue);
+            };
+        }
+        this.observers.push(observer);
+        return this;
+    }
+
+    dispatch(eventName: string) {
+        /* eslint-disable-next-line */
+        console.warn('dispatch custom event on property change has been deprecated in DNA 3.0');
+        let prop = this;
+        this.observers = this.observers || [];
+        this.observers.push(function(this: any, oldValue: any, newValue: any) {
+            return this.dispatchEvent(eventName, {
+                component: this,
+                property: prop.name,
+                newValue,
+                oldValue,
+            });
+        });
+        return this;
+    }
 }
 
 export function prop(types: Function | Function[]) {
+    /* eslint-disable-next-line */
+    console.warn('prop helper has been deprecated in DNA 3.0');
+
     if (!Array.isArray(types)) {
         return new CompatProperty([types]);
     }
@@ -47,5 +93,11 @@ Object.defineProperty(prop, 'NUMBER', {
 Object.defineProperty(prop, 'BOOLEAN', {
     get() {
         return new CompatProperty([Boolean]);
+    },
+});
+
+Object.defineProperty(prop, 'ANY', {
+    get() {
+        return new CompatProperty();
     },
 });

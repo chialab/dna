@@ -8,6 +8,9 @@ import { render } from './render';
 import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
 import { template } from './html';
 
+/**
+ * A set of component properties.
+ */
 export type Properties = { [key: string]: any; };
 
 /**
@@ -182,9 +185,15 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                     value = false;
                 }
             } else if (newValue) {
-                try {
-                    value = JSON.parse(newValue as string);
-                } catch {
+                if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
+                    value = parseFloat(newValue);
+                } else if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
+                    try {
+                        value = JSON.parse(newValue as string);
+                    } catch {
+                        value = newValue;
+                    }
+                } else {
                     value = newValue;
                 }
             } else {
@@ -233,7 +242,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         observe(propertyName: string, callback: ClassFieldObserver) {
             const property = getProperties(this.constructor)[propertyName];
             if (!property) {
-                throw new Error(`missing property ${propertyName}`);
+                throw new Error(`Missing property ${propertyName}`);
             }
             const observers = property.observers as Function[];
             observers.push(callback);
@@ -248,7 +257,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         unobserve(propertyName: string, callback: ClassFieldObserver) {
             const property = getProperties(this.constructor)[propertyName];
             if (!property) {
-                throw new Error(`missing property ${propertyName}`);
+                throw new Error(`Missing property ${propertyName}`);
             }
             const observers = property.observers as Function[];
             const io = observers.indexOf(callback);
@@ -427,6 +436,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
 
         element = DOM.document.createElement(extend || is) as HTMLElement;
         (element as any)[EMULATE_SYMBOL] = true;
+        DOM.emulateLifeCycle = true;
         if (extend) {
             element.setAttribute('is', is);
         }

@@ -1,31 +1,9 @@
-import { Template, TemplateItems } from '../../../lib/Template';
-import { HyperNode } from '../../../lib/HyperNode';
+import { Template } from '../../../lib/Template';
 import { extend, Component, Properties } from '../../../lib/Component';
 import { render } from '../../../lib/render';
-import { html } from '../../../lib/html';
 import { DelegatedEventCallback } from '../../../lib/events';
-
-function convertTemplate(this: any, template: Template): Template {
-    if (typeof template === 'function') {
-        /* eslint-disable-next-line */
-        console.warn('function templates has been deprecated in DNA 3.0');
-        return convertTemplate((template as Function).call(this));
-    }
-    if (!template) {
-        if (template === '' || template === 0) {
-            /* eslint-disable-next-line */
-            console.warn('Zero and empty string values non-rendering has been deprecated in DNA 3.0');
-        }
-        return null;
-    }
-    if (typeof template === 'string') {
-        return html(template);
-    }
-    if (typeof template === 'object' && Array.isArray((template as HyperNode).children)) {
-        (template as HyperNode).children = (template as HyperNode).children.map(convertTemplate.bind(this)) as TemplateItems;
-    }
-    return template;
-}
+import { convertTemplate } from './IDOM';
+import { ClassFieldObserver } from '../../../lib/property';
 
 export const mixin = extend;
 export class BaseComponent extends Component {
@@ -107,5 +85,23 @@ export class BaseComponent extends Component {
         /* eslint-disable-next-line */
         console.warn('`undelegate` method has been deprecated in DNA 3.0');
         return this.undelegateEventListener(event, selector, callback);
+    }
+
+    /**
+     * Compatibility alias to observe.
+     */
+    observeProperty(propertyName: string, callback: ClassFieldObserver) {
+        /* eslint-disable-next-line */
+        console.warn('`observeProperty` method has been deprecated in DNA 3.0');
+        return this.observe(propertyName, callback);
+    }
+
+    /**
+     * Compatibility alias to unobserve.
+     */
+    unobserveProperty(propertyName: string, callback: ClassFieldObserver) {
+        /* eslint-disable-next-line */
+        console.warn('`unobserveProperty` method has been deprecated in DNA 3.0');
+        return this.unobserve(propertyName, callback);
     }
 }

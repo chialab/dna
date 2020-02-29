@@ -12,10 +12,7 @@ export const EMULATE_SYMBOL = createSymbolKey();
  * @param node The parent node.
  * @return A frozen list of child nodes.
  */
-export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => {
-    const children = node.childNodes || [];
-    return [].map.call(children, (child) => child) as ReadonlyArray<Node>;
-};
+export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => [].slice.call(node.childNodes || [], 0) as ReadonlyArray<Node>;
 
 /**
  * Check if a node is a Document instance.
@@ -52,6 +49,10 @@ export const isEvent = (event: any): event is Event => event instanceof DOM.Even
  * It also handle element life cycle for custom elements unless otherwise specified.
  */
 export const DOM = {
+    /**
+     * Should emulate life cycle.
+     */
+    emulateLifeCycle: typeof customElements === 'undefined',
     /**
      * The window instance.
      */
@@ -294,17 +295,20 @@ export const DOM = {
      * @param node The connected node.
      */
     connect(node: Node) {
-        const previousNodes = cloneChildNodes(node) || [];
+        if (!this.emulateLifeCycle) {
+            return;
+        }
+        if (!isElement(node)) {
+            return;
+        }
+        let children = cloneChildNodes(node);
         if ((node as any)[EMULATE_SYMBOL]) {
             (node as CustomElement).connectedCallback();
+            children = cloneChildNodes(node);
         }
-        const children = cloneChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
-                let child = children[i];
-                if (previousNodes.indexOf(child) !== -1) {
-                    this.connect(child);
-                }
+                this.connect(children[i]);
             }
         }
     },
@@ -316,17 +320,20 @@ export const DOM = {
      * @param node The disconnected node.
      */
     disconnect(node: Node) {
-        const previousNodes = cloneChildNodes(node) || [];
+        if (!this.emulateLifeCycle) {
+            return;
+        }
+        if (!isElement(node)) {
+            return;
+        }
+        let children = cloneChildNodes(node);
         if ((node as any)[EMULATE_SYMBOL]) {
             (node as CustomElement).disconnectedCallback();
+            children = cloneChildNodes(node);
         }
-        const children = cloneChildNodes(node);
         if (children) {
             for (let i = 0, len = children.length; i < len; i++) {
-                let child = children[i];
-                if (previousNodes.indexOf(child) !== -1) {
-                    this.disconnect(child);
-                }
+                this.disconnect(children[i]);
             }
         }
     },

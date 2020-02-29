@@ -1,64 +1,65 @@
 import { define, DOM, IDOM, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { getComponentName } from '../helpers.js';
 
-// eslint-disable-next-line
-const h = IDOM.h;
-const WRAPPER = document.createElement('div');
-document.body.appendChild(WRAPPER);
+describe('[Compat] IDOM observer', () => {
+    let wrapper, name = getComponentName();
+    before(() => {
+        DOM.lifeCycle(true);
+        wrapper = DOM.createElement('div');
+        wrapper.ownerDocument.body.appendChild(wrapper);
 
-class TestComponent extends BaseComponent {
-    static get observedAttributes() {
-        return ['age'];
-    }
+        class TestComponent extends BaseComponent {
+            static get observedAttributes() {
+                return ['age'];
+            }
 
-    get properties() {
-        return {
-            age: Number,
-            married: Boolean,
-        };
-    }
+            get properties() {
+                return {
+                    age: Number,
+                    married: Boolean,
+                };
+            }
 
-    constructor(node) {
-        super(node);
-        this.name = 'Alan';
-        this.lastName = 'Turing';
-        this.connectedTimes = 0;
-        this.disconnectedTimes = 0;
-        this.attributeChanges = 0;
-    }
+            constructor(node) {
+                super(node);
+                this.name = 'Alan';
+                this.lastName = 'Turing';
+                this.connectedTimes = 0;
+                this.disconnectedTimes = 0;
+                this.attributeChanges = 0;
+            }
 
-    connectedCallback() {
-        super.connectedCallback();
-        this.connectedTimes++;
-    }
+            connectedCallback() {
+                super.connectedCallback();
+                this.connectedTimes++;
+            }
 
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        this.disconnectedTimes++;
-    }
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.disconnectedTimes++;
+            }
 
-    attributeChangedCallback(...args) {
-        super.attributeChangedCallback(...args);
-        this.attributeChanges++;
-    }
-}
+            attributeChangedCallback(...args) {
+                super.attributeChangedCallback(...args);
+                this.attributeChanges++;
+            }
+        }
 
+        define(name, TestComponent);
+    });
 
-define('test-idom-component', TestComponent);
-
-DOM.lifeCycle(true);
-
-const render = (data) => {
-    if (data.show) {
-        return <test-idom-component age={data.age} married={data.married}></test-idom-component>;
-    }
-};
-
-describe.skip('[Compat] IDOM observer', () => {
     describe('callbacks', () => {
         let node, elem;
         before(() => {
-            IDOM.patch(WRAPPER, render, { show: true, age: 20, married: false });
-            node = WRAPPER.querySelector('test-idom-component');
+            IDOM.patch(wrapper, (data) => {
+                if (data.show) {
+                    return IDOM.h(name, {
+                        age: data.age,
+                        married: data.married,
+                    });
+                }
+            }, { show: true, age: 20, married: false });
+            node = wrapper.querySelector(name);
             elem = DOM.getNodeComponent(node);
         });
 
@@ -68,15 +69,29 @@ describe.skip('[Compat] IDOM observer', () => {
         });
 
         it('should update a component', () => {
-            IDOM.patch(WRAPPER, render, { show: true, age: 21, married: true });
+            IDOM.patch(wrapper, (data) => {
+                if (data.show) {
+                    return IDOM.h(name, {
+                        age: data.age,
+                        married: data.married,
+                    });
+                }
+            }, { show: true, age: 21, married: true });
             assert.equal(elem.node.getAttribute('age'), '21');
             assert.equal(elem.age, 21);
-            assert.equal(elem.attributeChanges, 1);
+            assert.equal(elem.attributeChanges, 4);
             assert.equal(elem.married, true);
         });
 
         it('should remove a component', () => {
-            IDOM.patch(WRAPPER, render, { show: false });
+            IDOM.patch(wrapper, (data) => {
+                if (data.show) {
+                    return IDOM.h(name, {
+                        age: data.age,
+                        married: data.married,
+                    });
+                }
+            }, { show: false });
             assert.equal(elem.node.parentNode, undefined);
             assert.equal(elem.disconnectedTimes, 1);
         });

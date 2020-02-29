@@ -310,7 +310,7 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
         promises.push(callback());
     };
     if (!dispatchEvent(element, asyncEvent)) {
-        throw new Error('event has been canceled');
+        throw new Error('Event has been canceled');
     }
     return await Promise.all(promises);
 };
