@@ -131,7 +131,6 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
         // trigger Property changes
         if (typeof this.propertyChangedCallback === 'function') {
             this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
-            this.forceUpdate();
         }
     };
 

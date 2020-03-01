@@ -149,7 +149,7 @@ describe('[Compat] BaseComponent with native element', () => {
     describe('> created', () => {
         it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
-            assert.equal(elem.node.getAttribute('is').toLowerCase(), tag);
+            assert.equal(elem.is.toLowerCase(), tag);
         });
 
         it('check if element is correctly instantiated', () => {
@@ -329,7 +329,7 @@ describe('[Compat] Base IDOM Component with native element', () => {
     describe('> created', () => {
         it('check if element has the correct tag', () => {
             assert.equal(elem.node.tagName.toLowerCase(), 'button');
-            assert.equal(elem.node.getAttribute('is'), tag);
+            assert.equal(elem.is, tag);
         });
 
         it('check if element is correctly instantiated', () => {

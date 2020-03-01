@@ -44,7 +44,6 @@ describe('Component', function() {
             expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
-            expect(element.getAttribute('is')).to.be.equal(is);
         });
 
         it('should create a base class starting from the anchor base class', () => {

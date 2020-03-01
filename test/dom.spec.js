@@ -48,7 +48,6 @@ describe('DOM', function() {
             const element = DNA.DOM.createElement('article', { is });
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
-            expect(element.getAttribute('is')).to.be.equal(is);
         });
     });
 

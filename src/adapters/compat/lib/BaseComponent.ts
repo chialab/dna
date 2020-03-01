@@ -4,6 +4,10 @@ import { render } from '../../../lib/render';
 import { DelegatedEventCallback } from '../../../lib/events';
 import { convertTemplate } from './IDOM';
 import { ClassFieldObserver } from '../../../lib/property';
+import { css } from '../../../lib/css';
+import { DOM } from '../../../lib/DOM';
+
+const STYLES: { [key: string]: HTMLStyleElement } = {};
 
 export const mixin = extend;
 export class BaseComponent extends Component {
@@ -13,6 +17,8 @@ export class BaseComponent extends Component {
     readonly events?: {
         [key: string]: DelegatedEventCallback|string;
     };
+
+    readonly css?: string;
 
     get node() {
         return this;
@@ -40,6 +46,13 @@ export class BaseComponent extends Component {
     constructor(node?: HTMLElement | Properties, properties?: Properties) {
         super(node as HTMLElement, properties);
         this.classList.add(this.is as string);
+
+        if (this.is && this.css && !STYLES[this.is]) {
+            let content = css(this.is, this.css);
+            let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
+            style.textContent = content;
+            DOM.document.head.appendChild(style);
+        }
     }
 
     forceUpdate() {

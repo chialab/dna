@@ -89,7 +89,6 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 props = node || {};
                 element = this as unknown as CustomElement<T>;
             } else {
-                DOM.setAttribute(element, 'is', this.is);
                 Object.setPrototypeOf(element, this);
             }
 
@@ -135,6 +134,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
+            // force the is attribute for styling
+            this.setAttribute('is', this.is);
             // trigger a re-render when the Node is connected
             this.forceUpdate();
         }
@@ -143,7 +144,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * Invoked each time the Component is disconnected from the document's DOM.
          */
         disconnectedCallback() {
-            //
+            // restore children
+            render(this, getSlotted(this) || []);
         }
 
         /**
@@ -218,18 +220,20 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             const property = getProperties(constructor)[propertyName];
 
             const propAttribute = property.attribute || observedAttributes.indexOf(property.name as string) !== -1;
-            if (!propAttribute) {
-                return;
+            if (propAttribute) {
+                const computedAttribute = (propAttribute === true ? property.name : propAttribute) as string;
+                // update the bound attribute
+                if (falsy) {
+                    // a falsy value should remove the attribute
+                    this.removeAttribute(computedAttribute);
+                } else if (typeof newValue !== 'object') {
+                    // if the value is `true` should set an empty attribute, otherwise just set the value
+                    this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
+                }
             }
 
-            const computedAttribute = (propAttribute === true ? property.name : propAttribute) as string;
-            // update the bound attribute
-            if (falsy) {
-                // a falsy value should remove the attribute
-                this.removeAttribute(computedAttribute);
-            } else if (typeof newValue !== 'object') {
-                // if the value is `true` should set an empty attribute, otherwise just set the value
-                this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
+            if (this.isConnected) {
+                this.forceUpdate();
             }
         }
 
@@ -419,11 +423,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         let element: HTMLElement;
         try {
             element = Reflect.construct(base, args, constructor);
-            if (!extend) {
-                return element;
-            }
-            if (extend === element.localName) {
-                element.setAttribute('is', is);
+            if (!extend || extend === element.localName) {
                 return element;
             }
         } catch {
@@ -437,9 +437,6 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         element = DOM.document.createElement(extend || is) as HTMLElement;
         (element as any)[EMULATE_SYMBOL] = true;
         DOM.emulateLifeCycle = true;
-        if (extend) {
-            element.setAttribute('is', is);
-        }
         Object.setPrototypeOf(element, constructor.prototype);
         return element;
     } as any as T;
