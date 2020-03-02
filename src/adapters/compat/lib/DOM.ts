@@ -1,4 +1,4 @@
-import { DOM } from '../../../lib/DOM';
+import { DOM, connect, disconnect } from '../../../lib/DOM';
 import { dispatchEvent as coreDispatchEvent } from '../../../lib/events';
 import { CustomElement } from '../../../lib/CustomElement';
 
@@ -20,3 +20,7 @@ import { CustomElement } from '../../../lib/CustomElement';
 (DOM as any).dispatchEvent = function dispatchEvent(element: Element, event: Event | string, detail ?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean {
     return coreDispatchEvent(element, event, detail, bubbles, cancelable, composed);
 };
+
+(DOM as any).connect = connect;
+
+(DOM as any).disconnect = disconnect;

@@ -67,7 +67,11 @@ export class BaseComponent extends Component {
         if (typeof template === 'undefined') {
             return;
         }
-        render(this, convertTemplate.call(this, template));
+        template = convertTemplate.call(this, template);
+        if (typeof template === 'undefined') {
+            return;
+        }
+        render(this, template);
         return template;
     }
 

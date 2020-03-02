@@ -6,19 +6,21 @@ function normalizeContent(content) {
 }
 
 describe('[Compat] StyleComponent', () => {
-    let wrapper, TestComponent1, TestComponent2, TestComponent3, TestComponent4;
+    let wrapper, BaseTestComponent;
     before(() => {
         DOM.lifeCycle(true);
         wrapper = DOM.createElement('div');
         wrapper.ownerDocument.body.appendChild(wrapper);
 
-        class TestComponent extends BaseComponent {
+        BaseTestComponent = class BaseTestComponent extends BaseComponent {
             get template() {
                 return '<h1>DNA TESTS</h1><h3>test</h3>';
             }
-        }
+        };
+    });
 
-        TestComponent1 = class TestComponent1 extends TestComponent {
+    it('should handle `css` getter property', () => {
+        class TestComponent extends BaseTestComponent {
             get css() {
                 return `
 @charset "UTF-8";
@@ -52,9 +54,23 @@ h3 {
     100% { top: 10px; }
 }`;
             }
-        };
+        }
+        define(getComponentName(), TestComponent);
 
-        TestComponent2 = class TestComponent2 extends TestComponent {
+        let element = render(wrapper, TestComponent);
+        let h3 = document.createElement('h3');
+        wrapper.appendChild(h3);
+        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
+        let styleH3 = DOM.window.getComputedStyle((element.node).querySelector('h3'));
+        assert.equal(style.color, 'rgb(95, 158, 160)');
+        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
+        assert.equal(styleH3.color, 'rgb(0, 0, 255)');
+        let styleOutside = DOM.window.getComputedStyle(h3);
+        assert.equal(styleOutside.color, 'rgb(0, 0, 0)');
+    });
+
+    it('should handle `css` getter property with state', () => {
+        class TestComponent extends BaseTestComponent {
             get css() {
                 return `
 :host(.active) {
@@ -76,9 +92,18 @@ h3 {
                 super(...args);
                 this.node.classList.add('active');
             }
-        };
+        }
 
-        TestComponent3 = class TestComponent3 extends TestComponent {
+        define(getComponentName(), TestComponent, { extends: 'div' });
+
+        let element = render(wrapper, TestComponent);
+        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
+        assert.equal(style.color, 'rgb(95, 158, 160)');
+        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
+    });
+
+    it('should handle `css` with content getter property', () => {
+        class TestComponent extends BaseTestComponent {
             get css() {
                 return `
 #before1:before {
@@ -115,10 +140,28 @@ h3 {
                 super(...args);
                 this.node.classList.add('active');
             }
-        };
+        }
 
+        define(getComponentName(), TestComponent);
 
-        TestComponent4 = class TestComponent4 extends TestComponent {
+        let element = render(wrapper, TestComponent);
+        let root = element.node;
+        let before1 = DOM.window.getComputedStyle(root.querySelector('#before1'), ':before');
+        let before2 = DOM.window.getComputedStyle(root.querySelector('#before2'), ':before');
+        let before3 = DOM.window.getComputedStyle(root.querySelector('#before3'), ':before');
+        let before4 = DOM.window.getComputedStyle(root.querySelector('#before4'), ':before');
+        let before5 = DOM.window.getComputedStyle(root.querySelector('#before5'), ':before');
+        let before6 = DOM.window.getComputedStyle(root.querySelector('#before6'), ':before');
+        assert.equal(normalizeContent(before1.content), 'Hello');
+        assert.oneOf(normalizeContent(before2.content), ['before2', 'attr(id)']);
+        assert.equal(normalizeContent(before3.content), 'Hello world');
+        assert.equal(normalizeContent(before4.content), 'attr(id)');
+        assert.equal(normalizeContent(before5.content), '♜');
+        assert.equal(normalizeContent(before6.content), 'hello-world');
+    });
+
+    it('should handle `css` comments', () => {
+        class TestComponent extends BaseTestComponent {
             get css() {
                 return `
 @charset "UTF-8";
@@ -141,53 +184,11 @@ h3 {
     100% { top: 10px; }
 }`;
             }
-        };
+        }
 
-        define(getComponentName(), TestComponent1);
-        define(getComponentName(), TestComponent2, { extends: 'div' });
-        define(getComponentName(), TestComponent3);
-        define(getComponentName(), TestComponent4);
-    });
+        define(getComponentName(), TestComponent);
 
-    it('should handle `css` getter property', () => {
-        let element = render(wrapper, TestComponent1);
-        let h3 = document.createElement('h3');
-        wrapper.appendChild(h3);
-        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
-        let styleH3 = DOM.window.getComputedStyle((element.node).querySelector('h3'));
-        assert.equal(style.color, 'rgb(95, 158, 160)');
-        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
-        assert.equal(styleH3.color, 'rgb(0, 0, 255)');
-        let styleOutside = DOM.window.getComputedStyle(h3);
-        assert.equal(styleOutside.color, 'rgb(0, 0, 0)');
-    });
-
-    it('should handle `css` getter property with state', () => {
-        let element = render(wrapper, TestComponent2);
-        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
-        assert.equal(style.color, 'rgb(95, 158, 160)');
-        assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
-    });
-
-    it('should handle `css` with content getter property', () => {
-        let element = render(wrapper, TestComponent3);
-        let root = element.node;
-        let before1 = DOM.window.getComputedStyle(root.querySelector('#before1'), ':before');
-        let before2 = DOM.window.getComputedStyle(root.querySelector('#before2'), ':before');
-        let before3 = DOM.window.getComputedStyle(root.querySelector('#before3'), ':before');
-        let before4 = DOM.window.getComputedStyle(root.querySelector('#before4'), ':before');
-        let before5 = DOM.window.getComputedStyle(root.querySelector('#before5'), ':before');
-        let before6 = DOM.window.getComputedStyle(root.querySelector('#before6'), ':before');
-        assert.equal(normalizeContent(before1.content), 'Hello');
-        assert.oneOf(normalizeContent(before2.content), ['before2', 'attr(id)']);
-        assert.equal(normalizeContent(before3.content), 'Hello world');
-        assert.equal(normalizeContent(before4.content), 'attr(id)');
-        assert.equal(normalizeContent(before5.content), '♜');
-        assert.equal(normalizeContent(before6.content), 'hello-world');
-    });
-
-    it('should handle `css` comments', () => {
-        let element = render(wrapper, TestComponent4);
+        let element = render(wrapper, TestComponent);
         let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');

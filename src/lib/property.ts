@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { CustomElement } from './CustomElement';
+import { CustomElement, isCustomElement } from './CustomElement';
 import { ClassElement } from './ClassElement';
 
 /**
@@ -129,7 +129,7 @@ const classFieldToProperty = (descriptor: ClassFieldDescriptor, symbol: symbol):
         }
 
         // trigger Property changes
-        if (typeof this.propertyChangedCallback === 'function') {
+        if (isCustomElement(this)) {
             this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
         }
     };

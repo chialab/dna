@@ -328,6 +328,27 @@ describe('Component', function() {
         });
     });
 
+    describe('~isConnected', () => {
+        it('return `true` if element is connected', () => {
+            const is = getComponentName();
+            class TestElement extends DNA.Component { }
+            DNA.define(is, TestElement);
+
+            const element = DNA.DOM.createElement(is);
+            DNA.DOM.appendChild(wrapper, element);
+            expect(element.isConnected).to.be.true;
+        });
+
+        it('return `false` if element is disconnected', () => {
+            const is = getComponentName();
+            class TestElement extends DNA.Component { }
+            DNA.define(is, TestElement);
+
+            const element = DNA.DOM.createElement(is);
+            expect(element.isConnected).to.be.false;
+        });
+    });
+
     describe('#attributeChangedCallback', () => {
         it('should handle attribute changes on setAttribute', () => {
             class TestElement extends DNA.Component {

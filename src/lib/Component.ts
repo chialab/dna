@@ -1,5 +1,5 @@
-import { CustomElement } from './CustomElement';
-import { DOM, isElement, cloneChildNodes, EMULATE_SYMBOL } from './DOM';
+import { CustomElement, CE_SYMBOL, CE_EMULATE_LIFECYCLE } from './CustomElement';
+import { DOM, isElement, cloneChildNodes, isConnected, connect } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -65,7 +65,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * A flag with the connected value of the node.
          */
         get isConnected(): boolean {
-            return DOM.isConnected(this);
+            return isConnected(this);
         }
 
         /**
@@ -92,6 +92,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 Object.setPrototypeOf(element, this);
             }
 
+            (element as any)[CE_SYMBOL] = true;
             setScope(element, createScope(element));
             setSlotted(element, cloneChildNodes(element) as TemplateItems);
 
@@ -123,7 +124,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             }
 
             if (element.isConnected) {
-                DOM.connect(element);
+                connect(element);
             }
 
             return element as unknown as this;
@@ -435,7 +436,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = DOM.document.createElement(extend || is) as HTMLElement;
-        (element as any)[EMULATE_SYMBOL] = true;
+        (element as any)[CE_EMULATE_LIFECYCLE] = true;
         DOM.emulateLifeCycle = true;
         Object.setPrototypeOf(element, constructor.prototype);
         return element;

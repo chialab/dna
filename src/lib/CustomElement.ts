@@ -1,6 +1,29 @@
+import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
 import { Template } from './Template';
+
+/**
+ * A symbol which identify custom elements.
+ */
+export const CE_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * A symbol which identify emulated custom elements.
+ */
+export const CE_EMULATE_LIFECYCLE = createSymbolKey();
+
+/**
+ * Check if a node is a custom element.
+ * @param node The node to check.
+ */
+export const isCustomElement = (node: Element): node is CustomElement => (node as any)[CE_SYMBOL];
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ */
+export const shouldEmulateLifeCycle = (node: Element): node is CustomElement => (node as any)[CE_EMULATE_LIFECYCLE];
 
 /**
  * The basic Custom Element interface.

@@ -1,11 +1,5 @@
-import { createSymbolKey } from './symbols';
-import { CustomElement } from './CustomElement';
+import { shouldEmulateLifeCycle } from './CustomElement';
 import { registry } from './CustomElementRegistry';
-
-/**
- * A symbol which identify emulated custom elements.
- */
-export const EMULATE_SYMBOL = createSymbolKey();
 
 /**
  * Make a readonly copy of the child nodes collection.
@@ -41,6 +35,67 @@ export const isElement = (node: any): node is HTMLElement => node && node.nodeTy
  * @return The object is an Event instance.
  */
 export const isEvent = (event: any): event is Event => event instanceof DOM.Event;
+
+/**
+ * Check if a Node is connected.
+ *
+ * @param node The target element to check.
+ * @return A truthy value for connected targets.
+ */
+export const isConnected = (node: Node | null): boolean => {
+    if (isElement(node) || isText(node)) {
+        return isConnected(node.parentNode);
+    }
+    if (isDocument(node)) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Invoke `connectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The connected node.
+ */
+export const connect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    let children = cloneChildNodes(node);
+    if (shouldEmulateLifeCycle(node)) {
+        node.connectedCallback();
+        children = cloneChildNodes(node);
+    }
+    if (children) {
+        for (let i = 0, len = children.length; i < len; i++) {
+            connect(children[i]);
+        }
+    }
+};
+
+/**
+ * Invoke `disconnectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The disconnected node.
+ */
+export const disconnect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    let children = cloneChildNodes(node);
+    if (shouldEmulateLifeCycle(node)) {
+        node.disconnectedCallback();
+        children = cloneChildNodes(node);
+    }
+    if (children) {
+        for (let i = 0, len = children.length; i < len; i++) {
+            disconnect(children[i]);
+        }
+    }
+};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -102,7 +157,7 @@ export const DOM = {
     createElement(tagName: string, options?: ElementCreationOptions): Element {
         const is = options && options.is;
         const name = is || tagName.toLowerCase();
-        const node = this.document.createElement(tagName);
+        const node = DOM.document.createElement(tagName);
         const constructor = registry.get(name);
         if (constructor && !(node instanceof constructor)) {
             new constructor(node);
@@ -118,7 +173,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
-        return this.document.createElementNS(namespaceURI, tagName);
+        return DOM.document.createElementNS(namespaceURI, tagName);
     },
 
     /**
@@ -128,7 +183,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createTextNode(data: string): Text {
-        return this.document.createTextNode(data);
+        return DOM.document.createTextNode(data);
     },
 
     /**
@@ -139,9 +194,9 @@ export const DOM = {
     createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> {
         let event;
         try {
-            event = new this.CustomEvent(typeArg, eventInitDict);
+            event = new DOM.CustomEvent(typeArg, eventInitDict);
         } catch {
-            event = this.document.createEvent('CustomEvent');
+            event = DOM.document.createEvent('CustomEvent');
             event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
         }
         return event;
@@ -154,11 +209,15 @@ export const DOM = {
      * @param newChild The child to add.
      */
     appendChild<T extends Node>(parent: Element, newChild: T): T {
-        if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const appendChild = DOM.Node.prototype.appendChild;
+        if (!DOM.emulateLifeCycle) {
+            return appendChild.call(parent, newChild) as T;
         }
-        this.Node.prototype.appendChild.call(parent, newChild);
-        this.connect(newChild);
+        if (newChild.parentNode) {
+            DOM.removeChild(newChild.parentNode as Element, newChild);
+        }
+        appendChild.call(parent, newChild);
+        connect(newChild);
         return newChild;
     },
 
@@ -169,8 +228,12 @@ export const DOM = {
      * @param oldChild The child to remove.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T): T {
-        this.Node.prototype.removeChild.call(parent, oldChild);
-        this.disconnect(oldChild);
+        const removeChild = DOM.Node.prototype.removeChild;
+        if (!DOM.emulateLifeCycle) {
+            return removeChild.call(parent, oldChild) as T;
+        }
+        removeChild.call(parent, oldChild);
+        disconnect(oldChild);
         return oldChild;
     },
 
@@ -182,11 +245,15 @@ export const DOM = {
      * @param refChild The referred node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
-        if (newChild.parentNode) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const insertBefore = DOM.Node.prototype.insertBefore;
+        if (!DOM.emulateLifeCycle) {
+            return insertBefore.call(parent, newChild, refChild) as T;
         }
-        this.Node.prototype.insertBefore.call(parent, newChild, refChild);
-        this.connect(newChild);
+        if (newChild.parentNode) {
+            DOM.removeChild(newChild.parentNode as Element, newChild);
+        }
+        insertBefore.call(parent, newChild, refChild);
+        connect(newChild);
         return newChild;
     },
 
@@ -198,12 +265,16 @@ export const DOM = {
      * @param oldChild The node to replace.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
-        if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
-            this.removeChild(newChild.parentNode as Element, newChild);
+        const replaceChild = DOM.Node.prototype.replaceChild;
+        if (!DOM.emulateLifeCycle) {
+            return replaceChild.call(parent, newChild, oldChild) as T;
         }
-        this.Node.prototype.replaceChild.call(parent, newChild, oldChild);
-        this.disconnect(oldChild);
-        this.connect(newChild);
+        if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
+            DOM.removeChild(newChild.parentNode as Element, newChild);
+        }
+        replaceChild.call(parent, newChild, oldChild);
+        disconnect(oldChild);
+        connect(newChild);
         return oldChild;
     },
 
@@ -214,7 +285,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return this.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
+        return DOM.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -224,7 +295,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return this.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
+        return DOM.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -235,14 +306,20 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        const emulate = (element as any)[EMULATE_SYMBOL] &&
-            (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
-        const oldValue = emulate && this.getAttribute(element, qualifiedName);
-        this.HTMLElement.prototype.setAttribute.call(element, qualifiedName, value);
+        const setAttribute = DOM.HTMLElement.prototype.setAttribute;
+        if (shouldEmulateLifeCycle(element)) {
+            const constructor = element.constructor;
+            const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+            if (!observed) {
+                return setAttribute.call(element, qualifiedName, value);
+            }
 
-        if (emulate) {
-            (element as CustomElement).attributeChangedCallback(qualifiedName, oldValue as string, value);
+            const oldValue = DOM.getAttribute(element, qualifiedName);
+            setAttribute.call(element, qualifiedName, value);
+            element.attributeChangedCallback(qualifiedName, oldValue as string, value);
+            return;
         }
+        return setAttribute.call(element, qualifiedName, value);
     },
 
     /**
@@ -252,14 +329,19 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        const emulate = (element as any)[EMULATE_SYMBOL] &&
-            (element.constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
-        const oldValue = emulate && this.getAttribute(element, qualifiedName);
-        this.HTMLElement.prototype.removeAttribute.call(element, qualifiedName);
+        const removeAttribute = DOM.HTMLElement.prototype.removeAttribute;
+        if (shouldEmulateLifeCycle(element)) {
+            const constructor = element.constructor;
+            const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+            if (!observed) {
+                return removeAttribute.call(element, qualifiedName);
+            }
 
-        if (emulate) {
-            (element as CustomElement).attributeChangedCallback(qualifiedName, oldValue as string, null);
+            const oldValue = DOM.getAttribute(element, qualifiedName);
+            removeAttribute.call(element, qualifiedName);
+            element.attributeChangedCallback(qualifiedName, oldValue as string, null);
         }
+        return removeAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -267,74 +349,7 @@ export const DOM = {
      * @param selectorString The selector to match.
      */
     matches(element: Element, selectorString: string): boolean {
-        const match = this.HTMLElement.prototype.matches || this.HTMLElement.prototype.webkitMatchesSelector || (this.HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+        const match = DOM.HTMLElement.prototype.matches || DOM.HTMLElement.prototype.webkitMatchesSelector || (DOM.HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
         return match.call(element, selectorString);
-    },
-
-    /**
-     * Check if a Node is connected.
-     *
-     * @param target The target element to check.
-     * @return A truthy value for connected targets.
-     */
-    isConnected(target: Node | null): boolean {
-        if (isElement(target) || isText(target)) {
-            return this.isConnected(target.parentNode);
-        }
-        if (isDocument(target)) {
-            return true;
-        }
-
-        return false;
-    },
-
-    /**
-     * Invoke `connectedCallback` method of a Node (and its descendents).
-     * It does nothing if life cycle is disabled.
-     *
-     * @param node The connected node.
-     */
-    connect(node: Node) {
-        if (!this.emulateLifeCycle) {
-            return;
-        }
-        if (!isElement(node)) {
-            return;
-        }
-        let children = cloneChildNodes(node);
-        if ((node as any)[EMULATE_SYMBOL]) {
-            (node as CustomElement).connectedCallback();
-            children = cloneChildNodes(node);
-        }
-        if (children) {
-            for (let i = 0, len = children.length; i < len; i++) {
-                this.connect(children[i]);
-            }
-        }
-    },
-
-    /**
-     * Invoke `disconnectedCallback` method of a Node (and its descendents).
-     * It does nothing if life cycle is disabled.
-     *
-     * @param node The disconnected node.
-     */
-    disconnect(node: Node) {
-        if (!this.emulateLifeCycle) {
-            return;
-        }
-        if (!isElement(node)) {
-            return;
-        }
-        let children = cloneChildNodes(node);
-        if ((node as any)[EMULATE_SYMBOL]) {
-            (node as CustomElement).disconnectedCallback();
-            children = cloneChildNodes(node);
-        }
-        if (children) {
-            for (let i = 0, len = children.length; i < len; i++) {
-                this.disconnect(children[i]);
-            }
-        }
     },
 };

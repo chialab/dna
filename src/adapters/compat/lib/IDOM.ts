@@ -7,15 +7,16 @@ export { h } from '../../../lib/HyperNode';
 export function convertTemplate(this: any, template: Template, data?: any): Template {
     if (typeof template === 'function') {
         /* eslint-disable-next-line */
-        console.warn('function templates has been deprecated in DNA 3.0');
+        console.warn('function templates have been deprecated in DNA 3.0');
         return convertTemplate((template as Function).call(this, data));
     }
     if (!template) {
         if (template === '' || template === 0) {
             /* eslint-disable-next-line */
             console.warn('Zero and empty string values non-rendering has been deprecated in DNA 3.0');
+            return null;
         }
-        return null;
+        return template;
     }
     if (typeof template === 'string') {
         return html(template);

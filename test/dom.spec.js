@@ -210,30 +210,4 @@ describe('DOM', function() {
             expect(DNA.DOM.getAttribute(element, 'type')).to.be.null;
         });
     });
-
-    describe('#isConnected', () => {
-        it('return `true` if element is connected', () => {
-            const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(wrapper, child);
-            expect(DNA.DOM.isConnected(child)).to.be.true;
-        });
-
-        it('return `true` if element is disconnected', () => {
-            const child = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isConnected(child)).to.be.false;
-        });
-    });
-
-    describe('#isConnected', () => {
-        it('return `true` if element is connected', () => {
-            const child = DNA.DOM.createElement('div');
-            DNA.DOM.appendChild(wrapper, child);
-            expect(DNA.DOM.isConnected(child)).to.be.true;
-        });
-
-        it('return `true` if element is disconnected', () => {
-            const child = DNA.DOM.createElement('div');
-            expect(DNA.DOM.isConnected(child)).to.be.false;
-        });
-    });
 });
