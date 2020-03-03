@@ -1,12 +1,13 @@
-import { shouldEmulateLifeCycle } from './CustomElement';
+import { shouldEmulateLifeCycle, isCustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
+import { getSlotted } from './slotted';
 
 /**
  * Make a readonly copy of the child nodes collection.
  * @param node The parent node.
  * @return A frozen list of child nodes.
  */
-export const cloneChildNodes = (node: Node): ReadonlyArray<Node> => [].slice.call(node.childNodes || [], 0) as ReadonlyArray<Node>;
+export const cloneChildNodes = (node: Node): Node[] => [].slice.call(node.childNodes || [], 0) as Node[];
 
 /**
  * Check if a node is a Document instance.
@@ -207,8 +208,14 @@ export const DOM = {
      *
      * @param parent The parent element.
      * @param newChild The child to add.
+     * @param slot Should add a slot node.
      */
-    appendChild<T extends Node>(parent: Element, newChild: T): T {
+    appendChild<T extends Node>(parent: Element, newChild: T, slot = false): T {
+        if (slot && isCustomElement(parent)) {
+            getSlotted(parent).push(newChild);
+            parent.forceUpdate();
+            return newChild;
+        }
         const appendChild = DOM.Node.prototype.appendChild;
         if (!DOM.emulateLifeCycle) {
             return appendChild.call(parent, newChild) as T;
@@ -226,8 +233,18 @@ export const DOM = {
      *
      * @param parent The parent element.
      * @param oldChild The child to remove.
+     * @param slot Should remove a slot node.
      */
-    removeChild<T extends Node>(parent: Element, oldChild: T): T {
+    removeChild<T extends Node>(parent: Element, oldChild: T, slot = false): T {
+        if (slot && isCustomElement(parent)) {
+            const slotted = getSlotted(parent);
+            const io = slotted.indexOf(oldChild);
+            if (io !== -1) {
+                slotted.splice(io, 1);
+                parent.forceUpdate();
+            }
+            return oldChild;
+        }
         const removeChild = DOM.Node.prototype.removeChild;
         if (!DOM.emulateLifeCycle) {
             return removeChild.call(parent, oldChild) as T;
@@ -243,8 +260,22 @@ export const DOM = {
      * @param parent The parent element.
      * @param newChild The child to insert.
      * @param refChild The referred node.
+     * @param slot Should insert a slot node.
      */
-    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null): T {
+    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = false): T {
+        if (slot && isCustomElement(parent)) {
+            const slotted = getSlotted(parent);
+            if (refChild) {
+                const io = slotted.indexOf(refChild);
+                if (io !== -1) {
+                    slotted.splice(io, 0, newChild);
+                }
+            } else {
+                slotted.push(newChild);
+            }
+            parent.forceUpdate();
+            return newChild;
+        }
         const insertBefore = DOM.Node.prototype.insertBefore;
         if (!DOM.emulateLifeCycle) {
             return insertBefore.call(parent, newChild, refChild) as T;
@@ -263,8 +294,16 @@ export const DOM = {
      * @param parent The parent element.
      * @param newChild The child to insert.
      * @param oldChild The node to replace.
+     * @param slot Should replace a slot node.
      */
-    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T): T {
+    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = false): T {
+        if (slot && isCustomElement(parent)) {
+            const slotted = getSlotted(parent);
+            const io = slotted.indexOf(oldChild);
+            slotted.splice(io, 1, newChild);
+            parent.forceUpdate();
+            return oldChild;
+        }
         const replaceChild = DOM.Node.prototype.replaceChild;
         if (!DOM.emulateLifeCycle) {
             return replaceChild.call(parent, newChild, oldChild) as T;

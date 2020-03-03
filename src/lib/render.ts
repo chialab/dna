@@ -1,6 +1,6 @@
 import { DOM, isElement, isText } from './DOM';
 import { createSymbolKey } from './symbols';
-import { CustomElement } from './CustomElement';
+import { isCustomElement } from './CustomElement';
 import { Scope, createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { getSlotted, setSlotted } from './slotted';
@@ -37,18 +37,18 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
     // result list
     let results: Node[] = [];
 
-    const handleItems = (template: TemplateItems|TemplateItem, scope: Scope, filter?: TemplateFilter): void => {
+    const handleItems = (template: Template, scope: Scope, results: Node[], filter?: TemplateFilter): Node[] => {
         if (template == null || template === false) {
-            return;
+            return results;
         }
 
         if (isArray(template)) {
             scope = getScope(template) || scope;
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
-                handleItems(template[i], scope, filter);
+                handleItems(template[i], scope, results, filter);
             }
-            return;
+            return results;
         }
 
         let newNode: Element | Text | undefined;
@@ -58,7 +58,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         if (isObject && isHyperNode(template)) {
             let { Component, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
             if (isFragment) {
-                return handleItems(children, scope, filter);
+                return handleItems(children, scope, results, filter);
             }
 
             // if the current patch is a slot,
@@ -83,7 +83,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
                 }
 
                 setScope(slottedChildren, childScope);
-                return handleItems(slottedChildren, scope, filter);
+                return handleItems(slottedChildren, scope, results, filter);
             }
 
             // create the node
@@ -184,7 +184,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         }
 
         if (filter && !filter(newNode)) {
-            return;
+            return results;
         }
 
         // now, we are confident that if the input is a Node or a Component,
@@ -201,11 +201,11 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
 
         results.push(newNode);
 
-        if (newChildren) {
-            if (typeof (newNode as CustomElement).forceUpdate === 'function') {
-                setSlotted(newNode, newChildren);
+        if (isElement(newNode) && newChildren) {
+            if (isCustomElement(newNode)) {
+                setSlotted(newNode, handleItems(newChildren, newNode, []));
                 // notify the Component that its slotted Nodes has been updated
-                (newNode as CustomElement).forceUpdate();
+                newNode.forceUpdate();
             } else {
                 // the Node has slotted children, trigger a new render context for them
                 render(newNode as HTMLElement, newChildren, scope);
@@ -213,9 +213,11 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         }
 
         node = newNode;
+
+        return results;
     };
 
-    handleItems(input, renderScope, filter);
+    handleItems(input, renderScope, results, filter);
 
     // all children of the root have been handled,
     // we can start to cleanup the tree

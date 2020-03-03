@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { TemplateItems, Template } from './Template';
+import { Template } from './Template';
 
 /**
  * A Symbol which contains slotted children of a Component.
@@ -11,11 +11,11 @@ const SLOTTED_SYMBOL = createSymbolKey();
  * @param template The template target with slotted children.
  * @return A list of child template items.
  */
-export const getSlotted = (template: Template): TemplateItems => (template as any)[SLOTTED_SYMBOL];
+export const getSlotted = (template: Template): Node[] => (template as any)[SLOTTED_SYMBOL];
 
 /**
  * Set slotted children to a template item.
  * @param template The template target.
- * @param slotted A list of child template items.
+ * @param slotted A list of child nodes.
  */
-export const setSlotted = (template: Template, slotted: TemplateItems): TemplateItems => (template as any)[SLOTTED_SYMBOL] = slotted;
+export const setSlotted = (template: Template, slotted: Node[]): Node[] => (template as any)[SLOTTED_SYMBOL] = slotted;

@@ -1,8 +1,8 @@
 import { CustomElement, CE_SYMBOL, CE_EMULATE_LIFECYCLE } from './CustomElement';
-import { DOM, isElement, cloneChildNodes, isConnected, connect } from './DOM';
+import { DOM, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
-import { Template, TemplateItems } from './Template';
+import { Template } from './Template';
 import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
 import { defineProperty, initProperty, ClassFieldDescriptor, ClassFieldObserver, getProperties } from './property';
@@ -76,6 +76,13 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         }
 
         /**
+         * A list of slot nodes.
+         */
+        get slotChildNodes() {
+            return getSlotted(this);
+        }
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -94,7 +101,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
 
             (element as any)[CE_SYMBOL] = true;
             setScope(element, createScope(element));
-            setSlotted(element, cloneChildNodes(element) as TemplateItems);
+            setSlotted(element, cloneChildNodes(this));
 
             // setup Component properties
             const propertyDescriptors = this.properties;
@@ -144,10 +151,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         /**
          * Invoked each time the Component is disconnected from the document's DOM.
          */
-        disconnectedCallback() {
-            // restore children
-            render(this, getSlotted(this) || []);
-        }
+        disconnectedCallback() {}
 
         /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.
@@ -233,9 +237,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 }
             }
 
-            if (this.isConnected) {
-                this.forceUpdate();
-            }
+            this.forceUpdate();
         }
 
         /**
@@ -333,11 +335,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             if (tpl) {
                 return template(tpl, this);
             }
-            const children = getSlotted(this);
-            if (children) {
-                return children;
-            }
-            return undefined;
+            return this.slotChildNodes;
         }
 
         /**
@@ -353,46 +351,84 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         /**
          * Append a child to the Component.
          *
-         * @param newChild The child to add
+         * @param newChild The child to add.
          */
         appendChild<T extends Node>(newChild: T): T {
             return DOM.appendChild(this, newChild);
         }
 
         /**
+         * Append a slot child to the Component.
+         *
+         * @param newChild The child to add.
+         */
+        appendSlotChild<T extends Node>(newChild: T): T {
+            return DOM.appendChild(this, newChild, true);
+        }
+
+        /**
          * Remove a child from the Component.
          *
-         * @param {Node} oldChild The child to remove
+         * @param {Node} oldChild The child to remove.
          */
         removeChild<T extends Node>(oldChild: T): T {
             return DOM.removeChild(this, oldChild);
         }
 
         /**
+         * Remove a slot child from the Component.
+         *
+         * @param {Node} oldChild The child to remove.
+         */
+        removeSlotChild<T extends Node>(oldChild: T): T {
+            return DOM.removeChild(this, oldChild, true);
+        }
+
+        /**
          * Insert a child before another in the Component.
          *
-         * @param newChild The child to insert
-         * @param refChild The referred Node
+         * @param newChild The child to insert.
+         * @param refChild The referred Node.
          */
         insertBefore<T extends Node>(newChild: T, refChild: Node | null): T {
             return DOM.insertBefore(this, newChild, refChild);
         }
 
         /**
+         * Insert a slot child before another in the Component.
+         *
+         * @param newChild The child to insert.
+         * @param refChild The referred Node.
+         */
+        insertSlotBefore<T extends Node>(newChild: T, refChild: Node | null): T {
+            return DOM.insertBefore(this, newChild, refChild, true);
+        }
+
+        /**
          * Replace a child with another in the Component.
          *
-         * @param newChild The child to insert
-         * @param oldChild The Node to replace
+         * @param newChild The child to insert.
+         * @param oldChild The Node to replace.
          */
         replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
             return DOM.replaceChild(this, newChild, oldChild);
         }
 
         /**
+         * Replace a slot child with another in the Component.
+         *
+         * @param newChild The child to insert.
+         * @param oldChild The Node to replace.
+         */
+        replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T {
+            return DOM.replaceChild(this, newChild, oldChild, true);
+        }
+
+        /**
          * Set a Component attribute.
          *
-         * @param ualifiedName The attribute name
-         * @param value The value to set
+         * @param ualifiedName The attribute name.
+         * @param value The value to set.
          */
         setAttribute(qualifiedName: string, value: string) {
             return DOM.setAttribute(this, qualifiedName, value);
@@ -401,7 +437,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         /**
          * Remove a Component attribute.
          *
-         * @param qualifiedName The attribute name
+         * @param qualifiedName The attribute name.
          */
         removeAttribute(qualifiedName: string) {
             return DOM.removeAttribute(this, qualifiedName);

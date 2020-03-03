@@ -260,7 +260,7 @@ describe('[Compat] IDOMTemplateComponent', () => {
             assert.equal(DOM.getNodeComponent(testElement1).attached, true);
         });
 
-        it.skip('and their life cycle (disconnected)', () => {
+        it('and their life cycle (disconnected)', () => {
             DOM.removeChild(wrapper, element);
             const testElement = element.node.querySelector(placeholderName);
             assert.equal(DOM.getNodeComponent(testElement).attached, false);

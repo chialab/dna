@@ -763,6 +763,25 @@ describe('Component', function() {
             expect(connectedCallback.count).to.be.equal(2);
             expect(disconnectedCallback.invoked).to.be.true;
         });
+
+        it('should append slot item', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot />
+                    </div>`;
+                }
+            }
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            const span = DNA.DOM.createElement('span');
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendSlotChild(span);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+        });
     });
 
     describe('#removeChild', () => {
@@ -788,6 +807,29 @@ describe('Component', function() {
             expect(disconnectedCallback.invoked).to.be.false;
             element.removeChild(child);
             expect(disconnectedCallback.invoked).to.be.true;
+        });
+
+        it('should remove slot item', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot />
+                    </div>`;
+                }
+            }
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            const span = DNA.DOM.createElement('span');
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendSlotChild(span);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+            element.removeSlotChild(span);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes).to.have.lengthOf(0);
         });
     });
 
@@ -848,6 +890,28 @@ describe('Component', function() {
             expect(connectedCallback.invoked).to.be.true;
             expect(connectedCallback.count).to.be.equal(3);
             expect(disconnectedCallback.count).to.be.equal(1);
+        });
+
+        it('should insert slot item', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot />
+                    </div>`;
+                }
+            }
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            const span = DNA.DOM.createElement('span');
+            const input = DNA.DOM.createElement('input');
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendSlotChild(span);
+            element.insertSlotBefore(input, span);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('SPAN');
         });
     });
 
@@ -915,6 +979,27 @@ describe('Component', function() {
             expect(connectedCallback.invoked).to.be.true;
             expect(connectedCallback.count).to.be.equal(3);
             expect(disconnectedCallback.count).to.be.equal(2);
+        });
+
+        it('should replace slot item', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot />
+                    </div>`;
+                }
+            }
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            const span = DNA.DOM.createElement('span');
+            const input = DNA.DOM.createElement('input');
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendSlotChild(span);
+            element.replaceSlotChild(input, span);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
         });
     });
 
