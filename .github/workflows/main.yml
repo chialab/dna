@@ -182,16 +182,16 @@ jobs:
         run: yarn install
       - name: Generate API reference
         run: rna documentate --output docs/API.md --header '# API Reference'
-      - name: Push API references
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
-        run: |
-          cd docs
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to docs"
-          git push --follow-tags
-          cd ..
-      - name: 'Store wiki'
+      # - name: Push API references
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
+      #   run: |
+      #     cd docs
+      #     git add .
+      #     git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to docs"
+      #     git push --follow-tags
+      #     cd ..
+      - name: 'Upload docs'
         uses: actions/upload-artifact@v1
         with:
           name: docs
