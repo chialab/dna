@@ -26,7 +26,7 @@ DNA does not introduce any custom pattern for Component definitions, since it is
 
 ### Fast and reliable
 
-In order to be fast, simple and predective, DNA uses a custom template engine. Components automatically re-render when the state change, and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
+In order to be fast, simple and predictive, DNA uses a custom template engine. Components automatically re-render when the state change, and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
 
 ### Interpolation and JSX
 
