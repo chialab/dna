@@ -9,7 +9,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -28,18 +28,18 @@ jobs:
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
-      - name: Build and pack
-        run: yarn pack --filename dna.tgz
+      - name: Run build script
+        run: yarn run build
       - name: Cache distribution files
         uses: actions/cache@v1
         with:
           path: dist
           key: build-${{ github.sha }}
-      - name: Upload package
+      - name: Upload distribution files
         uses: actions/upload-artifact@v1
         with:
-          name: dna
-          path: dist.tgz
+          name: dist
+          path: dist
   # TEST
   test-node:
     name: Test Node
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -127,7 +127,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -159,7 +159,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
         with:
           submodules: true
       - name: Setup Node
