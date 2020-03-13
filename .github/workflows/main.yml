@@ -9,7 +9,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -28,18 +28,18 @@ jobs:
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
-      - name: Run build script
-        run: yarn run build
+      - name: Build and pack
+        run: yarn pack --filename dna.tgz
       - name: Cache distribution files
         uses: actions/cache@v1
         with:
           path: dist
           key: build-${{ github.sha }}
-      - name: Upload distribution files
+      - name: Upload package
         uses: actions/upload-artifact@v1
         with:
-          name: DNA
-          path: dist
+          name: dna
+          path: dist.tgz
   # TEST
   test-node:
     name: Test Node
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -127,7 +127,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -156,12 +156,12 @@ jobs:
   # DOCS
   api:
     name: Documentation
-    needs:
-      - build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Setup Node
         uses: actions/setup-node@v1
       - name: Config Yarn cache
@@ -180,24 +180,19 @@ jobs:
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
-      - name: Checkout the wiki
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
-        run: |
-          git config --global user.email "dev@chialab.io"
-          git config --global user.name "chialab-io"
-          git clone https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git wiki
-          cd wiki
-          git checkout ${GITHUB_REF#refs/heads/} || git checkout -B ${GITHUB_REF#refs/heads/}
-          cd ..
       - name: Generate API reference
-        run: rna documentate --output wiki/API.md --header '# API Reference'
+        run: rna documentate --output docs/API.md --header '# API Reference'
       - name: Push API references
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
         run: |
-          cd wiki
+          cd docs
           git add .
-          git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
+          git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to docs"
           git push --set-upstream origin ${GITHUB_REF#refs/heads/} --follow-tags
           cd ..
+      - name: 'Store wiki'
+        uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: docs
