@@ -6,7 +6,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    if: contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     steps:
       - name: Checkout the repository
         uses: actions/checkout@master
@@ -189,7 +189,7 @@ jobs:
           cd docs
           git add .
           git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to docs"
-          git push --set-upstream origin ${GITHUB_REF#refs/heads/} --follow-tags
+          git push --follow-tags
           cd ..
       - name: 'Store wiki'
         uses: actions/upload-artifact@v1
