@@ -36,6 +36,7 @@
     "test:saucelabs": "rna unit 'test/*.spec.js' --coverage --saucelabs --concurrency 2",
     "test:node": "rna unit 'test/*.spec.js' --coverage --node",
     "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
+    "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "npm run build"
   },
   "dependencies": {},
