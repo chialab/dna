@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://www.chialab.io/p/dna">
-        <img alt="DNA logo" width="144" height="144" src="https://rawcdn.githack.com/chialab/dna/bfeb880e3ce6f2aa0cbe31830d7278e6b2486aa2/logo.svg" />
+        <img alt="DNA logo" width="144" height="144" src="https://raw.githack.com/chialab/dna/3.0.0/logo.svg" />
     </a>
 </p>
 
@@ -126,7 +126,7 @@ Then use the element in your HTML:
 ### Requirements
 
 In order to build and test DNA, the following requirements are needed:
-* [NodeJS](https://nodejs.org/) (>= 8.0.0)
+* [NodeJS](https://nodejs.org/) (>= 10.0.0)
 * [Yarn](https://yarnpkg.com)
 * [RNA](https://github.com/chialab/rna-cli) (>= 3.0.0)
 
