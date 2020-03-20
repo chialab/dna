@@ -25,6 +25,7 @@ export {
     Component,
 } from '../../dna';
 export { IDOM };
+export * from './lib/mix';
 export * from './lib/bootstrap';
 export * from './lib/prop';
 export * from './lib/trust';

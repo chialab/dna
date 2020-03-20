@@ -32,6 +32,7 @@ describe('[Compat] module', function() {
         trust: 'function',
         prop: 'function',
         bootstrap: 'function',
+        mix: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {

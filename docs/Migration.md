@@ -4,7 +4,7 @@ DNA 3 comes with a compatibility layer with the 2.x version. It is called `compa
 
 ```sh
 $ npm uninstall @dnajs/idom
-$ npm install @chialab/dna
+$ npm install @chialab/dna @chialab/proteins htm
 ```
 
 ```diff
@@ -18,6 +18,7 @@ You can also use module alias in your bundler ([webpack](https://webpack.js.org/
 
 ### Deprecations in the compatibility layer
 
+* `mix` have been deprecated. Import the reference directly from `@chialab/proteins`.
 * Function templates have been deprecated and will log a warn in the console
 * Zero and empty string values are NOT rendered in templates but they will log a warn in the console
 * `events` getter has been deprecated in favour of the `listeners` getter

@@ -89,6 +89,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@chialab/proteins@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.2.0.tgz#e696fe5e208bf7bf75b2cf07f9506cf2be242be1"
+  integrity sha512-ScGU76HFa4CUpWFV/RwgmddqBBg3RH3QGBqTXoB078ta3GQ10AyRTR7XJaT7+/aL4X7t3NKlhZOJLvwvDLhNow==
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.npmjs.org/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"

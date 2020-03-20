@@ -41,9 +41,12 @@
   },
   "dependencies": {},
   "optionalDependencies": {
+    "@chialab/proteins": "^3.2.0",
+    "htm": "^3.0.3",
     "jsdom": "^16.0.0"
   },
   "devDependencies": {
+    "@chialab/proteins": "^3.2.0",
     "@types/jsdom": "^12.2.3",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.18.0",
