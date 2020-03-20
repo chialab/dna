@@ -1,32 +1,10 @@
 # Events
 
-Since Web Components are just `HTMLElement` extensions, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback. DNA add some extra features like declarative event listener declarations and delegation, and a special decorator for component methods.
-
-## Using the decorator
-
-Some class methods can be bound to an event listener with the `listener` decorator. You can also delegate events giving a valid selector to the listener object:
-
-```ts
-import { Component, define, listener} from '@chialab/dna';
-
-class MyForm extends Component {
-    @listener({ event: 'click', passive: true })
-    onClick(event) {
-        //
-    }
-
-    @listener({ event: 'input', selector: '[name="age"]' })
-    onInputAge(event, target) {
-        //
-    }
-}
-
-define('my-form', MyForm, { extends: 'form' });
-```
+Since Web Components are just `HTMLElement` extensions, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback. DNA add some extra features like declarative event listener declarations and delegation.
 
 ## Declarative event listeners
 
-You can also declare event listeners on a component using the `listeners` accessor, if you won't/can't use decorators:
+You can declare event listeners on a component using the `listeners` accessor:
 
 ```ts
 import { Component, define } from '@chialab/dna';

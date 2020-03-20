@@ -15,7 +15,6 @@ export {
     interpolate,
     css,
     AsyncEvent,
-    listener,
     delegateEventListener,
     undelegateEventListener,
     dispatchEvent,

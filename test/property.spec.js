@@ -334,6 +334,34 @@ describe('property', function() {
             expect(listener2.invoked).to.be.true;
             expect(listener2.response).to.be.deep.equal([undefined, 84]);
         });
+
+        it('should inherit and reduce the prototype chain', () => {
+            const BaseElement = class extends DNA.Component {
+                get properties() {
+                    return {
+                        inherit: String,
+                        override: {
+                            defaultValue: 42,
+                        },
+                    };
+                }
+            };
+            const MyElement = class extends BaseElement {
+                get properties() {
+                    return {
+                        override: {
+                            defaultValue: 84,
+                        },
+                    };
+                }
+            };
+
+            DNA.define(getComponentName(), MyElement);
+
+            const element = new MyElement();
+            expect(element).to.have.property('inherit');
+            expect(element).to.have.property('override', 84);
+        });
     });
 
     describe('#observe', () => {

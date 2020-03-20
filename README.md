@@ -81,15 +81,17 @@ class HelloWorld extends Component {
         return ['name'];
     }
 
+    get listeners() {
+        return {
+            // delegate an event
+            'change input[name="firstName"]': this.setName,
+        };
+    }
+
     // define an observable property
     @property()
     name = '';
 
-    // delegate an event
-    @listener({
-        event: 'change',
-        selector: 'input[name="firstName"]'
-    })
     setName(event, target) {
         this.name = target.value;
     }

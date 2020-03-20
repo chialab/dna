@@ -1,7 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { ClassElement } from './ClassElement';
 import { DOM, isElement, isEvent } from './DOM';
-import { CustomElement } from './CustomElement';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -314,45 +312,3 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
     }
     return await Promise.all(promises);
 };
-
-/**
- * Add a listener to the listeners accessor.
- * @param constructor The element constructor.
- * @param methodKey The name of the method to invoke.
- * @param descriptor The event descriptor.
- */
-const addListener = (constructor: Function, methodKey: PropertyKey, descriptor: DelegatedEventDescriptor) => {
-    const prototype = constructor.prototype;
-    const listeners = prototype.listeners || {};
-    listeners[`${descriptor.event} ${descriptor.selector || ''}`] = prototype[methodKey];
-    Object.defineProperty(prototype, 'listeners', {
-        value: listeners,
-        configurable: true,
-        writable: false,
-    });
-};
-
-/**
- * Bind a method to an event listener.
- *
- * @param descriptor The listener description.
- * @return The decorator initializer.
- */
-export const listener = (descriptor: DelegatedEventDescriptor) =>
-    ((targetOrClassElement: CustomElement, methodKey: string) => {
-        if (methodKey !== undefined) {
-            // decorators spec 1
-            addListener(targetOrClassElement.constructor, methodKey, descriptor);
-            return targetOrClassElement;
-        }
-
-        // decorators spec 2
-        const element = targetOrClassElement as unknown as ClassElement;
-        if (element.kind === 'method' && element.placement === 'prototype') {
-            element.finisher = (constructor: Function) => {
-                addListener(constructor, element.key, descriptor);
-            };
-        }
-
-        return element;
-    }) as any;

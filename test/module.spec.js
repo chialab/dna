@@ -28,7 +28,6 @@ describe('module', function() {
         dispatchEvent: 'function',
         dispatchAsyncEvent: 'function',
         property: 'function',
-        listener: 'function',
         Component: 'function',
         CustomElementRegistry: 'function',
     };

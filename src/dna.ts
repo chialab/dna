@@ -11,6 +11,6 @@ export { Fragment } from './lib/Fragment';
 export { h } from './lib/HyperNode';
 export { html, template, interpolate } from './lib/html';
 export { css } from './lib/css';
-export { AsyncEvent, listener, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
+export { AsyncEvent, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { property } from './lib/property';
 export { extend, Component } from './lib/Component';

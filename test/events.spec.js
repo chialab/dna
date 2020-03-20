@@ -249,53 +249,6 @@ describe('events', function() {
         });
     });
 
-    describe('@listener', () => {
-        it('should add a listener', () => {
-            const callback = spyFunction((event, target) => [event.type, target.tagName]);
-            class TestElement extends DNA.Component {
-                @DNA.listener({ event: 'click' })
-                method(event, target) {
-                    callback(event, target);
-                }
-            }
-
-            DNA.define(getComponentName(), TestElement);
-
-            const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
-            expect(callback.invoked).to.be.false;
-            element.dispatchEvent(DNA.DOM.createEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
-            expect(callback.invoked).to.be.true;
-        });
-
-        it('should add a delegated listener', () => {
-            const callback = spyFunction((event, target) => [event.type, target.tagName]);
-            class TestElement extends DNA.Component {
-                @DNA.listener({ event: 'click', selector: 'button' })
-                method(event, target) {
-                    callback(event, target);
-                }
-
-                render() {
-                    return DNA.html('<button key="trigger"></button>');
-                }
-            }
-
-            DNA.define(getComponentName(), TestElement);
-
-            const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
-            expect(callback.invoked).to.be.false;
-            element.$.trigger.click();
-            expect(callback.response).to.be.deep.equal(['click', 'BUTTON']);
-            expect(callback.invoked).to.be.true;
-        });
-    });
-
     describe('get listeners()', () => {
         it('should add a listener', () => {
             const is = getComponentName();
@@ -404,7 +357,12 @@ describe('events', function() {
         it('should trigger an event and return a Promise', async () => {
             const is = getComponentName();
             class TestElement extends DNA.Component {
-                @DNA.listener({ event: 'click' })
+                get listeners() {
+                    return {
+                        click: this.method,
+                    };
+                }
+
                 method(event) {
                     event.respondWith(async () => event.type);
                     event.respondWith(async () => event.target.tagName);
