@@ -24,6 +24,9 @@ export function convertTemplate(this: any, template: Template, data?: any): Temp
     if (typeof template === 'object' && Array.isArray((template as HyperNode).children)) {
         (template as HyperNode).children = (template as HyperNode).children.map(convertTemplate.bind(this)) as TemplateItems;
     }
+    if (Array.isArray(template)) {
+        template = template.map((tpl) => convertTemplate.call(this, tpl, data)) as TemplateItems;
+    }
     return template;
 }
 

@@ -62,8 +62,7 @@ export class BaseComponent extends Component {
     /**
      * Force an element to re-render.
      */
-    render() {
-        let template: Template = this.template;
+    render(template: Template = this.template) {
         if (typeof template === 'undefined') {
             return;
         }
