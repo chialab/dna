@@ -109,6 +109,33 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     forceUpdate(): void;
 
     /**
+     * Retrieve property descriptor.
+     * @param propertyKey The name of the property.
+     * @return The class field descriptor.
+     */
+    getProperty(propertyKey: string): ClassFieldDescriptor | null;
+
+    /**
+     * Define an observed property.
+     * @param propertyKey THe name of the class field.
+     * @param descriptor The property descriptor.
+     * @param symbol The symbol to use to store property value.
+     * @return The symbol used to store property value.
+     */
+    defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol?: symbol): symbol;
+
+    /**
+     * Initialize instance property.
+     *
+     * @param propertyKey The property name.
+     * @param symbol The property symbolic key.
+     * @param descriptor The property descriptor.
+     * @param initializer The initializer function of the decorator.
+     * @return The current property value.
+     */
+    initProperty(propertyKey: string, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any;
+
+    /**
      * Observe a Component Property.
      *
      * @param propertyName The name of the Property to observe.
