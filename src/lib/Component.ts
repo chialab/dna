@@ -1,5 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { CustomElement, CE_SYMBOL, CE_EMULATE_LIFECYCLE } from './CustomElement';
+import { registry } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
@@ -592,24 +593,23 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
 const shim = <T extends typeof HTMLElement>(base: T): T => {
     const shim = function(this: any, ...args: any[]) {
         const constructor = this.constructor as T;
-        const extend = (constructor as any).extends;
         const is = this.is;
+        if (!is) {
+            throw new TypeError('Illegal constructor');
+        }
 
+        let tag = registry.tagNames[is];
         let element: HTMLElement;
         try {
             element = Reflect.construct(base, args, constructor);
-            if (!extend || extend === element.localName) {
+            if (tag === element.localName) {
                 return element;
             }
         } catch {
             //
         }
 
-        if (!is) {
-            throw new TypeError('Illegal constructor');
-        }
-
-        element = DOM.document.createElement(extend || is) as HTMLElement;
+        element = DOM.document.createElement(tag) as HTMLElement;
         (element as any)[CE_EMULATE_LIFECYCLE] = true;
         DOM.emulateLifeCycle = true;
         Object.setPrototypeOf(element, constructor.prototype);

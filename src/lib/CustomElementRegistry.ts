@@ -29,6 +29,13 @@ export class CustomElementRegistry {
     } = {};
 
     /**
+     * A map of tag names.
+     */
+    readonly tagNames: {
+        [key: string]: string;
+    } = {};
+
+    /**
      * Collect "whenDefined" promises.
      */
     private queue: {
@@ -52,7 +59,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: CustomElement, options: { extends?: string; } = {}) {
+    define(name: string, constructor: CustomElement, options: ElementDefinitionOptions = {}) {
         assertValidateCustomElementName(name);
 
         if (typeof constructor !== 'function') {
@@ -69,18 +76,13 @@ export class CustomElementRegistry {
                 configurable: false,
                 value: name,
             });
-            if (options.extends) {
-                Object.defineProperty(constructor, 'extends', {
-                    writable: false,
-                    configurable: false,
-                    value: options.extends.toLowerCase(),
-                });
-            }
         } catch {
             throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
         }
 
+        let tagName = options.extends || name;
         this.registry[name] = constructor;
+        this.tagNames[name] = tagName.toLowerCase();
 
         if (typeof customElements !== 'undefined') {
             return customElements.define(name, constructor, options);
