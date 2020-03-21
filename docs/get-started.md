@@ -111,13 +111,13 @@ The `render` helper is used by DNA components to generate their templates, but i
 ```ts
 import { Component, define, render } from '@chialab/dna';
 
-class MyElement extends Component {
+class Card extends Component {
     ...
 }
 
-define('my-element', MyElement);
+define('x-card', Card);
 
-render(document.body, new MyElement());
+render(document.body, new Card());
 ```
 
 During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template.
@@ -128,26 +128,32 @@ Make sure to render the component in an empty root: at the end of the cycle, DNA
 
 </aside>
 
-This function accepts the render root node as first argument and a node or a template as second one. Another way to instantiate the `MyApp` component is:
+This function accepts the render root node as first argument and a node or a template as second one. Another way to instantiate the `Card` component is:
 
 ```ts
 import { Component, define, html, render } from '@chialab/dna';
 
-class MyElement extends Component {
+class Card extends Component {
     ...
 }
 
-define('my-element', MyElement);
+define('x-card', Card);
 
-render(document.body, html`<my-element />`);
+render(document.body, html`<x-card />`);
 ```
 
 It also work for extended native tags:
 
 ```ts
-define('my-element', MyElement, { extends: 'article' });
+import { Component, define, html, render } from '@chialab/dna';
 
-render(document.body, html`<article is="my-element" />`);
+class Article extends Component {
+    ...
+}
+
+define('x-article', Article, { extends: 'article' });
+
+render(document.body, html`<article is="x-article" />`);
 ```
 
 You can use the `render` method to inject more complex templates too:

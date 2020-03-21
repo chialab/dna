@@ -9,7 +9,7 @@ You can declare event listeners on a component using the `listeners` accessor:
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class MyButton extends Component {
+class Button extends Component {
     get listeners() {
         return {
             'click': this.onClick,
@@ -26,7 +26,7 @@ class MyButton extends Component {
     }
 }
 
-define('my-button', MyButton, { extends: 'button' });
+define('x-button', Button, { extends: 'button' });
 ```
 
 Event declaration accepts a function (in the example above, a prototype method has been referenced) or an object for listener configuration:
@@ -34,7 +34,7 @@ Event declaration accepts a function (in the example above, a prototype method h
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class MyTracker extends Component {
+class Tracker extends Component {
     get listeners(){
         return {
             touchmove: {
@@ -47,7 +47,7 @@ class MyTracker extends Component {
     };
 }
 
-define('my-tracker', MyTracker);
+define('x-tracker', Tracker);
 ```
 
 <aside class="note">
@@ -63,7 +63,7 @@ Listeners can be added via a template attribute named as the event with the `on`
 ```ts
 import { Component, html define } from '@chialab/dna';
 
-class MyHeader extends Component {
+class Header extends Component {
     render() {
         return html`
             <h2>${this.title}</h2>
@@ -74,7 +74,7 @@ class MyHeader extends Component {
     }
 }
 
-define('my-header', MyHeader, { extends: 'header' });
+define('x-header', Header, { extends: 'header' });
 ```
 
 ## Delegation
@@ -92,7 +92,7 @@ Using the `listeners` getter, you can specify the delegated child selector after
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class MyDialog extends Component {
+class Dialog extends Component {
     get listeners() {
         return {
             // event name + selector
@@ -104,7 +104,7 @@ class MyDialog extends Component {
     };
 }
 
-define('my-dialog', MyDialog, { extends: 'dialog' });
+define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 Otherwise, you can use `delegateEventListener` and `undelegateEventListener` methods just like `addEventListener` and `removeEventListener`:
@@ -112,10 +112,10 @@ Otherwise, you can use `delegateEventListener` and `undelegateEventListener` met
 ```ts
 import { Component, DOM, define } from '@chialab/idom';
 
-class MyDialog extends Component { ... }
-define('my-button', MyButton, { extends: 'button' });
+class Dialog extends Component { ... }
+define('x-dialog', Dialog, { extends: 'dialog' });
 
-const element = new MyDialog();
+const element = new Dialog();
 const closeDialog = (event, target) => { ... };
 DOM.appendChild(document.body, element);
 // delegate listener
@@ -131,10 +131,10 @@ DNA components overrides the `dispatchEvent` method in order to support an alter
 ```ts
 import { Component, DOM, define } from '@chialab/dna';
 
-class MyButton extends Component { ... }
-define('my-button', MyButton, { extends: 'button' });
+class Button extends Component { ... }
+define('x-button', Button, { extends: 'button' });
 
-const button = new MyButton();
+const button = new Button();
 DOM.appendChild(document.body, element);
 // native dispatch
 const event = new CustomEvent('sendEmail', {
@@ -175,7 +175,7 @@ class Paginator extends Component {
     };
 }
 
-define('my-paginator', Paginator);
+define('x-paginator', Paginator);
 
 const paginator = new Paginator();
 paginator.addEventListener('fetch', (event) => {

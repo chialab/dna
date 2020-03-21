@@ -28,6 +28,6 @@ console.log(card.outerHTML);
 
 <aside class="note">
 
-The `card` reference in the example above is full (js)DOM Node instance, so you can use any `Element.prototype` methods or update a property and get the re-render result with `.outerHTML`.
+The `card` reference in the example above is full (js)DOM Node instance, so you can use any `HTMLElement.prototype` methods or update a property and get the re-render result with `.outerHTML`.
 
 </aside>

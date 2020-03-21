@@ -3,7 +3,7 @@
 ## Why and how
 
 Since DNA does not require any Custom Elements polyfill, the [life cycle](./life-cycle) is delegated to the render cycle which uses the `DOM` helper under the hood. This helper invokes the life cycle methods for each DOM operation like `appendChild`, `removeChild` etc.
-If you want to manipulate the DOM tree outside of a render cycle, always use `DOM` methods instead of the `Element` prototype:
+If you want to manipulate the DOM tree outside of a render cycle, always use `DOM` methods instead of the `HTMLElement` prototype:
 
 ```ts
 import { ChildComponent } from './child-component';
@@ -18,7 +18,7 @@ DOM.appendChild(document.body, child);
 
 All methods inherit the prototype signature with the context node as first argument:
 
-| `Element.prototype` | `DOM` helper |
+| `HTMLElement.prototype` | `DOM` helper |
 | :------------------- | :------------ |
 | `appendChild(newChild)` | `appendChild(parent, newChild)` |
 | `removeChild(oldChild)` | `removeChild(parent, oldChild)` |
@@ -56,13 +56,14 @@ Since DNA render cycle is responsible for Custom Element's life cycle support in
 
 ```ts
 import { upgrade } from '@chialab/dna';
+import './video-player.js';
 
 const element = document.querySelector('main');
 element.innerHTML = `<article>
     <h1>Title</h1>
-    <my-video-player>
+    <video-player>
         <source src="/video.mp4" />
-    </my-video-player>
+    </video-player>
 </article>`;
 
 upgrade(element);

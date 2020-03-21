@@ -20,7 +20,7 @@ import { define, Component } from '@chialab/dna';
  * @fires zoom - The map zoom level changed.
  * @fires move - The map center point changed.
  */
-export class DNAMap extends Component {
+export class MapboxMap extends Component {
     static get observedAttributes() {
         return ['latitude', 'longitude'];
     }
@@ -36,7 +36,7 @@ export class DNAMap extends Component {
     longitude: number;
 }
 
-define('dna-map', DNAMap);
+define('x-map', MapboxMap);
 ```
 
 Run:
@@ -96,12 +96,12 @@ setCustomElements(customElements);
 
 * Add the properties table to the documentation page:
 
-**my-card.stories.mdx**
+**x-card.stories.mdx**
 
 ```ts
 import { Props } from '@storybook/addon-docs/blocks';
 
-<Props of="my-card" />
+<Props of="x-card" />
 ```
 
 ### Typescript JSX IntrinsicElements
@@ -110,9 +110,9 @@ TypeScript supports JSX syntax, and it is able to provide typechecking and hints
 
 ```ts
 import { render } from '@chialab/dna';
-import { MyCard } from './my-card';
+import { Card } from './x-card';
 
-render(document.body, <MyCard firstName="Alan" age={24} />);
+render(document.body, <Card firstName="Alan" age={24} />);
 ```
 
 But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` in order to bind element's tag name with its prototype:
@@ -120,15 +120,15 @@ But how does it work with defined custom elements? It is possibile to declare `I
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class MyCard extends Component {
+class Card extends Component {
     ...
 }
 
-define('my-card', MyCard);
+define('x-card', Card);
 
 declare namespace JSX {
     interface IntrinsicElements {
-        'my-card': MyCard;
+        'x-card': Card;
     }
 }
 ```

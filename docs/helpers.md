@@ -9,11 +9,11 @@ Like the [`CustomElementRegistry.get`](https://developer.mozilla.org/en-US/docs/
 ```ts
 import { Component, define, get } from '@chialab/dna';
 
-class XElement extends Component {}
+class CardElement extends Component {}
 
-define('x-element', XElement);
+define('x-card', Card);
 
-get('x-element') // -> XElement
+get('x-card') // -> Card
 ```
 
 ## whenDefined
@@ -22,12 +22,13 @@ Like the [`CustomElementRegistry.whenDefined`](https://developer.mozilla.org/en-
 
 ```ts
 import { whenDefined } from '@chialab/dna';
-import('./x-element.js');
 
-whenDefined('x-element')
+whenDefined('x-card')
     .then(() => {
-        // -> The x-element has been defined
+        // -> The x-card has been defined
     });
+
+import('./x-card.js');
 ```
 
 ## upgrade
@@ -37,15 +38,15 @@ Like the [`CustomElementRegistry.upgrade`](https://developer.mozilla.org/en-US/d
 ```ts
 import { Component, DOM, define, upgrade } from '@chialab/dna';
 
-class XElement extends Component {}
+class Card extends Component {}
 
-const element = DOM.createElement('x-element');
+const element = DOM.createElement('x-card');
 console.log(Object.getPrototypeOf(element)); // -> HTMLElement
 
-define('x-element', XElement);
+define('x-card', Card);
 upgrade(element);
 
-console.log(Object.getPrototypeOf(element)); // -> XElement
+console.log(Object.getPrototypeOf(element)); // -> Card
 ```
 
 All children and descendants of the passed element will be upgraded too, so `upgrade` can be used for tag re-hydration after a server side rendering:
@@ -88,19 +89,15 @@ Use the `DOM.window` namespace instead of the global constructor to make sure to
 The `css` helper is a method internally used by DNA convert a CSS string into its scoped Shadow DOM version. This can be used to add extra manipulation to the CSS string:
 
 ```ts
-import { Component, html, css, define } from '@chialab/dna';
+import { DOM, Component, html, css, define } from '@chialab/dna';
 
-const data = css('my-element', 'h1 { color: red; }')
+const cssText = css('x-article', 'h1 { color: red; }')
         .replace(/red/g, 'blue');
 
-export class MyElement extends Component {
-    // do NOT add the `scoped` attribute to the style element
-    render() {
-        return html`<style>${data}</style>`;
-    }
-}
+const style = DOM.document.createElement('style');
+style.textContent = cssText;
 
-define('my-element', MyElement);
+DOM.appendChild(DOM.document.head, style);
 ```
 
 ## interpolate
@@ -132,8 +129,8 @@ An adapter is a compatibility layer between DNA and the environment where it run
 import { DOM } from '@chialab/dna';
 
 Object.assign(DOM, {
-    window: myCustomWindow,
-    document: myCustomDocument,
+    window: windowImplementation,
+    document: documentImplementation,
     createElement(tagName: string, options?: ElementCreationOptions): Element { ... },
     createElementNS(namespaceURI: string, tagName: string): Element { ... },
     createTextNode(data: string): Text { ... },

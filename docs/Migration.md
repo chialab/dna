@@ -48,8 +48,8 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 - import { BaseComponent } from '@dnajs/idom';
 + import { Component } from '@chialab/dna';
 
-- class MyElement extends BaseComponent {
-+ class MyElement extends Component {
+- class Card extends BaseComponent {
++ class Card extends Component {
 ```
 
 * Replace stringed prototype references with real references
@@ -137,8 +137,8 @@ get properies() {
 * Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references
 
 ```diff
--DOM.getNodeComponent(document.querySelector('.my-input')).value = 'Web Components';
-+document.querySelector('.my-input').value = 'Web Components';
+-DOM.getNodeComponent(document.querySelector('.x-input')).value = 'Web Components';
++document.querySelector('.x-input').value = 'Web Components';
 -DOM.getComponentNode(app).setAttribute('title', 'Web Components');
 +app.setAttribute('title', 'Web Components');
 -app.node.setAttribute('title', 'Web Components');

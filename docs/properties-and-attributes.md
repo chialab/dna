@@ -31,6 +31,27 @@ class Card extends Component {
 }
 ```
 
+You can also define properties programmatically with the prototyped `defineProperty` method:
+
+```ts
+import { Component } from '@chialab/dna';
+
+class Card extends Component {
+    get properties() {
+        return {
+            age: {},
+        };
+    }
+}
+
+define('x-card', Card);
+
+const card = new Card();
+card.defineProperty('age', {
+    type: Number,
+});
+```
+
 ## Property descriptor
 
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
@@ -151,7 +172,7 @@ If you are using `<template>` tags, `html` helper or JSX templates, the value of
 @property({ type: String }) firstName;
 ```
 ```html
-<my-card firstName="Alan" />
+<x-card firstName="Alan" />
 ```
 ```js
 console.log(element.firstName); // 'Alan'
@@ -163,7 +184,7 @@ console.log(element.firstName); // 'Alan'
 @property({ type: Number }) age;
 ```
 ```html
-<my-card age="24" />
+<x-card age="24" />
 ```
 ```js
 console.log(element.age); // 24
@@ -175,7 +196,7 @@ console.log(element.age); // 24
 @property({ type: Boolean }) disabled = false;
 ```
 ```html
-<my-button disabled />
+<x-button disabled />
 ```
 ```js
 console.log(element.disabled); // true
@@ -187,7 +208,7 @@ console.log(element.disabled); // true
 @property({ type: Array }) items = [];
 ```
 ```html
-<my-list items="['Alan','Bob','Charlie']" />
+<x-list items="['Alan','Bob','Charlie']" />
 ```
 ```js
 console.log(element.items); // ['Alan', 'Bob', 'Charlie']
@@ -205,7 +226,9 @@ When the property is bound to an attribute, it will reflect the value to the DOM
 Falsy values (`null`, `undefined`, `false`) will completely remove the attribute from the DOM node, while `true` always set the DOM attribute with empty value. For example:
 
 ```ts
-class MyCard extends Component {
+import { Component, define } from '@chialab/dna';
+
+class Card extends Component {
     static get observedAttributes() {
         return ['firstName', 'age', 'married'];
     }
@@ -215,7 +238,9 @@ class MyCard extends Component {
     @property({ type: Boolean })  married = false;
 }
 
-const card = new MyCard();
+define('x-card', Card);
+
+const card = new Card();
 card.firstName = 'Alan';
 card.age = 24;
 card.married = true;
@@ -224,5 +249,5 @@ card.married = true;
 will result in the DOM like:
 
 ```html
-<my-card name="Alan" age="24" married />
+<x-card name="Alan" age="24" married />
 ```

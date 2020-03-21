@@ -5,13 +5,13 @@ Templates are the main part of a component definition because they are used to r
 ```ts
 import { Component, html, define } from '@chialab/dna';
 
-class MyElement extends Component {
+class HelloWorld extends Component {
     render() {
         return html`<h1>Hello world!</h1>`;
     }
 }
 
-define('my-element', MyElement);
+define('hello-world', HelloWorld);
 ```
 
 ### Using JSX
@@ -21,13 +21,13 @@ If you familiar with JSX, you can also use it since DNA templates are 100% compa
 ```ts
 import { Component, h, define } from '@chialab/dna';
 
-class MyElement extends Component {
+class HelloWorld extends Component {
     render() {
         return <h1>Hello world!</h1>;
     }
 }
 
-define('my-element', MyElement);
+define('hello-world', HelloWorld);
 ```
 
 Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to use the DNA's `h` and `Fragment` helpers:
@@ -50,13 +50,13 @@ Unless you are using JSX, writing and maintaining templates like the example abo
 If the `template` property is not defined, the DNA component will try to automatically detect a `<template>` tag in the document with the same `name`:
 
 ```ts
-define('my-element', MyElement);
+define('hello-world', HelloWorld);
 ```
 
 ```html
 <head>
-    <template name="my-element">
-        <div>Hello</div>
+    <template name="hello-world">
+        <div>Hello world!</div>
     </template>
 </head>
 ```
@@ -66,11 +66,11 @@ You can also directly pass a `HTMLTemplateElement` reference to the property:
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class MyElement extends Component {
-    readonly template = document.querySelector('template#my-element);
+class HelloWorld extends Component {
+    readonly template = document.querySelector('template#hello-world);
 }
 
-define('my-element', MyElement);
+define('hello-world', HelloWorld);
 ```
 
 ## Interpolation rules
@@ -304,8 +304,8 @@ import { html } from '@chialab/dna';
 
 const content = '<h1>Hello</h1>';
 
--<my-label>{content}</my-label>;
-+<my-label>{html(content)}</my-label>;
+-<x-label>{content}</x-label>;
++<x-label>{html(content)}</x-label>;
 ```
 
 <aside class="note">
@@ -319,12 +319,12 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 One of the best practice for Web Components is to use the [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) to render and stylize component's children.
 Shadow DOM is a good choice for encapsulating styles and handling components children, but its cross browser [support is poor](https://caniuse.com/#feat=shadowdomv1). During the render cycle, DNA is able to replicate ShadowDOM implementation as well as for [styles](./styles).
 
-For example, we may declare a custom `<article is="my-article">` tag with some layout features:
+For example, we may declare a custom `<article is="x-article">` tag with some layout features:
 
 ```ts
 import { Component, html, property, define } from '@chialab/dna';
 
-class MyArticle extends Component {
+class Article extends Component {
     static get observedAttributes() {
         return ['title', 'body'];
     }
@@ -344,7 +344,7 @@ class MyArticle extends Component {
     }
 }
 
-define('my-article', MyArticle, { extends: 'article' });
+define('x-article', Article, { extends: 'article' });
 ```
 
 This example has two problems:
@@ -355,7 +355,7 @@ This example has two problems:
 Shadow DOM solves those two issues, rendering "soft" children of an element into the `<slot>` tag:
 
 ```diff
-class MyArticle extends Component {
+class Article extends Component {
     static get observedAttributes() {
         return ['title'];
     }
@@ -379,10 +379,10 @@ class MyArticle extends Component {
 }
 ```
 
-Now, every "soft" child of the `<article is="my-article">` element is rendered into the layout:
+Now, every "soft" child of the `<article is="x-article">` element is rendered into the layout:
 
 ```html
-<article is="my-article">
+<article is="x-article">
     <h1>How to use DNA</h1>
     <img src="https://placekitten.com/300/200" />
     <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
@@ -392,7 +392,7 @@ Now, every "soft" child of the `<article is="my-article">` element is rendered i
 results
 
 ```html
-<article is="my-article">
+<article is="x-article">
     <div class="layout-body">
         <h1>How to use DNA</h1>
         <img src="https://placekitten.com/300/200" />
@@ -404,7 +404,7 @@ results
 We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will colleced any element which does not specify a slot.
 
 ```diff
-class MyArticle extends Component {
+class Article extends Component {
     render() {
         return html`
 -            <div class="layout-body">
@@ -422,7 +422,7 @@ class MyArticle extends Component {
 Update the HTML sample adding `<h1>` to the `title` slot.
 
 ```diff
-<article is="my-article">
+<article is="x-article">
 -    <h1>How to use DNA</h1>
 +    <h1 slot="title">How to use DNA</h1>
     <img src="https://placekitten.com/300/200" />
@@ -433,7 +433,7 @@ Update the HTML sample adding `<h1>` to the `title` slot.
 Now the resulting DOM would be:
 
 ```html
-<article is="my-article">
+<article is="x-article">
     <div class="layout-header">
         <h1>How to use DNA</h1>
     </div>
@@ -466,7 +466,7 @@ Keyed elements are also added to the component's render scope (the `$` getter):
 ```ts
 import { Component, html, define } from '@chialab/dna';
 
-class MyForm extends Component {
+class Form extends Component {
     render() {
         return html`<input key="firstName" placeholder="Eg. Alan" />`;
     }
@@ -476,7 +476,7 @@ class MyForm extends Component {
     }
 }
 
-define('my-form', MyForm, { extends: 'form' });
+define('x-form', Form, { extends: 'form' });
 ```
 
 <aside class="note">

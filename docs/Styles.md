@@ -17,7 +17,7 @@ Every `<style>` tag rendered to a component is scoped.
 ```ts
 import { Component, html, property, define } from '@chialab/dna';
 
-class MyCard extends Component {
+class Card extends Component {
     static get observedAttributes() {
         return ['title'];
     }
@@ -35,16 +35,16 @@ class MyCard extends Component {
     }
 }
 
-define('my-card', MyCard, { extends: 'div' });
+define('x-card', Card, { extends: 'div' });
 ```
 
 The previous component will br rendered as follow:
 
 ```html
 <h1>Unaffected heading</h1>
-<div is="my-card" title="Alan Turing">
+<div is="x-card" title="Alan Turing">
     <style>
-        [is='my-card'] h1 { color: cadetblue; }
+        [is='x-card'] h1 { color: cadetblue; }
     </style>
     <h1>Alan Turing</h1>
 <div>
@@ -63,7 +63,7 @@ h1 { color: cadetblue; }
 is transformed into
 
 ```css
-[is="my-card"] h1 { color: cadetblue; }
+[is="x-card"] h1 { color: cadetblue; }
 ```
 
 ### The `:host` pesudo selector
@@ -101,9 +101,9 @@ With the [CSS Module Spec](#native-css-modules-spec) you can import CSS files as
 
 ```ts
 import { Component } from '@chialab/dna';
-import style from './my-card.css';
+import style from './x-card.css';
 
-class MyCard extends Component {
+class Card extends Component {
     adoptedStyleSheets = [style];
 }
 ```
@@ -119,7 +119,7 @@ class MyCard extends Component {
 Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
 
 ```scss
-[is='my-card'] {
+[is='x-card'] {
     h1 {
         color: cadetblue;
     }
@@ -135,13 +135,13 @@ Every component node has the `is` attribute populated with the defined name of t
 Some bundlers import CSS files in JavaScript and auto-append `<link>` tags. In this case, you have to manually set the scope for your rules:
 
 ```css
-[is='my-card'] .title {
+[is='x-card'] .title {
     color: cadetblue;
 }
 ```
 
 ```html
-<link href="my-card.css" rel="stylesheet" />
+<link href="x-card.css" rel="stylesheet" />
 ```
 
 ### CSS Modules
@@ -156,9 +156,9 @@ If you are using a transpiler, you can also use CSS Modules, which imports CSS c
 
 ```ts
 import { Component, html, property, define } from '@chialab/dna';
-import { title } from './my-card.css';
+import { title } from './x-card.css';
 
-class MyCard extends Component {
+class Card extends Component {
     static get observedAttributes() {
         return ['title'];
     }
@@ -171,5 +171,5 @@ class MyCard extends Component {
     }
 }
 
-define('my-card', MyCard, { extends: 'div' });
+define('x-card', Card, { extends: 'div' });
 ```
