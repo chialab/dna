@@ -110,19 +110,21 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             setScope(element, createScope(element));
             setSlotted(element, cloneChildNodes(this));
 
-            // setup Component properties
             const propertyDescriptors = {} as {
                 [key: string]: ClassFieldDescriptor;
             };
+
             let proto = Object.getPrototypeOf(element);
             while (proto.constructor !== Component) {
-                let descriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
-                let getter = descriptor && descriptor.get;
-                if (getter) {
-                    let descriptorProps = getter.call(element) || {};
-                    for (let propertyKey in descriptorProps) {
+                let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
+                let listenersDescriptor = Object.getOwnPropertyDescriptor(proto, 'listeners');
+                let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
+                let listenersGetter = listenersDescriptor && listenersDescriptor.get;
+                if (propertiesGetter) {
+                    let descriptorProperties = propertiesGetter.call(element) || {};
+                    for (let propertyKey in descriptorProperties) {
                         if (!(propertyKey in propertyDescriptors)) {
-                            let descriptor = descriptorProps[propertyKey];
+                            let descriptor = descriptorProperties[propertyKey];
                             if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
                                 descriptor = { types: descriptor };
                             }
@@ -130,8 +132,18 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                         }
                     }
                 }
+                if (listenersGetter) {
+                    let descriptorListeners = listenersGetter.call(element) || {};
+                    // register listeners
+                    for (let eventPath in descriptorListeners) {
+                        let paths = eventPath.trim().split(' ');
+                        this.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
+                    }
+                }
                 proto = Object.getPrototypeOf(proto);
             }
+
+            // setup properties
             for (let propertyKey in propertyDescriptors) {
                 let descriptor = propertyDescriptors[propertyKey];
                 let symbol = this.defineProperty(propertyKey, descriptor);
@@ -141,15 +153,6 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             }
             for (let propertyKey in props) {
                 (element as any)[propertyKey] = props[propertyKey];
-            }
-
-            // register listeners
-            const listenerDescriptors = this.listeners;
-            if (listenerDescriptors) {
-                for (let eventPath in listenerDescriptors) {
-                    let paths = eventPath.trim().split(' ');
-                    this.delegateEventListener(paths.shift() as string, paths.join(' '), listenerDescriptors[eventPath]);
-                }
             }
 
             if (element.isConnected) {

@@ -293,7 +293,6 @@ describe('events', function() {
                 get listeners() {
                     return {
                         'click button': this.method,
-                        'change': callback,
                     };
                 }
 
@@ -314,6 +313,50 @@ describe('events', function() {
             element.$.trigger.click();
             expect(callback.response).to.be.deep.equal(['click', 'BUTTON']);
             expect(callback.invoked).to.be.true;
+        });
+
+        it('should inherit listeners', () => {
+            const callback1 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback2 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback3 = spyFunction((event, target) => [event.type, target.tagName]);
+
+            class BaseElement  extends DNA.Component {
+                get listeners() {
+                    return {
+                        'click button': callback1,
+                        'change': callback2,
+                    };
+                }
+
+                render() {
+                    return DNA.html('<button key="trigger"></button>');
+                }
+            }
+
+            class TestElement extends BaseElement {
+                get listeners() {
+                    return {
+                        'click button': callback3,
+                    };
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback1.invoked).to.be.false;
+            expect(callback2.invoked).to.be.false;
+            expect(callback3.invoked).to.be.false;
+            element.$.trigger.click();
+            element.dispatchEvent(DNA.DOM.createEvent('change', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.invoked).to.be.true;
+            expect(callback2.invoked).to.be.true;
+            expect(callback3.invoked).to.be.true;
         });
     });
 
