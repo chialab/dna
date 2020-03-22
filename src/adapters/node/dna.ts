@@ -1,2 +1,2 @@
-import './lib/DOM';
-export * from '../../dna';
+import '@chialab/dna/node/register';
+export * from '@chialab/dna';

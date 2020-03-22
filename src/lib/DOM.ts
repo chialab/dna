@@ -1,6 +1,13 @@
+import { window } from './window';
 import { shouldEmulateLifeCycle, isCustomElement } from './CustomElement';
 import { registry } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
+
+const { Node, HTMLElement, Event, CustomEvent, document } = window;
+
+if (!Node || !HTMLElement || !Event || !CustomEvent || !document) {
+    throw new Error('invalid DOM implementation');
+}
 
 /**
  * Make a readonly copy of the child nodes collection.
@@ -14,28 +21,28 @@ export const cloneChildNodes = (node: Node): Node[] => [].slice.call(node.childN
  * @param node The node to check.
  * @return The node is a Document instance.
  */
-export const isDocument = (node: any): node is Document => node && node.nodeType === DOM.Node.DOCUMENT_NODE;
+export const isDocument = (node: any): node is Document => node && node.nodeType === Node.DOCUMENT_NODE;
 
 /**
  * Check if a node is a Text instance.
  * @param node The node to check.
  * @return The node is a Text instance.
  */
-export const isText = (node: any): node is Text => node && node.nodeType === DOM.Node.TEXT_NODE;
+export const isText = (node: any): node is Text => node && node.nodeType === Node.TEXT_NODE;
 
 /**
  * Check if a node is an Element instance.
  * @param node The node to check.
  * @return The node is an Element instance.
  */
-export const isElement = (node: any): node is HTMLElement => node && node.nodeType === DOM.Node.ELEMENT_NODE;
+export const isElement = (node: any): node is HTMLElement => node && node.nodeType === Node.ELEMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
  * @param node The node to check.
  * @return The object is an Event instance.
  */
-export const isEvent = (event: any): event is Event => event instanceof DOM.Event;
+export const isEvent = (event: any): event is Event => event instanceof Event;
 
 /**
  * Check if a Node is connected.
@@ -109,45 +116,6 @@ export const DOM = {
      * Should emulate life cycle.
      */
     emulateLifeCycle: typeof customElements === 'undefined',
-    /**
-     * The window instance.
-     */
-    window: (typeof window !== 'undefined' ? window : undefined) as Window & typeof globalThis,
-
-    /**
-     * The document instance.
-     */
-    document: (typeof document !== 'undefined' ? document : undefined) as Document,
-
-    /**
-     * The adapter Document constructor.
-     */
-    Document: (typeof Document !== 'undefined' ? Document : undefined) as typeof Document,
-
-    /**
-     * The adapter Node constructor.
-     */
-    Node: (typeof Node !== 'undefined' ? Node : undefined) as typeof Node,
-
-    /**
-     * The adapter Text constructor.
-     */
-    Text: (typeof Text !== 'undefined' ? Text : undefined) as typeof Text,
-
-    /**
-     * The adapter HTMLElement constructor.
-     */
-    HTMLElement: (typeof HTMLElement !== 'undefined' ? HTMLElement : undefined) as typeof HTMLElement,
-
-    /**
-     * The adapter Event constructor.
-     */
-    Event: (typeof Event !== 'undefined' ? Event : undefined) as typeof Event,
-
-    /**
-     * The adapter CustomEvent constructor.
-     */
-    CustomEvent: (typeof CustomEvent !== 'undefined' ? CustomEvent : undefined) as typeof CustomEvent,
 
     /**
      * Create a new DOM element node for the specified tag.
@@ -158,7 +126,7 @@ export const DOM = {
     createElement(tagName: string, options?: ElementCreationOptions): Element {
         const is = options && options.is;
         const name = is || tagName.toLowerCase();
-        const node = DOM.document.createElement(tagName);
+        const node = document.createElement(tagName);
         const constructor = registry.get(name);
         if (constructor && !(node instanceof constructor)) {
             new constructor(node);
@@ -174,7 +142,7 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
-        return DOM.document.createElementNS(namespaceURI, tagName);
+        return document.createElementNS(namespaceURI, tagName);
     },
 
     /**
@@ -184,7 +152,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createTextNode(data: string): Text {
-        return DOM.document.createTextNode(data);
+        return document.createTextNode(data);
     },
 
     /**
@@ -195,9 +163,9 @@ export const DOM = {
     createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> {
         let event;
         try {
-            event = new DOM.CustomEvent(typeArg, eventInitDict);
+            event = new CustomEvent(typeArg, eventInitDict);
         } catch {
-            event = DOM.document.createEvent('CustomEvent');
+            event = document.createEvent('CustomEvent');
             event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
         }
         return event;
@@ -216,7 +184,7 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        const appendChild = DOM.Node.prototype.appendChild;
+        const appendChild = Node.prototype.appendChild;
         if (!DOM.emulateLifeCycle) {
             return appendChild.call(parent, newChild) as T;
         }
@@ -245,7 +213,7 @@ export const DOM = {
             }
             return oldChild;
         }
-        const removeChild = DOM.Node.prototype.removeChild;
+        const removeChild = Node.prototype.removeChild;
         if (!DOM.emulateLifeCycle) {
             return removeChild.call(parent, oldChild) as T;
         }
@@ -276,7 +244,7 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        const insertBefore = DOM.Node.prototype.insertBefore;
+        const insertBefore = Node.prototype.insertBefore;
         if (!DOM.emulateLifeCycle) {
             return insertBefore.call(parent, newChild, refChild) as T;
         }
@@ -304,7 +272,7 @@ export const DOM = {
             parent.forceUpdate();
             return oldChild;
         }
-        const replaceChild = DOM.Node.prototype.replaceChild;
+        const replaceChild = Node.prototype.replaceChild;
         if (!DOM.emulateLifeCycle) {
             return replaceChild.call(parent, newChild, oldChild) as T;
         }
@@ -324,7 +292,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return DOM.HTMLElement.prototype.getAttribute.call(element, qualifiedName);
+        return HTMLElement.prototype.getAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -334,7 +302,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return DOM.HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
+        return HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
     },
 
     /**
@@ -345,7 +313,7 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        const setAttribute = DOM.HTMLElement.prototype.setAttribute;
+        const setAttribute = HTMLElement.prototype.setAttribute;
         if (shouldEmulateLifeCycle(element)) {
             const constructor = element.constructor;
             const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
@@ -368,7 +336,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        const removeAttribute = DOM.HTMLElement.prototype.removeAttribute;
+        const removeAttribute = HTMLElement.prototype.removeAttribute;
         if (shouldEmulateLifeCycle(element)) {
             const constructor = element.constructor;
             const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
@@ -388,7 +356,7 @@ export const DOM = {
      * @param selectorString The selector to match.
      */
     matches(element: Element, selectorString: string): boolean {
-        const match = DOM.HTMLElement.prototype.matches || DOM.HTMLElement.prototype.webkitMatchesSelector || (DOM.HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+        const match = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
         return match.call(element, selectorString);
     },
 };

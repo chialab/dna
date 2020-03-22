@@ -28,7 +28,7 @@ describe('Component', function() {
             DNA.define(is, TestElement);
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLElement);
+            expect(element).to.be.an.instanceof(DNA.window.HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal(is.toUpperCase());
         });
@@ -41,19 +41,19 @@ describe('Component', function() {
             });
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLElement);
+            expect(element).to.be.an.instanceof(DNA.window.HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
         });
 
         it('should create a base class starting from the anchor base class', () => {
-            const HTMLAnchorElement = DNA.extend(DNA.DOM.window.HTMLAnchorElement);
+            const HTMLAnchorElement = DNA.extend(DNA.window.HTMLAnchorElement);
             class TestElement extends HTMLAnchorElement { }
             DNA.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
             element.href = 'https://www.webcomponents.org/introduction';
-            expect(TestElement).to.not.equal(DNA.DOM.window.HTMLAnchorElement);
-            expect(element).to.be.an.instanceof(DNA.DOM.window.HTMLAnchorElement);
+            expect(TestElement).to.not.equal(DNA.window.HTMLAnchorElement);
+            expect(element).to.be.an.instanceof(DNA.window.HTMLAnchorElement);
             expect('href' in element).to.be.true;
         });
 

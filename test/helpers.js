@@ -13,9 +13,9 @@ if (typeof Symbol() !== 'symbol') {
 
 export async function getModule() {
     if (typeof window === 'undefined') {
-        return await import('../dist/adapters/node/dna.js');
+        return require('@chialab/dna' + '/node');
     }
-    return await import('../dist/esm/dna.js');
+    return await import('@chialab/dna');
 }
 
 export function spyFunction(fn = () => {}) {

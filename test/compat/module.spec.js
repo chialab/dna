@@ -1,10 +1,11 @@
-import * as DNA from '../../dist/adapters/compat/dna.js';
+import * as DNA from '@chialab/dna/compat.js';
 import * as DNA_OLD from '@dnajs/idom';
 
 describe('[Compat] module', function() {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {
+        window: 'object',
         customElements: 'object',
         CustomElementRegistry: 'function',
         DOM: 'object',
@@ -51,8 +52,8 @@ describe('[Compat] module', function() {
 
     for (let ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
-            if (ref === 'namespace') {
-                expect(DNA).to.have.property('namespace');
+            if (ref === 'namespace' || ref === 'window') {
+                expect(DNA).to.have.property(ref);
             } else {
                 expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
             }

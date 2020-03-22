@@ -1,5 +1,6 @@
 import { registry } from './lib/CustomElementRegistry';
 
+export { window } from './lib/window';
 export { registry as customElements };
 export const get = registry.get.bind(registry);
 export const define = registry.define.bind(registry);

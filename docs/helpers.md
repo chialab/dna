@@ -64,10 +64,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 This function extends a native `HTMLElement` constructor with all DNA prototype capabilities. This is useful to extend native constructors instead of using the default `Component` class:
 
 ```ts
-import { extend, DOM } from '@chialab/dna';
+import { window, extend, DOM } from '@chialab/dna';
 
 // mix DNA features with the base class
-export class AnchorComponent extends extend(DOM.window.HTMLAnchorElement) {
+export class AnchorComponent extends extend(window.HTMLAnchorElement) {
     ...
 }
 
@@ -80,7 +80,7 @@ console.log(a.href); // -> https://my.domain/demo
 
 <aside class="note">
 
-Use the `DOM.window` namespace instead of the global constructor to make sure to write Node compatible components.
+Use the `window` namespace instead of the global constructor to make sure to write Node compatible components.
 
 </aside>
 

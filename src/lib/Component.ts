@@ -1,3 +1,4 @@
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { CustomElement, CE_SYMBOL, CE_EMULATE_LIFECYCLE } from './CustomElement';
 import { registry } from './CustomElementRegistry';
@@ -9,6 +10,8 @@ import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver } from './property';
 import { template } from './html';
+
+const { document, HTMLElement } = window;
 
 /**
  * A set of component properties.
@@ -612,7 +615,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
             //
         }
 
-        element = DOM.document.createElement(tag) as HTMLElement;
+        element = document.createElement(tag) as HTMLElement;
         (element as any)[CE_EMULATE_LIFECYCLE] = true;
         DOM.emulateLifeCycle = true;
         Object.setPrototypeOf(element, constructor.prototype);
@@ -635,4 +638,4 @@ export const extend = (constructor: typeof HTMLElement) => class extends mixin(s
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(DOM.window.HTMLElement) as CustomElement<HTMLElement>;
+export const Component = extend(HTMLElement) as CustomElement<HTMLElement>;

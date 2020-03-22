@@ -1,4 +1,4 @@
-import { define, render, DOM, IDOM, prop, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { define, render, DOM, IDOM, prop, BaseComponent } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 // eslint-disable-next-line

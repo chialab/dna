@@ -10,6 +10,7 @@ describe('module', function() {
     });
 
     const EXPECTED_EXPORT_MAP = {
+        window: 'object',
         customElements: 'object',
         CustomElementRegistry: 'function',
         DOM: 'object',
@@ -37,7 +38,11 @@ describe('module', function() {
 
     for (let ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
-            expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            if (ref === 'window') {
+                expect(DNA).to.have.property(ref);
+            } else {
+                expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            }
         });
     }
 

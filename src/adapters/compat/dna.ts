@@ -2,6 +2,9 @@ import './lib/DOM';
 import * as IDOM from './lib/IDOM';
 
 export {
+    window,
+    customElements,
+    CustomElementRegistry,
     get,
     define,
     upgrade,
@@ -9,8 +12,6 @@ export {
     DOM,
     connect,
     disconnect,
-    customElements,
-    CustomElementRegistry,
     Fragment,
     h,
     html,

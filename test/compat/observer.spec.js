@@ -1,4 +1,4 @@
-import { define, DOM, IDOM, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { define, DOM, IDOM, BaseComponent } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] IDOM observer', () => {

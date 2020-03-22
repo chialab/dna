@@ -1,3 +1,4 @@
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { DOM, isElement, isEvent } from './DOM';
 
@@ -288,7 +289,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
-    return DOM.HTMLElement.prototype.dispatchEvent.call(element, event);
+    return window.HTMLElement.prototype.dispatchEvent.call(element, event);
 };
 
 /**

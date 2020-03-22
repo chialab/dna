@@ -1,4 +1,4 @@
-import { define, render, DOM, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { window, define, render, DOM, BaseComponent } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 function normalizeContent(content) {
@@ -60,12 +60,12 @@ h3 {
         let element = render(wrapper, TestComponent);
         let h3 = document.createElement('h3');
         wrapper.appendChild(h3);
-        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
-        let styleH3 = DOM.window.getComputedStyle((element.node).querySelector('h3'));
+        let style = window.getComputedStyle((element.node).querySelector('h1'));
+        let styleH3 = window.getComputedStyle((element.node).querySelector('h3'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
         assert.equal(styleH3.color, 'rgb(0, 0, 255)');
-        let styleOutside = DOM.window.getComputedStyle(h3);
+        let styleOutside = window.getComputedStyle(h3);
         assert.equal(styleOutside.color, 'rgb(0, 0, 0)');
     });
 
@@ -97,7 +97,7 @@ h3 {
         define(getComponentName(), TestComponent, { extends: 'div' });
 
         let element = render(wrapper, TestComponent);
-        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
+        let style = window.getComputedStyle((element.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
     });
@@ -146,12 +146,12 @@ h3 {
 
         let element = render(wrapper, TestComponent);
         let root = element.node;
-        let before1 = DOM.window.getComputedStyle(root.querySelector('#before1'), ':before');
-        let before2 = DOM.window.getComputedStyle(root.querySelector('#before2'), ':before');
-        let before3 = DOM.window.getComputedStyle(root.querySelector('#before3'), ':before');
-        let before4 = DOM.window.getComputedStyle(root.querySelector('#before4'), ':before');
-        let before5 = DOM.window.getComputedStyle(root.querySelector('#before5'), ':before');
-        let before6 = DOM.window.getComputedStyle(root.querySelector('#before6'), ':before');
+        let before1 = window.getComputedStyle(root.querySelector('#before1'), ':before');
+        let before2 = window.getComputedStyle(root.querySelector('#before2'), ':before');
+        let before3 = window.getComputedStyle(root.querySelector('#before3'), ':before');
+        let before4 = window.getComputedStyle(root.querySelector('#before4'), ':before');
+        let before5 = window.getComputedStyle(root.querySelector('#before5'), ':before');
+        let before6 = window.getComputedStyle(root.querySelector('#before6'), ':before');
         assert.equal(normalizeContent(before1.content), 'Hello');
         assert.oneOf(normalizeContent(before2.content), ['before2', 'attr(id)']);
         assert.equal(normalizeContent(before3.content), 'Hello world');
@@ -189,7 +189,7 @@ h3 {
         define(getComponentName(), TestComponent);
 
         let element = render(wrapper, TestComponent);
-        let style = DOM.window.getComputedStyle((element.node).querySelector('h1'));
+        let style = window.getComputedStyle((element.node).querySelector('h1'));
         assert.equal(style.color, 'rgb(95, 158, 160)');
         assert.equal(style.backgroundColor, 'rgb(95, 158, 160)');
     });

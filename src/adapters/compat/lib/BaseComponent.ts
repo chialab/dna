@@ -1,4 +1,4 @@
-import { extend, render, css, DOM, Component, Properties, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
+import { window, extend, render, css, DOM, Component, Properties, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 
@@ -66,7 +66,7 @@ export class BaseComponent extends Component {
             let content = css(this.is, this.css);
             let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
             style.textContent = content;
-            DOM.document.head.appendChild(style);
+            window.document.head.appendChild(style);
         }
     }
 

@@ -1,4 +1,4 @@
-import { render, define, DOM, IDOM, trust, BaseComponent } from '../../dist/adapters/compat/dna.js';
+import { render, define, DOM, IDOM, trust, BaseComponent } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] Base HTML Component', () => {
