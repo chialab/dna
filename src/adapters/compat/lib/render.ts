@@ -1,7 +1,7 @@
-import { Properties } from '../../../lib/Component';
-import { render as coreRender } from '../../../lib/render';
-import { CustomElement } from '../../../lib/CustomElement';
+import { render as _render, CustomElement, Properties } from '@chialab/dna';
 
 export function render(root: HTMLElement, Component: CustomElement, props: Properties) {
-    return coreRender(root, new Component(props));
+    /* eslint-disable-next-line */
+    console.warn('render signature has changed in DNA 3.0');
+    return _render(root, new Component(props));
 }

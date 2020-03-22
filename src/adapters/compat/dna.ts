@@ -7,6 +7,8 @@ export {
     upgrade,
     whenDefined,
     DOM,
+    connect,
+    disconnect,
     customElements,
     CustomElementRegistry,
     Fragment,
@@ -23,7 +25,7 @@ export {
     property,
     extend,
     Component,
-} from '../../dna';
+} from '@chialab/dna';
 export { IDOM };
 export * from './lib/registry';
 export * from './lib/mix';

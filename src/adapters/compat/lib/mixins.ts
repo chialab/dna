@@ -1,4 +1,4 @@
-import { extend } from '../../../lib/Component';
+import { extend } from '@chialab/dna';
 import { createSymbolKey } from '../../../lib/symbols';
 
 const symbol: unique symbol = createSymbolKey() as any;

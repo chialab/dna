@@ -1,6 +1,4 @@
-import { DOM, connect, disconnect } from '../../../lib/DOM';
-import { dispatchEvent as coreDispatchEvent } from '../../../lib/events';
-import { CustomElement } from '../../../lib/CustomElement';
+import { DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, CustomElement } from '@chialab/dna';
 
 (DOM as any).update = (element: Element, qualifiedName: string, oldValue: any, value: string) => {
     DOM.setAttribute(element, qualifiedName, value);

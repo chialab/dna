@@ -1,7 +1,7 @@
-import { Template } from '../../../lib/Template';
-import { render } from '../../../lib/render';
-export { h } from '../../../lib/HyperNode';
+import { h, render, Template } from '@chialab/dna';
 import { convert } from './template';
+
+export { h };
 
 export function patch(root: HTMLElement, template: Template, data?: any) {
     return render(root, convert.call(null, template, data));

@@ -1,8 +1,7 @@
-import { CustomElement } from '../../../lib/CustomElement';
-import { registry as ceRegistry } from '../../../lib/CustomElementRegistry';
+import { CustomElement, customElements } from '@chialab/dna';
 
 export function bootstrap(root: HTMLElement, callback: (node: CustomElement) => any = () => {}) {
-    const registry = ceRegistry.registry;
+    const registry = customElements.registry;
     // iterate registry entries in order to retrieve all registered tags
     for (let key in registry) {
         const constructor = registry[key];

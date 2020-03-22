@@ -1,4 +1,4 @@
-import { CustomElement } from '../../../lib/CustomElement';
+import { CustomElement } from '@chialab/dna';
 
 export function proxy(element: CustomElement) {
     /* eslint-disable-next-line */

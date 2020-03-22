@@ -1,4 +1,4 @@
-import { ClassFieldObserver, ClassFieldValidator } from '../../../lib/property';
+import { ClassFieldObserver, ClassFieldValidator } from '@chialab/dna';
 
 class CompatProperty {
     name?: string;

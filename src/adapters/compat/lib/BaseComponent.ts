@@ -1,12 +1,6 @@
-import { Template } from '../../../lib/Template';
-import { extend, Component, Properties } from '../../../lib/Component';
-import { render } from '../../../lib/render';
-import { DelegatedEventCallback } from '../../../lib/events';
-import { convert } from './template';
+import { extend, render, css, DOM, Component, Properties, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
-import { ClassFieldObserver } from '../../../lib/property';
-import { css } from '../../../lib/css';
-import { DOM } from '../../../lib/DOM';
+import { convert } from './template';
 
 const STYLES: { [key: string]: HTMLStyleElement } = {};
 

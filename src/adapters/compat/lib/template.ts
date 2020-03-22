@@ -1,6 +1,4 @@
-import { Template, TemplateItems } from '../../../lib/Template';
-import { HyperNode } from '../../../lib/HyperNode';
-import { html } from '../../../lib/html';
+import { html, HyperNode, Template, TemplateItems } from '@chialab/dna';
 
 export function convert(this: any, template: Template, data?: any): Template {
     if (typeof template === 'function') {

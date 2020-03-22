@@ -1,4 +1,4 @@
-import { customElements } from '../../../dna';
+import { customElements } from '@chialab/dna';
 
 Object.defineProperty(customElements, 'components', {
     configurable: false,

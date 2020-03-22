@@ -1,3 +1,3 @@
-import { DOM } from '../../../lib/DOM';
+import { DOM } from '@chialab/dna';
 
 export const namespace = DOM.window;
