@@ -170,6 +170,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         } else {
             if (isStyle && typeof template === 'string' && scope.is) {
                 template = css(scope.is as string, template);
+                root.setAttribute('name', scope.is);
             }
 
             if (isText(currentNode)) {

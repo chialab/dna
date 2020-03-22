@@ -1,9 +1,12 @@
 import * as DNA from '../../dist/adapters/compat/dna.js';
+import * as DNA_OLD from '@dnajs/idom';
 
 describe('[Compat] module', function() {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {
+        customElements: 'object',
+        CustomElementRegistry: 'function',
         DOM: 'object',
         extend: 'function',
         render: 'function',
@@ -23,20 +26,34 @@ describe('[Compat] module', function() {
         dispatchAsyncEvent: 'function',
         property: 'function',
         Component: 'function',
-        CustomElementRegistry: 'function',
         // COMPAT
+        namespace: 'object',
+        registry: 'object',
+        DNA_SYMBOL: 'symbol',
+        COMPONENT_SYMBOL: 'symbol',
+        NODE_SYMBOL: 'symbol',
+        CONNECTED_SYMBOL: 'symbol',
+        STYLE_SYMBOL: 'symbol',
+        MIXINS: 'object',
         IDOM: 'object',
+        IDOMMixin: 'function',
         mixin: 'function',
         BaseComponent: 'function',
         trust: 'function',
         prop: 'function',
         bootstrap: 'function',
         mix: 'function',
+        proxy: 'function',
+        scopeStyle: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
-            expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            if (ref === 'namespace') {
+                expect(DNA).to.have.property('namespace');
+            } else {
+                expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            }
         });
     }
 
@@ -48,5 +65,17 @@ describe('[Compat] module', function() {
         }
         const expected = Object.keys(EXPECTED_EXPORT_MAP).sort();
         expect(actual).to.deep.equal(expected);
+    });
+
+    it('should export all 2.x references', () => {
+        for (let ref in DNA_OLD) {
+            expect(DNA).to.have.property(ref);
+            if (Object.prototype.toString.call(DNA_OLD[ref]) === '[object Object]' && ref !== 'namespace') {
+                Object.keys(DNA_OLD[ref]).forEach((key) => {
+                    expect(DNA[ref]).to.have.property(key);
+                    expect(DNA[ref][key]).to.be.a(typeof DNA_OLD[ref][key]);
+                });
+            }
+        }
     });
 });

@@ -94,10 +94,26 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@chialab/proteins@^3.2.0":
+"@chialab/proteins@^3.0.0", "@chialab/proteins@^3.2.0":
   version "3.2.1"
   resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.2.1.tgz#7ea473f4d4b434619611258fdd45d9e345c44952"
   integrity sha512-1cfUqSySjIOepp3QOvvu2OeV4rEGBlwU0VIjwwaDc/TSKEXCPsAA41bO+AQbUbuz7NMsaIpOAYWzMT1UIie5eA==
+
+"@dnajs/core@^2.9.8":
+  version "2.9.8"
+  resolved "https://registry.npmjs.org/@dnajs/core/-/core-2.9.8.tgz#25b8966ea2d455e56e920dd35750eb84875350f8"
+  integrity sha512-MFXO0L3Nor4SL14oo6le7QbQaf/AeEqnsHpWRCoGIhSrNeORdbVs4O/2LZWRjzsew6m41F31e34sOSEXJSCoXA==
+  dependencies:
+    "@chialab/proteins" "^3.0.0"
+
+"@dnajs/idom@^2.9.8":
+  version "2.9.8"
+  resolved "https://registry.npmjs.org/@dnajs/idom/-/idom-2.9.8.tgz#7f2dbfd3f5243c8da6513fd68587d7236e959941"
+  integrity sha512-7+KP9kMR3yIYhbz0mJJlrdf68uMY/ktyypjab8BmLNJXFfTqRXtfkS34YuWfVEkFzqo0HnidYcdRM/Nqm+06Xw==
+  dependencies:
+    "@chialab/proteins" "^3.0.0"
+    "@dnajs/core" "^2.9.8"
+    incremental-dom "^0.5.1"
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
@@ -859,6 +875,11 @@ imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.npmjs.org/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
+
+incremental-dom@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmjs.org/incremental-dom/-/incremental-dom-0.5.1.tgz#52f4539c3e9eee7cd112a6da052fb7162fefb0c3"
+  integrity sha1-UvRTnD6e7nzREqbaBS+3Fi/vsMM=
 
 inflight@^1.0.4:
   version "1.0.6"

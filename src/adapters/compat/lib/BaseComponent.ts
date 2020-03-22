@@ -2,7 +2,8 @@ import { Template } from '../../../lib/Template';
 import { extend, Component, Properties } from '../../../lib/Component';
 import { render } from '../../../lib/render';
 import { DelegatedEventCallback } from '../../../lib/events';
-import { convertTemplate } from './IDOM';
+import { convert } from './template';
+import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { ClassFieldObserver } from '../../../lib/property';
 import { css } from '../../../lib/css';
 import { DOM } from '../../../lib/DOM';
@@ -22,6 +23,26 @@ export class BaseComponent extends Component {
 
     get node() {
         return this;
+    }
+
+    get [DNA_SYMBOL]() {
+        return true;
+    }
+
+    get [COMPONENT_SYMBOL]() {
+        return this;
+    }
+
+    get [NODE_SYMBOL]() {
+        return this;
+    }
+
+    get [CONNECTED_SYMBOL]() {
+        return this.isConnected;
+    }
+
+    get [STYLE_SYMBOL]() {
+        return this.querySelector(`style[name="${this.is}"]`);
     }
 
     get template(): any  {
@@ -66,7 +87,7 @@ export class BaseComponent extends Component {
         if (typeof template === 'undefined') {
             return;
         }
-        template = convertTemplate.call(this, template);
+        template = convert.call(this, template);
         if (typeof template === 'undefined') {
             return;
         }

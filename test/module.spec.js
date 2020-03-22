@@ -10,6 +10,8 @@ describe('module', function() {
     });
 
     const EXPECTED_EXPORT_MAP = {
+        customElements: 'object',
+        CustomElementRegistry: 'function',
         DOM: 'object',
         extend: 'function',
         render: 'function',
@@ -29,7 +31,6 @@ describe('module', function() {
         dispatchAsyncEvent: 'function',
         property: 'function',
         Component: 'function',
-        CustomElementRegistry: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {

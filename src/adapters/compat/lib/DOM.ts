@@ -2,6 +2,11 @@ import { DOM, connect, disconnect } from '../../../lib/DOM';
 import { dispatchEvent as coreDispatchEvent } from '../../../lib/events';
 import { CustomElement } from '../../../lib/CustomElement';
 
+(DOM as any).update = (element: Element, qualifiedName: string, oldValue: any, value: string) => {
+    DOM.setAttribute(element, qualifiedName, value);
+    return true;
+};
+
 (DOM as any).lifeCycle = function lifeCycle(value: boolean) {
     // DOM.emulate = value;
 };
@@ -24,3 +29,9 @@ import { CustomElement } from '../../../lib/CustomElement';
 (DOM as any).connect = connect;
 
 (DOM as any).disconnect = disconnect;
+
+(DOM as any).CONNECTED = 'connectedCallback';
+
+(DOM as any).DISCONNECTED = 'disconnectedCallback';
+
+(DOM as any).UPDATED = 'attributeChangedCallback';
