@@ -1,15 +1,14 @@
 import { html, HyperNode, Template, TemplateItems } from '@chialab/dna';
+import { warnCode } from './deprecations';
 
 export function convert(this: any, template: Template, data?: any): Template {
     if (typeof template === 'function') {
-        /* eslint-disable-next-line */
-        console.warn('function templates have been deprecated in DNA 3.0');
+        warnCode('TEMPLATE_FUNCTIONS');
         return convert((template as Function).call(this, data));
     }
     if (!template) {
         if (template === '' || template === 0) {
-            /* eslint-disable-next-line */
-            console.warn('zero and empty string values non-rendering has been deprecated in DNA 3.0');
+            warnCode('TEMPLATE_EMPTY_VALUES');
             return null;
         }
         return template;

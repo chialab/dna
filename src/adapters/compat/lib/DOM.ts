@@ -1,4 +1,5 @@
 import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, CustomElement } from '@chialab/dna';
+import { warnCode } from './deprecations';
 
 (DOM as any).Node = window.Node;
 
@@ -12,6 +13,7 @@ import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, C
 };
 
 (DOM as any).getNodeComponent = function getNodeComponent(node: Element) {
+    warnCode('PREFER_INSTANCE');
     if (!(node as CustomElement).is) {
         return null;
     }
@@ -19,6 +21,7 @@ import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, C
 };
 
 (DOM as any).getComponentNode = function getNodeComponent(node: Element) {
+    warnCode('PREFER_INSTANCE');
     return node;
 };
 

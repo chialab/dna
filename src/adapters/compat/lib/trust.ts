@@ -1,7 +1,7 @@
 import { html } from '@chialab/dna';
+import { warnCode } from './deprecations';
 
 export function trust(text: string) {
-    /* eslint-disable-next-line */
-    console.warn('trust helper has been deprecated in DNA 3.0');
+    warnCode('TRUST_HELPER');
     return html(text);
 }

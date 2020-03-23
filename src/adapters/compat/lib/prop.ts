@@ -1,4 +1,5 @@
 import { ClassFieldObserver, ClassFieldValidator } from '@chialab/dna';
+import { warnCode } from './deprecations';
 
 class CompatProperty {
     name?: string;
@@ -40,8 +41,6 @@ class CompatProperty {
     observe(observer: ClassFieldObserver|string) {
         this.observers = this.observers || [];
         if (typeof observer === 'string') {
-            /* eslint-disable-next-line */
-            console.warn('string method reference for property observer has been deprecated in DNA 3.0');
             let methodKey = observer;
             observer = function(this: any, oldValue: any, newValue: any) {
                 return this[methodKey](oldValue, newValue);
@@ -52,8 +51,6 @@ class CompatProperty {
     }
 
     dispatch(eventName: string) {
-        /* eslint-disable-next-line */
-        console.warn('dispatch custom event on property change has been deprecated in DNA 3.0');
         let prop = this;
         this.observers = this.observers || [];
         this.observers.push(function(this: any, oldValue: any, newValue: any) {
@@ -69,8 +66,7 @@ class CompatProperty {
 }
 
 export function prop(types: Function | Function[]) {
-    /* eslint-disable-next-line */
-    console.warn('prop helper has been deprecated in DNA 3.0');
+    warnCode('PREFER_PROPERTY_DESCRIPTOR');
 
     if (!Array.isArray(types)) {
         return new CompatProperty([types]);

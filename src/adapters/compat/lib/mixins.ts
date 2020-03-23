@@ -1,13 +1,13 @@
 import { extend } from '@chialab/dna';
 import { createSymbolKey } from '../../../lib/symbols';
+import { warnCode } from './deprecations';
 
 const symbol: unique symbol = createSymbolKey() as any;
 const mixin = (constructor: typeof HTMLElement) => {
     if ((constructor as any)[symbol]) {
         return (constructor as any)[symbol];
     }
-    /* eslint-disable-next-line */
-    console.warn('mixins had been deprecated in DNA 3.0');
+    warnCode('AVOID_MIXINS');
     return (constructor as any)[symbol] = extend(constructor);
 };
 

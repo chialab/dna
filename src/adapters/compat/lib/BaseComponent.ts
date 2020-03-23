@@ -1,6 +1,7 @@
 import { window, extend, render, css, DOM, Component, Properties, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
+import { warnCode } from './deprecations';
 
 const STYLES: { [key: string]: HTMLStyleElement } = {};
 
@@ -16,6 +17,7 @@ export class BaseComponent extends Component {
     readonly css?: string;
 
     get node() {
+        warnCode('PREFER_INSTANCE');
         return this;
     }
 
@@ -24,10 +26,12 @@ export class BaseComponent extends Component {
     }
 
     get [COMPONENT_SYMBOL]() {
+        warnCode('PREFER_INSTANCE');
         return this;
     }
 
     get [NODE_SYMBOL]() {
+        warnCode('PREFER_INSTANCE');
         return this;
     }
 
@@ -44,17 +48,33 @@ export class BaseComponent extends Component {
     }
 
     get listeners() {
-        const events = this.events || {};
         const listeners: { [key: string]: DelegatedEventCallback } = {};
-        for (let eventName in events) {
-            let listener = events[eventName] as DelegatedEventCallback;
-            if (typeof listener === 'string') {
-                /* eslint-disable-next-line */
-                console.warn('string method reference in event listeners has been deprecated in DNA 3.0');
-                listener = (this as any)[listener];
+
+        let proto = Object.getPrototypeOf(this);
+        let shouldWarn = false;
+        while (proto.constructor !== Component) {
+            let eventsDescriptor = Object.getOwnPropertyDescriptor(proto, 'events');
+            let eventsGetter = eventsDescriptor && eventsDescriptor.get;
+            if (eventsGetter) {
+                let descriptorListeners = eventsGetter.call(this) || {};
+                // register listeners
+                for (let eventPath in descriptorListeners) {
+                    shouldWarn = true;
+                    let listener = descriptorListeners[eventPath] as DelegatedEventCallback;
+                    if (typeof listener === 'string') {
+                        warnCode('LISTENER_STRING_REFERENCE');
+                        listener = (this as any)[listener];
+                    }
+                    listeners[eventPath] = listener;
+                }
             }
-            listeners[eventName] = listener;
+            proto = Object.getPrototypeOf(proto);
         }
+
+        if (shouldWarn) {
+            warnCode('PREFER_LISTENERS');
+        }
+
         return listeners;
     }
 
@@ -63,10 +83,15 @@ export class BaseComponent extends Component {
         this.classList.add(this.is as string);
 
         if (this.is && this.css && !STYLES[this.is]) {
+            warnCode('PREFER_STYLE');
             let content = css(this.is, this.css);
             let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
             style.textContent = content;
             window.document.head.appendChild(style);
+        }
+
+        if (this.template) {
+            warnCode('PREFER_RENDER');
         }
     }
 
@@ -95,8 +120,7 @@ export class BaseComponent extends Component {
     trigger(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
     trigger(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
     trigger(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
-        /* eslint-disable-next-line */
-        console.warn('`trigger` method has been deprecated in DNA 3.0');
+        warnCode('PREFER_DISPATCH_EVENT');
         return this.dispatchEvent(event as string, detail, bubbles, cancelable, composed);
     }
 
@@ -104,8 +128,7 @@ export class BaseComponent extends Component {
      * Compatibility alias to delegate.
      */
     delegate(event: string, selector: string | null, callback: DelegatedEventCallback) {
-        /* eslint-disable-next-line */
-        console.warn('`delegate` method has been deprecated in DNA 3.0');
+        warnCode('PREFER_DELEGATE_EVENT_LISTENER');
         return this.delegateEventListener(event, selector, callback);
     }
 
@@ -113,8 +136,7 @@ export class BaseComponent extends Component {
      * Compatibility alias to undelegate.
      */
     undelegate(event: string, selector: string | null, callback: DelegatedEventCallback) {
-        /* eslint-disable-next-line */
-        console.warn('`undelegate` method has been deprecated in DNA 3.0');
+        warnCode('PREFER_UNDELEGATE_EVENT_LISTENER');
         return this.undelegateEventListener(event, selector, callback);
     }
 
@@ -122,8 +144,7 @@ export class BaseComponent extends Component {
      * Compatibility alias to observe.
      */
     observeProperty(propertyName: string, callback: ClassFieldObserver) {
-        /* eslint-disable-next-line */
-        console.warn('`observeProperty` method has been deprecated in DNA 3.0');
+        warnCode('PREFER_OBSERVE');
         return this.observe(propertyName, callback);
     }
 
@@ -131,8 +152,7 @@ export class BaseComponent extends Component {
      * Compatibility alias to unobserve.
      */
     unobserveProperty(propertyName: string, callback: ClassFieldObserver) {
-        /* eslint-disable-next-line */
-        console.warn('`unobserveProperty` method has been deprecated in DNA 3.0');
+        warnCode('PREFER_UNOBSERVE');
         return this.unobserve(propertyName, callback);
     }
 }

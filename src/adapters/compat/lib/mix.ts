@@ -1,7 +1,7 @@
 import { mix as _mix } from '@chialab/proteins';
+import { warnCode } from './deprecations';
 
 export function mix(SuperClass: Function) {
-    /* eslint-disable-next-line */
-    console.warn('mix helper has been deprecated in DNA 3.0');
+    warnCode('MIX_HELPER');
     return _mix(SuperClass);
 }

@@ -1,7 +1,7 @@
 import { CustomElement } from '@chialab/dna';
+import { warnCode } from './deprecations';
 
 export function proxy(element: CustomElement) {
-    /* eslint-disable-next-line */
-    console.warn('proxy helper have been deprecated in DNA 3.0');
+    warnCode('PROXY_HELPER');
     return element;
 }

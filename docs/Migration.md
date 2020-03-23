@@ -16,62 +16,37 @@ You can also use module alias in your bundler ([webpack](https://webpack.js.org/
 
 ⚠️⚠️⚠️ Some features are not available in the compatibility layers and some breaking changes were needed, so we recommend to follow the [migration path](#migration).
 
-### Deprecations in the compatibility layer
+## Deprecations in the compatibility layer
 
-* `mix` has been deprecated. Import the reference directly from `@chialab/proteins`.
-* `render` signature has changed. Instead of passing as second argument the constructor of the component, now you should pass an instance.
-* Function templates have been deprecated and will log a warn in the console
-* Zero and empty string values are NOT rendered in templates but they will log a warn in the console
-* `events` getter has been deprecated in favour of the `listeners` getter
-* `props` helper has been deprecated in favour of the property descriptor
-* stringed prototype references for property observer or event listener have been deprecated and will log a warn in the console
-* Component `trigger` method has been deprecated in favour of the `dispatchEvent` method and will log a warn in the console
-* Component `delegate` method has been deprecated in favour of the `delegateEventListener` method and will log a warn in the console
-* Component `undelegate` method has been deprecated in favour of the `undelegateEventListener` method and will log a warn in the console
-* Component `observeProperty` method has been deprecated in favour of the `observe` method and will log a warn in the console
-* Component `unobserveProperty` method has been deprecated in favour of the `unobserve` method and will log a warn in the console
+#### `PREFER_RENDER`
 
-### Changes in the compatibility layer
-
-* Removing a node from the document will not remove its event listeners
-* Some event validation error messages have been changed
-* Some component constructor error messages have been changed
-* Some properties validation error messages have been changed
-
-## Migration
-
-This is a list of changes requested to completely migrate to the DNA 3.0 version.
-
-* Install and use the new `@chialab/dna` instead of the `@dnajs/idom` module
-* Extends the `Component` constructor instead of the `BaseComponent` class
+The `template` getter has been deprecated. Use the `render` method instead.
 
 ```diff
-- import { BaseComponent } from '@dnajs/idom';
-+ import { Component } from '@chialab/dna';
-
-- class Card extends BaseComponent {
-+ class Card extends Component {
+-get template() {
+-    return () => <div>Hello</div>;
+-}
++render() {
++    return <div>Hello</div>;
++}
 ```
 
-* Replace stringed prototype references with real references
+#### `PREFER_STYLE`
+
+The `css` getter has been deprecated. Use the `render` method instead.
 
 ```diff
-get events() {
-    return {
--        'click': 'method',
-+        'click': this.method,
-    };
-}
+-get css() {
+-    return ':host { color: red; }';
+-}
++render() {
++    return <style>:host { color: red; }</style>;
++}
 ```
 
-* Replace `events` getters with the new [`listeners` getter](./events#declarative-event-listeners)
+#### `PREFER_PROPERTY_DESCRIPTOR`
 
-```diff
-- get events() {
-+ get listeners() {
-```
-
-* Replace the `prop` helper with a [property descriptor]([Declare a property](./properties-and-attributes#declare-a-property))
+The `prop` helper has been deprecated in favour of the [property descriptor](./properties-and-attributes#property-descriptor).
 
 ```diff
 get properies() {
@@ -89,61 +64,200 @@ get properies() {
 }
 ```
 
-* Replace `trigger` calls
+#### `PREFER_LISTENERS`
+
+The `events` getter has been deprecated in favour of the [`listeners` getter](./events#declarative-event-listeners).
 
 ```diff
-- this.trigger('event', details);
-+ this.dispatchEvent('event', details);
+- get events() {
++ get listeners() {
+    return {
+        click: this.onClick,
+    }
+}
 ```
 
-* Replace `delegate` calls with `delegateEventListener`
+#### `LISTENER_STRING_REFERENCE`
+
+References to class methods using the name as string has been deprecated. Use direct reference to prototype methods.
 
 ```diff
-- this.delegate('event', 'button' , listener);
-+ this.delegateEventListener('event', 'button' , listener);
+get listeners() {
+    return {
+-        'click': 'onClick',
++        'click': this.onClick,
+    };
+}
 ```
 
-* Replace `undelegate` calls with `undelegateEventListener`
+#### `PREFER_OBSERVE`
 
-```diff
-- this.undelegate('event', 'button' , listener);
-+ this.undelegateEventListener('event', 'button' , listener);
-```
-
-* Replace `observeProperty` calls with `observe`
+The `observeProperty` method has been deprecated in favour of the [`observe` method](./properties-and-attributes#property-observers).
 
 ```diff
 - this.observeProperty('name', () => {});
 + this.observe('name', () => {});
 ```
 
-* Replace `unobserveProperty` calls with `unobserve`
+#### `PREFER_UNOBSERVE`
+
+The `unobserveProperty` method has been deprecated in favour of the [`unobserve` method](./properties-and-attributes#property-observers).
 
 ```diff
 - this.unobserveProperty('name', () => {});
 + this.unobserve('name', () => {});
 ```
 
-* Convert `template` getter to `render` method
+#### `PREFER_DISPATCH_EVENT`
+
+The `trigger` method has been deprecated in favour of the [`dispatchEvent` method](./events#dispatching-events).
 
 ```diff
--get template() {
--    return () => <div>Hello</div>;
--}
-+render() {
-+    return <div>Hello</div>;
-+}
+- this.trigger('event', details);
++ this.dispatchEvent('event', details);
 ```
 
-* Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references
+#### `PREFER_DELEGATE_EVENT_LISTENER`
+
+The `delegate` method has been deprecated in favour of the [`delegateEventListener` method](./events#delegation).
+
+```diff
+- this.delegate('event', 'button' , listener);
++ this.delegateEventListener('event', 'button' , listener);
+```
+
+#### `PREFER_UNDELEGATE_EVENT_LISTENER`
+
+The `undelegate` method has been deprecated in favour of the [`undelegateEventListener` method](./events#delegation).
+
+```diff
+- this.undelegate('event', 'button' , listener);
++ this.undelegateEventListener('event', 'button' , listener);
+```
+
+#### `RENDER_HELPER`
+
+The `render` helper changed the signature, now it accepts element instances instead of constructors:
+
+```diff
+- render(document.body, Article, { title: 'My first blog post' });
++ render(document.body, new Article({ title: 'My first blog post' }));
+```
+
+#### `TEMPLATE_FUNCTIONS`
+
+Template function have been deprecated since they are now useless (invoking the `h` helper is now side-effects free).
+
+```diff
+- return () => <h1>Hello</h1>;
++ return <h1>Hello</h1>;
+```
+
+#### `TEMPLATE_EMPTY_VALUES`
+
+Zero and empty strings are no more considered falsy values. It means that while in DNA 2 the interpolation of `0` results as an empty template, DNA 3 will print `'0'` in text nodes and attributes.
+
+#### `PREFER_INSTANCE`
+
+Helpers `DOM.getNodeComponent` and `DOM.getComponentNode` and `node` getter have been deprecated since they are now useless. The node **is** the component.
 
 ```diff
 -DOM.getNodeComponent(document.querySelector('.x-input')).value = 'Web Components';
 +document.querySelector('.x-input').value = 'Web Components';
+
 -DOM.getComponentNode(app).setAttribute('title', 'Web Components');
 +app.setAttribute('title', 'Web Components');
+
 -app.node.setAttribute('title', 'Web Components');
 +app.setAttribute('title', 'Web Components');
 ```
 
+#### `AVOID_MIXINS`
+
+Base class composability using mixins has been deprecated. Always use the `Component` class.
+
+#### `PROXY_HELPER`
+
+The `proxy` helper have been deprecated since it is now useless, see the [`extend` method](./helpers#extend).
+
+#### `TRUST_HELPER`
+
+The `trust` helper has been deprecated. Use the `html` helper instaed.
+
+```diff
+-import { trust } from '@chialab/dna/compat.js';
++import { html } from '@chialab/dna/compat.js';
+
+-<div>{trust('<h1>Title</h1'>')}</div>;
++<div>{html('<h1>Title</h1'>')}</div>;
+```
+
+#### `MIX_HELPER`
+
+The `mix` has been deprecated. Import the reference directly from [`@chialab/proteins`](https://www.npmjs.com/package/@chialab/proteins).
+
+```diff
+-import { mix } from '@chialab/dna/compat.js';
++import { mix } from '@chialab/proteins';
+```
+
+* `render` signature has changed. Instead of passing as second argument the constructor of the component, now you should pass an instance.
+
+## Breaking changes in the compatibility layer
+
+* Removing a node from the document will not remove its event listeners
+* Some event validation error messages have been changed
+* Some component constructor error messages have been changed
+* Some properties validation error messages have been changed
 * Life cycle hook invokations have been align with specification: now the `attributeChangedCallback` is called on every `setAttribute` even if the new value is the same of the old one, as well as `connectedCallback` is invoked on `appendChild` event if the node is already the last of the parent.
+
+## Migration
+
+This is a list of changes requested to completely migrate to the DNA 3.0 version.
+
+* Install and use the new `@chialab/dna` instead of the `@dnajs/idom` module
+* Extends the `Component` constructor instead of the `BaseComponent` class
+
+```diff
+- import { BaseComponent } from '@dnajs/idom';
++ import { Component } from '@chialab/dna';
+
+- class Card extends BaseComponent {
++ class Card extends Component {
+```
+
+* Convert `template` getter to `render` method ([PREFER_RENDER](./#prefer_render))
+
+* Convert `css` getter to `<style>` elements in `render` method ([PREFER_STYLE](./#prefer_style))
+
+* Replace the `prop` helper with a property descriptor ([PREFER_PROPERTY_DESCRIPTOR](./#prefer_property_descriptor))
+
+* Replace `events` getters with the new `listeners` getter ([PREFER_LISTENERS](./#prefer_listeners))
+
+* Replace stringed prototype references with real references in event listeners ([LISTENER_STRING_REFERENCE](./#listener_string_reference))
+
+* Replace `trigger` references with `dispatchEvents` ([PREFER_DISPATCH_EVENT](./#prefer_dispatch_event))
+
+* Replace `delegate` calls with `delegateEventListener` ([PREFER_DELEGATE_EVENT_LISTENER](./#prefer_delegate_event_listener))
+
+* Replace `undelegate` calls with `undelegateEventListener` ([PREFER_UNDELEGATE_EVENT_LISTENER](./#prefer_undelegate_event_listener))
+
+* Replace `observeProperty` calls with `observe` ([PREFER_OBSERVE](./#prefer_observe))
+
+* Replace `unobserveProperty` calls with `unobserve` ([PREFER_UNOBSERVE](./#prefer_unobserve))
+
+* Update `render` invokations ([RENDER_HELPER](./#render_helper))
+
+* Remove template functions ([TEMPLATE_FUNCTIONS](./#template_functions))
+
+* Check that your templates does not rely on the falsity of zero and empty string values ([TEMPLATE_EMPTY_VALUES](./#template_empty_values))
+
+* Replace all core mixins with the `Component` class ([AVOID_MIXINS](./#avoid_mixins))
+
+* Remove all `proxy` occurrences ([PROXY_HELPER](./#proxy_helper))
+
+* Replace `trust` occurrences with `html` ([TRUST_HELPER](./#trust_helper))
+
+* Import the `mix` helper from `@chialab/proteins` ([MIX_HELPER](./#mix_helper))
+
+* Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references ([PREFER_INSTANCE](./#prefer_instance))
