@@ -27,10 +27,7 @@ jobs:
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
-        run: |
-          yarn install
-          yarn link
-          yarn link @chialab/dna
+        run: yarn install
       - name: Run build script
         run: yarn run build
       - name: Cache distribution files
@@ -69,10 +66,7 @@ jobs:
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
-        run: |
-          yarn install
-          yarn link
-          yarn link @chialab/dna
+        run: yarn install
       - name: Fetch build artifacts
         uses: actions/cache@v1
         with:
@@ -110,10 +104,7 @@ jobs:
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
-        run: |
-          yarn install
-          yarn link
-          yarn link @chialab/dna
+        run: yarn install
       - name: Fetch build artifacts
         uses: actions/cache@v1
         with:
@@ -154,10 +145,7 @@ jobs:
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
-        run: |
-          yarn install
-          yarn link
-          yarn link @chialab/dna
+        run: yarn install
       - name: Fetch build artifacts
         uses: actions/cache@v1
         with:

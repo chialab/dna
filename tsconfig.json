@@ -14,7 +14,13 @@
     "noImplicitThis": true,
     "allowJs": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+        "@chialab/dna": [
+          "./src/dna.ts"
+        ]
+    }
   },
   "include": [
     "src/**/*.ts"
