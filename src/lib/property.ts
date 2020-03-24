@@ -89,6 +89,10 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      */
     setter?: (this: Element, newValue?: any) => any;
     /**
+     * The event to fire on property change.
+     */
+    event?: true|string;
+    /**
      * The property private symbol.
      */
     symbol?: symbol;

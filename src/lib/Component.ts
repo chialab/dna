@@ -225,6 +225,14 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 }
             }
 
+            if (property.event) {
+                let eventName = property.event === true ? `${propertyName}change` : property.event;
+                this.dispatchEvent(eventName, {
+                    newValue,
+                    oldValue,
+                });
+            }
+
             this.forceUpdate();
         }
 
@@ -438,8 +446,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * @param composed Is the event composed.
          */
         dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
-        dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
-        dispatchEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+        dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
+        dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
             return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
@@ -453,8 +461,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * @param composed Is the event composed.
          */
         dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-        dispatchAsyncEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-        dispatchAsyncEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+        dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
+        dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
             return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 

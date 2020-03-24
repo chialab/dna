@@ -731,6 +731,42 @@ describe('Component', function() {
             element.title = 'test';
             expect(propertyChangedCallback.count).to.be.equal(1);
         });
+
+        it('should dispatch custom event', () => {
+            const callback1 = spyFunction((event) => event);
+            const callback2 = spyFunction((event) => event);
+            class TestElement extends DNA.Component {
+                get properties() {
+                    return {
+                        age: {
+                            types: [Number],
+                            event: true,
+                            defaultValue: 20,
+                        },
+                    };
+                }
+
+                @DNA.property({ event: 'titleupdate' }) title = '';
+            }
+
+            DNA.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            element.addEventListener('agechange', callback1);
+            element.addEventListener('titleupdate', callback2);
+            expect(callback1.invoked).to.be.false;
+            expect(callback2.invoked).to.be.false;
+            element.age = 25;
+            expect(callback1.invoked).to.be.true;
+            expect(callback1.response.type).to.be.equal('agechange');
+            expect(callback1.response.detail.oldValue).to.be.equal(20);
+            expect(callback1.response.detail.newValue).to.be.equal(25);
+            element.title = 'Test';
+            expect(callback2.invoked).to.be.true;
+            expect(callback2.response.type).to.be.equal('titleupdate');
+            expect(callback2.response.detail.oldValue).to.be.equal('');
+            expect(callback2.response.detail.newValue).to.be.equal('Test');
+        });
     });
 
     describe('#appendChild', () => {
