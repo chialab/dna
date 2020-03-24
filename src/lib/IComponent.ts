@@ -1,41 +1,13 @@
-import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
 import { Template } from './Template';
 import { Scope } from './Scope';
 
-/**
- * A symbol which identify components.
- */
-export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
-
-/**
- * A symbol which identify emulated components.
- */
-export const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
-
-/**
- * Check if a node is a component.
- * @param node The node to check.
- */
-export const isComponent = (node: Element): node is IComponent => (node as any)[COMPONENT_SYMBOL];
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- */
-export const shouldEmulateLifeCycle = (node: Element): node is IComponent => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
-
-/**
- * The basic DNA Component interface.
- * It's a Custom Element, but with some extra useful method.
- * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
- */
 export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     /**
      * The defined component name.
      */
-    readonly is: string | undefined;
+    readonly is: string;
 
     /**
      * A set of properties to define to the node.
@@ -54,7 +26,7 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     /**
      * A set of delegated events to bind to the node.
      */
-    readonly template?: HTMLTemplateElement;
+    readonly template: HTMLTemplateElement|undefined;
 
     /**
      * The render scope reference of the node.
@@ -62,23 +34,14 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     readonly $: Scope|undefined;
 
     /**
-         * A list of slot nodes.
-         */
+     * A list of slot nodes.
+     */
     readonly slotChildNodes: Node[];
 
     /**
      * A list of CSSStyleSheet to apply to the component.
      */
     adoptedStyleSheets?: CSSStyleSheet[];
-
-    /**
-     * The DNA Custom Element constructor.
-     *
-     * @param node Instantiate the element using the given node instead of creating a new one.
-     * @param properties A set of initial properties for the element.
-     */
-    new(node?: T, properties?: { [key: string]: any; }): IComponent<T>;
-    new(properties?: { [key: string]: any; }): IComponent<T>;
 
     /**
      * Invoked each time the Custom Element is appended into a document-connected element.
@@ -161,7 +124,7 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
      * @param propertyName The name of the Property to unobserve.
      * @param callback The callback function to remove.
      */
-    unobserve(propertyName: string, callback: ClassFieldObserver):void;
+    unobserve(propertyName: string, callback: ClassFieldObserver): void;
 
     /**
      * Dispatch a custom Event.
@@ -194,7 +157,7 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
      * @param selector The selector to delegate
      * @param callback The callback to trigger when an Event matches the delegation
      */
-    delegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback): void;
+    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback): void;
 
     /**
      * Remove an Event delegation.
@@ -235,3 +198,25 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
      */
     replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T;
 }
+
+/* eslint-disable no-var */
+/**
+ * The basic DNA Component interface.
+ * It's a Custom Element, but with some extra useful method.
+ * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
+ */
+export declare var IComponent: {
+    /**
+     * An array containing the names of the attributes to observe.
+     */
+    readonly observedAttributes: string[];
+    /**
+     * The DNA Custom Element constructor.
+     *
+     * @param node Instantiate the element using the given node instead of creating a new one.
+     * @param properties A set of initial properties for the element.
+     */
+    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent;
+    new(properties?: { [key: string]: any; }): IComponent;
+    prototype: IComponent;
+};

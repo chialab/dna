@@ -1,6 +1,6 @@
-import { IComponent, customElements } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
-export function bootstrap(root: HTMLElement, callback: (node: IComponent) => any = () => {}) {
+export function bootstrap(root: HTMLElement, callback: (node: Component) => any = () => {}) {
     const registry = customElements.registry;
     // iterate registry entries in order to retrieve all registered tags
     for (let key in registry) {
@@ -12,7 +12,7 @@ export function bootstrap(root: HTMLElement, callback: (node: IComponent) => any
             const node = nodes[i];
             // check if already instantiated
             if (node instanceof constructor) {
-                callback(node as IComponent);
+                callback(node as Component);
             } else {
                 callback(new constructor(node as HTMLElement));
             }

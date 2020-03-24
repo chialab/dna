@@ -1,4 +1,4 @@
-import { window, extend, render, css, DOM, Component, Properties, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
+import { window, extend, render, css, DOM, Component, Template, DelegatedEventCallback, ClassFieldObserver } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { warnCode } from './deprecations';
@@ -78,7 +78,7 @@ export class BaseComponent extends Component {
         return listeners;
     }
 
-    constructor(node?: HTMLElement | Properties, properties?: Properties) {
+    constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
         super(node as HTMLElement, properties);
         this.classList.add(this.is as string);
 

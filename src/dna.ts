@@ -16,5 +16,4 @@ export { html, template, interpolate } from './lib/html';
 export { css } from './lib/css';
 export { AsyncEvent, DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter, property } from './lib/property';
-export { isComponent, IComponent } from './lib/IComponent';
-export { extend, Component, Properties } from './lib/Component';
+export { extend, Component } from './lib/Component';

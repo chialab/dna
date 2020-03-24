@@ -1,4 +1,4 @@
-import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, isComponent } from '@chialab/dna';
+import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, Component } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
 (DOM as any).Node = window.Node;
@@ -14,7 +14,7 @@ import { warnCode } from './deprecations';
 
 (DOM as any).getNodeComponent = function getNodeComponent(node: Element) {
     warnCode('PREFER_INSTANCE');
-    if (!isComponent(node)) {
+    if (!(node instanceof Component)) {
         return null;
     }
     return node;

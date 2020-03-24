@@ -1,7 +1,7 @@
-import { render as _render, IComponent, Properties } from '@chialab/dna';
+import { render as _render, Component } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
-export function render(root: HTMLElement, Component: IComponent, props: Properties) {
+export function render(root: HTMLElement, constructor: typeof Component, props: { [key: string]: any; }) {
     warnCode('RENDER_HELPER');
-    return _render(root, new Component(props));
+    return _render(root, new constructor(props));
 }

@@ -8,14 +8,14 @@ import { ClassElement } from './ClassElement';
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
  */
-export type ClassFieldObserver = (this: IComponent, oldValue: any, newValue: any) => any;
+export type ClassFieldObserver = <T extends HTMLElement>(this: T, oldValue: any, newValue: any) => any;
 
 /**
  * A validation function for the class field.
  *
  * @param value The value to set.
  */
-export type ClassFieldValidator = (this: IComponent, value: any) => boolean;
+export type ClassFieldValidator = <T extends HTMLElement>(this: T, value: any) => boolean;
 
 /**
  * Convert attribute to property value.
@@ -23,7 +23,7 @@ export type ClassFieldValidator = (this: IComponent, value: any) => boolean;
  * @param value The attributue value.
  * @return The property value.
  */
-export type ClassFieldAttributeConverter = (this: IComponent, value: string|null) => any;
+export type ClassFieldAttributeConverter = <T extends HTMLElement>(this: T, value: string|null) => any;
 
 /**
  * Convert property to attribute value.
@@ -31,7 +31,7 @@ export type ClassFieldAttributeConverter = (this: IComponent, value: string|null
  * @param value The property value.
  * @return The attributue value.
  */
-export type ClassFieldPropertyConverter = (this: IComponent, value: any) => string|null|undefined;
+export type ClassFieldPropertyConverter = <T extends HTMLElement>(this: T, value: any) => string|null|undefined;
 
 /**
  * A list of properties for an class field description.
@@ -140,7 +140,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
             initializer(this: IComponent) {
                 return this.initProperty(String(element.key), symbol, descriptor, element.initializer);
             },
-            finisher(constructor: Function) {
+            finisher(constructor: typeof IComponent) {
                 constructor.prototype.defineProperty(String(element.key), descriptor, symbol);
             },
         };

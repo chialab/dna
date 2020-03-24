@@ -36,10 +36,7 @@ export {
     ClassFieldPropertyConverter,
     property,
     extend,
-    isComponent,
-    IComponent,
     Component,
-    Properties,
 } from '@chialab/dna';
 export { IDOM };
 export * from './lib/registry';

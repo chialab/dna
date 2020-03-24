@@ -1,8 +1,8 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { IComponent, COMPONENT_SYMBOL, EMULATE_LIFECYCLE_SYMBOL } from './IComponent';
+import { IComponent } from './IComponent';
 import { registry } from './CustomElementRegistry';
-import { DOM, isElement, isConnected, connect, cloneChildNodes } from './DOM';
+import { DOM, COMPONENT_SYMBOL, EMULATE_LIFECYCLE_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template } from './Template';
@@ -14,11 +14,6 @@ import { template } from './html';
 const { document, HTMLElement } = window;
 
 /**
- * A set of component properties.
- */
-export type Properties = { [key: string]: any; };
-
-/**
  * A Symbol which contains all Property instances of a Component.
  */
 const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
@@ -28,584 +23,588 @@ const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param constructor The base HTMLElement constructor to extend.
  * @return The extend class.
  */
-const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): IComponent<T>, prototype: IComponent<T> } =>
-    class Component extends (constructor as typeof HTMLElement) {
-        /**
-         * An array containing the names of the attributes to observe.
-         */
-        static readonly observedAttributes: string[] = [];
+const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component extends (constructor as typeof HTMLElement) {
+    /**
+     * An array containing the names of the attributes to observe.
+     */
+    static readonly observedAttributes: string[] = [];
 
-        /**
-         * The tag name used for Component definition.
-         */
-        get is(): string {
-            return undefined as unknown as string;
+    /**
+     * The tag name used for Component definition.
+     */
+    get is(): string {
+        return undefined as unknown as string;
+    }
+
+    /**
+     * A set of properties to define to the node.
+     */
+    readonly properties?: {
+        [key: string]: ClassFieldDescriptor | Function | Function[];
+    };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
+    readonly listeners?: {
+        [key: string]: DelegatedEventCallback;
+    };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
+    get template(): HTMLTemplateElement | undefined {
+        if (!this.ownerDocument) {
+            return undefined;
+        }
+        return this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+    }
+
+    /**
+     * A list of CSSStyleSheet to apply to the component.
+     */
+    adoptedStyleSheets?: CSSStyleSheet[];
+
+    /**
+     * A flag with the connected value of the node.
+     */
+    get isConnected(): boolean {
+        return isConnected(this);
+    }
+
+    /**
+     * The render scope reference of the node.
+     */
+    get $() {
+        return getScope(this);
+    }
+
+    /**
+     * A list of slot nodes.
+     */
+    get slotChildNodes() {
+        return getSlotted(this);
+    }
+
+    /**
+     * Create a new Component instance.
+     * @param node Instantiate the element using the given node instead of creating a new one.
+     * @param properties A set of initial properties for the element.
+     */
+    constructor(node?: HTMLElement | { [key: string]: any; }, properties: { [key: string]: any; } = {}) {
+        super();
+
+        let element = node as this;
+        let props = properties as { [key: string]: any; };
+        if (!isElement(element)) {
+            props = node || {};
+            element = this;
+        } else {
+            Object.setPrototypeOf(element, this);
         }
 
-        /**
-         * A set of properties to define to the node.
-         */
-        readonly properties?: {
-            [key: string]: ClassFieldDescriptor|Function|Function[];
+        (element as any)[COMPONENT_SYMBOL] = true;
+        setScope(element, createScope(element));
+        setSlotted(element, cloneChildNodes(this));
+
+        const propertyDescriptors = {} as {
+            [key: string]: ClassFieldDescriptor;
         };
 
-        /**
-         * A set of delegated events to bind to the node.
-         */
-        readonly listeners?: {
-            [key: string]: DelegatedEventCallback;
-        };
-
-        /**
-         * A set of delegated events to bind to the node.
-         */
-        get template(): HTMLTemplateElement | undefined {
-            if (!this.ownerDocument) {
-                return undefined;
+        let proto = Object.getPrototypeOf(element);
+        while (proto.constructor !== Component) {
+            let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
+            let listenersDescriptor = Object.getOwnPropertyDescriptor(proto, 'listeners');
+            let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
+            let listenersGetter = listenersDescriptor && listenersDescriptor.get;
+            if (propertiesGetter) {
+                let descriptorProperties = propertiesGetter.call(element) || {};
+                for (let propertyKey in descriptorProperties) {
+                    if (!(propertyKey in propertyDescriptors)) {
+                        let descriptor = descriptorProperties[propertyKey];
+                        if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
+                            descriptor = { types: descriptor };
+                        }
+                        propertyDescriptors[propertyKey] = descriptor;
+                    }
+                }
             }
-            return this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
-        }
-
-        /**
-         * A list of CSSStyleSheet to apply to the component.
-         */
-        adoptedStyleSheets?: CSSStyleSheet[];
-
-        /**
-         * A flag with the connected value of the node.
-         */
-        get isConnected(): boolean {
-            return isConnected(this);
-        }
-
-        /**
-         * The render scope reference of the node.
-         */
-        get $() {
-            return getScope(this);
-        }
-
-        /**
-         * A list of slot nodes.
-         */
-        get slotChildNodes() {
-            return getSlotted(this);
-        }
-
-        /**
-         * Create a new Component instance.
-         * @param node Instantiate the element using the given node instead of creating a new one.
-         * @param properties A set of initial properties for the element.
-         */
-        constructor(node?: HTMLElement | Properties, properties: Properties = {}) {
-            super();
-
-            let element: IComponent<T> = node as IComponent<T>;
-            let props: Properties = properties as Properties;
-            if (!isElement(element)) {
-                props = node || {};
-                element = this as unknown as IComponent<T>;
-            } else {
-                Object.setPrototypeOf(element, this);
+            if (listenersGetter) {
+                let descriptorListeners = listenersGetter.call(element) || {};
+                // register listeners
+                for (let eventPath in descriptorListeners) {
+                    let paths = eventPath.trim().split(' ');
+                    this.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
+                }
             }
+            proto = Object.getPrototypeOf(proto);
+        }
 
-            (element as any)[COMPONENT_SYMBOL] = true;
-            setScope(element, createScope(element));
-            setSlotted(element, cloneChildNodes(this));
+        // setup properties
+        for (let propertyKey in propertyDescriptors) {
+            let descriptor = propertyDescriptors[propertyKey];
+            let symbol = this.defineProperty(propertyKey, descriptor);
+            if (!(propertyKey in props)) {
+                this.initProperty(propertyKey, symbol, descriptor);
+            }
+        }
+        for (let propertyKey in props) {
+            (element as any)[propertyKey] = props[propertyKey];
+        }
 
-            const propertyDescriptors = {} as {
-                [key: string]: ClassFieldDescriptor;
-            };
+        if (element.isConnected) {
+            connect(element);
+        }
 
-            let proto = Object.getPrototypeOf(element);
-            while (proto.constructor !== Component) {
-                let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
-                let listenersDescriptor = Object.getOwnPropertyDescriptor(proto, 'listeners');
-                let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
-                let listenersGetter = listenersDescriptor && listenersDescriptor.get;
-                if (propertiesGetter) {
-                    let descriptorProperties = propertiesGetter.call(element) || {};
-                    for (let propertyKey in descriptorProperties) {
-                        if (!(propertyKey in propertyDescriptors)) {
-                            let descriptor = descriptorProperties[propertyKey];
-                            if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
-                                descriptor = { types: descriptor };
-                            }
-                            propertyDescriptors[propertyKey] = descriptor;
+        return element;
+    }
+
+    /**
+     * Invoked each time the Component is appended into a document-connected element.
+     * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+     */
+    connectedCallback() {
+        // force the is attribute for styling
+        this.setAttribute('is', this.is);
+        // trigger a re-render when the Node is connected
+        this.forceUpdate();
+    }
+
+    /**
+     * Invoked each time the Component is disconnected from the document's DOM.
+     */
+    disconnectedCallback() { }
+
+    /**
+     * Invoked each time one of the Component's attributes is added, removed, or changed.
+     *
+     * @param attributeName The name of the updated attribute.
+     * @param oldValue The previous value of the attribute.
+     * @param newValue The new value for the attribute (null if removed).
+     */
+    attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
+        const properties = (this as any)[PROPERTIES_SYMBOL];
+        let property: ClassFieldDescriptor | undefined;
+        for (let propertyKey in properties) {
+            let prop = properties[propertyKey];
+            if (prop.attribute === attributeName) {
+                property = prop;
+                break;
+            }
+        }
+
+        if (!property) {
+            return;
+        }
+
+        // update the Component Property value
+        (this as any)[property.name as string] = (property.fromAttribute as ClassFieldAttributeConverter).call(this as any, newValue);
+    }
+
+    /**
+     * Invoked each time one of the Component's properties is added, removed, or changed.
+     *
+     * @param propertyName The name of the changed property.
+     * @param oldValue The previous value of the property.
+     * @param newValue The new value for the property (undefined if removed).
+     */
+    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
+        const property = this.getProperty(propertyName) as ClassFieldDescriptor;
+        if (property.attribute && property.toAttribute) {
+            let value = property.toAttribute.call(this as any, newValue);
+            if (value === null) {
+                this.removeAttribute(property.attribute as string);
+            } else if (value !== undefined) {
+                this.setAttribute(property.attribute as string, value);
+            }
+        }
+
+        if (property.event) {
+            let eventName = property.event === true ? `${propertyName}change` : property.event;
+            this.dispatchEvent(eventName, {
+                newValue,
+                oldValue,
+            });
+        }
+
+        this.forceUpdate();
+    }
+
+    /**
+     * Retrieve property descriptor.
+     * @param propertyKey The name of the property.
+     * @return The class field descriptor.
+     */
+    getProperty(propertyKey: string): ClassFieldDescriptor | null {
+        const descriptors = (this as any)[PROPERTIES_SYMBOL];
+        if (!descriptors) {
+            return null;
+        }
+        return descriptors[propertyKey] || null;
+    }
+
+    /**
+     * Define an observed property.
+     * @param propertyKey THe name of the class field.
+     * @param descriptor The property descriptor.
+     * @param symbol The symbol to use to store property value.
+     * @return The symbol used to store property value.
+     */
+    defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
+        const observedAttributes = (this.constructor as typeof Component).observedAttributes;
+        const descriptors = (this as any)[PROPERTIES_SYMBOL] = (this as any)[PROPERTIES_SYMBOL] || {};
+        descriptors[propertyKey] = descriptor;
+        (descriptor as any).__proto__ = null;
+        descriptor.name = propertyKey;
+        descriptor.symbol = symbol;
+
+        let hasAttribute = descriptor.attribute || observedAttributes.indexOf(propertyKey) !== -1;
+        let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
+        descriptor.attribute = attribute;
+
+        let types: Function[] = descriptor.types as Function[] || [];
+        if (!Array.isArray(types)) {
+            types = [types];
+        }
+        descriptor.types = types;
+
+        if (attribute) {
+            descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
+                if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
+                    if (newValue === '' || newValue === attribute) {
+                        // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
+                        return true;
+                    }
+                    return false;
+                }
+                if (newValue) {
+                    if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
+                        return parseFloat(newValue);
+                    }
+                    if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
+                        try {
+                            return JSON.parse(newValue as string);
+                        } catch {
+                            //
                         }
                     }
                 }
-                if (listenersGetter) {
-                    let descriptorListeners = listenersGetter.call(element) || {};
-                    // register listeners
-                    for (let eventPath in descriptorListeners) {
-                        let paths = eventPath.trim().split(' ');
-                        this.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
-                    }
+                return newValue;
+            });
+            descriptor.toAttribute = descriptor.toAttribute || ((newValue) => {
+                let falsy = newValue == null || newValue === false;
+                if (falsy) {
+                    // a falsy value should remove the attribute
+                    return null;
                 }
-                proto = Object.getPrototypeOf(proto);
-            }
-
-            // setup properties
-            for (let propertyKey in propertyDescriptors) {
-                let descriptor = propertyDescriptors[propertyKey];
-                let symbol = this.defineProperty(propertyKey, descriptor);
-                if (!(propertyKey in props)) {
-                    this.initProperty(propertyKey, symbol, descriptor);
+                if (typeof newValue === 'object') {
+                    // objects should be ignored
+                    return;
                 }
-            }
-            for (let propertyKey in props) {
-                (element as any)[propertyKey] = props[propertyKey];
-            }
-
-            if (element.isConnected) {
-                connect(element);
-            }
-
-            return element as unknown as this;
+                // if the value is `true` should set an empty attribute
+                if (newValue === true) {
+                    return '';
+                }
+                // otherwise just set the value
+                return newValue;
+            });
         }
 
-        /**
-         * Invoked each time the Component is appended into a document-connected element.
-         * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
-         */
-        connectedCallback() {
-            // force the is attribute for styling
-            this.setAttribute('is', this.is);
-            // trigger a re-render when the Node is connected
-            this.forceUpdate();
+        let observers = descriptor.observers || [];
+        if (descriptor.observe) {
+            observers = [descriptor.observe, ...observers];
         }
+        descriptor.observers = observers;
 
-        /**
-         * Invoked each time the Component is disconnected from the document's DOM.
-         */
-        disconnectedCallback() {}
+        const validate = typeof descriptor.validate === 'function' && descriptor.validate;
+        const finalDescriptor: PropertyDescriptor = {
+            enumerable: true,
+        };
 
-        /**
-         * Invoked each time one of the Component's attributes is added, removed, or changed.
-         *
-         * @param attributeName The name of the updated attribute.
-         * @param oldValue The previous value of the attribute.
-         * @param newValue The new value for the attribute (null if removed).
-         */
-        attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-            const properties = (this as any)[PROPERTIES_SYMBOL];
-            let property: ClassFieldDescriptor | undefined;
-            for (let propertyKey in properties) {
-                let prop = properties[propertyKey];
-                if (prop.attribute === attributeName) {
-                    property = prop;
-                    break;
-                }
-            }
+        const getter = descriptor.getter || ((value) => value);
+        const get = function get(this: any) {
+            return getter.call(this, this[symbol]);
+        };
 
-            if (!property) {
+        const setter = descriptor.setter || ((value) => value);
+        const set = function set(this: any, value: any) {
+            return setter.call(this, value);
+        };
+
+        finalDescriptor.get = get;
+        finalDescriptor.set = function(this: any, newValue: any) {
+            const oldValue = this[symbol];
+            newValue = set.call(this, newValue);
+
+            if (oldValue === newValue) {
+                // no changes
                 return;
             }
 
-            // update the Component Property value
-            (this as any)[property.name as string] = (property.fromAttribute as ClassFieldAttributeConverter).call(this as any, newValue);
-        }
-
-        /**
-         * Invoked each time one of the Component's properties is added, removed, or changed.
-         *
-         * @param propertyName The name of the changed property.
-         * @param oldValue The previous value of the property.
-         * @param newValue The new value for the property (undefined if removed).
-         */
-        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-            const property = this.getProperty(propertyName) as ClassFieldDescriptor;
-            if (property.attribute && property.toAttribute) {
-                let value = property.toAttribute.call(this as any, newValue);
-                if (value === null) {
-                    this.removeAttribute(property.attribute as string);
-                } else if (value !== undefined) {
-                    this.setAttribute(property.attribute as string, value);
+            const falsy = newValue == null || newValue === false;
+            // if types or custom validator has been set, check the value validity
+            if (!falsy) {
+                let valid = true;
+                if (types.length) {
+                    // check if the value is an instanceof of at least one constructor
+                    valid = types.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
+                }
+                if (valid && validate) {
+                    valid = validate.call(this, newValue);
+                }
+                if (!valid) {
+                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
                 }
             }
 
-            if (property.event) {
-                let eventName = property.event === true ? `${propertyName}change` : property.event;
-                this.dispatchEvent(eventName, {
-                    newValue,
-                    oldValue,
-                });
+            this[symbol] = newValue;
+
+            if (observers) {
+                observers.forEach((observer) => observer.call(this, oldValue, newValue));
             }
 
-            this.forceUpdate();
-        }
+            // trigger Property changes
+            this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
+        };
 
-        /**
-         * Retrieve property descriptor.
-         * @param propertyKey The name of the property.
-         * @return The class field descriptor.
-         */
-        getProperty(propertyKey: string): ClassFieldDescriptor | null {
-            const descriptors = (this as any)[PROPERTIES_SYMBOL];
-            if (!descriptors) {
-                return null;
-            }
-            return descriptors[propertyKey] || null;
-        }
+        Object.defineProperty(this, propertyKey, finalDescriptor);
+        return symbol;
+    }
 
-        /**
-         * Define an observed property.
-         * @param propertyKey THe name of the class field.
-         * @param descriptor The property descriptor.
-         * @param symbol The symbol to use to store property value.
-         * @return The symbol used to store property value.
-         */
-        defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
-            const observedAttributes = (this.constructor as typeof Component).observedAttributes;
-            const descriptors = (this as any)[PROPERTIES_SYMBOL] = (this as any)[PROPERTIES_SYMBOL] || {};
-            descriptors[propertyKey] = descriptor;
-            (descriptor as any).__proto__ = null;
-            descriptor.name = propertyKey;
-            descriptor.symbol = symbol;
-
-            let hasAttribute = descriptor.attribute || observedAttributes.indexOf(propertyKey) !== -1;
-            let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
-            descriptor.attribute = attribute;
-
-            let types: Function[] = descriptor.types as Function[] || [];
-            if (!Array.isArray(types)) {
-                types = [types];
-            }
-            descriptor.types = types;
-
-            if (attribute) {
-                descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
-                    if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
-                        if (newValue === '' || newValue === attribute) {
-                            // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
-                            return true;
-                        }
-                        return false;
-                    }
-                    if (newValue) {
-                        if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
-                            return parseFloat(newValue);
-                        }
-                        if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
-                            try {
-                                return JSON.parse(newValue as string);
-                            } catch {
-                                //
-                            }
-                        }
-                    }
-                    return newValue;
-                });
-                descriptor.toAttribute = descriptor.toAttribute || ((newValue) => {
-                    let falsy = newValue == null || newValue === false;
-                    if (falsy) {
-                        // a falsy value should remove the attribute
-                        return null;
-                    }
-                    if (typeof newValue === 'object') {
-                        // objects should be ignored
-                        return;
-                    }
-                    // if the value is `true` should set an empty attribute
-                    if (newValue === true) {
-                        return '';
-                    }
-                    // otherwise just set the value
-                    return newValue;
-                });
-            }
-
-            let observers = descriptor.observers || [];
-            if (descriptor.observe) {
-                observers = [descriptor.observe, ...observers];
-            }
-            descriptor.observers = observers;
-
-            const validate = typeof descriptor.validate === 'function' && descriptor.validate;
-            const finalDescriptor: PropertyDescriptor = {
-                enumerable: true,
-            };
-
-            const getter = descriptor.getter || ((value) => value);
-            const get = function get(this: any) {
-                return getter.call(this, this[symbol]);
-            };
-
-            const setter = descriptor.setter || ((value) => value);
-            const set = function set(this: any, value: any) {
-                return setter.call(this, value);
-            };
-
-            finalDescriptor.get = get;
-            finalDescriptor.set = function(this: any, newValue: any) {
-                const oldValue = this[symbol];
-                newValue = set.call(this, newValue);
-
-                if (oldValue === newValue) {
-                    // no changes
-                    return;
-                }
-
-                const falsy = newValue == null || newValue === false;
-                // if types or custom validator has been set, check the value validity
-                if (!falsy) {
-                    let valid = true;
-                    if (types.length) {
-                        // check if the value is an instanceof of at least one constructor
-                        valid = types.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
-                    }
-                    if (valid && validate) {
-                        valid = validate.call(this, newValue);
-                    }
-                    if (!valid) {
-                        throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
-                    }
-                }
-
-                this[symbol] = newValue;
-
-                if (observers) {
-                    observers.forEach((observer) => observer.call(this, oldValue, newValue));
-                }
-
-                // trigger Property changes
-                this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
-            };
-
-            Object.defineProperty(this, propertyKey, finalDescriptor);
-            return symbol;
-        }
-
-        /**
-         * Initialize instance property.
-         *
-         * @param propertyKey The property name.
-         * @param symbol The property symbolic key.
-         * @param descriptor The property descriptor.
-         * @param initializer The initializer function of the decorator.
-         * @return The current property value.
-         */
-        initProperty(propertyKey: string, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any {
-            let target = this as any;
-            if (typeof target[symbol] !== 'undefined') {
-                return target[symbol];
-            }
-            // remove old prototype property definition Chrome < 40
-            delete target[propertyKey];
-            if (typeof initializer === 'function') {
-                target[symbol] = initializer.call(target);
-            } else if ('value' in descriptor) {
-                target[symbol] = descriptor.value;
-            } else if ('defaultValue' in descriptor) {
-                target[symbol] = descriptor.defaultValue;
-            }
+    /**
+     * Initialize instance property.
+     *
+     * @param propertyKey The property name.
+     * @param symbol The property symbolic key.
+     * @param descriptor The property descriptor.
+     * @param initializer The initializer function of the decorator.
+     * @return The current property value.
+     */
+    initProperty(propertyKey: string, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any {
+        let target = this as any;
+        if (typeof target[symbol] !== 'undefined') {
             return target[symbol];
         }
-
-        /**
-         * Observe a Component Property.
-         *
-         * @param propertyName The name of the Property to observe
-         * @param callback The callback function
-         */
-        observe(propertyName: string, callback: ClassFieldObserver) {
-            const property = this.getProperty(propertyName);
-            if (!property) {
-                throw new Error(`Missing property ${propertyName}`);
-            }
-            const observers = property.observers as Function[];
-            observers.push(callback);
+        // remove old prototype property definition Chrome < 40
+        delete target[propertyKey];
+        if (typeof initializer === 'function') {
+            target[symbol] = initializer.call(target);
+        } else if ('value' in descriptor) {
+            target[symbol] = descriptor.value;
+        } else if ('defaultValue' in descriptor) {
+            target[symbol] = descriptor.defaultValue;
         }
+        return target[symbol];
+    }
 
-        /**
-         * Unobserve a Component Property.
-         *
-         * @param propertyName The name of the Property to unobserve
-         * @param callback The callback function to remove
-         */
-        unobserve(propertyName: string, callback: ClassFieldObserver) {
-            const property = this.getProperty(propertyName);
-            if (!property) {
-                throw new Error(`Missing property ${propertyName}`);
-            }
-            const observers = property.observers as Function[];
-            const io = observers.indexOf(callback);
-            if (io !== -1) {
-                observers.splice(io, 1);
-            }
+    /**
+     * Observe a Component Property.
+     *
+     * @param propertyName The name of the Property to observe
+     * @param callback The callback function
+     */
+    observe(propertyName: string, callback: ClassFieldObserver) {
+        const property = this.getProperty(propertyName);
+        if (!property) {
+            throw new Error(`Missing property ${propertyName}`);
         }
+        const observers = property.observers as Function[];
+        observers.push(callback);
+    }
 
-        /**
-         * Dispatch a custom Event.
-         *
-         * @param event The event to dispatch or the name of the synthetic event to create.
-         * @param detail Detail object of the event.
-         * @param bubbles Should the event bubble.
-         * @param cancelable Should the event be cancelable.
-         * @param composed Is the event composed.
-         */
-        dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
-        dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
-        dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
-            return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+    /**
+     * Unobserve a Component Property.
+     *
+     * @param propertyName The name of the Property to unobserve
+     * @param callback The callback function to remove
+     */
+    unobserve(propertyName: string, callback: ClassFieldObserver) {
+        const property = this.getProperty(propertyName);
+        if (!property) {
+            throw new Error(`Missing property ${propertyName}`);
         }
+        const observers = property.observers as Function[];
+        const io = observers.indexOf(callback);
+        if (io !== -1) {
+            observers.splice(io, 1);
+        }
+    }
 
-        /**
-         * Dispatch an async custom Event.
-         *
-         * @param event The event to dispatch or the name of the synthetic event to create.
-         * @param detail Detail object of the event.
-         * @param bubbles Should the event bubble.
-         * @param cancelable Should the event be cancelable.
-         * @param composed Is the event composed.
-         */
-        dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-        dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-        dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
-            return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
-        }
+    /**
+     * Dispatch a custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
+    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
+    dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+        return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+    }
 
-        /**
-         * Delegate an Event listener.
-         *
-         * @param eventName The event name to listen
-         * @param selector The selector to delegate
-         * @param callback The callback to trigger when an Event matches the delegation
-         */
-        delegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback) {
-            return delegateEventListener(this, event, selector, callback);
-        }
+    /**
+     * Dispatch an async custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
+    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
+    dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+        return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
+    }
 
-        /**
-         * Remove an Event delegation.
-         *
-         * @param eventName The Event name to undelegate
-         * @param selector The selector to undelegate
-         * @param callback The callback to remove
-         */
-        undelegateEventListener(event: string, selector: string|null, callback: DelegatedEventCallback) {
-            return undelegateEventListener(this, event, selector, callback);
-        }
+    /**
+     * Delegate an Event listener.
+     *
+     * @param eventName The event name to listen
+     * @param selector The selector to delegate
+     * @param callback The callback to trigger when an Event matches the delegation
+     */
+    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback) {
+        return delegateEventListener(this, event, selector, callback);
+    }
 
-        /**
-         * Render method of the Component.
-         *
-         * @return The instances of the rendered Components and/or Nodes
-         */
-        render(): Template | undefined {
-            const tpl = this.template;
-            if (tpl) {
-                return template(tpl, this);
-            }
-            return this.slotChildNodes;
-        }
+    /**
+     * Remove an Event delegation.
+     *
+     * @param eventName The Event name to undelegate
+     * @param selector The selector to undelegate
+     * @param callback The callback to remove
+     */
+    undelegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback) {
+        return undelegateEventListener(this, event, selector, callback);
+    }
 
-        /**
-         * Force an element to re-render.
-         */
-        forceUpdate() {
-            const template = this.render();
-            if (template) {
-                render(this, template);
-            }
+    /**
+     * Render method of the Component.
+     *
+     * @return The instances of the rendered Components and/or Nodes
+     */
+    render(): Template | undefined {
+        const tpl = this.template;
+        if (tpl) {
+            return template(tpl, this);
         }
+        return this.slotChildNodes;
+    }
 
-        /**
-         * Append a child to the Component.
-         *
-         * @param newChild The child to add.
-         */
-        appendChild<T extends Node>(newChild: T): T {
-            return DOM.appendChild(this, newChild);
+    /**
+     * Force an element to re-render.
+     */
+    forceUpdate() {
+        const template = this.render();
+        if (template) {
+            render(this, template);
         }
+    }
 
-        /**
-         * Append a slot child to the Component.
-         *
-         * @param newChild The child to add.
-         */
-        appendSlotChild<T extends Node>(newChild: T): T {
-            return DOM.appendChild(this, newChild, true);
-        }
+    /**
+     * Append a child to the Component.
+     *
+     * @param newChild The child to add.
+     */
+    appendChild<T extends Node>(newChild: T): T {
+        return DOM.appendChild(this, newChild);
+    }
 
-        /**
-         * Remove a child from the Component.
-         *
-         * @param {Node} oldChild The child to remove.
-         */
-        removeChild<T extends Node>(oldChild: T): T {
-            return DOM.removeChild(this, oldChild);
-        }
+    /**
+     * Append a slot child to the Component.
+     *
+     * @param newChild The child to add.
+     */
+    appendSlotChild<T extends Node>(newChild: T): T {
+        return DOM.appendChild(this, newChild, true);
+    }
 
-        /**
-         * Remove a slot child from the Component.
-         *
-         * @param {Node} oldChild The child to remove.
-         */
-        removeSlotChild<T extends Node>(oldChild: T): T {
-            return DOM.removeChild(this, oldChild, true);
-        }
+    /**
+     * Remove a child from the Component.
+     *
+     * @param {Node} oldChild The child to remove.
+     */
+    removeChild<T extends Node>(oldChild: T): T {
+        return DOM.removeChild(this, oldChild);
+    }
 
-        /**
-         * Insert a child before another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param refChild The referred Node.
-         */
-        insertBefore<T extends Node>(newChild: T, refChild: Node | null): T {
-            return DOM.insertBefore(this, newChild, refChild);
-        }
+    /**
+     * Remove a slot child from the Component.
+     *
+     * @param {Node} oldChild The child to remove.
+     */
+    removeSlotChild<T extends Node>(oldChild: T): T {
+        return DOM.removeChild(this, oldChild, true);
+    }
 
-        /**
-         * Insert a slot child before another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param refChild The referred Node.
-         */
-        insertSlotBefore<T extends Node>(newChild: T, refChild: Node | null): T {
-            return DOM.insertBefore(this, newChild, refChild, true);
-        }
+    /**
+     * Insert a child before another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param refChild The referred Node.
+     */
+    insertBefore<T extends Node>(newChild: T, refChild: Node | null): T {
+        return DOM.insertBefore(this, newChild, refChild);
+    }
 
-        /**
-         * Replace a child with another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param oldChild The Node to replace.
-         */
-        replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
-            return DOM.replaceChild(this, newChild, oldChild);
-        }
+    /**
+     * Insert a slot child before another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param refChild The referred Node.
+     */
+    insertSlotBefore<T extends Node>(newChild: T, refChild: Node | null): T {
+        return DOM.insertBefore(this, newChild, refChild, true);
+    }
 
-        /**
-         * Replace a slot child with another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param oldChild The Node to replace.
-         */
-        replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T {
-            return DOM.replaceChild(this, newChild, oldChild, true);
-        }
+    /**
+     * Replace a child with another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param oldChild The Node to replace.
+     */
+    replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
+        return DOM.replaceChild(this, newChild, oldChild);
+    }
 
-        /**
-         * Set a Component attribute.
-         *
-         * @param ualifiedName The attribute name.
-         * @param value The value to set.
-         */
-        setAttribute(qualifiedName: string, value: string) {
-            return DOM.setAttribute(this, qualifiedName, value);
-        }
+    /**
+     * Replace a slot child with another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param oldChild The Node to replace.
+     */
+    replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T {
+        return DOM.replaceChild(this, newChild, oldChild, true);
+    }
 
-        /**
-         * Remove a Component attribute.
-         *
-         * @param qualifiedName The attribute name.
-         */
-        removeAttribute(qualifiedName: string) {
-            return DOM.removeAttribute(this, qualifiedName);
-        }
-    } as unknown as { new(): IComponent<T>, prototype: IComponent<T> };
+    /**
+     * Set a Component attribute.
+     *
+     * @param ualifiedName The attribute name.
+     * @param value The value to set.
+     */
+    setAttribute(qualifiedName: string, value: string) {
+        return DOM.setAttribute(this, qualifiedName, value);
+    }
+
+    /**
+     * Remove a Component attribute.
+     *
+     * @param qualifiedName The attribute name.
+     */
+    removeAttribute(qualifiedName: string) {
+        return DOM.removeAttribute(this, qualifiedName);
+    }
+} as unknown as {
+    readonly observedAttributes: string[];
+    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
+    new(properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
+    prototype: IComponent<InstanceType<T>>;
+};
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -648,7 +647,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
  * @param name The name of the constructor (eg. "HTMLAnchorElement").
  * @return A proxy that extends the native constructor.
  */
-export const extend = (constructor: typeof HTMLElement) => class extends mixin(shim(constructor)) {};
+export const extend = <T extends typeof HTMLElement>(constructor: T) => mixin(shim(constructor));
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with
@@ -656,4 +655,4 @@ export const extend = (constructor: typeof HTMLElement) => class extends mixin(s
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(HTMLElement) as IComponent<HTMLElement>;
+export class Component extends extend(HTMLElement) { }

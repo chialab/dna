@@ -1,6 +1,5 @@
-import { DOM, isElement, isText } from './DOM';
+import { DOM, isElement, isText, isComponent } from './DOM';
 import { createSymbolKey } from './symbols';
-import { isComponent } from './IComponent';
 import { Scope, createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { getSlotted, setSlotted } from './slotted';

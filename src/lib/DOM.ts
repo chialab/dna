@@ -1,5 +1,6 @@
 import { window } from './window';
-import { shouldEmulateLifeCycle, isComponent } from './IComponent';
+import { createSymbolKey } from './symbols';
+import { IComponent } from './IComponent';
 import { registry } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
 
@@ -43,6 +44,28 @@ export const isElement = (node: any): node is HTMLElement => node && node.nodeTy
  * @return The object is an Event instance.
  */
 export const isEvent = (event: any): event is Event => event instanceof Event;
+
+/**
+ * A symbol which identify components.
+ */
+export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * Check if a node is a component.
+ * @param node The node to check.
+ */
+export const isComponent = (node: Element): node is IComponent => (node as any)[COMPONENT_SYMBOL];
+
+/**
+ * A symbol which identify emulated components.
+ */
+export const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ */
+export const shouldEmulateLifeCycle = (node: Element): node is IComponent => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Check if a Node is connected.
