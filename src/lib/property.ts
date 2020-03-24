@@ -8,14 +8,30 @@ import { ClassElement } from './ClassElement';
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
  */
-export type ClassFieldObserver = (oldValue: any, newValue: any) => any;
+export type ClassFieldObserver = (this: CustomElement, oldValue: any, newValue: any) => any;
 
 /**
  * A validation function for the class field.
  *
  * @param value The value to set.
  */
-export type ClassFieldValidator = (value: any) => boolean;
+export type ClassFieldValidator = (this: CustomElement, value: any) => boolean;
+
+/**
+ * Convert attribute to property value.
+ *
+ * @param value The attributue value.
+ * @return The property value.
+ */
+export type ClassFieldAttributeConverter = (this: CustomElement, value: string|null) => any;
+
+/**
+ * Convert property to attribute value.
+ *
+ * @param value The property value.
+ * @return The attributue value.
+ */
+export type ClassFieldPropertyConverter = (this: CustomElement, value: any) => string|null|undefined;
 
 /**
  * A list of properties for an class field description.
@@ -28,7 +44,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
-    attribute?: string;
+    attribute?: true|string;
     /**
      * The initial value of the property.
      */
@@ -37,6 +53,16 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * A list of valid property values prototypes.
      */
     types?: Function | Function[],
+    /**
+     * Convert attribute to property value.
+     */
+    fromAttribute?: ClassFieldAttributeConverter;
+    /**
+     * Convert property to attribute value.
+     * @param value The property value.
+     * @return The attributue value.
+     */
+    toAttribute?: ClassFieldPropertyConverter;
     /**
      * Define a property observable.
      */

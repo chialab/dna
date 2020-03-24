@@ -9,8 +9,7 @@ class HelloWorld extends Component {
     }
 
     // define an observable property
-    @property()
-    name = '';
+    @property() name = '';
 
     render() {
         return html`

@@ -10,8 +10,7 @@ The preferred way to define a property is to use the `property` decorator on a c
 import { Component, property } from '@chialab/dna';
 
 class Card extends Component {
-    @property()
-    age = null;
+    @property() age = null;
 }
 ```
 
@@ -52,7 +51,7 @@ card.defineProperty('age', {
 });
 ```
 
-## Property descriptor
+## Property descriptor
 
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
 
@@ -90,6 +89,24 @@ You can still set or update component's property value via attributes even when 
 
 </aside>
 
+You can also customize the default converters between attributes and properties with `fromAttribute` and `toAttribute`.
+
+```ts
+@property({
+    type: Date,
+    attribute('birthdate'),
+    fromAttribute(value) {
+        // attribute has been set as timestamp
+        return new Date(parseInt(value));
+    },
+    toAttribute(value) {
+        // set attribute as timestamp
+        return value.getTime().toString();
+    },
+})
+age = null;
+```
+
 ### defaultValue
 
 The initial value of the property. This will not trigger a `propertyChangedCallback` but it will update the bound attribute.
@@ -104,19 +121,45 @@ If you are using class fields, probably you won't use this configuration key.
 
 A list of valid constructors for the property value. If the value is not an instance of the specified constructors, an exception is thrown.
 
-### validate
+### validate
 
 A custom validation function for the property value. If the method returns a falsy value, an exception is thrown.
 
 ### observe
 
-A function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument.
+A function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument:
 
-<aside class="note">
+```ts
+import { Component, property } from '@chialab/dna';
+
+class Card extends Component {
+    static get observedAttributes() {
+        return ['age'];
+    }
+
+    @property({
+        type: Number,
+        observe(oldValue, newValue) {
+            console.log(`Happy birthday! You are now ${newValue}`);
+        },
+    })
+    age = null;
+}
+```
 
 You can also pass an array of property observers using the **observers** configuration key instead of **observe**.
 
-</aside>
+```ts
+@property({
+    type: Number,
+    observers: [
+        function(oldValue, newValue) {
+            console.log(`Happy birthday! You are now ${newValue}`);
+        },
+    ],
+})
+age = null;
+```
 
 ### event
 

@@ -464,13 +464,13 @@ describe('Component', function() {
             });
         });
 
-        describe('attribute to property value convertion', () => {
+        describe('attribute and properties sync', () => {
             let element;
 
             before(() => {
                 class TestElement extends DNA.Component {
                     static get observedAttributes() {
-                        return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'all'];
+                        return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'all', 'convertion'];
                     }
 
                     @DNA.property()
@@ -496,6 +496,16 @@ describe('Component', function() {
 
                     @DNA.property({ types: [Number, String, Object] })
                     all = [];
+
+                    @DNA.property({
+                        fromAttribute(value) {
+                            return parseInt(value) * 2;
+                        },
+                        toAttribute(value) {
+                            return `${value / 2}`;
+                        },
+                    })
+                    convertion = '';
                 }
 
                 DNA.define(getComponentName(), TestElement);
@@ -503,94 +513,108 @@ describe('Component', function() {
                 element = new TestElement();
             });
 
-            it('should handle unspecified type', () => {
-                element.setAttribute('any', '1');
-                expect(element.any).to.be.equal('1');
-                element.setAttribute('any', 'test');
-                expect(element.any).to.be.equal('test');
-                element.removeAttribute('any');
-                expect(element.any).to.be.null;
+            describe('attribute to property value convertion', () => {
+                it('should handle unspecified type', () => {
+                    element.setAttribute('any', '1');
+                    expect(element.any).to.be.equal('1');
+                    element.setAttribute('any', 'test');
+                    expect(element.any).to.be.equal('test');
+                    element.removeAttribute('any');
+                    expect(element.any).to.be.null;
+                });
+
+                it('should handle boolean type', () => {
+                    element.setAttribute('boolean', '');
+                    expect(element.boolean).to.be.true;
+                    element.removeAttribute('boolean');
+                    expect(element.boolean).to.be.false;
+                });
+
+                it('should handle string type', () => {
+                    element.setAttribute('string', '');
+                    expect(element.string).to.be.equal('');
+                    element.setAttribute('string', 'test');
+                    expect(element.string).to.be.equal('test');
+                    element.setAttribute('string', '1234');
+                    expect(element.string).to.be.equal('1234');
+                    element.setAttribute('string', '{"test":1}');
+                    expect(element.string).to.be.equal('{"test":1}');
+                    element.setAttribute('string', '[1]');
+                    expect(element.string).to.be.equal('[1]');
+                    element.removeAttribute('string');
+                    expect(element.string).to.be.null;
+                });
+
+                it('should handle number type', () => {
+                    element.setAttribute('number', '1234');
+                    expect(element.number).to.be.equal(1234);
+                    element.setAttribute('number', '-1234');
+                    expect(element.number).to.be.equal(-1234);
+                    element.setAttribute('number', '1234.1234');
+                    expect(element.number).to.be.equal(1234.1234);
+                    element.removeAttribute('number');
+                    expect(element.number).to.be.null;
+                });
+
+                it('should handle string/number type', () => {
+                    element.setAttribute('string-number', '');
+                    expect(element.stringNumber).to.be.equal('');
+                    element.setAttribute('string-number', 'test');
+                    expect(element.stringNumber).to.be.equal('test');
+                    element.setAttribute('string-number', '1234');
+                    expect(element.stringNumber).to.be.equal(1234);
+                    element.setAttribute('string-number', '{"test":1}');
+                    expect(element.stringNumber).to.be.equal('{"test":1}');
+                    element.setAttribute('string-number', '[1]');
+                    expect(element.stringNumber).to.be.equal('[1]');
+                    element.removeAttribute('string-number');
+                    expect(element.stringNumber).to.be.null;
+                });
+
+                it('should handle object type', () => {
+                    element.setAttribute('object', '{}');
+                    expect(element.object).to.be.deep.equal({});
+                    element.setAttribute('object', '{"test":1}');
+                    expect(element.object).to.be.deep.equal({ test: 1 });
+                    element.removeAttribute('object');
+                    expect(element.object).to.be.null;
+                });
+
+                it('should handle array type', () => {
+                    element.setAttribute('array', '[]');
+                    expect(element.array).to.be.deep.equal([]);
+                    element.setAttribute('array', '[1]');
+                    expect(element.array).to.be.deep.equal([1]);
+                    element.removeAttribute('array');
+                    expect(element.array).to.be.null;
+                });
+
+                it('should handle all types', () => {
+                    element.setAttribute('all', '');
+                    expect(element.all).to.be.equal('');
+                    element.setAttribute('all', 'test');
+                    expect(element.all).to.be.equal('test');
+                    element.setAttribute('all', '1234');
+                    expect(element.all).to.be.equal(1234);
+                    element.setAttribute('all', '{"test":1}');
+                    expect(element.all).to.be.deep.equal({ test: 1 });
+                    element.setAttribute('all', '[1]');
+                    expect(element.all).to.be.deep.equal([1]);
+                    element.removeAttribute('all');
+                    expect(element.all).to.be.null;
+                });
+
+                it('should convert using configuration', () => {
+                    element.setAttribute('convertion', '2');
+                    expect(element.convertion).to.be.equal(4);
+                });
             });
 
-            it('should handle boolean type', () => {
-                element.setAttribute('boolean', '');
-                expect(element.boolean).to.be.true;
-                element.removeAttribute('boolean');
-                expect(element.boolean).to.be.false;
-            });
-
-            it('should handle string type', () => {
-                element.setAttribute('string', '');
-                expect(element.string).to.be.equal('');
-                element.setAttribute('string', 'test');
-                expect(element.string).to.be.equal('test');
-                element.setAttribute('string', '1234');
-                expect(element.string).to.be.equal('1234');
-                element.setAttribute('string', '{"test":1}');
-                expect(element.string).to.be.equal('{"test":1}');
-                element.setAttribute('string', '[1]');
-                expect(element.string).to.be.equal('[1]');
-                element.removeAttribute('string');
-                expect(element.string).to.be.null;
-            });
-
-            it('should handle number type', () => {
-                element.setAttribute('number', '1234');
-                expect(element.number).to.be.equal(1234);
-                element.setAttribute('number', '-1234');
-                expect(element.number).to.be.equal(-1234);
-                element.setAttribute('number', '1234.1234');
-                expect(element.number).to.be.equal(1234.1234);
-                element.removeAttribute('number');
-                expect(element.number).to.be.null;
-            });
-
-            it('should handle string/number type', () => {
-                element.setAttribute('string-number', '');
-                expect(element.stringNumber).to.be.equal('');
-                element.setAttribute('string-number', 'test');
-                expect(element.stringNumber).to.be.equal('test');
-                element.setAttribute('string-number', '1234');
-                expect(element.stringNumber).to.be.equal(1234);
-                element.setAttribute('string-number', '{"test":1}');
-                expect(element.stringNumber).to.be.equal('{"test":1}');
-                element.setAttribute('string-number', '[1]');
-                expect(element.stringNumber).to.be.equal('[1]');
-                element.removeAttribute('string-number');
-                expect(element.stringNumber).to.be.null;
-            });
-
-            it('should handle object type', () => {
-                element.setAttribute('object', '{}');
-                expect(element.object).to.be.deep.equal({});
-                element.setAttribute('object', '{"test":1}');
-                expect(element.object).to.be.deep.equal({ test: 1 });
-                element.removeAttribute('object');
-                expect(element.object).to.be.null;
-            });
-
-            it('should handle array type', () => {
-                element.setAttribute('array', '[]');
-                expect(element.array).to.be.deep.equal([]);
-                element.setAttribute('array', '[1]');
-                expect(element.array).to.be.deep.equal([1]);
-                element.removeAttribute('array');
-                expect(element.array).to.be.null;
-            });
-
-            it('should handle all types', () => {
-                element.setAttribute('all', '');
-                expect(element.all).to.be.equal('');
-                element.setAttribute('all', 'test');
-                expect(element.all).to.be.equal('test');
-                element.setAttribute('all', '1234');
-                expect(element.all).to.be.equal(1234);
-                element.setAttribute('all', '{"test":1}');
-                expect(element.all).to.be.deep.equal({ test: 1 });
-                element.setAttribute('all', '[1]');
-                expect(element.all).to.be.deep.equal([1]);
-                element.removeAttribute('all');
-                expect(element.all).to.be.null;
+            describe('property to attribute value convertion', () => {
+                it('should convert using configuration', () => {
+                    element.convertion = 4;
+                    expect(element.getAttribute('convertion')).to.be.equal('2');
+                });
             });
         });
     });

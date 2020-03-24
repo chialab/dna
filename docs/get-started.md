@@ -82,8 +82,7 @@ class BlogPost extends Component {
         return ['title'];
     }
 
-    @property()
-    title = '';
+    @property() title = '';
 
     render() {
         return html`<h1>${this.title}</h1>`;

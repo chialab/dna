@@ -23,7 +23,10 @@ class CompatProperty {
         return this;
     }
 
-    attribute(attributeName: string) {
+    attribute(attributeName: string|boolean) {
+        if (attributeName === undefined) {
+            attributeName = true;
+        }
         (this as any).attribute = attributeName;
         return this;
     }

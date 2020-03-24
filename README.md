@@ -89,8 +89,7 @@ class HelloWorld extends Component {
     }
 
     // define an observable property
-    @property()
-    name = '';
+    @property() name = '';
 
     setName(event, target) {
         this.name = target.value;

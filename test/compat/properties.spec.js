@@ -48,7 +48,7 @@ describe('[Compat] PropertiesComponent', () => {
 
         TestComponent2 = class TestComponent2 extends TestComponent {
             static get observedAttributes() {
-                return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-var2', 'my-var3'];
+                return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-let', 'my-const'];
             }
 
             get properties() {
@@ -58,10 +58,10 @@ describe('[Compat] PropertiesComponent', () => {
                     var: prop.NUMBER.attribute(),
                     mine: prop.NUMBER.attribute(),
                     myVar: prop.BOOLEAN.attribute('my-var'),
-                    myVar2: prop.BOOLEAN.attribute('my-var2'),
+                    myVar2: prop.BOOLEAN.attribute('my-let'),
                     myVar3: prop.ANY
                         .default(false)
-                        .attribute('my-var3')
+                        .attribute('my-const')
                         .getter(this.handleProp)
                         .setter((val) => !!val)
                         .dispatch('changed'),
@@ -174,7 +174,7 @@ describe('[Compat] PropertiesComponent', () => {
 
         it.skip('check sync between custom computed property with setter and attribute', () => {
             elem.myVar3 = true;
-            assert.equal(elem.node.getAttribute('my-var3'), 'DNA Test');
+            assert.equal(elem.node.getAttribute('my-const'), 'DNA Test');
         });
 
         it('dispatch event', () => {
@@ -200,7 +200,7 @@ describe('[Compat] PropertiesComponent', () => {
             elem = render(wrapper, TestComponent2);
             DOM.setAttribute(elem, 'alt', 'DNA Test 2');
             DOM.setAttribute(elem, 'mine', '1234');
-            DOM.setAttribute(elem, 'my-var2', '');
+            DOM.setAttribute(elem, 'my-let', '');
         });
 
         it('check sync between attribute and property', () => {
@@ -214,7 +214,7 @@ describe('[Compat] PropertiesComponent', () => {
         });
 
         it('check sync between custom computed attribute and property', () => {
-            assert.equal(elem.node.getAttribute('my-var2'), '');
+            assert.equal(elem.node.getAttribute('my-let'), '');
             assert.equal(elem.myVar2, true);
         });
     });
@@ -225,7 +225,7 @@ describe('[Compat] PropertiesComponent', () => {
             elem = new TestComponent2();
             elem.node.setAttribute('alt', 'DNA Test 2');
             elem.node.setAttribute('mine', '1234');
-            elem.node.setAttribute('my-var2', '');
+            elem.node.setAttribute('my-let', '');
             DOM.appendChild(wrapper, elem);
         });
 
@@ -240,7 +240,7 @@ describe('[Compat] PropertiesComponent', () => {
         });
 
         it('check sync between custom computed attribute and property', () => {
-            assert.equal(elem.node.getAttribute('my-var2'), '');
+            assert.equal(elem.node.getAttribute('my-let'), '');
             assert.equal(elem.myVar2, true);
         });
     });

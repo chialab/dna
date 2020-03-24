@@ -22,8 +22,7 @@ class Card extends Component {
         return ['title'];
     }
 
-    @property()
-    title = '';
+    @property() title = '';
 
     render() {
         return html`
@@ -163,8 +162,7 @@ class Card extends Component {
         return ['title'];
     }
 
-    @property()
-    title = '';
+    @property() title = '';
 
     render() {
         return html`<h1 class="${title}"></h1>`;

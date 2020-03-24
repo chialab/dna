@@ -8,7 +8,7 @@ import { createScope, getScope, setScope } from './Scope';
 import { Template } from './Template';
 import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
-import { ClassFieldDescriptor, ClassFieldObserver } from './property';
+import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
 import { template } from './html';
 
 const { document, HTMLElement } = window;
@@ -193,13 +193,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             let property: ClassFieldDescriptor | undefined;
             for (let propertyKey in properties) {
                 let prop = properties[propertyKey];
-                if (prop.attribute) {
-                    if (prop.attribute === attributeName) {
-                        property = prop;
-                        break;
-                    }
-                    continue;
-                } else if ((prop.name as string) === attributeName) {
+                if (prop.attribute === attributeName) {
                     property = prop;
                     break;
                 }
@@ -209,33 +203,8 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                 return;
             }
 
-            const types = property.types as Function[];
-            let value: any;
-            if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attributeName)) {
-                if (newValue === '' || newValue === attributeName) {
-                    // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
-                    value = true;
-                } else {
-                    value = false;
-                }
-            } else if (newValue) {
-                if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
-                    value = parseFloat(newValue);
-                } else if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
-                    try {
-                        value = JSON.parse(newValue as string);
-                    } catch {
-                        value = newValue;
-                    }
-                } else {
-                    value = newValue;
-                }
-            } else {
-                value = newValue;
-            }
-
             // update the Component Property value
-            (this as any)[property.name as string] = value;
+            (this as any)[property.name as string] = (property.fromAttribute as ClassFieldAttributeConverter).call(this as any, newValue);
         }
 
         /**
@@ -246,19 +215,13 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * @param newValue The new value for the property (undefined if removed).
          */
         propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-            const observedAttributes = (this.constructor as typeof Component).observedAttributes;
             const property = this.getProperty(propertyName) as ClassFieldDescriptor;
-            const falsy = newValue == null || newValue === false;
-            const propAttribute = property.attribute || observedAttributes.indexOf(property.name as string) !== -1;
-            if (propAttribute) {
-                const computedAttribute = (propAttribute === true ? property.name : propAttribute) as string;
-                // update the bound attribute
-                if (falsy) {
-                    // a falsy value should remove the attribute
-                    this.removeAttribute(computedAttribute);
-                } else if (typeof newValue !== 'object') {
-                    // if the value is `true` should set an empty attribute, otherwise just set the value
-                    this.setAttribute(computedAttribute, newValue === true ? '' : newValue);
+            if (property.attribute && property.toAttribute) {
+                let value = property.toAttribute.call(this as any, newValue);
+                if (value === null) {
+                    this.removeAttribute(property.attribute as string);
+                } else if (value !== undefined) {
+                    this.setAttribute(property.attribute as string, value);
                 }
             }
 
@@ -286,10 +249,16 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
          * @return The symbol used to store property value.
          */
         defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
+            const observedAttributes = (this.constructor as typeof Component).observedAttributes;
             const descriptors = (this as any)[PROPERTIES_SYMBOL] = (this as any)[PROPERTIES_SYMBOL] || {};
             descriptors[propertyKey] = descriptor;
+            (descriptor as any).__proto__ = null;
             descriptor.name = propertyKey;
             descriptor.symbol = symbol;
+
+            let hasAttribute = descriptor.attribute || observedAttributes.indexOf(propertyKey) !== -1;
+            let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
+            descriptor.attribute = attribute;
 
             let types: Function[] = descriptor.types as Function[] || [];
             if (!Array.isArray(types)) {
@@ -297,12 +266,53 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
             }
             descriptor.types = types;
 
+            if (attribute) {
+                descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
+                    if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
+                        if (newValue === '' || newValue === attribute) {
+                            // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
+                            return true;
+                        }
+                        return false;
+                    }
+                    if (newValue) {
+                        if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
+                            return parseFloat(newValue);
+                        }
+                        if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
+                            try {
+                                return JSON.parse(newValue as string);
+                            } catch {
+                                //
+                            }
+                        }
+                    }
+                    return newValue;
+                });
+                descriptor.toAttribute = descriptor.toAttribute || ((newValue) => {
+                    let falsy = newValue == null || newValue === false;
+                    if (falsy) {
+                        // a falsy value should remove the attribute
+                        return null;
+                    }
+                    if (typeof newValue === 'object') {
+                        // objects should be ignored
+                        return;
+                    }
+                    // if the value is `true` should set an empty attribute
+                    if (newValue === true) {
+                        return '';
+                    }
+                    // otherwise just set the value
+                    return newValue;
+                });
+            }
+
             let observers = descriptor.observers || [];
             if (descriptor.observe) {
                 observers = [descriptor.observe, ...observers];
             }
             descriptor.observers = observers;
-            (descriptor as any).__proto__ = null;
 
             const validate = typeof descriptor.validate === 'function' && descriptor.validate;
             const finalDescriptor: PropertyDescriptor = {
@@ -338,7 +348,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
                         valid = types.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
                     }
                     if (valid && validate) {
-                        valid = validate(newValue);
+                        valid = validate.call(this, newValue);
                     }
                     if (!valid) {
                         throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);

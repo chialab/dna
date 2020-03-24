@@ -6,7 +6,7 @@ export function warn(message: string, url?: string) {
 }
 
 export function warnCode(code: keyof typeof Code) {
-    warn(Code[code], `${BASE_URL}#${code}`);
+    warn(Code[code], `${BASE_URL}#${code.toLowerCase()}`);
 }
 
 export enum Code {
