@@ -1,6 +1,6 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { CustomElement, CE_SYMBOL, CE_EMULATE_LIFECYCLE } from './CustomElement';
+import { IComponent, COMPONENT_SYMBOL, EMULATE_LIFECYCLE_SYMBOL } from './IComponent';
 import { registry } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
@@ -28,7 +28,7 @@ const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param constructor The base HTMLElement constructor to extend.
  * @return The extend class.
  */
-const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): CustomElement<T>, prototype: CustomElement<T> } =>
+const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, prototype: T }): { new(): IComponent<T>, prototype: IComponent<T> } =>
     class Component extends (constructor as typeof HTMLElement) {
         /**
          * An array containing the names of the attributes to observe.
@@ -100,16 +100,16 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         constructor(node?: HTMLElement | Properties, properties: Properties = {}) {
             super();
 
-            let element: CustomElement<T> = node as CustomElement<T>;
+            let element: IComponent<T> = node as IComponent<T>;
             let props: Properties = properties as Properties;
             if (!isElement(element)) {
                 props = node || {};
-                element = this as unknown as CustomElement<T>;
+                element = this as unknown as IComponent<T>;
             } else {
                 Object.setPrototypeOf(element, this);
             }
 
-            (element as any)[CE_SYMBOL] = true;
+            (element as any)[COMPONENT_SYMBOL] = true;
             setScope(element, createScope(element));
             setSlotted(element, cloneChildNodes(this));
 
@@ -605,7 +605,7 @@ const mixin = <T extends HTMLElement = HTMLElement>(constructor: { new(): T, pro
         removeAttribute(qualifiedName: string) {
             return DOM.removeAttribute(this, qualifiedName);
         }
-    } as unknown as { new(): CustomElement<T>, prototype: CustomElement<T> };
+    } as unknown as { new(): IComponent<T>, prototype: IComponent<T> };
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -634,7 +634,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = document.createElement(tag) as HTMLElement;
-        (element as any)[CE_EMULATE_LIFECYCLE] = true;
+        (element as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
         DOM.emulateLifeCycle = true;
         Object.setPrototypeOf(element, constructor.prototype);
         return element;
@@ -656,4 +656,4 @@ export const extend = (constructor: typeof HTMLElement) => class extends mixin(s
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(HTMLElement) as CustomElement<HTMLElement>;
+export const Component = extend(HTMLElement) as IComponent<HTMLElement>;

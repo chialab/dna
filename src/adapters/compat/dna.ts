@@ -2,7 +2,6 @@ import './lib/DOM';
 import * as IDOM from './lib/IDOM';
 
 export {
-    CustomElement,
     CustomElementRegistry,
     window,
     customElements,
@@ -37,6 +36,8 @@ export {
     ClassFieldPropertyConverter,
     property,
     extend,
+    isComponent,
+    IComponent,
     Component,
     Properties,
 } from '@chialab/dna';

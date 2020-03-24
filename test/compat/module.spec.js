@@ -28,6 +28,7 @@ describe('[Compat] module', function() {
         dispatchEvent: 'function',
         dispatchAsyncEvent: 'function',
         property: 'function',
+        isComponent: 'function',
         Component: 'function',
         // COMPAT
         namespace: 'object',

@@ -33,6 +33,7 @@ describe('module', function() {
         dispatchEvent: 'function',
         dispatchAsyncEvent: 'function',
         property: 'function',
+        isComponent: 'function',
         Component: 'function',
     };
 

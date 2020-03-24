@@ -1,7 +1,7 @@
-import { CustomElement } from '@chialab/dna';
+import { IComponent } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
-export function proxy(element: CustomElement) {
+export function proxy(element: IComponent) {
     warnCode('PROXY_HELPER');
     return element;
 }

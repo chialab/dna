@@ -1,4 +1,4 @@
-import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, CustomElement } from '@chialab/dna';
+import { window, DOM, connect, disconnect, dispatchEvent as coreDispatchEvent, isComponent } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
 (DOM as any).Node = window.Node;
@@ -14,7 +14,7 @@ import { warnCode } from './deprecations';
 
 (DOM as any).getNodeComponent = function getNodeComponent(node: Element) {
     warnCode('PREFER_INSTANCE');
-    if (!(node as CustomElement).is) {
+    if (!isComponent(node)) {
         return null;
     }
     return node;

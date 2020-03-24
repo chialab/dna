@@ -1,6 +1,6 @@
 import { DOM, isElement, isText } from './DOM';
 import { createSymbolKey } from './symbols';
-import { isCustomElement } from './CustomElement';
+import { isComponent } from './IComponent';
 import { Scope, createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { getSlotted, setSlotted } from './slotted';
@@ -203,7 +203,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         results.push(newNode);
 
         if (isElement(newNode) && newChildren) {
-            if (isCustomElement(newNode)) {
+            if (isComponent(newNode)) {
                 setSlotted(newNode, handleItems(newChildren, newNode, []));
                 // notify the Component that its slotted Nodes has been updated
                 newNode.forceUpdate();

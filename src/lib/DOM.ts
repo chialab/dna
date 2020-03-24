@@ -1,5 +1,5 @@
 import { window } from './window';
-import { shouldEmulateLifeCycle, isCustomElement } from './CustomElement';
+import { shouldEmulateLifeCycle, isComponent } from './IComponent';
 import { registry } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
 
@@ -179,7 +179,7 @@ export const DOM = {
      * @param slot Should add a slot node.
      */
     appendChild<T extends Node>(parent: Element, newChild: T, slot = false): T {
-        if (slot && isCustomElement(parent)) {
+        if (slot && isComponent(parent)) {
             getSlotted(parent).push(newChild);
             parent.forceUpdate();
             return newChild;
@@ -204,7 +204,7 @@ export const DOM = {
      * @param slot Should remove a slot node.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T, slot = false): T {
-        if (slot && isCustomElement(parent)) {
+        if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             const io = slotted.indexOf(oldChild);
             if (io !== -1) {
@@ -231,7 +231,7 @@ export const DOM = {
      * @param slot Should insert a slot node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = false): T {
-        if (slot && isCustomElement(parent)) {
+        if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             if (refChild) {
                 const io = slotted.indexOf(refChild);
@@ -265,7 +265,7 @@ export const DOM = {
      * @param slot Should replace a slot node.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = false): T {
-        if (slot && isCustomElement(parent)) {
+        if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             const io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);

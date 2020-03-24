@@ -1,4 +1,4 @@
-import { CustomElement } from './CustomElement';
+import { IComponent } from './IComponent';
 
 /**
  * A regex for Custom Element.
@@ -25,7 +25,7 @@ export class CustomElementRegistry {
      * A global registry.
      */
     readonly registry: {
-        [key: string]: CustomElement;
+        [key: string]: IComponent;
     } = {};
 
     /**
@@ -48,7 +48,7 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): CustomElement {
+    get(name: string): IComponent {
         return this.registry[name];
     }
 
@@ -59,7 +59,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: CustomElement, options: ElementDefinitionOptions = {}) {
+    define(name: string, constructor: IComponent, options: ElementDefinitionOptions = {}) {
         assertValidateCustomElementName(name);
 
         if (typeof constructor !== 'function') {
