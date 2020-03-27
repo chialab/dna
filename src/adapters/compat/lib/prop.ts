@@ -3,13 +3,13 @@ import { warnCode } from './deprecations';
 
 class CompatProperty {
     name?: string;
-    types?: Function[];
+    type?: Function[];
     defaultValue?: any;
     observers?: ClassFieldObserver[];
 
-    constructor(types?: Function[]) {
-        if (types) {
-            this.types = types;
+    constructor(type?: Function[]) {
+        if (type) {
+            this.type = type;
         }
     }
 
@@ -68,13 +68,13 @@ class CompatProperty {
     }
 }
 
-export function prop(types: Function | Function[]) {
+export function prop(type: Function | Function[]) {
     warnCode('PREFER_PROPERTY_DESCRIPTOR');
 
-    if (!Array.isArray(types)) {
-        return new CompatProperty([types]);
+    if (!Array.isArray(type)) {
+        return new CompatProperty([type]);
     }
-    return new CompatProperty(types);
+    return new CompatProperty(type);
 }
 
 Object.defineProperty(prop, 'STRING', {

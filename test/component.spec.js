@@ -476,25 +476,25 @@ describe('Component', function() {
                     @DNA.property()
                     any = undefined;
 
-                    @DNA.property({ types: Boolean })
+                    @DNA.property({ type: Boolean })
                     boolean = false;
 
-                    @DNA.property({ types: String })
+                    @DNA.property({ type: String })
                     string = '';
 
-                    @DNA.property({ types: Number })
+                    @DNA.property({ type: Number })
                     number = 0;
 
-                    @DNA.property({ types: [String, Number], attribute: 'string-number' })
+                    @DNA.property({ type: [String, Number], attribute: 'string-number' })
                     stringNumber = '';
 
-                    @DNA.property({ types: [Object] })
+                    @DNA.property({ type: [Object] })
                     object = {};
 
-                    @DNA.property({ types: [Array] })
+                    @DNA.property({ type: [Array] })
                     array = [];
 
-                    @DNA.property({ types: [Number, String, Object] })
+                    @DNA.property({ type: [Number, String, Object] })
                     all = [];
 
                     @DNA.property({
@@ -589,7 +589,7 @@ describe('Component', function() {
                     expect(element.array).to.be.null;
                 });
 
-                it('should handle all types', () => {
+                it('should handle all type', () => {
                     element.setAttribute('all', '');
                     expect(element.all).to.be.equal('');
                     element.setAttribute('all', 'test');
@@ -626,7 +626,7 @@ describe('Component', function() {
                 get properties() {
                     return {
                         age: {
-                            types: [Number],
+                            type: [Number],
                         },
                     };
                 }
@@ -660,7 +660,7 @@ describe('Component', function() {
                 get properties() {
                     return {
                         age: {
-                            types: [Number],
+                            type: [Number],
                         },
                     };
                 }
@@ -702,13 +702,46 @@ describe('Component', function() {
             expect(element.innerHTML).to.be.equal('<h1>test</h1>');
         });
 
+        it.skip('should render only once after construction', () => {
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {
+                @DNA.property() title = '';
+                @DNA.property() description = '';
+                @DNA.property() body = 'Test';
+
+                get properties() {
+                    return {
+                        author: String,
+                        date: {
+                            type: Date,
+                            defaultValue: new Date(),
+                        },
+                    };
+                }
+
+                render() {
+                    callback();
+                    return DNA.html`<h1>${this.title}</h1>`;
+                }
+            }
+
+            DNA.define(getComponentName(), TestElement);
+            expect(callback.invoked).to.be.false;
+            new TestElement({
+                title: 'Test',
+                description: 'Test',
+            });
+            expect(callback.invoked).to.be.true;
+            expect(callback.count).to.be.equal(1);
+        });
+
         it('should NOT handle property if nothing changed on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
                 get properties() {
                     return {
                         age: {
-                            types: [Number],
+                            type: [Number],
                         },
                     };
                 }
@@ -739,7 +772,7 @@ describe('Component', function() {
                 get properties() {
                     return {
                         age: {
-                            types: [Number],
+                            type: [Number],
                             event: true,
                             defaultValue: 20,
                         },
@@ -1075,7 +1108,7 @@ describe('Component', function() {
                 get properties() {
                     return {
                         age: {
-                            types: [Number],
+                            type: [Number],
                         },
                     };
                 }

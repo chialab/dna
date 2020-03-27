@@ -52,7 +52,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
     /**
      * A list of valid property values prototypes.
      */
-    types?: Function | Function[],
+    type?: Function | Function[],
     /**
      * Convert attribute to property value.
      */

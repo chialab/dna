@@ -34,7 +34,7 @@ describe('property', function() {
         it('should define a property with single type checker', () => {
             const MyElement = class extends DNA.Component {
                 @DNA.property({
-                    types: String,
+                    type: String,
                 })
                 testProp = undefined;
             };
@@ -47,7 +47,7 @@ describe('property', function() {
         it('should define a property with multiple type checkers', () => {
             const MyElement = class extends DNA.Component {
                 @DNA.property({
-                    types: [String, Boolean],
+                    type: [String, Boolean],
                 })
                 testProp = undefined;
             };
@@ -62,7 +62,7 @@ describe('property', function() {
         it('should define a property with custom validation', () => {
             const MyElement = class extends DNA.Component {
                 @DNA.property({
-                    types: [String, Boolean],
+                    type: [String, Boolean],
                     validate(value) {
                         if (typeof value === 'string') {
                             return value !== 'invalid';
@@ -192,7 +192,7 @@ describe('property', function() {
                 get properties() {
                     return {
                         testProp: {
-                            types: String,
+                            type: String,
                         },
                     };
                 }
@@ -208,7 +208,7 @@ describe('property', function() {
                 get properties() {
                     return {
                         testProp: {
-                            types: [String, Boolean],
+                            type: [String, Boolean],
                         },
                     };
                 }
@@ -226,7 +226,7 @@ describe('property', function() {
                 get properties() {
                     return {
                         testProp: {
-                            types: [String, Boolean],
+                            type: [String, Boolean],
                             validate(value) {
                                 if (typeof value === 'string') {
                                     return value !== 'invalid';

@@ -123,7 +123,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                     if (!(propertyKey in propertyDescriptors)) {
                         let descriptor = descriptorProperties[propertyKey];
                         if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
-                            descriptor = { types: descriptor };
+                            descriptor = { type: descriptor };
                         }
                         propertyDescriptors[propertyKey] = descriptor;
                     }
@@ -262,15 +262,15 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
         descriptor.attribute = attribute;
 
-        let types: Function[] = descriptor.types as Function[] || [];
-        if (!Array.isArray(types)) {
-            types = [types];
+        let type: Function[] = descriptor.type as Function[] || [];
+        if (!Array.isArray(type)) {
+            type = [type];
         }
-        descriptor.types = types;
+        descriptor.type = type;
 
         if (attribute) {
             descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
-                if (types.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
+                if (type.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
                     if (newValue === '' || newValue === attribute) {
                         // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
                         return true;
@@ -278,10 +278,10 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                     return false;
                 }
                 if (newValue) {
-                    if (types.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
+                    if (type.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
                         return parseFloat(newValue);
                     }
-                    if (types.indexOf(Object) !== -1 || types.indexOf(Array) !== -1) {
+                    if (type.indexOf(Object) !== -1 || type.indexOf(Array) !== -1) {
                         try {
                             return JSON.parse(newValue as string);
                         } catch {
@@ -345,9 +345,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             // if types or custom validator has been set, check the value validity
             if (!falsy) {
                 let valid = true;
-                if (types.length) {
+                if (type.length) {
                     // check if the value is an instanceof of at least one constructor
-                    valid = types.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
+                    valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
                 }
                 if (valid && validate) {
                     valid = validate.call(this, newValue);

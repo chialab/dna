@@ -53,7 +53,7 @@ get properies() {
     return {
 -        name: prop(String).default('Hello').observe('onNameChanged').dispatch('changename'),
 +        name: {
-+           types: [String],
++           type: [String],
 +           defaultValue: 'Hello',
 +           observers: [
 +               this.onNameChanged,
