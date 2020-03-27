@@ -29,6 +29,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     static readonly observedAttributes: string[] = [];
 
+    private [COMPONENT_SYMBOL]: true;
+
     /**
      * The tag name used for Component definition.
      */
@@ -103,7 +105,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
-        (element as any)[COMPONENT_SYMBOL] = true;
         setScope(element, createScope(element));
         setSlotted(element, cloneChildNodes(this));
 
@@ -134,7 +135,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                 // register listeners
                 for (let eventPath in descriptorListeners) {
                     let paths = eventPath.trim().split(' ');
-                    this.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
+                    element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
                 }
             }
             proto = Object.getPrototypeOf(proto);
@@ -143,17 +144,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         // setup properties
         for (let propertyKey in propertyDescriptors) {
             let descriptor = propertyDescriptors[propertyKey];
-            let symbol = this.defineProperty(propertyKey, descriptor);
+            let symbol = element.defineProperty(propertyKey, descriptor);
             if (!(propertyKey in props)) {
-                this.initProperty(propertyKey, symbol, descriptor);
+                element.initProperty(propertyKey, symbol, descriptor);
             }
         }
-        for (let propertyKey in props) {
-            (element as any)[propertyKey] = props[propertyKey];
-        }
+
+        element.initProperties(props);
+        element[COMPONENT_SYMBOL] = true;
 
         if (element.isConnected) {
             connect(element);
+        } else {
+            element.forceUpdate();
         }
 
         return element;
@@ -227,7 +230,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             });
         }
 
-        this.forceUpdate();
+        if (this[COMPONENT_SYMBOL]) {
+            this.forceUpdate();
+        }
     }
 
     /**
@@ -369,6 +374,16 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         Object.defineProperty(this, propertyKey, finalDescriptor);
         return symbol;
+    }
+
+    /**
+     * Initialize constructor properties.
+     * @param props The propertie to set.
+     */
+    initProperties(props: { [key: string]: any; }) {
+        for (let propertyKey in props) {
+            (this as any)[propertyKey] = props[propertyKey];
+        }
     }
 
     /**

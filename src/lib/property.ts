@@ -118,7 +118,8 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
         }
 
         // decorators spec 2
-        const element = targetOrClassElement as unknown as  ClassElement;
+        const element = targetOrClassElement as unknown as ClassElement;
+        const key = String(element.key);
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
@@ -138,10 +139,17 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 enumerable: false,
             },
             initializer(this: IComponent) {
-                return this.initProperty(String(element.key), symbol, descriptor, element.initializer);
+                return (this as any)[symbol];
             },
             finisher(constructor: typeof IComponent) {
-                constructor.prototype.defineProperty(String(element.key), descriptor, symbol);
+                constructor.prototype.defineProperty(key, descriptor, symbol);
+                const initProperties = constructor.prototype.initProperties;
+                constructor.prototype.initProperties = function(this: IComponent, props: { [key: string]: any; }) {
+                    if (!(key in props)) {
+                        this.initProperty(key, symbol, descriptor, element.initializer);
+                    }
+                    return initProperties.call(this, props);
+                };
             },
         };
     }) as any;

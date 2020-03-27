@@ -99,6 +99,12 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol?: symbol): symbol;
 
     /**
+     * Initialize constructor properties.
+     * @param props The propertie to set.
+     */
+    initProperties(props: { [key: string]: any; }): void;
+
+    /**
      * Initialize instance property.
      *
      * @param propertyKey The property name.

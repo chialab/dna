@@ -2,6 +2,7 @@ import { window, extend, render, css, DOM, Component, Template, DelegatedEventCa
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { warnCode } from './deprecations';
+import { ClassFieldDescriptor } from 'src/lib/property';
 
 const STYLES: { [key: string]: HTMLStyleElement } = {};
 
@@ -43,7 +44,7 @@ export class BaseComponent extends Component {
         return this.querySelector(`style[name="${this.is}"]`);
     }
 
-    get template(): any  {
+    get template(): any {
         return undefined;
     }
 
@@ -89,6 +90,33 @@ export class BaseComponent extends Component {
             style.textContent = content;
             window.document.head.appendChild(style);
         }
+
+        const propertyDescriptors = {} as {
+            [key: string]: ClassFieldDescriptor;
+        };
+
+        let proto = Object.getPrototypeOf(this);
+        while (proto.constructor !== Component) {
+            let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
+            let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
+            if (propertiesGetter) {
+                let descriptorProperties = propertiesGetter.call(this) || {};
+                for (let propertyKey in descriptorProperties) {
+                    if (!(propertyKey in propertyDescriptors)) {
+                        let descriptor = descriptorProperties[propertyKey];
+                        if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
+                            descriptor = { type: descriptor };
+                        }
+                        propertyDescriptors[propertyKey] = descriptor;
+                    }
+                }
+            }
+            proto = Object.getPrototypeOf(proto);
+        }
+
+        Object.defineProperty(this, 'properties', {
+            value: propertyDescriptors,
+        });
 
         if (this.template) {
             warnCode('PREFER_RENDER');

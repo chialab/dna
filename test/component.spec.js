@@ -302,7 +302,7 @@ describe('Component', function() {
             });
         });
 
-        it('should render on connect', () => {
+        it('should render on constructor', () => {
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<h1>test</h1>`;
@@ -321,8 +321,6 @@ describe('Component', function() {
                 new TestElement1(),
                 new TestElement2(),
             ].forEach((element) => {
-                expect(element.innerHTML).to.be.equal('');
-                DNA.DOM.appendChild(wrapper, element);
                 expect(element.innerHTML).to.be.equal('<h1>test</h1>');
             });
         });
@@ -702,7 +700,7 @@ describe('Component', function() {
             expect(element.innerHTML).to.be.equal('<h1>test</h1>');
         });
 
-        it.skip('should render only once after construction', () => {
+        it('should render only once after construction', () => {
             const callback = spyFunction();
             class TestElement extends DNA.Component {
                 @DNA.property() title = '';
@@ -714,25 +712,33 @@ describe('Component', function() {
                         author: String,
                         date: {
                             type: Date,
-                            defaultValue: new Date(),
+                            defaultValue: new Date(0),
                         },
                     };
                 }
 
                 render() {
                     callback();
-                    return DNA.html`<h1>${this.title}</h1>`;
+                    return DNA.html`
+                        <div>${this.title}</div>
+                        <div>${this.description}</div>
+                        <div>${this.body}</div>
+                        <div>${this.author}</div>
+                        <div>${this.date.getTime()}</div>
+                    `;
                 }
             }
 
             DNA.define(getComponentName(), TestElement);
             expect(callback.invoked).to.be.false;
-            new TestElement({
+            const element = new TestElement({
                 title: 'Test',
                 description: 'Test',
+                author: 'Test',
             });
             expect(callback.invoked).to.be.true;
             expect(callback.count).to.be.equal(1);
+            expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');
         });
 
         it('should NOT handle property if nothing changed on assignment', () => {
