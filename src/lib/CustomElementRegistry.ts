@@ -1,17 +1,22 @@
+import { window } from './window';
 import { IComponent } from './IComponent';
 
 /**
- * A regex for Custom Element.
- * @author mathiasbynens
+ * The native custom elements registry.
  */
-const VALIDATION_REGEX = /^[a-z](?:[-.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*-(?:[-.0-9_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF])*$/; /* eslint-disable-line no-misleading-character-class */
+const customElements = window.customElements;
 
 /**
  * Check the validity of a Custom Element name.
  * @param name The name to validate.
  */
 const assertValidateCustomElementName = (name: string): boolean => {
-    if (!name || !name.match(VALIDATION_REGEX)) {
+    if (
+        !name                       // missing element name
+        || /[^a-z\-\d]/.test(name)  // custom element names can contain lowercase characters, digits and hyphens
+        || name.indexOf('-') < 1    // custom element names must contain (and must not start with) a hyphen
+        || /^\d/i.test(name)        // custom element names must not start with a digit
+    ) {
         throw new SyntaxError('The provided name must be a valid Custom Element name');
     }
     return true;
@@ -84,7 +89,7 @@ export class CustomElementRegistry {
         this.registry[name] = constructor;
         this.tagNames[name] = tagName.toLowerCase();
 
-        if (typeof customElements !== 'undefined') {
+        if (customElements) {
             return customElements.define(name, constructor, options);
         }
 
@@ -100,7 +105,7 @@ export class CustomElementRegistry {
      * @return A Promise that resolves when the named element is defined.
      */
     whenDefined(name: string): Promise<void> {
-        if (typeof customElements !== 'undefined') {
+        if (customElements) {
             return customElements.whenDefined(name);
         }
         if (this.registry[name]) {
@@ -120,7 +125,7 @@ export class CustomElementRegistry {
      * @param root A Node instance with descendant elements that are to be upgraded.
      */
     upgrade(root: HTMLElement) {
-        if (typeof customElements !== 'undefined' && 'upgrade' in customElements) {
+        if (customElements && 'upgrade' in customElements) {
             return customElements.upgrade(root);
         }
         // iterate registry entries in order to retrieve all registered tags
