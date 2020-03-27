@@ -319,32 +319,34 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 One of the best practice for Web Components is to use the [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) to render and stylize component's children.
 Shadow DOM is a good choice for encapsulating styles and handling components children, but its cross browser [support is poor](https://caniuse.com/#feat=shadowdomv1). During the render cycle, DNA is able to replicate ShadowDOM implementation as well as for [styles](./styles).
 
-For example, we may declare a custom `<article is="x-article">` tag with some layout features:
+For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
 ```ts
 import { Component, html, property, define } from '@chialab/dna';
 
-class Article extends Component {
+class Dialog extends Component {
     static get observedAttributes() {
-        return ['title', 'body'];
+        return ['title', 'content'];
     }
 
     @property() title = '';
-    @property() body = '';
+    @property() content = '';
 
     render() {
         return html`
-            <div class="layout-header">
-                <h1>${this.title}</h1>
-            </div>
-            <div class="layout-body">
-                ${this.body}
+            <div class="layout-container">
+                <div class="layout-header">
+                    <h1>${this.title}</h1>
+                </div>
+                <div class="layout-content">
+                    ${this.content}
+                </div>
             </div>
         `;
     }
 }
 
-define('x-article', Article, { extends: 'article' });
+define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 This example has two problems:
@@ -355,64 +357,67 @@ This example has two problems:
 Shadow DOM solves those two issues, rendering "soft" children of an element into the `<slot>` tag:
 
 ```diff
-class Article extends Component {
-    static get observedAttributes() {
-        return ['title'];
-    }
+class Dialog extends Component {
+-    static get observedAttributes() {
+-        return ['title', 'content'];
+-    }
 
 -    @property() title = '';
--    @property() body = '';
+-    @property() content = '';
 
     render() {
         return html`
--            <div class="layout-header">
--                <h1>${this.title}</h1>
--            </div>
--            <div class="layout-body">
--                ${this.body}
--            </div>
-+            <div class="layout-body">
-+                 <slot />
-+            </div>
+            <div class="layout-container">
+-                <div class="layout-header">
+-                    <h1>${this.title}</h1>
+-                </div>
+                <div class="layout-content">
+-                   ${this.content}
++                   <slot />
+                </div>
+            </div>
         `;
     }
 }
 ```
 
-Now, every "soft" child of the `<article is="x-article">` element is rendered into the layout:
+Now, every "soft" child of the `<dialog is="x-dialog">` element is rendered into the layout:
 
 ```html
-<article is="x-article">
+<dialog is="x-dialog">
     <h1>How to use DNA</h1>
     <img src="https://placekitten.com/300/200" />
     <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
-</article>
+</dialog>
 ```
 
 results
 
 ```html
-<article is="x-article">
-    <div class="layout-body">
-        <h1>How to use DNA</h1>
-        <img src="https://placekitten.com/300/200" />
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
+<dialog is="x-dialog">
+    <div class="layout-container">
+        <div class="layout-content">
+            <h1>How to use DNA</h1>
+            <img src="https://placekitten.com/300/200" />
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
+        </div>
     </div>
-</article>
+</dialog>
 ```
 
 We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will colleced any element which does not specify a slot.
 
 ```diff
-class Article extends Component {
+class Dialog extends Component {
     render() {
         return html`
--            <div class="layout-body">
-+            <div class="layout-header">
-+                <slot name="title" />
-+            </div>
-+            <div class="layout-body">
-                <slot />
+            <div class="layout-container">
++               <div class="layout-header">
++                   <slot name="title" />
++               </div>
+                <div class="layout-content">
+                    <slot />
+                </div>
             </div>
         `;
     }
@@ -422,26 +427,28 @@ class Article extends Component {
 Update the HTML sample adding `<h1>` to the `title` slot.
 
 ```diff
-<article is="x-article">
+<dialog is="x-dialog">
 -    <h1>How to use DNA</h1>
 +    <h1 slot="title">How to use DNA</h1>
     <img src="https://placekitten.com/300/200" />
     <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
-</article>
+</dialog>
 ```
 
 Now the resulting DOM would be:
 
 ```html
-<article is="x-article">
-    <div class="layout-header">
-        <h1>How to use DNA</h1>
+<dialog is="x-dialog">
+    <div class="layout-container">
+        <div class="layout-header">
+            <h1>How to use DNA</h1>
+        </div>
+        <div class="layout-content">
+            <img src="https://placekitten.com/300/200" />
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
+        </div>
     </div>
-    <div class="layout-body">
-        <img src="https://placekitten.com/300/200" />
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing <em>elit</em>.</p>
-    </div>
-</article>
+</dialog>
 ```
 
 ## Keyed elements

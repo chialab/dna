@@ -39,7 +39,7 @@ class Tracker extends Component {
         return {
             touchmove: {
                 listener: (event) => {
-                    event.preventDefault();
+                    // ...
                 },
                 passive: true,
             },
