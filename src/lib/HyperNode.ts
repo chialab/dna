@@ -20,6 +20,13 @@ export type HyperProperties = {
 };
 
 /**
+ * A list of namespaceURI bound with their tagName.
+ */
+export enum NamespaceURI {
+    svg = 'http://www.w3.org/2000/svg',
+}
+
+/**
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
@@ -29,7 +36,7 @@ export type HyperNode = {
     key?: any,
     isFragment?: boolean,
     isSlot?: boolean,
-    namespaceURI?: string,
+    namespaceURI?: NamespaceURI,
     properties?: any,
     children: TemplateItems,
 };
@@ -84,7 +91,7 @@ export const h = (tagOrComponent: string | typeof Element, properties: HyperProp
         key,
         isFragment,
         isSlot,
-        namespaceURI: propertiesToSet.namespaceURI,
+        namespaceURI: NamespaceURI[tag as keyof typeof NamespaceURI] || propertiesToSet.xmlns,
         properties: propertiesToSet,
         children,
         [HYPER_SYMBOL]: true,

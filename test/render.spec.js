@@ -10,7 +10,7 @@ describe('render', function() {
         wrapper = DNA.DOM.createElement('div');
     });
 
-    describe('#render', () => {
+    describe('render', () => {
         it('should render string', () => {
             DNA.render(wrapper, 'hello');
             expect(wrapper.innerHTML).to.be.equal('hello');
@@ -158,6 +158,24 @@ describe('render', function() {
             expect(children[1].textContent).to.be.equal('Six');
             expect(children[2].textContent).to.be.equal('Seven');
             expect(children[3].textContent).to.be.equal('Height');
+        });
+
+        it('should render svgs', () => {
+            DNA.render(wrapper, DNA.h('div', {}, DNA.h('svg', null, DNA.h('g', {}, DNA.h('rect', { width: '100', height: '100' }), DNA.h('foreignObject', {}, DNA.h('body', { xmlns: 'http://www.w3.org/1999/xhtml' }, DNA.h('p')))))));
+            const div = wrapper.querySelector('div');
+            const svg = wrapper.querySelector('svg');
+            const g = wrapper.querySelector('g');
+            const rect = wrapper.querySelector('rect');
+            const foreign = wrapper.querySelector('foreignobject');
+            const body = wrapper.querySelector('body');
+            const p = wrapper.querySelector('p');
+            expect(div.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
+            expect(svg.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
+            expect(g.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
+            expect(rect.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
+            expect(foreign.namespaceURI).to.be.equal('http://www.w3.org/2000/svg');
+            expect(body.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
+            expect(p.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
         });
     });
 

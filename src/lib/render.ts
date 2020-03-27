@@ -28,6 +28,7 @@ const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
 export const render = (root: HTMLElement, input: Template, scope?: Scope, filter?: TemplateFilter): Node | Node[] | void => {
     const renderScope = scope && createScope(scope) || getScope(root) || createScope(root);
     const isStyle = root.localName === 'style';
+    const rootNamespaceURI = root.namespaceURI;
 
     // the current iterating node
     let currentNode = root.firstChild as Node;
@@ -112,10 +113,13 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             if (!newNode) {
                 if (Component) {
                     newNode = new Component();
-                } else if (namespaceURI) {
-                    newNode = DOM.createElementNS(namespaceURI, tag as string);
                 } else {
-                    newNode = DOM.createElement(tag as string);
+                    let currentNamespace = namespaceURI || rootNamespaceURI;
+                    if (currentNamespace) {
+                        newNode = DOM.createElementNS(currentNamespace, tag as string);
+                    } else {
+                        newNode = DOM.createElement(tag as string);
+                    }
                 }
 
                 if (key) {
