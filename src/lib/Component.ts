@@ -155,8 +155,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         if (element.isConnected) {
             connect(element);
-        } else {
-            element.forceUpdate();
         }
 
         return element;

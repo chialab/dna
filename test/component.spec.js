@@ -302,7 +302,7 @@ describe('Component', function() {
             });
         });
 
-        it('should render on constructor', () => {
+        it('should render when connected', () => {
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<h1>test</h1>`;
@@ -321,6 +321,8 @@ describe('Component', function() {
                 new TestElement1(),
                 new TestElement2(),
             ].forEach((element) => {
+                expect(element.innerHTML).to.be.equal('');
+                DNA.DOM.appendChild(wrapper, element);
                 expect(element.innerHTML).to.be.equal('<h1>test</h1>');
             });
         });
@@ -736,6 +738,7 @@ describe('Component', function() {
                 description: 'Test',
                 author: 'Test',
             });
+            DNA.DOM.appendChild(wrapper, element);
             expect(callback.invoked).to.be.true;
             expect(callback.count).to.be.equal(1);
             expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');

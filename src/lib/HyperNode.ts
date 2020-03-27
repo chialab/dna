@@ -1,5 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { registry } from './CustomElementRegistry';
+import { IComponent } from './IComponent';
 import { TemplateItems } from './Template';
 import { Fragment } from './Fragment';
 
@@ -30,7 +31,7 @@ export enum NamespaceURI {
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
-    Component?: typeof Element,
+    Component?: typeof IComponent,
     tag?: string;
     is?: string,
     key?: any,
