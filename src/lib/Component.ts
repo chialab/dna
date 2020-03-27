@@ -380,6 +380,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     initProperties(props: { [key: string]: any; }) {
         for (let propertyKey in props) {
+            // remove old prototype property definition Chrome < 40
+            delete (this as any)[propertyKey];
             (this as any)[propertyKey] = props[propertyKey];
         }
     }
