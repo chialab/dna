@@ -177,6 +177,16 @@ describe('render', function() {
             expect(body.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
             expect(p.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
         });
+
+        it('should not set svgs properties', () => {
+            DNA.render(wrapper, DNA.h('svg', null, DNA.h('line', { x1: '0', y1: '100', x2: '100', y2: '200' })));
+            const svg = wrapper.querySelector('svg');
+            const line = svg.querySelector('line');
+            expect(line.getAttribute('x1')).to.be.equal('0');
+            expect(line.getAttribute('y1')).to.be.equal('100');
+            expect(line.getAttribute('x2')).to.be.equal('100');
+            expect(line.getAttribute('y2')).to.be.equal('200');
+        });
     });
 
     describe('not keyed', () => {

@@ -138,28 +138,26 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             for (let propertyKey in properties) {
                 let value = properties[propertyKey];
                 let changed = !(propertyKey in childContext) || value !== childContext[propertyKey];
-                if (!isNew && !changed) {
+                if (!changed) {
                     continue;
                 }
 
-                if (changed) {
-                    childContext[propertyKey] = value;
-                    if (!namespaceURI) {
-                        (newNode as any)[propertyKey] = value;
-                    }
+                let type = typeof value;
+                let isReference = type === 'object' || type === 'function';
+
+                childContext[propertyKey] = value;
+                if (Component || isReference) {
+                    (newNode as any)[propertyKey] = value;
                 }
 
                 if (value == null || value === false) {
                     if (!isNew && DOM.hasAttribute(newNode as Element, propertyKey)) {
                         DOM.removeAttribute(newNode as Element, propertyKey);
                     }
-                } else {
-                    let type = typeof value;
-                    if (type !== 'object' && type !== 'function') {
-                        let attrValue = value === true ? '' : value;
-                        if (isNew || DOM.getAttribute(newNode as Element, propertyKey) !== attrValue) {
-                            DOM.setAttribute(newNode as Element, propertyKey, attrValue);
-                        }
+                } else if (!isReference) {
+                    let attrValue = value === true ? '' : value;
+                    if (isNew || DOM.getAttribute(newNode as Element, propertyKey) !== attrValue) {
+                        DOM.setAttribute(newNode as Element, propertyKey, attrValue);
                     }
                 }
             }
