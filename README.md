@@ -74,7 +74,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 **Define the Component**
 ```ts
-import { Component, define, html, property, listener, render } from '@chialab/dna';
+import { Component, define, html, property, render } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get observedAttributes() {

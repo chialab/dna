@@ -6,21 +6,24 @@
 
 **Classes**
 
-<a href="#customelementregistry">CustomElementRegistry</a>
+<a href="#customelementregistry">CustomElementRegistry</a>, <a href="#component">Component</a>
 
 
 
 
 **Constants**
 
-<a href="#get">get</a>, <a href="#define">define</a>, <a href="#upgrade">upgrade</a>, <a href="#whendefined">whenDefined</a>, <a href="#dom">DOM</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#listener">listener</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>
+<a href="#window">window</a>, <a href="#customelements">customElements</a>, <a href="#get">get</a>, <a href="#define">define</a>, <a href="#upgrade">upgrade</a>, <a href="#whendefined">whenDefined</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>
 
 
+**Enums**
+
+<a href="#namespaceuri">NamespaceURI</a>
 
 
 **Types**
 
-<a href="#asyncevent">AsyncEvent</a>
+<a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -52,10 +55,17 @@ The CustomElementRegistry interface provides methods for registering custom elem
         <tr>
             <td>registry</td>
             <td><code>{
-    [key: string]: <a href="#customelement">CustomElement</a>;
+    [key: string]: <a href="#icomponent">IComponent</a>;
 }</code></td>
             <td align="center">✓</td>
-            <td>A global registry.</td>
+            <td>A global registry.</td></tr>
+<tr>
+            <td>tagNames</td>
+            <td><code>{
+    [key: string]: string;
+}</code></td>
+            <td align="center">✓</td>
+            <td>A map of tag names.</td>
         </tr>
     </tbody>
 </table>
@@ -75,7 +85,7 @@ Get the Custom Element definition for a tag.
 
 <details>
 <summary>
-<code>(name: string): <a href="#customelement">CustomElement</a></code>
+<code>(name: string): <a href="#icomponent">IComponent</a></code>
 </summary><br />
 
 
@@ -99,7 +109,7 @@ Get the Custom Element definition for a tag.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#customelement">CustomElement</a></code> The definition for the given tag.
+<strong>Returns</strong>: <code><a href="#icomponent">IComponent</a></code> The definition for the given tag.
 
 <br />
 </details>
@@ -122,9 +132,7 @@ Define a new Custom Element.
 
 <details>
 <summary>
-<code>(name: string, constructor: <a href="#customelement">CustomElement</a>, options?: {
-    extends?: string;
-}): void</code>
+<code>(name: string, constructor: <a href="#icomponent">IComponent</a>, options?: ElementDefinitionOptions): void</code>
 </summary><br />
 
 
@@ -146,14 +154,12 @@ Define a new Custom Element.
             <td>The tag name for the element.</td></tr>
 <tr>
             <td>constructor</td>
-            <td><code><a href="#customelement">CustomElement</a></code></td>
+            <td><code><a href="#icomponent">IComponent</a></code></td>
             <td align="center"></td>
             <td>The Custom Element constructor.</td></tr>
 <tr>
             <td>options</td>
-            <td><code>{
-    extends?: string;
-}</code></td>
+            <td><code>ElementDefinitionOptions</code></td>
             <td align="center">✓</td>
             <td>A set of definition options, like `extends` for native tag extension.</td>
         </tr>
@@ -274,6 +280,107 @@ It upgrades all custom elements in a subtree even before they are connected to t
 
 <hr />
 
+<strong id="component"><code>class</code>  Component</strong>
+    
+
+
+<strong>Extends:</strong> <a href="#component_base">Component_base</a>
+
+<p>
+
+The DNA base Component constructor, a Custom Element constructor with
+declarative properties and event delegations, custom template and
+a complete life cycle implementation.
+All DNA components **must** extends this class.
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr />
+
+<strong id="icomponent"><code>constant</code>  IComponent</strong>
+
+
+
+<p>
+
+The basic DNA Component interface.
+It's a Custom Element, but with some extra useful method.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>{
+    observedAttributes: string[];
+    constructor(node?: HTMLElement, properties?: {
+        [key: string]: any;
+    }): <a href="#icomponent">IComponent</a>;
+    constructor(properties?: {
+        [key: string]: any;
+    }): <a href="#icomponent">IComponent</a>;
+    prototype: <a href="#icomponent">IComponent</a>;
+}</pre>
+
+<strong>See also</strong>
+
+* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
+
+
+<hr />
+
+<strong id="window"><code>constant</code>  window</strong>
+
+
+
+
+
+
+
+<strong>Type:</strong>
+
+<pre>Window & globalThis</pre>
+
+
+
+
+<hr />
+
+<strong id="customelements"><code>constant</code>  customElements</strong>
+
+
+
+<p>
+
+The global DNA registry instance.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
+
+
+
+
+<hr />
+
 <strong id="get"><code>constant</code>  get</strong>
 
 
@@ -284,91 +391,16 @@ It upgrades all custom elements in a subtree even before they are connected to t
 
 <strong>Type:</strong>
 
-<pre>(name: string): <a href="#customelement">CustomElement</a></pre>
-
-
-
-
-<hr />
-
-<strong id="ce_symbol"><code>constant</code>  CE_SYMBOL</strong>
-
-
-
-<p>
-
-A symbol which identify custom elements.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>unique Symbol</pre>
-
-
-
-
-<hr />
-
-<strong id="ce_emulate_lifecycle"><code>constant</code>  CE_EMULATE_LIFECYCLE</strong>
-
-
-
-<p>
-
-A symbol which identify emulated custom elements.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>Symbol</pre>
-
-
-
-
-<hr />
-
-<strong id="iscustomelement"><code>constant</code>  isCustomElement</strong>
-
-
-
-<p>
-
-Check if a node is a custom element.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(node: Element): node is <a href="#customelement">CustomElement</a></pre>
-
-
-
-
-<hr />
-
-<strong id="shouldemulatelifecycle"><code>constant</code>  shouldEmulateLifeCycle</strong>
-
-
-
-<p>
-
-Check if a node require emulated life cycle.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(node: Element): node is <a href="#customelement">CustomElement</a></pre>
+<pre>(name: string): {
+    constructor(node?: HTMLElement|undefined, properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>;
+    constructor(properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>;
+    observedAttributes: string[];
+    prototype: <a href="#icomponent">IComponent</a>;
+}</pre>
 
 
 
@@ -385,9 +417,16 @@ Check if a node require emulated life cycle.
 
 <strong>Type:</strong>
 
-<pre>(name: string, constructor: <a href="#customelement">CustomElement</a>, options?: {
-    extends?: string|undefined;
-}): void</pre>
+<pre>(name: string, constructor: {
+    constructor(node?: HTMLElement|undefined, properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>;
+    constructor(properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>;
+    observedAttributes: string[];
+    prototype: <a href="#icomponent">IComponent</a>;
+}, options?: ElementDefinitionOptions): void</pre>
 
 
 
@@ -447,68 +486,64 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <pre>{
     emulateLifeCycle: boolean;
-    window: Window & globalThis;
-    document: Document;
-    Document: {
-        constructor(): Document;
-        prototype: Document;
-    };
-    Node: {
-        constructor(): Node;
-        prototype: Node;
-        ATTRIBUTE_NODE: number;
-        CDATA_SECTION_NODE: number;
-        COMMENT_NODE: number;
-        DOCUMENT_FRAGMENT_NODE: number;
-        DOCUMENT_NODE: number;
-        DOCUMENT_POSITION_CONTAINED_BY: number;
-        DOCUMENT_POSITION_CONTAINS: number;
-        DOCUMENT_POSITION_DISCONNECTED: number;
-        DOCUMENT_POSITION_FOLLOWING: number;
-        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: number;
-        DOCUMENT_POSITION_PRECEDING: number;
-        DOCUMENT_TYPE_NODE: number;
-        ELEMENT_NODE: number;
-        ENTITY_NODE: number;
-        ENTITY_REFERENCE_NODE: number;
-        NOTATION_NODE: number;
-        PROCESSING_INSTRUCTION_NODE: number;
-        TEXT_NODE: number;
-    };
-    Text: {
-        constructor(data?: string|undefined): Text;
-        prototype: Text;
-    };
-    HTMLElement: {
-        constructor(): HTMLElement;
-        prototype: HTMLElement;
-    };
-    Event: {
-        constructor(type: string, eventInitDict?: EventInit|undefined): Event;
-        prototype: Event;
-        AT_TARGET: number;
-        BUBBLING_PHASE: number;
-        CAPTURING_PHASE: number;
-        NONE: number;
-    };
-    CustomEvent: {
-        constructor(typeArg: string, eventInitDict?: CustomEventInit&lt;T&gt;|undefined): CustomEvent&lt;T&gt;;
-        prototype: CustomEvent&lt;any&gt;;
-    };
     createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode(data: string): Text;
     createEvent(typeArg: string, eventInitDict?: CustomEventInit&lt;any&gt;): CustomEvent&lt;any&gt;;
-    appendChild&lt;T_1 extends Node&gt;(parent: Element, newChild: T_1, slot?: boolean): T_1;
-    removeChild&lt;T_2 extends Node&gt;(parent: Element, oldChild: T_2, slot?: boolean): T_2;
-    insertBefore&lt;T_3 extends Node&gt;(parent: Element, newChild: T_3, refChild: Node|null, slot?: boolean): T_3;
-    replaceChild&lt;T_4 extends Node&gt;(parent: Element, newChild: Node, oldChild: T_4, slot?: boolean): T_4;
+    appendChild&lt;T extends Node&gt;(parent: Element, newChild: T, slot?: boolean): T;
+    removeChild&lt;T_1 extends Node&gt;(parent: Element, oldChild: T_1, slot?: boolean): T_1;
+    insertBefore&lt;T_2 extends Node&gt;(parent: Element, newChild: T_2, refChild: Node|null, slot?: boolean): T_2;
+    replaceChild&lt;T_3 extends Node&gt;(parent: Element, newChild: Node, oldChild: T_3, slot?: boolean): T_3;
     getAttribute(element: Element, qualifiedName: string): string|null;
     hasAttribute(element: Element, qualifiedName: string): boolean;
     setAttribute(element: Element, qualifiedName: string, value: string): void;
     removeAttribute(element: Element, qualifiedName: string): void;
     matches(element: Element, selectorString: string): boolean;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="connect"><code>constant</code>  connect</strong>
+
+
+
+<p>
+
+Invoke `connectedCallback` method of a Node (and its descendents).
+It does nothing if life cycle is disabled.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(node: Node): void</pre>
+
+
+
+
+<hr />
+
+<strong id="disconnect"><code>constant</code>  disconnect</strong>
+
+
+
+<p>
+
+Invoke `disconnectedCallback` method of a Node (and its descendents).
+It does nothing if life cycle is disabled.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(node: Node): void</pre>
 
 
 
@@ -670,27 +705,6 @@ It also converts `:host` selectors for cross browser compatibility.
 
 <hr />
 
-<strong id="listener"><code>constant</code>  listener</strong>
-
-
-
-<p>
-
-Bind a method to an event listener.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(descriptor: <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>): any</pre>
-
-
-
-
-<hr />
-
 <strong id="delegateeventlistener"><code>constant</code>  delegateEventListener</strong>
 
 
@@ -812,297 +826,18 @@ Get a native HTMLElement constructor to extend by its name.
 
 <strong>Type:</strong>
 
-<pre>(constructor: {
+<pre>&lt;T extends {
     constructor(): HTMLElement;
     prototype: HTMLElement;
-}): {
-    constructor(): {
-        constructor(node?: HTMLElement|undefined, properties?: {
-            [key: string]: any;
-        }|undefined): <a href="#customelement">CustomElement</a>&lt;HTMLElement&gt;;
-        constructor(properties?: {
-            [key: string]: any;
-        }|undefined): <a href="#customelement">CustomElement</a>&lt;HTMLElement&gt;;
-        accessKey: string;
-        accessKeyLabel: string;
-        autocapitalize: string;
-        dir: string;
-        draggable: boolean;
-        hidden: boolean;
-        innerText: string;
-        lang: string;
-        offsetHeight: number;
-        offsetLeft: number;
-        offsetParent: Element|null;
-        offsetTop: number;
-        offsetWidth: number;
-        spellcheck: boolean;
-        title: string;
-        translate: boolean;
-        click(): void;
-        addEventListener&lt;K extends "waiting"|"error"|"abort"|"cancel"|"progress"|"ended"|"change"|"input"|"select"|"fullscreenchange"|"fullscreenerror"|"animationcancel"|"animationend"|"animationiteration"|"animationstart"|"auxclick"|"blur"|"canplay"|"canplaythrough"|"click"|"close"|"contextmenu"|"cuechange"|"dblclick"|"drag"|"dragend"|"dragenter"|"dragexit"|"dragleave"|"dragover"|"dragstart"|"drop"|"durationchange"|"emptied"|"focus"|"focusin"|"focusout"|"gotpointercapture"|"invalid"|"keydown"|"keypress"|"keyup"|"load"|"loadeddata"|"loadedmetadata"|"loadstart"|"lostpointercapture"|"mousedown"|"mouseenter"|"mouseleave"|"mousemove"|"mouseout"|"mouseover"|"mouseup"|"pause"|"play"|"playing"|"pointercancel"|"pointerdown"|"pointerenter"|"pointerleave"|"pointermove"|"pointerout"|"pointerover"|"pointerup"|"ratechange"|"reset"|"resize"|"scroll"|"securitypolicyviolation"|"seeked"|"seeking"|"selectionchange"|"selectstart"|"stalled"|"submit"|"suspend"|"timeupdate"|"toggle"|"touchcancel"|"touchend"|"touchmove"|"touchstart"|"transitioncancel"|"transitionend"|"transitionrun"|"transitionstart"|"volumechange"|"wheel"|"copy"|"cut"|"paste"&gt;(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]): any, options?: boolean|AddEventListenerOptions|undefined): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean|AddEventListenerOptions|undefined): void;
-        removeEventListener&lt;K_1 extends "waiting"|"error"|"abort"|"cancel"|"progress"|"ended"|"change"|"input"|"select"|"fullscreenchange"|"fullscreenerror"|"animationcancel"|"animationend"|"animationiteration"|"animationstart"|"auxclick"|"blur"|"canplay"|"canplaythrough"|"click"|"close"|"contextmenu"|"cuechange"|"dblclick"|"drag"|"dragend"|"dragenter"|"dragexit"|"dragleave"|"dragover"|"dragstart"|"drop"|"durationchange"|"emptied"|"focus"|"focusin"|"focusout"|"gotpointercapture"|"invalid"|"keydown"|"keypress"|"keyup"|"load"|"loadeddata"|"loadedmetadata"|"loadstart"|"lostpointercapture"|"mousedown"|"mouseenter"|"mouseleave"|"mousemove"|"mouseout"|"mouseover"|"mouseup"|"pause"|"play"|"playing"|"pointercancel"|"pointerdown"|"pointerenter"|"pointerleave"|"pointermove"|"pointerout"|"pointerover"|"pointerup"|"ratechange"|"reset"|"resize"|"scroll"|"securitypolicyviolation"|"seeked"|"seeking"|"selectionchange"|"selectstart"|"stalled"|"submit"|"suspend"|"timeupdate"|"toggle"|"touchcancel"|"touchend"|"touchmove"|"touchstart"|"transitioncancel"|"transitionend"|"transitionrun"|"transitionstart"|"volumechange"|"wheel"|"copy"|"cut"|"paste"&gt;(type: K_1, listener: (this: HTMLElement, ev: HTMLElementEventMap[K_1]): any, options?: boolean|EventListenerOptions|undefined): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean|EventListenerOptions|undefined): void;
-        assignedSlot: HTMLSlotElement|null;
-        attributes: NamedNodeMap;
-        classList: DOMTokenList;
-        className: string;
-        clientHeight: number;
-        clientLeft: number;
-        clientTop: number;
-        clientWidth: number;
-        id: string;
-        localName: string;
-        namespaceURI: string|null;
-        onfullscreenchange: ((this: Element, ev: Event): any)|null;
-        onfullscreenerror: ((this: Element, ev: Event): any)|null;
-        outerHTML: string;
-        prefix: string|null;
-        scrollHeight: number;
-        scrollLeft: number;
-        scrollTop: number;
-        scrollWidth: number;
-        shadowRoot: ShadowRoot|null;
-        slot: string;
-        tagName: string;
-        attachShadow(init: ShadowRootInit): ShadowRoot;
-        closest&lt;K_2 extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(selector: K_2): HTMLElementTagNameMap[K_2]|null;
-        closest&lt;K_3 extends "symbol"|"a"|"script"|"style"|"title"|"circle"|"clipPath"|"defs"|"desc"|"ellipse"|"feBlend"|"feColorMatrix"|"feComponentTransfer"|"feComposite"|"feConvolveMatrix"|"feDiffuseLighting"|"feDisplacementMap"|"feDistantLight"|"feFlood"|"feFuncA"|"feFuncB"|"feFuncG"|"feFuncR"|"feGaussianBlur"|"feImage"|"feMerge"|"feMergeNode"|"feMorphology"|"feOffset"|"fePointLight"|"feSpecularLighting"|"feSpotLight"|"feTile"|"feTurbulence"|"filter"|"foreignObject"|"g"|"image"|"line"|"linearGradient"|"marker"|"mask"|"metadata"|"path"|"pattern"|"polygon"|"polyline"|"radialGradient"|"rect"|"stop"|"svg"|"switch"|"text"|"textPath"|"tspan"|"use"|"view"&gt;(selector: K_3): SVGElementTagNameMap[K_3]|null;
-        closest&lt;E extends Element&gt;(selector: string): E|null;
-        getAttribute(qualifiedName: string): string|null;
-        getAttributeNS(namespace: string|null, localName: string): string|null;
-        getAttributeNames(): string[];
-        getAttributeNode(name: string): Attr|null;
-        getAttributeNodeNS(namespaceURI: string, localName: string): Attr|null;
-        getBoundingClientRect(): DOMRect;
-        getClientRects(): DOMRectList;
-        getElementsByClassName(classNames: string): HTMLCollectionOf&lt;Element&gt;;
-        getElementsByTagName&lt;K_4 extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(qualifiedName: K_4): HTMLCollectionOf&lt;HTMLElementTagNameMap[K_4]&gt;;
-        getElementsByTagName&lt;K_5 extends "symbol"|"a"|"script"|"style"|"title"|"circle"|"clipPath"|"defs"|"desc"|"ellipse"|"feBlend"|"feColorMatrix"|"feComponentTransfer"|"feComposite"|"feConvolveMatrix"|"feDiffuseLighting"|"feDisplacementMap"|"feDistantLight"|"feFlood"|"feFuncA"|"feFuncB"|"feFuncG"|"feFuncR"|"feGaussianBlur"|"feImage"|"feMerge"|"feMergeNode"|"feMorphology"|"feOffset"|"fePointLight"|"feSpecularLighting"|"feSpotLight"|"feTile"|"feTurbulence"|"filter"|"foreignObject"|"g"|"image"|"line"|"linearGradient"|"marker"|"mask"|"metadata"|"path"|"pattern"|"polygon"|"polyline"|"radialGradient"|"rect"|"stop"|"svg"|"switch"|"text"|"textPath"|"tspan"|"use"|"view"&gt;(qualifiedName: K_5): HTMLCollectionOf&lt;SVGElementTagNameMap[K_5]&gt;;
-        getElementsByTagName(qualifiedName: string): HTMLCollectionOf&lt;Element&gt;;
-        getElementsByTagNameNS(namespaceURI: "http://www.w3.org/1999/xhtml", localName: string): HTMLCollectionOf&lt;HTMLElement&gt;;
-        getElementsByTagNameNS(namespaceURI: "http://www.w3.org/2000/svg", localName: string): HTMLCollectionOf&lt;SVGElement&gt;;
-        getElementsByTagNameNS(namespaceURI: string, localName: string): HTMLCollectionOf&lt;Element&gt;;
-        hasAttribute(qualifiedName: string): boolean;
-        hasAttributeNS(namespace: string|null, localName: string): boolean;
-        hasAttributes(): boolean;
-        hasPointerCapture(pointerId: number): boolean;
-        insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element|null;
-        insertAdjacentHTML(where: InsertPosition, html: string): void;
-        insertAdjacentText(where: InsertPosition, text: string): void;
-        matches(selectors: string): boolean;
-        msGetRegionContent(): any;
-        releasePointerCapture(pointerId: number): void;
-        removeAttribute(qualifiedName: string): void;
-        removeAttributeNS(namespace: string|null, localName: string): void;
-        removeAttributeNode(attr: Attr): Attr;
-        requestFullscreen(options?: FullscreenOptions|undefined): Promise&lt;void&gt;;
-        requestPointerLock(): void;
-        scroll(options?: ScrollToOptions|undefined): void;
-        scroll(x: number, y: number): void;
-        scrollBy(options?: ScrollToOptions|undefined): void;
-        scrollBy(x: number, y: number): void;
-        scrollIntoView(arg?: boolean|ScrollIntoViewOptions|undefined): void;
-        scrollTo(options?: ScrollToOptions|undefined): void;
-        scrollTo(x: number, y: number): void;
-        setAttribute(qualifiedName: string, value: string): void;
-        setAttributeNS(namespace: string|null, qualifiedName: string, value: string): void;
-        setAttributeNode(attr: Attr): Attr|null;
-        setAttributeNodeNS(attr: Attr): Attr|null;
-        setPointerCapture(pointerId: number): void;
-        toggleAttribute(qualifiedName: string, force?: boolean|undefined): boolean;
-        webkitMatchesSelector(selectors: string): boolean;
-        baseURI: string;
-        childNodes: NodeListOf&lt;ChildNode&gt;;
-        firstChild: ChildNode|null;
-        isConnected: boolean;
-        lastChild: ChildNode|null;
-        nextSibling: ChildNode|null;
-        nodeName: string;
-        nodeType: number;
-        nodeValue: string|null;
-        ownerDocument: Document|null;
-        parentElement: HTMLElement|null;
-        parentNode: (Node & ParentNode)|null;
-        previousSibling: ChildNode|null;
-        textContent: string|null;
-        appendChild&lt;T extends Node&gt;(newChild: T): T;
-        cloneNode(deep?: boolean|undefined): Node;
-        compareDocumentPosition(other: Node): number;
-        contains(other: Node|null): boolean;
-        getRootNode(options?: GetRootNodeOptions|undefined): Node;
-        hasChildNodes(): boolean;
-        insertBefore&lt;T_1 extends Node&gt;(newChild: T_1, refChild: Node|null): T_1;
-        isDefaultNamespace(namespace: string|null): boolean;
-        isEqualNode(otherNode: Node|null): boolean;
-        isSameNode(otherNode: Node|null): boolean;
-        lookupNamespaceURI(prefix: string|null): string|null;
-        lookupPrefix(namespace: string|null): string|null;
-        normalize(): void;
-        removeChild&lt;T_2 extends Node&gt;(oldChild: T_2): T_2;
-        replaceChild&lt;T_3 extends Node&gt;(newChild: Node, oldChild: T_3): T_3;
-        ATTRIBUTE_NODE: number;
-        CDATA_SECTION_NODE: number;
-        COMMENT_NODE: number;
-        DOCUMENT_FRAGMENT_NODE: number;
-        DOCUMENT_NODE: number;
-        DOCUMENT_POSITION_CONTAINED_BY: number;
-        DOCUMENT_POSITION_CONTAINS: number;
-        DOCUMENT_POSITION_DISCONNECTED: number;
-        DOCUMENT_POSITION_FOLLOWING: number;
-        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: number;
-        DOCUMENT_POSITION_PRECEDING: number;
-        DOCUMENT_TYPE_NODE: number;
-        ELEMENT_NODE: number;
-        ENTITY_NODE: number;
-        ENTITY_REFERENCE_NODE: number;
-        NOTATION_NODE: number;
-        PROCESSING_INSTRUCTION_NODE: number;
-        TEXT_NODE: number;
-        dispatchEvent: ((event: Event): boolean) & {
-            (event: Event): boolean;
-            (event: string, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean|undefined, cancelable?: boolean|undefined, composed?: boolean|undefined): boolean;
-        };
-        animate(keyframes: PropertyIndexedKeyframes|Keyframe[]|null, options?: number|KeyframeAnimationOptions|undefined): Animation;
-        getAnimations(): Animation[];
-        after(nodes: (string|Node)[]): void;
-        before(nodes: (string|Node)[]): void;
-        remove(): void;
-        replaceWith(nodes: (string|Node)[]): void;
-        innerHTML: string;
-        nextElementSibling: Element|null;
-        previousElementSibling: Element|null;
-        childElementCount: number;
-        children: HTMLCollection;
-        firstElementChild: Element|null;
-        lastElementChild: Element|null;
-        append(nodes: (string|Node)[]): void;
-        prepend(nodes: (string|Node)[]): void;
-        querySelector&lt;K_6 extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(selectors: K_6): HTMLElementTagNameMap[K_6]|null;
-        querySelector&lt;K_7 extends "symbol"|"a"|"script"|"style"|"title"|"circle"|"clipPath"|"defs"|"desc"|"ellipse"|"feBlend"|"feColorMatrix"|"feComponentTransfer"|"feComposite"|"feConvolveMatrix"|"feDiffuseLighting"|"feDisplacementMap"|"feDistantLight"|"feFlood"|"feFuncA"|"feFuncB"|"feFuncG"|"feFuncR"|"feGaussianBlur"|"feImage"|"feMerge"|"feMergeNode"|"feMorphology"|"feOffset"|"fePointLight"|"feSpecularLighting"|"feSpotLight"|"feTile"|"feTurbulence"|"filter"|"foreignObject"|"g"|"image"|"line"|"linearGradient"|"marker"|"mask"|"metadata"|"path"|"pattern"|"polygon"|"polyline"|"radialGradient"|"rect"|"stop"|"svg"|"switch"|"text"|"textPath"|"tspan"|"use"|"view"&gt;(selectors: K_7): SVGElementTagNameMap[K_7]|null;
-        querySelector&lt;E_1 extends Element&gt;(selectors: string): E_1|null;
-        querySelectorAll&lt;K_8 extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(selectors: K_8): NodeListOf&lt;HTMLElementTagNameMap[K_8]&gt;;
-        querySelectorAll&lt;K_9 extends "symbol"|"a"|"script"|"style"|"title"|"circle"|"clipPath"|"defs"|"desc"|"ellipse"|"feBlend"|"feColorMatrix"|"feComponentTransfer"|"feComposite"|"feConvolveMatrix"|"feDiffuseLighting"|"feDisplacementMap"|"feDistantLight"|"feFlood"|"feFuncA"|"feFuncB"|"feFuncG"|"feFuncR"|"feGaussianBlur"|"feImage"|"feMerge"|"feMergeNode"|"feMorphology"|"feOffset"|"fePointLight"|"feSpecularLighting"|"feSpotLight"|"feTile"|"feTurbulence"|"filter"|"foreignObject"|"g"|"image"|"line"|"linearGradient"|"marker"|"mask"|"metadata"|"path"|"pattern"|"polygon"|"polyline"|"radialGradient"|"rect"|"stop"|"svg"|"switch"|"text"|"textPath"|"tspan"|"use"|"view"&gt;(selectors: K_9): NodeListOf&lt;SVGElementTagNameMap[K_9]&gt;;
-        querySelectorAll&lt;E_2 extends Element&gt;(selectors: string): NodeListOf&lt;E_2&gt;;
-        oncopy: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        oncut: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        onpaste: ((this: DocumentAndElementEventHandlers, ev: ClipboardEvent): any)|null;
-        style: CSSStyleDeclaration;
-        contentEditable: string;
-        inputMode: string;
-        isContentEditable: boolean;
-        onabort: ((this: GlobalEventHandlers, ev: UIEvent): any)|null;
-        onanimationcancel: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationend: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationiteration: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onanimationstart: ((this: GlobalEventHandlers, ev: AnimationEvent): any)|null;
-        onauxclick: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onblur: ((this: GlobalEventHandlers, ev: FocusEvent): any)|null;
-        oncancel: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncanplay: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncanplaythrough: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onclick: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onclose: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oncontextmenu: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        oncuechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ondblclick: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        ondrag: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragend: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragenter: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragexit: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ondragleave: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragover: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondragstart: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondrop: ((this: GlobalEventHandlers, ev: DragEvent): any)|null;
-        ondurationchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onemptied: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onended: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onerror: OnErrorEventHandler;
-        onfocus: ((this: GlobalEventHandlers, ev: FocusEvent): any)|null;
-        ongotpointercapture: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        oninput: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        oninvalid: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onkeydown: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onkeypress: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onkeyup: ((this: GlobalEventHandlers, ev: KeyboardEvent): any)|null;
-        onload: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadeddata: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadedmetadata: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onloadstart: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onlostpointercapture: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onmousedown: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseenter: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseleave: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmousemove: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseout: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseover: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onmouseup: ((this: GlobalEventHandlers, ev: MouseEvent): any)|null;
-        onpause: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onplay: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onplaying: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onpointercancel: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerdown: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerenter: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerleave: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointermove: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerout: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerover: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onpointerup: ((this: GlobalEventHandlers, ev: PointerEvent): any)|null;
-        onprogress: ((this: GlobalEventHandlers, ev: ProgressEvent&lt;EventTarget&gt;): any)|null;
-        onratechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onreset: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onresize: ((this: GlobalEventHandlers, ev: UIEvent): any)|null;
-        onscroll: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsecuritypolicyviolation: ((this: GlobalEventHandlers, ev: SecurityPolicyViolationEvent): any)|null;
-        onseeked: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onseeking: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselect: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselectionchange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onselectstart: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onstalled: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsubmit: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onsuspend: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontimeupdate: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontoggle: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        ontouchcancel?: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null|undefined;
-        ontouchend?: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null|undefined;
-        ontouchmove?: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null|undefined;
-        ontouchstart?: ((this: GlobalEventHandlers, ev: TouchEvent): any)|null|undefined;
-        ontransitioncancel: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionend: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionrun: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        ontransitionstart: ((this: GlobalEventHandlers, ev: TransitionEvent): any)|null;
-        onvolumechange: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onwaiting: ((this: GlobalEventHandlers, ev: Event): any)|null;
-        onwheel: ((this: GlobalEventHandlers, ev: WheelEvent): any)|null;
-        autofocus: boolean;
-        dataset: DOMStringMap;
-        nonce?: string|undefined;
-        tabIndex: number;
-        blur(): void;
-        focus(options?: FocusOptions|undefined): void;
-        is: string|undefined;
-        properties?: {
-            [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
-        }|undefined;
-        listeners?: {
-            [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
-        }|undefined;
-        template?: HTMLTemplateElement|undefined;
-        adoptedStyleSheets?: CSSStyleSheet[]|undefined;
-        connectedCallback(): void;
-        disconnectedCallback(): void;
-        attributeChangedCallback(attributeName: string, oldValue: string|null, newValue: string|null): void;
-        propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
-        render(): <a href="#template">Template</a>;
-        forceUpdate(): void;
-        observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
-        unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
-        delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
-        undelegateEventListener(event?: string|undefined, selector?: string|null|undefined, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>|undefined): void;
-    };
+}&gt;(constructor: T): {
+    constructor(node?: HTMLElement|undefined, properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
+    constructor(properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
+    observedAttributes: string[];
+    prototype: <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
 }</pre>
 
 
@@ -1110,74 +845,111 @@ Get a native HTMLElement constructor to extend by its name.
 
 <hr />
 
-<strong id="component"><code>constant</code>  Component</strong>
+<strong id="component_base"><code>constant</code>  Component_base</strong>
 
 
 
-<p>
 
-The DNA base Component constructor, a Custom Element constructor with
-declarative properties and event delegations, custom template and
-a complete life cycle implementation.
-All DNA components **must** extends this class.
-
-</p>
 
 
 
 <strong>Type:</strong>
 
-<pre><a href="#customelement">CustomElement</a>&lt;HTMLElement&gt;</pre>
+<pre>{
+    constructor(node?: HTMLElement|undefined, properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    constructor(properties?: {
+        [key: string]: any;
+    }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    observedAttributes: string[];
+    prototype: <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+}</pre>
 
 
 
 
 <hr />
 
-<strong id="customelement"><code>type</code>  CustomElement</strong>
+<strong id="namespaceuri"><code>enum</code>  NamespaceURI</strong>
+
+
 
 <p>
 
-The basic Custom Element interface.
-It's a Custom Element, but with some extra useful method.
+A list of namespaceURI bound with their tagName.
 
 </p>
 
 
+<table>
+    <thead>
+        <th align="left">Member</th>
+        <th align="left">Description</th>
+        <th align="left">Value</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>svg</td>
+            <td></td>
+            <td><code>"http://www.w3.org/2000/svg"</code></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+
+
+
+
+<hr />
+
+<strong id="icomponent"><code>type</code>  IComponent</strong>
+
+
+
+
 
 <pre>T & {
-    is: string|undefined;
+    is: string;
     properties?: {
-        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
+        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
     };
     listeners?: {
         [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
     };
-    template?: HTMLTemplateElement;
+    template: HTMLTemplateElement|undefined;
+    $: <a href="#scope">Scope</a>|undefined;
+    slotChildNodes: Node[];
     adoptedStyleSheets?: CSSStyleSheet[];
-    constructor(node?: T, properties?: {
-        [key: string]: any;
-    }): <a href="#customelement">CustomElement</a>&lt;T&gt;;
-    constructor(properties?: {
-        [key: string]: any;
-    }): <a href="#customelement">CustomElement</a>&lt;T&gt;;
     connectedCallback(): void;
     disconnectedCallback(): void;
     attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
     render(): <a href="#template">Template</a>;
     forceUpdate(): void;
+    getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
+    defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
+    initProperties(props: {
+        [key: string]: any;
+    }): void;
+    initProperty(propertyKey: string, symbol: Symbol, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, initializer?: Function): any;
     observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     dispatchEvent(event: Event): boolean;
     dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchAsyncEvent(event: Event): Promise&lt;any[]&gt;;
+    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
+    appendSlotChild&lt;T extends Node&gt;(newChild: T): T;
+    removeSlotChild&lt;T extends Node&gt;(oldChild: T): T;
+    insertSlotBefore&lt;T extends Node&gt;(newChild: T, refChild: Node|null): T;
+    replaceSlotChild&lt;T extends Node&gt;(newChild: Node, oldChild: T): T;
 }</pre>
 
-<strong>See also</strong>
 
-* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
 
 
 <hr />
@@ -1194,16 +966,53 @@ A list of properties for an class field description.
 
 <pre>PropertyDescriptor & {
     name?: PropertyKey;
-    attribute?: string;
+    attribute?: true|string;
     defaultValue?: any;
-    types?: Function|Function[];
+    type?: Function|Function[];
+    fromAttribute?: <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>;
+    toAttribute?: <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>;
     observe?: <a href="#classfieldobserver">ClassFieldObserver</a>;
     observers?: <a href="#classfieldobserver">ClassFieldObserver</a>[];
     validate?: <a href="#classfieldvalidator">ClassFieldValidator</a>;
     getter?: (this: Element, value?: any): any;
     setter?: (this: Element, newValue?: any): any;
+    event?: true|string;
     symbol?: Symbol;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="classfieldattributeconverter"><code>type</code>  ClassFieldAttributeConverter</strong>
+
+<p>
+
+Convert attribute to property value.
+
+</p>
+
+
+
+<pre>&lt;T extends HTMLElement&gt;(this: T, value: string|null): any</pre>
+
+
+
+
+<hr />
+
+<strong id="classfieldpropertyconverter"><code>type</code>  ClassFieldPropertyConverter</strong>
+
+<p>
+
+Convert property to attribute value.
+
+</p>
+
+
+
+<pre>&lt;T extends HTMLElement&gt;(this: T, value: any): string|null|undefined</pre>
 
 
 
@@ -1220,7 +1029,7 @@ The observer signature for class fields.
 
 
 
-<pre>(oldValue: any, newValue: any): any</pre>
+<pre>&lt;T extends HTMLElement&gt;(this: T, oldValue: any, newValue: any): any</pre>
 
 
 
@@ -1237,7 +1046,7 @@ A validation function for the class field.
 
 
 
-<pre>(value: any): boolean</pre>
+<pre>&lt;T extends HTMLElement&gt;(this: T, value: any): boolean</pre>
 
 
 
@@ -1255,6 +1064,38 @@ Describe the signature of a delegated event callback.
 
 
 <pre>(event: Event, target?: Node): any</pre>
+
+
+
+
+<hr />
+
+<strong id="scope"><code>type</code>  Scope</strong>
+
+<p>
+
+A scope interface.
+
+</p>
+
+
+
+<pre>HTMLElement & <a href="#scopevalues">ScopeValues</a></pre>
+
+
+
+
+<hr />
+
+<strong id="scopevalues"><code>type</code>  ScopeValues</strong>
+
+
+
+
+
+<pre>{
+    [key: string]: any;
+}</pre>
 
 
 
@@ -1307,13 +1148,13 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 
 <pre>{
-    Component?: Element;
+    Component?: <a href="#icomponent">IComponent</a>;
     tag?: string;
     is?: string;
     key?: any;
     isFragment?: boolean;
     isSlot?: boolean;
-    namespaceURI?: string;
+    namespaceURI?: <a href="#namespaceuri">NamespaceURI</a>;
     properties?: any;
     children: <a href="#templateitems">TemplateItems</a>;
 }</pre>
@@ -1334,38 +1175,6 @@ A list of template items.
 
 
 <pre><a href="#templateitem">TemplateItem</a>[]</pre>
-
-
-
-
-<hr />
-
-<strong id="scope"><code>type</code>  Scope</strong>
-
-<p>
-
-A scope interface.
-
-</p>
-
-
-
-<pre>HTMLElement & <a href="#scopevalues">ScopeValues</a></pre>
-
-
-
-
-<hr />
-
-<strong id="scopevalues"><code>type</code>  ScopeValues</strong>
-
-
-
-
-
-<pre>{
-    [key: string]: any;
-}</pre>
 
 
 
@@ -1420,27 +1229,6 @@ The properties of a HyperNode.
 
 <pre>Event & {
     respondWith(callback: (): Promise&lt;any&gt;): void;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="delegatedeventdescriptor"><code>type</code>  DelegatedEventDescriptor</strong>
-
-<p>
-
-A descriptor for an event delegation.
-
-</p>
-
-
-
-<pre>{
-    event: string;
-    selector: string|null;
-    callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
 }</pre>
 
 
