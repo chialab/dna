@@ -56,7 +56,7 @@ export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SY
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export const h = (tagOrComponent: string | typeof Element, properties: HyperProperties | null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | typeof Element, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',

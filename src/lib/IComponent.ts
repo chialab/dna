@@ -1,6 +1,6 @@
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
-import { Template } from './Template';
+import { Template, TemplateItems } from './Template';
 import { Scope } from './Scope';
 
 export type IComponent<T extends HTMLElement = HTMLElement> = T & {
@@ -36,7 +36,7 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     /**
      * A list of slot nodes.
      */
-    readonly slotChildNodes: Node[];
+    slotChildNodes: TemplateItems;
 
     /**
      * A list of CSSStyleSheet to apply to the component.

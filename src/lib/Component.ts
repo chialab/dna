@@ -5,7 +5,7 @@ import { registry } from './CustomElementRegistry';
 import { DOM, COMPONENT_SYMBOL, EMULATE_LIFECYCLE_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
-import { Template } from './Template';
+import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
@@ -86,6 +86,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     get slotChildNodes() {
         return getSlotted(this);
+    }
+
+    set slotChildNodes(children: TemplateItems) {
+        setSlotted(this, children);
+        this.forceUpdate();
     }
 
     /**
@@ -370,6 +375,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
         };
 
+        // remove old prototype property definition Chrome < 40
+        delete (this as any)[propertyKey];
         Object.defineProperty(this, propertyKey, finalDescriptor);
         return symbol;
     }
@@ -400,8 +407,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         if (typeof target[symbol] !== 'undefined') {
             return target[symbol];
         }
-        // remove old prototype property definition Chrome < 40
-        delete target[propertyKey];
         if (typeof initializer === 'function') {
             target[symbol] = initializer.call(target);
         } else if ('value' in descriptor) {
@@ -653,6 +658,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         Object.setPrototypeOf(element, constructor.prototype);
         return element;
     } as any as T;
+    Object.setPrototypeOf(shim, base);
     shim.prototype = base.prototype;
     return shim;
 };

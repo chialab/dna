@@ -27,15 +27,17 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "npm run build:browser && npm run build:node && npm run build:compat",
+    "build": "npm run build:browser && npm run build:node && npm run build:compat && npm run build:react",
     "build:browser": "rna build --production --name DNA --typings --bundle",
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs --targets 'node >= 10'",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --name DNA --format esm",
-    "test": "yarn test:browser && yarn test:node && yarn test:compat",
+    "build:react": "rna build src/adapters/react/dna.ts --output 'dist/adapters/react/dna.js' --name DNA --format esm",
+    "test": "yarn test:browser && yarn test:node && yarn test:compat && yarn test:react",
     "test:browser": "rna unit 'test/*.spec.js' --coverage --browser",
     "test:saucelabs": "rna unit 'test/*.spec.js' --coverage --saucelabs --concurrency 2",
     "test:node": "rna unit 'test/*.spec.js' --coverage --node",
     "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
+    "test:react": "rna unit 'test/react/*.spec.js' --browser --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "npm run build",
     "install": "yarn link && yarn link @chialab/dna"
@@ -44,12 +46,16 @@
   "optionalDependencies": {
     "@chialab/proteins": "^3.2.0",
     "htm": "^3.0.3",
-    "jsdom": "^16.0.0"
+    "jsdom": "^16.0.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "@chialab/proteins": "^3.2.0",
     "@dnajs/idom": "^2.9.8",
     "@types/jsdom": "^12.2.3",
+    "@types/react": "^16.9.31",
+    "@types/react-dom": "^16.9.6",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.18.0",
     "babel-eslint": "^10.0.3",
