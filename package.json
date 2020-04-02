@@ -27,11 +27,11 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "npm run build:browser && npm run build:node && npm run build:compat && npm run build:react",
+    "build": "rm -rf dist && npm run build:browser && npm run build:node && npm run build:compat && npm run build:react",
     "build:browser": "rna build --production --name DNA --typings --bundle",
-    "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --name DNA --format cjs --targets 'node >= 10'",
-    "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --name DNA --format esm",
-    "build:react": "rna build src/adapters/react/dna.ts --output 'dist/adapters/react/dna.js' --name DNA --format esm",
+    "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --typings --format cjs --targets 'node >= 10'",
+    "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --typings --format esm",
+    "build:react": "rna build src/adapters/react/dna.ts --output 'dist/adapters/react/dna.js' --typings --format esm",
     "test": "yarn test:browser && yarn test:node && yarn test:compat && yarn test:react",
     "test:browser": "rna unit 'test/*.spec.js' --coverage --browser",
     "test:saucelabs": "rna unit 'test/*.spec.js' --coverage --saucelabs --concurrency 2",

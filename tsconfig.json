@@ -3,7 +3,6 @@
     "target": "es2017",
     "module": "es2015",
     "lib": ["es2017", "dom"],
-    "declaration": false,
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,
@@ -18,9 +17,9 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-        "@chialab/dna": [
-          "./src/dna.ts"
-        ]
+      "@chialab/dna": [
+        "./src/dna.ts"
+      ]
     }
   },
   "include": [
