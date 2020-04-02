@@ -384,8 +384,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
         };
 
-        // remove old prototype property definition Chrome < 40
-        delete (this as any)[propertyKey];
         Object.defineProperty(this, propertyKey, finalDescriptor);
         return symbol;
     }
@@ -416,6 +414,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         if (typeof target[symbol] !== 'undefined') {
             return target[symbol];
         }
+        // remove old prototype property definition Chrome < 40
+        delete (target as any)[propertyKey];
         if (typeof initializer === 'function') {
             target[symbol] = initializer.call(target);
         } else if ('value' in descriptor) {
