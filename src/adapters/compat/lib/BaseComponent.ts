@@ -2,11 +2,22 @@ import { window, extend, render, css, DOM, Component, Template, DelegatedEventCa
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { warnCode } from './deprecations';
-import { ClassFieldDescriptor } from 'src/lib/property';
 
+/**
+ * Map of style elements.
+ * @private
+ */
 const STYLES: { [key: string]: HTMLStyleElement } = {};
 
+/**
+ * Alias to the `extend` method.
+ */
 export const mixin = extend;
+
+/**
+ * The DNA 2 base component class.
+ * @deprecated since version 3.0
+ */
 export class BaseComponent extends Component {
     /**
      * Listeners alias.
@@ -15,44 +26,70 @@ export class BaseComponent extends Component {
         [key: string]: DelegatedEventCallback|string;
     };
 
+    /**
+     * CSS text to use for scoped style.
+     */
     readonly css?: string;
 
+    /**
+     * Compatibility symbol for DNA components.
+     */
+    get [DNA_SYMBOL]() {
+        return true;
+    }
+
+    /**
+     * Alias to the component node (same as component ind DNA 3).
+     */
     get node() {
         warnCode('PREFER_INSTANCE');
         return this;
     }
 
-    get [DNA_SYMBOL]() {
-        return true;
-    }
-
-    get [COMPONENT_SYMBOL]() {
-        warnCode('PREFER_INSTANCE');
-        return this;
-    }
-
+    /**
+     * Alias to the component node (same as component ind DNA 3).
+     */
     get [NODE_SYMBOL]() {
         warnCode('PREFER_INSTANCE');
         return this;
     }
 
+    /**
+     * Alias to the component instance (same as node in DNA 3).
+     */
+    get [COMPONENT_SYMBOL]() {
+        warnCode('PREFER_INSTANCE');
+        return this;
+    }
+
+    /**
+     * Alias to the connection status.
+     */
     get [CONNECTED_SYMBOL]() {
         return this.isConnected;
     }
 
-    get [STYLE_SYMBOL]() {
-        return this.querySelector(`style[name="${this.is}"]`);
-    }
+    /**
+     * Alias to the main style element for the component.
+     */
+    [STYLE_SYMBOL]: HTMLStyleElement;
 
+    /**
+     * Compatibility DNA component default template.
+     */
     get template(): any {
         return undefined;
     }
 
+    /**
+     * Compatibility alias from `events` getter to `listener`.
+     */
     get listeners() {
         const listeners: { [key: string]: DelegatedEventCallback } = {};
 
         let proto = Object.getPrototypeOf(this);
         let shouldWarn = false;
+        // collect al prototyped event listeners
         while (proto.constructor !== Component) {
             let eventsDescriptor = Object.getOwnPropertyDescriptor(proto, 'events');
             let eventsGetter = eventsDescriptor && eventsDescriptor.get;
@@ -63,6 +100,7 @@ export class BaseComponent extends Component {
                     shouldWarn = true;
                     let listener = descriptorListeners[eventPath] as DelegatedEventCallback;
                     if (typeof listener === 'string') {
+                        // string reference to prototype method has been removed in DNA 3, update the reference
                         warnCode('LISTENER_STRING_REFERENCE');
                         listener = (this as any)[listener];
                     }
@@ -83,46 +121,34 @@ export class BaseComponent extends Component {
         super(node as HTMLElement, properties);
         this.classList.add(this.is as string);
 
-        if (this.is && this.css && !STYLES[this.is]) {
-            warnCode('PREFER_STYLE');
-            let content = css(this.is, this.css);
-            let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
-            style.textContent = content;
-            window.document.head.appendChild(style);
-        }
-
-        const propertyDescriptors = {} as {
-            [key: string]: ClassFieldDescriptor;
-        };
-
-        let proto = Object.getPrototypeOf(this);
-        while (proto.constructor !== Component) {
-            let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
-            let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
-            if (propertiesGetter) {
-                let descriptorProperties = propertiesGetter.call(this) || {};
-                for (let propertyKey in descriptorProperties) {
-                    if (!(propertyKey in propertyDescriptors)) {
-                        let descriptor = descriptorProperties[propertyKey];
-                        if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
-                            descriptor = { type: descriptor };
-                        }
-                        propertyDescriptors[propertyKey] = descriptor;
-                    }
-                }
+        if (this.css) {
+            // handle css text for the component
+            if (!STYLES[this.is]) {
+                warnCode('PREFER_STYLE');
+                let content = css(this.is, this.css);
+                let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
+                style.textContent = content;
+                window.document.head.appendChild(style);
             }
-            proto = Object.getPrototypeOf(proto);
+            this[STYLE_SYMBOL] = STYLES[this.is];
         }
 
+        // compatibility alias to `getProperties` method
         Object.defineProperty(this, 'properties', {
-            value: propertyDescriptors,
+            get() {
+                return this.getProperties();
+            },
         });
 
+        // check if deprecated template getter is defined and warn
         if (this.template) {
             warnCode('PREFER_RENDER');
         }
     }
 
+    /**
+     * Compatibility alias to `render` method.
+     */
     forceUpdate() {
         this.render();
     }

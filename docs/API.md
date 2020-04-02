@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -613,7 +613,7 @@ HyperFunction factory to use as JSX pragma.
 <pre>(tagOrComponent: string|{
     constructor(): Element;
     prototype: Element;
-}, properties: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
+}, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
 
 
 
@@ -921,7 +921,7 @@ A list of namespaceURI bound with their tagName.
     };
     template: HTMLTemplateElement|undefined;
     $: <a href="#scope">Scope</a>|undefined;
-    slotChildNodes: Node[];
+    slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;
     disconnectedCallback(): void;
@@ -929,6 +929,9 @@ A list of namespaceURI bound with their tagName.
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
     render(): <a href="#template">Template</a>;
     forceUpdate(): void;
+    getProperties(): {
+        [propertyKey: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
+    };
     getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
     defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
     initProperties(props: {
@@ -1102,17 +1105,17 @@ A scope interface.
 
 <hr />
 
-<strong id="template"><code>type</code>  Template</strong>
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
 
 <p>
 
-A generic template. Can be a single atomic item or a list of items.
+A list of template items.
 
 </p>
 
 
 
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -1164,17 +1167,17 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 <hr />
 
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+<strong id="template"><code>type</code>  Template</strong>
 
 <p>
 
-A list of template items.
+A generic template. Can be a single atomic item or a list of items.
 
 </p>
 
 
 
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
 
 
 

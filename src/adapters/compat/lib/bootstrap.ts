@@ -1,5 +1,11 @@
 import { Component, customElements } from '@chialab/dna';
 
+/**
+ * Instantiate all defined components in a DOM tree.
+ * @deprecated since version 3.0
+ * @param root The root Node of the tree.
+ * @param callback A callback called on upgraded components.
+ */
 export function bootstrap(root: HTMLElement, callback: (node: Component) => any = () => {}) {
     const registry = customElements.registry;
     // iterate registry entries in order to retrieve all registered tags
