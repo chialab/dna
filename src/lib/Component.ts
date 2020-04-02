@@ -15,6 +15,7 @@ const { document, HTMLElement } = window;
 
 /**
  * A Symbol which contains all Property instances of a Component.
+ * @private
  */
 const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
 
@@ -189,7 +190,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-        const properties = (this as any)[PROPERTIES_SYMBOL];
+        let properties = this.getProperties();
         let property: ClassFieldDescriptor | undefined;
         for (let propertyKey in properties) {
             let prop = properties[propertyKey];
@@ -239,12 +240,20 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
+     * Retrieve all properties descriptors.
+     * @return A list of class field descriptors.
+     */
+    getProperties(): { [propertyKey: string]: ClassFieldDescriptor } {
+        return (this as any)[PROPERTIES_SYMBOL] || {};
+    }
+
+    /**
      * Retrieve property descriptor.
      * @param propertyKey The name of the property.
      * @return The class field descriptor.
      */
     getProperty(propertyKey: string): ClassFieldDescriptor | null {
-        const descriptors = (this as any)[PROPERTIES_SYMBOL];
+        const descriptors = this.getProperties();
         if (!descriptors) {
             return null;
         }
@@ -260,7 +269,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
         const observedAttributes = (this.constructor as typeof Component).observedAttributes;
-        const descriptors = (this as any)[PROPERTIES_SYMBOL] = (this as any)[PROPERTIES_SYMBOL] || {};
+        const descriptors = (this as any)[PROPERTIES_SYMBOL] = this.getProperties();
         descriptors[propertyKey] = descriptor;
         (descriptor as any).__proto__ = null;
         descriptor.name = propertyKey;
@@ -659,7 +668,10 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         return element;
     } as any as T;
     Object.setPrototypeOf(shim, base);
+    (shim as any).apply = Function.apply;
+    (shim as any).call = Function.call;
     shim.prototype = base.prototype;
+    shim.prototype.constructor = shim;
     return shim;
 };
 

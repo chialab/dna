@@ -83,6 +83,12 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     forceUpdate(): void;
 
     /**
+     * Retrieve all properties descriptors.
+     * @return A list of class field descriptors.
+     */
+    getProperties(): { [propertyKey: string]: ClassFieldDescriptor };
+
+    /**
      * Retrieve property descriptor.
      * @param propertyKey The name of the property.
      * @return The class field descriptor.
