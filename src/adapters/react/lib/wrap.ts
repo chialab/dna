@@ -63,7 +63,7 @@ export function wrap<T extends typeof Component>(constructor: T) {
         render(): React.ReactNode {
             return React.createElement(tagName, {
                 is,
-                ...convertReactProps((this as React.Component).props),
+                ...convertReactProps((this as React.Component).props, false),
             });
         }
     };

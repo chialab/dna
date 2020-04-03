@@ -1,4 +1,5 @@
 import { TemplateItems, h } from '@chialab/dna';
+import { convertReactProps } from './convertReactProps';
 import React from 'react';
 
 /**
@@ -29,7 +30,7 @@ export function convertReactNodes(children: React.ReactNode | React.ReactNode[])
                 children: undefined,
                 originalType: undefined,
             };
-            return h(type, props, ...convertReactNodes(children));
+            return h(type, convertReactProps(props), ...convertReactNodes(children));
         }
         return child;
     }) as TemplateItems;
