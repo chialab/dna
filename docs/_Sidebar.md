@@ -36,6 +36,7 @@
   * [Setting innerHTML](./manipulating-the-dom#setting-innerhtml)
   * [Integration with third party libraries](./manipulating-the-dom#integration-with-third-party-libraries)
 * [Use in Node.js](./use-in-node)
+* [Use in React](./use-in-react)
 * [Helpers](./helpers)
 * [Tools](./tools)
 * [Migration](./migration)
