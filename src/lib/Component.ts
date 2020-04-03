@@ -544,30 +544,12 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * Append a slot child to the Component.
-     *
-     * @param newChild The child to add.
-     */
-    appendSlotChild<T extends Node>(newChild: T): T {
-        return DOM.appendChild(this, newChild, true);
-    }
-
-    /**
      * Remove a child from the Component.
      *
      * @param {Node} oldChild The child to remove.
      */
     removeChild<T extends Node>(oldChild: T): T {
         return DOM.removeChild(this, oldChild);
-    }
-
-    /**
-     * Remove a slot child from the Component.
-     *
-     * @param {Node} oldChild The child to remove.
-     */
-    removeSlotChild<T extends Node>(oldChild: T): T {
-        return DOM.removeChild(this, oldChild, true);
     }
 
     /**
@@ -581,16 +563,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * Insert a slot child before another in the Component.
-     *
-     * @param newChild The child to insert.
-     * @param refChild The referred Node.
-     */
-    insertSlotBefore<T extends Node>(newChild: T, refChild: Node | null): T {
-        return DOM.insertBefore(this, newChild, refChild, true);
-    }
-
-    /**
      * Replace a child with another in the Component.
      *
      * @param newChild The child to insert.
@@ -598,16 +570,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
         return DOM.replaceChild(this, newChild, oldChild);
-    }
-
-    /**
-     * Replace a slot child with another in the Component.
-     *
-     * @param newChild The child to insert.
-     * @param oldChild The Node to replace.
-     */
-    replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T {
-        return DOM.replaceChild(this, newChild, oldChild, true);
     }
 
     /**

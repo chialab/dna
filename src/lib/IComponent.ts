@@ -179,36 +179,6 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
      * @param callback The callback to remove
      */
     undelegateEventListener(event?: string, selector?: string | null, callback?: DelegatedEventCallback): void;
-
-    /**
-     * Append a slot child to the Component.
-     *
-     * @param newChild The child to add.
-     */
-    appendSlotChild<T extends Node>(newChild: T): T;
-
-    /**
-     * Remove a slot child from the Component.
-     *
-     * @param {Node} oldChild The child to remove.
-     */
-    removeSlotChild<T extends Node>(oldChild: T): T;
-
-    /**
-     * Insert a slot child before another in the Component.
-     *
-     * @param newChild The child to insert.
-     * @param refChild The referred Node.
-     */
-    insertSlotBefore<T extends Node>(newChild: T, refChild: Node | null): T;
-
-    /**
-     * Replace a slot child with another in the Component.
-     *
-     * @param newChild The child to insert.
-     * @param oldChild The Node to replace.
-     */
-    replaceSlotChild<T extends Node>(newChild: Node, oldChild: T): T;
 }
 
 /* eslint-disable no-var */

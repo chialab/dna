@@ -946,10 +946,6 @@ A list of namespaceURI bound with their tagName.
     dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
-    appendSlotChild&lt;T extends Node&gt;(newChild: T): T;
-    removeSlotChild&lt;T extends Node&gt;(oldChild: T): T;
-    insertSlotBefore&lt;T extends Node&gt;(newChild: T, refChild: Node|null): T;
-    replaceSlotChild&lt;T extends Node&gt;(newChild: Node, oldChild: T): T;
 }</pre>
 
 

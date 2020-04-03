@@ -106,5 +106,20 @@ describe('registry', function() {
             DNA.upgrade(wrapper);
             expect(card).to.be.an.instanceof(MyCard);
         });
+
+        it('should upgrade a builtin node after an element definition', () => {
+            const is = getComponentName();
+            const MyCard = class extends DNA.Component { };
+            const wrapper = DNA.DOM.createElement('div');
+            const card = DNA.DOM.createElement('article');
+            card.setAttribute('is', is);
+            wrapper.appendChild(card);
+            expect(card).to.not.be.an.instanceof(MyCard);
+            DNA.define(is, MyCard, {
+                extends: 'article',
+            });
+            DNA.upgrade(wrapper);
+            expect(card).to.be.an.instanceof(MyCard);
+        });
     });
 });

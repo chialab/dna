@@ -201,7 +201,7 @@ export const DOM = {
      * @param newChild The child to add.
      * @param slot Should add a slot node.
      */
-    appendChild<T extends Node>(parent: Element, newChild: T, slot = false): T {
+    appendChild<T extends Node>(parent: Element, newChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
             getSlotted(parent).push(newChild);
             parent.forceUpdate();
@@ -226,7 +226,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      * @param slot Should remove a slot node.
      */
-    removeChild<T extends Node>(parent: Element, oldChild: T, slot = false): T {
+    removeChild<T extends Node>(parent: Element, oldChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             const io = slotted.indexOf(oldChild);
@@ -253,7 +253,7 @@ export const DOM = {
      * @param refChild The referred node.
      * @param slot Should insert a slot node.
      */
-    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = false): T {
+    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = true): T {
         if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             if (refChild) {
@@ -287,7 +287,7 @@ export const DOM = {
      * @param oldChild The node to replace.
      * @param slot Should replace a slot node.
      */
-    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = false): T {
+    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
             const slotted = getSlotted(parent);
             const io = slotted.indexOf(oldChild);

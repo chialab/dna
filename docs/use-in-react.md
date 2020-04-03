@@ -56,7 +56,7 @@ ReactDOM.render(
         <p>...</p>
     </Dialog.React>,
     document.body
-)
+);
 ```
 
 <aside class="note">

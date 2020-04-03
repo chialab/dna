@@ -879,7 +879,7 @@ describe('Component', function() {
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
             DNA.DOM.appendChild(wrapper, element);
-            element.appendSlotChild(span);
+            element.appendChild(span);
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
@@ -924,11 +924,11 @@ describe('Component', function() {
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
             DNA.DOM.appendChild(wrapper, element);
-            element.appendSlotChild(span);
+            element.appendChild(span);
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
-            element.removeSlotChild(span);
+            element.removeChild(span);
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes).to.have.lengthOf(0);
@@ -1008,8 +1008,8 @@ describe('Component', function() {
             const span = DNA.DOM.createElement('span');
             const input = DNA.DOM.createElement('input');
             DNA.DOM.appendChild(wrapper, element);
-            element.appendSlotChild(span);
-            element.insertSlotBefore(input, span);
+            element.appendChild(span);
+            element.insertBefore(input, span);
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
@@ -1097,8 +1097,8 @@ describe('Component', function() {
             const span = DNA.DOM.createElement('span');
             const input = DNA.DOM.createElement('input');
             DNA.DOM.appendChild(wrapper, element);
-            element.appendSlotChild(span);
-            element.replaceSlotChild(input, span);
+            element.appendChild(span);
+            element.replaceChild(input, span);
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');

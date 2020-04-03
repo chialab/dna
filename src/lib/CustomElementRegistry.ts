@@ -125,24 +125,25 @@ export class CustomElementRegistry {
      * @param root A Node instance with descendant elements that are to be upgraded.
      */
     upgrade(root: HTMLElement) {
-        if (customElements && 'upgrade' in customElements) {
-            return customElements.upgrade(root);
-        }
-        // iterate registry entries in order to retrieve all registered tags
-        const registry = this.registry;
-        for (let key in registry) {
-            const constructor = registry[key];
-            // find all nodes for the current Component configuration
-            const nodes = root.querySelectorAll(`${key}, [is="${key}"]`);
-            // iterate all nodes found
-            for (let i = 0, len = nodes.length; i < len; i++) {
-                const node = nodes[i];
-                // check if already instantiated
-                if (node instanceof constructor) {
-                    continue;
-                }
-                new constructor(node as HTMLElement);
+        const is = (root.getAttribute('is') || root.tagName).toLowerCase();
+        const constructor = this.get(is);
+        check: if (constructor) {
+            if (customElements && 'upgrade' in customElements) {
+                // native upgrade
+                customElements.upgrade(root);
             }
+            // check if already instantiated
+            if (root instanceof constructor) {
+                break check;
+            }
+
+            new constructor(root as HTMLElement);
+        }
+        // find all root children
+        const nodes = root.children;
+        // iterate all nodes found
+        for (let i = 0, len = nodes.length; i < len; i++) {
+            this.upgrade(nodes[i] as HTMLElement);
         }
     }
 }

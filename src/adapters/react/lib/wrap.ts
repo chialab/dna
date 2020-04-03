@@ -1,4 +1,4 @@
-import { Component, connect, disconnect } from '@chialab/dna';
+import { Component, customElements, connect, disconnect, upgrade } from '@chialab/dna';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { convertReactNodes } from './convertReactNodes';
@@ -14,6 +14,7 @@ import { convertReactProps } from './convertReactProps';
  */
 export function wrap<T extends typeof Component>(constructor: T) {
     const is = constructor.prototype.is;
+    const tagName = customElements.tagNames[is];
 
     if ((constructor as any).__react) {
         // create a single react reference per component
@@ -26,6 +27,9 @@ export function wrap<T extends typeof Component>(constructor: T) {
          */
         componentDidMount() {
             const node = ReactDOM.findDOMNode(this) as InstanceType<T>;
+            if (!(node instanceof Component)) {
+                upgrade(node);
+            }
             const props: any = (this as React.Component).props;
             this.componentWillUpdate(props);
             connect(node);
@@ -56,9 +60,11 @@ export function wrap<T extends typeof Component>(constructor: T) {
         /**
          * Render the component root with only plain attributes.
          */
-        render() {
-            const props: any = (this as React.Component).props;
-            return React.createElement(is, convertReactProps(props));
+        render(): React.ReactNode {
+            return React.createElement(tagName, {
+                is,
+                ...convertReactProps((this as React.Component).props),
+            });
         }
     };
 }

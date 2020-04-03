@@ -196,7 +196,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
-            DOM.insertBefore(root, newNode, currentNode);
+            DOM.insertBefore(root, newNode, currentNode, false);
         } else {
             currentNode = currentNode.nextSibling as Node;
         }
@@ -225,7 +225,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
     // we can start to cleanup the tree
     // remove all Nodes that are outside the result range
     while (root.lastChild != node) {
-        DOM.removeChild(root, root.lastChild as Node);
+        DOM.removeChild(root, root.lastChild as Node, false);
     }
 
     let len = results.length;
