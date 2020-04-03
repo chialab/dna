@@ -6,7 +6,7 @@
   "main": "dist/cjs/dna.js",
   "module": "dist/esm/dna.js",
   "browser": "dist/umd/dna.js",
-  "types": "typings.d.ts",
+  "types": "dist/esm/dna.d.ts",
   "license": "MIT",
   "directories": {
     "src": "src",

@@ -19,6 +19,9 @@
     "paths": {
       "@chialab/dna": [
         "./src/dna.ts"
+      ],
+      "react": [
+        "./node_modules/react",
       ]
     }
   },
