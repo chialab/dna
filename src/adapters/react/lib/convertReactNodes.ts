@@ -21,13 +21,15 @@ export function convertReactNodes(children: React.ReactNode | React.ReactNode[])
     }
     return nodes.map(child => {
         if (isReactNode(child)) {
+            let type = (child.props.originalType || child.type) as string;
             let children = child.props.children as React.ReactNode[];
             let props = {
                 ...child.props,
                 key: child.key,
                 children: undefined,
+                originalType: undefined,
             };
-            return h(child.type as string, props, ...convertReactNodes(children));
+            return h(type, props, ...convertReactNodes(children));
         }
         return child;
     }) as TemplateItems;
