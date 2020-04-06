@@ -113,7 +113,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 descriptor.defaultValue = originalDescriptor.value;
             }
             targetOrClassElement.defineProperty(propertyKey, descriptor, symbol);
-            targetOrClassElement.initProperty(propertyKey, symbol, descriptor);
+            targetOrClassElement.initProperty(propertyKey, descriptor, symbol);
             return targetOrClassElement;
         }
 
@@ -142,11 +142,11 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 return (this as any)[symbol];
             },
             finisher(constructor: typeof IComponent) {
-                constructor.prototype.defineProperty(key, descriptor, symbol);
                 const initProperties = constructor.prototype.initProperties;
                 constructor.prototype.initProperties = function(this: IComponent, props: { [key: string]: any; }) {
+                    this.defineProperty(key, descriptor, symbol);
                     if (!(key in props)) {
-                        this.initProperty(key, symbol, descriptor, element.initializer);
+                        this.initProperty(key, descriptor, symbol, element.initializer);
                     }
                     return initProperties.call(this, props);
                 };

@@ -114,12 +114,12 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
      * Initialize instance property.
      *
      * @param propertyKey The property name.
-     * @param symbol The property symbolic key.
      * @param descriptor The property descriptor.
+     * @param symbol The property symbolic key.
      * @param initializer The initializer function of the decorator.
      * @return The current property value.
      */
-    initProperty(propertyKey: string, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any;
+    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: Function): any;
 
     /**
      * Observe a Component Property.

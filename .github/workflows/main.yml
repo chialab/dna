@@ -41,6 +41,44 @@ jobs:
           name: DNA
           path: dist
   # TEST
+  test-browser:
+    name: Test Browsers
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Config Yarn cache
+        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
+      - name: Set up Yarn cache
+        uses: actions/cache@v1
+        with:
+          path: .yarn
+          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch build artifacts
+        uses: actions/cache@v1
+        with:
+          path: dist
+          key: build-${{ github.sha }}
+      - name: Run tests
+        run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version'
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info
   test-node:
     name: Test Node
     needs:
@@ -79,8 +117,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: test/__coverage__/*/lcov.info
-  test-browsers:
-    name: Test Browsers
+  test-saucelabs:
+    name: Test SauceLabs
     needs:
       - build
     runs-on: ubuntu-latest

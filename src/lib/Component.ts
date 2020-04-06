@@ -152,7 +152,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             let descriptor = propertyDescriptors[propertyKey];
             let symbol = element.defineProperty(propertyKey, descriptor);
             if (!(propertyKey in props)) {
-                element.initProperty(propertyKey, symbol, descriptor);
+                element.initProperty(propertyKey, descriptor, symbol);
             }
         }
 
@@ -394,8 +394,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     initProperties(props: { [key: string]: any; }) {
         for (let propertyKey in props) {
-            // remove old prototype property definition Chrome < 40
-            delete (this as any)[propertyKey];
             (this as any)[propertyKey] = props[propertyKey];
         }
     }
@@ -404,18 +402,16 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Initialize instance property.
      *
      * @param propertyKey The property name.
-     * @param symbol The property symbolic key.
      * @param descriptor The property descriptor.
+     * @param symbol The property symbolic key.
      * @param initializer The initializer function of the decorator.
      * @return The current property value.
      */
-    initProperty(propertyKey: string, symbol: symbol, descriptor: ClassFieldDescriptor, initializer?: Function): any {
+    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: Function): any {
         let target = this as any;
         if (typeof target[symbol] !== 'undefined') {
             return target[symbol];
         }
-        // remove old prototype property definition Chrome < 40
-        delete (target as any)[propertyKey];
         if (typeof initializer === 'function') {
             target[symbol] = initializer.call(target);
         } else if ('value' in descriptor) {
