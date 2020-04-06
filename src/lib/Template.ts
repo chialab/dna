@@ -23,3 +23,11 @@ export type TemplateFilter = (item: TemplateItem) => boolean;
  * A generic template. Can be a single atomic item or a list of items.
  */
 export type Template = TemplateItem | TemplateItems;
+
+/**
+ * A function that returns a template.
+ *
+ * @param props A set of properties with children.
+ * @return A template.
+ */
+export type TemplateFunction = (props: { children: Template, [key: string]: any }) => Template;

@@ -63,6 +63,16 @@ describe('render', function() {
             expect(wrapper.querySelector('ul.list').querySelector('li:nth-child(2)').textContent).to.be.equal('Two');
         });
 
+        it('should render component constructor', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {}
+
+            DNA.define(name, TestElement);
+
+            DNA.render(wrapper, DNA.h(TestElement));
+            expect(wrapper.querySelector(name)).to.exist;
+        });
+
         it('should render a text node', () => {
             DNA.render(wrapper, DNA.DOM.createTextNode('Hello'));
             expect(wrapper.childNodes).to.have.lengthOf(1);
@@ -96,6 +106,25 @@ describe('render', function() {
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
             ]);
+            expect(wrapper.childNodes).to.have.lengthOf(6);
+        });
+
+        it('should render component function', () => {
+            function Test() {
+                return [
+                    'hello',
+                    true,
+                    DNA.interpolate('hello {{name}}! do you like {{food}}?', {
+                        name: 'Snow White',
+                        food: 'apples',
+                    }),
+                    DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
+                    DNA.DOM.createTextNode('Hello'),
+                    DNA.DOM.createElement('div'),
+                ];
+            }
+
+            DNA.render(wrapper, DNA.h(Test));
             expect(wrapper.childNodes).to.have.lengthOf(6);
         });
 
@@ -468,15 +497,15 @@ describe('render', function() {
         });
 
         it('should access keyed element in scope', () => {
-            class MyElement extends DNA.Component {
+            class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;
                 }
             }
 
-            DNA.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), TestElement);
 
-            const element = new MyElement();
+            const element = new TestElement();
             element.forceUpdate();
 
             expect(element.childNodes).to.have.lengthOf(1);

@@ -54,7 +54,7 @@ export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: Element): node is IComponent => (node as any)[COMPONENT_SYMBOL];
+export const isComponent = (node: any): node is IComponent => (node as any)[COMPONENT_SYMBOL];
 
 /**
  * A symbol which identify emulated components.

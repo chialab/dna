@@ -1,4 +1,4 @@
-import { TemplateItems, h } from '@chialab/dna';
+import { TemplateItems, Fragment, h } from '@chialab/dna';
 import { convertReactProps } from './convertReactProps';
 import React from 'react';
 
@@ -8,6 +8,14 @@ import React from 'react';
  */
 function isReactNode(target: any): target is React.ReactElement {
     return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.element)';
+}
+
+/**
+ * Check if the target is a ReactForwardRef.
+ * @param target The reference to check.
+ */
+function isReactForwardRef(target: any): target is React.ForwardRefExoticComponent<unknown> {
+    return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.forward_ref)';
 }
 
 /**
@@ -22,13 +30,15 @@ export function convertReactNodes(children: React.ReactNode | React.ReactNode[])
     }
     return nodes.map(child => {
         if (isReactNode(child)) {
-            let type = (child.props.originalType || child.type) as string;
+            if (isReactForwardRef(child.type)) {
+                return h(Fragment, null, ...convertReactNodes((child.type as any).render(child.props, (child as any).ref)));
+            }
+            let type = child.type as string;
             let children = child.props.children as React.ReactNode[];
             let props = {
                 ...child.props,
                 key: child.key,
                 children: undefined,
-                originalType: undefined,
             };
             return h(type, convertReactProps(props), ...convertReactNodes(children));
         }

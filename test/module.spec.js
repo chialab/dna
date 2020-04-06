@@ -22,7 +22,7 @@ describe('module', function() {
         define: 'function',
         whenDefined: 'function',
         upgrade: 'function',
-        Fragment: 'function',
+        Fragment: 'symbol',
         h: 'function',
         html: 'function',
         template: 'function',

@@ -1,8 +1,11 @@
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { registry } from './CustomElementRegistry';
 import { IComponent } from './IComponent';
-import { TemplateItems } from './Template';
+import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
+
+const { HTMLElement } = window;
 
 /**
  * Symbol for interpolated functions.
@@ -56,33 +59,41 @@ export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SY
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export const h = (tagOrComponent: string | typeof Element, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | typeof IComponent | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
         is: string | undefined,
         key: any | undefined,
         propertiesToSet: any = {},
-        Component: typeof Element | undefined;
+        Component: typeof IComponent | TemplateFunction | undefined;
 
-    if (properties) {
-        for (let propertyKey in properties) {
-            let value = properties[propertyKey];
-            if (propertyKey === 'is') {
-                is = value;
-            } else if (propertyKey === 'key') {
-                key = value;
-            } else {
-                propertiesToSet[propertyKey] = value;
+    if (!isFragment) {
+        if (properties) {
+            for (let propertyKey in properties) {
+                let value = properties[propertyKey];
+                if (propertyKey === 'is') {
+                    is = value;
+                } else if (propertyKey === 'key') {
+                    key = value;
+                } else {
+                    propertiesToSet[propertyKey] = value;
+                }
             }
         }
-    }
 
-    if (!tag) {
-        Component = tagOrComponent as typeof Element;
-    } else {
-        // get the constructor from the registry
-        Component = registry.get(is as string || tag as string);
+        if (!tag) {
+            if ((tagOrComponent as typeof IComponent).prototype instanceof HTMLElement) {
+                Component = tagOrComponent as typeof IComponent;
+            } else {
+                isFragment = true;
+                children = (tagOrComponent as TemplateFunction)(propertiesToSet) as TemplateItems;
+                propertiesToSet = {};
+            }
+        } else {
+            // get the constructor from the registry
+            Component = registry.get(is as string || tag as string);
+        }
     }
 
     return {
