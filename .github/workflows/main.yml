@@ -190,11 +190,7 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
       - name: Run tests
-        run: |
-          sudo Xvfb -ac $DISPLAY -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          yarn run test:compat
-        env:
-          DISPLAY: :99
+        run: yarn run test:compat --headless
   test-react:
     name: Test react library
     needs:
@@ -227,11 +223,7 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
       - name: Run tests
-        run: |
-          sudo Xvfb -ac $DISPLAY -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          yarn run test:react
-        env:
-          DISPLAY: :99
+        run: yarn run test:react --headless
   # DOCS
   api:
     name: Documentation
