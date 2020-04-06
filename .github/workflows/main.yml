@@ -73,7 +73,7 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
       - name: Run tests
-        run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version'
+        run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version' --headless
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v1
         with:
