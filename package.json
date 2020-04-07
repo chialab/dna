@@ -27,20 +27,21 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "rm -rf dist && npm run build:browser && npm run build:node && npm run build:compat && npm run build:react",
+    "symlink": "yarn link && yarn link @chialab/dna",
+    "build": "rm -rf dist && yarn build:browser && yarn build:node && yarn build:compat && yarn build:react",
     "build:browser": "rna build --production --name DNA --typings --bundle",
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --production --typings --format cjs --targets 'node >= 10'",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --production --typings --format esm",
     "build:react": "rna build src/adapters/react/dna.ts --output 'dist/adapters/react/dna.js' --production --typings --format esm",
     "test": "yarn test:main && yarn test:compat && yarn test:react",
     "test:main": "yarn test:browser && yarn test:node",
-    "test:browser": "rna unit 'test/*.spec.js' --coverage --browser",
-    "test:saucelabs": "rna unit 'test/*.spec.js' --coverage --saucelabs --concurrency 2",
-    "test:node": "rna unit 'test/*.spec.js' --coverage --node",
-    "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
-    "test:react": "rna unit 'test/react/*.spec.js' --browser --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault",
+    "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --coverage --browser",
+    "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --coverage --saucelabs --concurrency 2",
+    "test:node": "yarn symlink && rna unit 'test/*.spec.js' --coverage --node",
+    "test:compat": "yarn symlink && rna unit 'test/compat/*.spec.js' --browser",
+    "test:react": "yarn symlink && rna unit 'test/react/*.spec.js' --browser --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
-    "prepack": "npm run build"
+    "prepack": "yarn build"
   },
   "dependencies": {},
   "optionalDependencies": {
