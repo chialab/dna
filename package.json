@@ -40,8 +40,7 @@
     "test:compat": "rna unit 'test/compat/*.spec.js' --browser",
     "test:react": "rna unit 'test/react/*.spec.js' --browser --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
-    "prepack": "npm run build",
-    "install": "yarn link && yarn link @chialab/dna"
+    "prepack": "npm run build"
   },
   "dependencies": {},
   "optionalDependencies": {

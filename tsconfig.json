@@ -18,7 +18,8 @@
     "baseUrl": "./",
     "paths": {
       "@chialab/dna": [
-        "./src/dna.ts"
+        "./dist/esm/dna",
+        "./src/dna"
       ],
       "react": [
         "./node_modules/react",
