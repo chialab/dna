@@ -66,43 +66,17 @@ A map component based on mapbox-gl.
 ```
 
 
-#### Storybook
+### Storybook
 
 Storybook is a fantastic tool for components development: you can create samples for your elements, provide a documentation and an API reference, run accessibility tests and more. Since version 5.6, it also supports Web Components.
 
-Use `npx` (installed with Node) to setup the project and follow the [official guide](https://storybook.js.org/docs/basics/introduction/):
+A DNA preset for storybook is available with full [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs) support and automatic Web Components Analyzer runs across your components. You can install it using the `@chialab/storybook-dna` package from NPM:
 
 ```sh
-$ npx -p @storybook/cli sb init -t web_components
+$ yarn add @chialab/storybook-dna -D
 ```
 
-Storybook is compatible with the Web Components Analyzer JSON output in order to beautifilly works with the [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs):
-
-* Generate a JSON report:
-
-```sh
-$ wca analyze src --format json --outFile custom-elements.json
-```
-
-* Import `custom-elements.json` in the Storybook preview file:
-
-**.storybook/preview.js**
-```ts
-import { setCustomElements } from '@storybook/web-components';
-import customElements from '../custom-elements.json';
-
-setCustomElements(customElements);
-```
-
-* Add the properties table to the documentation page:
-
-**x-card.stories.mdx**
-
-```ts
-import { Props } from '@storybook/addon-docs/blocks';
-
-<Props of="x-card" />
-```
+Please follow the instructions in the preset [README](https://github.com/chialab/storybook-dna) for the full configuration.
 
 ### Typescript JSX IntrinsicElements
 
