@@ -8,13 +8,7 @@ First of all, make sure you have DNA installed, as well as the React peer depend
 $ npm i @chialab/dna react react-dom
 ```
 
-Then, somewhere in your app root import the React adapter:
-
-```ts
-import '@chialab/dna/react';
-```
-
-Now, you can access the `.React` function from the component constructor:
+Then, you can import the DNA `Root` component and use it as wrapper for DNA components:
 
 **dialog.ts**
 ```ts
@@ -42,19 +36,27 @@ class Dialog extends Component {
 }
 
 define('x-dialog', Dialog, { extends: 'dialog' });
+
+declare namespace JSX {
+    interface IntrinsicElements {
+        'x-dialog': Dialog;
+    }
+}
 ```
 
 **app.ts**
 ```ts
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '@chialab/dna/react';
-import { Dialog } from './dialog';
+import { Root } from '@chialab/dna/react';
+import './dialog';
 
 ReactDOM.render(
-    <Dialog.React title="Hello world!">
-        <p>...</p>
-    </Dialog.React>,
+    <Root>
+        <dialog is="x-dialog" title="Hello world!">
+            <p>...</p>
+        </dialog>
+    </Root>,
     document.body
 );
 ```
@@ -62,5 +64,12 @@ ReactDOM.render(
 <aside class="note">
 
 Probably, your app is configured to use React JSX, please make sure to use already compiled templates or the `html` helper in DNA components in order to avoid conflicts.
+
+</aside>
+
+
+<aside class="note">
+
+In order to enable type checking on JSX you need to [declare `IntrinsicElements`](./Tools#typescript-jsx-intrinsicelements).
 
 </aside>
