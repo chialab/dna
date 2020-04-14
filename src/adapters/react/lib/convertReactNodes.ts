@@ -54,15 +54,23 @@ export function convertReactNodes(children: React.ReactNode | React.ReactNode[],
                 ref = ref || React.createRef();
                 references.push([ref as React.RefObject<unknown>, child.props]);
             }
-            let { children, references: childReferences } = convertReactNodes(child.props.children, context);
-            references.push(...childReferences);
+
+            if (child.props.children) {
+                let { children, references: childReferences } = convertReactNodes(child.props.children, context);
+                references.push(...childReferences);
+                return {
+                    ...child,
+                    ref,
+                    props: {
+                        ...convertReactProps(child.props, false),
+                        children: React.createElement(React.Fragment, null, ...children),
+                    },
+                };
+            }
             return {
                 ...child,
                 ref,
-                props: {
-                    ...convertReactProps(child.props, false),
-                    children: React.createElement(React.Fragment, null, ...children),
-                },
+                props: convertReactProps(child.props, false),
             };
         }),
     };
