@@ -1,5 +1,5 @@
-import { createElement, Fragment, Component as ReactComponent, ReactNode } from 'react';
-import { findDOMNode } from 'react-dom';
+import React, { ReactNode } from 'react';
+import ReactDOM from 'react-dom';
 import { connect, disconnect } from '@chialab/dna';
 import { upgrade } from '@chialab/dna';
 import { ReferencesMap, convertReactNodes } from './convertReactNodes';
@@ -8,13 +8,13 @@ import { ReferencesMap, convertReactNodes } from './convertReactNodes';
  * A generic wrapper for DNA components.
  * It renders a div wrapper which is used as render root for DNA components.
  */
-export class Root extends ReactComponent<unknown> {
+export class Root extends React.Component<unknown> {
     private references: ReferencesMap = [];
     /**
      * Render wrapper.
      */
     componentDidMount() {
-        const node = findDOMNode(this) as HTMLElement;
+        const node = ReactDOM.findDOMNode(this) as HTMLElement;
         upgrade(node);
         connect(node);
     }
@@ -23,7 +23,7 @@ export class Root extends ReactComponent<unknown> {
      * Update wrapper.
      */
     componentDidUpdate() {
-        const node = findDOMNode(this) as HTMLElement;
+        const node = ReactDOM.findDOMNode(this) as HTMLElement;
         upgrade(node);
         this.references.forEach(([ref, props]) => {
             if (!ref.current) {
@@ -41,7 +41,7 @@ export class Root extends ReactComponent<unknown> {
      * Disconnect wrapper.
      */
     componentWillUnmount() {
-        const node = findDOMNode(this) as HTMLElement;
+        const node = ReactDOM.findDOMNode(this) as HTMLElement;
         disconnect(node);
     }
 
@@ -49,8 +49,8 @@ export class Root extends ReactComponent<unknown> {
      * Render the component wrapper.
      */
     render(): ReactNode {
-        const { children, references } = convertReactNodes(this.props.children);
+        const { children, references } = convertReactNodes(this.props.children, this.context);
         this.references = references;
-        return createElement(Fragment, this.props, ...children);
+        return React.createElement(React.Fragment, this.props, ...children);
     }
 }
