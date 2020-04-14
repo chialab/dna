@@ -6,21 +6,19 @@ function normalizeContent(content) {
 }
 
 describe('[Compat] StyleComponent', () => {
-    let wrapper, BaseTestComponent;
+    let wrapper;
     before(() => {
         DOM.lifeCycle(true);
         wrapper = DOM.createElement('div');
         wrapper.ownerDocument.body.appendChild(wrapper);
-
-        BaseTestComponent = class BaseTestComponent extends BaseComponent {
-            get template() {
-                return '<h1>DNA TESTS</h1><h3>test</h3>';
-            }
-        };
     });
 
     it('should handle `css` getter property', () => {
-        class TestComponent extends BaseTestComponent {
+        class TestComponent extends BaseComponent {
+            get template() {
+                return '<h1>DNA TESTS</h1><h3>test</h3>';
+            }
+
             get css() {
                 return `
 @charset "UTF-8";
@@ -70,7 +68,11 @@ h3 {
     });
 
     it('should handle `css` getter property with state', () => {
-        class TestComponent extends BaseTestComponent {
+        class TestComponent extends BaseComponent {
+            get template() {
+                return '<h1>DNA TESTS</h1><h3>test</h3>';
+            }
+
             get css() {
                 return `
 :host(.active) {
@@ -103,7 +105,11 @@ h3 {
     });
 
     it('should handle `css` with content getter property', () => {
-        class TestComponent extends BaseTestComponent {
+        class TestComponent extends BaseComponent {
+            get template() {
+                return '<span id="before1"></span><span id="before2"></span><span id="before3"></span><span id="before4"></span><span id="before5"></span><span id="before6"></span>';
+            }
+
             get css() {
                 return `
 #before1:before {
@@ -132,10 +138,6 @@ h3 {
 `;
             }
 
-            get template() {
-                return '<span id="before1"></span><span id="before2"></span><span id="before3"></span><span id="before4"></span><span id="before5"></span><span id="before6"></span>';
-            }
-
             constructor(...args) {
                 super(...args);
                 this.node.classList.add('active');
@@ -161,7 +163,11 @@ h3 {
     });
 
     it('should handle `css` comments', () => {
-        class TestComponent extends BaseTestComponent {
+        class TestComponent extends BaseComponent {
+            get template() {
+                return '<h1>DNA TESTS</h1><h3>test</h3>';
+            }
+
             get css() {
                 return `
 @charset "UTF-8";

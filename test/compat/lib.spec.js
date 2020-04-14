@@ -1,4 +1,4 @@
-import { DOM, define, bootstrap, render, BaseComponent } from '@chialab/dna/compat.js';
+import { DOM, define, bootstrap, render, BaseComponent, window } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] lib', () => {
@@ -9,7 +9,7 @@ describe('[Compat] lib', () => {
         wrapper = DOM.createElement('div');
         wrapper.ownerDocument.body.appendChild(wrapper);
 
-        class TestComponent extends BaseComponent {
+        TestComponent1 = class TestComponent1 extends BaseComponent {
             static get observedAttributes() {
                 return ['age'];
             }
@@ -37,13 +37,39 @@ describe('[Compat] lib', () => {
                 super.attributeChangedCallback(...args);
                 this.attributeChanges++;
             }
-        }
+        };
+        TestComponent2 = class TestComponent2 extends BaseComponent {
+            static get observedAttributes() {
+                return ['age'];
+            }
 
-        TestComponent1 = class TestComponent1 extends TestComponent {};
-        TestComponent2 = class TestComponent2 extends TestComponent {};
+            constructor(node) {
+                super(node);
+                this.name = 'Alan';
+                this.lastName = 'Turing';
+                this.connectedTimes = 0;
+                this.disconnectedTimes = 0;
+                this.attributeChanges = 0;
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.connectedTimes++;
+            }
+
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.disconnectedTimes++;
+            }
+
+            attributeChangedCallback(...args) {
+                super.attributeChangedCallback(...args);
+                this.attributeChanges++;
+            }
+        };
 
         define(name1, TestComponent1);
-        define(name2, TestComponent2, { extends: 'div' });
+        define(name2, TestComponent2, { extends: 'button' });
     });
 
     describe('define', () => {
@@ -59,9 +85,10 @@ describe('[Compat] lib', () => {
         describe('an element with extends field', () => {
             it('a custom element with extends field', () => {
                 const elem = render(wrapper, TestComponent2);
-                assert.equal(elem.node.localName, 'div');
+                assert.equal(elem.node.localName, 'button');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
+                expect(elem).to.be.instanceof(window.HTMLButtonElement);
             });
         });
     });
