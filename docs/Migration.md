@@ -201,7 +201,17 @@ The `mix` has been deprecated. Import the reference directly from [`@chialab/pro
 +import { mix } from '@chialab/proteins';
 ```
 
-* `render` signature has changed. Instead of passing as second argument the constructor of the component, now you should pass an instance.
+#### EXTEND_BUILTIN
+
+Custom Elements that extend builtin elements should also extend their constructors.
+
+```diff
+-import { BaseComponent } from '@chialab/dna/compat.js';
++import { mixin, extend, window } from '@chialab/dna/compat.js';
+
+-export class XButton extends BaseComponent {
++export class XButton extends mixin(extend(window.HTMLButtonElement)) {
+```
 
 ## Breaking changes in the compatibility layer
 
@@ -261,3 +271,5 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 * Import the `mix` helper from `@chialab/proteins` ([MIX_HELPER](./#mix_helper))
 
 * Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references ([PREFER_INSTANCE](./#prefer_instance))
+
+* Correctly extend builtin elements using the `extend` helper ([EXTEND_BUILTIN](./#extend_builtin))
