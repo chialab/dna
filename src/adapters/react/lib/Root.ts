@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect, disconnect } from '@chialab/dna';
 import { upgrade } from '@chialab/dna';
@@ -48,7 +48,7 @@ export class Root extends React.Component<unknown> {
     /**
      * Render the component wrapper.
      */
-    render(): ReactNode {
+    render(): React.ReactNode {
         const { children, references } = convertReactNodes(this.props.children, this.context);
         this.references = references;
         return React.createElement(React.Fragment, this.props, ...children);

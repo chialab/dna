@@ -1,11 +1,11 @@
-import React, { ReactNode, ReactElement, ForwardRefExoticComponent, RefObject, FunctionComponent, Context } from 'react';
+import React from 'react';
 import { convertReactProps } from './convertReactProps';
 
 /**
  * Check if the target is a ReactElement.
  * @param target The reference to check.
  */
-function isReactNode(target: any): target is ReactElement {
+function isReactNode(target: any): target is React.ReactElement {
     return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.element)';
 }
 
@@ -13,13 +13,13 @@ function isReactNode(target: any): target is ReactElement {
  * Check if the target is a ReactForwardRef.
  * @param target The reference to check.
  */
-function isReactForwardRef(target: any): target is ForwardRefExoticComponent<unknown> {
+function isReactForwardRef(target: any): target is React.ForwardRefExoticComponent<unknown> {
     return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.forward_ref)';
 }
 
-export type ReferencesMap = Array<[RefObject<unknown>, any]>;
+export type ReferencesMap = Array<[React.RefObject<unknown>, any]>;
 
-function isComponentFunction(target: any): target is FunctionComponent {
+function isComponentFunction(target: any): target is React.FunctionComponent {
     return typeof target === 'function' && !(target.prototype instanceof React.Component);
 }
 
@@ -29,8 +29,8 @@ function isComponentFunction(target: any): target is FunctionComponent {
  * @param children A list of React nodes to convert.
  * @return A list of converted nodes.
  */
-export function convertReactNodes(children: ReactNode | ReactNode[], context: Context<unknown>): { children: ReactNode[], references: ReferencesMap} {
-    let nodes = children as ReactNode[];
+export function convertReactNodes(children: React.ReactNode | React.ReactNode[], context: React.Context<unknown>): { children: React.ReactNode[], references: ReferencesMap} {
+    let nodes = children as React.ReactNode[];
     if (!Array.isArray(nodes)) {
         nodes = [nodes];
     }
@@ -44,19 +44,15 @@ export function convertReactNodes(children: ReactNode | ReactNode[], context: Co
             if (isComponentFunction(child.type)) {
                 let { children, references: childReferences } = convertReactNodes(child.type(child.props, context), context);
                 if (children.length === 1) {
-                    children = children[0] as ReactNode[];
+                    children = children[0] as React.ReactNode[];
                 }
                 references.push(...childReferences);
-                return React.createElement(
-                    React.Fragment,
-                    null,
-                    children,
-                );
+                return React.createElement(React.Fragment, null, children);
             }
-            let ref: RefObject<unknown>|null = (child as any).ref;
+            let ref: React.RefObject<unknown>|null = (child as any).ref;
             if (!isReactForwardRef(child.type)) {
                 ref = ref || React.createRef();
-                references.push([ref as RefObject<unknown>, child.props]);
+                references.push([ref as React.RefObject<unknown>, child.props]);
             }
             let { children, references: childReferences } = convertReactNodes(child.props.children, context);
             references.push(...childReferences);
