@@ -629,7 +629,6 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
     (shim as any).apply = Function.apply;
     (shim as any).call = Function.call;
     shim.prototype = base.prototype;
-    shim.prototype.constructor = shim;
     return shim;
 };
 
