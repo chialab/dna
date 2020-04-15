@@ -39,4 +39,4 @@ customElements.define = function(name, constructor, options) {
     }
 };
 
-export { customElements as registry };
+export const registry = customElements;

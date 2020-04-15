@@ -586,8 +586,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 } as unknown as {
     readonly observedAttributes: string[];
-    new(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
+    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
     new(properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
+    new(): IComponent<InstanceType<T>>;
     prototype: IComponent<InstanceType<T>>;
 };
 
@@ -642,4 +643,5 @@ export const extend = <T extends typeof HTMLElement>(constructor: T) => mixin(sh
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export class Component extends extend(HTMLElement) { }
+export const Component = class extends extend(HTMLElement) { } as typeof IComponent;
+export type Component<T extends HTMLElement = HTMLElement> = IComponent<T>

@@ -112,7 +112,7 @@ export const mixin = (constructor: typeof Component) =>
             return listeners;
         }
 
-        constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
+        constructor(node?: HTMLElement, properties?: { [key: string]: any; }) {
             super(node, properties);
 
             if (this.css) {

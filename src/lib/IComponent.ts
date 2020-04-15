@@ -200,5 +200,6 @@ export declare var IComponent: {
      */
     new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent;
     new(properties?: { [key: string]: any; }): IComponent;
+    new(): IComponent;
     prototype: IComponent;
 };
