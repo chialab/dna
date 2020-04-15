@@ -6,14 +6,14 @@
 
 **Classes**
 
-<a href="#customelementregistry">CustomElementRegistry</a>, <a href="#component">Component</a>
+<a href="#customelementregistry">CustomElementRegistry</a>
 
 
 
 
 **Constants**
 
-<a href="#icomponent">IComponent</a>, <a href="#namespace">namespace</a>, <a href="#registry">registry</a>, <a href="#get">get</a>, <a href="#define">define</a>, <a href="#upgrade">upgrade</a>, <a href="#whendefined">whenDefined</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>
+<a href="#icomponent">IComponent</a>, <a href="#namespace">namespace</a>, <a href="#registry">registry</a>, <a href="#get">get</a>, <a href="#define">define</a>, <a href="#upgrade">upgrade</a>, <a href="#whendefined">whenDefined</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#icomponent">IComponent</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#icomponent">IComponent</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#component">Component</a>
 
 
 <hr />
@@ -65,7 +65,14 @@ The CustomElementRegistry interface provides methods for registering custom elem
     [key: string]: string;
 }</code></td>
             <td align="center">✓</td>
-            <td>A map of tag names.</td>
+            <td>A map of tag names.</td></tr>
+<tr>
+            <td>queue</td>
+            <td><code>{
+    [key: string]: Array&lt;(value?: any): void&gt;;
+}</code></td>
+            <td align="center">✓</td>
+            <td>Collect "whenDefined" promises.</td>
         </tr>
     </tbody>
 </table>
@@ -280,36 +287,6 @@ It upgrades all custom elements in a subtree even before they are connected to t
 
 <hr />
 
-<strong id="component"><code>class</code>  Component</strong>
-    
-
-
-<strong>Extends:</strong> <a href="#component_base">Component_base</a>
-
-<p>
-
-The DNA base Component constructor, a Custom Element constructor with
-declarative properties and event delegations, custom template and
-a complete life cycle implementation.
-All DNA components **must** extends this class.
-
-</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<hr />
-
 <strong id="icomponent"><code>constant</code>  IComponent</strong>
 
 
@@ -333,6 +310,7 @@ It's a Custom Element, but with some extra useful method.
     constructor(properties?: {
         [key: string]: any;
     }): <a href="#icomponent">IComponent</a>;
+    constructor(): <a href="#icomponent">IComponent</a>;
     prototype: <a href="#icomponent">IComponent</a>;
 }</pre>
 
@@ -398,6 +376,7 @@ The global DNA registry instance.
     constructor(properties?: {
         [key: string]: any;
     }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    constructor(): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
     observedAttributes: string[];
     prototype: <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
 }</pre>
@@ -424,6 +403,7 @@ The global DNA registry instance.
     constructor(properties?: {
         [key: string]: any;
     }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    constructor(): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
     observedAttributes: string[];
     prototype: <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
 }, options?: ElementDefinitionOptions): void</pre>
@@ -485,7 +465,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 <strong>Type:</strong>
 
 <pre>{
-    emulateLifeCycle: boolean;
+    emulateLifeCycle(node: HTMLElement): void;
     createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode(data: string): Text;
@@ -614,6 +594,7 @@ HyperFunction factory to use as JSX pragma.
     constructor(properties?: {
         [key: string]: any;
     }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    constructor(): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
     observedAttributes: string[];
     prototype: <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
 }|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
@@ -839,6 +820,7 @@ Get a native HTMLElement constructor to extend by its name.
     constructor(properties?: {
         [key: string]: any;
     }|undefined): <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
+    constructor(): <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
     observedAttributes: string[];
     prototype: <a href="#icomponent">IComponent</a>&lt;InstanceType&lt;T&gt;&gt;;
 }</pre>
@@ -848,11 +830,18 @@ Get a native HTMLElement constructor to extend by its name.
 
 <hr />
 
-<strong id="component_base"><code>constant</code>  Component_base</strong>
+<strong id="component"><code>constant</code>  Component</strong>
 
 
 
+<p>
 
+The DNA base Component constructor, a Custom Element constructor with
+declarative properties and event delegations, custom template and
+a complete life cycle implementation.
+All DNA components **must** extends this class.
+
+</p>
 
 
 
@@ -865,6 +854,7 @@ Get a native HTMLElement constructor to extend by its name.
     constructor(properties?: {
         [key: string]: any;
     }|undefined): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
+    constructor(): <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
     observedAttributes: string[];
     prototype: <a href="#icomponent">IComponent</a>&lt;HTMLElement&gt;;
 }</pre>
@@ -1252,5 +1242,18 @@ The properties of a HyperNode.
 <pre>Event & {
     respondWith(callback: (): Promise&lt;any&gt;): void;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="component"><code>type</code>  Component</strong>
+
+
+
+
+
+<pre><a href="#icomponent">IComponent</a>&lt;T&gt;</pre>
 
 
