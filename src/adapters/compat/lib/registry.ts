@@ -1,37 +1,42 @@
-import { DOM, extend, customElements } from '@chialab/dna';
-import { mixin, BaseComponent } from './BaseComponent';
+import { DOM, customElements } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
 Object.defineProperty(customElements, 'components', {
     configurable: false,
     get() {
-        return this.registry;
+        return customElements.registry;
     },
 });
 
-const define = customElements.define;
 customElements.define = function(name, constructor, options) {
-    if (!options || !options.extends) {
-        return define.call(this, name, constructor, options);
+    if (typeof constructor !== 'function') {
+        throw new TypeError('The referenced constructor must be a constructor');
     }
-    let tag = options.extends;
-    let builtinConstructor = DOM.createElement(tag).constructor as typeof HTMLElement;
-    if ((constructor.prototype instanceof builtinConstructor)) {
-        return define.call(this, name, constructor, options);
+
+    if (customElements.registry[name]) {
+        throw new Error('The registry already contains an entry with the same name');
     }
-    let proto = constructor;
-    let superProto = constructor;
-    while (proto !== BaseComponent) {
-        superProto = proto;
-        proto = Object.getPrototypeOf(proto);
+
+    try {
+        Object.defineProperty(constructor.prototype, 'is', {
+            writable: false,
+            configurable: false,
+            value: name,
+        });
+    } catch {
+        throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
     }
-    warnCode('EXTEND_BUILTIN');
-    let extendBuiltin = mixin(extend(builtinConstructor));
-    Object.setPrototypeOf(superProto, extendBuiltin);
-    (superProto as any).apply = Function.apply;
-    (superProto as any).call = Function.call;
-    Object.setPrototypeOf(superProto.prototype, extendBuiltin.prototype);
-    return define.call(this, name, constructor, options);
+
+    let tagName = options && options.extends || name;
+    if (tagName !== name && !(constructor.prototype instanceof DOM.createElement(tagName).constructor)) {
+        warnCode('EXTEND_BUILTIN');
+    }
+    customElements.registry[name] = constructor;
+    customElements.tagNames[name] = tagName.toLowerCase();
+    const queue = customElements.queue;
+    if (queue[name]) {
+        queue[name].forEach((resolve) => resolve());
+    }
 };
 
 export { customElements as registry };

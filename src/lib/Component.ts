@@ -2,7 +2,7 @@ import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { IComponent } from './IComponent';
 import { registry } from './CustomElementRegistry';
-import { DOM, COMPONENT_SYMBOL, EMULATE_LIFECYCLE_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
+import { DOM, COMPONENT_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -29,8 +29,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * An array containing the names of the attributes to observe.
      */
     static readonly observedAttributes: string[] = [];
-
-    private [COMPONENT_SYMBOL]: true;
 
     /**
      * The tag name used for Component definition.
@@ -111,6 +109,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
+        (element as any)[COMPONENT_SYMBOL] = true;
         setScope(element, createScope(element));
         setSlotted(element, cloneChildNodes(this));
 
@@ -119,7 +118,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         };
 
         let proto = Object.getPrototypeOf(element);
-        while (proto.constructor !== Component) {
+        while (proto.constructor !== HTMLElement) {
             let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
             let listenersDescriptor = Object.getOwnPropertyDescriptor(proto, 'listeners');
             let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
@@ -157,7 +156,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         }
 
         element.initProperties(props);
-        element[COMPONENT_SYMBOL] = true;
 
         if (element.isConnected) {
             connect(element);
@@ -234,7 +232,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             });
         }
 
-        if (this[COMPONENT_SYMBOL]) {
+        if (this.isConnected) {
             this.forceUpdate();
         }
     }
@@ -588,7 +586,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 } as unknown as {
     readonly observedAttributes: string[];
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
+    new(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
     new(properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
     prototype: IComponent<InstanceType<T>>;
 };
@@ -602,8 +600,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
  */
 const shim = <T extends typeof HTMLElement>(base: T): T => {
     const shim = function(this: any, ...args: any[]) {
-        const constructor = this.constructor as T;
-        const is = this.is;
+        let constructor = this.constructor as T;
+        let is = this.is;
         if (!is) {
             throw new TypeError('Illegal constructor');
         }
@@ -620,8 +618,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = document.createElement(tag) as HTMLElement;
-        (element as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
-        DOM.emulateLifeCycle = true;
+        DOM.emulateLifeCycle(element);
         Object.setPrototypeOf(element, constructor.prototype);
         return element;
     } as any as T;

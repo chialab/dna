@@ -43,7 +43,7 @@ export class CustomElementRegistry {
     /**
      * Collect "whenDefined" promises.
      */
-    private queue: {
+    readonly queue: {
         [key: string]: Array<(value?: unknown) => void>
     } = {};
 

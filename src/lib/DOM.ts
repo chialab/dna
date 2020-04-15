@@ -57,17 +57,6 @@ export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
 export const isComponent = (node: any): node is IComponent => (node as any)[COMPONENT_SYMBOL];
 
 /**
- * A symbol which identify emulated components.
- */
-export const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- */
-export const shouldEmulateLifeCycle = (node: Element): node is IComponent => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
-
-/**
  * Check if a Node is connected.
  *
  * @param node The target element to check.
@@ -129,6 +118,22 @@ export const disconnect = (node: Node) => {
 };
 
 /**
+ * A symbol which identify emulated components.
+ */
+const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ */
+const shouldEmulateLifeCycle = (node: Element): node is IComponent => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
+
+/**
+ * Should emulate life cycle.
+ */
+let emulateLifeCycle = typeof customElements === 'undefined';
+
+/**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.
  * For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
@@ -136,9 +141,12 @@ export const disconnect = (node: Node) => {
  */
 export const DOM = {
     /**
-     * Should emulate life cycle.
+     * Flag the element for life cycle emulation.
      */
-    emulateLifeCycle: typeof customElements === 'undefined',
+    emulateLifeCycle(node: HTMLElement) {
+        emulateLifeCycle = true;
+        (node as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
+    },
 
     /**
      * Create a new DOM element node for the specified tag.
@@ -208,7 +216,7 @@ export const DOM = {
             return newChild;
         }
         const appendChild = Node.prototype.appendChild;
-        if (!DOM.emulateLifeCycle) {
+        if (!emulateLifeCycle) {
             return appendChild.call(parent, newChild) as T;
         }
         if (newChild.parentNode) {
@@ -237,7 +245,7 @@ export const DOM = {
             return oldChild;
         }
         const removeChild = Node.prototype.removeChild;
-        if (!DOM.emulateLifeCycle) {
+        if (!emulateLifeCycle) {
             return removeChild.call(parent, oldChild) as T;
         }
         removeChild.call(parent, oldChild);
@@ -268,7 +276,7 @@ export const DOM = {
             return newChild;
         }
         const insertBefore = Node.prototype.insertBefore;
-        if (!DOM.emulateLifeCycle) {
+        if (!emulateLifeCycle) {
             return insertBefore.call(parent, newChild, refChild) as T;
         }
         if (newChild.parentNode) {
@@ -296,10 +304,10 @@ export const DOM = {
             return oldChild;
         }
         const replaceChild = Node.prototype.replaceChild;
-        if (!DOM.emulateLifeCycle) {
+        if (!emulateLifeCycle) {
             return replaceChild.call(parent, newChild, oldChild) as T;
         }
-        if (newChild.parentNode && newChild !== oldChild && newChild.parentNode !== parent) {
+        if (newChild.parentNode && newChild !== oldChild) {
             DOM.removeChild(newChild.parentNode as Element, newChild);
         }
         replaceChild.call(parent, newChild, oldChild);

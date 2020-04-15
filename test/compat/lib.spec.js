@@ -1,4 +1,4 @@
-import { DOM, define, bootstrap, render, BaseComponent, window } from '@chialab/dna/compat.js';
+import { DOM, window, define, bootstrap, render, BaseComponent } from '@chialab/dna/compat.js';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] lib', () => {
@@ -88,7 +88,6 @@ describe('[Compat] lib', () => {
                 assert.equal(elem.node.localName, 'button');
                 assert.equal(elem.name, 'Alan');
                 assert.equal(elem.lastName, 'Turing');
-                expect(elem).to.be.instanceof(window.HTMLButtonElement);
             });
         });
     });
@@ -190,10 +189,12 @@ describe('[Compat] lib', () => {
     describe('bootstrap', () => {
         let wrapper, wrapper2;
         before(() => {
-            wrapper = document.createElement('div');
+            wrapper = DOM.createElement('div');
             wrapper.innerHTML = `<p>Hello <${name1} age="21"></${name1}></p>`;
-            wrapper2 = document.createElement('div');
-            wrapper2.innerHTML = `<p>Hello again <${name1} age="21"/><${name1} age="22"/></p>`;
+            wrapper2 = DOM.createElement('div');
+            wrapper2.innerHTML = `<p>Hello again <${name1} age="21"></${name1}><${name1} age="22"></${name1}></p>`;
+            DOM.appendChild(window.document.body, wrapper);
+            DOM.appendChild(window.document.body, wrapper2);
         });
 
         it('should instantiate all components', () => {
@@ -214,6 +215,11 @@ describe('[Compat] lib', () => {
                 count++;
             });
             assert.equal(count, 2);
+        });
+
+        after(() => {
+            DOM.removeChild(window.document.body, wrapper);
+            DOM.removeChild(window.document.body, wrapper2);
         });
     });
 });

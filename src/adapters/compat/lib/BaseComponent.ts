@@ -13,7 +13,7 @@ const STYLES: { [key: string]: HTMLStyleElement } = {};
  * Alias to the `extend` method.
  */
 export const mixin = (constructor: typeof Component) =>
-    class BaseComponent extends constructor {
+    class CompatComponent extends constructor {
         /**
          * Listeners alias.
          */
@@ -85,7 +85,7 @@ export const mixin = (constructor: typeof Component) =>
             let proto = Object.getPrototypeOf(this);
             let shouldWarn = false;
             // collect al prototyped event listeners
-            while (proto.constructor !== BaseComponent) {
+            while (proto.constructor !== CompatComponent) {
                 let eventsDescriptor = Object.getOwnPropertyDescriptor(proto, 'events');
                 let eventsGetter = eventsDescriptor && eventsDescriptor.get;
                 if (eventsGetter) {
@@ -113,8 +113,7 @@ export const mixin = (constructor: typeof Component) =>
         }
 
         constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
-            super(node as HTMLElement, properties);
-            this.classList.add(this.is as string);
+            super(node, properties);
 
             if (this.css) {
                 // handle css text for the component
@@ -139,6 +138,22 @@ export const mixin = (constructor: typeof Component) =>
             if (this.template) {
                 warnCode('PREFER_RENDER');
             }
+        }
+
+        /**
+         * @inheritdoc
+         */
+        initProperties(props: { [key: string]: any; }) {
+            DOM.emulateLifeCycle(this);
+            return super.initProperties(props);
+        }
+
+        /**
+         * @inheritdoc
+         */
+        connectedCallback() {
+            super.connectedCallback();
+            this.classList.add(this.is as string);
         }
 
         /**
