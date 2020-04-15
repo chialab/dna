@@ -15,7 +15,7 @@ export class Root extends React.Component<unknown> {
      */
     componentDidMount() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
-        upgrade(node);
+        this.componentDidUpdate();
         connect(node);
     }
 
@@ -30,7 +30,9 @@ export class Root extends React.Component<unknown> {
                 return;
             }
             for (let propertyKey in props) {
-                if (propertyKey !== 'children') {
+                if (propertyKey !== 'children' &&
+                    propertyKey !== 'is' &&
+                    propertyKey !== 'key') {
                     (ref.current as any)[propertyKey] = (props as any)[propertyKey];
                 }
             }
