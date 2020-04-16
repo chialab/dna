@@ -111,7 +111,10 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         (element as any)[COMPONENT_SYMBOL] = true;
         setScope(element, createScope(element));
-        setSlotted(element, cloneChildNodes(this));
+
+        let children = cloneChildNodes(element);
+        setSlotted(element, children);
+        children.forEach((child) => DOM.removeChild(element, child, false));
 
         const propertyDescriptors = {} as {
             [key: string]: ClassFieldDescriptor;

@@ -1,5 +1,5 @@
 import htm from 'htm/mini';
-import { getModule, spyFunction } from './helpers.js';
+import { getModule, spyFunction, getComponentName } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -276,19 +276,85 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
+                const name = getComponentName();
                 class MyElement extends DNA.Component {
                     render() {
                         return TEMPLATES[type].call(this);
                     }
                 }
 
-                DNA.define(`my-element-${type.toLowerCase()}`, MyElement);
+                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
 
-                const element = DNA.render(wrapper, DNA.h(`my-element-${type}`, null,
+                const element = DNA.render(wrapper, DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
                     DNA.h('p', null, 'Body'),
                 ));
+
+                expect(element.childNodes).to.have.lengthOf(2);
+                expect(element.childNodes[0].tagName).to.be.equal('DIV');
+                expect(element.childNodes[0].className).to.be.equal('layout-header');
+                expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
+                expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
+                expect(element.childNodes[1].tagName).to.be.equal('DIV');
+                expect(element.childNodes[1].className).to.be.equal('layout-body');
+                expect(element.childNodes[1].childNodes[0].tagName).to.be.equal('IMG');
+                expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
+                expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
+            });
+        }
+    });
+
+    describe('slot with upgraded elements', () => {
+        const TEMPLATES = {
+            JSX() {
+                return DNA.h(DNA.Fragment, null,
+                    DNA.h('div', { class: 'layout-header' }, DNA.h('slot', { name: 'title' })),
+                    DNA.h('div', { class: 'layout-body' }, DNA.h('slot')),
+                );
+            },
+            HTML() {
+                return DNA.html`
+                    <div class="layout-header">
+                        <slot name="title" />
+                    </div>
+                    <div class="layout-body">
+                        <slot />
+                    </div>
+                `;
+            },
+            TEMPLATE() {
+                const template = html(`<template>
+                    <div class="layout-header">
+                        <slot name="title" />
+                    </div>
+                    <div class="layout-body">
+                        <slot />
+                    </div>
+                </template>`);
+                return DNA.template(template, this);
+            },
+        };
+
+        for (let type in TEMPLATES) {
+            it(type, () => {
+                const name = getComponentName();
+                class MyElement extends DNA.Component {
+                    render() {
+                        return TEMPLATES[type].call(this);
+                    }
+                }
+
+                const element = DNA.render(wrapper, DNA.h(`${name}-${type.toLowerCase()}`, null,
+                    DNA.h('h1', { slot: 'title' }, 'Title'),
+                    DNA.h('img', { src: 'cat.png' }),
+                    DNA.h('p', null, 'Body'),
+                ));
+
+                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                DNA.upgrade(element);
 
                 expect(element.childNodes).to.have.lengthOf(2);
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');

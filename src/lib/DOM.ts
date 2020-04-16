@@ -220,7 +220,7 @@ export const DOM = {
             return appendChild.call(parent, newChild) as T;
         }
         if (newChild.parentNode) {
-            DOM.removeChild(newChild.parentNode as Element, newChild);
+            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         appendChild.call(parent, newChild);
         connect(newChild);
@@ -280,7 +280,7 @@ export const DOM = {
             return insertBefore.call(parent, newChild, refChild) as T;
         }
         if (newChild.parentNode) {
-            DOM.removeChild(newChild.parentNode as Element, newChild);
+            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         insertBefore.call(parent, newChild, refChild);
         connect(newChild);
@@ -308,7 +308,7 @@ export const DOM = {
             return replaceChild.call(parent, newChild, oldChild) as T;
         }
         if (newChild.parentNode && newChild !== oldChild) {
-            DOM.removeChild(newChild.parentNode as Element, newChild);
+            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         replaceChild.call(parent, newChild, oldChild);
         disconnect(oldChild);

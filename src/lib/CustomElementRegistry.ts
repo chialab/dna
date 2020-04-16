@@ -127,24 +127,26 @@ export class CustomElementRegistry {
     upgrade(root: HTMLElement) {
         const is = (root.getAttribute('is') || root.tagName).toLowerCase();
         const constructor = this.get(is);
-        check: if (constructor) {
-            if (customElements && 'upgrade' in customElements) {
-                // native upgrade
-                customElements.upgrade(root);
-            }
-            // check if already instantiated
-            if (root instanceof constructor) {
-                break check;
-            }
-
-            new constructor(root as HTMLElement);
-        }
         // find all root children
         const nodes = root.children;
         // iterate all nodes found
         for (let i = 0, len = nodes.length; i < len; i++) {
             this.upgrade(nodes[i] as HTMLElement);
         }
+        if (!constructor) {
+            return;
+        }
+        if (customElements && 'upgrade' in customElements) {
+            // native upgrade
+            customElements.upgrade(root);
+        }
+        // check if already instantiated
+        if (root instanceof constructor) {
+            root.forceUpdate();
+            return;
+        }
+
+        new constructor(root as HTMLElement).forceUpdate();
     }
 }
 
