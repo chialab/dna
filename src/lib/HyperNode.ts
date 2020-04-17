@@ -72,7 +72,7 @@ export const h = (tagOrComponent: string | typeof IComponent | typeof Fragment |
         if (properties) {
             for (let propertyKey in properties) {
                 let value = properties[propertyKey];
-                if (propertyKey === 'is') {
+                if (propertyKey === 'is' && registry.get(value)) {
                     is = value;
                 } else if (propertyKey === 'key') {
                     key = value;

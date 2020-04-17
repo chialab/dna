@@ -161,7 +161,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         element.initProperties(props);
 
         if (element.isConnected) {
-            connect(element);
+            connect(element, element !== this);
         }
 
         return element;
@@ -218,12 +218,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
         const property = this.getProperty(propertyName) as ClassFieldDescriptor;
-        if (property.attribute && property.toAttribute) {
+        const attrName = property.attribute as string;
+        if (attrName && property.toAttribute) {
             let value = property.toAttribute.call(this as any, newValue);
             if (value === null) {
-                this.removeAttribute(property.attribute as string);
+                this.removeAttribute(attrName);
             } else if (value !== undefined) {
-                this.setAttribute(property.attribute as string, value);
+                this.setAttribute(attrName, value);
             }
         }
 
@@ -324,7 +325,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                     return '';
                 }
                 // otherwise just set the value
-                return newValue;
+                return `${newValue}`;
             });
         }
 
@@ -417,6 +418,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             target[symbol] = initializer.call(target);
         } else if ('value' in descriptor) {
             target[symbol] = descriptor.value;
+        } else if (descriptor.attribute && this.hasAttribute(descriptor.attribute as string)) {
+            let value = this.getAttribute(descriptor.attribute as string);
+            target[symbol] = (descriptor.fromAttribute as ClassFieldAttributeConverter).call(this, value);
         } else if ('defaultValue' in descriptor) {
             target[symbol] = descriptor.defaultValue;
         }

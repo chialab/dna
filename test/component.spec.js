@@ -654,6 +654,46 @@ describe('Component', function() {
             expect(propertyChangedCallback.count).to.be.equal(3);
         });
 
+        it('should not loop on connection assignement', async () => {
+            const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+            class TestElement extends DNA.Component {
+                static get observedAttributes() {
+                    return ['page'];
+                }
+
+                get properties() {
+                    return {
+                        page: {
+                            type: Number,
+                        },
+                    };
+                }
+
+                connectedCallback() {
+                    console.log('--------');
+                    super.connectedCallback();
+                    this.page = 2;
+                }
+
+                propertyChangedCallback(...args) {
+                    super.propertyChangedCallback(...args);
+                    propertyChangedCallback(...args);
+                }
+            }
+
+            const name = getComponentName();
+            wrapper.innerHTML = `<section is="${name}" page="1"></section>`;
+            const element = wrapper.children[0];
+            DNA.define(name, TestElement, {
+                extends: 'section',
+            });
+            DNA.upgrade(element);
+
+            expect(propertyChangedCallback.invoked).to.be.true;
+            expect(propertyChangedCallback.response).to.be.deep.equal(['page', 1, 2]);
+            expect(propertyChangedCallback.count).to.be.equal(1);
+        });
+
         it('should NOT handle property changes on delete', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {

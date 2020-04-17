@@ -79,12 +79,12 @@ export const isConnected = (node: Node | null): boolean => {
  *
  * @param node The connected node.
  */
-export const connect = (node: Node) => {
+export const connect = (node: Node, force = false) => {
     if (!isElement(node)) {
         return;
     }
     let children = cloneChildNodes(node);
-    if (shouldEmulateLifeCycle(node)) {
+    if (isComponent(node) && (shouldEmulateLifeCycle(node) || force)) {
         node.connectedCallback();
         children = cloneChildNodes(node);
     }
