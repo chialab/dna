@@ -1,10 +1,11 @@
-import { DOM, isElement, isText, isComponent } from './DOM';
+import { DOM, isElement, isText, isComponent, cloneChildNodes } from './DOM';
 import { createSymbolKey } from './symbols';
 import { Scope, createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { getSlotted, setSlotted } from './slotted';
+import { getSlotted } from './slotted';
 import { isHyperNode } from './HyperNode';
 import { css } from './css';
+import { IComponent } from './IComponent';
 
 /**
  * Alias to Array.isArray.
@@ -25,15 +26,15 @@ const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
  * @param scope The render scope object.
  * @return The resulting child Nodes.
  */
-export const render = (root: HTMLElement, input: Template, scope?: Scope, filter?: TemplateFilter): Node | Node[] | void => {
+export const render = (root: HTMLElement, input: Template, scope?: Scope, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
     const renderScope = scope && createScope(scope) || getScope(root) || createScope(root);
     const isStyle = root.localName === 'style';
     const rootNamespaceURI = root.namespaceURI;
 
+    let childNodes = (slot && getSlotted(root).slice(0)) || cloneChildNodes(root);
     // the current iterating node
-    let currentNode = root.firstChild as Node;
-    // the current element to insert
-    let node: Element | Text | undefined;
+    let currentIndex = 0;
+    let currentNode = childNodes[currentIndex] as Node;
     // result list
     let results: Node[] = [];
 
@@ -92,7 +93,8 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
                 let prevKey = (currentNode as any).key;
                 if (prevKey != null && key != null && key !== prevKey) {
                     let prevCurrentNode = currentNode;
-                    currentNode = currentNode.nextSibling as Node;
+                    currentIndex++;
+                    currentNode = childNodes[currentIndex] as Node;
                     prevKey = isElement(currentNode) && (currentNode as any).key;
                     DOM.removeChild(root, prevCurrentNode);
                 }
@@ -196,25 +198,23 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
-            DOM.insertBefore(root, newNode, currentNode, false);
+            DOM.insertBefore(root, newNode, currentNode, slot);
         } else {
-            currentNode = currentNode.nextSibling as Node;
+            currentIndex++;
+            currentNode = childNodes[currentIndex]  as Node;
         }
 
         results.push(newNode);
 
         if (isElement(newNode) && newChildren) {
-            if (isComponent(newNode)) {
-                setSlotted(newNode, handleItems(newChildren, newNode, []));
+            let isComponentNode = isComponent(newNode);
+            // the Node has slotted children, trigger a new render context for them
+            render(newNode as HTMLElement, newChildren, scope, undefined, isComponentNode);
+            if (isComponentNode) {
                 // notify the Component that its slotted Nodes has been updated
-                newNode.forceUpdate();
-            } else {
-                // the Node has slotted children, trigger a new render context for them
-                render(newNode as HTMLElement, newChildren, scope);
+                (newNode as IComponent).forceUpdate();
             }
         }
-
-        node = newNode;
 
         return results;
     };
@@ -224,8 +224,9 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
     // all children of the root have been handled,
     // we can start to cleanup the tree
     // remove all Nodes that are outside the result range
-    while (root.lastChild != node) {
-        DOM.removeChild(root, root.lastChild as Node, false);
+    let length = childNodes.length;
+    while (length > currentIndex) {
+        DOM.removeChild(root, childNodes[--length] as Node, slot);
     }
 
     let len = results.length;

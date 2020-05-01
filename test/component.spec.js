@@ -670,7 +670,6 @@ describe('Component', function() {
                 }
 
                 connectedCallback() {
-                    console.log('--------');
                     super.connectedCallback();
                     this.page = 2;
                 }

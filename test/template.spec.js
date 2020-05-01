@@ -244,17 +244,36 @@ describe('template', function() {
     });
 
     describe('slot', () => {
+        const rootName = getComponentName();
+        const titleName = getComponentName();
+        let template;
+
+        before(async () => {
+            template = html(`<template>
+                <div class="layout-header">
+                    <${`${titleName}-template`}>
+                        <slot name="title"></slot>
+                    </${`${titleName}-template`}>
+                </div>
+                <div class="layout-body">
+                    <slot />
+                </div>
+            </template>`);
+        });
+
         const TEMPLATES = {
             JSX() {
                 return DNA.h(DNA.Fragment, null,
-                    DNA.h('div', { class: 'layout-header' }, DNA.h('slot', { name: 'title' })),
+                    DNA.h('div', { class: 'layout-header' }, DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))),
                     DNA.h('div', { class: 'layout-body' }, DNA.h('slot')),
                 );
             },
             HTML() {
                 return DNA.html`
                     <div class="layout-header">
-                        <slot name="title" />
+                        <${`${titleName}-html`}>
+                            <slot name="title" />
+                        </>
                     </div>
                     <div class="layout-body">
                         <slot />
@@ -262,30 +281,29 @@ describe('template', function() {
                 `;
             },
             TEMPLATE() {
-                const template = html(`<template>
-                    <div class="layout-header">
-                        <slot name="title" />
-                    </div>
-                    <div class="layout-body">
-                        <slot />
-                    </div>
-                </template>`);
                 return DNA.template(template, this);
             },
         };
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                const name = getComponentName();
                 class MyElement extends DNA.Component {
                     render() {
                         return TEMPLATES[type].call(this);
                     }
                 }
 
-                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement);
 
-                const element = DNA.render(wrapper, DNA.h(`${name}-${type.toLowerCase()}`, null,
+                class MyTitle extends DNA.Component {
+                    render() {
+                        return DNA.h('slot', { name: 'title' });
+                    }
+                }
+
+                DNA.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
+
+                const element = DNA.render(wrapper, DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
                     DNA.h('p', null, 'Body'),
@@ -295,8 +313,9 @@ describe('template', function() {
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
                 expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
-                expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
-                expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
+                expect(element.childNodes[0].childNodes[0].tagName).to.be.equal(`${titleName}-${type}`.toUpperCase());
+                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
                 expect(element.childNodes[1].className).to.be.equal('layout-body');
                 expect(element.childNodes[1].childNodes[0].tagName).to.be.equal('IMG');
