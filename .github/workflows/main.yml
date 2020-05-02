@@ -1,12 +1,17 @@
 name: Main
-on: push
+on:
+  push:
+    tags-ignore:
+      - '*'
+    paths:
+      - 'src/**'
+      - 'test/**'
 
 jobs:
   # BUILD
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -224,24 +229,3 @@ jobs:
           key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:react --headless
-  # DOCS
-  api:
-    name: Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v1
-      - name: Push documentation to wiki
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}
-        run: |
-          git config --global user.email "dev@chialab.io"
-          git config --global user.name "chialab-io"
-          git clone https://${GITHUB_TOKEN}@github.com/chialab/dna.wiki.git wiki
-          cd wiki
-          git checkout ${GITHUB_REF#refs/heads/} || git checkout -B ${GITHUB_REF#refs/heads/}
-          cp -rf ../docs/* .
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Lastest api reference ${GITHUB_REF#refs/heads/} auto-pushed to wiki"
-          git push --set-upstream origin ${GITHUB_REF#refs/heads/} --follow-tags
-          cd ..
