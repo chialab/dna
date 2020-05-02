@@ -4,7 +4,6 @@ on:
     branches:
       - '3.0.0'
     paths:
-      - 'src/**'
       - 'docs/**'
     tags-ignore:
       - '*'

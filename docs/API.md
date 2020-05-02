@@ -501,7 +501,7 @@ It does nothing if life cycle is disabled.
 
 <strong>Type:</strong>
 
-<pre>(node: Node): void</pre>
+<pre>(node: Node, force?: boolean): void</pre>
 
 
 
@@ -545,7 +545,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>, scope?: <a href="#scope">Scope</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined): void|Node|Node[]</pre>
+<pre>(root: HTMLElement, input: <a href="#template">Template</a>, scope?: <a href="#scope">Scope</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): void|Node|Node[]</pre>
 
 
 
