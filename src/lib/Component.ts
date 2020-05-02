@@ -224,7 +224,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             let value = property.toAttribute.call(this as any, newValue);
             if (value === null) {
                 this.removeAttribute(attrName);
-            } else if (value !== undefined) {
+            } else if (value !== undefined && value !== this.getAttribute(attrName)) {
                 this.setAttribute(attrName, value);
             }
         }
