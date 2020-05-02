@@ -93,8 +93,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
                 let prevKey = (currentNode as any).key;
                 if (prevKey != null && key != null && key !== prevKey) {
                     let prevCurrentNode = currentNode;
-                    currentIndex++;
-                    currentNode = childNodes[currentIndex] as Node;
+                    currentNode = childNodes[++currentIndex] as Node;
                     prevKey = isElement(currentNode) && (currentNode as any).key;
                     DOM.removeChild(root, prevCurrentNode);
                 }
@@ -200,8 +199,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             // otherwise append the new Node at the end of the parent
             DOM.insertBefore(root, newNode, currentNode, slot);
         } else {
-            currentIndex++;
-            currentNode = childNodes[currentIndex]  as Node;
+            currentNode = childNodes[++currentIndex]  as Node;
         }
 
         results.push(newNode);
