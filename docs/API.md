@@ -987,7 +987,7 @@ Convert attribute to property value.
 
 
 
-<pre>&lt;T extends HTMLElement&gt;(this: T, value: string|null): any</pre>
+<pre>(value: string|null): any</pre>
 
 
 
@@ -1004,7 +1004,7 @@ Convert property to attribute value.
 
 
 
-<pre>&lt;T extends HTMLElement&gt;(this: T, value: any): string|null|undefined</pre>
+<pre>(value: any): string|null|undefined</pre>
 
 
 
@@ -1021,7 +1021,7 @@ The observer signature for class fields.
 
 
 
-<pre>&lt;T extends HTMLElement&gt;(this: T, oldValue: any, newValue: any): any</pre>
+<pre>(oldValue: any, newValue: any): any</pre>
 
 
 
@@ -1038,7 +1038,7 @@ A validation function for the class field.
 
 
 
-<pre>&lt;T extends HTMLElement&gt;(this: T, value: any): boolean</pre>
+<pre>(value: any): boolean</pre>
 
 
 
