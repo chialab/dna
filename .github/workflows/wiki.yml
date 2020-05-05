@@ -1,4 +1,4 @@
-name: Main
+name: Wiki
 on:
   push:
     branches:
@@ -9,8 +9,8 @@ on:
       - '*'
 
 jobs:
-  wiki:
-    name: Wiki
+  deploy:
+    name: Deploy Wiki
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
