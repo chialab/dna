@@ -1,10 +1,5 @@
 name: Main
-on:
-  push:
-    tags-ignore:
-      - v*
-    paths-ignore:
-      - 'docs/**'
+on: [push, pull_request]
 
 jobs:
   # BUILD
