@@ -40,3 +40,13 @@ customElements.define = function(name, constructor, options) {
 };
 
 export const registry = customElements;
+
+export const get = (tagName: string) => {
+    warnCode('USE_REGISTRY');
+    return registry.get(tagName);
+};
+
+export const define = (tagName: string, constructor: any, options: ElementDefinitionOptions) => {
+    warnCode('USE_REGISTRY');
+    return registry.define(tagName, constructor, options);
+};

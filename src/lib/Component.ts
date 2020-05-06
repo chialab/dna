@@ -1,6 +1,6 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { IComponent } from './IComponent';
+import { ComponentConstructorInterface } from './Interfaces';
 import { registry } from './CustomElementRegistry';
 import { DOM, COMPONENT_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
@@ -592,13 +592,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     removeAttribute(qualifiedName: string) {
         return DOM.removeAttribute(this, qualifiedName);
     }
-} as unknown as {
-    readonly observedAttributes: string[];
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
-    new(properties?: { [key: string]: any; }): IComponent<InstanceType<T>>;
-    new(): IComponent<InstanceType<T>>;
-    prototype: IComponent<InstanceType<T>>;
-};
+} as ComponentConstructorInterface<InstanceType<T>>;
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -651,5 +645,4 @@ export const extend = <T extends typeof HTMLElement>(constructor: T) => mixin(sh
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = class extends extend(HTMLElement) { } as typeof IComponent;
-export type Component<T extends HTMLElement = HTMLElement> = IComponent<T>
+export class Component extends extend(HTMLElement) {}

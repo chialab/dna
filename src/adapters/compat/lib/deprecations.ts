@@ -29,4 +29,5 @@ export enum Code {
     TRUST_HELPER = '`trust` helper has been deprecated in DNA 3.0, use `html` instaed',
     MIX_HELPER = '`mix` helper has been deprecated in DNA 3.0, import it from @chialab/proteins',
     EXTEND_BUILTIN = 'custom elements should extends the builtin constructor',
+    USE_REGISTRY = '`define` and `get` methods had been deprecated in DNA 3.0, use `customElements` instead',
 }

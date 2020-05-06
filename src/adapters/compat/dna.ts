@@ -1,9 +1,6 @@
-import { registry } from './lib/registry';
 import './lib/DOM';
 import * as IDOM from './lib/IDOM';
 
-export const get = registry.get.bind(registry);
-export const define = registry.define.bind(registry);
 export {
     CustomElementRegistry,
     window,
@@ -37,7 +34,8 @@ export {
     extend,
     Component,
 } from '@chialab/dna';
-export { IDOM, registry };
+export { IDOM };
+export * from './lib/registry';
 export * from './lib/mix';
 export * from './lib/bootstrap';
 export * from './lib/prop';

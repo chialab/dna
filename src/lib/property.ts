@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { IComponent } from './IComponent';
+import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 import { ClassElement } from './ClassElement';
 
 /**
@@ -105,7 +105,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @return The decorator initializer.
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
-    ((targetOrClassElement: IComponent, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+    ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         const symbol = createSymbolKey();
         if (propertyKey !== undefined) {
             // decorators spec 1
@@ -138,12 +138,12 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 writable: true,
                 enumerable: false,
             },
-            initializer(this: IComponent) {
+            initializer(this: ComponentInterface<HTMLElement>) {
                 return (this as any)[symbol];
             },
-            finisher(constructor: typeof IComponent) {
+            finisher(constructor: ComponentConstructorInterface<HTMLElement>) {
                 const initProperties = constructor.prototype.initProperties;
-                constructor.prototype.initProperties = function(this: IComponent, props: { [key: string]: any; }) {
+                constructor.prototype.initProperties = function(this: ComponentInterface<HTMLElement>, props: { [key: string]: any; }) {
                     this.defineProperty(key, descriptor, symbol);
                     if (!(key in props)) {
                         this.initProperty(key, descriptor, symbol, element.initializer);

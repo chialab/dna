@@ -3,7 +3,7 @@ import { DelegatedEventCallback } from './events';
 import { Template, TemplateItems } from './Template';
 import { Scope } from './Scope';
 
-export type IComponent<T extends HTMLElement = HTMLElement> = T & {
+export type ComponentInterface<T extends HTMLElement> = T & {
     /**
      * The defined component name.
      */
@@ -181,13 +181,12 @@ export type IComponent<T extends HTMLElement = HTMLElement> = T & {
     undelegateEventListener(event?: string, selector?: string | null, callback?: DelegatedEventCallback): void;
 }
 
-/* eslint-disable no-var */
 /**
  * The basic DNA Component interface.
  * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
-export declare var IComponent: {
+export type ComponentConstructorInterface<T extends HTMLElement> = {
     /**
      * An array containing the names of the attributes to observe.
      */
@@ -198,8 +197,8 @@ export declare var IComponent: {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): IComponent;
-    new(properties?: { [key: string]: any; }): IComponent;
-    new(): IComponent;
-    prototype: IComponent;
+    new(node?: HTMLElement, properties?: { [key: string]: any; }): ComponentInterface<T>;
+    new(properties?: { [key: string]: any; }): ComponentInterface<T>;
+    new(): ComponentInterface<T>;
+    prototype: ComponentInterface<T>;
 };

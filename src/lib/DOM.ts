@@ -1,6 +1,6 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { IComponent } from './IComponent';
+import { ComponentInterface } from './Interfaces';
 import { registry } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
 
@@ -54,7 +54,7 @@ export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: any): node is IComponent => (node as any)[COMPONENT_SYMBOL];
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
 
 /**
  * Check if a Node is connected.
@@ -126,7 +126,7 @@ const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-const shouldEmulateLifeCycle = (node: Element): node is IComponent => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
+const shouldEmulateLifeCycle = (node: Element): node is ComponentInterface<HTMLElement> => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Should emulate life cycle.

@@ -1,5 +1,5 @@
 import { window } from './window';
-import { IComponent } from './IComponent';
+import { ComponentConstructorInterface } from './Interfaces';
 
 /**
  * The native custom elements registry.
@@ -30,7 +30,7 @@ export class CustomElementRegistry {
      * A global registry.
      */
     readonly registry: {
-        [key: string]: typeof IComponent;
+        [key: string]: ComponentConstructorInterface<HTMLElement>;
     } = {};
 
     /**
@@ -53,7 +53,7 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): typeof IComponent {
+    get(name: string): ComponentConstructorInterface<HTMLElement> {
         return this.registry[name];
     }
 
@@ -64,7 +64,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: typeof IComponent, options: ElementDefinitionOptions = {}) {
+    define(name: string, constructor: ComponentConstructorInterface<HTMLElement>, options: ElementDefinitionOptions = {}) {
         assertValidateCustomElementName(name);
 
         if (typeof constructor !== 'function') {

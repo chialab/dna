@@ -201,7 +201,7 @@ The `mix` has been deprecated. Import the reference directly from [`@chialab/pro
 +import { mix } from '@chialab/proteins';
 ```
 
-#### EXTEND_BUILTIN
+#### `EXTEND_BUILTIN`
 
 Custom Elements that extend builtin elements should also extend their constructors.
 
@@ -211,6 +211,18 @@ Custom Elements that extend builtin elements should also extend their constructo
 
 -export class XButton extends BaseComponent {
 +export class XButton extends mixin(extend(window.HTMLButtonElement)) {
+```
+
+#### `USE_REGISTRY`
+
+Custom Elements should be defined using the `customElements` registry.
+
+```diff
+-import { define } from '@chialab/dna/compat.js';
++import { customElements } from '@chialab/dna/compat.js';
+
+-define('x-dialog', Dialog);
++customElements.define('x-dialog', Dialog);
 ```
 
 ## Breaking changes in the compatibility layer
@@ -273,3 +285,5 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 * Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references ([PREFER_INSTANCE](./#prefer_instance))
 
 * Correctly extend builtin elements using the `extend` helper ([EXTEND_BUILTIN](./#extend_builtin))
+
+* Replace `define` invokations with `customElements.define` ([USE_REGISTRY](./#use_registry))

@@ -5,7 +5,7 @@ import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Templat
 import { getSlotted } from './slotted';
 import { isHyperNode } from './HyperNode';
 import { css } from './css';
-import { IComponent } from './IComponent';
+import { ComponentInterface } from './Interfaces';
 
 /**
  * Alias to Array.isArray.
@@ -210,7 +210,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
             render(newNode as HTMLElement, newChildren, scope, undefined, isComponentNode);
             if (isComponentNode) {
                 // notify the Component that its slotted Nodes has been updated
-                (newNode as IComponent).forceUpdate();
+                (newNode as ComponentInterface<HTMLElement>).forceUpdate();
             }
         }
 

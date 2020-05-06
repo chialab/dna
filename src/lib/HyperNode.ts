@@ -1,7 +1,7 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { registry } from './CustomElementRegistry';
-import { IComponent } from './IComponent';
+import { ComponentConstructorInterface } from './Interfaces';
 import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
 
@@ -34,7 +34,7 @@ export enum NamespaceURI {
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
-    Component?: typeof IComponent,
+    Component?: ComponentConstructorInterface<HTMLElement>,
     tag?: string;
     is?: string,
     key?: any,
@@ -59,14 +59,14 @@ export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SY
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export const h = (tagOrComponent: string | typeof IComponent | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | ComponentConstructorInterface<HTMLElement> | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
         is: string | undefined,
         key: any | undefined,
         propertiesToSet: any = {},
-        Component: typeof IComponent | TemplateFunction | undefined;
+        Component: ComponentConstructorInterface<HTMLElement> | TemplateFunction | undefined;
 
     if (!isFragment) {
         if (properties) {
@@ -83,8 +83,8 @@ export const h = (tagOrComponent: string | typeof IComponent | typeof Fragment |
         }
 
         if (!tag) {
-            if ((tagOrComponent as typeof IComponent).prototype instanceof HTMLElement) {
-                Component = tagOrComponent as typeof IComponent;
+            if ((tagOrComponent as ComponentConstructorInterface<HTMLElement>).prototype instanceof HTMLElement) {
+                Component = tagOrComponent as ComponentConstructorInterface<HTMLElement>;
             } else {
                 isFragment = true;
                 children = (tagOrComponent as TemplateFunction)(propertiesToSet) as TemplateItems;
