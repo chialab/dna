@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#icomponentconstructor">IComponentConstructor</a>, <a href="#icomponent">IComponent</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -55,7 +55,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
         <tr>
             <td>registry</td>
             <td><code>{
-    [key: string]: <a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;;
+    [key: string]: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
 }</code></td>
             <td align="center">✓</td>
             <td>A global registry.</td></tr>
@@ -92,7 +92,7 @@ Get the Custom Element definition for a tag.
 
 <details>
 <summary>
-<code>(name: string): <a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;</code>
+<code>(name: string): <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code>
 </summary><br />
 
 
@@ -116,7 +116,7 @@ Get the Custom Element definition for a tag.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;</code> The definition for the given tag.
+<strong>Returns</strong>: <code><a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code> The definition for the given tag.
 
 <br />
 </details>
@@ -139,7 +139,7 @@ Define a new Custom Element.
 
 <details>
 <summary>
-<code>(name: string, constructor: <a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;, options?: ElementDefinitionOptions): void</code>
+<code>(name: string, constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, options?: ElementDefinitionOptions): void</code>
 </summary><br />
 
 
@@ -161,7 +161,7 @@ Define a new Custom Element.
             <td>The tag name for the element.</td></tr>
 <tr>
             <td>constructor</td>
-            <td><code><a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;</code></td>
+            <td><code><a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code></td>
             <td align="center"></td>
             <td>The Custom Element constructor.</td></tr>
 <tr>
@@ -373,7 +373,6 @@ It also handle element life cycle for custom elements unless otherwise specified
 <strong>Type:</strong>
 
 <pre>{
-    emulateLifeCycle(node: HTMLElement): void;
     createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode(data: string): Text;
@@ -495,7 +494,7 @@ HyperFunction factory to use as JSX pragma.
 
 <strong>Type:</strong>
 
-<pre>(tagOrComponent: string|Symbol|<a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
+<pre>(tagOrComponent: string|Symbol|<a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
 
 
 
@@ -711,7 +710,7 @@ Get a native HTMLElement constructor to extend by its name.
 <pre>&lt;T extends {
     constructor(): HTMLElement;
     prototype: HTMLElement;
-}&gt;(constructor: T): <a href="#icomponentconstructor">IComponentConstructor</a>&lt;InstanceType&lt;T&gt;&gt;</pre>
+}&gt;(constructor: T): <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;InstanceType&lt;T&gt;&gt;</pre>
 
 
 
@@ -728,7 +727,7 @@ Get a native HTMLElement constructor to extend by its name.
 
 <strong>Type:</strong>
 
-<pre><a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;</pre>
+<pre><a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</pre>
 
 
 
@@ -769,7 +768,7 @@ A list of namespaceURI bound with their tagName.
 
 <hr />
 
-<strong id="icomponentconstructor"><code>type</code>  IComponentConstructor</strong>
+<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
 
 <p>
 
@@ -784,12 +783,12 @@ It's a Custom Element, but with some extra useful method.
     observedAttributes: string[];
     constructor(node?: HTMLElement, properties?: {
         [key: string]: any;
-    }): <a href="#icomponent">IComponent</a>&lt;T&gt;;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
     constructor(properties?: {
         [key: string]: any;
-    }): <a href="#icomponent">IComponent</a>&lt;T&gt;;
-    constructor(): <a href="#icomponent">IComponent</a>&lt;T&gt;;
-    prototype: <a href="#icomponent">IComponent</a>&lt;T&gt;;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
 }</pre>
 
 <strong>See also</strong>
@@ -799,7 +798,7 @@ It's a Custom Element, but with some extra useful method.
 
 <hr />
 
-<strong id="icomponent"><code>type</code>  IComponent</strong>
+<strong id="componentinterface"><code>type</code>  ComponentInterface</strong>
 
 
 
@@ -828,7 +827,7 @@ It's a Custom Element, but with some extra useful method.
     };
     getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
     defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
-    initProperties(props: {
+    initialize(props: {
         [key: string]: any;
     }): void;
     initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol, initializer?: Function): any;
@@ -840,6 +839,7 @@ It's a Custom Element, but with some extra useful method.
     dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
+    emulateLifeCycle(): void;
 }</pre>
 
 
@@ -1041,7 +1041,7 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 
 <pre>{
-    Component?: <a href="#icomponentconstructor">IComponentConstructor</a>&lt;HTMLElement&gt;;
+    Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
     tag?: string;
     is?: string;
     key?: any;
