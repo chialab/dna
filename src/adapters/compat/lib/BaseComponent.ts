@@ -143,9 +143,9 @@ export const mixin = (constructor: typeof Component) =>
         /**
          * @inheritdoc
          */
-        initProperties(props: { [key: string]: any; }) {
-            DOM.emulateLifeCycle(this);
-            return super.initProperties(props);
+        initialize(props: { [key: string]: any; }) {
+            this.emulateLifeCycle();
+            return super.initialize(props);
         }
 
         /**

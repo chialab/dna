@@ -142,13 +142,13 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 return (this as any)[symbol];
             },
             finisher(constructor: ComponentConstructorInterface<HTMLElement>) {
-                const initProperties = constructor.prototype.initProperties;
-                constructor.prototype.initProperties = function(this: ComponentInterface<HTMLElement>, props: { [key: string]: any; }) {
+                const initialize = constructor.prototype.initialize;
+                constructor.prototype.initialize = function(this: ComponentInterface<HTMLElement>, props: { [key: string]: any; }) {
                     this.defineProperty(key, descriptor, symbol);
                     if (!(key in props)) {
                         this.initProperty(key, descriptor, symbol, element.initializer);
                     }
-                    return initProperties.call(this, props);
+                    return initialize.call(this, props);
                 };
             },
         };

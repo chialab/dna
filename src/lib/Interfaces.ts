@@ -108,7 +108,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * Initialize constructor properties.
      * @param props The propertie to set.
      */
-    initProperties(props: { [key: string]: any; }): void;
+    initialize(props: { [key: string]: any; }): void;
 
     /**
      * Initialize instance property.
@@ -179,6 +179,11 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param callback The callback to remove
      */
     undelegateEventListener(event?: string, selector?: string | null, callback?: DelegatedEventCallback): void;
+
+    /**
+     * Should emulate life cycle for the node.
+     */
+    emulateLifeCycle(): void;
 }
 
 /**

@@ -1,8 +1,8 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { ComponentConstructorInterface } from './Interfaces';
+import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 import { registry } from './CustomElementRegistry';
-import { DOM, COMPONENT_SYMBOL, isElement, isConnected, connect, cloneChildNodes } from './DOM';
+import { DOM, COMPONENT_SYMBOL, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -113,7 +113,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         let children = cloneChildNodes(element);
         setSlotted(element, children);
-        children.forEach((child) => DOM.removeChild(element, child));
+        children.forEach((child) => removeChildImpl.call(element, child));
 
         (element as any)[COMPONENT_SYMBOL] = true;
 
@@ -159,7 +159,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             }
         }
 
-        element.initProperties(props);
+        element.initialize(props);
 
         if (element.isConnected) {
             connect(element, element !== this);
@@ -395,7 +395,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Initialize constructor properties.
      * @param props The propertie to set.
      */
-    initProperties(props: { [key: string]: any; }) {
+    initialize(props: { [key: string]: any; }) {
         for (let propertyKey in props) {
             (this as any)[propertyKey] = props[propertyKey];
         }
@@ -592,6 +592,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     removeAttribute(qualifiedName: string) {
         return DOM.removeAttribute(this, qualifiedName);
     }
+
+    /**
+     * Should emulate life cycle for the node.
+     */
+    emulateLifeCycle() {
+        emulateLifeCycle(this);
+    }
 } as ComponentConstructorInterface<InstanceType<T>>;
 
 /**
@@ -621,8 +628,8 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = document.createElement(tag) as HTMLElement;
-        DOM.emulateLifeCycle(element);
         Object.setPrototypeOf(element, constructor.prototype);
+        (element as ComponentInterface<InstanceType<T>>).emulateLifeCycle();
         return element;
     } as any as T;
     Object.setPrototypeOf(shim, base);

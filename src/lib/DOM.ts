@@ -10,6 +10,15 @@ if (!Node || !HTMLElement || !Event || !CustomEvent || !document) {
     throw new Error('invalid DOM implementation');
 }
 
+export const appendChildImpl = Node.prototype.appendChild;
+export const removeChildImpl = Node.prototype.removeChild;
+export const insertBeforeImpl = Node.prototype.insertBefore;
+export const replaceChildImpl = Node.prototype.replaceChild;
+export const getAttributeImpl = HTMLElement.prototype.getAttribute;
+export const hasAttributeImpl = HTMLElement.prototype.hasAttribute;
+export const setAttributeImpl = HTMLElement.prototype.setAttribute;
+export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+
 /**
  * Make a readonly copy of the child nodes collection.
  * @param node The parent node.
@@ -84,8 +93,8 @@ export const connect = (node: Node, force = false) => {
         return;
     }
     let children = cloneChildNodes(node);
-    if (isComponent(node) && (shouldEmulateLifeCycle(node) || force)) {
-        node.connectedCallback();
+    if (shouldEmulateLifeCycle(node) || force) {
+        (node as ComponentInterface<HTMLElement>).connectedCallback();
         children = cloneChildNodes(node);
     }
     if (children) {
@@ -131,7 +140,15 @@ const shouldEmulateLifeCycle = (node: Element): node is ComponentInterface<HTMLE
 /**
  * Should emulate life cycle.
  */
-let emulateLifeCycle = typeof customElements === 'undefined';
+let lifeCycleEmulation = typeof customElements === 'undefined';
+
+/**
+ * Flag the element for life cycle emulation.
+ */
+export const emulateLifeCycle = (node: HTMLElement) => {
+    lifeCycleEmulation = true;
+    (node as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
+};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -140,14 +157,6 @@ let emulateLifeCycle = typeof customElements === 'undefined';
  * It also handle element life cycle for custom elements unless otherwise specified.
  */
 export const DOM = {
-    /**
-     * Flag the element for life cycle emulation.
-     */
-    emulateLifeCycle(node: HTMLElement) {
-        emulateLifeCycle = true;
-        (node as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
-    },
-
     /**
      * Create a new DOM element node for the specified tag.
      *
@@ -215,14 +224,13 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        const appendChild = Node.prototype.appendChild;
-        if (!emulateLifeCycle) {
-            return appendChild.call(parent, newChild) as T;
+        if (!lifeCycleEmulation) {
+            return appendChildImpl.call(parent, newChild) as T;
         }
         if (newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
-        appendChild.call(parent, newChild);
+        appendChildImpl.call(parent, newChild);
         connect(newChild);
         return newChild;
     },
@@ -244,11 +252,10 @@ export const DOM = {
             }
             return oldChild;
         }
-        const removeChild = Node.prototype.removeChild;
-        if (!emulateLifeCycle) {
-            return removeChild.call(parent, oldChild) as T;
+        if (!lifeCycleEmulation) {
+            return removeChildImpl.call(parent, oldChild) as T;
         }
-        removeChild.call(parent, oldChild);
+        removeChildImpl.call(parent, oldChild);
         disconnect(oldChild);
         return oldChild;
     },
@@ -275,14 +282,13 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        const insertBefore = Node.prototype.insertBefore;
-        if (!emulateLifeCycle) {
-            return insertBefore.call(parent, newChild, refChild) as T;
+        if (!lifeCycleEmulation) {
+            return insertBeforeImpl.call(parent, newChild, refChild) as T;
         }
         if (newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
-        insertBefore.call(parent, newChild, refChild);
+        insertBeforeImpl.call(parent, newChild, refChild);
         connect(newChild);
         return newChild;
     },
@@ -303,14 +309,13 @@ export const DOM = {
             parent.forceUpdate();
             return oldChild;
         }
-        const replaceChild = Node.prototype.replaceChild;
-        if (!emulateLifeCycle) {
-            return replaceChild.call(parent, newChild, oldChild) as T;
+        if (!lifeCycleEmulation) {
+            return replaceChildImpl.call(parent, newChild, oldChild) as T;
         }
         if (newChild.parentNode && newChild !== oldChild) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
-        replaceChild.call(parent, newChild, oldChild);
+        replaceChildImpl.call(parent, newChild, oldChild);
         disconnect(oldChild);
         connect(newChild);
         return oldChild;
@@ -323,7 +328,7 @@ export const DOM = {
      * @param qualifiedName The attribute name
      */
     getAttribute(element: Element, qualifiedName: string): string | null {
-        return HTMLElement.prototype.getAttribute.call(element, qualifiedName);
+        return getAttributeImpl.call(element, qualifiedName);
     },
 
     /**
@@ -333,7 +338,7 @@ export const DOM = {
      * @param qualifiedName The attribute name to check.
      */
     hasAttribute(element: Element, qualifiedName: string): boolean {
-        return HTMLElement.prototype.hasAttribute.call(element, qualifiedName);
+        return hasAttributeImpl.call(element, qualifiedName);
     },
 
     /**
@@ -344,20 +349,19 @@ export const DOM = {
      * @param value The value to set.
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
-        const setAttribute = HTMLElement.prototype.setAttribute;
         if (shouldEmulateLifeCycle(element)) {
             const constructor = element.constructor;
             const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
-                return setAttribute.call(element, qualifiedName, value);
+                return setAttributeImpl.call(element, qualifiedName, value);
             }
 
             const oldValue = DOM.getAttribute(element, qualifiedName);
-            setAttribute.call(element, qualifiedName, value);
+            setAttributeImpl.call(element, qualifiedName, value);
             element.attributeChangedCallback(qualifiedName, oldValue as string, value);
             return;
         }
-        return setAttribute.call(element, qualifiedName, value);
+        return setAttributeImpl.call(element, qualifiedName, value);
     },
 
     /**
@@ -387,7 +391,6 @@ export const DOM = {
      * @param selectorString The selector to match.
      */
     matches(element: Element, selectorString: string): boolean {
-        const match = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
-        return match.call(element, selectorString);
+        return matchesImpl.call(element, selectorString);
     },
 };
