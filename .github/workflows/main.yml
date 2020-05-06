@@ -2,10 +2,9 @@ name: Main
 on:
   push:
     tags-ignore:
-      - '*'
-    paths:
-      - 'src/**'
-      - 'test/**'
+      - v*
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   # BUILD
