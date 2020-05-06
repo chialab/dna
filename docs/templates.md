@@ -3,7 +3,7 @@
 Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings. Use the `render` method and the `html` helper to return the template for the element:
 
 ```ts
-import { Component, html, define } from '@chialab/dna';
+import { Component, customElements, html } from '@chialab/dna';
 
 class HelloWorld extends Component {
     render() {
@@ -11,7 +11,7 @@ class HelloWorld extends Component {
     }
 }
 
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 ```
 
 ### Using JSX
@@ -19,7 +19,7 @@ define('hello-world', HelloWorld);
 If you familiar with JSX, you can also use it since DNA templates are 100% compatible with JSX transpiled output:
 
 ```ts
-import { Component, h, define } from '@chialab/dna';
+import { Component, customElements, h } from '@chialab/dna';
 
 class HelloWorld extends Component {
     render() {
@@ -27,7 +27,7 @@ class HelloWorld extends Component {
     }
 }
 
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 ```
 
 Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to use the DNA's `h` and `Fragment` helpers:
@@ -50,7 +50,7 @@ Unless you are using JSX, writing and maintaining templates like the example abo
 If the `template` property is not defined, the DNA component will try to automatically detect a `<template>` tag in the document with the same `name`:
 
 ```ts
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 ```
 
 ```html
@@ -64,13 +64,13 @@ define('hello-world', HelloWorld);
 You can also directly pass a `HTMLTemplateElement` reference to the property:
 
 ```ts
-import { Component, define } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
 class HelloWorld extends Component {
     readonly template = document.querySelector('template#hello-world);
 }
 
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 ```
 
 ## Interpolation rules
@@ -322,7 +322,7 @@ Shadow DOM is a good choice for encapsulating styles and handling components chi
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
 ```ts
-import { Component, html, property, define } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 
 class Dialog extends Component {
     static get observedAttributes() {
@@ -346,7 +346,7 @@ class Dialog extends Component {
     }
 }
 
-define('x-dialog', Dialog, { extends: 'dialog' });
+customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 This example has two problems:
@@ -471,7 +471,7 @@ In this example, once the last `<option>` element has been created, it never cha
 Keyed elements are also added to the component's render scope (the `$` getter):
 
 ```ts
-import { Component, html, define } from '@chialab/dna';
+import { Component, customElements, html } from '@chialab/dna';
 
 class Form extends Component {
     render() {
@@ -483,7 +483,7 @@ class Form extends Component {
     }
 }
 
-define('x-form', Form, { extends: 'form' });
+customElements.define('x-form', Form, { extends: 'form' });
 ```
 
 <aside class="note">

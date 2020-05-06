@@ -1,4 +1,4 @@
-import { Component, html as _html, define, DOM, Root } from '@chialab/dna/react.js';
+import { Component, html as _html, customElements, DOM, Root } from '@chialab/dna/react.js';
 import ReactDOM from 'react-dom';
 
 describe('[React]', () => {
@@ -30,7 +30,7 @@ describe('[React]', () => {
                 }
             };
 
-            define(tagBase, TestBaseComponent);
+            customElements.define(tagBase, TestBaseComponent);
 
             TestNativeComponent = class TagNativeComponent extends Component {
                 static get observedAttributes() {
@@ -53,7 +53,7 @@ describe('[React]', () => {
                 }
             };
 
-            define(tagNative, TestNativeComponent, {
+            customElements.define(tagNative, TestNativeComponent, {
                 extends: 'article',
             });
         });

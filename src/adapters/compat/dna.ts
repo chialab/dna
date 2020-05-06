@@ -2,14 +2,12 @@ import { registry } from './lib/registry';
 import './lib/DOM';
 import * as IDOM from './lib/IDOM';
 
+export const get = registry.get.bind(registry);
 export const define = registry.define.bind(registry);
 export {
     CustomElementRegistry,
     window,
     customElements,
-    get,
-    upgrade,
-    whenDefined,
     TemplateItem,
     TemplateItems,
     Template,

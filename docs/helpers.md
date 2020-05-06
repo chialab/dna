@@ -7,11 +7,11 @@ The DNA module exports a set of useful methods too. Sometimes those methods are 
 Like the [`CustomElementRegistry.get`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/get) method, it returns the component constructor defined for a given tag:
 
 ```ts
-import { Component, define, get } from '@chialab/dna';
+import { Component, customElements, get } from '@chialab/dna';
 
 class CardElement extends Component {}
 
-define('x-card', Card);
+customElements.define('x-card', Card);
 
 get('x-card') // -> Card
 ```
@@ -21,9 +21,9 @@ get('x-card') // -> Card
 Like the [`CustomElementRegistry.whenDefined`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined) method, it returns a Promise that resolves once a component has been defined with the name:
 
 ```ts
-import { whenDefined } from '@chialab/dna';
+import { customElements } from '@chialab/dna';
 
-whenDefined('x-card')
+customElements.whenDefined('x-card')
     .then(() => {
         // -> The x-card has been defined
     });
@@ -36,26 +36,26 @@ import('./x-card.js');
 Like the [`CustomElementRegistry.upgrade`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/upgrade) method, it is used to upgrade nodes that had been created before element definition:
 
 ```ts
-import { Component, DOM, define, upgrade } from '@chialab/dna';
+import { Component, customElements, DOM } from '@chialab/dna';
 
 class Card extends Component {}
 
 const element = DOM.createElement('x-card');
 console.log(Object.getPrototypeOf(element)); // -> HTMLElement
 
-define('x-card', Card);
-upgrade(element);
+customElements.define('x-card', Card);
+customElements.upgrade(element);
 
 console.log(Object.getPrototypeOf(element)); // -> Card
 ```
 
-All children and descendants of the passed element will be upgraded too, so `upgrade` can be used for tag re-hydration after a server side rendering:
+All children and descendants of the passed element will be upgraded too, so `customElements.upgrade` can be used for tag re-hydration after a server side rendering:
 
 ```ts
-import { upgrade } from '@chialab/dna';
+import { customElements } from '@chialab/dna';
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    upgrade(document.body);
+    customElements.upgrade(document.body);
 });
 ```
 
@@ -89,7 +89,7 @@ Use the `window` namespace instead of the global constructor to make sure to wri
 The `css` helper is a method internally used by DNA convert a CSS string into its scoped Shadow DOM version. This can be used to add extra manipulation to the CSS string:
 
 ```ts
-import { DOM, Component, html, css, define } from '@chialab/dna';
+import { DOM, css } from '@chialab/dna';
 
 const cssText = css('x-article', 'h1 { color: red; }')
         .replace(/red/g, 'blue');

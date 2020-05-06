@@ -67,7 +67,7 @@ describe('render', function() {
             const name = getComponentName();
             class TestElement extends DNA.Component {}
 
-            DNA.define(name, TestElement);
+            DNA.customElements.define(name, TestElement);
 
             DNA.render(wrapper, DNA.h(TestElement));
             expect(wrapper.querySelector(name)).to.exist;
@@ -503,7 +503,7 @@ describe('render', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             element.forceUpdate();

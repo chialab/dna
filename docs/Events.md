@@ -7,7 +7,7 @@ Since Web Components are just `HTMLElement` extensions, events handling is compl
 You can declare event listeners on a component using the `listeners` accessor:
 
 ```ts
-import { Component, define } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
 class Button extends Component {
     get listeners() {
@@ -26,13 +26,13 @@ class Button extends Component {
     }
 }
 
-define('x-button', Button, { extends: 'button' });
+customElements.define('x-button', Button, { extends: 'button' });
 ```
 
 Event declaration accepts a function (in the example above, a prototype method has been referenced) or an object for listener configuration:
 
 ```ts
-import { Component, define } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
 class Tracker extends Component {
     get listeners(){
@@ -47,7 +47,7 @@ class Tracker extends Component {
     };
 }
 
-define('x-tracker', Tracker);
+customElements.define('x-tracker', Tracker);
 ```
 
 <aside class="note">
@@ -61,7 +61,7 @@ Please refer to the [addEventListener](https://developer.mozilla.org/it/docs/Web
 Listeners can be added via a template attribute named as the event with the `on` prefix:
 
 ```ts
-import { Component, html define } from '@chialab/dna';
+import { Component, customElements, html } from '@chialab/dna';
 
 class Header extends Component {
     render() {
@@ -74,7 +74,7 @@ class Header extends Component {
     }
 }
 
-define('x-header', Header, { extends: 'header' });
+customElements.define('x-header', Header, { extends: 'header' });
 ```
 
 ## Delegation
@@ -90,7 +90,7 @@ Do not confuse the `event.target` property with the second argument of the liste
 Using the `listeners` getter, you can specify the delegated child selector after the event name in the declaration key:
 
 ```ts
-import { Component, define } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
 class Dialog extends Component {
     get listeners() {
@@ -104,16 +104,16 @@ class Dialog extends Component {
     };
 }
 
-define('x-dialog', Dialog, { extends: 'dialog' });
+customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 Otherwise, you can use `delegateEventListener` and `undelegateEventListener` methods just like `addEventListener` and `removeEventListener`:
 
 ```ts
-import { Component, DOM, define } from '@chialab/idom';
+import { Component, customElements, DOM } from '@chialab/idom';
 
 class Dialog extends Component { ... }
-define('x-dialog', Dialog, { extends: 'dialog' });
+customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 
 const element = new Dialog();
 const closeDialog = (event, target) => { ... };
@@ -129,10 +129,10 @@ element.undelegateEventListener('click', 'nav button', closeDialog);
 DNA components overrides the `dispatchEvent` method in order to support an alternative signature for easier [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events) creation:
 
 ```ts
-import { Component, DOM, define } from '@chialab/dna';
+import { Component, customElements, DOM } from '@chialab/dna';
 
 class Button extends Component { ... }
-define('x-button', Button, { extends: 'button' });
+customElements.define('x-button', Button, { extends: 'button' });
 
 const button = new Button();
 DOM.appendChild(document.body, element);
@@ -163,7 +163,7 @@ button.dispatchEvent('sendEmail',
 With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed:
 
 ```ts
-import { Component, DOM, define } from '@chialab/dna';
+import { Component, customElements, DOM } from '@chialab/dna';
 
 class Paginator extends Component {
     get listeners() {
@@ -175,7 +175,7 @@ class Paginator extends Component {
     };
 }
 
-define('x-paginator', Paginator);
+customElements.define('x-paginator', Paginator);
 
 const paginator = new Paginator();
 paginator.addEventListener('fetch', (event) => {

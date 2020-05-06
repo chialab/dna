@@ -52,10 +52,10 @@ parent.appendChild(child);
 
 ## Setting `innerHTML`
 
-Since DNA render cycle is responsible for Custom Element's life cycle support in old browser, directly setting the `innerHTML` to an element can lead to unespected behavior. You should always consider to use the `html` helper coombine with the `render` method, but where it is not possible remember to invoke the `upgrade` method to the root of the change:
+Since DNA render cycle is responsible for Custom Element's life cycle support in old browser, directly setting the `innerHTML` to an element can lead to unespected behavior. You should always consider to use the `html` helper coombine with the `render` method, but where it is not possible remember to invoke the `customElements.upgrade` method to the root of the change:
 
 ```ts
-import { upgrade } from '@chialab/dna';
+import { customElements } from '@chialab/dna';
 import './video-player.js';
 
 const element = document.querySelector('main');
@@ -66,7 +66,7 @@ element.innerHTML = `<article>
     </video-player>
 </article>`;
 
-upgrade(element);
+customElements.upgrade(element);
 ```
 
 ## Integration with third party libraries
@@ -74,7 +74,7 @@ upgrade(element);
 Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are just HTML nodes, the integration is possible using the element context as library param:
 
 ```ts
-import { Component, define } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 import Pickr from '@simonwep/pickr';
 
 export class ColorPicker extends Component {
@@ -93,5 +93,5 @@ export class ColorPicker extends Component {
     }
 }
 
-define('color-picker', ColorPicker);
+customElements.define('color-picker', ColorPicker);
 ```

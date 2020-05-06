@@ -52,7 +52,7 @@ Usage via [unpkg.com](https://unpkg.com/), as UMD package:
 or as ES6 module:
 
 ```js
-import { Component, define, html, ... } from 'https://unpkg.com/@chialab/dna?module';
+import { Component, customElements, html, ... } from 'https://unpkg.com/@chialab/dna?module';
 ```
 
 Install via NPM:
@@ -64,7 +64,7 @@ $ yarn add @chialab/dna
 ```
 
 ```ts
-import { Component, define, html, ... } from '@chialab/dna';
+import { Component, customElements, html, ... } from '@chialab/dna';
 ```
 
 
@@ -74,7 +74,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 **Define the Component**
 ```ts
-import { Component, define, html, property, render } from '@chialab/dna';
+import { Component, customElements, html, property, render } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get observedAttributes() {
@@ -104,7 +104,7 @@ class HelloWorld extends Component {
 }
 
 // link the Component class to a tag
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 
 // render the Component
 render(document.body, new HelloWorld);

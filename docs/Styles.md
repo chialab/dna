@@ -15,7 +15,7 @@ You don't need to use DNA's scoped style if you are already using a styling stra
 Every `<style>` tag rendered to a component is scoped.
 
 ```ts
-import { Component, html, property, define } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 
 class Card extends Component {
     static get observedAttributes() {
@@ -34,7 +34,7 @@ class Card extends Component {
     }
 }
 
-define('x-card', Card, { extends: 'div' });
+customElements.define('x-card', Card, { extends: 'div' });
 ```
 
 The previous component will br rendered as follow:
@@ -154,7 +154,7 @@ If you are using a transpiler, you can also use CSS Modules, which imports CSS c
 ```
 
 ```ts
-import { Component, html, property, define } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 import { title } from './x-card.css';
 
 class Card extends Component {
@@ -169,5 +169,5 @@ class Card extends Component {
     }
 }
 
-define('x-card', Card, { extends: 'div' });
+customElements.define('x-card', Card, { extends: 'div' });
 ```

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { connect, disconnect } from '@chialab/dna';
-import { upgrade } from '@chialab/dna';
+import { connect, disconnect, customElements } from '@chialab/dna';
 import { ReferencesMap, convertReactNodes } from './convertReactNodes';
 
 /**
@@ -24,7 +23,7 @@ export class Root extends React.Component<unknown> {
      */
     componentDidUpdate() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
-        upgrade(node);
+        customElements.upgrade(node);
         this.references.forEach(([ref, props]) => {
             if (!ref.current) {
                 return;

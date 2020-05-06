@@ -11,7 +11,7 @@ You can use DNA via CDN thanks to the [Unpkg](https://unpkg.com/) project, which
 ```
 
 ```ts
-import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
+import { Component, customElements } from 'https://unpkg.com/@chialab/dna?module';
 ```
 
 ### Setup a bundler
@@ -52,10 +52,10 @@ The DNA environment is pretty simple and common (if you are familiar with other 
 DNA components are classes which extends the base HTMLElement with helpers for [templating](./templates), [styling](./styles), [events delegation](./events) and [life cycle](./life-cycle).
 
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
-In this example we are going to use the `define` method to register the component in the DNA registry:
+In this example we are going to use the `customElements.define` method to register the component in the DNA registry:
 
 ```ts
-import { Component, define, html } from '@chialab/dna';
+import { Component, customElements, html } from '@chialab/dna';
 
 // create a component class
 class HelloWorld extends Component {
@@ -66,7 +66,7 @@ class HelloWorld extends Component {
 }
 
 // link the HTML tag with the class
-define('hello-world', HelloWorld);
+customElements.define('hello-world', HelloWorld);
 ```
 
 ### Extending native elements
@@ -75,7 +75,7 @@ In the Custom Element specification it is possible to define an element using th
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. An example:
 
 ```ts
-import { Component, define, html, property } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 
 class BlogPost extends Component {
     static get observedAttributes() {
@@ -90,7 +90,7 @@ class BlogPost extends Component {
 }
 
 // extend the article tag
-define('blog-post', BlogPost, {
+customElements.define('blog-post', BlogPost, {
     extends: 'article'
 });
 ```
@@ -108,13 +108,13 @@ It also preserve accessibility and usability features: extending the `BUTTON` el
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
 ```ts
-import { Component, define, render } from '@chialab/dna';
+import { Component, customElements, render } from '@chialab/dna';
 
 class Card extends Component {
     ...
 }
 
-define('x-card', Card);
+customElements.define('x-card', Card);
 
 render(document.body, new Card());
 ```
@@ -130,13 +130,13 @@ Make sure to render the component in an empty root: at the end of the cycle, DNA
 This function accepts the render root node as first argument and a node or a template as second one. Another way to instantiate the `Card` component is:
 
 ```ts
-import { Component, define, html, render } from '@chialab/dna';
+import { Component, customElements, html, render } from '@chialab/dna';
 
 class Card extends Component {
     ...
 }
 
-define('x-card', Card);
+customElements.define('x-card', Card);
 
 render(document.body, html`<x-card />`);
 ```
@@ -144,13 +144,13 @@ render(document.body, html`<x-card />`);
 It also work for extended native tags:
 
 ```ts
-import { Component, define, html, render } from '@chialab/dna';
+import { Component, customElements, html, render } from '@chialab/dna';
 
 class Article extends Component {
     ...
 }
 
-define('x-article', Article, { extends: 'article' });
+customElements.define('x-article', Article, { extends: 'article' });
 
 render(document.body, html`<article is="x-article" />`);
 ```

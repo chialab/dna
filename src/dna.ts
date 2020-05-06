@@ -1,12 +1,6 @@
-import { registry } from './lib/CustomElementRegistry';
-
 export { CustomElementRegistry } from './lib/CustomElementRegistry';
 export { window } from './lib/window';
-export { registry as customElements };
-export const get = registry.get.bind(registry);
-export const define = registry.define.bind(registry);
-export const upgrade = registry.upgrade.bind(registry);
-export const whenDefined = registry.whenDefined.bind(registry);
+export { registry as customElements } from './lib/CustomElementRegistry';
 export { TemplateItem, TemplateItems, Template, TemplateFilter } from './lib/Template';
 export { DOM, connect, disconnect } from './lib/DOM';
 export { render } from './lib/render';

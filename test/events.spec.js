@@ -266,7 +266,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -305,7 +305,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -341,7 +341,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -365,7 +365,7 @@ describe('events', function() {
             const callback = spyFunction();
             class TestElement extends DNA.Component {}
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -384,7 +384,7 @@ describe('events', function() {
             const callback = spyFunction();
             class TestElement extends DNA.Component {}
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -412,7 +412,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = new TestElement();
             const response = await element.dispatchAsyncEvent('click');
@@ -429,7 +429,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -449,7 +449,7 @@ describe('events', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);

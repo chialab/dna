@@ -25,7 +25,7 @@ describe('Component', function() {
         it('should create a node', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = new TestElement();
             expect(element).to.be.an.instanceof(DNA.window.HTMLElement);
@@ -36,7 +36,7 @@ describe('Component', function() {
         it('should extend a native node', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement, {
+            DNA.customElements.define(is, TestElement, {
                 extends: 'article',
             });
 
@@ -49,7 +49,7 @@ describe('Component', function() {
         it('should create a base class starting from the anchor base class', () => {
             const HTMLAnchorElement = DNA.extend(DNA.window.HTMLAnchorElement);
             class TestElement extends HTMLAnchorElement { }
-            DNA.define(getComponentName(), TestElement, { extends: 'a' });
+            DNA.customElements.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
             element.href = 'https://www.webcomponents.org/introduction';
             expect(TestElement).to.not.equal(DNA.window.HTMLAnchorElement);
@@ -76,7 +76,7 @@ describe('Component', function() {
                 @DNA.property() myCustomProp3 = '';
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
 
@@ -100,7 +100,7 @@ describe('Component', function() {
                 @DNA.property() myCustomProp3 = '';
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement({
                 myCustomProp1: 42,
@@ -123,8 +123,8 @@ describe('Component', function() {
 
             wrapper.innerHTML = `<${is}></${is}>`;
             expect(connected).to.be.false;
-            DNA.define(is, TestElement);
-            DNA.upgrade(wrapper);
+            DNA.customElements.define(is, TestElement);
+            DNA.customElements.upgrade(wrapper);
             expect(connected).to.be.true;
         });
     });
@@ -150,8 +150,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -191,8 +191,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -237,8 +237,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -282,8 +282,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -312,8 +312,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -332,7 +332,7 @@ describe('Component', function() {
         it('return `true` if element is connected', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = DNA.DOM.createElement(is);
             DNA.DOM.appendChild(wrapper, element);
@@ -342,7 +342,7 @@ describe('Component', function() {
         it('return `false` if element is disconnected', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = DNA.DOM.createElement(is);
             expect(element.isConnected).to.be.false;
@@ -370,8 +370,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -408,8 +408,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -446,8 +446,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -508,7 +508,7 @@ describe('Component', function() {
                     convertion = '';
                 }
 
-                DNA.define(getComponentName(), TestElement);
+                DNA.customElements.define(getComponentName(), TestElement);
 
                 element = new TestElement();
             });
@@ -639,7 +639,7 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
@@ -683,10 +683,10 @@ describe('Component', function() {
             const name = getComponentName();
             wrapper.innerHTML = `<section is="${name}" page="1"></section>`;
             const element = wrapper.children[0];
-            DNA.define(name, TestElement, {
+            DNA.customElements.define(name, TestElement, {
                 extends: 'section',
             });
-            DNA.upgrade(element);
+            DNA.customElements.upgrade(element);
 
             expect(propertyChangedCallback.invoked).to.be.true;
             expect(propertyChangedCallback.response).to.be.deep.equal(['page', 1, 2]);
@@ -712,7 +712,7 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
@@ -732,7 +732,7 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -770,7 +770,7 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
             expect(callback.invoked).to.be.false;
             const element = new TestElement({
                 title: 'Test',
@@ -802,7 +802,7 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
@@ -830,7 +830,7 @@ describe('Component', function() {
                 @DNA.property({ event: 'titleupdate' }) title = '';
             }
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             element.addEventListener('agechange', callback1);
@@ -861,8 +861,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
@@ -888,8 +888,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
@@ -913,7 +913,7 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
@@ -936,8 +936,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
@@ -958,7 +958,7 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
@@ -985,8 +985,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1015,8 +1015,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1041,7 +1041,7 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
@@ -1072,8 +1072,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1104,8 +1104,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.define(getComponentName(), TestElement);
-            DNA.define(getComponentName(), TestChild);
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1130,7 +1130,7 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             const span = DNA.DOM.createElement('span');
@@ -1165,7 +1165,7 @@ describe('Component', function() {
                 @DNA.property({ attribute: 'alias' }) test = '';
             };
 
-            DNA.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestElement);
         });
 
         beforeEach(() => {

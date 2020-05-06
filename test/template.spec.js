@@ -293,7 +293,7 @@ describe('template', function() {
                     }
                 }
 
-                DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement);
+                DNA.customElements.define(`${rootName}-${type.toLowerCase()}`, MyElement);
 
                 class MyTitle extends DNA.Component {
                     render() {
@@ -301,7 +301,7 @@ describe('template', function() {
                     }
                 }
 
-                DNA.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
+                DNA.customElements.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
 
                 const element = DNA.render(wrapper, DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
@@ -372,8 +372,8 @@ describe('template', function() {
                     DNA.h('p', null, 'Body'),
                 ));
 
-                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
-                DNA.upgrade(element);
+                DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
+                DNA.customElements.upgrade(element);
 
                 expect(element.childNodes).to.have.lengthOf(2);
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');

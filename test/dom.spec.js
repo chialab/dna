@@ -31,7 +31,7 @@ describe('DOM', function() {
         it('should create a defined element', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement);
+            DNA.customElements.define(is, TestElement);
 
             const element = DNA.DOM.createElement(is);
             expect(element.is).to.be.equal(is);
@@ -41,7 +41,7 @@ describe('DOM', function() {
         it('should create and extend a native element', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.define(is, TestElement, {
+            DNA.customElements.define(is, TestElement, {
                 extends: 'article',
             });
 
