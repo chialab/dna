@@ -1,5 +1,6 @@
 import { window } from './window';
-import { ComponentConstructorInterface } from './Interfaces';
+import { createSymbolKey } from './symbols';
+import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 
 /**
  * The native custom elements registry.
@@ -23,6 +24,24 @@ const assertValidateCustomElementName = (name: string): boolean => {
 };
 
 /**
+ * A symbol which identify components.
+ */
+export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * Check if a node is a component.
+ * @param node The node to check.
+ */
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
+
+/**
+ * Check if a node is a component constructor.
+ * @param node The node to check.
+ */
+export const isComponentConstructor = (constructor: any): constructor is ComponentConstructorInterface<HTMLElement> => (constructor.prototype as any)[COMPONENT_SYMBOL];
+
+
+/**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
  */
 export class CustomElementRegistry {
@@ -30,7 +49,7 @@ export class CustomElementRegistry {
      * A global registry.
      */
     readonly registry: {
-        [key: string]: ComponentConstructorInterface<HTMLElement>;
+        [key: string]: typeof HTMLElement;
     } = {};
 
     /**
@@ -53,7 +72,7 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): ComponentConstructorInterface<HTMLElement> {
+    get(name: string): typeof HTMLElement {
         return this.registry[name];
     }
 
@@ -64,7 +83,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: ComponentConstructorInterface<HTMLElement>, options: ElementDefinitionOptions = {}) {
+    define(name: string, constructor: typeof HTMLElement, options: ElementDefinitionOptions = {}) {
         assertValidateCustomElementName(name);
 
         if (typeof constructor !== 'function') {
@@ -141,12 +160,14 @@ export class CustomElementRegistry {
             customElements.upgrade(root);
         }
         // check if already instantiated
-        if (root instanceof constructor) {
+        if (isComponent(root)) {
             root.forceUpdate();
             return;
         }
 
-        new constructor(root as HTMLElement).forceUpdate();
+        if (isComponentConstructor(constructor)) {
+            new constructor(root).forceUpdate();
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface } from './Interfaces';
-import { registry } from './CustomElementRegistry';
+import { isComponent, isComponentConstructor, registry } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
 
 const { Node, HTMLElement, Event, CustomEvent, document } = window;
@@ -53,17 +53,6 @@ export const isElement = (node: any): node is HTMLElement => node && node.nodeTy
  * @return The object is an Event instance.
  */
 export const isEvent = (event: any): event is Event => event instanceof Event;
-
-/**
- * A symbol which identify components.
- */
-export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
-
-/**
- * Check if a node is a component.
- * @param node The node to check.
- */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
 
 /**
  * Check if a Node is connected.
@@ -168,7 +157,7 @@ export const DOM = {
         const name = is || tagName.toLowerCase();
         const node = document.createElement(tagName);
         const constructor = registry.get(name);
-        if (constructor && !(node instanceof constructor)) {
+        if (isComponentConstructor(constructor) && !(node instanceof constructor)) {
             new constructor(node);
         }
         return node;

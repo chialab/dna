@@ -1,8 +1,8 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
-import { registry } from './CustomElementRegistry';
-import { DOM, COMPONENT_SYMBOL, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
+import { registry, COMPONENT_SYMBOL } from './CustomElementRegistry';
+import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItems } from './Template';
@@ -82,6 +82,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         this.forceUpdate();
     }
 
+    [COMPONENT_SYMBOL] = true;
+
     /**
      * Create a new Component instance.
      * @param node Instantiate the element using the given node instead of creating a new one.
@@ -104,8 +106,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         let children = cloneChildNodes(element);
         setSlotted(element, children);
         children.forEach((child) => removeChildImpl.call(element, child));
-
-        (element as any)[COMPONENT_SYMBOL] = true;
 
         const propertyDescriptors = {} as {
             [key: string]: ClassFieldDescriptor;
@@ -509,7 +509,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @return The instances of the rendered Components and/or Nodes
      */
     render(): Template | undefined {
-        let templateNode = this.ownerDocument?.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+        let templateNode = this.ownerDocument && this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
         if (templateNode) {
             return template(templateNode, this);
         }

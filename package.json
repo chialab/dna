@@ -33,6 +33,7 @@
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --production --typings --format cjs --targets 'node >= 10'",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --production --typings --format esm",
     "build:react": "rna build src/adapters/react/dna.ts --output 'dist/adapters/react/dna.js' --production --typings --format esm",
+    "build:hooks": "rna build src/adapters/hooks/dna.ts --output 'dist/adapters/hooks/dna.js' --production --typings --format esm",
     "test": "yarn test:main && yarn test:compat && yarn test:react",
     "test:main": "yarn test:browser && yarn test:node",
     "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --coverage --browser",
@@ -40,16 +41,17 @@
     "test:node": "yarn symlink && rna unit 'test/*.spec.js' --coverage --node",
     "test:compat": "yarn symlink && rna unit 'test/compat/*.spec.js' --browser",
     "test:react": "yarn symlink && rna unit 'test/react/*.spec.js' --browser --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault",
+    "test:hooks": "yarn symlink && rna unit 'test/hooks/*.spec.js' --browser",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "yarn build"
   },
-  "dependencies": {},
   "optionalDependencies": {
     "@chialab/proteins": "^3.2.0",
     "htm": "^3.0.3",
     "jsdom": "^16.0.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "haunted": "^4.7.0"
   },
   "devDependencies": {
     "@chialab/proteins": "^3.2.0",
@@ -66,6 +68,7 @@
     "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-mocha-no-only": "^1.1.0",
     "htm": "^3.0.3",
-    "typescript": "^3.8.0"
+    "typescript": "^3.8.0",
+    "haunted": "^4.7.0"
   }
 }

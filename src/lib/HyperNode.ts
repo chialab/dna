@@ -34,7 +34,7 @@ export enum NamespaceURI {
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
-    Component?: ComponentConstructorInterface<HTMLElement>,
+    Component?: typeof HTMLElement,
     tag?: string;
     is?: string,
     key?: any,
@@ -59,14 +59,14 @@ export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SY
  * @param properties The set of properties of the Node
  * @param children The children of the Node
  */
-export const h = (tagOrComponent: string | ComponentConstructorInterface<HTMLElement> | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
         is: string | undefined,
         key: any | undefined,
         propertiesToSet: any = {},
-        Component: ComponentConstructorInterface<HTMLElement> | TemplateFunction | undefined;
+        Component: typeof HTMLElement | TemplateFunction | undefined;
 
     if (!isFragment) {
         if (properties) {

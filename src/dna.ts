@@ -1,6 +1,5 @@
-export { CustomElementRegistry } from './lib/CustomElementRegistry';
+export { registry as customElements, CustomElementRegistry, isComponentConstructor, isComponent } from './lib/CustomElementRegistry';
 export { window } from './lib/window';
-export { registry as customElements } from './lib/CustomElementRegistry';
 export { TemplateItem, TemplateItems, Template, TemplateFilter } from './lib/Template';
 export { DOM, connect, disconnect } from './lib/DOM';
 export { render } from './lib/render';

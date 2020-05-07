@@ -1,5 +1,6 @@
-import { DOM, isElement, isText, isComponent, cloneChildNodes } from './DOM';
+import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { createSymbolKey } from './symbols';
+import { isComponent } from './CustomElementRegistry';
 import { Scope, createScope, getScope, setScope } from './Scope';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { getSlotted } from './slotted';
