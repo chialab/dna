@@ -45,9 +45,7 @@ Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to u
 
 ### Using template tags
 
-Unless you are using JSX, writing and maintaining templates like the example above can be pain. Since a computational performance problem should not be a problem for a components author, DNA template can be created using template strings or `<template>` nodes interpolation. Anyway, each of this solutions internally uses the `h` helper so they are 100% equivalent.
-
-If the `template` property is not defined, the DNA component will try to automatically detect a `<template>` tag in the document with the same `name`:
+If a component does not provide a `render` method, DNA will try to automatically detect in the document a `<template>` with the same `name` of the component:
 
 ```ts
 customElements.define('hello-world', HelloWorld);

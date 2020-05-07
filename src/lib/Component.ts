@@ -52,16 +52,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     };
 
     /**
-     * A set of delegated events to bind to the node.
-     */
-    get template(): HTMLTemplateElement | undefined {
-        if (!this.ownerDocument) {
-            return undefined;
-        }
-        return this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
-    }
-
-    /**
      * A list of CSSStyleSheet to apply to the component.
      */
     adoptedStyleSheets?: CSSStyleSheet[];
@@ -519,9 +509,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @return The instances of the rendered Components and/or Nodes
      */
     render(): Template | undefined {
-        const tpl = this.template;
-        if (tpl) {
-            return template(tpl, this);
+        let templateNode = this.ownerDocument?.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+        if (templateNode) {
+            return template(templateNode, this);
         }
         return this.slotChildNodes;
     }

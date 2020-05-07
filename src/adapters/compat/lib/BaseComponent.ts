@@ -72,9 +72,7 @@ export const mixin = (constructor: typeof Component) =>
         /**
          * Compatibility DNA component default template.
          */
-        get template(): any {
-            return undefined;
-        }
+        readonly template: any;
 
         /**
          * Compatibility alias from `events` getter to `listener`.
@@ -166,18 +164,19 @@ export const mixin = (constructor: typeof Component) =>
         /**
          * Force an element to re-render.
          */
-        render(template: Template = this.template) {
+        render(template?: Template) {
+            let slotted = this.slotChildNodes;
             if (typeof template === 'undefined') {
-                template = [];
+                if (!('template' in this)) {
+                    template = slotted;
+                } else {
+                    template = this.template;
+                }
             }
             template = convert.call(this, template);
             if (typeof template === 'undefined') {
-                template = [];
+                return;
             }
-            template = [
-                template,
-                this.slotChildNodes,
-            ] as Template;
             render(this, template);
             return template;
         }
