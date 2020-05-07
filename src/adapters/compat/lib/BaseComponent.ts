@@ -168,12 +168,16 @@ export const mixin = (constructor: typeof Component) =>
          */
         render(template: Template = this.template) {
             if (typeof template === 'undefined') {
-                return;
+                template = [];
             }
             template = convert.call(this, template);
             if (typeof template === 'undefined') {
-                return;
+                template = [];
             }
+            template = [
+                template,
+                this.slotChildNodes,
+            ] as Template;
             render(this, template);
             return template;
         }
