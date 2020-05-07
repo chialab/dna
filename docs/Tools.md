@@ -16,7 +16,6 @@ import { Component, customElements } from '@chialab/dna';
 
 /**
  * A map component based on mapbox-gl.
- * @element dna-map
  * @fires zoom - The map zoom level changed.
  * @fires move - The map center point changed.
  */
@@ -70,7 +69,7 @@ A map component based on mapbox-gl.
 
 Storybook is a fantastic tool for components development: you can create samples for your elements, provide a documentation and an API reference, run accessibility tests and more. Since version 5.6, it also supports Web Components.
 
-A DNA preset for storybook is available with full [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs) support and automatic Web Components Analyzer runs across your components. You can install it using the `@chialab/storybook-dna` package from NPM:
+A DNA preset for storybook is available with full [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs) support and automatic Web Components Analyzer runs across your components for documentation and knobs. You can install it using the `@chialab/storybook-dna` package from NPM:
 
 ```sh
 $ yarn add @chialab/storybook-dna -D
