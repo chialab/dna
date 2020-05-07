@@ -9,19 +9,11 @@ function isReactNode(target: any): target is React.ReactElement {
     return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.element)';
 }
 
-/**
- * Check if the target is a ReactForwardRef.
- * @param target The reference to check.
- */
-function isReactForwardRef(target: any): target is React.ForwardRefExoticComponent<unknown> {
-    return typeof target === 'object' && target.$$typeof && target.$$typeof.toString() === 'Symbol(react.forward_ref)';
-}
-
-export type ReferencesMap = Array<[React.RefObject<unknown>, any]>;
-
 function isComponentFunction(target: any): target is React.FunctionComponent {
     return typeof target === 'function' && !(target.prototype instanceof React.Component);
 }
+
+export type ReferencesMap = Array<[React.RefObject<unknown>, any]>;
 
 /**
  * Wrap React children with fragments in order to always use HTMLElement methods like appendChild and insertBefore.
@@ -49,11 +41,9 @@ export function convertReactNodes(children: React.ReactNode | React.ReactNode[],
                 references.push(...childReferences);
                 return React.createElement(React.Fragment, null, children);
             }
-            let ref: React.RefObject<unknown>|null = (child as any).ref;
-            if (!isReactForwardRef(child.type)) {
-                ref = ref || React.createRef();
-                references.push([ref as React.RefObject<unknown>, child.props]);
-            }
+
+            let ref: React.RefObject<unknown>|null = (child as any).ref || React.createRef();
+            references.push([ref as React.RefObject<unknown>, child.props]);
 
             if (child.props.children) {
                 let { children, references: childReferences } = convertReactNodes(child.props.children, context);
