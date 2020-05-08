@@ -99,6 +99,25 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
 }
 
 /**
+ * Setup property initialization.
+ * @param target The instance element.
+ * @param key The property name.
+ * @param descriptor The property descriptor.
+ * @param symbol The symbol for the private property.
+ * @param initializer The initial value.
+ */
+function initializeProperty(target: ComponentInterface<HTMLElement>, key: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: any) {
+    const initialize = target.initialize;
+    target.initialize = function(this: ComponentInterface<HTMLElement>, props: { [key: string]: any; }) {
+        this.defineProperty(key, descriptor, symbol);
+        if (!(key in props)) {
+            this.initProperty(key, descriptor, symbol, initializer);
+        }
+        return initialize.call(this, props);
+    };
+}
+
+/**
  * A decorator for class fields definition.
  *
  * @param descriptor The class field description.
@@ -112,8 +131,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
             if (originalDescriptor) {
                 descriptor.defaultValue = originalDescriptor.value;
             }
-            targetOrClassElement.defineProperty(propertyKey, descriptor, symbol);
-            targetOrClassElement.initProperty(propertyKey, descriptor, symbol);
+            initializeProperty(targetOrClassElement, propertyKey, descriptor, symbol);
             return targetOrClassElement;
         }
 
@@ -142,14 +160,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 return (this as any)[symbol];
             },
             finisher(constructor: ComponentConstructorInterface<HTMLElement>) {
-                const initialize = constructor.prototype.initialize;
-                constructor.prototype.initialize = function(this: ComponentInterface<HTMLElement>, props: { [key: string]: any; }) {
-                    this.defineProperty(key, descriptor, symbol);
-                    if (!(key in props)) {
-                        this.initProperty(key, descriptor, symbol, element.initializer);
-                    }
-                    return initialize.call(this, props);
-                };
+                initializeProperty(constructor.prototype, key, descriptor, symbol, element.initializer);
             },
         };
     }) as any;
