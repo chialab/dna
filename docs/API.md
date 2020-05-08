@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#registry">registry</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>
+<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>
 
 
 <hr />
@@ -55,7 +55,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
         <tr>
             <td>registry</td>
             <td><code>{
-    [key: string]: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
+    [key: string]: HTMLElement;
 }</code></td>
             <td align="center">✓</td>
             <td>A global registry.</td></tr>
@@ -92,7 +92,7 @@ Get the Custom Element definition for a tag.
 
 <details>
 <summary>
-<code>(name: string): <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code>
+<code>(name: string): HTMLElement</code>
 </summary><br />
 
 
@@ -116,7 +116,7 @@ Get the Custom Element definition for a tag.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code> The definition for the given tag.
+<strong>Returns</strong>: <code>HTMLElement</code> The definition for the given tag.
 
 <br />
 </details>
@@ -139,7 +139,7 @@ Define a new Custom Element.
 
 <details>
 <summary>
-<code>(name: string, constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, options?: ElementDefinitionOptions): void</code>
+<code>(name: string, constructor: HTMLElement, options?: ElementDefinitionOptions): void</code>
 </summary><br />
 
 
@@ -161,7 +161,7 @@ Define a new Custom Element.
             <td>The tag name for the element.</td></tr>
 <tr>
             <td>constructor</td>
-            <td><code><a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;</code></td>
+            <td><code>HTMLElement</code></td>
             <td align="center"></td>
             <td>The Custom Element constructor.</td></tr>
 <tr>
@@ -317,24 +317,7 @@ All DNA components **must** extends this class.
 
 <hr />
 
-<strong id="namespace"><code>constant</code>  namespace</strong>
-
-
-
-
-
-
-
-<strong>Type:</strong>
-
-<pre>Window & globalThis</pre>
-
-
-
-
-<hr />
-
-<strong id="registry"><code>constant</code>  registry</strong>
+<strong id="customelements"><code>constant</code>  customElements</strong>
 
 
 
@@ -349,6 +332,23 @@ The global DNA registry instance.
 <strong>Type:</strong>
 
 <pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
+
+
+
+
+<hr />
+
+<strong id="namespace"><code>constant</code>  namespace</strong>
+
+
+
+
+
+
+
+<strong>Type:</strong>
+
+<pre>Window & globalThis</pre>
 
 
 
@@ -494,7 +494,10 @@ HyperFunction factory to use as JSX pragma.
 
 <strong>Type:</strong>
 
-<pre>(tagOrComponent: string|Symbol|<a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
+<pre>(tagOrComponent: string|Symbol|{
+    constructor(): HTMLElement;
+    prototype: HTMLElement;
+}|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
 
 
 
@@ -768,79 +771,203 @@ A list of namespaceURI bound with their tagName.
 
 <hr />
 
-<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
+<strong id="templateitem"><code>type</code>  TemplateItem</strong>
 
 <p>
 
-The basic DNA Component interface.
-It's a Custom Element, but with some extra useful method.
+The atomic template item.
+It can be a node, a Hyper or Interpolate function or a primitive value.
+
+</p>
+
+
+
+<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|string|number|boolean|undefined|null</pre>
+
+
+
+
+<hr />
+
+<strong id="hypernode"><code>type</code>  HyperNode</strong>
+
+<p>
+
+A virtual description of a Node, generate by the `h` helper and used in the render function.
 
 </p>
 
 
 
 <pre>{
-    observedAttributes: string[];
-    constructor(node?: HTMLElement, properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    Component?: HTMLElement;
+    tag?: string;
+    is?: string;
+    key?: any;
+    isFragment?: boolean;
+    isSlot?: boolean;
+    namespaceURI?: <a href="#namespaceuri">NamespaceURI</a>;
+    properties?: any;
+    children: <a href="#templateitems">TemplateItems</a>;
 }</pre>
 
-<strong>See also</strong>
 
-* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
 
 
 <hr />
 
-<strong id="componentinterface"><code>type</code>  ComponentInterface</strong>
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+
+<p>
+
+A list of template items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+
+
+
+
+<hr />
+
+<strong id="template"><code>type</code>  Template</strong>
+
+<p>
+
+A generic template. Can be a single atomic item or a list of items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
+
+
+
+
+<hr />
+
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+
+<p>
+
+A filter function signature for template items.
+
+</p>
+
+
+
+<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
+
+
+
+
+<hr />
+
+<strong id="scope"><code>type</code>  Scope</strong>
+
+<p>
+
+A scope interface.
+
+</p>
+
+
+
+<pre>HTMLElement & <a href="#scopevalues">ScopeValues</a></pre>
+
+
+
+
+<hr />
+
+<strong id="scopevalues"><code>type</code>  ScopeValues</strong>
 
 
 
 
 
-<pre>T & {
-    is: string;
-    properties?: {
-        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
-    };
-    listeners?: {
-        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
-    };
-    template: HTMLTemplateElement|undefined;
-    $: <a href="#scope">Scope</a>|undefined;
-    slotChildNodes: <a href="#templateitems">TemplateItems</a>;
-    adoptedStyleSheets?: CSSStyleSheet[];
-    connectedCallback(): void;
-    disconnectedCallback(): void;
-    attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
-    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
-    render(): <a href="#template">Template</a>;
-    forceUpdate(): void;
-    getProperties(): {
-        [propertyKey: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
-    };
-    getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
-    defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
-    initialize(props: {
-        [key: string]: any;
-    }): void;
-    initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol, initializer?: Function): any;
-    observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
-    unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
-    dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
-    dispatchAsyncEvent(event: Event): Promise&lt;any[]&gt;;
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
-    delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
-    undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
-    emulateLifeCycle(): void;
+<pre>{
+    [key: string]: any;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
+
+<p>
+
+A function that returns a template.
+
+</p>
+
+
+
+<pre>(props: {
+    children: <a href="#template">Template</a>;
+    [key: string]: any;
+}): <a href="#template">Template</a></pre>
+
+
+
+
+<hr />
+
+<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
+
+<p>
+
+The properties of a HyperNode.
+
+</p>
+
+
+
+<pre>{
+    is?: string;
+    slot?: string;
+    key?: any;
+    namespaceURI?: string;
+    [key: string]: any;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="asyncevent"><code>type</code>  AsyncEvent</strong>
+
+
+
+
+
+<pre>Event & {
+    respondWith(callback: (): Promise&lt;any&gt;): void;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong>
+
+<p>
+
+Describe the signature of a delegated event callback.
+
+</p>
+
+
+
+<pre>(event: Event, target?: Node): any</pre>
 
 
 
@@ -946,202 +1073,78 @@ A validation function for the class field.
 
 <hr />
 
-<strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong>
+<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
 
 <p>
 
-Describe the signature of a delegated event callback.
-
-</p>
-
-
-
-<pre>(event: Event, target?: Node): any</pre>
-
-
-
-
-<hr />
-
-<strong id="scope"><code>type</code>  Scope</strong>
-
-<p>
-
-A scope interface.
-
-</p>
-
-
-
-<pre>HTMLElement & <a href="#scopevalues">ScopeValues</a></pre>
-
-
-
-
-<hr />
-
-<strong id="scopevalues"><code>type</code>  ScopeValues</strong>
-
-
-
-
-
-<pre>{
-    [key: string]: any;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
-
-<p>
-
-A list of template items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
-
-
-
-
-<hr />
-
-<strong id="templateitem"><code>type</code>  TemplateItem</strong>
-
-<p>
-
-The atomic template item.
-It can be a node, a Hyper or Interpolate function or a primitive value.
-
-</p>
-
-
-
-<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|string|number|boolean|undefined|null</pre>
-
-
-
-
-<hr />
-
-<strong id="hypernode"><code>type</code>  HyperNode</strong>
-
-<p>
-
-A virtual description of a Node, generate by the `h` helper and used in the render function.
+The basic DNA Component interface.
+It's a Custom Element, but with some extra useful method.
 
 </p>
 
 
 
 <pre>{
-    Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
-    tag?: string;
-    is?: string;
-    key?: any;
-    isFragment?: boolean;
-    isSlot?: boolean;
-    namespaceURI?: <a href="#namespaceuri">NamespaceURI</a>;
-    properties?: any;
-    children: <a href="#templateitems">TemplateItems</a>;
+    observedAttributes: string[];
+    constructor(node?: HTMLElement, properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
 }</pre>
 
+<strong>See also</strong>
 
-
-
-<hr />
-
-<strong id="template"><code>type</code>  Template</strong>
-
-<p>
-
-A generic template. Can be a single atomic item or a list of items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
-
-
+* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
 
 
 <hr />
 
-<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
-
-<p>
-
-A filter function signature for template items.
-
-</p>
-
-
-
-<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
-
-
-
-
-<hr />
-
-<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
-
-<p>
-
-A function that returns a template.
-
-</p>
-
-
-
-<pre>(props: {
-    children: <a href="#template">Template</a>;
-    [key: string]: any;
-}): <a href="#template">Template</a></pre>
-
-
-
-
-<hr />
-
-<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
-
-<p>
-
-The properties of a HyperNode.
-
-</p>
-
-
-
-<pre>{
-    is?: string;
-    slot?: string;
-    key?: any;
-    namespaceURI?: string;
-    [key: string]: any;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="asyncevent"><code>type</code>  AsyncEvent</strong>
+<strong id="componentinterface"><code>type</code>  ComponentInterface</strong>
 
 
 
 
 
-<pre>Event & {
-    respondWith(callback: (): Promise&lt;any&gt;): void;
+<pre>T & {
+    is: string;
+    properties?: {
+        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
+    };
+    listeners?: {
+        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
+    };
+    template: HTMLTemplateElement|undefined;
+    $: <a href="#scope">Scope</a>|undefined;
+    slotChildNodes: <a href="#templateitems">TemplateItems</a>;
+    adoptedStyleSheets?: CSSStyleSheet[];
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
+    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
+    render(): <a href="#template">Template</a>;
+    forceUpdate(): void;
+    getProperties(): {
+        [propertyKey: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
+    };
+    getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
+    defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
+    initialize(props: {
+        [key: string]: any;
+    }): void;
+    initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol, initializer?: Function): any;
+    observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
+    unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
+    dispatchEvent(event: Event): boolean;
+    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchAsyncEvent(event: Event): Promise&lt;any[]&gt;;
+    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
+    delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
+    undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
+    emulateLifeCycle(): void;
 }</pre>
 
 
