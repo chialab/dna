@@ -58,4 +58,4 @@ Tests are run against all ever green browsers, Internet Explorer and old Safari 
 
 ## Ok, I'm in!
 
-Read the [Get started](./get-started) page or try out DNA in the [sandbox](https://codesandbox.io/s/dna-30-sandbox-kuw64)!
+Read the [Get started](./get-started) page or try out DNA in the [sandbox](https://stackblitz.com/edit/dna-3-sandbox?embed=1&file=index.ts&hideExplorer=1&hideNavigation=1)!
