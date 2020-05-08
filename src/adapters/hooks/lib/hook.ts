@@ -1,10 +1,5 @@
-import { Template, customElements, DOM, render, shim } from '@chialab/dna';
+import { Template, Component, customElements, DOM, render } from '@chialab/dna';
 import haunted, { GenericRenderer } from 'haunted';
-
-/**
- * The base HTMLElement.
- */
-const BaseElement = shim(window.HTMLElement);
 
 /**
  * The haunted Component factory.
@@ -23,17 +18,17 @@ const { component } = haunted({
  */
 export function hook(name : string, hookFunction: GenericRenderer) {
     const HookElement = component(hookFunction, {
-        baseElement: BaseElement,
+        baseElement: Component,
         useShadowDOM: false,
     }) as typeof HTMLElement;
 
-    const Component = class extends HookElement {
+    const HookComponent = class extends HookElement {
         connectedCallback() {
             DOM.setAttribute(this, 'is', name);
             (HookElement.prototype as any).connectedCallback.call(this);
         }
     };
 
-    customElements.define(name, Component, { extends: 'div' });
-    return Component;
+    customElements.define(name, HookComponent, { extends: 'div' });
+    return HookComponent;
 }

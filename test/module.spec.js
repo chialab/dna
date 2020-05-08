@@ -17,7 +17,6 @@ describe('module', function() {
         connect: 'function',
         disconnect: 'function',
         extend: 'function',
-        shim: 'function',
         render: 'function',
         Fragment: 'symbol',
         h: 'function',
