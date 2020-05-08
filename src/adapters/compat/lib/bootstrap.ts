@@ -1,4 +1,4 @@
-import { Component, customElements, isComponentConstructor } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
 /**
  * Instantiate all defined components in a DOM tree.
@@ -19,10 +19,8 @@ export function bootstrap(root: HTMLElement, callback: (node: Component) => any 
             // check if already instantiated
             if (node instanceof constructor) {
                 callback(node as Component);
-            } else if (isComponentConstructor(constructor)) {
-                callback(new constructor(node as HTMLElement));
             } else {
-                Object.setPrototypeOf(node, constructor.prototype);
+                customElements.upgrade(node as HTMLElement);
                 callback(node as Component);
             }
         }

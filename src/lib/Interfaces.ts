@@ -1,7 +1,25 @@
+import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
 import { Template, TemplateItems } from './Template';
 import { Scope } from './Scope';
+
+/**
+ * A symbol which identify components.
+ */
+export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * Check if a node is a component.
+ * @param node The node to check.
+ */
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
+
+/**
+ * Check if a constructor is a component constructor.
+ * @param constructor The constructor to check.
+ */
+export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => (constructor.prototype)[COMPONENT_SYMBOL];
 
 export type ComponentInterface<T extends HTMLElement> = T & {
     /**

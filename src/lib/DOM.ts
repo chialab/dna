@@ -1,7 +1,7 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { ComponentInterface } from './Interfaces';
-import { isComponent, isComponentConstructor, registry } from './CustomElementRegistry';
+import { ComponentInterface, isComponent, isComponentConstructor } from './Interfaces';
+import { customElements } from './CustomElementRegistry';
 import { getSlotted } from './slotted';
 
 const { Node, HTMLElement, Event, CustomEvent, document } = window;
@@ -156,8 +156,8 @@ export const DOM = {
         const is = options && options.is;
         const name = is || tagName.toLowerCase();
         const node = document.createElement(tagName);
-        const constructor = registry.get(name);
-        if (isComponentConstructor(constructor) && !(node instanceof constructor)) {
+        const constructor = customElements.get(name);
+        if (constructor && isComponentConstructor(constructor) && !(node instanceof constructor)) {
             new constructor(node);
         }
         return node;

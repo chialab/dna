@@ -1,5 +1,5 @@
 export * from '@chialab/dna';
-export * from './lib/Hooks';
+export * from './lib/hook';
 export {
     useState,
     useMemo,

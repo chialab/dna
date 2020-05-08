@@ -1,11 +1,8 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { registry } from './CustomElementRegistry';
-import { ComponentConstructorInterface } from './Interfaces';
+import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
-
-const { HTMLElement } = window;
 
 /**
  * Symbol for interpolated functions.
@@ -72,7 +69,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         if (properties) {
             for (let propertyKey in properties) {
                 let value = properties[propertyKey];
-                if (propertyKey === 'is' && registry.get(value)) {
+                if (propertyKey === 'is' && customElements.get(value)) {
                     is = value;
                 } else if (propertyKey === 'key') {
                     key = value;
@@ -83,8 +80,8 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         }
 
         if (!tag) {
-            if ((tagOrComponent as ComponentConstructorInterface<HTMLElement>).prototype instanceof HTMLElement) {
-                Component = tagOrComponent as ComponentConstructorInterface<HTMLElement>;
+            if ((tagOrComponent as Function).prototype instanceof window.HTMLElement) {
+                Component = tagOrComponent as typeof HTMLElement;
             } else {
                 isFragment = true;
                 children = (tagOrComponent as TemplateFunction)(propertiesToSet) as TemplateItems;
@@ -92,7 +89,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
             }
         } else {
             // get the constructor from the registry
-            Component = registry.get(is as string || tag as string);
+            Component = customElements.get(is as string || tag as string);
         }
     }
 

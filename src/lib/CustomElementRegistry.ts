@@ -1,11 +1,10 @@
 import { window } from './window';
-import { createSymbolKey } from './symbols';
-import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
+import { isComponent, isComponentConstructor } from './Interfaces';
 
 /**
  * The native custom elements registry.
  */
-const customElements = window.customElements;
+const nativeCustomElements = window.customElements;
 
 /**
  * Check the validity of a Custom Element name.
@@ -22,24 +21,6 @@ const assertValidateCustomElementName = (name: string): boolean => {
     }
     return true;
 };
-
-/**
- * A symbol which identify components.
- */
-export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
-
-/**
- * Check if a node is a component.
- * @param node The node to check.
- */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
-
-/**
- * Check if a node is a component constructor.
- * @param node The node to check.
- */
-export const isComponentConstructor = (constructor: any): constructor is ComponentConstructorInterface<HTMLElement> => (constructor.prototype as any)[COMPONENT_SYMBOL];
-
 
 /**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
@@ -108,8 +89,8 @@ export class CustomElementRegistry {
         this.registry[name] = constructor;
         this.tagNames[name] = tagName.toLowerCase();
 
-        if (customElements) {
-            return customElements.define(name, constructor, options);
+        if (nativeCustomElements) {
+            return nativeCustomElements.define(name, constructor, options);
         }
 
         const queue = this.queue;
@@ -124,8 +105,8 @@ export class CustomElementRegistry {
      * @return A Promise that resolves when the named element is defined.
      */
     whenDefined(name: string): Promise<void> {
-        if (customElements) {
-            return customElements.whenDefined(name);
+        if (nativeCustomElements) {
+            return nativeCustomElements.whenDefined(name);
         }
         if (this.registry[name]) {
             return Promise.resolve();
@@ -155,9 +136,9 @@ export class CustomElementRegistry {
         if (!constructor) {
             return;
         }
-        if (customElements && 'upgrade' in customElements) {
+        if (nativeCustomElements && 'upgrade' in nativeCustomElements) {
             // native upgrade
-            customElements.upgrade(root);
+            nativeCustomElements.upgrade(root);
         }
         // check if already instantiated
         if (isComponent(root)) {
@@ -174,4 +155,4 @@ export class CustomElementRegistry {
 /**
  * The global DNA registry instance.
  */
-export const registry = new CustomElementRegistry();
+export const customElements = new CustomElementRegistry();

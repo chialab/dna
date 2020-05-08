@@ -1,4 +1,4 @@
-export { registry as customElements, CustomElementRegistry, isComponentConstructor, isComponent } from './lib/CustomElementRegistry';
+export { customElements, CustomElementRegistry } from './lib/CustomElementRegistry';
 export { window } from './lib/window';
 export { TemplateItem, TemplateItems, Template, TemplateFilter } from './lib/Template';
 export { DOM, connect, disconnect } from './lib/DOM';
@@ -9,4 +9,4 @@ export { html, template, interpolate } from './lib/html';
 export { css } from './lib/css';
 export { AsyncEvent, DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter, property } from './lib/property';
-export { extend, Component } from './lib/Component';
+export { shim, extend, Component } from './lib/Component';

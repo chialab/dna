@@ -32,6 +32,7 @@ export {
     ClassFieldPropertyConverter,
     property,
     extend,
+    shim,
     Component,
 } from '@chialab/dna';
 export { IDOM };

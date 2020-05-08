@@ -1,1 +1,1 @@
-export * from './dist/adapters/react/dna';
+export * from './dist/adapters/hooks/dna';

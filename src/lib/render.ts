@@ -1,12 +1,11 @@
+import { ComponentInterface, isComponent } from './Interfaces';
+import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
+import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { createSymbolKey } from './symbols';
-import { isComponent } from './CustomElementRegistry';
 import { Scope, createScope, getScope, setScope } from './Scope';
-import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { getSlotted } from './slotted';
-import { isHyperNode } from './HyperNode';
 import { css } from './css';
-import { ComponentInterface } from './Interfaces';
 
 /**
  * Alias to Array.isArray.

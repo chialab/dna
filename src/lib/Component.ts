@@ -1,7 +1,7 @@
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
-import { registry, COMPONENT_SYMBOL } from './CustomElementRegistry';
+import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
+import { customElements } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createScope, getScope, setScope } from './Scope';
@@ -82,7 +82,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         this.forceUpdate();
     }
 
-    [COMPONENT_SYMBOL] = true;
+    get [COMPONENT_SYMBOL]() {
+        return true;
+    }
 
     /**
      * Create a new Component instance.
@@ -509,7 +511,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @return The instances of the rendered Components and/or Nodes
      */
     render(): Template | undefined {
-        let templateNode = this.ownerDocument && this.ownerDocument.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
+        let document = this.ownerDocument;
+        let templateNode = document && document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
         if (templateNode) {
             return template(templateNode, this);
         }
@@ -598,7 +601,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
  * @param base The constructor or the class to shim.
  * @return A newable constructor with the same prototype.
  */
-const shim = <T extends typeof HTMLElement>(base: T): T => {
+export const shim = <T extends typeof HTMLElement>(base: T): T => {
     const shim = function(this: any, ...args: any[]) {
         let constructor = this.constructor as T;
         let is = this.is;
@@ -606,7 +609,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
             throw new TypeError('Illegal constructor');
         }
 
-        let tag = registry.tagNames[is];
+        let tag = customElements.tagNames[is];
         let element: HTMLElement;
         try {
             element = Reflect.construct(base, args, constructor);
@@ -619,7 +622,7 @@ const shim = <T extends typeof HTMLElement>(base: T): T => {
 
         element = document.createElement(tag) as HTMLElement;
         Object.setPrototypeOf(element, constructor.prototype);
-        (element as ComponentInterface<InstanceType<T>>).emulateLifeCycle();
+        emulateLifeCycle(element as ComponentInterface<InstanceType<T>>);
         return element;
     } as any as T;
     Object.setPrototypeOf(shim, base);
