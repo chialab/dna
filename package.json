@@ -37,7 +37,7 @@
     "test": "yarn test:core && yarn test:compat && yarn test:react && yarn test:hooks",
     "test:core": "yarn test:browser && yarn test:node",
     "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --browser",
-    "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --saucelabs --concurrency 2",
+    "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --concurrency 2 --saucelabs",
     "test:node": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --node",
     "test:compat": "yarn symlink && rna unit 'test/compat/*.spec.js' --jsx.pragma 'h' --jsx.module '@dnajs/idom' --browser",
     "test:react": "yarn symlink && rna unit 'test/react/*.spec.js' --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault --browser",

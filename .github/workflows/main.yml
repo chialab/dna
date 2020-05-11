@@ -1,5 +1,15 @@
 name: Main
-on: [push, pull_request]
+on:
+  push:
+    tags:
+    - '!*'
+    paths:
+    - '!docs/**'
+  pull_request:
+    tags:
+    - '!*'
+    paths:
+    - '!docs/**'
 
 jobs:
   # BUILD
