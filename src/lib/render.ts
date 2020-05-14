@@ -1,9 +1,10 @@
-import { ComponentInterface, isComponent } from './Interfaces';
+import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
+import { Context, createContext, getContext, setContext } from './Context';
+import { isThenable, wrapThenable } from './Thenable';
 import { createSymbolKey } from './symbols';
-import { Scope, createScope, getScope, setScope } from './Scope';
 import { getSlotted } from './slotted';
 import { css } from './css';
 
@@ -23,33 +24,59 @@ const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
  *
  * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
- * @param scope The render scope object.
+ * @param context The render context object.
  * @return The resulting child Nodes.
  */
-export const render = (root: HTMLElement, input: Template, scope?: Scope, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
-    const renderScope = scope && createScope(scope) || getScope(root) || createScope(root);
+export const render = (root: HTMLElement, input: Template, context?: Context, rootContext?: Context, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
+    const renderContext = context || getContext(root) || createContext(root);
+    const rootRenderContext = rootContext || renderContext;
     const isStyle = root.localName === 'style';
     const rootNamespaceURI = root.namespaceURI;
+    // result list
+    const results: Node[] = [];
 
     let childNodes = (slot && getSlotted(root).slice(0)) || cloneChildNodes(root);
     // the current iterating node
     let currentIndex = 0;
     let currentNode = childNodes[currentIndex] as Node;
-    // result list
-    let results: Node[] = [];
 
-    const handleItems = (template: Template, scope: Scope, results: Node[], filter?: TemplateFilter): Node[] => {
+    // promises list
+    let promises: Promise<unknown>[];
+    if (rootRenderContext === renderContext) {
+        promises = rootRenderContext.promises = [];
+    } else {
+        promises = rootRenderContext.promises as Promise<unknown>[];
+    }
+
+    const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
         if (template == null || template === false) {
-            return results;
+            return;
         }
 
         if (isArray(template)) {
-            scope = getScope(template) || scope;
+            templateContext = getContext(template) || templateContext;
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
-                handleItems(template[i], scope, results, filter);
+                handleItems(template[i], templateContext, filter);
             }
-            return results;
+            return;
+        }
+
+        if (isThenable(template)) {
+            let status = wrapThenable(template);
+            handleItems(status.result, templateContext, filter);
+            if (status.pending) {
+                promises.push(template);
+                template
+                    .catch(() => 1)
+                    .then(() => {
+                        let list = rootRenderContext.promises;
+                        if (list && list.indexOf(template as Promise<unknown>) !== -1) {
+                            render(root, input, templateContext, rootRenderContext, filter, slot);
+                        }
+                    });
+            }
+            return;
         }
 
         let newNode: Element | Text | undefined;
@@ -59,13 +86,14 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         if (isObject && isHyperNode(template)) {
             let { Component, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
             if (isFragment) {
-                return handleItems(children, scope, results, filter);
+                handleItems(children, templateContext, filter);
+                return;
             }
 
             // if the current patch is a slot,
             if (isSlot) {
-                let slottedChildren = (getSlotted(scope) || []).slice(0);
-                let childScope = getScope(slottedChildren) || scope;
+                let slottedChildren = (getSlotted(templateContext) || []).slice(0);
+                let childContext = getContext(slottedChildren) || templateContext;
                 let filter;
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
@@ -83,8 +111,9 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
                     };
                 }
 
-                setScope(slottedChildren, childScope);
-                return handleItems(slottedChildren, scope, results, filter);
+                setContext(slottedChildren, childContext);
+                handleItems(slottedChildren, templateContext, filter);
+                return;
             }
 
             // create the node
@@ -125,7 +154,7 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
 
                 if (key) {
                     (newNode as any).key = key;
-                    scope[key] = newNode;
+                    templateContext[key] = newNode;
                 }
             }
 
@@ -165,14 +194,14 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
 
             // store the Node children in order to reuse them
             // at the next render cycle
-            setScope(children, scope);
+            setContext(children, templateContext);
             newChildren = children;
         } else if (isObject && (isElement(template) || isText(template))) {
             newNode = template;
         } else {
-            if (isStyle && typeof template === 'string' && scope.is) {
-                template = css(scope.is as string, template);
-                root.setAttribute('name', scope.is);
+            if (isStyle && typeof template === 'string' && templateContext.is) {
+                template = css(templateContext.is as string, template);
+                root.setAttribute('name', templateContext.is);
             }
 
             if (isText(currentNode)) {
@@ -205,19 +234,14 @@ export const render = (root: HTMLElement, input: Template, scope?: Scope, filter
         results.push(newNode);
 
         if (isElement(newNode) && newChildren) {
-            let isComponentNode = isComponent(newNode);
             // the Node has slotted children, trigger a new render context for them
-            render(newNode as HTMLElement, newChildren, scope, undefined, isComponentNode);
-            if (isComponentNode) {
-                // notify the Component that its slotted Nodes has been updated
-                (newNode as ComponentInterface<HTMLElement>).forceUpdate();
-            }
+            render(newNode as HTMLElement, newChildren, createContext(templateContext), rootRenderContext, undefined, isComponent(newNode));
         }
 
-        return results;
+        return;
     };
 
-    handleItems(input, renderScope, results, filter);
+    handleItems(input, renderContext, filter);
 
     // all children of the root have been handled,
     // we can start to cleanup the tree

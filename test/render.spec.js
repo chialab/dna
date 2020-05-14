@@ -141,6 +141,7 @@ describe('render', function() {
                 DNA.DOM.createElement('div'),
             ],
             null,
+            null,
             (node) => !!node.tagName);
             expect(wrapper.childNodes).to.have.lengthOf(2);
         });
@@ -496,7 +497,7 @@ describe('render', function() {
             expect(option3).to.be.equal(option5);
         });
 
-        it('should access keyed element in scope', () => {
+        it('should access keyed element in context', () => {
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;

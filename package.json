@@ -29,6 +29,7 @@
   "scripts": {
     "symlink": "yarn link && yarn link @chialab/dna",
     "build": "rm -rf dist && yarn build:core && yarn build:node && yarn build:compat && yarn build:react && yarn build:hooks",
+    "build:lite": "rna build --name DNA --bundle",
     "build:core": "rna build --production --name DNA --typings --bundle",
     "build:node": "rna build src/adapters/node/dna.ts --output 'dist/adapters/node/dna.js' --production --typings --format cjs --targets 'node >= 10'",
     "build:compat": "rna build src/adapters/compat/dna.ts --output 'dist/adapters/compat/dna.js' --production --typings --format esm",

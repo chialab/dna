@@ -4,7 +4,7 @@ import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } f
 import { customElements } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
-import { createScope, getScope, setScope } from './Scope';
+import { createContext, getContext, setContext } from './Context';
 import { Template, TemplateItems } from './Template';
 import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
@@ -64,10 +64,10 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * The render scope reference of the node.
+     * The render context reference of the node.
      */
     get $() {
-        return getScope(this);
+        return getContext(this);
     }
 
     /**
@@ -103,7 +103,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
-        setScope(element, createScope(element));
+        setContext(element, createContext(element));
 
         let children = cloneChildNodes(element);
         setSlotted(element, children);

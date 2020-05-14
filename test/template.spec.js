@@ -89,7 +89,7 @@ describe('template', function() {
     });
 
     describe('content interpolation', () => {
-        const scope = {
+        const context = {
             name: 'Alan',
             num: 42,
         };
@@ -108,7 +108,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope));
+                DNA.render(wrapper, TEMPLATES[type].call(context));
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello! My name is Alan and my favorite number is 42');
@@ -117,7 +117,7 @@ describe('template', function() {
     });
 
     describe('attribute interpolation', () => {
-        const scope = {
+        const context = {
             name: 'filter',
             disabled: true,
         };
@@ -140,7 +140,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
+                DNA.render(wrapper, TEMPLATES[type].call(context), context);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('INPUT');
                 expect(wrapper.childNodes[0].outerHTML).to.be.equal('<input name="filter" disabled="" required="">');
@@ -149,7 +149,7 @@ describe('template', function() {
     });
 
     describe('loops', () => {
-        const scope = {
+        const context = {
             items: ['Alan', 'Brian', 'Carl'],
         };
         const TEMPLATES = {
@@ -177,7 +177,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
+                DNA.render(wrapper, TEMPLATES[type].call(context), context);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('UL');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(3);
@@ -192,7 +192,7 @@ describe('template', function() {
     });
 
     describe('conditionals', () => {
-        const scope = {
+        const context = {
             avatar: 'cat.png',
             title: 'Romeo',
             members: [],
@@ -232,7 +232,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type].call(scope), scope);
+                DNA.render(wrapper, TEMPLATES[type].call(context), context);
                 expect(wrapper.childNodes).to.have.lengthOf(3);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('IMG');
                 expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal('cat.png');
@@ -271,7 +271,7 @@ describe('template', function() {
             HTML() {
                 return DNA.html`
                     <div class="layout-header">
-                        <${`${titleName}-html`}>
+                        <${`${titleName}-${'html'}`}>
                             <slot name="title" />
                         </>
                     </div>
@@ -409,15 +409,67 @@ describe('template', function() {
             for (let type in TEMPLATES) {
                 it(type, () => {
                     const listener = spyFunction();
-                    const scope = {
+                    const context = {
                         listener,
                     };
-                    DNA.render(wrapper, TEMPLATES[type].call(scope));
+                    DNA.render(wrapper, TEMPLATES[type].call(context));
                     const button = wrapper.childNodes[0];
                     button.click();
                     expect(listener.invoked).to.be.true;
                 });
             }
+        });
+    });
+
+    describe('promises', () => {
+        it('should handle successfull promises', async () => {
+            const context = {};
+            const promise = new Promise((resolve) => {
+                setTimeout(() => resolve('World!'), 1000);
+            });
+            const template = DNA.html`<div>
+                ${DNA.until(promise, 'Loading...')}
+                ${DNA.wait(promise, DNA.html`Hello ${promise}`)}
+            </div>`;
+            DNA.render(wrapper, template, context);
+            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+            while (context.promises.length) {
+                await Promise.all(context.promises);
+            }
+            expect(wrapper.innerHTML).to.be.equal('<div>Hello World!</div>');
+        });
+
+        it('should handle failed promises', async () => {
+            const context = {};
+            const promise = new Promise((resolve, reject) => {
+                setTimeout(() => reject('timeout'), 1000);
+            });
+            const template = DNA.html`<div>
+                ${DNA.until(promise, 'Loading...')}
+                ${DNA.wait(promise, DNA.html`Hello ${promise}`, DNA.html`Error ${promise}`)}
+            </div>`;
+            DNA.render(wrapper, template, context);
+            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+            while (context.promises.length) {
+                await Promise.all(context.promises);
+            }
+            expect(wrapper.innerHTML).to.be.equal('<div>Error timeout</div>');
+        });
+
+        it('should ignore outdated promises in template', async () => {
+            const context = {};
+            const promise = new Promise((resolve) => {
+                setTimeout(() => resolve('World!'), 1000);
+            });
+            const promise2 = new Promise((resolve) => {
+                setTimeout(() => resolve('World!'), 500);
+            });
+            const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${DNA.wait(promise, DNA.html`Hello ${promise}`)}`)}</div>`;
+            DNA.render(wrapper, template, context);
+            while (context.promises.length) {
+                await Promise.all(context.promises);
+            }
+            expect(wrapper.innerHTML).to.be.equal('<div></div>');
         });
     });
 });

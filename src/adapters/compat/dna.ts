@@ -33,6 +33,8 @@ export {
     property,
     extend,
     Component,
+    until,
+    wait,
 } from '@chialab/dna';
 export { IDOM };
 export * from './lib/registry';

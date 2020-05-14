@@ -2,7 +2,7 @@ import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback } from './events';
 import { Template, TemplateItems } from './Template';
-import { Scope } from './Scope';
+import { Context } from './Context';
 
 /**
  * A symbol which identify components.
@@ -47,9 +47,9 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     readonly template: HTMLTemplateElement|undefined;
 
     /**
-     * The render scope reference of the node.
+     * The render context reference of the node.
      */
-    readonly $: Scope|undefined;
+    readonly $: Context|undefined;
 
     /**
      * A list of slot nodes.

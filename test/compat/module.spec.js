@@ -25,6 +25,8 @@ describe('[Compat] module', function() {
         dispatchAsyncEvent: 'function',
         property: 'function',
         Component: 'function',
+        until: 'function',
+        wait: 'function',
         // COMPAT
         namespace: 'object',
         registry: 'object',

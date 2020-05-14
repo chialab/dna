@@ -10,3 +10,4 @@ export { css } from './lib/css';
 export { AsyncEvent, DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter, property } from './lib/property';
 export { extend, Component } from './lib/Component';
+export * from './lib/directives';

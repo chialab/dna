@@ -34,7 +34,7 @@ If you are familiar with JSX, you can write your templates using the React synta
 
 ### Properties, async render, slots... and more!
 
-DNA comes with a lot of features in a very small (~ 6kb gzipped) package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events.
+DNA comes with a lot of features in a very small package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events.
 
 ## Browsers support
 

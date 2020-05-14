@@ -1,6 +1,6 @@
 import htm from 'htm';
 import { Template } from './Template';
-import { Scope, createScope } from './Scope';
+import { Context, createContext } from './Context';
 import { h, HyperNode } from './HyperNode';
 import { isElement, isText } from './DOM';
 
@@ -39,7 +39,7 @@ const escape = (text: string): string => text.replace(/'/g, '\\\'').replace(/\n/
  * @param expression The expression to compile.
  * @return The result of the interpolation.
  */
-export const interpolate = (expression: string, scope: Scope): any => {
+export const interpolate = (expression: string, context: Context): any => {
     // split the expression into chunks
     const chunks = expression.trim().split(PARSE_REGEX);
     // the generated function body
@@ -61,7 +61,7 @@ export const interpolate = (expression: string, scope: Scope): any => {
 
     body += ';';
 
-    return new Function(body).call(scope);
+    return new Function(body).call(context);
 };
 
 /**
@@ -70,11 +70,11 @@ export const interpolate = (expression: string, scope: Scope): any => {
  * @param node The node to convert.
  * @return The virtual DOM template function.
  */
-function innerCompile(scope: Scope, node: HTMLElement, namespace?: Namespaces): HyperNode;
-function innerCompile(scope: Scope, node: Text): string;
-function innerCompile(scope: Scope, node: Node[], namespace?: Namespaces): HyperNode[];
-function innerCompile(scope: Scope, node: NodeList, namespace?: Namespaces): HyperNode[];
-function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
+function innerCompile(context: Context, node: HTMLElement, namespace?: Namespaces): HyperNode;
+function innerCompile(context: Context, node: Text): string;
+function innerCompile(context: Context, node: Node[], namespace?: Namespaces): HyperNode[];
+function innerCompile(context: Context, node: NodeList, namespace?: Namespaces): HyperNode[];
+function innerCompile(context: Context, node: HTMLElement | Text | NodeList | Node[], namespace?: Namespaces): Template | Template[] {
     if (isElement(node)) {
         // the current node is an element
         // get the tag name
@@ -82,7 +82,7 @@ function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[]
 
         if (tag === 'template') {
             if (node.hasAttribute('if')) {
-                const ifStatemenet = interpolate(node.getAttribute('if') as string, scope);
+                const ifStatemenet = interpolate(node.getAttribute('if') as string, context);
                 if (!ifStatemenet) {
                     return [];
                 }
@@ -96,19 +96,19 @@ function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[]
                 const keyVar = node.getAttribute('key') || '$key';
                 // extract the `item` variable to use in the template
                 const itemVar = node.getAttribute('item') || '$item';
-                const array = interpolate(node.getAttribute('repeat') as string, scope);
+                const array = interpolate(node.getAttribute('repeat') as string, context);
                 for (let key in array) {
                     let item = array[key];
-                    // augment the scope of the child
-                    let childScope = createScope(scope, {
+                    // augment the context of the child
+                    let childContext = createContext(context, {
                         [keyVar]: key,
                         [itemVar]: item,
                     });
 
-                    newChildren.push(innerCompile(childScope, children));
+                    newChildren.push(innerCompile(childContext, children));
                 }
             } else {
-                newChildren = innerCompile(scope, children);
+                newChildren = innerCompile(context, children);
             }
             return newChildren;
         }
@@ -126,17 +126,17 @@ function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[]
             if (attr.value === '') {
                 properties[attr.name] = true;
             } else {
-                properties[attr.name] = interpolate(attr.value, scope);
+                properties[attr.name] = interpolate(attr.value, context);
             }
         }
 
         // compile children and use their virtual DOM functions
-        return h(tag, properties, ...innerCompile(scope, node.childNodes, namespace));
+        return h(tag, properties, ...innerCompile(context, node.childNodes, namespace));
     }
 
     if (isText(node)) {
         // the current node is text content
-        return interpolate(node.textContent || '', scope);
+        return interpolate(node.textContent || '', context);
     }
 
     const children: Array<Element | Text> = [];
@@ -154,7 +154,7 @@ function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[]
     }
 
     // iterate nodes and convert them to virtual DOM using the internal function
-    return children.map((child) => innerCompile(scope, child as any, namespace));
+    return children.map((child) => innerCompile(context, child as any, namespace));
 }
 
 /**
@@ -163,7 +163,7 @@ function innerCompile(scope: Scope, node: HTMLElement | Text | NodeList | Node[]
  * @param template The template to parse.
  * @return The virtual DOM template function.
  */
-export const template = (template: HTMLTemplateElement, scope: Scope): Template => innerCompile(scope, getTemplateChildren(template));
+export const template = (template: HTMLTemplateElement, context: Context): Template => innerCompile(context, getTemplateChildren(template));
 
 const innerHtml = htm.bind(h);
 

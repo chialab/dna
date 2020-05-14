@@ -9,4 +9,5 @@ export {
     useReducer,
     useRef,
     useContext,
+    Hook,
 } from 'haunted';
