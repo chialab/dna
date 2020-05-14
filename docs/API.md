@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>
+<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>, <a href="#until">until</a>, <a href="#wait">wait</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#scope">Scope</a>, <a href="#scopevalues">ScopeValues</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>
+<a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#context">Context</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>
 
 
 <hr />
@@ -452,7 +452,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>, scope?: <a href="#scope">Scope</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): void|Node|Node[]</pre>
+<pre>(root: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#context">Context</a>|undefined, rootContext?: <a href="#context">Context</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): void|Node|Node[]</pre>
 
 
 
@@ -539,7 +539,7 @@ Compile a template element into virtual DOM template.
 
 <strong>Type:</strong>
 
-<pre>(template: HTMLTemplateElement, scope: <a href="#scope">Scope</a>): <a href="#template">Template</a></pre>
+<pre>(template: HTMLTemplateElement, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
 
 
 
@@ -560,7 +560,7 @@ Create an InterpolationFunction.
 
 <strong>Type:</strong>
 
-<pre>(expression: string, scope: <a href="#scope">Scope</a>): any</pre>
+<pre>(expression: string, context: <a href="#context">Context</a>): any</pre>
 
 
 
@@ -737,6 +737,48 @@ Get a native HTMLElement constructor to extend by its name.
 
 <hr />
 
+<strong id="until"><code>constant</code>  until</strong>
+
+
+
+<p>
+
+It renders the template when then provided Thenable is in pending status.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(thenable: any, template: <a href="#template">Template</a>): any</pre>
+
+
+
+
+<hr />
+
+<strong id="wait"><code>constant</code>  wait</strong>
+
+
+
+<p>
+
+It renders the template once then provided Thenable has resolved or rejected.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(thenable: any, successTemplate: <a href="#template">Template</a>, errorTemplate?: <a href="#template">Template</a>): any</pre>
+
+
+
+
+<hr />
+
 <strong id="namespaceuri"><code>enum</code>  NamespaceURI</strong>
 
 
@@ -782,7 +824,7 @@ It can be a node, a Hyper or Interpolate function or a primitive value.
 
 
 
-<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|string|number|boolean|undefined|null</pre>
+<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|Promise&lt;any&gt;|string|number|boolean|undefined|null</pre>
 
 
 
@@ -867,30 +909,18 @@ A filter function signature for template items.
 
 <hr />
 
-<strong id="scope"><code>type</code>  Scope</strong>
+<strong id="context"><code>type</code>  Context</strong>
 
 <p>
 
-A scope interface.
+A ontext interface.
 
 </p>
 
 
 
-<pre>HTMLElement & <a href="#scopevalues">ScopeValues</a></pre>
-
-
-
-
-<hr />
-
-<strong id="scopevalues"><code>type</code>  ScopeValues</strong>
-
-
-
-
-
-<pre>{
+<pre>HTMLElement & {
+    promises?: Promise&lt;any&gt;[];
     [key: string]: any;
 }</pre>
 
@@ -1118,7 +1148,7 @@ It's a Custom Element, but with some extra useful method.
         [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
     };
     template: HTMLTemplateElement|undefined;
-    $: <a href="#scope">Scope</a>|undefined;
+    $: <a href="#context">Context</a>|undefined;
     slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;
