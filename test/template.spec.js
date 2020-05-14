@@ -422,38 +422,105 @@ describe('template', function() {
     });
 
     describe('promises', () => {
-        it('should handle successfull promises', async () => {
-            const context = {};
-            const promise = new Promise((resolve) => {
-                setTimeout(() => resolve('World!'), 1000);
-            });
-            const template = DNA.html`<div>
-                ${DNA.until(promise, 'Loading...')}
-                ${DNA.wait(promise, DNA.html`Hello ${promise}`)}
-            </div>`;
-            DNA.render(wrapper, template, context);
-            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
-            while (context.promises.length) {
-                await Promise.all(context.promises);
+        describe('should handle successfull promises', async () => {
+            const TEMPLATES = {
+                JSX() {
+                    return DNA.h('div', null,
+                        DNA.until(this.promise, 'Loading...'),
+                        DNA.wait(this.promise, ['Hello ', this.promise])
+                    );
+                },
+                HTML() {
+                    return DNA.html`<div>
+                        ${DNA.until(this.promise, 'Loading...')}
+                        ${DNA.wait(this.promise, DNA.html`Hello ${this.promise}`)}
+                    </div>`;
+                },
+                TEMPLATE() {
+                    const template = html(`<template>
+                        <div>
+                            <template until={{promise}}>
+                                Loading...
+                            </template>
+                            <template then={{promise}}>
+                                Hello {{promise}}
+                            </template>
+                        </div>
+                    </template>`);
+                    return DNA.template(template, this);
+                },
+            };
+
+            for (let type in TEMPLATES) {
+                it(type, async () => {
+                    const promise = new Promise((resolve) => {
+                        setTimeout(() => resolve('World!'), 1000);
+                    });
+                    const context = {
+                        promise,
+                    };
+
+                    DNA.render(wrapper, TEMPLATES[type].call(context), context);
+
+                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+                    while (context.promises.length) {
+                        await Promise.all(context.promises);
+                    }
+                    expect(wrapper.innerHTML).to.be.equal('<div>Hello World!</div>');
+                });
             }
-            expect(wrapper.innerHTML).to.be.equal('<div>Hello World!</div>');
         });
 
-        it('should handle failed promises', async () => {
-            const context = {};
-            const promise = new Promise((resolve, reject) => {
-                setTimeout(() => reject('timeout'), 1000);
-            });
-            const template = DNA.html`<div>
-                ${DNA.until(promise, 'Loading...')}
-                ${DNA.wait(promise, DNA.html`Hello ${promise}`, DNA.html`Error ${promise}`)}
-            </div>`;
-            DNA.render(wrapper, template, context);
-            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
-            while (context.promises.length) {
-                await Promise.all(context.promises);
+        describe('should handle failed promises', async () => {
+            const TEMPLATES = {
+                JSX() {
+                    return DNA.h('div', null,
+                        DNA.until(this.promise, 'Loading...'),
+                        DNA.wait(this.promise, ['Hello ', this.promise], ['Error ', this.promise])
+                    );
+                },
+                HTML() {
+                    return DNA.html`<div>
+                        ${DNA.until(this.promise, 'Loading...')}
+                        ${DNA.wait(this.promise, DNA.html`Hello ${this.promise}`, DNA.html`Error ${this.promise}`)}
+                    </div>`;
+                },
+                TEMPLATE() {
+                    const template = html(`<template>
+                        <div>
+                            <template until={{promise}}>
+                                Loading...
+                            </template>
+                            <template then={{promise}}>
+                                Hello {{promise}}
+                            </template>
+                            <template catch={{promise}}>
+                                Error {{promise}}
+                            </template>
+                        </div>
+                    </template>`);
+                    return DNA.template(template, this);
+                },
+            };
+
+            for (let type in TEMPLATES) {
+                it(type, async () => {
+                    const promise = new Promise((resolve, reject) => {
+                        setTimeout(() => reject('timeout'), 1000);
+                    });
+                    const context = {
+                        promise,
+                    };
+
+                    DNA.render(wrapper, TEMPLATES[type].call(context), context);
+
+                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+                    while (context.promises.length) {
+                        await Promise.all(context.promises);
+                    }
+                    expect(wrapper.innerHTML).to.be.equal('<div>Error timeout</div>');
+                });
             }
-            expect(wrapper.innerHTML).to.be.equal('<div>Error timeout</div>');
         });
 
         it('should ignore outdated promises in template', async () => {

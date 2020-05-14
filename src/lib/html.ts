@@ -3,6 +3,7 @@ import { Template } from './Template';
 import { Context, createContext } from './Context';
 import { h, HyperNode } from './HyperNode';
 import { isElement, isText } from './DOM';
+import { until, wait } from './directives';
 
 enum Namespaces {
     SVG = 'http://www.w3.org/2000/svg',
@@ -43,7 +44,7 @@ export const interpolate = (expression: string, context: Context): any => {
     // split the expression into chunks
     const chunks = expression.trim().split(PARSE_REGEX);
     // the generated function body
-    let body = 'with(this) return ';
+    let body = 'with(this) var _=[';
 
     body += chunks
         .map((match, index) => {
@@ -57,9 +58,9 @@ export const interpolate = (expression: string, context: Context): any => {
             return `(${match})`;
         })
         .filter((statement) => !!statement)
-        .join('+');
+        .join(',');
 
-    body += ';';
+    body += '];return(_.length>1)?_:_[0]';
 
     return new Function(body).call(context);
 };
@@ -91,12 +92,28 @@ function innerCompile(context: Context, node: HTMLElement | Text | NodeList | No
             const children = getTemplateChildren(node as HTMLTemplateElement);
 
             let newChildren: Template[] = [];
-            if (node.hasAttribute('repeat')) {
+            if (node.hasAttribute('until')) {
+                return until(
+                    interpolate(node.getAttribute('until') as string, context),
+                    innerCompile(context, children)
+                );
+            } else if (node.hasAttribute('then')) {
+                return wait(
+                    interpolate(node.getAttribute('then') as string, context),
+                    innerCompile(context, children)
+                );
+            } else if (node.hasAttribute('catch')) {
+                return wait(
+                    interpolate(node.getAttribute('catch') as string, context),
+                    undefined,
+                    innerCompile(context, children)
+                );
+            } else if (node.hasAttribute('repeat')) {
                 // extract the `key` variable to use in the template
-                const keyVar = node.getAttribute('key') || '$key';
+                let keyVar = node.getAttribute('key') || '$key';
                 // extract the `item` variable to use in the template
-                const itemVar = node.getAttribute('item') || '$item';
-                const array = interpolate(node.getAttribute('repeat') as string, context);
+                let itemVar = node.getAttribute('item') || '$item';
+                let array = interpolate(node.getAttribute('repeat') as string, context);
                 for (let key in array) {
                     let item = array[key];
                     // augment the context of the child

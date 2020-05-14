@@ -24,7 +24,7 @@ export const until = (thenable: any, template: Template) => {
  * @param errorTemplate The template to render when the Thenable rejects.
  * @return A promise which resolves the template once then provided Thenable has resolved or rejected.
  */
-export const wait = (thenable: any, successTemplate: Template, errorTemplate: Template) => {
+export const wait = (thenable: any, successTemplate: Template, errorTemplate?: Template) => {
     let original = wrapThenable(thenable);
     let wrapper = thenable
         .then(() => successTemplate)

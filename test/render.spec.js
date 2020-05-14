@@ -106,7 +106,7 @@ describe('render', function() {
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
             ]);
-            expect(wrapper.childNodes).to.have.lengthOf(6);
+            expect(wrapper.childNodes).to.have.lengthOf(10);
         });
 
         it('should render component function', () => {
@@ -125,7 +125,7 @@ describe('render', function() {
             }
 
             DNA.render(wrapper, DNA.h(Test));
-            expect(wrapper.childNodes).to.have.lengthOf(6);
+            expect(wrapper.childNodes).to.have.lengthOf(10);
         });
 
         it('should filter contents', () => {

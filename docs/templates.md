@@ -293,6 +293,82 @@ h(Fragment, null,
 </div>
 </details>
 
+### Promises
+
+The DNA's render algorithm has builtin support for `Promise`s in template: it interpolates the result of a `Promise` just like using the `await` statement and provides the helpers `until` and `wait` for status handling:
+
+```ts
+import { until, wait } from '@chialab/dna';
+
+const json = fetch('/data.json')
+    .then(() => response.json())
+    .then((data) => data.map(({ name }) => html`<li>${name}</li>`));
+
+html`
+    ${until(json, 'Loading...')}
+    ${wait(json,
+        html`<ul>${json}</ul>`,
+        html`<div>Error: ${json}</div>`
+    )}
+`
+```
+
+<details>
+<summary>JSX</summary>
+<div>
+
+```ts
+import { until, wait } from '@chialab/dna';
+<>
+    {until(json, 'Loading...')}
+    {wait(json,
+        <ul>{json}</ul>,
+        <div>Error {json}</div>,
+    )}
+</>
+```
+
+</div>
+</details>
+
+<details>
+<summary>Template tag</summary>
+<div>
+
+```html
+<template>
+    <template until={{json}}>
+        Loading...
+    </template>
+    <template then={{json}}>
+        <ul>{{json}}</ul>
+    </template>
+    <template catch={{json}}>
+        <div>Error {{json}}</div>
+    </template>
+</template>
+```
+
+</div>
+</details>
+
+<details>
+<summary>Raw</summary>
+<div>
+
+
+```ts
+h(Fragment, null,
+    until(json, 'Loading...'),
+    wait(json,
+        h('ul', null, json),
+        h('div', null, 'Error ', json),
+    )
+)
+```
+</div>
+</details>
+
 ## HTML content
 
 By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you need to pass the code to the `html` helper:
@@ -308,7 +384,7 @@ const content = '<h1>Hello</h1>';
 
 <aside class="note">
 
-Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Please always make sure you are rendering secure code!
+Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
 
 </aside>
 
