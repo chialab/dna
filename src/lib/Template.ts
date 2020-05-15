@@ -1,10 +1,11 @@
 import { HyperNode } from './HyperNode';
+import { Observable } from './Observable';
 
 /**
  * The atomic template item.
  * It can be a node, a Hyper or Interpolate function or a primitive value.
  */
-export type TemplateItem = Element | Text | Node | HyperNode | Promise<any> | string | number | boolean | undefined | null;
+export type TemplateItem = Element | Text | Node | HyperNode | Promise<any> | Observable<any> | string | number | boolean | undefined | null;
 
 /**
  * A list of template items.

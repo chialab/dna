@@ -70,6 +70,7 @@
     "eslint-plugin-mocha-no-only": "^1.1.0",
     "haunted": "^4.7.0",
     "htm": "^3.0.3",
+    "rxjs": "^6.5.5",
     "typescript": "^3.8.0"
   }
 }

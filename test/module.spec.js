@@ -31,7 +31,6 @@ describe('module', function() {
         property: 'function',
         Component: 'function',
         until: 'function',
-        wait: 'function',
     };
 
     for (let ref in EXPECTED_EXPORT_MAP) {

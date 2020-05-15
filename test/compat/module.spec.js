@@ -26,7 +26,6 @@ describe('[Compat] module', function() {
         property: 'function',
         Component: 'function',
         until: 'function',
-        wait: 'function',
         // COMPAT
         namespace: 'object',
         registry: 'object',

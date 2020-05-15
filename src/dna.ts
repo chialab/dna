@@ -1,5 +1,6 @@
 export { customElements, CustomElementRegistry } from './lib/CustomElementRegistry';
 export { window } from './lib/window';
+export { Observable } from './lib/Observable';
 export { TemplateItem, TemplateItems, Template, TemplateFilter } from './lib/Template';
 export { DOM, connect, disconnect } from './lib/DOM';
 export { render } from './lib/render';
@@ -9,5 +10,6 @@ export { html, template, interpolate } from './lib/html';
 export { css } from './lib/css';
 export { AsyncEvent, DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './lib/events';
 export { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter, property } from './lib/property';
+export { ComponentInterface, ComponentConstructorInterface } from './lib/Interfaces';
 export { extend, Component } from './lib/Component';
 export * from './lib/directives';

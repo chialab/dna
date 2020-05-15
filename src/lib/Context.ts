@@ -1,4 +1,5 @@
 import { createSymbolKey } from './symbols';
+import { Subscription } from './Observable';
 
 /**
  * The ontext symbol.
@@ -10,6 +11,7 @@ const CONTEXT_SYMBOL = createSymbolKey();
  */
 export type Context = HTMLElement & {
     promises?: Promise<unknown>[];
+    subscriptions?: Subscription[];
     [key: string]: any;
 };
 
@@ -21,6 +23,9 @@ export type Context = HTMLElement & {
 export const createContext = (prototype: any, values: { [key: string]: any } = {}): Context => {
     const context = Object.create(prototype, {
         promises: {
+            writable: true,
+        },
+        subscriptions: {
             writable: true,
         },
     });

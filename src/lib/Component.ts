@@ -592,7 +592,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     emulateLifeCycle() {
         emulateLifeCycle(this);
     }
-} as ComponentConstructorInterface<InstanceType<T>>;
+} as unknown as ComponentConstructorInterface<InstanceType<T>>;
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -645,4 +645,4 @@ export const extend = <T extends typeof HTMLElement>(constructor: T) => mixin(sh
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export class Component extends extend(HTMLElement) {}
+export const Component = extend(HTMLElement);

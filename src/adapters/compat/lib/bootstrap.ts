@@ -1,4 +1,4 @@
-import { Component, customElements } from '@chialab/dna';
+import { ComponentInterface, customElements } from '@chialab/dna';
 
 /**
  * Instantiate all defined components in a DOM tree.
@@ -6,7 +6,7 @@ import { Component, customElements } from '@chialab/dna';
  * @param root The root Node of the tree.
  * @param callback A callback called on upgraded components.
  */
-export function bootstrap(root: HTMLElement, callback: (node: Component) => any = () => {}) {
+export function bootstrap(root: HTMLElement, callback: (node: ComponentInterface<any>) => any = () => {}) {
     const registry = customElements.registry;
     // iterate registry entries in order to retrieve all registered tags
     for (let key in registry) {
@@ -18,10 +18,10 @@ export function bootstrap(root: HTMLElement, callback: (node: Component) => any 
             const node = nodes[i];
             // check if already instantiated
             if (node instanceof constructor) {
-                callback(node as Component);
+                callback(node as ComponentInterface<any>);
             } else {
                 customElements.upgrade(node as HTMLElement);
-                callback(node as Component);
+                callback(node as ComponentInterface<any>);
             }
         }
     }

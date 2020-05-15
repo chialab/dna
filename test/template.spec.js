@@ -1,5 +1,6 @@
 import htm from 'htm/mini';
-import { getModule, spyFunction, getComponentName } from './helpers.js';
+import { Observable } from 'rxjs';
+import { getModule, spyFunction, getComponentName, wait } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -427,13 +428,13 @@ describe('template', function() {
                 JSX() {
                     return DNA.h('div', null,
                         DNA.until(this.promise, 'Loading...'),
-                        DNA.wait(this.promise, ['Hello ', this.promise])
+                        this.promise.then((res) => ['Hello ', res])
                     );
                 },
                 HTML() {
                     return DNA.html`<div>
                         ${DNA.until(this.promise, 'Loading...')}
-                        ${DNA.wait(this.promise, DNA.html`Hello ${this.promise}`)}
+                        ${this.promise.then((res) => DNA.html`Hello ${res}`)}
                     </div>`;
                 },
                 TEMPLATE() {
@@ -443,7 +444,7 @@ describe('template', function() {
                                 Loading...
                             </template>
                             <template then={{promise}}>
-                                Hello {{promise}}
+                                Hello {{$resolved}}
                             </template>
                         </div>
                     </template>`);
@@ -476,13 +477,13 @@ describe('template', function() {
                 JSX() {
                     return DNA.h('div', null,
                         DNA.until(this.promise, 'Loading...'),
-                        DNA.wait(this.promise, ['Hello ', this.promise], ['Error ', this.promise])
+                        this.promise.catch((error) => ['Error ', error])
                     );
                 },
                 HTML() {
                     return DNA.html`<div>
                         ${DNA.until(this.promise, 'Loading...')}
-                        ${DNA.wait(this.promise, DNA.html`Hello ${this.promise}`, DNA.html`Error ${this.promise}`)}
+                        ${this.promise.catch((error) => DNA.html`Error ${error}`)}
                     </div>`;
                 },
                 TEMPLATE() {
@@ -491,11 +492,8 @@ describe('template', function() {
                             <template until={{promise}}>
                                 Loading...
                             </template>
-                            <template then={{promise}}>
-                                Hello {{promise}}
-                            </template>
                             <template catch={{promise}}>
-                                Error {{promise}}
+                                Error {{$rejected}}
                             </template>
                         </div>
                     </template>`);
@@ -531,12 +529,112 @@ describe('template', function() {
             const promise2 = new Promise((resolve) => {
                 setTimeout(() => resolve('World!'), 500);
             });
-            const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${DNA.wait(promise, DNA.html`Hello ${promise}`)}`)}</div>`;
+            const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}</div>`;
             DNA.render(wrapper, template, context);
             while (context.promises.length) {
                 await Promise.all(context.promises);
             }
             expect(wrapper.innerHTML).to.be.equal('<div></div>');
+        });
+    });
+
+    describe('observables', () => {
+        describe('should subscribe', async () => {
+            const TEMPLATES = {
+                JSX() {
+                    return DNA.h('div', null, this.observable$);
+                },
+                HTML() {
+                    return DNA.html`<div>
+                        ${this.observable$}
+                    </div>`;
+                },
+                TEMPLATE() {
+                    const template = html(`<template>
+                        <div>{{observable$}}</div>
+                    </template>`);
+                    return DNA.template(template, this);
+                },
+            };
+
+            for (let type in TEMPLATES) {
+                it(type, async () => {
+                    const observable$ = new Observable(async (subscriber) => {
+                        await wait(100);
+                        subscriber.next(1);
+                        await wait(100);
+                        subscriber.next(2);
+                        await wait(100);
+                        subscriber.next(3);
+                        await wait(100);
+                        subscriber.next(4);
+                        subscriber.complete();
+                    });
+                    const context = { observable$ };
+
+                    DNA.render(wrapper, TEMPLATES[type].call(context), context);
+
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div>1</div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div>2</div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div>3</div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div>4</div>');
+                });
+            }
+        });
+
+        describe('should subscribe and pipe', async () => {
+            const TEMPLATES = {
+                JSX() {
+                    return DNA.h('div', null, this.observable$.pipe((num) => DNA.h('span', null, num)));
+                },
+                HTML() {
+                    return DNA.html`<div>
+                        ${this.observable$.pipe((num) => DNA.html`<span>${num}</span>`)}
+                    </div>`;
+                },
+                TEMPLATE() {
+                    const template = html(`<template>
+                        <div>
+                            <template pipe={{observable$}} as="$value">
+                                <span>{{$value}}</span>
+                            </template>
+                        </div>
+                    </template>`);
+                    return DNA.template(template, this);
+                },
+            };
+
+            for (let type in TEMPLATES) {
+                it(type, async () => {
+                    const observable$ = new Observable(async (subscriber) => {
+                        await wait(100);
+                        subscriber.next(1);
+                        await wait(100);
+                        subscriber.next(2);
+                        await wait(100);
+                        subscriber.next(3);
+                        await wait(100);
+                        subscriber.next(4);
+                        subscriber.complete();
+                    });
+                    const context = { observable$ };
+
+                    DNA.render(wrapper, TEMPLATES[type].call(context), context);
+
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div><span>1</span></div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div><span>2</span></div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div><span>3</span></div>');
+                    await wait(100);
+                    expect(wrapper.innerHTML).to.be.equal('<div><span>4</span></div>');
+                });
+            }
         });
     });
 });

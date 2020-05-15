@@ -4,6 +4,7 @@ import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
 import { isThenable, wrapThenable } from './Thenable';
+import { Subscription, isSubscribable, wrapSubscribable } from './Observable';
 import { createSymbolKey } from './symbols';
 import { getSlotted } from './slotted';
 import { css } from './css';
@@ -42,10 +43,17 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
     // promises list
     let promises: Promise<unknown>[];
+    let subscriptions: Subscription[];
     if (rootRenderContext === renderContext) {
+        let oldSubscriptions = rootRenderContext.subscriptions;
+        if (oldSubscriptions) {
+            oldSubscriptions.forEach((subscription) => subscription.unsubscribe());
+        }
         promises = rootRenderContext.promises = [];
+        subscriptions = rootRenderContext.subscriptions = [];
     } else {
         promises = rootRenderContext.promises as Promise<unknown>[];
+        subscriptions = rootRenderContext.subscriptions as Subscription[];
     }
 
     const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
@@ -64,7 +72,6 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
         if (isThenable(template)) {
             let status = wrapThenable(template);
-            handleItems(status.result, templateContext, filter);
             if (status.pending) {
                 promises.push(template);
                 template
@@ -76,6 +83,23 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                         }
                     });
             }
+            handleItems(status.result, templateContext, filter);
+            return;
+        }
+
+        if (isSubscribable(template)) {
+            let status = wrapSubscribable(template);
+            if (!status.complete) {
+                let subscription = template.subscribe(() => {
+                    render(root, input, templateContext, rootRenderContext, filter, slot);
+                }, () => {
+                    render(root, input, templateContext, rootRenderContext, filter, slot);
+                }, () => {
+                    subscription.unsubscribe();
+                });
+                subscriptions.push(subscription);
+            }
+            handleItems(status.current, templateContext, filter);
             return;
         }
 

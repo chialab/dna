@@ -32,9 +32,9 @@ In order to be fast, simple and predictive, DNA uses a custom template engine. C
 
 If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use template strings to avoid the build step in your workflow.
 
-### Properties, async render, slots... and more!
+### Properties, slots, Promises and Observables!
 
-DNA comes with a lot of features in a very small package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events.
+DNA comes with a lot of features in a very small package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events. It can also resolve `Promise`s and pipe `Observable`s directly in the template.
 
 ## Browsers support
 

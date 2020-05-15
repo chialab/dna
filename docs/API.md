@@ -6,14 +6,14 @@
 
 **Classes**
 
-<a href="#customelementregistry">CustomElementRegistry</a>, <a href="#component">Component</a>
+<a href="#customelementregistry">CustomElementRegistry</a>
 
 
 
 
 **Constants**
 
-<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component_base">Component_base</a>, <a href="#until">until</a>, <a href="#wait">wait</a>
+<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#context">Context</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#context">Context</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>
 
 
 <hr />
@@ -271,36 +271,6 @@ It upgrades all custom elements in a subtree even before they are connected to t
 
 <br />
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<hr />
-
-<strong id="component"><code>class</code>  Component</strong>
-    
-
-
-<strong>Extends:</strong> <a href="#component_base">Component_base</a>
-
-<p>
-
-The DNA base Component constructor, a Custom Element constructor with
-declarative properties and event delegations, custom template and
-a complete life cycle implementation.
-All DNA components **must** extends this class.
-
-</p>
 
 
 
@@ -720,11 +690,18 @@ Get a native HTMLElement constructor to extend by its name.
 
 <hr />
 
-<strong id="component_base"><code>constant</code>  Component_base</strong>
+<strong id="component"><code>constant</code>  Component</strong>
 
 
 
+<p>
 
+The DNA base Component constructor, a Custom Element constructor with
+declarative properties and event delegations, custom template and
+a complete life cycle implementation.
+All DNA components **must** extends this class.
+
+</p>
 
 
 
@@ -752,27 +729,6 @@ It renders the template when then provided Thenable is in pending status.
 <strong>Type:</strong>
 
 <pre>(thenable: any, template: <a href="#template">Template</a>): any</pre>
-
-
-
-
-<hr />
-
-<strong id="wait"><code>constant</code>  wait</strong>
-
-
-
-<p>
-
-It renders the template once then provided Thenable has resolved or rejected.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(thenable: any, successTemplate: <a href="#template">Template</a>, errorTemplate?: <a href="#template">Template</a>): any</pre>
 
 
 
@@ -813,6 +769,45 @@ A list of namespaceURI bound with their tagName.
 
 <hr />
 
+<strong id="observable"><code>type</code>  Observable</strong>
+
+<p>
+
+Observable-like minimal interface.
+
+</p>
+
+
+
+<pre>{
+    pipe(operator: (value: T): any): <a href="#observable">Observable</a>&lt;T&gt;;
+    subscribe(nextCallback: (value: T): any, errorCallback: (error: Error): any, completeCallback: (): any): <a href="#subscription">Subscription</a>;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="subscription"><code>type</code>  Subscription</strong>
+
+<p>
+
+Subscription-like minimal interface.
+
+</p>
+
+
+
+<pre>{
+    unsubscribe(): void;
+}</pre>
+
+
+
+
+<hr />
+
 <strong id="templateitem"><code>type</code>  TemplateItem</strong>
 
 <p>
@@ -824,7 +819,7 @@ It can be a node, a Hyper or Interpolate function or a primitive value.
 
 
 
-<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|Promise&lt;any&gt;|string|number|boolean|undefined|null</pre>
+<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|Promise&lt;any&gt;|<a href="#observable">Observable</a>&lt;any&gt;|string|number|boolean|undefined|null</pre>
 
 
 
@@ -921,6 +916,7 @@ A ontext interface.
 
 <pre>HTMLElement & {
     promises?: Promise&lt;any&gt;[];
+    subscriptions?: <a href="#subscription">Subscription</a>[];
     [key: string]: any;
 }</pre>
 
@@ -1103,36 +1099,6 @@ A validation function for the class field.
 
 <hr />
 
-<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
-
-<p>
-
-The basic DNA Component interface.
-It's a Custom Element, but with some extra useful method.
-
-</p>
-
-
-
-<pre>{
-    observedAttributes: string[];
-    constructor(node?: HTMLElement, properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-}</pre>
-
-<strong>See also</strong>
-
-* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
-
-
-<hr />
-
 <strong id="componentinterface"><code>type</code>  ComponentInterface</strong>
 
 
@@ -1178,3 +1144,33 @@ It's a Custom Element, but with some extra useful method.
 }</pre>
 
 
+
+
+<hr />
+
+<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
+
+<p>
+
+The basic DNA Component interface.
+It's a Custom Element, but with some extra useful method.
+
+</p>
+
+
+
+<pre>{
+    observedAttributes: string[];
+    constructor(node?: HTMLElement, properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+}</pre>
+
+<strong>See also</strong>
+
+* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).

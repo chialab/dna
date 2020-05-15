@@ -1,7 +1,7 @@
 import { createSymbolKey } from './symbols';
 
 /**
- * A Symbol which contains all Thenable state.
+ * A Symbol which contains Thenable state.
  * @private
  */
 const symbol: unique symbol = createSymbolKey() as any;
@@ -11,8 +11,6 @@ const symbol: unique symbol = createSymbolKey() as any;
  */
 export type ThenableState = {
     pending: boolean;
-    rejected: boolean;
-    resolved: boolean;
     result?: any;
 };
 
@@ -41,20 +39,16 @@ export const wrapThenable = (target: any): ThenableState => {
     }
     let state: ThenableState = {
         pending: true,
-        rejected: false,
-        resolved: false,
     };
     (thenable as any)[symbol] = state;
     thenable
         .then((result: unknown) => {
             state.result = result;
             state.pending = false;
-            state.resolved = true;
         })
         .catch((error: unknown) => {
             state.result = error;
             state.pending = false;
-            state.rejected = true;
         });
 
     return state;

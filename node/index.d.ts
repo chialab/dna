@@ -1,1 +1,1 @@
-export * from '../dist/adapters/node';
+export * from '../dist/adapters/node/dna';

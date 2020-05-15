@@ -3,7 +3,8 @@ import { Template } from './Template';
 import { Context, createContext } from './Context';
 import { h, HyperNode } from './HyperNode';
 import { isElement, isText } from './DOM';
-import { until, wait } from './directives';
+import { until } from './directives';
+import { Observable } from './Observable';
 
 enum Namespaces {
     SVG = 'http://www.w3.org/2000/svg',
@@ -98,16 +99,29 @@ function innerCompile(context: Context, node: HTMLElement | Text | NodeList | No
                     innerCompile(context, children)
                 );
             } else if (node.hasAttribute('then')) {
-                return wait(
-                    interpolate(node.getAttribute('then') as string, context),
-                    innerCompile(context, children)
-                );
+                let as = node.getAttribute('as') || '$resolved';
+                let promise = interpolate(node.getAttribute('then') as string, context) as Promise<unknown>;
+                return promise
+                    .then((result: any) => {
+                        context[as] = result;
+                        return innerCompile(context, children);
+                    });
             } else if (node.hasAttribute('catch')) {
-                return wait(
-                    interpolate(node.getAttribute('catch') as string, context),
-                    undefined,
-                    innerCompile(context, children)
-                );
+                let as = node.getAttribute('as') || '$rejected';
+                let promise = interpolate(node.getAttribute('catch') as string, context) as Promise<unknown>;
+                return promise
+                    .catch((error: Error) => {
+                        context[as] = error;
+                        return innerCompile(context, children);
+                    });
+            } else if (node.hasAttribute('pipe')) {
+                let as = node.getAttribute('as') || '$value';
+                let observable = interpolate(node.getAttribute('pipe') as string, context) as Observable<unknown>;
+                return observable
+                    .pipe((value) => {
+                        context[as] = value;
+                        return innerCompile(context, children);
+                    });
             } else if (node.hasAttribute('repeat')) {
                 // extract the `key` variable to use in the template
                 let keyVar = node.getAttribute('key') || '$key';
