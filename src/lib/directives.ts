@@ -1,5 +1,5 @@
 import { Template } from './Template';
-import { wrapThenable } from './Thenable';
+import { getThenableState } from './Thenable';
 
 /**
  * It renders the template when then provided Thenable is in pending status.
@@ -8,11 +8,9 @@ import { wrapThenable } from './Thenable';
  * @return A promise which resolves the template while the Thenable is in pending status.
  */
 export const until = (thenable: any, template: Template) => {
-    let original = wrapThenable(thenable);
-    let wrapper = thenable
-        .then(() => false)
-        .catch(() => false);
-    let state = wrapThenable(wrapper);
+    let original = getThenableState(thenable);
+    let wrapper = thenable.then(() => false).catch(() => false);
+    let state = getThenableState(wrapper);
     state.result = original.pending && template;
     return wrapper;
 };

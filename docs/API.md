@@ -422,7 +422,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#context">Context</a>|undefined, rootContext?: <a href="#context">Context</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): void|Node|Node[]</pre>
+<pre>(root: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#context">Context</a>|undefined, rootContext?: <a href="#context">Context</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): Node|Node[]|void</pre>
 
 
 
@@ -464,10 +464,7 @@ HyperFunction factory to use as JSX pragma.
 
 <strong>Type:</strong>
 
-<pre>(tagOrComponent: string|Symbol|{
-    constructor(): HTMLElement;
-    prototype: HTMLElement;
-}|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
+<pre>(tagOrComponent: string|HTMLElement|<a href="#fragment">Fragment</a>|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
 
 
 
@@ -617,7 +614,7 @@ Dispatch a custom Event.
 
 <strong>Type:</strong>
 
-<pre>(element: Element, event: string|Event, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean</pre>
+<pre>(element: Element, event: Event|string, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean</pre>
 
 
 
@@ -638,7 +635,7 @@ Dispatch an async custom Event.
 
 <strong>Type:</strong>
 
-<pre>(element: Element, event: string|Event, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;</pre>
+<pre>(element: Element, event: Event|string, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;</pre>
 
 
 

@@ -21,20 +21,13 @@ export type ThenableState = {
 export const isThenable = (target: any): target is Promise<unknown> => target && typeof target.then === 'function';
 
 /**
- * Get the state of a Thenable object.
- * @param target The Thenable object.
- * @return The Thenable state.
- */
-export const getThenableState = (target: Promise<unknown>) => wrapThenable(target);
-
-/**
  * Get or inject a state into a Thenable object.
  * @param target The Thenable to extend.
  * @return The Thenable state instance.
  */
-export const wrapThenable = (target: any): ThenableState => {
+export const getThenableState = (target: Promise<unknown>): ThenableState => {
     let thenable: Promise<unknown> = target;
-    if (symbol in thenable) {
+    if ((thenable as any)[symbol]) {
         return (thenable as any)[symbol];
     }
     let state: ThenableState = {

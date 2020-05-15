@@ -24,7 +24,7 @@ const symbol: unique symbol = createSymbolKey() as any;
 /**
  * An object representing the status of a Subscribable.
  */
-export type SubscribableState = {
+export type ObservableState = {
     complete: boolean;
     errored: boolean;
     current?: any;
@@ -34,26 +34,19 @@ export type SubscribableState = {
  * Check if the target is a Subscribable (has the `subscribe` method).
  * @param target The object to check.
  */
-export const isSubscribable = (target: any): target is Observable<unknown> => target && typeof target['subscribe'] === 'function';
-
-/**
- * Get the state of a Subscribable object.
- * @param target The Subscribable object.
- * @return The Subscribable state.
- */
-export const getSubscribableState = (target: Promise<unknown>) => wrapSubscribable(target);
+export const isObservable = (target: any): target is Observable<unknown> => target && typeof target['subscribe'] === 'function';
 
 /**
  * Get or inject a state into a Subscribable object.
  * @param target The Subscribable to extend.
  * @return The Subscribable state instance.
  */
-export const wrapSubscribable = (target: any): SubscribableState => {
+export const getObservableState = (target: any): ObservableState => {
     let subscribable: Observable<unknown> = target;
-    if (symbol in subscribable) {
+    if ((subscribable as any)[symbol]) {
         return (subscribable as any)[symbol];
     }
-    let state: SubscribableState = {
+    let state: ObservableState = {
         complete: false,
         errored: false,
     };

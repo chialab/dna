@@ -3,8 +3,8 @@ import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Templat
 import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
-import { isThenable, wrapThenable } from './Thenable';
-import { Subscription, isSubscribable, wrapSubscribable } from './Observable';
+import { isThenable, getThenableState } from './Thenable';
+import { Subscription, isObservable, getObservableState } from './Observable';
 import { createSymbolKey } from './symbols';
 import { getSlotted } from './slotted';
 import { css } from './css';
@@ -71,7 +71,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
         }
 
         if (isThenable(template)) {
-            let status = wrapThenable(template);
+            let status = getThenableState(template);
             if (status.pending) {
                 promises.push(template);
                 template
@@ -87,8 +87,8 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             return;
         }
 
-        if (isSubscribable(template)) {
-            let status = wrapSubscribable(template);
+        if (isObservable(template)) {
+            let status = getObservableState(template);
             if (!status.complete) {
                 let subscription = template.subscribe(() => {
                     render(root, input, templateContext, rootRenderContext, filter, slot);
