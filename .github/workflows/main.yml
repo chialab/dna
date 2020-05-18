@@ -5,6 +5,7 @@ jobs:
   # BUILD
   build:
     name: Build
+    if: "! contains(toJSON(github.event.commits.*.message), 'docs:')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository

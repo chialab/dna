@@ -71,7 +71,7 @@ customElements.upgrade(element);
 
 ## Integration with third party libraries
 
-Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are just HTML nodes, the integration is possible using the element context as library param:
+Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are DOM nodes, the integration is possible using the element context as library param:
 
 ```ts
 import { Component, customElements } from '@chialab/dna';

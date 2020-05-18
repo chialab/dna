@@ -16,10 +16,10 @@ import { Component, customElements } from 'https://unpkg.com/@chialab/dna?module
 
 ### Setup a bundler
 
-The DNA environment is pretty simple and common (if you are familiar with other libraries like React, Angular, LitElement etc.):
+The DNA environment is pretty common (if you are familiar with other libraries like React, Angular, LitElement etc.):
 
 1. Make sure you have a recent [Node.js](https://nodejs.org/en/) version installed
-2. Setup a bundler ([Rollup](https://rollupjs.org) is recommended, but [Webpack](https://webpack.js.org/) and [Parcel](https://parceljs.org/) are just as good choices)
+2. Setup a bundler ([Rollup](https://rollupjs.org) is recommended, but [Webpack](https://webpack.js.org/) and [Parcel](https://parceljs.org/) are equally good choices)
 3. Setup Babel ([Rollup](https://github.com/rollup/rollup-plugin-babel), [Webpack](https://github.com/babel/babel-loader), [Parcel](https://parceljs.org/transforms.html#babel)) or TypeScript ([Rollup](https://github.com/rollup/rollup-plugin-typescript), [Webpack](https://webpack.js.org/guides/typescript/), [Parcel](https://parceljs.org/transforms.html#typescript)):
     * if your choice is Babel, please make sure all this plugins are loaded in order to use all DNA features:
         ```sh

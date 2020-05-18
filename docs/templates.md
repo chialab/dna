@@ -295,7 +295,7 @@ h(Fragment, null,
 
 ### Promises
 
-The DNA's render algorithm has builtin support for `Promise`s in template: it interpolates the result of a `Promise` just like using the `await` statement and provides the helper `until` for status handling:
+The DNA's render algorithm has builtin support for `Promise`s in template: it interpolates the result of a `Promise` as if you were using the `await` statement and provides the helper `until` for status handling:
 
 ```ts
 import { until } from '@chialab/dna';
@@ -369,7 +369,7 @@ h(Fragment, null,
 
 ### Observables
 
-As well as `Promise`s, DNA treats [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can simply interpolate [`Observable`]s' values or pipe a template:
+As well as `Promise`s, DNA treats [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
 
 ```ts
 import { timer, interval } from 'rxjs';

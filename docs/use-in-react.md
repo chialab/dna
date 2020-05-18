@@ -1,6 +1,6 @@
 # Use in React
 
-Web Components support in React is [really poor](https://it.reactjs.org/docs/web-components.html): you can instantiate simple nodes with simple attributes, but you can't give them referenced properties or slotted children. DNA exposes a module that automatically wrap the Custom Element into a React Component, with a full TypeScript support.
+Web Components support in React is [really poor](https://it.reactjs.org/docs/web-components.html): you can instantiate nodes with attributes, but you can't give them referenced properties or slotted children. DNA exposes a module that automatically wrap the Custom Element into a React Component, with a full TypeScript support.
 
 First of all, make sure you have DNA installed, as well as the React peer dependency.
 

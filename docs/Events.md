@@ -1,6 +1,6 @@
 # Events
 
-Since Web Components are just `HTMLElement` extensions, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback. DNA add some extra features like declarative event listener declarations and delegation.
+Since Web Components extend the native `HTMLElement`, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback. DNA add some extra features like declarative event listeners and delegations.
 
 ## Declarative event listeners
 
@@ -107,7 +107,7 @@ class Dialog extends Component {
 customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
-Otherwise, you can use `delegateEventListener` and `undelegateEventListener` methods just like `addEventListener` and `removeEventListener`:
+Otherwise, you can use `addEventListener`, `removeEventListener`, `delegateEventListener` and `undelegateEventListener` methods:
 
 ```ts
 import { Component, customElements, DOM } from '@chialab/idom';
