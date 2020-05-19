@@ -5,7 +5,7 @@ export default ((): Window & typeof globalThis => {
     }
 
     // node environment
-    const jsdom = require(/* do not bundle */eval('\'jsdom\''));
+    const jsdom = require('jsdom');
     const dom = new jsdom.JSDOM();
     return dom.window;
 })();
