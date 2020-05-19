@@ -231,7 +231,7 @@ Custom Elements should be defined using the `customElements` registry.
 * Some event validation error messages have been changed
 * Some component constructor error messages have been changed
 * Some properties validation error messages have been changed
-* Life cycle hook invokations have been align with specification: now the `attributeChangedCallback` is called on every `setAttribute` even if the new value is the same of the old one, as well as `connectedCallback` is invoked on `appendChild` event if the node is already the last of the parent.
+* Life cycle have been align with specification: now the `attributeChangedCallback` is called on every `setAttribute` even if the new value is the same of the old one, as well as `connectedCallback` is invoked on `appendChild` event if the node is already the last of the parent.
 
 ## Migration
 
