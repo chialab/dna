@@ -108,7 +108,13 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
         let isObject = typeof template === 'object';
 
         if (isObject && isHyperNode(template)) {
-            let { Component, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
+            let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
+
+            if (Function) {
+                handleItems(Function(properties, templateContext), templateContext, filter);
+                return;
+            }
+
             if (isFragment) {
                 handleItems(children, templateContext, filter);
                 return;

@@ -1,5 +1,6 @@
 import { HyperNode } from './HyperNode';
 import { Observable } from './Observable';
+import { Context } from './Context';
 
 /**
  * The atomic template item.
@@ -31,4 +32,4 @@ export type Template = TemplateItem | TemplateItems;
  * @param props A set of properties with children.
  * @return A template.
  */
-export type TemplateFunction = (props: { children: Template, [key: string]: any }) => Template;
+export type TemplateFunction = (props: { children: Template, [key: string]: any }, context: Context) => Template;

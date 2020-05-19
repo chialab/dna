@@ -32,6 +32,7 @@ export enum NamespaceURI {
  */
 export type HyperNode = {
     Component?: typeof HTMLElement,
+    Function?: TemplateFunction,
     tag?: string;
     is?: string,
     key?: any,
@@ -63,7 +64,8 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         is: string | undefined,
         key: any | undefined,
         propertiesToSet: any = {},
-        Component: typeof HTMLElement | TemplateFunction | undefined;
+        Component: typeof HTMLElement | undefined,
+        Function: TemplateFunction | undefined;
 
     if (!isFragment) {
         if (properties) {
@@ -80,12 +82,10 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         }
 
         if (!tag) {
-            if ((tagOrComponent as Function).prototype instanceof window.HTMLElement) {
+            if (((tagOrComponent as Function).prototype instanceof window.HTMLElement)) {
                 Component = tagOrComponent as typeof HTMLElement;
             } else {
-                isFragment = true;
-                children = (tagOrComponent as TemplateFunction)(propertiesToSet) as TemplateItems;
-                propertiesToSet = {};
+                Function = tagOrComponent as TemplateFunction;
             }
         } else {
             // get the constructor from the registry
@@ -95,6 +95,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
 
     return {
         Component,
+        Function,
         tag,
         is,
         key,
