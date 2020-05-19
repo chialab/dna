@@ -12,13 +12,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -28,18 +21,33 @@ jobs:
         run: npm install -g @chialab/rna-cli
       - name: Install project dependencies
         run: yarn install
-      - name: Run build script
-        run: yarn run build
-      - name: Cache distribution files
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
-          path: dist
-          key: build-${{ github.sha }}
-      - name: Upload distribution files
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Run build script
+        run: yarn run build
+      - name: Upload core build
         uses: actions/upload-artifact@v1
         with:
           name: DNA
           path: dist
+      - name: Upload compat build
+        uses: actions/upload-artifact@v1
+        with:
+          name: DNA Compat
+          path: compat/index*
+      - name: Upload hooks build
+        uses: actions/upload-artifact@v1
+        with:
+          name: DNA Hooks
+          path: hooks/index*
+      - name: Upload react build
+        uses: actions/upload-artifact@v1
+        with:
+          name: DNA React
+          path: react/index*
   # TEST
   test-browser:
     name: Test Browsers
@@ -51,13 +59,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -65,13 +66,16 @@ jobs:
           key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
           path: dist
-          key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version' --headless
       - name: Upload coverage to codecov
@@ -79,6 +83,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: test/__coverage__/*/lcov.info
+
   test-node:
     name: Test Node
     needs:
@@ -89,13 +94,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -103,13 +101,16 @@ jobs:
           key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
           path: dist
-          key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:node
       - name: Upload coverage to codecov
@@ -117,6 +118,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: test/__coverage__/*/lcov.info
+
   test-saucelabs:
     name: Test SauceLabs
     needs:
@@ -127,13 +129,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -141,13 +136,16 @@ jobs:
           key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
           path: dist
-          key: build-${{ github.sha }}
       - name: Run tests
         run: yarn run test:saucelabs
         env:
@@ -158,6 +156,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: test/__coverage__/*/lcov.info
+
   test-compat:
     name: Test compat library
     needs:
@@ -168,13 +167,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -182,48 +174,24 @@ jobs:
           key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
           path: dist
-          key: build-${{ github.sha }}
+      - name: Fetch compat artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA Compat
+          path: compat
       - name: Run tests
         run: yarn run test:compat --headless
-  test-react:
-    name: Test react library
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v1
-      - name: Setup Node
-        uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
-      - name: Set up NPM cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
-      - name: Install RNA
-        run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
-        uses: actions/cache@v1
-        with:
-          path: dist
-          key: build-${{ github.sha }}
-      - name: Run tests
-        run: yarn run test:react --headless
+
   test-hooks:
     name: Test hooks library
     needs:
@@ -234,13 +202,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Setup Node
         uses: actions/setup-node@v1
-      - name: Config Yarn cache
-        run: yarn config set cache-folder $GITHUB_WORKSPACE/.yarn
-      - name: Set up Yarn cache
-        uses: actions/cache@v1
-        with:
-          path: .yarn
-          key: yarn-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
       - name: Set up NPM cache
         uses: actions/cache@v1
         with:
@@ -248,12 +209,55 @@ jobs:
           key: npm-cache-${{ hashFiles('**/yarn.lock') }}
       - name: Install RNA
         run: npm install -g @chialab/rna-cli
-      - name: Install project dependencies
-        run: yarn install
-      - name: Fetch build artifacts
+      - name: Cache dependencies
         uses: actions/cache@v1
         with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
           path: dist
-          key: build-${{ github.sha }}
+      - name: Fetch hooks artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA Hooks
+          path: hooks
       - name: Run tests
         run: yarn run test:hooks --headless
+
+  test-react:
+    name: Test react library
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: deps-cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA
+          path: dist
+      - name: Fetch react artifacts
+        uses: actions/download-artifact@master
+        with:
+          name: DNA React
+          path: react
+      - name: Run tests
+        run: yarn run test:react --headless
