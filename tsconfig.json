@@ -19,7 +19,7 @@
     "paths": {
       "@chialab/dna": [
         "./dist/esm/dna",
-        "./src/dna"
+        "./src/index"
       ],
       "react": [
         "./node_modules/react"
@@ -27,7 +27,10 @@
     }
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "compat/src/**/*.ts",
+    "hooks/src/**/*.ts",
+    "react/src/**/*.ts"
   ],
   "exclude": [
     "test/**/*"

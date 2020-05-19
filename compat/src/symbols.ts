@@ -1,4 +1,4 @@
-import { createSymbolKey } from '../../../lib/symbols';
+import { createSymbolKey } from '../../src/symbols';
 
 /**
  * Symbol for DNA component mixin.

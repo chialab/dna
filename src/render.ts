@@ -1,6 +1,6 @@
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode } from './HyperNode';
+import { isHyperNode, HyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
 import { isThenable, getThenableState } from './Thenable';
@@ -116,7 +116,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
             // if the current patch is a slot,
             if (isSlot) {
-                let slottedChildren = (getSlotted(templateContext) || []).slice(0);
+                let slottedChildren = (getSlotted(templateContext as HyperNode) || []).slice(0);
                 let childContext = getContext(slottedChildren) || templateContext;
                 let filter;
                 if (properties.name) {

@@ -1,5 +1,5 @@
 import { extend } from '@chialab/dna';
-import { createSymbolKey } from '../../../lib/symbols';
+import { createSymbolKey } from '../../src/symbols';
 import { warnCode } from './deprecations';
 
 const symbol: unique symbol = createSymbolKey() as any;

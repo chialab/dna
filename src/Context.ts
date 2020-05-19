@@ -9,7 +9,7 @@ const CONTEXT_SYMBOL = createSymbolKey();
 /**
  * A ontext interface.
  */
-export type Context = HTMLElement & {
+export type Context = {
     promises?: Promise<unknown>[];
     subscriptions?: Subscription[];
     [key: string]: any;

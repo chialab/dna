@@ -1,5 +1,5 @@
-import './lib/DOM';
-import * as IDOM from './lib/IDOM';
+import './DOM';
+import * as IDOM from './IDOM';
 
 export {
     CustomElementRegistry,
@@ -38,15 +38,15 @@ export {
     until,
 } from '@chialab/dna';
 export { IDOM };
-export * from './lib/registry';
-export * from './lib/mix';
-export * from './lib/bootstrap';
-export * from './lib/prop';
-export * from './lib/trust';
-export * from './lib/BaseComponent';
-export * from './lib/render';
-export * from './lib/namespace';
-export * from './lib/mixins';
-export * from './lib/symbols';
-export * from './lib/proxy';
-export * from './lib/css';
+export * from './registry';
+export * from './mix';
+export * from './bootstrap';
+export * from './prop';
+export * from './trust';
+export * from './BaseComponent';
+export * from './render';
+export * from './namespace';
+export * from './mixins';
+export * from './symbols';
+export * from './proxy';
+export * from './css';

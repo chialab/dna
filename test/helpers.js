@@ -13,7 +13,7 @@ if (typeof Symbol() !== 'symbol') {
 
 export async function getModule() {
     if (typeof window === 'undefined') {
-        return require('@chialab/dna' + '/node');
+        return require(eval('\'@chialab/dna\''));
     }
     return await import('@chialab/dna');
 }

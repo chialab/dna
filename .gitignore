@@ -17,3 +17,8 @@ yarn-error.log
 /public
 
 # RNA
+
+compat/*
+hooks/*
+react/*
+!src

@@ -10,7 +10,7 @@ $ npm i @chialab/dna jsdom
 
 ```js
 // get the module namespace
-const { Component, customElements, DOM, html, render } = require('@chialab/dna/node');
+const { Component, customElements, DOM, html, render } = require('@chialab/dna');
 
 class HelloWorld extends Component {
     render() {
