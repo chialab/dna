@@ -1,4 +1,4 @@
-import { window, define, render, DOM, BaseComponent } from '@chialab/dna/compat.js';
+import { window, define, render, DOM, BaseComponent } from '@chialab/dna/compat';
 import { getComponentName } from '../helpers.js';
 
 function normalizeContent(content) {

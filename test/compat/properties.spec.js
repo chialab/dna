@@ -1,4 +1,4 @@
-import { prop, define, render, DOM, BaseComponent } from '@chialab/dna/compat.js';
+import { prop, define, render, DOM, BaseComponent } from '@chialab/dna/compat';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] PropertiesComponent', () => {

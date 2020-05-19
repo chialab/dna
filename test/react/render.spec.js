@@ -1,4 +1,4 @@
-import { Component, html as _html, customElements, DOM, Root } from '@chialab/dna/react.js';
+import { Component, html as _html, customElements, DOM, Root } from '@chialab/dna/react';
 import ReactDOM from 'react-dom';
 
 describe('[React]', () => {

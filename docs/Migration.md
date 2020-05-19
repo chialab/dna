@@ -1,6 +1,6 @@
 # Backward compatibility and migration
 
-DNA 3 comes with a compatibility layer with the 2.x version. It is called `compat` and it is available as module importing the `@chialab/dna/compat.js` script:
+DNA 3 comes with a compatibility layer with the 2.x version. It is called `compat` and it is available as module importing the `@chialab/dna/compat` script:
 
 ```sh
 $ npm uninstall @dnajs/idom
@@ -9,7 +9,7 @@ $ npm install @chialab/dna @chialab/proteins
 
 ```diff
 - import { BaseComponent, define } from '@dnajs/idom';
-+ import { BaseComponent, define } from '@chialab/dna/compat.js';
++ import { BaseComponent, define } from '@chialab/dna/compat';
 ```
 
 You can also use module alias in your bundler ([webpack](https://webpack.js.org/configuration/resolve/), [rollup](https://github.com/rollup/plugins/tree/master/packages/alias)) in order to try out the new version without code changes.
@@ -185,8 +185,8 @@ The `proxy` helper have been deprecated since it is now useless, see the [`exten
 The `trust` helper has been deprecated. Use the `html` helper instaed.
 
 ```diff
--import { trust } from '@chialab/dna/compat.js';
-+import { html } from '@chialab/dna/compat.js';
+-import { trust } from '@chialab/dna/compat';
++import { html } from '@chialab/dna/compat';
 
 -<div>{trust('<h1>Title</h1'>')}</div>;
 +<div>{html('<h1>Title</h1'>')}</div>;
@@ -197,7 +197,7 @@ The `trust` helper has been deprecated. Use the `html` helper instaed.
 The `mix` has been deprecated. Import the reference directly from [`@chialab/proteins`](https://www.npmjs.com/package/@chialab/proteins).
 
 ```diff
--import { mix } from '@chialab/dna/compat.js';
+-import { mix } from '@chialab/dna/compat';
 +import { mix } from '@chialab/proteins';
 ```
 
@@ -206,8 +206,8 @@ The `mix` has been deprecated. Import the reference directly from [`@chialab/pro
 Custom Elements that extend builtin elements should also extend their constructors.
 
 ```diff
--import { BaseComponent } from '@chialab/dna/compat.js';
-+import { mixin, extend, window } from '@chialab/dna/compat.js';
+-import { BaseComponent } from '@chialab/dna/compat';
++import { mixin, extend, window } from '@chialab/dna/compat';
 
 -export class XButton extends BaseComponent {
 +export class XButton extends mixin(extend(window.HTMLButtonElement)) {
@@ -218,8 +218,8 @@ Custom Elements that extend builtin elements should also extend their constructo
 Custom Elements should be defined using the `customElements` registry.
 
 ```diff
--import { define } from '@chialab/dna/compat.js';
-+import { customElements } from '@chialab/dna/compat.js';
+-import { define } from '@chialab/dna/compat';
++import { customElements } from '@chialab/dna/compat';
 
 -define('x-dialog', Dialog);
 +customElements.define('x-dialog', Dialog);

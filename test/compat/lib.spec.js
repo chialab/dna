@@ -1,4 +1,4 @@
-import { DOM, window, define, bootstrap, render, BaseComponent } from '@chialab/dna/compat.js';
+import { DOM, window, define, bootstrap, render, BaseComponent } from '@chialab/dna/compat';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] lib', () => {

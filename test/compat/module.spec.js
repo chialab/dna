@@ -1,4 +1,4 @@
-import * as DNA from '@chialab/dna/compat.js';
+import * as DNA from '@chialab/dna/compat';
 import * as DNA_OLD from '@dnajs/idom';
 
 describe('[Compat] module', function() {

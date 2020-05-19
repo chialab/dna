@@ -1,4 +1,4 @@
-import { define, render, DOM, BaseComponent } from '@chialab/dna/compat.js';
+import { define, render, DOM, BaseComponent } from '@chialab/dna/compat';
 import { getComponentName } from '../helpers.js';
 
 describe('[Compat] EventsComponent', () => {
