@@ -1,5 +1,5 @@
 import { window, define, render, DOM, BaseComponent } from '@chialab/dna/compat';
-import { getComponentName } from '../helpers.js';
+import { getComponentName } from '../../test/helpers.js';
 
 function normalizeContent(content) {
     return content.replace(/^("|')/, '').replace(/("|')$/, '');

@@ -1,5 +1,5 @@
 import { prop, define, render, IDOM, DOM, BaseComponent } from '@chialab/dna/compat';
-import { getComponentName } from '../helpers.js';
+import { getComponentName } from '../../test/helpers.js';
 
 describe('[Compat] TemplateComponent', () => {
     let wrapper, BaseTestComponent;

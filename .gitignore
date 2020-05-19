@@ -22,3 +22,4 @@ compat/*
 hooks/*
 react/*
 !src
+!test

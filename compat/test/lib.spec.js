@@ -1,5 +1,5 @@
 import { DOM, window, define, bootstrap, render, BaseComponent } from '@chialab/dna/compat';
-import { getComponentName } from '../helpers.js';
+import { getComponentName } from '../../test/helpers.js';
 
 describe('[Compat] lib', () => {
     let wrapper, TestComponent1, TestComponent2, name1 = getComponentName(), name2 = getComponentName();

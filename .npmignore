@@ -12,10 +12,8 @@ package-lock.json
 
 # RNA
 
-/src
-/compat/src
-/hooks/src
-/react/src
-/docs
+src
+test
+docs
 tsconfig.json
 logo.svg

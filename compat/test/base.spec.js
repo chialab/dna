@@ -1,5 +1,5 @@
 import { define, render, DOM, IDOM, prop, BaseComponent } from '@chialab/dna/compat';
-import { getComponentName } from '../helpers.js';
+import { getComponentName } from '../../test/helpers.js';
 
 // eslint-disable-next-line
 const h = IDOM.h;

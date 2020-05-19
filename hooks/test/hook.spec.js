@@ -1,5 +1,5 @@
 import { Component, customElements, useState, hook, DOM, html, render } from '@chialab/dna/hooks';
-import { wait } from '../helpers';
+import { wait } from '../../test/helpers.js';
 
 describe('[Hooks]', () => {
     describe('hook', () => {
