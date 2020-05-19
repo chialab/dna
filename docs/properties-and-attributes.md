@@ -1,6 +1,6 @@
 # Properties and attributes
 
-Component's properties are class fields that can be configured with the `property` decorator. As they represent the state of the element, every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) hook method of the component.
+Component's properties are class fields that can be configured with the `property` decorator. As they represent the state of the element, every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
 
 ## Declare a property
 

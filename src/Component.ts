@@ -1,4 +1,4 @@
-import window from './window';
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';

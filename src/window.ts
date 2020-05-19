@@ -1,4 +1,4 @@
-export default ((): Window & typeof globalThis => {
+const namespace = ((): Window & typeof globalThis => {
     if (typeof window !== 'undefined') {
         // browser environment
         return window;
@@ -9,3 +9,5 @@ export default ((): Window & typeof globalThis => {
     const dom = new jsdom.JSDOM();
     return dom.window;
 })();
+
+export { namespace as window };

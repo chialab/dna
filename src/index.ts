@@ -1,4 +1,4 @@
-import window from './window';
+import { window } from './window';
 export { window };
 export { customElements, CustomElementRegistry } from './CustomElementRegistry';
 export { Observable } from './Observable';

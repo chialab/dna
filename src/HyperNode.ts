@@ -1,4 +1,4 @@
-import window from './window';
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';

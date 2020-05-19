@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#customelements">customElements</a>, <a href="#namespace">namespace</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -287,6 +287,23 @@ It upgrades all custom elements in a subtree even before they are connected to t
 
 <hr />
 
+<strong id="namespace"><code>constant</code>  namespace</strong>
+
+
+
+
+
+
+
+<strong>Type:</strong>
+
+<pre>Window & globalThis</pre>
+
+
+
+
+<hr />
+
 <strong id="customelements"><code>constant</code>  customElements</strong>
 
 
@@ -302,23 +319,6 @@ The global DNA registry instance.
 <strong>Type:</strong>
 
 <pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
-
-
-
-
-<hr />
-
-<strong id="namespace"><code>constant</code>  namespace</strong>
-
-
-
-
-
-
-
-<strong>Type:</strong>
-
-<pre>Window & globalThis</pre>
 
 
 
@@ -911,7 +911,7 @@ A ontext interface.
 
 
 
-<pre>HTMLElement & {
+<pre>{
     promises?: Promise&lt;any&gt;[];
     subscriptions?: <a href="#subscription">Subscription</a>[];
     [key: string]: any;

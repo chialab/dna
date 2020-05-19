@@ -1,4 +1,4 @@
-import window from './window';
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { DOM, isElement, isEvent } from './DOM';
 
