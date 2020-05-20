@@ -20,6 +20,18 @@ const isArray = Array.isArray;
 const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
 
 /**
+ * Match letters after an hypen.
+ */
+const HYPHEN_REGEX = /-([a-z])/g;
+
+/**
+ * Make the matched group uppercase.
+ * @param match The full match string.
+ * @param letter The string to capitalize.
+ */
+const hyphenReplacer = (match: string, letter: string) => letter.toUpperCase();
+
+/**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
@@ -208,14 +220,16 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
                 childContext[propertyKey] = value;
 
-                if (propertyKey === 'style' && isReference) {
+                if (isReference && propertyKey === 'style') {
+                    let diff = typeof oldValue === 'object';
                     let style = (newNode as HTMLElement).style;
-                    if (typeof oldValue === 'object') {
-                        for (let key in value) {
-                            style.removeProperty(key);
+                    for (let i = style.length; i--;) {
+                        let hypenName = style[i];
+                        let camelName = hypenName.replace(HYPHEN_REGEX, hyphenReplacer);
+                        if (!diff || (camelName in oldValue)) {
+                            style.removeProperty(hypenName);
                         }
                     }
-                    DOM.removeAttribute(newNode as Element, propertyKey);
                     for (let key in value) {
                         (style as any)[key] = value[key];
                     }
