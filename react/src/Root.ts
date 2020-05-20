@@ -9,6 +9,7 @@ import { ReferencesMap, convertReactNodes } from './convertReactNodes';
  */
 export class Root extends React.Component<unknown> {
     private references: ReferencesMap = [];
+
     /**
      * Render wrapper.
      */
@@ -28,11 +29,14 @@ export class Root extends React.Component<unknown> {
             if (!ref.current) {
                 return;
             }
+            let node: any = ref.current;
+            let attributes = node.constructor.observedAttributes || [];
             for (let propertyKey in props) {
                 if (propertyKey !== 'children' &&
                     propertyKey !== 'is' &&
-                    propertyKey !== 'key') {
-                    (ref.current as any)[propertyKey] = (props as any)[propertyKey];
+                    propertyKey !== 'key' &&
+                    attributes.indexOf(propertyKey) === -1) {
+                    node[propertyKey] = props[propertyKey];
                 }
             }
         });
