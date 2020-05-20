@@ -10,6 +10,14 @@ describe('render', function() {
         wrapper = DNA.DOM.createElement('div');
     });
 
+    beforeEach(() => {
+        DNA.DOM.appendChild(DNA.window.document.body, wrapper);
+    });
+
+    afterEach(() => {
+        DNA.DOM.removeChild(DNA.window.document.body, wrapper);
+    });
+
     describe('render', () => {
         it('should render string', () => {
             DNA.render(wrapper, 'hello');
@@ -188,6 +196,30 @@ describe('render', function() {
             expect(children[1].textContent).to.be.equal('Six');
             expect(children[2].textContent).to.be.equal('Seven');
             expect(children[3].textContent).to.be.equal('Height');
+        });
+
+        it('should update add and remove attributes', () => {
+            DNA.render(wrapper, DNA.h('div', { prop1: 'test1', prop2: 2 }));
+            const elem = wrapper.children[0];
+            expect(elem.getAttribute('prop1')).to.be.equal('test1');
+            expect(elem.getAttribute('prop2')).to.be.equal('2');
+            DNA.render(wrapper, DNA.h('div', { prop1: 'test1', prop3: true }));
+            expect(elem.getAttribute('prop1')).to.be.equal('test1');
+            expect(elem.getAttribute('prop2')).to.be.null;
+            expect(elem.getAttribute('prop3')).to.be.equal('');
+        });
+
+        it('should update add and remove styles', () => {
+            DNA.render(wrapper, DNA.h('div', { style: 'color: red;' }));
+            const elem = wrapper.children[0];
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
+            DNA.render(wrapper, DNA.h('div', { style: { backgroundColor: 'blue' } }));
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
+            expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
+            DNA.render(wrapper, DNA.h('div', { style: 'font-weight: bold;' }));
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
+            expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgba(0, 0, 0, 0)', '']);
+            expect(DNA.window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
         });
 
         it('should render svgs', () => {

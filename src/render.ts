@@ -184,7 +184,11 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
                 if (key) {
                     (newNode as any).key = key;
-                    templateContext[key] = newNode;
+                    Object.defineProperty(templateContext, key, {
+                        configurable: true,
+                        writable: false,
+                        value: newNode,
+                    });
                 }
             }
 
@@ -197,15 +201,31 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             }
             for (let propertyKey in properties) {
                 let value = properties[propertyKey];
-                let changed = !(propertyKey in childContext) || value !== childContext[propertyKey];
+                let oldValue = childContext[propertyKey];
+                let type = typeof value;
+                let isReference = type === 'object' || type === 'function';
+                let changed = !(propertyKey in childContext) || value !== oldValue;
+
+                childContext[propertyKey] = value;
+
+                if (propertyKey === 'style' && isReference) {
+                    let style = (newNode as HTMLElement).style;
+                    if (typeof oldValue === 'object') {
+                        for (let key in value) {
+                            style.removeProperty(key);
+                        }
+                    }
+                    DOM.removeAttribute(newNode as Element, propertyKey);
+                    for (let key in value) {
+                        (style as any)[key] = value[key];
+                    }
+                    continue;
+                }
+
                 if (!changed) {
                     continue;
                 }
 
-                let type = typeof value;
-                let isReference = type === 'object' || type === 'function';
-
-                childContext[propertyKey] = value;
                 if (Component || isReference) {
                     (newNode as any)[propertyKey] = value;
                 }
