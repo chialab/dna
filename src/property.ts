@@ -80,14 +80,14 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (this: Element, value?: any) => any;
+    getter?: (value?: any) => any;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (this: Element, newValue?: any) => any;
+    setter?: (newValue?: any) => any;
     /**
      * The event to fire on property change.
      */
