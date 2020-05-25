@@ -57,10 +57,7 @@ import { Component, customElements, html, ... } from 'https://unpkg.com/@chialab
 
 Install via NPM:
 ```sh
-# NPM
-$ npm install @chialab/dna
-# Yarn
-$ yarn add @chialab/dna
+$ npm i @chialab/dna
 ```
 
 ```ts

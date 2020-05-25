@@ -1,6 +1,6 @@
 # Use in Node.js
 
-DNA is a component library based on DOM, but it is abstract enough to work in other environments or with different configurations. The Node.js adapter is distribuited along with the core library and it uses [`jsdom`](https://github.com/jsdom/jsdom) to create a fake DOM environment.
+DNA is a component library based on [Document Object Model](https://developer.mozilla.org/docs/Web/API/Document_Object_Model). In order to work in Node.js it uses the [`jsdom`](https://github.com/jsdom/jsdom) library to create a DOM environment.
 
 ```sh
 $ npm i @chialab/dna jsdom

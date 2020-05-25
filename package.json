@@ -45,11 +45,13 @@
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "yarn build"
   },
+  "dependencies": {
+    "jsdom": "^16.0.0"
+  },
   "optionalDependencies": {
     "@chialab/proteins": "^3.2.0",
     "haunted": "^4.7.0",
     "htm": "^3.0.3",
-    "jsdom": "^16.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

@@ -5,7 +5,7 @@ const namespace = ((): Window & typeof globalThis => {
     }
 
     // node environment
-    const jsdom = require('jsdom');
+    const jsdom = require(JSON.parse('"jsdom"'));
     const dom = new jsdom.JSDOM();
     return dom.window;
 })();

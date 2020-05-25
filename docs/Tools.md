@@ -72,7 +72,7 @@ Storybook is a fantastic tool for components development: you can create samples
 A DNA preset for storybook is available with full [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs) support and automatic Web Components Analyzer runs across your components for documentation and knobs. You can install it using the `@chialab/storybook-dna` package from NPM:
 
 ```sh
-$ yarn add @chialab/storybook-dna -D
+$ npm i @chialab/storybook-dna -D
 ```
 
 Please follow the instructions in the preset [README](https://github.com/chialab/storybook-dna) for the full configuration.
