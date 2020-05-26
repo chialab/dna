@@ -1,13 +1,13 @@
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode, HyperNode } from './HyperNode';
+import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
 import { isThenable, getThenableState } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
 import { createSymbolKey } from './symbols';
-import { getSlotted } from './slotted';
 import { css } from './css';
+import { ComponentInterface } from '@chialab/dna';
 
 /**
  * Alias to Array.isArray.
@@ -48,7 +48,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
     // result list
     const results: Node[] = [];
 
-    let childNodes = (slot && getSlotted(root).slice(0)) || cloneChildNodes(root);
+    let childNodes = (slot && (root as ComponentInterface<any>).slotChildNodes.slice(0)) || cloneChildNodes(root);
     // the current iterating node
     let currentIndex = 0;
     let currentNode = childNodes[currentIndex] as Node;
@@ -134,7 +134,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
             // if the current patch is a slot,
             if (isSlot) {
-                let slottedChildren = (getSlotted(templateContext as HyperNode) || []).slice(0);
+                let slottedChildren = ((templateContext as ComponentInterface<any>).slotChildNodes || []).slice(0);
                 let childContext = getContext(slottedChildren) || templateContext;
                 let filter;
                 if (properties.name) {
@@ -315,11 +315,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
         DOM.removeChild(root, childNodes[--length] as Node, slot);
     }
 
-    let len = results.length;
-    if (len === 0) {
-        return;
-    }
-    if (len === 1) {
+    if (results.length < 2) {
         return results[0];
     }
     return results as Node[];

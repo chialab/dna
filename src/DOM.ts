@@ -2,7 +2,6 @@ import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { getSlotted } from './slotted';
 
 const { Node, HTMLElement, Event, CustomEvent, document } = window;
 
@@ -209,7 +208,7 @@ export const DOM = {
      */
     appendChild<T extends Node>(parent: Element, newChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
-            getSlotted(parent).push(newChild);
+            parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
             return newChild;
         }
@@ -233,8 +232,8 @@ export const DOM = {
      */
     removeChild<T extends Node>(parent: Element, oldChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
-            const slotted = getSlotted(parent);
-            const io = slotted.indexOf(oldChild);
+            let slotted = parent.slotChildNodes;
+            let io = slotted.indexOf(oldChild);
             if (io !== -1) {
                 slotted.splice(io, 1);
                 parent.forceUpdate();
@@ -259,9 +258,9 @@ export const DOM = {
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = true): T {
         if (slot && isComponent(parent)) {
-            const slotted = getSlotted(parent);
+            let slotted = parent.slotChildNodes;
             if (refChild) {
-                const io = slotted.indexOf(refChild);
+                let io = slotted.indexOf(refChild);
                 if (io !== -1) {
                     slotted.splice(io, 0, newChild);
                 }
@@ -292,8 +291,8 @@ export const DOM = {
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = true): T {
         if (slot && isComponent(parent)) {
-            const slotted = getSlotted(parent);
-            const io = slotted.indexOf(oldChild);
+            let slotted = parent.slotChildNodes;
+            let io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);
             parent.forceUpdate();
             return oldChild;

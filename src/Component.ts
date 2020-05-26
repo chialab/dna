@@ -6,12 +6,16 @@ import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createContext, getContext, setContext } from './Context';
 import { Template, TemplateItems } from './Template';
-import { getSlotted, setSlotted } from './slotted';
 import { render } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
 import { template } from './html';
 
 const { document, HTMLElement } = window;
+
+/**
+ * A Symbol which contains slotted children of a Component.
+ */
+const SLOTTED_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -74,12 +78,14 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * A list of slot nodes.
      */
     get slotChildNodes() {
-        return getSlotted(this);
+        return (this as any)[SLOTTED_SYMBOL];
     }
 
     set slotChildNodes(children: TemplateItems) {
-        setSlotted(this, children);
-        this.forceUpdate();
+        (this as any)[SLOTTED_SYMBOL] = children;
+        if (this.isConnected) {
+            this.forceUpdate();
+        }
     }
 
     get [COMPONENT_SYMBOL]() {
@@ -106,7 +112,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         setContext(element, createContext(element));
 
         let children = cloneChildNodes(element);
-        setSlotted(element, children);
+        element.slotChildNodes = children;
         children.forEach((child) => removeChildImpl.call(element, child));
 
         const propertyDescriptors = {} as {
@@ -330,6 +336,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         const validate = typeof descriptor.validate === 'function' && descriptor.validate;
         const finalDescriptor: PropertyDescriptor = {
+            configurable: true,
             enumerable: true,
         };
 
@@ -353,13 +360,12 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                 return;
             }
 
-            const falsy = newValue == null || newValue === false;
             // if types or custom validator has been set, check the value validity
-            if (!falsy) {
+            if (newValue != null && newValue !== false) {
                 let valid = true;
                 if (type.length) {
                     // check if the value is an instanceof of at least one constructor
-                    valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor && newValue.constructor === Type)));
+                    valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor === Type)));
                 }
                 if (valid && validate) {
                     valid = validate.call(this, newValue);
