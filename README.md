@@ -71,7 +71,7 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 **Define the Component**
 ```ts
-import { Component, customElements, html, property, render } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get observedAttributes() {
@@ -102,9 +102,6 @@ class HelloWorld extends Component {
 
 // link the Component class to a tag
 customElements.define('hello-world', HelloWorld);
-
-// render the Component
-render(document.body, new HelloWorld);
 ```
 
 Then use the element in your HTML:

@@ -1,7 +1,7 @@
 DNA is a component library which aims to provide a temporarary interface to define declarative Web Components until browsers support is complete. Instead of requiring heavy polyfills in order to work in all browsers, DNA's philosophy is to use its template engine to handle Custom Elements life cycle and Shadow DOM flexibility, resulting more efficient, reliable and light.
 
 ```ts
-import { Component, customElements, html, property, render } from '@chialab/dna';
+import { Component, customElements, html, property } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get observedAttributes() {
@@ -21,9 +21,6 @@ class HelloWorld extends Component {
 
 // link the component class to a tag
 customElements.define('hello-world', HelloWorld);
-
-// render the component
-render(document.body, new HelloWorld);
 ```
 
 Then use the element in your HTML:
