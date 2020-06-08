@@ -106,7 +106,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         };
         let initialConstructor = this.constructor as typeof HTMLElement;
         let ctr = initialConstructor;
-        while (ctr !== HTMLElement) {
+        while (ctr !== constructor) {
             let propertiesDescriptor = Object.getOwnPropertyDescriptor(ctr, 'properties');
             let listenersDescriptor = Object.getOwnPropertyDescriptor(ctr, 'listeners');
             let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
