@@ -21,19 +21,8 @@ export type DelegatedEventCallback = (event: Event, target?: Node) => any;
 /**
  * A descriptor for an event delegation.
  */
-type DelegatedEventDescriptor = {
-    /**
-     * The name of the delegated event.
-     */
-    event: string;
-    /**
-     * The selector for the delegated event.
-     */
-    selector: string | null;
-    /**
-     * The callback for the delegated event.
-     */
-    callback?: DelegatedEventCallback;
+export type DelegatedEventDescriptor = AddEventListenerOptions & {
+    callback: DelegatedEventCallback,
 };
 
 /**
@@ -43,7 +32,20 @@ type DelegationList = {
     /**
      * A list of delegation descriptors.
      */
-    descriptors: DelegatedEventDescriptor[],
+    descriptors: {
+        /**
+         * The name of the delegated event.
+         */
+        event: string;
+        /**
+         * The selector for the delegated event.
+         */
+        selector: string | null;
+        /**
+         * The callback for the delegated event.
+         */
+        callback?: DelegatedEventCallback;
+    }[],
     /**
      * The real event listener.
      */

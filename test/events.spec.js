@@ -249,14 +249,14 @@ describe('events', function() {
         });
     });
 
-    describe('get listeners()', () => {
+    describe('listeners getter', () => {
         it('should add a listener', () => {
             const is = getComponentName();
             const callback = spyFunction((event, target) => [event.type, target.tagName]);
             class TestElement extends DNA.Component {
-                get listeners() {
+                static get listeners() {
                     return {
-                        click: this.method,
+                        click: TestElement.prototype.method,
                         change: callback,
                     };
                 }
@@ -290,9 +290,9 @@ describe('events', function() {
         it('should add a delegated listener', () => {
             const callback = spyFunction((event, target) => [event.type, target.tagName]);
             class TestElement extends DNA.Component {
-                get listeners() {
+                static get listeners() {
                     return {
-                        'click button': this.method,
+                        'click button': TestElement.prototype.method,
                     };
                 }
 
@@ -321,7 +321,7 @@ describe('events', function() {
             const callback3 = spyFunction((event, target) => [event.type, target.tagName]);
 
             class BaseElement  extends DNA.Component {
-                get listeners() {
+                static get listeners() {
                     return {
                         'click button': callback1,
                         'change': callback2,
@@ -334,7 +334,7 @@ describe('events', function() {
             }
 
             class TestElement extends BaseElement {
-                get listeners() {
+                static get listeners() {
                     return {
                         'click button': callback3,
                     };
@@ -400,9 +400,9 @@ describe('events', function() {
         it('should trigger an event and return a Promise', async () => {
             const is = getComponentName();
             class TestElement extends DNA.Component {
-                get listeners() {
+                static get listeners() {
                     return {
-                        click: this.method,
+                        click: TestElement.prototype.method,
                     };
                 }
 

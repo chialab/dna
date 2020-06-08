@@ -3,7 +3,7 @@ import { createSymbolKey } from './symbols';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
-import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
+import { DelegatedEventCallback, DelegatedEventDescriptor, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
 import { createContext, getContext, setContext } from './Context';
 import { Template, TemplateItems } from './Template';
 import { render } from './render';
@@ -40,20 +40,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     get is(): string {
         return undefined as unknown as string;
     }
-
-    /**
-     * A set of properties to define to the node.
-     */
-    readonly properties?: {
-        [key: string]: ClassFieldDescriptor | Function | Function[];
-    };
-
-    /**
-     * A set of delegated events to bind to the node.
-     */
-    readonly listeners?: {
-        [key: string]: DelegatedEventCallback;
-    };
 
     /**
      * A list of CSSStyleSheet to apply to the component.
@@ -115,18 +101,20 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         element.slotChildNodes = children;
         children.forEach((child) => removeChildImpl.call(element, child));
 
-        const propertyDescriptors = {} as {
+        let propertyDescriptors = {} as {
             [key: string]: ClassFieldDescriptor;
         };
-
-        let proto = Object.getPrototypeOf(element);
-        while (proto.constructor !== HTMLElement) {
-            let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
-            let listenersDescriptor = Object.getOwnPropertyDescriptor(proto, 'listeners');
+        let initialConstructor = this.constructor as typeof HTMLElement;
+        let ctr = initialConstructor;
+        while (ctr !== HTMLElement) {
+            let propertiesDescriptor = Object.getOwnPropertyDescriptor(ctr, 'properties');
+            let listenersDescriptor = Object.getOwnPropertyDescriptor(ctr, 'listeners');
             let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
             let listenersGetter = listenersDescriptor && listenersDescriptor.get;
             if (propertiesGetter) {
-                let descriptorProperties = propertiesGetter.call(element) || {};
+                let descriptorProperties = (propertiesGetter.call(initialConstructor) || {}) as {
+                    [key: string]: ClassFieldDescriptor | Function | Function[];
+                };
                 for (let propertyKey in descriptorProperties) {
                     if (!(propertyKey in propertyDescriptors)) {
                         let descriptor = descriptorProperties[propertyKey];
@@ -138,14 +126,25 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                 }
             }
             if (listenersGetter) {
-                let descriptorListeners = listenersGetter.call(element) || {};
+                let listenerDescriptors = (listenersGetter.call(initialConstructor) || {}) as {
+                    [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+                };
                 // register listeners
-                for (let eventPath in descriptorListeners) {
+                for (let eventPath in listenerDescriptors) {
                     let paths = eventPath.trim().split(' ');
-                    element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptorListeners[eventPath]);
+                    let descriptor = listenerDescriptors[eventPath];
+                    if (typeof descriptor === 'function') {
+                        element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptor);
+                    } else {
+                        element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptor.callback, {
+                            capture: descriptor.capture,
+                            once: descriptor.once,
+                            passive: descriptor.passive,
+                        });
+                    }
                 }
             }
-            proto = Object.getPrototypeOf(proto);
+            ctr = Object.getPrototypeOf(ctr);
         }
 
         // setup properties
@@ -496,8 +495,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param selector The selector to delegate
      * @param callback The callback to trigger when an Event matches the delegation
      */
-    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback) {
-        return delegateEventListener(this, event, selector, callback);
+    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
+        return delegateEventListener(this, event, selector, callback, options);
     }
 
     /**

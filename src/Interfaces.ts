@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
-import { DelegatedEventCallback } from './events';
+import { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 import { Template, TemplateItems } from './Template';
 import { Context } from './Context';
 
@@ -26,20 +26,6 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * The defined component name.
      */
     readonly is: string;
-
-    /**
-     * A set of properties to define to the node.
-     */
-    readonly properties?: {
-        [key: string]: ClassFieldDescriptor | Function | Function[];
-    };
-
-    /**
-     * A set of delegated events to bind to the node.
-     */
-    readonly listeners?: {
-        [key: string]: DelegatedEventCallback;
-    };
 
     /**
      * A set of delegated events to bind to the node.
@@ -214,6 +200,21 @@ export type ComponentConstructorInterface<T extends HTMLElement> = {
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes: string[];
+
+    /**
+     * A set of properties to define to the node.
+     */
+    readonly properties?: {
+        [key: string]: ClassFieldDescriptor | Function | Function[];
+    };
+
+    /**
+     * A set of delegated events to bind to the node.
+     */
+    readonly listeners?: {
+        [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+    };
+
     /**
      * The DNA Custom Element constructor.
      *

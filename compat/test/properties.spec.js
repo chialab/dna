@@ -9,7 +9,7 @@ describe('[Compat] PropertiesComponent', () => {
         wrapper.ownerDocument.body.appendChild(wrapper);
 
         class TestComponent extends BaseComponent {
-            get properties() {
+            static get properties() {
                 return {
                     name: prop.STRING.attribute(),
                     title: prop.STRING.attribute(),
@@ -22,7 +22,7 @@ describe('[Compat] PropertiesComponent', () => {
                 return ['name', 'last-name', 'married', 'age', 'var', 'validbool'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     lastName: prop.STRING.attribute('last-name'),
                     married: prop.BOOLEAN,
@@ -51,7 +51,7 @@ describe('[Compat] PropertiesComponent', () => {
                 return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-let', 'my-const'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     id: prop.STRING.attribute(),
                     alt: prop.STRING.attribute(),

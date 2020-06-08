@@ -5,7 +5,7 @@ import { warnCode } from './deprecations';
  * Compatibility proxy to properties descriptors.
  * @deprecated since version 3.0
  */
-class CompatibilityPropertyProxy {
+export class CompatibilityPropertyProxy {
     name?: string;
     type?: Function[];
     defaultValue?: any;

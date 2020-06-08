@@ -8,6 +8,15 @@ class HelloWorld extends Component {
         return ['name'];
     }
 
+    static get listeners() {
+        return {
+            // delegate an event
+            'change input[name="firstName"]': function() {
+                this.name = target.value;
+            },
+        };
+    }
+
     // define an observable property
     @property() name = '';
 

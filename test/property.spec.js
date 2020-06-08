@@ -155,10 +155,10 @@ describe('property', function() {
         });
     });
 
-    describe('get properties()', () => {
+    describe('properties getter', () => {
         it('should define a property', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: String,
                     };
@@ -172,7 +172,7 @@ describe('property', function() {
 
         it('should define a property with a defaultValue', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -189,7 +189,7 @@ describe('property', function() {
 
         it('should define a property with single type checker', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             type: String,
@@ -205,7 +205,7 @@ describe('property', function() {
 
         it('should define a property with multiple type checkers', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             type: [String, Boolean],
@@ -223,7 +223,7 @@ describe('property', function() {
 
         it('should define a property with custom validation', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             type: [String, Boolean],
@@ -249,7 +249,7 @@ describe('property', function() {
 
         it('should define a property with custom getter', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -269,7 +269,7 @@ describe('property', function() {
 
         it('should define a property with custom setter', () => {
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -290,7 +290,7 @@ describe('property', function() {
         it('should define a property with a single observer', () => {
             const listener = spyFunction((...args) => args);
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -313,7 +313,7 @@ describe('property', function() {
             const listener1 = spyFunction((...args) => args);
             const listener2 = spyFunction((...args) => args);
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -337,7 +337,7 @@ describe('property', function() {
 
         it('should inherit and reduce the prototype chain', () => {
             const BaseElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         inherit: String,
                         override: {
@@ -347,7 +347,7 @@ describe('property', function() {
                 }
             };
             const MyElement = class extends BaseElement {
-                get properties() {
+                static get properties() {
                     return {
                         override: {
                             defaultValue: 84,
@@ -368,7 +368,7 @@ describe('property', function() {
         it('should observe property changes', () => {
             const listener = spyFunction((...args) => args);
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,
@@ -404,7 +404,7 @@ describe('property', function() {
         it('should unobserve property changes', () => {
             const listener = spyFunction((...args) => args);
             const MyElement = class extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         testProp: {
                             defaultValue: 42,

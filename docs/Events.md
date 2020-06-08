@@ -10,10 +10,10 @@ You can declare event listeners on a component using the `listeners` accessor:
 import { Component, customElements } from '@chialab/dna';
 
 class Button extends Component {
-    get listeners() {
+    static get listeners() {
         return {
-            'click': this.onClick,
-            'input [name="age"]': this.onInputAge,
+            'click': Button.prototype.onClick,
+            'input [name="age"]': Button.prototype.onInputAge,
         };
     };
 
@@ -35,10 +35,10 @@ Event declaration accepts a function (in the example above, a prototype method h
 import { Component, customElements } from '@chialab/dna';
 
 class Tracker extends Component {
-    get listeners(){
+    static get listeners(){
         return {
             touchmove: {
-                listener: (event) => {
+                callback: function(event) {
                     // ...
                 },
                 passive: true,
@@ -93,11 +93,13 @@ Using the `listeners` getter, you can specify the delegated child selector after
 import { Component, customElements } from '@chialab/dna';
 
 class Dialog extends Component {
-    get listeners() {
+    static get listeners() {
         return {
             // event name + selector
             'click nav button': {
-                listener: (event, target) => { ... },
+                callback: function(event, target) {
+                    ...
+                },
                 passive: false,
             },
         };
@@ -166,9 +168,9 @@ With DNA, you can also dispatch events and await a `Promise` which resolves when
 import { Component, customElements, DOM } from '@chialab/dna';
 
 class Paginator extends Component {
-    get listeners() {
+    static get listeners() {
         return {
-            'click button.next': async () => {
+            'click button.next': async function() {
                 this.data = await this.dispatchAsyncEvent('fetch');
             },
         };

@@ -41,7 +41,7 @@ export { IDOM };
 export * from './registry';
 export * from './mix';
 export * from './bootstrap';
-export * from './prop';
+export { prop } from './prop';
 export * from './trust';
 export * from './BaseComponent';
 export * from './render';

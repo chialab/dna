@@ -64,7 +64,7 @@ describe('Component', function() {
 
         it('should setup properties', () => {
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         myCustomProp1: {
                             attribute: 'custom-prop',
@@ -88,7 +88,7 @@ describe('Component', function() {
 
         it('should initialize properties', () => {
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         myCustomProp1: {
                             attribute: 'custom-prop',
@@ -623,7 +623,7 @@ describe('Component', function() {
         it('should handle property changes on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         age: {
                             type: [Number],
@@ -661,7 +661,7 @@ describe('Component', function() {
                     return ['page'];
                 }
 
-                get properties() {
+                static get properties() {
                     return {
                         page: {
                             type: Number,
@@ -696,7 +696,7 @@ describe('Component', function() {
         it('should NOT handle property changes on delete', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         age: {
                             type: [Number],
@@ -748,7 +748,7 @@ describe('Component', function() {
                 @DNA.property() description = '';
                 @DNA.property() body = 'Test';
 
-                get properties() {
+                static get properties() {
                     return {
                         author: String,
                         date: {
@@ -786,7 +786,7 @@ describe('Component', function() {
         it('should NOT handle property if nothing changed on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         age: {
                             type: [Number],
@@ -817,7 +817,7 @@ describe('Component', function() {
             const callback1 = spyFunction((event) => event);
             const callback2 = spyFunction((event) => event);
             class TestElement extends DNA.Component {
-                get properties() {
+                static get properties() {
                     return {
                         age: {
                             type: [Number],
@@ -1153,7 +1153,7 @@ describe('Component', function() {
                     return ['title', 'alias', 'age', 'flag'];
                 }
 
-                get properties() {
+                static get properties() {
                     return {
                         age: {
                             type: [Number],

@@ -17,7 +17,7 @@ describe('[Compat] BaseComponent', () => {
                 return ['name'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     name: String,
                     lastName: prop.STRING.attribute('last-name'),
@@ -106,7 +106,7 @@ describe('[Compat] BaseComponent with native element', () => {
                 return ['name'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     name: String,
                     lastName: prop.STRING.attribute('last-name'),
@@ -196,7 +196,7 @@ describe('[Compat] Base IDOM Component', () => {
                 return ['name'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     name: String,
                     lastName: prop.STRING.attribute('last-name'),
@@ -284,7 +284,7 @@ describe('[Compat] Base IDOM Component with native element', () => {
                 return ['name'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     name: String,
                     lastName: prop.STRING.attribute('last-name'),

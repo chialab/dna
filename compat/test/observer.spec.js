@@ -13,7 +13,7 @@ describe('[Compat] IDOM observer', () => {
                 return ['age'];
             }
 
-            get properties() {
+            static get properties() {
                 return {
                     age: Number,
                     married: Boolean,

@@ -18,13 +18,13 @@ customElements.define('x-card', Card);
 
 In the example above, the `age` field of every `Card` instance is observed.
 
-Since class fields are supported by TypeScript and they are a proposal for JavaScript (Babel has a plugin for that), properties can be declared with the `properties` getter:
+Since class fields are supported by TypeScript and they are a proposal for JavaScript (Babel has a plugin for that), properties can be declared with the static `properties` getter:
 
 ```ts
 import { Component, customElements } from '@chialab/dna';
 
 class Card extends Component {
-    get properties() {
+    static get properties() {
         return {
             age: {},
         };
@@ -40,7 +40,7 @@ You can also define properties programmatically with the prototyped `definePrope
 import { Component, customElements } from '@chialab/dna';
 
 class Card extends Component {
-    get properties() {
+    static get properties() {
         return {
             age: {},
         };

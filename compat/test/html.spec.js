@@ -10,7 +10,7 @@ describe('[Compat] Base HTML Component', () => {
         wrapper.ownerDocument.body.appendChild(wrapper);
 
         TestComponent = class TestComponent extends BaseComponent {
-            get properties() {
+            static get properties() {
                 return {
                     content: String,
                 };

@@ -14,7 +14,7 @@ describe('[React]', () => {
                     return ['name'];
                 }
 
-                get properties() {
+                static get properties() {
                     return {
                         name: String,
                         tags: Array,
@@ -37,7 +37,7 @@ describe('[React]', () => {
                     return ['name'];
                 }
 
-                get properties() {
+                static get properties() {
                     return {
                         name: String,
                         tags: Array,
