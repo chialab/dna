@@ -147,7 +147,19 @@ export class CustomElementRegistry {
         }
 
         if (isComponentConstructor(constructor)) {
-            new constructor(root).forceUpdate();
+            let attributes = [];
+            let obseerved = constructor.observedAttributes || [];
+            for (let i = 0, len = root.attributes.length; i < len; i++) {
+                let attr = root.attributes[i];
+                if (obseerved.indexOf(attr.name) !== -1) {
+                    attributes.push([attr.name, attr.value]);
+                }
+            }
+            let element = new constructor(root);
+            attributes.forEach(([name, value]) => {
+                element.attributeChangedCallback(name, null, value);
+            });
+            element.forceUpdate();
         }
     }
 }

@@ -98,7 +98,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         setContext(element, createContext(element));
 
         let children = cloneChildNodes(element);
-        element.slotChildNodes = children;
+        (element as any)[SLOTTED_SYMBOL] = children;
         children.forEach((child) => removeChildImpl.call(element, child));
 
         let propertyDescriptors = {} as {
