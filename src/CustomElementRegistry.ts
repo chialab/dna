@@ -147,18 +147,23 @@ export class CustomElementRegistry {
         }
 
         if (isComponentConstructor(constructor)) {
-            let attributes = [];
-            let obseerved = constructor.observedAttributes || [];
+            let attributes: { name: string, value: string }[] = [];
+            let observed = constructor.observedAttributes || [];
             for (let i = 0, len = root.attributes.length; i < len; i++) {
                 let attr = root.attributes[i];
-                if (obseerved.indexOf(attr.name) !== -1) {
-                    attributes.push([attr.name, attr.value]);
+                if (observed.indexOf(attr.name) !== -1) {
+                    attributes.push({
+                        name: attr.name,
+                        value: attr.value,
+                    });
                 }
             }
             let element = new constructor(root);
-            attributes.forEach(([name, value]) => {
-                element.attributeChangedCallback(name, null, value);
-            });
+            attributes
+                .filter((attr) => element.getAttribute(attr.name) === attr.value)
+                .forEach((attr) => {
+                    element.attributeChangedCallback(attr.name, null, attr.value);
+                });
             element.forceUpdate();
         }
     }
