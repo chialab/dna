@@ -11,6 +11,7 @@ const symbol: unique symbol = createSymbolKey() as any;
  */
 export type ThenableState = {
     pending: boolean;
+    aborted: boolean;
     result?: any;
 };
 
@@ -19,6 +20,11 @@ export type ThenableState = {
  * @param target The object to check.
  */
 export const isThenable = (target: any): target is Promise<unknown> => target && typeof target.then === 'function';
+
+export const abort = (target: Promise<unknown>) => {
+    let state = getThenableState(target);
+    state.aborted = true;
+};
 
 /**
  * Get or inject a state into a Thenable object.
@@ -32,6 +38,7 @@ export const getThenableState = (target: Promise<unknown>): ThenableState => {
     }
     let state: ThenableState = {
         pending: true,
+        aborted: false,
     };
     (thenable as any)[symbol] = state;
     thenable

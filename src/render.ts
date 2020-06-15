@@ -3,7 +3,7 @@ import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Templat
 import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText, cloneChildNodes } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
-import { isThenable, getThenableState } from './Thenable';
+import { isThenable, getThenableState, abort } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
 import { createSymbolKey } from './symbols';
 import { css } from './css';
@@ -54,19 +54,18 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
     let currentNode = childNodes[currentIndex] as Node;
 
     // promises list
-    let promises: Promise<unknown>[];
-    let subscriptions: Subscription[];
-    if (rootRenderContext === renderContext) {
-        let oldSubscriptions = rootRenderContext.subscriptions;
-        if (oldSubscriptions) {
-            oldSubscriptions.forEach((subscription) => subscription.unsubscribe());
-        }
-        promises = rootRenderContext.promises = [];
-        subscriptions = rootRenderContext.subscriptions = [];
-    } else {
-        promises = rootRenderContext.promises as Promise<unknown>[];
-        subscriptions = rootRenderContext.subscriptions as Subscription[];
-    }
+    let promises: Promise<unknown>[] = renderContext.promises = [];
+    let subscriptions: Subscription[] = renderContext.subscriptions = [];
+    let rootPromises = rootRenderContext.promises as Promise<unknown>[];
+    let rootSubscriptions = rootRenderContext.subscriptions as Subscription[];
+    renderContext.promises?.forEach((promise) => {
+        abort(promise);
+        rootPromises.splice(rootPromises.indexOf(promise), 1);
+    });
+    renderContext.subscriptions?.forEach((subscription) => {
+        subscription.unsubscribe();
+        rootSubscriptions.splice(rootSubscriptions.indexOf(subscription), 1);
+    });
 
     const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -86,11 +85,13 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             let status = getThenableState(template);
             if (status.pending) {
                 promises.push(template);
+                if (rootPromises !== promises) {
+                    rootPromises.push(template);
+                }
                 template
                     .catch(() => 1)
                     .then(() => {
-                        let list = rootRenderContext.promises;
-                        if (list && list.indexOf(template as Promise<unknown>) !== -1) {
+                        if (!status.aborted) {
                             render(root, input, templateContext, rootRenderContext, filter, slot);
                         }
                     });
@@ -110,6 +111,9 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     subscription.unsubscribe();
                 });
                 subscriptions.push(subscription);
+                if (rootSubscriptions !== subscriptions) {
+                    rootSubscriptions.push(subscription);
+                }
             }
             handleItems(status.current, templateContext, filter);
             return;

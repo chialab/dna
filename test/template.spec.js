@@ -428,13 +428,13 @@ describe('template', function() {
                 JSX() {
                     return DNA.h('div', null,
                         DNA.until(this.promise, 'Loading...'),
-                        this.promise.then((res) => ['Hello ', res])
+                        DNA.h('div', null, this.promise.then((res) => ['Hello ', res]))
                     );
                 },
                 HTML() {
                     return DNA.html`<div>
                         ${DNA.until(this.promise, 'Loading...')}
-                        ${this.promise.then((res) => DNA.html`Hello ${res}`)}
+                        <div>${this.promise.then((res) => DNA.html`Hello ${res}`)}</div>
                     </div>`;
                 },
                 TEMPLATE() {
@@ -443,9 +443,11 @@ describe('template', function() {
                             <template until={{promise}}>
                                 Loading...
                             </template>
-                            <template then={{promise}}>
-                                Hello {{$resolved}}
-                            </template>
+                            <div>
+                                <template then={{promise}}>
+                                    Hello {{$resolved}}
+                                </template>
+                            </div>
                         </div>
                     </template>`);
                     return DNA.template(template, this);
@@ -463,11 +465,11 @@ describe('template', function() {
 
                     DNA.render(wrapper, TEMPLATES[type].call(context), context);
 
-                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...<div></div></div>');
                     while (context.promises.length) {
                         await Promise.all(context.promises);
                     }
-                    expect(wrapper.innerHTML).to.be.equal('<div>Hello World!</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><div>Hello World!</div></div>');
                 });
             }
         });
