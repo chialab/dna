@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#context">Context</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
 
 
 <hr />
@@ -835,6 +835,7 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 <pre>{
     Component?: HTMLElement;
+    Function?: <a href="#templatefunction">TemplateFunction</a>;
     tag?: string;
     is?: string;
     key?: any;
@@ -850,17 +851,20 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 <hr />
 
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
 
 <p>
 
-A list of template items.
+A function that returns a template.
 
 </p>
 
 
 
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+<pre>(props: {
+    children: <a href="#template">Template</a>;
+    [key: string]: any;
+}, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
 
 
 
@@ -884,17 +888,17 @@ A generic template. Can be a single atomic item or a list of items.
 
 <hr />
 
-<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
 
 <p>
 
-A filter function signature for template items.
+A list of template items.
 
 </p>
 
 
 
-<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -922,20 +926,17 @@ A ontext interface.
 
 <hr />
 
-<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
 
 <p>
 
-A function that returns a template.
+A filter function signature for template items.
 
 </p>
 
 
 
-<pre>(props: {
-    children: <a href="#template">Template</a>;
-    [key: string]: any;
-}): <a href="#template">Template</a></pre>
+<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
 
 
 
@@ -1017,8 +1018,8 @@ A list of properties for an class field description.
     observe?: <a href="#classfieldobserver">ClassFieldObserver</a>;
     observers?: <a href="#classfieldobserver">ClassFieldObserver</a>[];
     validate?: <a href="#classfieldvalidator">ClassFieldValidator</a>;
-    getter?: (this: Element, value?: any): any;
-    setter?: (this: Element, newValue?: any): any;
+    getter?: (value?: any): any;
+    setter?: (newValue?: any): any;
     event?: true|string;
     symbol?: Symbol;
 }</pre>
@@ -1104,14 +1105,8 @@ A validation function for the class field.
 
 <pre>T & {
     is: string;
-    properties?: {
-        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
-    };
-    listeners?: {
-        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
-    };
     template: HTMLTemplateElement|undefined;
-    $: <a href="#context">Context</a>|undefined;
+    $: <a href="#context">Context</a>;
     slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;
@@ -1158,6 +1153,12 @@ It's a Custom Element, but with some extra useful method.
 
 <pre>{
     observedAttributes: string[];
+    properties?: {
+        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
+    };
+    listeners?: {
+        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>|<a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>;
+    };
     constructor(node?: HTMLElement, properties?: {
         [key: string]: any;
     }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
@@ -1171,3 +1172,22 @@ It's a Custom Element, but with some extra useful method.
 <strong>See also</strong>
 
 * [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
+
+
+<hr />
+
+<strong id="delegatedeventdescriptor"><code>type</code>  DelegatedEventDescriptor</strong>
+
+<p>
+
+A descriptor for an event delegation.
+
+</p>
+
+
+
+<pre>AddEventListenerOptions & {
+    callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
+}</pre>
+
+
