@@ -8,6 +8,10 @@ Object.defineProperty(customElements, 'components', {
     },
 });
 
+customElements.get = function(tagName: string) {
+    return customElements.registry[tagName];
+};
+
 customElements.define = function(name, constructor, options) {
     if (typeof constructor !== 'function') {
         throw new TypeError('The referenced constructor must be a constructor');
@@ -33,6 +37,7 @@ customElements.define = function(name, constructor, options) {
     }
     customElements.registry[name] = constructor;
     customElements.tagNames[name] = tagName.toLowerCase();
+
     const queue = customElements.queue;
     if (queue[name]) {
         queue[name].forEach((resolve) => resolve());

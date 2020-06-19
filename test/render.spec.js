@@ -209,17 +209,31 @@ describe('render', function() {
             expect(elem.getAttribute('prop3')).to.be.equal('');
         });
 
+        it('should update add and remove classes', () => {
+            DNA.render(wrapper, DNA.h('div', { class: 'test1' }));
+            const elem = wrapper.children[0];
+            expect(elem.getAttribute('class')).to.be.equal('test1');
+            elem.classList.add('test2');
+            expect(elem.getAttribute('class')).to.be.equal('test1 test2');
+            DNA.render(wrapper, DNA.h('div', { class: { test3: true } }));
+            expect(elem.getAttribute('class')).to.be.equal('test2 test3');
+        });
+
         it('should update add and remove styles', () => {
             DNA.render(wrapper, DNA.h('div', { style: 'color: red;' }));
             const elem = wrapper.children[0];
+            elem.style.fontFamily = 'sans-serif';
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
             DNA.render(wrapper, DNA.h('div', { style: { backgroundColor: 'blue' } }));
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
             expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
             DNA.render(wrapper, DNA.h('div', { style: 'font-weight: bold;' }));
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
             expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgba(0, 0, 0, 0)', '', 'transparent']);
             expect(DNA.window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
         });
 
         it('should render svgs', () => {

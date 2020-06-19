@@ -12,10 +12,10 @@ export function bootstrap(root: HTMLElement, callback: (node: ComponentInterface
     for (let key in registry) {
         const constructor = registry[key];
         // find all nodes for the current Component configuration
-        const nodes = root.querySelectorAll(`${key}, [is="${key}"]`);
+        let nodes = root.querySelectorAll(`${key}, [is="${key}"]`);
         // iterate all nodes found
         for (let i = 0, len = nodes.length; i < len; i++) {
-            const node = nodes[i];
+            let node = nodes[i];
             // check if already instantiated
             if (node instanceof constructor) {
                 callback(node as ComponentInterface<any>);

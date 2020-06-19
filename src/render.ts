@@ -20,16 +20,58 @@ const isArray = Array.isArray;
 const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
 
 /**
- * Match letters after an hypen.
+ * Convert strings or classes map to a list of classes.
+ * @param value The value to convert.
+ * @return A list of classes.
  */
-const HYPHEN_REGEX = /-([a-z])/g;
+const convertClasses = (value: any) => {
+    let classes: string[] = [];
+    if (!value) {
+        return classes;
+    }
+    if (typeof value === 'object') {
+        for (let k in value) {
+            if (value[k]) {
+                classes.push(k);
+            }
+        }
+        return classes;
+    }
+    classes = value.toString().trim().split(' ');
+    return classes;
+};
 
 /**
- * Make the matched group uppercase.
- * @param match The full match string.
- * @param letter The string to capitalize.
+ * Convert strings or styles map to a list of styles.
+ * @param value The value to convert.
+ * @return A set of styles.
  */
-const hyphenReplacer = (match: string, letter: string) => letter.toUpperCase();
+const convertStyles = (value: any) => {
+    let styles: { [key: string]: string } = {};
+    if (!value) {
+        return styles;
+    }
+    if (typeof value === 'object') {
+        for (let propertyKey in value) {
+            let camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
+                `-${match.toLowerCase()}`
+            );
+            styles[camelName] = value[propertyKey];
+        }
+        return styles;
+    }
+    value
+        .toString()
+        .split(';')
+        .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
+            let rulePair = ruleString.split(':');
+            if (rulePair.length == 2) {
+                ruleMap[rulePair[0].trim()] = rulePair[1].trim();
+            }
+            return ruleMap;
+        }, styles);
+    return styles;
+};
 
 /**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
@@ -224,19 +266,33 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
                 childContext[propertyKey] = value;
 
-                if (isReference && propertyKey === 'style') {
-                    let diff = typeof oldValue === 'object';
+                if (propertyKey === 'style') {
                     let style = (newNode as HTMLElement).style;
-                    for (let i = style.length; i--;) {
-                        let hypenName = style[i];
-                        let camelName = hypenName.replace(HYPHEN_REGEX, hyphenReplacer);
-                        if (!diff || (camelName in oldValue)) {
-                            style.removeProperty(hypenName);
+                    let oldStyles = convertStyles(oldValue);
+                    let newStyles = convertStyles(value);
+                    for (let propertyKey in oldStyles) {
+                        if (!(propertyKey in newStyles)) {
+                            style.removeProperty(propertyKey);
                         }
                     }
-                    for (let key in value) {
-                        (style as any)[key] = value[key];
+                    for (let propertyKey in newStyles) {
+                        style.setProperty(propertyKey, newStyles[propertyKey]);
                     }
+                    continue;
+                } else if (propertyKey === 'class') {
+                    let classList = (newNode as HTMLElement).classList;
+                    let oldClasses: string[] = convertClasses(oldValue);
+                    let newClasses: string[] = convertClasses(value);
+                    oldClasses.forEach((className: string) => {
+                        if (newClasses.indexOf(className) === -1) {
+                            classList.remove(className);
+                        }
+                    });
+                    newClasses.forEach((className: string) => {
+                        if (!classList.contains(className)) {
+                            classList.add(className);
+                        }
+                    });
                     continue;
                 }
 
