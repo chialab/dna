@@ -54,6 +54,9 @@ export class CustomElementRegistry {
      * @return The definition for the given tag.
      */
     get(name: string): typeof HTMLElement {
+        if (nativeCustomElements) {
+            return nativeCustomElements.get(name);
+        }
         return this.registry[name];
     }
 
