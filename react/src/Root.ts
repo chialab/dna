@@ -16,7 +16,9 @@ export class Root extends React.Component<unknown> {
     componentDidMount() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
         this.componentDidUpdate();
-        connect(node);
+        if (node) {
+            connect(node);
+        }
     }
 
     /**
@@ -24,7 +26,9 @@ export class Root extends React.Component<unknown> {
      */
     componentDidUpdate() {
         const node = ReactDOM.findDOMNode(this) as HTMLElement;
-        customElements.upgrade(node);
+        if (node) {
+            customElements.upgrade(node);
+        }
         this.references.forEach(([ref, props]) => {
             if (!ref.current) {
                 return;
