@@ -2,7 +2,7 @@ import { window } from './window';
 export { window };
 export { customElements, CustomElementRegistry } from './CustomElementRegistry';
 export { Observable } from './Observable';
-export { TemplateItem, TemplateItems, Template, TemplateFilter } from './Template';
+export { TemplateItem, TemplateItems, Template, TemplateFilter, TemplateFunction } from './Template';
 export { DOM, connect, disconnect } from './DOM';
 export { render } from './render';
 export { Fragment } from './Fragment';

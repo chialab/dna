@@ -30,7 +30,8 @@
     "src/**/*.ts",
     "compat/src/**/*.ts",
     "hooks/src/**/*.ts",
-    "react/src/**/*.ts"
+    "react/src/**/*.ts",
+    "jsx-runtime/src/**/*.ts"
   ],
   "exclude": [
     "test/**/*"
