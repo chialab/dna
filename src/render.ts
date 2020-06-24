@@ -96,18 +96,20 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
     let currentNode = childNodes[currentIndex] as Node;
 
     // promises list
-    let promises: Promise<unknown>[] = renderContext.promises = [];
-    let subscriptions: Subscription[] = renderContext.subscriptions = [];
+    let promises: Promise<unknown>[] = renderContext.promises = renderContext.promises || [];
+    let subscriptions: Subscription[] = renderContext.subscriptions = renderContext.subscriptions || [];
     let rootPromises = rootRenderContext.promises as Promise<unknown>[];
     let rootSubscriptions = rootRenderContext.subscriptions as Subscription[];
-    renderContext.promises?.forEach((promise) => {
+    promises.forEach((promise) => {
         abort(promise);
         rootPromises.splice(rootPromises.indexOf(promise), 1);
     });
-    renderContext.subscriptions?.forEach((subscription) => {
+    subscriptions.forEach((subscription) => {
         subscription.unsubscribe();
         rootSubscriptions.splice(rootSubscriptions.indexOf(subscription), 1);
     });
+    promises.splice(0, promises.length);
+    subscriptions.splice(0, subscriptions.length);
 
     const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -133,8 +135,8 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 template
                     .catch(() => 1)
                     .then(() => {
-                        if (!status.aborted) {
-                            render(root, input, templateContext, rootRenderContext, filter, slot);
+                        if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
+                            render(root, input, context, rootRenderContext, filter, slot);
                         }
                     });
             }
@@ -146,9 +148,9 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             let status = getObservableState(template);
             if (!status.complete) {
                 let subscription = template.subscribe(() => {
-                    render(root, input, templateContext, rootRenderContext, filter, slot);
+                    render(root, input, context, rootRenderContext, filter, slot);
                 }, () => {
-                    render(root, input, templateContext, rootRenderContext, filter, slot);
+                    render(root, input, context, rootRenderContext, filter, slot);
                 }, () => {
                     subscription.unsubscribe();
                 });

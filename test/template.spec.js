@@ -525,6 +525,30 @@ describe('template', function() {
 
         it('should ignore outdated promises in template', async () => {
             const context = {};
+
+            let flag = false;
+            const promise = new Promise((resolve) => {
+                setTimeout(() => {
+                    flag = true;
+                    DNA.render(wrapper, template(), context);
+                    resolve('World!');
+                }, 1000);
+            });
+            const template = () => DNA.html`<div>
+                ${!flag && DNA.until(promise, 'Loading...')}
+                ${flag && 'Done'}
+            </div>`;
+
+            DNA.render(wrapper, template(), context);
+            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+            while (context.promises.length) {
+                await Promise.all(context.promises);
+            }
+            expect(wrapper.innerHTML).to.be.equal('<div>Done</div>');
+        });
+
+        it('should ignore outdated dependents promises in template', async () => {
+            const context = {};
             const promise = new Promise((resolve) => {
                 setTimeout(() => resolve('World!'), 1000);
             });
