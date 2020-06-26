@@ -4,7 +4,7 @@ import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } f
 import { customElements } from './CustomElementRegistry';
 import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, DelegatedEventDescriptor, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
-import { createContext, getContext, setContext } from './Context';
+import { createContext, getContext, setContext, Context } from './Context';
 import { Template, TemplateItems } from './Template';
 import { render } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
@@ -519,7 +519,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         let document = this.ownerDocument;
         let templateNode = document && document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
         if (templateNode) {
-            return template(templateNode, this);
+            return template(templateNode, this.$ as Context);
         }
         return this.slotChildNodes;
     }

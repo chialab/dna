@@ -1,7 +1,7 @@
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode } from './HyperNode';
-import { DOM, isElement, isText, cloneChildNodes } from './DOM';
+import { DOM, isElement, isText } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
 import { isThenable, getThenableState, abort } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
@@ -18,6 +18,16 @@ const isArray = Array.isArray;
  * A symbol to store node properties.
  */
 const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
+
+/**
+ * A cache for converted class values.
+ */
+const CLASSES_CACHE: { [key: string]: string[] } = {};
+
+/**
+ * A cache for converted style values.
+ */
+const STYLES_CACHE: { [key: string]: { [key: string]: any } } = {};
 
 /**
  * Convert strings or classes map to a list of classes.
@@ -37,8 +47,7 @@ const convertClasses = (value: any) => {
         }
         return classes;
     }
-    classes = value.toString().trim().split(' ');
-    return classes;
+    return classes = CLASSES_CACHE[value] = CLASSES_CACHE[value] || value.toString().trim().split(' ');
 };
 
 /**
@@ -60,7 +69,7 @@ const convertStyles = (value: any) => {
         }
         return styles;
     }
-    value
+    return styles = STYLES_CACHE[value] = STYLES_CACHE[value] || value
         .toString()
         .split(';')
         .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
@@ -70,7 +79,6 @@ const convertStyles = (value: any) => {
             }
             return ruleMap;
         }, styles);
-    return styles;
 };
 
 /**
@@ -90,7 +98,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
     // result list
     const results: Node[] = [];
 
-    let childNodes = (slot && (root as ComponentInterface<any>).slotChildNodes.slice(0)) || cloneChildNodes(root);
+    let childNodes: Node[] = (slot && (root as ComponentInterface<any>).slotChildNodes) || root.childNodes;
     // the current iterating node
     let currentIndex = 0;
     let currentNode = childNodes[currentIndex] as Node;
@@ -116,58 +124,18 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             return;
         }
 
-        if (isArray(template)) {
+        let isObject = typeof template === 'object';
+        let newNode: Element | Text | undefined;
+        let newChildren: TemplateItems | undefined;
+
+        if (isObject && isArray(template)) {
             templateContext = getContext(template) || templateContext;
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
                 handleItems(template[i], templateContext, filter);
             }
             return;
-        }
-
-        if (isThenable(template)) {
-            let status = getThenableState(template);
-            if (status.pending) {
-                promises.push(template);
-                if (rootPromises !== promises) {
-                    rootPromises.push(template);
-                }
-                template
-                    .catch(() => 1)
-                    .then(() => {
-                        if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
-                            render(root, input, context, rootRenderContext, filter, slot);
-                        }
-                    });
-            }
-            handleItems(status.result, templateContext, filter);
-            return;
-        }
-
-        if (isObservable(template)) {
-            let status = getObservableState(template);
-            if (!status.complete) {
-                let subscription = template.subscribe(() => {
-                    render(root, input, context, rootRenderContext, filter, slot);
-                }, () => {
-                    render(root, input, context, rootRenderContext, filter, slot);
-                }, () => {
-                    subscription.unsubscribe();
-                });
-                subscriptions.push(subscription);
-                if (rootSubscriptions !== subscriptions) {
-                    rootSubscriptions.push(subscription);
-                }
-            }
-            handleItems(status.current, templateContext, filter);
-            return;
-        }
-
-        let newNode: Element | Text | undefined;
-        let newChildren: TemplateItems | undefined;
-        let isObject = typeof template === 'object';
-
-        if (isObject && isHyperNode(template)) {
+        } else if (isObject && isHyperNode(template)) {
             let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
@@ -212,7 +180,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 let prevKey = (currentNode as any).key;
                 if (prevKey != null && key != null && key !== prevKey) {
                     let prevCurrentNode = currentNode;
-                    currentNode = childNodes[++currentIndex] as Node;
+                    currentNode = childNodes[currentIndex + 1] as Node;
                     prevKey = isElement(currentNode) && (currentNode as any).key;
                     DOM.removeChild(root, prevCurrentNode);
                 }
@@ -268,9 +236,13 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
                 childContext[propertyKey] = value;
 
+                if (!changed) {
+                    continue;
+                }
+
                 if (propertyKey === 'style') {
                     let style = (newNode as HTMLElement).style;
-                    let oldStyles = convertStyles(oldValue);
+                    let oldStyles = childContext.styles || {};
                     let newStyles = convertStyles(value);
                     for (let propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
@@ -280,10 +252,11 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     for (let propertyKey in newStyles) {
                         style.setProperty(propertyKey, newStyles[propertyKey]);
                     }
+                    childContext.styles = newStyles;
                     continue;
                 } else if (propertyKey === 'class') {
                     let classList = (newNode as HTMLElement).classList;
-                    let oldClasses: string[] = convertClasses(oldValue);
+                    let oldClasses: string[] = childContext.classes || [];
                     let newClasses: string[] = convertClasses(value);
                     oldClasses.forEach((className: string) => {
                         if (newClasses.indexOf(className) === -1) {
@@ -295,10 +268,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                             classList.add(className);
                         }
                     });
-                    continue;
-                }
-
-                if (!changed) {
+                    childContext.classes = newClasses;
                     continue;
                 }
 
@@ -324,6 +294,40 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             newChildren = children;
         } else if (isObject && (isElement(template) || isText(template))) {
             newNode = template;
+        } else if (isObject && isThenable(template)) {
+            let status = getThenableState(template);
+            if (status.pending) {
+                promises.push(template);
+                if (rootPromises !== promises) {
+                    rootPromises.push(template);
+                }
+                template
+                    .catch(() => 1)
+                    .then(() => {
+                        if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
+                            render(root, input, context, rootRenderContext, filter, slot);
+                        }
+                    });
+            }
+            handleItems(status.result, templateContext, filter);
+            return;
+        } else if (isObject && isObservable(template)) {
+            let status = getObservableState(template);
+            if (!status.complete) {
+                let subscription = template.subscribe(() => {
+                    render(root, input, context, rootRenderContext, filter, slot);
+                }, () => {
+                    render(root, input, context, rootRenderContext, filter, slot);
+                }, () => {
+                    subscription.unsubscribe();
+                });
+                subscriptions.push(subscription);
+                if (rootSubscriptions !== subscriptions) {
+                    rootSubscriptions.push(subscription);
+                }
+            }
+            handleItems(status.current, templateContext, filter);
+            return;
         } else {
             if (isStyle && typeof template === 'string' && templateContext.is) {
                 template = css(templateContext.is as string, template);
@@ -353,6 +357,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
             DOM.insertBefore(root, newNode, currentNode, slot);
+            currentIndex++;
         } else {
             currentNode = childNodes[++currentIndex]  as Node;
         }

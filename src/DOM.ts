@@ -4,6 +4,7 @@ import { ComponentInterface, isComponent, isComponentConstructor } from './Inter
 import { customElements } from './CustomElementRegistry';
 
 const { Node, HTMLElement, Event, CustomEvent, document } = window;
+const slice = Array.prototype.slice;
 
 if (!Node || !HTMLElement || !Event || !CustomEvent || !document) {
     throw new Error('invalid DOM implementation');
@@ -23,7 +24,7 @@ export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototyp
  * @param node The parent node.
  * @return A frozen list of child nodes.
  */
-export const cloneChildNodes = (node: Node): Node[] => [].slice.call(node.childNodes || [], 0) as Node[];
+export const cloneChildNodes = (node: Node): Node[] => slice.call(node.childNodes || [], 0) as Node[];
 
 /**
  * Check if a node is a Document instance.

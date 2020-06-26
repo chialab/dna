@@ -12,6 +12,8 @@ const CONTEXT_SYMBOL = createSymbolKey();
 export type Context = {
     promises?: Promise<unknown>[];
     subscriptions?: Subscription[];
+    classes?: string[];
+    styles?: { [key: string]: any };
     [key: string]: any;
 };
 
@@ -21,18 +23,17 @@ export type Context = {
  * @return An context object with prototype.
  */
 export const createContext = (prototype: any, values: { [key: string]: any } = {}): Context => {
-    const context = Object.create(prototype, {
-        promises: {
-            writable: true,
-        },
-        subscriptions: {
-            writable: true,
-        },
-    });
-    for (let propertyKey in values) {
-        context[propertyKey] = values[propertyKey];
+    let context = {
+        promises: undefined,
+        subscriptions: undefined,
+        classes: undefined,
+        styles: undefined,
+        __proto__: prototype,
+    } as Context;
+    for (let key in values) {
+        context[key] = values[key];
     }
-    return context as Context;
+    return context;
 };
 
 /**
