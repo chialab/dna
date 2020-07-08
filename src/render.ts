@@ -236,7 +236,11 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 }
                 let value = properties[propertyKey];
                 let oldValue = childContext[propertyKey];
+                let changed = !(propertyKey in childContext) || value !== oldValue;
                 childContext[propertyKey] = value;
+                if (!changed) {
+                    continue;
+                }
 
                 if (propertyKey === 'style') {
                     let style = (newNode as HTMLElement).style;
@@ -265,11 +269,6 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                             classList.add(className);
                         }
                     });
-                    continue;
-                }
-
-                let changed = !(propertyKey in childContext) || value !== oldValue;
-                if (!changed) {
                     continue;
                 }
 
