@@ -24,11 +24,11 @@ export type Context = {
  */
 export const createContext = (prototype: any, values: { [key: string]: any } = {}): Context => {
     let context = {
+        __proto__: prototype,
         promises: undefined,
         subscriptions: undefined,
-        classes: undefined,
-        styles: undefined,
-        __proto__: prototype,
+        class: undefined,
+        style: undefined,
     } as Context;
     for (let key in values) {
         context[key] = values[key];

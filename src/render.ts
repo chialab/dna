@@ -1,4 +1,4 @@
-import { isComponent } from './Interfaces';
+import { ComponentInterface, isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode } from './HyperNode';
 import { DOM, isElement, isText } from './DOM';
@@ -7,7 +7,6 @@ import { isThenable, getThenableState, abort } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
 import { createSymbolKey } from './symbols';
 import { css } from './css';
-import { ComponentInterface } from '@chialab/dna';
 
 /**
  * Alias to Array.isArray.
@@ -93,7 +92,6 @@ const convertStyles = (value: any) => {
 export const render = (root: HTMLElement, input: Template, context?: Context, rootContext?: Context, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
     const renderContext = context || getContext(root) || createContext(root);
     const rootRenderContext = rootContext || renderContext;
-    const isStyle = root.localName === 'style';
     const rootNamespaceURI = root.namespaceURI;
     // result list
     const results: Node[] = [];
@@ -108,23 +106,28 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
     let subscriptions: Subscription[] = renderContext.subscriptions = renderContext.subscriptions || [];
     let rootPromises = rootRenderContext.promises as Promise<unknown>[];
     let rootSubscriptions = rootRenderContext.subscriptions as Subscription[];
-    promises.forEach((promise) => {
-        abort(promise);
-        rootPromises.splice(rootPromises.indexOf(promise), 1);
-    });
-    subscriptions.forEach((subscription) => {
-        subscription.unsubscribe();
-        rootSubscriptions.splice(rootSubscriptions.indexOf(subscription), 1);
-    });
-    promises.splice(0, promises.length);
-    subscriptions.splice(0, subscriptions.length);
+    if (promises.length) {
+        promises.forEach((promise) => {
+            abort(promise);
+            rootPromises.splice(rootPromises.indexOf(promise), 1);
+        });
+        promises.splice(0, promises.length);
+    }
+    if (subscriptions.length) {
+        subscriptions.forEach((subscription) => {
+            subscription.unsubscribe();
+            rootSubscriptions.splice(rootSubscriptions.indexOf(subscription), 1);
+        });
+        subscriptions.splice(0, subscriptions.length);
+    }
 
     const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
         if (template == null || template === false) {
             return;
         }
 
-        let isObject = typeof template === 'object';
+        let templateType = typeof template;
+        let isObject = templateType === 'object';
         let newNode: Element | Text | undefined;
         let newChildren: TemplateItems | undefined;
 
@@ -182,7 +185,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     let prevCurrentNode = currentNode;
                     currentNode = childNodes[currentIndex + 1] as Node;
                     prevKey = isElement(currentNode) && (currentNode as any).key;
-                    DOM.removeChild(root, prevCurrentNode);
+                    DOM.removeChild(root, prevCurrentNode, slot);
                 }
                 if (key != null || prevKey != null) {
                     if (key === prevKey) {
@@ -228,21 +231,16 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 }
             }
             for (let propertyKey in properties) {
-                let value = properties[propertyKey];
-                let oldValue = childContext[propertyKey];
-                let type = typeof value;
-                let isReference = type === 'object' || type === 'function';
-                let changed = !(propertyKey in childContext) || value !== oldValue;
-
-                childContext[propertyKey] = value;
-
-                if (!changed) {
+                if (propertyKey === 'is' || propertyKey === 'key') {
                     continue;
                 }
+                let value = properties[propertyKey];
+                let oldValue = childContext[propertyKey];
+                childContext[propertyKey] = value;
 
                 if (propertyKey === 'style') {
                     let style = (newNode as HTMLElement).style;
-                    let oldStyles = childContext.styles || {};
+                    let oldStyles = convertStyles(oldValue);
                     let newStyles = convertStyles(value);
                     for (let propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
@@ -252,11 +250,10 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     for (let propertyKey in newStyles) {
                         style.setProperty(propertyKey, newStyles[propertyKey]);
                     }
-                    childContext.styles = newStyles;
                     continue;
                 } else if (propertyKey === 'class') {
                     let classList = (newNode as HTMLElement).classList;
-                    let oldClasses: string[] = childContext.classes || [];
+                    let oldClasses: string[] = convertClasses(oldValue);
                     let newClasses: string[] = convertClasses(value);
                     oldClasses.forEach((className: string) => {
                         if (newClasses.indexOf(className) === -1) {
@@ -268,9 +265,16 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                             classList.add(className);
                         }
                     });
-                    childContext.classes = newClasses;
                     continue;
                 }
+
+                let changed = !(propertyKey in childContext) || value !== oldValue;
+                if (!changed) {
+                    continue;
+                }
+
+                let type = typeof value;
+                let isReference = type === 'object' || type === 'function';
 
                 if (Component || isReference) {
                     (newNode as any)[propertyKey] = value;
@@ -329,8 +333,8 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             handleItems(status.current, templateContext, filter);
             return;
         } else {
-            if (isStyle && typeof template === 'string' && templateContext.is) {
-                template = css(templateContext.is as string, template);
+            if (templateType === 'string' && templateContext.is && root.localName === 'style') {
+                template = css(templateContext.is as string, template as string);
                 root.setAttribute('name', templateContext.is);
             }
 

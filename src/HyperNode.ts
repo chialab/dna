@@ -7,7 +7,15 @@ import { Fragment } from './Fragment';
 /**
  * Symbol for interpolated functions.
  */
-const HYPER_SYMBOL = createSymbolKey();
+const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * The hyper node prototype.
+ */
+const HYPER_PROTO = {
+    __proto__: null,
+    [HYPER_SYMBOL]: true,
+};
 
 /**
  * The properties of a HyperNode.
@@ -61,26 +69,13 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
-        is: string | undefined,
-        key: any | undefined,
-        propertiesToSet: any = {},
+        propertiesToSet: any = properties || {},
+        is: string | undefined = propertiesToSet.is,
+        key = propertiesToSet.key,
         Component: typeof HTMLElement | undefined,
         Function: TemplateFunction | undefined;
 
     if (!isFragment) {
-        if (properties) {
-            for (let propertyKey in properties) {
-                let value = properties[propertyKey];
-                if (propertyKey === 'is' && customElements.get(value)) {
-                    is = value;
-                } else if (propertyKey === 'key') {
-                    key = value;
-                } else {
-                    propertiesToSet[propertyKey] = value;
-                }
-            }
-        }
-
         if (!tag) {
             if (((tagOrComponent as Function).prototype instanceof window.HTMLElement)) {
                 Component = tagOrComponent as typeof HTMLElement;
@@ -94,6 +89,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
     }
 
     return {
+        __proto__: HYPER_PROTO,
         Component,
         Function,
         tag,
@@ -104,6 +100,5 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         namespaceURI: NamespaceURI[tag as keyof typeof NamespaceURI] || propertiesToSet.xmlns,
         properties: propertiesToSet,
         children,
-        [HYPER_SYMBOL]: true,
     } as HyperNode;
 };

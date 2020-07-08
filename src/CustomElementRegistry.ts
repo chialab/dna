@@ -10,17 +10,12 @@ const nativeCustomElements = window.customElements;
  * Check the validity of a Custom Element name.
  * @param name The name to validate.
  */
-const assertValidateCustomElementName = (name: string): boolean => {
-    if (
-        !name                       // missing element name
-        || /[^a-z\-\d]/.test(name)  // custom element names can contain lowercase characters, digits and hyphens
-        || name.indexOf('-') < 1    // custom element names must contain (and must not start with) a hyphen
-        || /^\d/i.test(name)        // custom element names must not start with a digit
-    ) {
-        throw new SyntaxError('The provided name must be a valid Custom Element name');
-    }
-    return true;
-};
+const assertValidateCustomElementName = (name: string): boolean => (
+    !!name                       // missing element name
+    && /[a-z\-\d]/.test(name)  // custom element names can contain lowercase characters, digits and hyphens
+    && name.indexOf('-') >= 1  // custom element names must contain (and must not start with) a hyphen
+    && /^[^\d]/i.test(name)        // custom element names must not start with a digit
+);
 
 /**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
@@ -53,11 +48,12 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): typeof HTMLElement {
-        if (nativeCustomElements) {
-            return nativeCustomElements.get(name);
+    get(name: string): typeof HTMLElement|undefined {
+        let constructor: typeof HTMLElement = this.registry[name];
+        if (!constructor && nativeCustomElements) {
+            constructor = nativeCustomElements.get(name);
         }
-        return this.registry[name];
+        return constructor;
     }
 
     /**
@@ -68,7 +64,9 @@ export class CustomElementRegistry {
      * @param options A set of definition options, like `extends` for native tag extension.
      */
     define(name: string, constructor: typeof HTMLElement, options: ElementDefinitionOptions = {}) {
-        assertValidateCustomElementName(name);
+        if (!assertValidateCustomElementName(name)) {
+            throw new SyntaxError('The provided name must be a valid Custom Element name');
+        }
 
         if (typeof constructor !== 'function') {
             throw new TypeError('The referenced constructor must be a constructor');
