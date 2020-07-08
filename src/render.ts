@@ -234,13 +234,8 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 if (propertyKey === 'is' || propertyKey === 'key') {
                     continue;
                 }
-                let value = properties[propertyKey];
                 let oldValue = childContext[propertyKey];
-                let changed = !(propertyKey in childContext) || value !== oldValue;
-                childContext[propertyKey] = value;
-                if (!changed) {
-                    continue;
-                }
+                let value = childContext[propertyKey] = properties[propertyKey];
 
                 if (propertyKey === 'style') {
                     let style = (newNode as HTMLElement).style;
