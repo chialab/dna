@@ -79,7 +79,7 @@ describe('[Compat] IDOM observer', () => {
             }, { show: true, age: 21, married: true });
             assert.equal(elem.node.getAttribute('age'), '21');
             assert.equal(elem.age, 21);
-            assert.equal(elem.attributeChanges, 4);
+            assert.equal(elem.attributeChanges, 2);
             assert.equal(elem.married, true);
         });
 

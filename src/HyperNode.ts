@@ -10,21 +10,13 @@ import { Fragment } from './Fragment';
 const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
- * The hyper node prototype.
- */
-const HYPER_PROTO = {
-    __proto__: null,
-    [HYPER_SYMBOL]: true,
-};
-
-/**
  * The properties of a HyperNode.
  */
 export type HyperProperties = {
     is?: string;
     slot?: string;
     key?: any;
-    namespaceURI?: string;
+    xlmns?: NamespaceURI;
     [key: string]: any;
 };
 
@@ -72,24 +64,26 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         propertiesToSet: any = properties || {},
         is: string | undefined = propertiesToSet.is,
         key = propertiesToSet.key,
+        xmlns = propertiesToSet.xmlns,
         Component: typeof HTMLElement | undefined,
         Function: TemplateFunction | undefined;
 
-    if (!isFragment) {
+    if (!isFragment && !isSlot) {
         if (!tag) {
             if (((tagOrComponent as Function).prototype instanceof window.HTMLElement)) {
                 Component = tagOrComponent as typeof HTMLElement;
             } else {
                 Function = tagOrComponent as TemplateFunction;
             }
+        } else if (tag === 'svg') {
+            xmlns = NamespaceURI.svg;
         } else {
             // get the constructor from the registry
-            Component = customElements.get(is as string || tag as string);
+            Component = customElements.get(is || tag);
         }
     }
 
     return {
-        __proto__: HYPER_PROTO,
         Component,
         Function,
         tag,
@@ -97,8 +91,9 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         key,
         isFragment,
         isSlot,
-        namespaceURI: NamespaceURI[tag as keyof typeof NamespaceURI] || propertiesToSet.xmlns,
+        namespaceURI: xmlns,
         properties: propertiesToSet,
         children,
+        [HYPER_SYMBOL]: true,
     } as HyperNode;
 };

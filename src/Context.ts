@@ -2,7 +2,7 @@ import { createSymbolKey } from './symbols';
 import { Subscription } from './Observable';
 
 /**
- * The ontext symbol.
+ * The Context symbol.
  */
 const CONTEXT_SYMBOL = createSymbolKey();
 
@@ -12,8 +12,6 @@ const CONTEXT_SYMBOL = createSymbolKey();
 export type Context = {
     promises?: Promise<unknown>[];
     subscriptions?: Subscription[];
-    classes?: string[];
-    styles?: { [key: string]: any };
     [key: string]: any;
 };
 
@@ -22,16 +20,16 @@ export type Context = {
  * @param prototype The initial prototype object for the context.
  * @return An context object with prototype.
  */
-export const createContext = (prototype: any, values: { [key: string]: any } = {}): Context => {
+export const createContext = (prototype: any, values?: { [key: string]: any }): Context => {
     let context = {
         __proto__: prototype,
         promises: undefined,
         subscriptions: undefined,
-        class: undefined,
-        style: undefined,
     } as Context;
-    for (let key in values) {
-        context[key] = values[key];
+    if (values) {
+        for (let key in values) {
+            context[key] = values[key];
+        }
     }
     return context;
 };

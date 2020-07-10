@@ -1,7 +1,7 @@
 import { ComponentInterface, isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode } from './HyperNode';
-import { DOM, isElement, isText } from './DOM';
+import { isHyperNode, NamespaceURI } from './HyperNode';
+import { DOM, isElement, isText, getAttributeImpl } from './DOM';
 import { Context, createContext, getContext, setContext } from './Context';
 import { isThenable, getThenableState, abort } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
@@ -90,13 +90,13 @@ const convertStyles = (value: any) => {
  * @return The resulting child Nodes.
  */
 export const render = (root: HTMLElement, input: Template, context?: Context, rootContext?: Context, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
-    const renderContext = context || getContext(root) || createContext(root);
-    const rootRenderContext = rootContext || renderContext;
-    const rootNamespaceURI = root.namespaceURI;
+    let renderContext = context || getContext(root) || createContext(root);
+    let rootRenderContext = rootContext || renderContext;
+    let rootNamespaceURI = root.namespaceURI;
     // result list
-    const results: Node[] = [];
+    let results: Node[] = [];
 
-    let childNodes: Node[] = (slot && (root as ComponentInterface<any>).slotChildNodes) || root.childNodes;
+    let childNodes: Node[] = slot ? (root as ComponentInterface<any>).slotChildNodes : root.childNodes;
     // the current iterating node
     let currentIndex = 0;
     let currentNode = childNodes[currentIndex] as Node;
@@ -129,6 +129,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
         let templateType = typeof template;
         let isObject = templateType === 'object';
         let newNode: Element | Text | undefined;
+        let isNewElementNode = false;
         let newChildren: TemplateItems | undefined;
 
         if (isObject && isArray(template)) {
@@ -159,14 +160,14 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
                         if (isElement(item)) {
-                            return DOM.getAttribute(item, 'slot') === properties.name;
+                            return getAttributeImpl.call(item, 'slot') === properties.name;
                         }
                         return false;
                     };
                 } else {
                     filter = (item: TemplateItem) => {
                         if (isElement(item)) {
-                            return !DOM.getAttribute(item, 'slot');
+                            return !getAttributeImpl.call(item, 'slot');
                         }
                         return true;
                     };
@@ -190,18 +191,23 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 if (key != null || prevKey != null) {
                     if (key === prevKey) {
                         isNew = false;
+                        isNewElementNode = true;
                         newNode = currentNode as Element;
                     }
                 } else if (Component && currentNode instanceof Component) {
                     isNew = false;
+                    isNewElementNode = true;
                     newNode = currentNode;
                 } else if (tag && (currentNode as Element).localName === tag) {
                     isNew = false;
+                    isNewElementNode = true;
                     newNode = currentNode as Element;
                 }
             }
 
             if (!newNode) {
+                isNewElementNode = true;
+
                 if (Component) {
                     newNode = new Component();
                 } else {
@@ -224,7 +230,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             }
 
             // update the Node properties
-            const childContext: any = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] || {};
+            let childContext: any = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] || {};
             for (let propertyKey in childContext) {
                 if (!(propertyKey in properties)) {
                     properties[propertyKey] = null;
@@ -268,19 +274,19 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 }
 
                 let type = typeof value;
-                let isReference = type === 'object' || type === 'function';
+                let isReference = (value && type === 'object') || type === 'function' || Component || (currentNamespace != NamespaceURI.svg && propertyKey in newNode);
 
-                if (Component || isReference) {
-                    (newNode as any)[propertyKey] = value;
-                }
-
-                if (value == null || value === false) {
+                if (isReference) {
+                    if (oldValue != value) {
+                        (newNode as any)[propertyKey] = value;
+                    }
+                } else if (value == null || value === false) {
                     if (!isNew && DOM.hasAttribute(newNode as Element, propertyKey)) {
                         DOM.removeAttribute(newNode as Element, propertyKey);
                     }
-                } else if (!isReference) {
+                } else {
                     let attrValue = value === true ? '' : value;
-                    if (isNew || DOM.getAttribute(newNode as Element, propertyKey) !== attrValue) {
+                    if (isNew || getAttributeImpl.call(newNode as Element, propertyKey) !== attrValue) {
                         DOM.setAttribute(newNode as Element, propertyKey, attrValue);
                     }
                 }
@@ -290,7 +296,10 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
             // at the next render cycle
             setContext(children, templateContext);
             newChildren = children;
-        } else if (isObject && (isElement(template) || isText(template))) {
+        } else if (isObject && isElement(template)) {
+            newNode = template;
+            isNewElementNode = true;
+        } else if (isObject && isText(template)) {
             newNode = template;
         } else if (isObject && isThenable(template)) {
             let status = getThenableState(template);
@@ -334,7 +343,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
             if (isText(currentNode)) {
                 newNode = currentNode as Text;
-                if (currentNode.textContent != template) {
+                if (newNode.textContent != template) {
                     newNode.textContent = template as string;
                 }
             } else {
@@ -362,7 +371,7 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
 
         results.push(newNode);
 
-        if (isElement(newNode) && newChildren) {
+        if (isNewElementNode && newChildren) {
             // the Node has slotted children, trigger a new render context for them
             render(newNode as HTMLElement, newChildren, createContext(templateContext), rootRenderContext, undefined, isComponent(newNode));
         }
