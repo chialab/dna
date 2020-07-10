@@ -205,18 +205,16 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 }
             }
 
+            let currentNamespace = namespaceURI || rootNamespaceURI;
             if (!newNode) {
                 isNewElementNode = true;
 
                 if (Component) {
                     newNode = new Component();
+                } else if (currentNamespace) {
+                    newNode = DOM.createElementNS(currentNamespace, tag as string);
                 } else {
-                    let currentNamespace = namespaceURI || rootNamespaceURI;
-                    if (currentNamespace) {
-                        newNode = DOM.createElementNS(currentNamespace, tag as string);
-                    } else {
-                        newNode = DOM.createElement(tag as string);
-                    }
+                    newNode = DOM.createElement(tag as string);
                 }
 
                 if (key) {
