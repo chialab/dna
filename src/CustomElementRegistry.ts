@@ -7,6 +7,11 @@ import { isComponent, isComponentConstructor } from './Interfaces';
 const nativeCustomElements = window.customElements;
 
 /**
+ * The current document instance.
+ */
+const document = window.document;
+
+/**
  * Check the validity of a Custom Element name.
  * @param name The name to validate.
  */
@@ -91,7 +96,19 @@ export class CustomElementRegistry {
         this.tagNames[name] = tagName.toLowerCase();
 
         if (nativeCustomElements) {
-            return nativeCustomElements.define(name, constructor, options);
+            // in order to correctly handle children
+            // we have to check the document ready state
+            if (document.readyState === 'complete') {
+                nativeCustomElements.define(name, constructor, options);
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    nativeCustomElements.define(name, constructor, options);
+                }, {
+                    // browsers that support WC also support the once property
+                    once: true,
+                });
+            }
+            return;
         }
 
         const queue = this.queue;
