@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#template">template</a>, <a href="#interpolate">interpolate</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#renderasync">renderAsync</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
 
 
 <hr />
@@ -92,7 +92,7 @@ Get the Custom Element definition for a tag.
 
 <details>
 <summary>
-<code>(name: string): HTMLElement</code>
+<code>(name: string): HTMLElement|undefined</code>
 </summary><br />
 
 
@@ -116,7 +116,7 @@ Get the Custom Element definition for a tag.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>HTMLElement</code> The definition for the given tag.
+<strong>Returns</strong>: <code>HTMLElement|undefined</code> The definition for the given tag.
 
 <br />
 </details>
@@ -422,7 +422,30 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>, context?: <a href="#context">Context</a>|undefined, rootContext?: <a href="#context">Context</a>|undefined, filter?: <a href="#templatefilter">TemplateFilter</a>|undefined, slot?: boolean): Node|Node[]|void</pre>
+<pre>(root: HTMLElement, input: <a href="#template">Template</a>): Node|Node[]|void</pre>
+
+
+
+
+<hr />
+
+<strong id="renderasync"><code>constant</code>  renderAsync</strong>
+
+
+
+<p>
+
+Render a set of Nodes into another, with some checks for Nodes in order to avoid
+useless changes in the tree and to mantain or update the state of compatible Nodes.
+It await pending rendering promises.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(root: HTMLElement, input: <a href="#template">Template</a>): Promise&lt;Node|Node[]|void&gt;</pre>
 
 
 
@@ -486,48 +509,6 @@ Compile a template string into virtual DOM template.
 <strong>Type:</strong>
 
 <pre>(string: string|TemplateStringsArray, values: any[]): <a href="#template">Template</a></pre>
-
-
-
-
-<hr />
-
-<strong id="template"><code>constant</code>  template</strong>
-
-
-
-<p>
-
-Compile a template element into virtual DOM template.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(template: HTMLTemplateElement, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
-
-
-
-
-<hr />
-
-<strong id="interpolate"><code>constant</code>  interpolate</strong>
-
-
-
-<p>
-
-Create an InterpolationFunction.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(expression: string, context: <a href="#context">Context</a>): any</pre>
 
 
 
@@ -864,7 +845,7 @@ A function that returns a template.
 <pre>(props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
+}): <a href="#template">Template</a></pre>
 
 
 
@@ -905,27 +886,6 @@ A list of template items.
 
 <hr />
 
-<strong id="context"><code>type</code>  Context</strong>
-
-<p>
-
-A ontext interface.
-
-</p>
-
-
-
-<pre>{
-    promises?: Promise&lt;any&gt;[];
-    subscriptions?: <a href="#subscription">Subscription</a>[];
-    [key: string]: any;
-}</pre>
-
-
-
-
-<hr />
-
 <strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
 
 <p>
@@ -957,7 +917,7 @@ The properties of a HyperNode.
     is?: string;
     slot?: string;
     key?: any;
-    namespaceURI?: string;
+    xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
     [key: string]: any;
 }</pre>
 
@@ -1105,7 +1065,6 @@ A validation function for the class field.
 
 <pre>T & {
     is: string;
-    template: HTMLTemplateElement|undefined;
     $: <a href="#context">Context</a>;
     slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
@@ -1133,6 +1092,49 @@ A validation function for the class field.
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     emulateLifeCycle(): void;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="context"><code>type</code>  Context</strong>
+
+<p>
+
+A ontext interface.
+
+</p>
+
+
+
+<pre>{
+    childNodes: <a href="#iterablenodelist">IterableNodeList</a>;
+    props: {
+        [key: string]: any;
+    };
+    keys: any[];
+    promises: Promise&lt;any&gt;[];
+    subscriptions: <a href="#subscription">Subscription</a>[];
+    is?: string;
+    slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+    [key: string]: any;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
+
+
+
+
+
+<pre>Node[] & {
+    item(index: number): Node|null;
 }</pre>
 
 

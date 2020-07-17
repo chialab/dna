@@ -16,10 +16,10 @@ const document = window.document;
  * @param name The name to validate.
  */
 const assertValidateCustomElementName = (name: string): boolean => (
-    !!name                       // missing element name
-    && /[a-z\-\d]/.test(name)  // custom element names can contain lowercase characters, digits and hyphens
+    !!name                     // missing element name
     && name.indexOf('-') >= 1  // custom element names must contain (and must not start with) a hyphen
-    && /^[^\d]/i.test(name)        // custom element names must not start with a digit
+    && /[a-z\-\d]/.test(name)  // custom element names can contain lowercase characters, digits and hyphens
+    && /^[^\d]/i.test(name)    // custom element names must not start with a digit
 );
 
 /**
@@ -53,9 +53,11 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): typeof HTMLElement|undefined {
+    get(name: string): typeof HTMLElement | undefined {
         let constructor: typeof HTMLElement = this.registry[name];
-        if (!constructor && nativeCustomElements) {
+        // the native custom elements get method is slow
+        // assert valid names before calling it.
+        if (!constructor && nativeCustomElements && assertValidateCustomElementName(name)) {
             constructor = nativeCustomElements.get(name);
         }
         return constructor;
@@ -69,6 +71,11 @@ export class CustomElementRegistry {
      * @param options A set of definition options, like `extends` for native tag extension.
      */
     define(name: string, constructor: typeof HTMLElement, options: ElementDefinitionOptions = {}) {
+        if (document.readyState !== 'complete') {
+            document.addEventListener('DOMContentLoaded', () => this.define(name, constructor, options));
+            return;
+        }
+
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
@@ -96,24 +103,13 @@ export class CustomElementRegistry {
         this.tagNames[name] = tagName.toLowerCase();
 
         if (nativeCustomElements) {
-            // in order to correctly handle children
-            // we have to check the document ready state
-            if (document.readyState === 'complete') {
-                nativeCustomElements.define(name, constructor, options);
-            } else {
-                document.addEventListener('DOMContentLoaded', () => {
-                    nativeCustomElements.define(name, constructor, options);
-                }, {
-                    // browsers that support WC also support the once property
-                    once: true,
-                });
+            nativeCustomElements.define(name, constructor, options);
+        } else {
+            const queue = this.queue;
+            this.upgrade(document.body);
+            if (queue[name]) {
+                queue[name].forEach((resolve) => resolve());
             }
-            return;
-        }
-
-        const queue = this.queue;
-        if (queue[name]) {
-            queue[name].forEach((resolve) => resolve());
         }
     }
 

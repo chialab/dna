@@ -13,24 +13,19 @@ export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => (node as any)[COMPONENT_SYMBOL];
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => COMPONENT_SYMBOL in node;
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  */
-export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => (constructor.prototype)[COMPONENT_SYMBOL];
+export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => COMPONENT_SYMBOL in constructor.prototype;
 
 export type ComponentInterface<T extends HTMLElement> = T & {
     /**
      * The defined component name.
      */
     readonly is: string;
-
-    /**
-     * A set of delegated events to bind to the node.
-     */
-    readonly template: HTMLTemplateElement|undefined;
 
     /**
      * The render context reference of the node.

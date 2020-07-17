@@ -43,34 +43,6 @@ Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to u
 }
 ```
 
-### Using template tags
-
-If a component does not provide a `render` method, DNA will try to automatically detect in the document a `<template>` with the same `name` of the component:
-
-```ts
-customElements.define('hello-world', HelloWorld);
-```
-
-```html
-<head>
-    <template name="hello-world">
-        <div>Hello world!</div>
-    </template>
-</head>
-```
-
-You can also directly pass a `HTMLTemplateElement` reference to the property:
-
-```ts
-import { Component, customElements } from '@chialab/dna';
-
-class HelloWorld extends Component {
-    readonly template = document.querySelector('template#hello-world);
-}
-
-customElements.define('hello-world', HelloWorld);
-```
-
 ## Interpolation rules
 
 When interpolating an expression, the following rules (based on the type of the result and context) are applied:
@@ -105,19 +77,6 @@ html`<span>${this.firstName} ${this.lastName}</span>`
 </details>
 
 <details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    <span>{{firstName}} {{lastName}}</span>
-</template>
-```
-
-</div>
-</details>
-
-<details>
 <summary>Raw</summary>
 <div>
 
@@ -139,19 +98,6 @@ html`<input name=${this.name} disabled=${this.disabled} required />`
 
 ```ts
 <input name={this.name} disabled={this.disabled} required />
-```
-
-</div>
-</details>
-
-<details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    <input name={{name}} disabled={{disabled}} required />
-</template>
 ```
 
 </div>
@@ -186,23 +132,6 @@ html`<ul>
 <ul>
     {this.items.map((item, index) => <li>{index}. {item}</li>)}
 </ul>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    <ul>
-        <template repeat={{items}} item="item" key="index">
-            <li>{{index}}. {{item}}</li>
-        </template>
-    </ul>
-</template>
 ```
 
 </div>
@@ -249,28 +178,6 @@ html`
         'No members'
     }
 </>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    <template if={{avatar}}>
-        <img src={{avatar}} />
-    </template>
-    <h1>{title || 'Untitled'}</h1>
-    <template if={{members.length}}>
-        {{members.length}} members
-    </template>
-    <template if={{!members.length}}>
-        No members
-    </template>
-</template>
 ```
 
 </div>
@@ -331,27 +238,6 @@ import { until } from '@chialab/dna';
 </details>
 
 <details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    <template until={{json}}>
-        Loading...
-    </template>
-    <template then={{json}} as="$data">
-        <ul>{{$data}}</ul>
-    </template>
-    <template catch={{json}} as="$error">
-        <div>Error {{$error}}</div>
-    </template>
-</template>
-```
-
-</div>
-</details>
-
-<details>
 <summary>Raw</summary>
 <div>
 
@@ -393,27 +279,6 @@ html`
     Timer: {timer$},
     Numbers: {numbers$.pipe((val) => val % 2 ? <strong>{val}</strong> : val)}
 </>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Template tag</summary>
-<div>
-
-```html
-<template>
-    Timer: {timer$},
-    <template pipe={{timer$}} as="$val">
-        <template if="{{$val % 2}}">
-            <strong>{{$val}}</strong>
-        </template>
-        <template if="{{!($val % 2)}}">
-            {{$val}}
-        </template>
-    </template>
-</template>
 ```
 
 </div>

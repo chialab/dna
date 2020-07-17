@@ -2,9 +2,9 @@ import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
+import { cloneChildNodes } from './NodeList';
 
 const { Node, HTMLElement, Event, CustomEvent, document } = window;
-const slice = Array.prototype.slice;
 
 if (!Node || !HTMLElement || !Event || !CustomEvent || !document) {
     throw new Error('invalid DOM implementation');
@@ -18,34 +18,28 @@ export const getAttributeImpl = HTMLElement.prototype.getAttribute;
 export const hasAttributeImpl = HTMLElement.prototype.hasAttribute;
 export const setAttributeImpl = HTMLElement.prototype.setAttribute;
 export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
-
-/**
- * Make a readonly copy of the child nodes collection.
- * @param node The parent node.
- * @return A frozen list of child nodes.
- */
-export const cloneChildNodes = (node: Node): Node[] => slice.call(node.childNodes || [], 0) as Node[];
+const { DOCUMENT_NODE, TEXT_NODE, ELEMENT_NODE } = Node;
 
 /**
  * Check if a node is a Document instance.
  * @param node The node to check.
  * @return The node is a Document instance.
  */
-export const isDocument = (node: any): node is Document => node && node.nodeType === Node.DOCUMENT_NODE;
+export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
 
 /**
  * Check if a node is a Text instance.
  * @param node The node to check.
  * @return The node is a Text instance.
  */
-export const isText = (node: any): node is Text => node && node.nodeType === Node.TEXT_NODE;
+export const isText = (node: any): node is Text => node && node.nodeType === TEXT_NODE;
 
 /**
  * Check if a node is an Element instance.
  * @param node The node to check.
  * @return The node is an Element instance.
  */
-export const isElement = (node: any): node is HTMLElement => node && node.nodeType === Node.ELEMENT_NODE;
+export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
@@ -81,15 +75,12 @@ export const connect = (node: Node, force = false) => {
     if (!isElement(node)) {
         return;
     }
-    let children = cloneChildNodes(node);
     if (shouldEmulateLifeCycle(node) || force) {
         (node as ComponentInterface<HTMLElement>).connectedCallback();
-        children = cloneChildNodes(node);
     }
-    if (children) {
-        for (let i = 0, len = children.length; i < len; i++) {
-            connect(children[i]);
-        }
+    let children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        connect(children[i]);
     }
 };
 
@@ -103,15 +94,12 @@ export const disconnect = (node: Node) => {
     if (!isElement(node)) {
         return;
     }
-    let children = cloneChildNodes(node);
     if (shouldEmulateLifeCycle(node)) {
         node.disconnectedCallback();
-        children = cloneChildNodes(node);
     }
-    if (children) {
-        for (let i = 0, len = children.length; i < len; i++) {
-            disconnect(children[i]);
-        }
+    let children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        disconnect(children[i]);
     }
 };
 
@@ -124,7 +112,7 @@ const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-const shouldEmulateLifeCycle = (node: Element): node is ComponentInterface<HTMLElement> => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
+const shouldEmulateLifeCycle = (node: Element): node is ComponentInterface<HTMLElement> => EMULATE_LIFECYCLE_SYMBOL in node;
 
 /**
  * Should emulate life cycle.
@@ -213,14 +201,13 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        if (!lifeCycleEmulation) {
-            return appendChildImpl.call(parent, newChild) as T;
-        }
-        if (newChild.parentNode) {
+        if (lifeCycleEmulation && newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         appendChildImpl.call(parent, newChild);
-        connect(newChild);
+        if (lifeCycleEmulation) {
+            connect(newChild);
+        }
         return newChild;
     },
 
@@ -241,11 +228,10 @@ export const DOM = {
             }
             return oldChild;
         }
-        if (!lifeCycleEmulation) {
-            return removeChildImpl.call(parent, oldChild) as T;
-        }
         removeChildImpl.call(parent, oldChild);
-        disconnect(oldChild);
+        if (lifeCycleEmulation) {
+            disconnect(oldChild);
+        }
         return oldChild;
     },
 
@@ -271,14 +257,13 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        if (!lifeCycleEmulation) {
-            return insertBeforeImpl.call(parent, newChild, refChild) as T;
-        }
-        if (newChild.parentNode) {
+        if (lifeCycleEmulation && newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         insertBeforeImpl.call(parent, newChild, refChild);
-        connect(newChild);
+        if (lifeCycleEmulation) {
+            connect(newChild);
+        }
         return newChild;
     },
 
@@ -298,15 +283,16 @@ export const DOM = {
             parent.forceUpdate();
             return oldChild;
         }
-        if (!lifeCycleEmulation) {
-            return replaceChildImpl.call(parent, newChild, oldChild) as T;
-        }
-        if (newChild.parentNode && newChild !== oldChild) {
-            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
+        if (lifeCycleEmulation) {
+            if (newChild.parentNode && newChild !== oldChild) {
+                DOM.removeChild(newChild.parentNode as Element, newChild, slot);
+            }
+            disconnect(oldChild);
         }
         replaceChildImpl.call(parent, newChild, oldChild);
-        disconnect(oldChild);
-        connect(newChild);
+        if (lifeCycleEmulation) {
+            connect(newChild);
+        }
         return oldChild;
     },
 

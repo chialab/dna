@@ -7,7 +7,6 @@
 * [Templates](./templates)
   * [Render](./templates#templates)
   * [Using JSX](./templates#using-jsx)
-  * [Using template tags](./templates#using-template-tags)
   * [Interpolation rules](./templates#interpolation-rules)
   * [Shadow DOM](./templates#shadow-dom)
   * [Keyed elements](./templates#keyed-elements)

@@ -1,37 +1,18 @@
-import { createSymbolKey } from './symbols';
 import { Subscription } from './Observable';
-
-/**
- * The Context symbol.
- */
-const CONTEXT_SYMBOL = createSymbolKey();
+import { IterableNodeList } from './NodeList';
 
 /**
  * A ontext interface.
  */
 export type Context = {
-    promises?: Promise<unknown>[];
-    subscriptions?: Subscription[];
+    childNodes: IterableNodeList,
+    props: { [key: string]: any; },
+    keys: any[];
+    promises: Promise<unknown>[];
+    subscriptions: Subscription[];
+    is?: string;
+    slotChildNodes?: IterableNodeList,
     [key: string]: any;
-};
-
-/**
- * Create a context with an initial prototype.
- * @param prototype The initial prototype object for the context.
- * @return An context object with prototype.
- */
-export const createContext = (prototype: any, values?: { [key: string]: any }): Context => {
-    let context = {
-        __proto__: prototype,
-        promises: undefined,
-        subscriptions: undefined,
-    } as Context;
-    if (values) {
-        for (let key in values) {
-            context[key] = values[key];
-        }
-    }
-    return context;
 };
 
 /**
@@ -39,11 +20,23 @@ export const createContext = (prototype: any, values?: { [key: string]: any }): 
  * @param target The context object.
  * @return The context object (if it exists).
  */
-export const getContext = (target: any): Context | undefined => target[CONTEXT_SYMBOL];
+export const getContext = (target: any): Context => target['__CONTEXT_SYMBOL__'];
 
 /**
  * Attach a context to an object.
  * @param target The object to context.
  * @param context The context to set.
  */
-export const setContext = (target: any, context: Context): Context => target[CONTEXT_SYMBOL] = context;
+export const setContext = (target: any, context: Context): Context => target['__CONTEXT_SYMBOL__'] = context;
+
+/**
+ * Create a
+ * @param root
+ */
+export const createContext = (root: HTMLElement) => setContext(root, {
+    childNodes: root.childNodes as unknown as IterableNodeList,
+    props: {},
+    keys: [],
+    promises: [],
+    subscriptions: [],
+});

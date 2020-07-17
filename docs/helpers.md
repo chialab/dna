@@ -100,27 +100,6 @@ style.textContent = cssText;
 DOM.appendChild(DOM.document.head, style);
 ```
 
-## interpolate
-
-The `interpolate` helper compiles a string expression like `Hello {{ name }}` into static values. It is internally used to provide interpolation to a template generated from `<template>` element.
-
-```ts
-import { interpolate } from '@chialab/dna';
-
-interpolate(`Hello, my name is {{firstName.toUpperCase()}} and I'm {{age * 2}} years old. I was born on {{birthdate.toLocaleDateString()}}`, {
-    name: 'Alan',
-    age: 20,
-    birthdate: new Date('05/05/1993'),
-});
-// -> Hello, my name is Alan and I'm 40 years old. I was born on 05/05/1993.
-```
-
-<aside class="note">
-
-Since the `interpolate` method generates a function which evaluate any script inside the interpolation symbols, you must make sure it is safe code. Furthemore, interpolated scripts will not be transpiled by Babel or any other transpiler, so any unsupported syntax by the browser will throw a `SyntaxError`.
-
-</aside>
-
 ## Creating an adapter
 
 An adapter is a compatibility layer between DNA and the environment where it runs. Since DNA is completely based on the DOM, in order to create an adapter we need to replace the methods of the `DOM` namespace:

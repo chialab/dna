@@ -1,22 +1,13 @@
-import { ComponentInterface, isComponent } from './Interfaces';
+import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode, NamespaceURI } from './HyperNode';
-import { DOM, isElement, isText, getAttributeImpl } from './DOM';
-import { Context, createContext, getContext, setContext } from './Context';
+import { isHyperNode } from './HyperNode';
+import { DOM, isElement, isText, getAttributeImpl, hasAttributeImpl } from './DOM';
+import { Context, getContext, createContext } from './Context';
 import { isThenable, getThenableState, abort } from './Thenable';
 import { Subscription, isObservable, getObservableState } from './Observable';
-import { createSymbolKey } from './symbols';
+import { isArray } from './helpers';
+import { cloneChildNodes, IterableNodeList } from './NodeList';
 import { css } from './css';
-
-/**
- * Alias to Array.isArray.
- */
-const isArray = Array.isArray;
-
-/**
- * A symbol to store node properties.
- */
-const PRIVATE_CONTEXT_SYMBOL = createSymbolKey();
 
 /**
  * A cache for converted class values.
@@ -86,76 +77,74 @@ const convertStyles = (value: any) => {
  *
  * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
- * @param context The render context object.
- * @return The resulting child Nodes.
+ * @return The resulting child nodes list.
  */
-export const render = (root: HTMLElement, input: Template, context?: Context, rootContext?: Context, filter?: TemplateFilter, slot = false): Node | Node[] | void => {
-    let renderContext = context || getContext(root) || createContext(root);
+export const internalRender = (
+    root: HTMLElement,
+    input: Template,
+    filter?: TemplateFilter,
+    rootContext?: Context,
+    rootNamespaceURI = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
+    slot = false) => {
+    let renderContext = getContext(root) || createContext(root);
     let rootRenderContext = rootContext || renderContext;
-    let rootNamespaceURI = root.namespaceURI;
-    // result list
-    let results: Node[] = [];
-
-    let childNodes: Node[] = slot ? (root as ComponentInterface<any>).slotChildNodes : root.childNodes;
-    // the current iterating node
+    let childNodes: IterableNodeList;
+    if (slot) {
+        childNodes = renderContext.slotChildNodes as IterableNodeList;
+    } else {
+        childNodes = renderContext.childNodes;
+    }
     let currentIndex = 0;
-    let currentNode = childNodes[currentIndex] as Node;
+    let currentNode = childNodes.item(currentIndex) as Node;
 
     // promises list
-    let promises: Promise<unknown>[] = renderContext.promises = renderContext.promises || [];
-    let subscriptions: Subscription[] = renderContext.subscriptions = renderContext.subscriptions || [];
-    let rootPromises = rootRenderContext.promises as Promise<unknown>[];
-    let rootSubscriptions = rootRenderContext.subscriptions as Subscription[];
-    if (promises.length) {
-        promises.forEach((promise) => {
-            abort(promise);
-            rootPromises.splice(rootPromises.indexOf(promise), 1);
-        });
-        promises.splice(0, promises.length);
-    }
-    if (subscriptions.length) {
-        subscriptions.forEach((subscription) => {
-            subscription.unsubscribe();
-            rootSubscriptions.splice(rootSubscriptions.indexOf(subscription), 1);
-        });
-        subscriptions.splice(0, subscriptions.length);
-    }
+    let oldKeys: string[] = [];
+    let oldPromises: Promise<any>[] = [];
+    let oldSubscriptions: Subscription[] = [];
+    let keys = renderContext.keys;
+    let promises = renderContext.promises;
+    let subscriptions = renderContext.subscriptions;
+    let rootPromises = rootRenderContext.promises;
+    let rootSubscriptions = rootRenderContext.subscriptions;
+    while (keys.length) oldKeys.unshift(keys.pop());
+    while (promises.length) oldPromises.unshift(promises.pop() as Promise<any>);
+    while (subscriptions.length) oldSubscriptions.unshift(subscriptions.pop() as Subscription);
 
-    const handleItems = (template: Template, templateContext: Context, filter?: TemplateFilter) => {
+    const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
             return;
         }
 
         let templateType = typeof template;
-        let isObject = templateType === 'object';
-        let newNode: Element | Text | undefined;
-        let isNewElementNode = false;
-        let newChildren: TemplateItems | undefined;
+        let isObjectTemplate = templateType === 'object';
+        let templateNode: Element | Text | undefined;
+        let templateChildren: TemplateItems | undefined;
+        let templateNamespace = rootNamespaceURI;
+        let isElementTemplate = false;
+        let isComponentTemplate = false;
 
-        if (isObject && isArray(template)) {
-            templateContext = getContext(template) || templateContext;
+        if (isObjectTemplate && isArray(template)) {
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
-                handleItems(template[i], templateContext, filter);
+                handleItems(template[i], filter);
             }
             return;
-        } else if (isObject && isHyperNode(template)) {
+        } else if (isObjectTemplate && isHyperNode(template)) {
             let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
-                handleItems(Function(properties, templateContext), templateContext, filter);
+                handleItems(Function(properties), filter);
                 return;
             }
 
             if (isFragment) {
-                handleItems(children, templateContext, filter);
+                handleItems(children, filter);
                 return;
             }
 
             // if the current patch is a slot,
             if (isSlot) {
-                let slottedChildren = ((templateContext as ComponentInterface<any>).slotChildNodes || []).slice(0);
-                let childContext = getContext(slottedChildren) || templateContext;
+                let slottedChildren: Node[] = rootRenderContext.slotChildNodes || [];
                 let filter;
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
@@ -173,76 +162,81 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     };
                 }
 
-                setContext(slottedChildren, childContext);
-                handleItems(slottedChildren, templateContext, filter);
+                handleItems(slottedChildren, filter);
                 return;
             }
 
-            // create the node
-            let isNew = true;
-            if (isElement(currentNode)) {
+            templateNamespace = namespaceURI || rootNamespaceURI;
+
+            if (currentNode) {
                 let prevKey = (currentNode as any).key;
                 if (prevKey != null && key != null && key !== prevKey) {
                     let prevCurrentNode = currentNode;
-                    currentNode = childNodes[currentIndex + 1] as Node;
-                    prevKey = isElement(currentNode) && (currentNode as any).key;
+                    currentNode = childNodes.item(currentIndex + 1) as Node;
+                    prevKey = currentNode && (currentNode as any).key;
                     DOM.removeChild(root, prevCurrentNode, slot);
                 }
                 if (key != null || prevKey != null) {
                     if (key === prevKey) {
-                        isNew = false;
-                        isNewElementNode = true;
-                        newNode = currentNode as Element;
+                        isElementTemplate = true;
+                        templateNode = currentNode as Element;
+                        isComponentTemplate = !!Component && isComponent(templateNode);
                     }
                 } else if (Component && currentNode instanceof Component) {
-                    isNew = false;
-                    isNewElementNode = true;
-                    newNode = currentNode;
+                    isElementTemplate = true;
+                    isComponentTemplate = true;
+                    templateNode = currentNode;
                 } else if (tag && (currentNode as Element).localName === tag) {
-                    isNew = false;
-                    isNewElementNode = true;
-                    newNode = currentNode as Element;
+                    isElementTemplate = true;
+                    templateNode = currentNode as Element;
                 }
             }
 
-            let currentNamespace = namespaceURI || rootNamespaceURI;
-            if (!newNode) {
-                isNewElementNode = true;
+            if (!templateNode) {
+                isElementTemplate = true;
 
                 if (Component) {
-                    newNode = new Component();
-                } else if (currentNamespace) {
-                    newNode = DOM.createElementNS(currentNamespace, tag as string);
+                    templateNode = new Component();
+                    isComponentTemplate = isComponent(templateNode);
                 } else {
-                    newNode = DOM.createElement(tag as string);
+                    templateNode = DOM.createElementNS(templateNamespace, tag as string);
                 }
 
                 if (key) {
-                    (newNode as any).key = key;
-                    Object.defineProperty(templateContext, key, {
+                    (templateNode as any).key = key;
+                    keys.push(key.toString());
+                    Object.defineProperty(rootRenderContext, key, {
                         configurable: true,
                         writable: false,
-                        value: newNode,
+                        value: templateNode,
                     });
                 }
             }
 
             // update the Node properties
-            let childContext: any = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] = (newNode as any)[PRIVATE_CONTEXT_SYMBOL] || {};
-            for (let propertyKey in childContext) {
+            let childContext: Context = getContext(templateNode) || createContext(templateNode as HTMLElement);
+            let childProperties = childContext.props as any;
+            childContext.props = properties;
+
+            for (let propertyKey in childProperties) {
                 if (!(propertyKey in properties)) {
                     properties[propertyKey] = null;
                 }
             }
+
             for (let propertyKey in properties) {
                 if (propertyKey === 'is' || propertyKey === 'key') {
                     continue;
                 }
-                let oldValue = childContext[propertyKey];
-                let value = childContext[propertyKey] = properties[propertyKey];
+                let oldValue = childProperties[propertyKey];
+                let value = properties[propertyKey];
+
+                if (oldValue === value) {
+                    continue;
+                }
 
                 if (propertyKey === 'style') {
-                    let style = (newNode as HTMLElement).style;
+                    let style = (templateNode as HTMLElement).style;
                     let oldStyles = convertStyles(oldValue);
                     let newStyles = convertStyles(value);
                     for (let propertyKey in oldStyles) {
@@ -255,14 +249,16 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                     }
                     continue;
                 } else if (propertyKey === 'class') {
-                    let classList = (newNode as HTMLElement).classList;
-                    let oldClasses: string[] = convertClasses(oldValue);
+                    let classList = (templateNode as HTMLElement).classList;
                     let newClasses: string[] = convertClasses(value);
-                    oldClasses.forEach((className: string) => {
-                        if (newClasses.indexOf(className) === -1) {
-                            classList.remove(className);
-                        }
-                    });
+                    if (oldValue) {
+                        let oldClasses: string[] = convertClasses(oldValue);
+                        oldClasses.forEach((className: string) => {
+                            if (newClasses.indexOf(className) === -1) {
+                                classList.remove(className);
+                            }
+                        });
+                    }
                     newClasses.forEach((className: string) => {
                         if (!classList.contains(className)) {
                             classList.add(className);
@@ -272,123 +268,191 @@ export const render = (root: HTMLElement, input: Template, context?: Context, ro
                 }
 
                 let type = typeof value;
-                let isReference = (value && type === 'object') || type === 'function' || Component || (currentNamespace != NamespaceURI.svg && propertyKey in newNode);
+                let isReference = (value && type === 'object') || type === 'function';
 
-                if (isReference) {
-                    if (oldValue != value) {
-                        (newNode as any)[propertyKey] = value;
+                if (isReference || Component) {
+                    (templateNode as any)[propertyKey] = value;
+                }
+
+                if (value == null || value === false) {
+                    if (hasAttributeImpl.call(templateNode as Element, propertyKey)) {
+                        DOM.removeAttribute(templateNode as Element, propertyKey);
                     }
-                } else if (value == null || value === false) {
-                    if (!isNew && DOM.hasAttribute(newNode as Element, propertyKey)) {
-                        DOM.removeAttribute(newNode as Element, propertyKey);
-                    }
-                } else {
-                    let attrValue = value === true ? '' : value;
-                    if (isNew || getAttributeImpl.call(newNode as Element, propertyKey) !== attrValue) {
-                        DOM.setAttribute(newNode as Element, propertyKey, attrValue);
+                } else if (!isReference) {
+                    let attrValue = value === true ? '' : value.toString();
+                    if (getAttributeImpl.call(templateNode as Element, propertyKey) !== attrValue) {
+                        DOM.setAttribute(templateNode as Element, propertyKey, attrValue);
                     }
                 }
             }
 
-            // store the Node children in order to reuse them
-            // at the next render cycle
-            setContext(children, templateContext);
-            newChildren = children;
-        } else if (isObject && isElement(template)) {
-            newNode = template;
-            isNewElementNode = true;
-        } else if (isObject && isText(template)) {
-            newNode = template;
-        } else if (isObject && isThenable(template)) {
+            templateChildren = children;
+        } else if (isObjectTemplate && isElement(template)) {
+            templateNode = template;
+            isElementTemplate = true;
+            isComponentTemplate = isComponent(templateNode);
+        } else if (isObjectTemplate && isText(template)) {
+            templateNode = template;
+        } else if (isObjectTemplate && isThenable(template)) {
             let status = getThenableState(template);
             if (status.pending) {
                 promises.push(template);
-                if (rootPromises !== promises) {
-                    rootPromises.push(template);
-                }
                 template
                     .catch(() => 1)
                     .then(() => {
                         if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
-                            render(root, input, context, rootRenderContext, filter, slot);
+                            internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
                         }
                     });
             }
-            handleItems(status.result, templateContext, filter);
+            handleItems(status.result, filter);
             return;
-        } else if (isObject && isObservable(template)) {
+        } else if (isObjectTemplate && isObservable(template)) {
             let status = getObservableState(template);
             if (!status.complete) {
                 let subscription = template.subscribe(() => {
-                    render(root, input, context, rootRenderContext, filter, slot);
+                    internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
                 }, () => {
-                    render(root, input, context, rootRenderContext, filter, slot);
+                    internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
                 }, () => {
                     subscription.unsubscribe();
                 });
                 subscriptions.push(subscription);
-                if (rootSubscriptions !== subscriptions) {
-                    rootSubscriptions.push(subscription);
-                }
             }
-            handleItems(status.current, templateContext, filter);
+            handleItems(status.current, filter);
             return;
         } else {
-            if (templateType === 'string' && templateContext.is && root.localName === 'style') {
-                template = css(templateContext.is as string, template as string);
-                root.setAttribute('name', templateContext.is);
+            if (templateType === 'string' && rootRenderContext.is && root.localName === 'style') {
+                template = css(rootRenderContext.is as string, template as string);
+                root.setAttribute('name', rootRenderContext.is);
             }
 
             if (isText(currentNode)) {
-                newNode = currentNode as Text;
-                if (newNode.textContent != template) {
-                    newNode.textContent = template as string;
+                templateNode = currentNode as Text;
+                if (templateNode.textContent != template) {
+                    templateNode.textContent = template as string;
                 }
             } else {
                 // convert non-Node template into Text
-                newNode = DOM.createTextNode(template as string);
+                templateNode = DOM.createTextNode(template as string);
             }
         }
 
-        if (filter && !filter(newNode)) {
-            return results;
+        if (filter && !filter(templateNode)) {
+            return;
         }
 
         // now, we are confident that if the input is a Node or a Component,
         // check if Nodes are the same instance
         // (patch result should return same Node instances for compatible types)
-        if (newNode !== currentNode) {
+        if (templateNode !== currentNode) {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
-            DOM.insertBefore(root, newNode, currentNode, slot);
+            DOM.insertBefore(root, templateNode, currentNode, slot);
             currentIndex++;
         } else {
-            currentNode = childNodes[++currentIndex]  as Node;
+            currentNode = childNodes.item(++currentIndex)  as Node;
         }
 
-        results.push(newNode);
-
-        if (isNewElementNode && newChildren) {
+        if (isElementTemplate && templateChildren) {
             // the Node has slotted children, trigger a new render context for them
-            render(newNode as HTMLElement, newChildren, createContext(templateContext), rootRenderContext, undefined, isComponent(newNode));
+            internalRender(
+                templateNode as HTMLElement,
+                templateChildren,
+                undefined,
+                rootRenderContext,
+                templateNamespace,
+                isComponentTemplate
+            );
         }
-
-        return;
     };
 
-    handleItems(input, renderContext, filter);
+    handleItems(input, filter);
+
+    if (oldKeys.length) {
+        oldKeys.forEach((key) => {
+            if (keys.indexOf(key) === -1) {
+                delete rootRenderContext[key];
+            }
+        });
+    }
+
+    if (oldPromises.length) {
+        oldPromises.forEach((promise) => {
+            if (promises.indexOf(promise) === -1) {
+                abort(promise);
+                let io = rootPromises.indexOf(promise);
+                if (io !== -1) {
+                    rootPromises.splice(io, 1);
+                }
+            }
+        });
+    }
+    if (promises.length && promises !== rootPromises) {
+        promises.forEach((promise) => {
+            rootPromises.push(promise);
+        });
+    }
+
+    if (oldSubscriptions.length) {
+        oldSubscriptions.forEach((subscription) => {
+            if (subscriptions.indexOf(subscription) === -1) {
+                subscription.unsubscribe();
+                let io = rootSubscriptions.indexOf(subscription);
+                if (io !== -1) {
+                    rootSubscriptions.splice(io, 1);
+                }
+            }
+        });
+    }
+    if (subscriptions.length && subscriptions !== rootSubscriptions) {
+        subscriptions.forEach((subscription) => {
+            rootSubscriptions.push(subscription);
+        });
+    }
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
     // remove all Nodes that are outside the result range
-    let length = childNodes.length;
-    while (length > currentIndex) {
-        DOM.removeChild(root, childNodes[--length] as Node, slot);
+    while (currentNode) {
+        DOM.removeChild(root, currentNode, slot);
+        currentNode = childNodes.item(currentIndex) as Node;
     }
+    return childNodes;
+};
 
-    if (results.length < 2) {
-        return results[0];
+/**
+ * Render a set of Nodes into another, with some checks for Nodes in order to avoid
+ * useless changes in the tree and to mantain or update the state of compatible Nodes.
+ *
+ * @param root The root Node for the render.
+ * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @return The resulting child Nodes.
+ */
+export const render = (root: HTMLElement, input: Template): Node | Node[] | void => {
+    let childNodes = internalRender(root, input);
+    if (childNodes.length < 2) {
+        return childNodes[0];
     }
-    return results as Node[];
+    return cloneChildNodes(childNodes);
+};
+
+/**
+ * Render a set of Nodes into another, with some checks for Nodes in order to avoid
+ * useless changes in the tree and to mantain or update the state of compatible Nodes.
+ * It await pending rendering promises.
+ *
+ * @param root The root Node for the render.
+ * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @return The resulting child Nodes.
+ */
+export const renderAsync = async (root: HTMLElement, input: Template): Promise<Node | Node[] | void> => {
+    let rootContext = getContext(root) || createContext(root);
+    let result = render(root, input);
+    let promises: Promise<any>[] = rootContext.promises || [];
+    while (promises.length) {
+        await Promise.all(promises);
+    }
+    return result;
 };

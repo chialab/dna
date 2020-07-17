@@ -55,14 +55,6 @@ describe('render', function() {
             expect(wrapper.innerHTML).to.be.equal('');
         });
 
-        it('should render interpolated function', () => {
-            DNA.render(wrapper, DNA.interpolate('hello {{name}}! do you like {{food}}?', {
-                name: 'Snow White',
-                food: 'apples',
-            }));
-            expect(wrapper.innerHTML).to.be.equal('hello Snow White! do you like apples?');
-        });
-
         it('should render hyper function', () => {
             DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
             expect(wrapper.querySelector('ul.list')).to.exist;
@@ -93,39 +85,24 @@ describe('render', function() {
             expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
         });
 
-        it('should render a style node with scope', () => {
-            DNA.render(wrapper, DNA.h('style', {}, '.test {}'), {
-                is: 'my-card',
-            });
-            expect(wrapper.childNodes).to.have.lengthOf(1);
-            expect(wrapper.childNodes[0].tagName).to.be.equal('STYLE');
-            expect(wrapper.childNodes[0].textContent).to.be.equal('[is="my-card"] .test {}');
-        });
-
         it('should render mixed content', () => {
             DNA.render(wrapper, [
                 'hello',
+                'world',
                 true,
-                DNA.interpolate('hello {{name}}! do you like {{food}}?', {
-                    name: 'Snow White',
-                    food: 'apples',
-                }),
                 DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
             ]);
-            expect(wrapper.childNodes).to.have.lengthOf(10);
+            expect(wrapper.childNodes).to.have.lengthOf(6);
         });
 
         it('should render component function', () => {
             function Test() {
                 return [
                     'hello',
+                    'world',
                     true,
-                    DNA.interpolate('hello {{name}}! do you like {{food}}?', {
-                        name: 'Snow White',
-                        food: 'apples',
-                    }),
                     DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
                     DNA.DOM.createTextNode('Hello'),
                     DNA.DOM.createElement('div'),
@@ -133,25 +110,7 @@ describe('render', function() {
             }
 
             DNA.render(wrapper, DNA.h(Test));
-            expect(wrapper.childNodes).to.have.lengthOf(10);
-        });
-
-        it('should filter contents', () => {
-            DNA.render(wrapper, [
-                'hello',
-                true,
-                DNA.interpolate('hello {{name}}! do you like {{food}}?', {
-                    name: 'Snow White',
-                    food: 'apples',
-                }),
-                DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
-                DNA.DOM.createTextNode('Hello'),
-                DNA.DOM.createElement('div'),
-            ],
-            null,
-            null,
-            (node) => !!node.tagName);
-            expect(wrapper.childNodes).to.have.lengthOf(2);
+            expect(wrapper.childNodes).to.have.lengthOf(6);
         });
 
         it('should add nodes', () => {

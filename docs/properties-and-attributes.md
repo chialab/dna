@@ -242,7 +242,7 @@ Attributes can be used to update the component properties and viceversa. Every t
 
 ### Template and JSX attributes
 
-If you are using `<template>` tags, `html` helper or JSX templates, the value of an attribute will be reflected to the property using the following logic:
+If you are using the `html` helper or JSX templates, the value of an attribute will be reflected to the property using the following logic:
 
 * passing a **string** value via attribute:
 

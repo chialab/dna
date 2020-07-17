@@ -2,20 +2,16 @@ import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { DOM, isElement, isConnected, connect, cloneChildNodes, emulateLifeCycle, removeChildImpl } from './DOM';
+import { DOM, isElement, isConnected, connect, emulateLifeCycle, removeChildImpl } from './DOM';
 import { DelegatedEventCallback, DelegatedEventDescriptor, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
-import { createContext, getContext, setContext, Context } from './Context';
-import { Template, TemplateItems } from './Template';
-import { render } from './render';
+import { getContext, Context, createContext } from './Context';
+import { Template } from './Template';
+import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
-import { template } from './html';
+import { isArray, getOwnPropertyDescriptor } from './helpers';
+import { cloneChildNodes } from './NodeList';
 
 const { document, HTMLElement } = window;
-
-/**
- * A Symbol which contains slotted children of a Component.
- */
-const SLOTTED_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -57,23 +53,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * The render context reference of the node.
      */
     get $() {
-        return getContext(this);
+        return getContext(this) as Context;
     }
 
     /**
      * A list of slot nodes.
      */
     get slotChildNodes() {
-        return (this as any)[SLOTTED_SYMBOL];
+        return this.$.slotChildNodes;
     }
 
-    set slotChildNodes(children: TemplateItems) {
-        (this as any)[SLOTTED_SYMBOL] = children;
-        if (this.isConnected) {
-            this.forceUpdate();
-        }
-    }
-
+    /**
+     * Flag DNA components.
+     */
     get [COMPONENT_SYMBOL]() {
         return true;
     }
@@ -95,11 +87,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
-        setContext(element, createContext(element));
-
-        let children = cloneChildNodes(element);
-        (element as any)[SLOTTED_SYMBOL] = children;
-        children.forEach((child) => removeChildImpl.call(element, child));
+        let context = createContext(element);
+        let slotChildNodes = cloneChildNodes(this.childNodes);
+        slotChildNodes.forEach((child) => removeChildImpl.call(this, child));
+        context.is = element.is;
+        context.slotChildNodes = slotChildNodes;
 
         let propertyDescriptors = {} as {
             [key: string]: ClassFieldDescriptor;
@@ -107,8 +99,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         let initialConstructor = this.constructor as typeof HTMLElement;
         let ctr = initialConstructor;
         while (ctr !== constructor) {
-            let propertiesDescriptor = Object.getOwnPropertyDescriptor(ctr, 'properties');
-            let listenersDescriptor = Object.getOwnPropertyDescriptor(ctr, 'listeners');
+            let propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
+            let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
             let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
             let listenersGetter = listenersDescriptor && listenersDescriptor.get;
             if (propertiesGetter) {
@@ -118,7 +110,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                 for (let propertyKey in descriptorProperties) {
                     if (!(propertyKey in propertyDescriptors)) {
                         let descriptor = descriptorProperties[propertyKey];
-                        if (typeof descriptor === 'function' || Array.isArray(descriptor)) {
+                        if (typeof descriptor === 'function' || isArray(descriptor)) {
                             descriptor = { type: descriptor };
                         }
                         propertyDescriptors[propertyKey] = descriptor;
@@ -516,11 +508,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @return The instances of the rendered Components and/or Nodes
      */
     render(): Template | undefined {
-        let document = this.ownerDocument;
-        let templateNode = document && document.querySelector(`template[name="${this.is}"]`) as HTMLTemplateElement;
-        if (templateNode) {
-            return template(templateNode, this.$ as Context);
-        }
         return this.slotChildNodes;
     }
 
@@ -529,8 +516,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     forceUpdate() {
         const template = this.render();
-        if (template) {
-            render(this, template);
+        if (template && document.readyState === 'complete') {
+            internalRender(this, template);
         }
     }
 

@@ -1,13 +1,7 @@
 import { window } from './window';
-import { createSymbolKey } from './symbols';
 import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
-
-/**
- * Symbol for interpolated functions.
- */
-const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * The properties of a HyperNode.
@@ -48,7 +42,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
+export const isHyperNode = (target: any): target is HyperNode => '__HYPER_SYMBOL__' in target;
 
 /**
  * HyperFunction factory to use as JSX pragma.
@@ -94,6 +88,6 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         namespaceURI: xmlns,
         properties: propertiesToSet,
         children,
-        [HYPER_SYMBOL]: true,
+        __HYPER_SYMBOL__: true,
     } as HyperNode;
 };
