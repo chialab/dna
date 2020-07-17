@@ -2,6 +2,12 @@ import { window } from './window';
 import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
+import { createSymbolKey } from './symbols';
+
+/**
+ * A symbol which identify emulated components.
+ */
+const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * The properties of a HyperNode.
@@ -42,7 +48,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => '__dnaNode' in target;
+export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
 
 /**
  * HyperFunction factory to use as JSX pragma.
@@ -88,6 +94,6 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         namespaceURI: xmlns,
         properties: propertiesToSet,
         children,
-        __dnaNode: true,
+        [HYPER_SYMBOL]: true,
     } as HyperNode;
 };

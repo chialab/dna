@@ -112,7 +112,7 @@ const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-const shouldEmulateLifeCycle = (node: Element): node is ComponentInterface<HTMLElement> => EMULATE_LIFECYCLE_SYMBOL in node;
+const shouldEmulateLifeCycle = (node: any): node is ComponentInterface<HTMLElement> => node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Should emulate life cycle.

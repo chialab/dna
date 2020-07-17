@@ -13,13 +13,13 @@ export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => COMPONENT_SYMBOL in node;
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => node[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  */
-export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => COMPONENT_SYMBOL in constructor.prototype;
+export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => constructor.prototype[COMPONENT_SYMBOL];
 
 export type ComponentInterface<T extends HTMLElement> = T & {
     /**

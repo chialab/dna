@@ -88,8 +88,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         }
 
         let context = createContext(element);
-        let slotChildNodes = cloneChildNodes(this.childNodes);
-        slotChildNodes.forEach((child) => removeChildImpl.call(this, child));
+        let slotChildNodes = cloneChildNodes(element.childNodes);
+        slotChildNodes.forEach((child) => removeChildImpl.call(element, child));
         context.is = element.is;
         context.slotChildNodes = slotChildNodes;
 
