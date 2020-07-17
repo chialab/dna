@@ -94,9 +94,9 @@
     to-fast-properties "^2.0.0"
 
 "@chialab/proteins@^3.0.0", "@chialab/proteins@^3.2.0":
-  version "3.2.2"
-  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.2.2.tgz#c08049c78fc6d02094ee9f1ad56903d9b91c77f5"
-  integrity sha512-t65TVWZVbVIgX2dcf8+cquRfet8wkfw97wfQuvs1447rTVY3HnbpDydW6ZFtlWwlL6Xbejo7byUHberwq9cD2Q==
+  version "3.2.3"
+  resolved "https://registry.npmjs.org/@chialab/proteins/-/proteins-3.2.3.tgz#0e97747ed01403459df292603de3182614f642d6"
+  integrity sha512-LmHCfywI13wqdVyUQYQHqNwKGfrw6AlYfBYZn+Lm0eDWxtfbxKptagNoHA+Qpb44UpjHNK/m/zhAxeoEDzofqA==
 
 "@dnajs/core@^2.9.8":
   version "2.9.8"
