@@ -71,11 +71,6 @@ export class CustomElementRegistry {
      * @param options A set of definition options, like `extends` for native tag extension.
      */
     define(name: string, constructor: typeof HTMLElement, options: ElementDefinitionOptions = {}) {
-        if (document.readyState !== 'complete') {
-            document.addEventListener('DOMContentLoaded', () => this.define(name, constructor, options));
-            return;
-        }
-
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }

@@ -5,6 +5,8 @@ import { IterableNodeList } from './NodeList';
  * A ontext interface.
  */
 export type Context = {
+    tag: string,
+    key?: any,
     childNodes: IterableNodeList,
     props: { [key: string]: any; },
     keys: any[];
@@ -20,21 +22,23 @@ export type Context = {
  * @param target The context object.
  * @return The context object (if it exists).
  */
-export const getContext = (target: any): Context => target['__CONTEXT_SYMBOL__'];
+export const getContext = (target: any): Context => target['__dnaContext'];
 
 /**
  * Attach a context to an object.
  * @param target The object to context.
  * @param context The context to set.
  */
-export const setContext = (target: any, context: Context): Context => target['__CONTEXT_SYMBOL__'] = context;
+export const setContext = (target: any, context: Context): Context => target['__dnaContext'] = context;
 
 /**
- * Create a
- * @param root
+ * Create a node context.
+ * @param node The node scope of the context.
+ * @return A context object for the node.
  */
-export const createContext = (root: HTMLElement) => setContext(root, {
-    childNodes: root.childNodes as unknown as IterableNodeList,
+export const createContext = (node: HTMLElement) => setContext(node, {
+    tag: node.localName,
+    childNodes: node.childNodes as unknown as IterableNodeList,
     props: {},
     keys: [],
     promises: [],

@@ -42,7 +42,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => '__HYPER_SYMBOL__' in target;
+export const isHyperNode = (target: any): target is HyperNode => '__dnaNode' in target;
 
 /**
  * HyperFunction factory to use as JSX pragma.
@@ -88,6 +88,6 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         namespaceURI: xmlns,
         properties: propertiesToSet,
         children,
-        __HYPER_SYMBOL__: true,
+        __dnaNode: true,
     } as HyperNode;
 };

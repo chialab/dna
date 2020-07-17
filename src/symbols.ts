@@ -9,5 +9,5 @@ export const createSymbolKey = (description?: string | number) => {
     if (typeof Symbol !== 'undefined') {
         return Symbol(description);
     }
-    return `$sym_${symbols++}` as unknown as symbol;
+    return `__dna${symbols++}` as unknown as symbol;
 };

@@ -34,7 +34,7 @@ export type ObservableState = {
  * Check if the target is a Subscribable (has the `subscribe` method).
  * @param target The object to check.
  */
-export const isObservable = (target: any): target is Observable<unknown> => target && typeof target['subscribe'] === 'function';
+export const isObservable = (target: any): target is Observable<unknown> => typeof target['subscribe'] === 'function';
 
 /**
  * Get or inject a state into a Subscribable object.

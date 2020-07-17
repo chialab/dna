@@ -19,7 +19,7 @@ export type ThenableState = {
  * Check if the target is a Thenable (has the `then` method).
  * @param target The object to check.
  */
-export const isThenable = (target: any): target is Promise<unknown> => target && typeof target.then === 'function';
+export const isThenable = (target: any): target is Promise<unknown> => typeof target.then === 'function';
 
 export const abort = (target: Promise<unknown>) => {
     let state = getThenableState(target);

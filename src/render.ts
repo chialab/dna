@@ -82,11 +82,12 @@ const convertStyles = (value: any) => {
 export const internalRender = (
     root: HTMLElement,
     input: Template,
-    filter?: TemplateFilter,
+    context?: Context,
     rootContext?: Context,
+    filter?: TemplateFilter,
     rootNamespaceURI = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
     slot = false) => {
-    let renderContext = getContext(root) || createContext(root);
+    let renderContext = context || getContext(root) || createContext(root);
     let rootRenderContext = rootContext || renderContext;
     let childNodes: IterableNodeList;
     if (slot) {
@@ -118,6 +119,7 @@ export const internalRender = (
         let templateType = typeof template;
         let isObjectTemplate = templateType === 'object';
         let templateNode: Element | Text | undefined;
+        let templateContext: Context|undefined;
         let templateChildren: TemplateItems | undefined;
         let templateNamespace = rootNamespaceURI;
         let isElementTemplate = false;
@@ -168,27 +170,34 @@ export const internalRender = (
 
             templateNamespace = namespaceURI || rootNamespaceURI;
 
-            if (currentNode) {
-                let prevKey = (currentNode as any).key;
-                if (prevKey != null && key != null && key !== prevKey) {
-                    let prevCurrentNode = currentNode;
-                    currentNode = childNodes.item(currentIndex + 1) as Node;
-                    prevKey = currentNode && (currentNode as any).key;
-                    DOM.removeChild(root, prevCurrentNode, slot);
+            check_key: if (currentNode) {
+                let currentContext = getContext(currentNode) || createContext(currentNode as HTMLElement);
+                let currentKey = currentContext.key;
+                if (currentKey != null && key != null && key !== currentKey) {
+                    DOM.removeChild(root, currentNode, slot);
+                    currentNode = childNodes.item(currentIndex) as Node;
+                    if (!currentNode) {
+                        break check_key;
+                    }
+                    currentContext = getContext(currentNode) || createContext(currentNode as HTMLElement);
+                    currentKey = currentContext.key;
                 }
-                if (key != null || prevKey != null) {
-                    if (key === prevKey) {
+                if (key != null || currentKey != null) {
+                    if (key === currentKey) {
                         isElementTemplate = true;
                         templateNode = currentNode as Element;
+                        templateContext = currentContext;
                         isComponentTemplate = !!Component && isComponent(templateNode);
                     }
                 } else if (Component && currentNode instanceof Component) {
                     isElementTemplate = true;
-                    isComponentTemplate = true;
+                    isComponentTemplate = isComponent(currentNode);
                     templateNode = currentNode;
-                } else if (tag && (currentNode as Element).localName === tag) {
+                    templateContext = currentContext;
+                } else if (tag && currentContext.tag === tag) {
                     isElementTemplate = true;
                     templateNode = currentNode as Element;
+                    templateContext = currentContext;
                 }
             }
 
@@ -201,22 +210,22 @@ export const internalRender = (
                 } else {
                     templateNode = DOM.createElementNS(templateNamespace, tag as string);
                 }
-
-                if (key) {
-                    (templateNode as any).key = key;
-                    keys.push(key.toString());
-                    Object.defineProperty(rootRenderContext, key, {
-                        configurable: true,
-                        writable: false,
-                        value: templateNode,
-                    });
-                }
             }
 
             // update the Node properties
-            let childContext: Context = getContext(templateNode) || createContext(templateNode as HTMLElement);
-            let childProperties = childContext.props as any;
-            childContext.props = properties;
+            templateContext = templateContext || getContext(templateNode) || createContext(templateNode as HTMLElement);
+            let childProperties = templateContext.props as any;
+            templateContext.props = properties;
+
+            if (key) {
+                templateContext.key = key;
+                keys.push(key);
+                Object.defineProperty(rootRenderContext, key, {
+                    configurable: true,
+                    writable: false,
+                    value: templateNode,
+                });
+            }
 
             for (let propertyKey in childProperties) {
                 if (!(propertyKey in properties)) {
@@ -301,7 +310,7 @@ export const internalRender = (
                     .catch(() => 1)
                     .then(() => {
                         if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
-                            internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
+                            internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
                         }
                     });
             }
@@ -311,9 +320,9 @@ export const internalRender = (
             let status = getObservableState(template);
             if (!status.complete) {
                 let subscription = template.subscribe(() => {
-                    internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
+                    internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
                 }, () => {
-                    internalRender(root, input, filter, rootRenderContext, rootNamespaceURI, slot);
+                    internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
                 }, () => {
                     subscription.unsubscribe();
                 });
@@ -322,7 +331,7 @@ export const internalRender = (
             handleItems(status.current, filter);
             return;
         } else {
-            if (templateType === 'string' && rootRenderContext.is && root.localName === 'style') {
+            if (templateType === 'string' && rootRenderContext.is && renderContext.tag === 'style') {
                 template = css(rootRenderContext.is as string, template as string);
                 root.setAttribute('name', rootRenderContext.is);
             }
@@ -352,7 +361,7 @@ export const internalRender = (
             DOM.insertBefore(root, templateNode, currentNode, slot);
             currentIndex++;
         } else {
-            currentNode = childNodes.item(++currentIndex)  as Node;
+            currentNode = childNodes.item(++currentIndex) as Node;
         }
 
         if (isElementTemplate && templateChildren) {
@@ -360,8 +369,9 @@ export const internalRender = (
             internalRender(
                 templateNode as HTMLElement,
                 templateChildren,
-                undefined,
+                templateContext,
                 rootRenderContext,
+                undefined,
                 templateNamespace,
                 isComponentTemplate
             );
@@ -370,46 +380,45 @@ export const internalRender = (
 
     handleItems(input, filter);
 
-    if (oldKeys.length) {
-        oldKeys.forEach((key) => {
-            if (keys.indexOf(key) === -1) {
-                delete rootRenderContext[key];
-            }
-        });
+    for (let i = 0, len = oldKeys.length; i < len; i++) {
+        let key = oldKeys[i];
+        if (keys.indexOf(key) === -1) {
+            delete rootRenderContext[key];
+        }
     }
 
-    if (oldPromises.length) {
-        oldPromises.forEach((promise) => {
-            if (promises.indexOf(promise) === -1) {
-                abort(promise);
-                let io = rootPromises.indexOf(promise);
-                if (io !== -1) {
-                    rootPromises.splice(io, 1);
-                }
+    for (let i = 0, len = oldPromises.length; i < len; i++) {
+        let promise = oldPromises[i];
+        if (promises.indexOf(promise) === -1) {
+            abort(promise);
+            let io = rootPromises.indexOf(promise);
+            if (io !== -1) {
+                rootPromises.splice(io, 1);
             }
-        });
+        }
     }
-    if (promises.length && promises !== rootPromises) {
-        promises.forEach((promise) => {
+    if (promises !== rootPromises) {
+        for (let i = 0, len = promises.length; i < len; i++) {
+            let promise = promises[i];
             rootPromises.push(promise);
-        });
+        }
     }
 
-    if (oldSubscriptions.length) {
-        oldSubscriptions.forEach((subscription) => {
-            if (subscriptions.indexOf(subscription) === -1) {
-                subscription.unsubscribe();
-                let io = rootSubscriptions.indexOf(subscription);
-                if (io !== -1) {
-                    rootSubscriptions.splice(io, 1);
-                }
+    for (let i = 0, len = oldSubscriptions.length; i < len; i++) {
+        let subscription = oldSubscriptions[i];
+        if (subscriptions.indexOf(subscription) === -1) {
+            subscription.unsubscribe();
+            let io = rootSubscriptions.indexOf(subscription);
+            if (io !== -1) {
+                rootSubscriptions.splice(io, 1);
             }
-        });
+        }
     }
-    if (subscriptions.length && subscriptions !== rootSubscriptions) {
-        subscriptions.forEach((subscription) => {
+    if (subscriptions !== rootSubscriptions) {
+        for (let i = 0, len = subscriptions.length; i < len; i++) {
+            let subscription = subscriptions[i];
             rootSubscriptions.push(subscription);
-        });
+        }
     }
 
     // all children of the root have been handled,
