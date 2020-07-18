@@ -77,6 +77,10 @@ const convertStyles = (value: any) => {
  *
  * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @param context The render context of the root.
+ * @param rootContext The render context of the main render.
+ * @param rootNamespaceURI The current namespace uri of the render.
+ * @param slot Should handle slot children.
  * @return The resulting child nodes list.
  */
 export const internalRender = (
@@ -84,7 +88,6 @@ export const internalRender = (
     input: Template,
     context?: Context,
     rootContext?: Context,
-    filter?: TemplateFilter,
     rootNamespaceURI = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
     slot = false) => {
     let renderContext = context || getContext(root) || createContext(root);
@@ -93,23 +96,34 @@ export const internalRender = (
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
     } else {
-        childNodes = renderContext.childNodes;
+        childNodes = renderContext.childNodes as IterableNodeList;
     }
     let currentIndex = 0;
     let currentNode = childNodes.item(currentIndex) as Node;
+    let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+    let updateRender = () => internalRender(root, input, renderContext, rootRenderContext, rootNamespaceURI, slot);
 
     // promises list
-    let oldKeys: string[] = [];
-    let oldPromises: Promise<any>[] = [];
-    let oldSubscriptions: Subscription[] = [];
+    let oldKeys: string[]|undefined;
+    let oldPromises: Promise<any>[]|undefined;
+    let oldSubscriptions: Subscription[]|undefined;
     let keys = renderContext.keys;
     let promises = renderContext.promises;
     let subscriptions = renderContext.subscriptions;
     let rootPromises = rootRenderContext.promises;
     let rootSubscriptions = rootRenderContext.subscriptions;
-    while (keys.length) oldKeys.unshift(keys.pop());
-    while (promises.length) oldPromises.unshift(promises.pop() as Promise<any>);
-    while (subscriptions.length) oldSubscriptions.unshift(subscriptions.pop() as Subscription);
+    if (keys) {
+        oldKeys = [];
+        while (keys.length) oldKeys.unshift(keys.pop());
+    }
+    if (promises) {
+        oldPromises = [];
+        while (promises.length) oldPromises.unshift(promises.pop() as Promise<any>);
+    }
+    if (subscriptions) {
+        oldSubscriptions = [];
+        while (subscriptions.length) oldSubscriptions.unshift(subscriptions.pop() as Subscription);
+    }
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -135,7 +149,10 @@ export const internalRender = (
             let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
-                handleItems(Function(properties), filter);
+                handleItems(Function({
+                    children,
+                    ...properties,
+                }, renderContext, updateRender), filter);
                 return;
             }
 
@@ -170,16 +187,15 @@ export const internalRender = (
 
             templateNamespace = namespaceURI || rootNamespaceURI;
 
-            check_key: if (currentNode) {
-                let currentContext = getContext(currentNode) || createContext(currentNode as HTMLElement);
+            check_key: if (currentContext) {
                 let currentKey = currentContext.key;
                 if (currentKey != null && key != null && key !== currentKey) {
                     DOM.removeChild(root, currentNode, slot);
                     currentNode = childNodes.item(currentIndex) as Node;
-                    if (!currentNode) {
+                    currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+                    if (!currentContext) {
                         break check_key;
                     }
-                    currentContext = getContext(currentNode) || createContext(currentNode as HTMLElement);
                     currentKey = currentContext.key;
                 }
                 if (key != null || currentKey != null) {
@@ -194,7 +210,7 @@ export const internalRender = (
                     isComponentTemplate = isComponent(currentNode);
                     templateNode = currentNode;
                     templateContext = currentContext;
-                } else if (tag && currentContext.tag === tag) {
+                } else if (tag && currentContext.tagName === tag) {
                     isElementTemplate = true;
                     templateNode = currentNode as Element;
                     templateContext = currentContext;
@@ -214,12 +230,16 @@ export const internalRender = (
 
             // update the Node properties
             templateContext = templateContext || getContext(templateNode) || createContext(templateNode as HTMLElement);
-            let childProperties = templateContext.props as any;
+            let childProperties = templateContext.props;
             templateContext.props = properties;
 
             if (key) {
                 templateContext.key = key;
-                keys.push(key);
+                if (keys) {
+                    keys.push(key);
+                } else {
+                    keys = renderContext.keys = [key];
+                }
                 Object.defineProperty(rootRenderContext, key, {
                     configurable: true,
                     writable: false,
@@ -227,9 +247,11 @@ export const internalRender = (
                 });
             }
 
-            for (let propertyKey in childProperties) {
-                if (!(propertyKey in properties)) {
-                    properties[propertyKey] = null;
+            if (childProperties) {
+                for (let propertyKey in childProperties) {
+                    if (!(propertyKey in properties)) {
+                        properties[propertyKey] = null;
+                    }
                 }
             }
 
@@ -237,11 +259,13 @@ export const internalRender = (
                 if (propertyKey === 'is' || propertyKey === 'key') {
                     continue;
                 }
-                let oldValue = childProperties[propertyKey];
                 let value = properties[propertyKey];
-
-                if (oldValue === value) {
-                    continue;
+                let oldValue;
+                if (childProperties) {
+                    oldValue = childProperties[propertyKey];
+                    if (oldValue === value) {
+                        continue;
+                    }
                 }
 
                 if (propertyKey === 'style') {
@@ -305,12 +329,16 @@ export const internalRender = (
         } else if (isObjectTemplate && isThenable(template)) {
             let status = getThenableState(template);
             if (status.pending) {
-                promises.push(template);
+                if (promises) {
+                    promises.push(template);
+                } else {
+                    promises = renderContext.promises = [template];
+                }
                 template
                     .catch(() => 1)
                     .then(() => {
-                        if (!status.aborted && rootPromises.indexOf(template as Promise<unknown>) !== -1) {
-                            internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
+                        if (!status.aborted && (rootPromises as Promise<any>[]).indexOf(template as Promise<unknown>) !== -1) {
+                            updateRender();
                         }
                     });
             }
@@ -319,24 +347,28 @@ export const internalRender = (
         } else if (isObjectTemplate && isObservable(template)) {
             let status = getObservableState(template);
             if (!status.complete) {
-                let subscription = template.subscribe(() => {
-                    internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
-                }, () => {
-                    internalRender(root, input, context, rootRenderContext, filter, rootNamespaceURI, slot);
-                }, () => {
-                    subscription.unsubscribe();
-                });
-                subscriptions.push(subscription);
+                let subscription = template.subscribe(
+                    () => updateRender(),
+                    () => updateRender(),
+                    () => {
+                        subscription.unsubscribe();
+                    }
+                );
+                if (subscriptions) {
+                    subscriptions.push(subscription);
+                } else {
+                    subscriptions = renderContext.subscriptions = [subscription];
+                }
             }
             handleItems(status.current, filter);
             return;
         } else {
-            if (templateType === 'string' && rootRenderContext.is && renderContext.tag === 'style') {
+            if (templateType === 'string' && rootRenderContext.is && renderContext.tagName === 'style') {
                 template = css(rootRenderContext.is as string, template as string);
                 root.setAttribute('name', rootRenderContext.is);
             }
 
-            if (isText(currentNode)) {
+            if (currentContext && currentContext.isText) {
                 templateNode = currentNode as Text;
                 if (templateNode.textContent != template) {
                     templateNode.textContent = template as string;
@@ -362,6 +394,7 @@ export const internalRender = (
             currentIndex++;
         } else {
             currentNode = childNodes.item(++currentIndex) as Node;
+            currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
         }
 
         if (isElementTemplate && templateChildren) {
@@ -371,50 +404,61 @@ export const internalRender = (
                 templateChildren,
                 templateContext,
                 rootRenderContext,
-                undefined,
                 templateNamespace,
                 isComponentTemplate
             );
         }
     };
 
-    handleItems(input, filter);
+    handleItems(input);
 
-    for (let i = 0, len = oldKeys.length; i < len; i++) {
-        let key = oldKeys[i];
-        if (keys.indexOf(key) === -1) {
-            delete rootRenderContext[key];
-        }
-    }
-
-    for (let i = 0, len = oldPromises.length; i < len; i++) {
-        let promise = oldPromises[i];
-        if (promises.indexOf(promise) === -1) {
-            abort(promise);
-            let io = rootPromises.indexOf(promise);
-            if (io !== -1) {
-                rootPromises.splice(io, 1);
+    if (oldKeys) {
+        for (let i = 0, len = oldKeys.length; i < len; i++) {
+            let key = oldKeys[i];
+            if ((keys as string[]).indexOf(key) === -1) {
+                delete rootRenderContext[key];
             }
         }
     }
-    if (promises !== rootPromises) {
+
+    if (oldPromises) {
+        for (let i = 0, len = oldPromises.length; i < len; i++) {
+            let promise = oldPromises[i];
+            if ((promises as Promise<any>[]).indexOf(promise) === -1) {
+                abort(promise);
+                let io = (rootPromises as Promise<any>[]).indexOf(promise);
+                if (io !== -1) {
+                    (rootPromises as Promise<any>[]).splice(io, 1);
+                }
+            }
+        }
+    }
+    if (promises && promises !== rootPromises) {
+        if (!rootPromises) {
+            rootPromises = rootRenderContext.promises = [];
+        }
         for (let i = 0, len = promises.length; i < len; i++) {
             let promise = promises[i];
             rootPromises.push(promise);
         }
     }
 
-    for (let i = 0, len = oldSubscriptions.length; i < len; i++) {
-        let subscription = oldSubscriptions[i];
-        if (subscriptions.indexOf(subscription) === -1) {
-            subscription.unsubscribe();
-            let io = rootSubscriptions.indexOf(subscription);
-            if (io !== -1) {
-                rootSubscriptions.splice(io, 1);
+    if (oldSubscriptions) {
+        for (let i = 0, len = oldSubscriptions.length; i < len; i++) {
+            let subscription = oldSubscriptions[i];
+            if ((subscriptions as Subscription[]).indexOf(subscription) === -1) {
+                subscription.unsubscribe();
+                let io = (rootSubscriptions as Subscription[]).indexOf(subscription);
+                if (io !== -1) {
+                    (rootSubscriptions as Subscription[]).splice(io, 1);
+                }
             }
         }
     }
-    if (subscriptions !== rootSubscriptions) {
+    if (subscriptions && subscriptions !== rootSubscriptions) {
+        if (!rootSubscriptions) {
+            rootSubscriptions = rootRenderContext.subscriptions = [];
+        }
         for (let i = 0, len = subscriptions.length; i < len; i++) {
             let subscription = subscriptions[i];
             rootSubscriptions.push(subscription);

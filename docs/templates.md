@@ -300,6 +300,93 @@ h(Fragment, null,
 </div>
 </details>
 
+### Functions
+
+Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can pass properties to template functions:
+
+```ts
+function Row({ children, store, id }, context, refresh) {
+    const select = () => {
+        store.select(id);
+        refresh();
+    };
+
+    return html`
+        <tr id=${id} onclick=${select}>
+            ${children}
+        </tr>
+    `;
+}
+
+html`<table>
+    <tbody>
+        ${store.data.map((item) => html`<${Row} ...${item}>
+            <td>${item.id}</td>
+            <td>${item.label}</td>
+        </>`)}
+    </tbody>
+</table>`
+```
+
+<details>
+<summary>JSX</summary>
+<div>
+
+```ts
+function Row({ children, store, id }, context, refresh) {
+    const select = () => {
+        store.select(id);
+        refresh();
+    };
+
+    return <tr id=${id} onclick=${select}>
+        ${children}
+    </tr>;
+}
+
+<table>
+    <tbody>
+        {store.data.map((item) => <Row ...item>
+            <td>{item.id}</td>
+            <td>{item.label}</td>
+        </Row>}
+    </tbody>
+</table>
+```
+
+</div>
+</details>
+
+<details>
+<summary>Raw</summary>
+<div>
+
+
+```ts
+function Row({ children, store, id }, context, refresh) {
+    const select = () => {
+        store.select(id);
+        refresh();
+    };
+
+    return h('tr', {
+        id: id,
+        onclick: select
+    }, ...children);
+}
+
+h('table', null,
+    h('tbody', null
+        store.data.map((item) => h(Row, ...item,
+            h('td', null, item.id)
+            h('td', null, item.label)
+        ))
+    ),
+)
+```
+</div>
+</details>
+
 ## HTML content
 
 By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you need to pass the code to the `html` helper:

@@ -17,6 +17,7 @@ export type HyperProperties = {
     slot?: string;
     key?: any;
     xlmns?: NamespaceURI;
+    children?: TemplateItems,
     [key: string]: any;
 };
 
@@ -93,7 +94,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         isSlot,
         namespaceURI: xmlns,
         properties: propertiesToSet,
-        children,
+        children: propertiesToSet.children || children,
         [HYPER_SYMBOL]: true,
     } as HyperNode;
 };

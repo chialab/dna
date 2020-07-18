@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
 
 
 <hr />
@@ -845,7 +845,7 @@ A function that returns a template.
 <pre>(props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}): <a href="#template">Template</a></pre>
+}, context: <a href="#context">Context</a>, update: (): Node[]): <a href="#template">Template</a></pre>
 
 
 
@@ -886,6 +886,53 @@ A list of template items.
 
 <hr />
 
+<strong id="context"><code>type</code>  Context</strong>
+
+<p>
+
+A ontext interface.
+
+</p>
+
+
+
+<pre>{
+    isElement: boolean;
+    isText: boolean;
+    tagName?: string;
+    key?: any;
+    childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+    props?: {
+        [key: string]: any;
+    };
+    keys?: any[];
+    promises?: Promise&lt;any&gt;[];
+    subscriptions?: <a href="#subscription">Subscription</a>[];
+    is?: string;
+    slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+    [key: string]: any;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
+
+
+
+
+
+<pre>Node[] & {
+    item(index: number): Node|null;
+}</pre>
+
+
+
+
+<hr />
+
 <strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
 
 <p>
@@ -918,6 +965,7 @@ The properties of a HyperNode.
     slot?: string;
     key?: any;
     xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
+    children?: <a href="#templateitems">TemplateItems</a>;
     [key: string]: any;
 }</pre>
 
@@ -1092,49 +1140,6 @@ A validation function for the class field.
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     emulateLifeCycle(): void;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="context"><code>type</code>  Context</strong>
-
-<p>
-
-A ontext interface.
-
-</p>
-
-
-
-<pre>{
-    childNodes: <a href="#iterablenodelist">IterableNodeList</a>;
-    props: {
-        [key: string]: any;
-    };
-    keys: any[];
-    promises: Promise&lt;any&gt;[];
-    subscriptions: <a href="#subscription">Subscription</a>[];
-    is?: string;
-    slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
-    [key: string]: any;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
-
-
-
-
-
-<pre>Node[] & {
-    item(index: number): Node|null;
 }</pre>
 
 
