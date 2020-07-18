@@ -34,4 +34,4 @@ export type Template = TemplateItem | TemplateItems;
  * @param update Update the rendering state.
  * @return A template.
  */
-export type TemplateFunction = (props: { children: Template, [key: string]: any }, context: Context, update: () => Node[]) => Template;
+export type TemplateFunction = (props: { children: Template, [key: string]: any }, context: Context, update: () => boolean) => Template;

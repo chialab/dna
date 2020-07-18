@@ -1,3 +1,4 @@
+import { TemplateFunction } from './Template';
 import { Subscription } from './Observable';
 import { IterableNodeList } from './NodeList';
 import { isElement, isText } from './DOM';
@@ -19,7 +20,7 @@ export type Context = {
     childNodes?: IterableNodeList,
     props?: { [key: string]: any; },
     keys?: any[];
-    promises?: Promise<unknown>[];
+    functions?: TemplateFunction[];
     subscriptions?: Subscription[];
     is?: string;
     slotChildNodes?: IterableNodeList,

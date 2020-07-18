@@ -13,7 +13,6 @@ describe('[Compat] module', function() {
         disconnect: 'function',
         extend: 'function',
         render: 'function',
-        renderAsync: 'function',
         Fragment: 'symbol',
         h: 'function',
         html: 'function',

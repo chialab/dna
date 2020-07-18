@@ -385,9 +385,7 @@ describe('template', function() {
                     DNA.render(wrapper, TEMPLATES[type]( {
                         promise,
                     }));
-                    await DNA.renderAsync(wrapper, TEMPLATES[type]( {
-                        promise,
-                    }));
+                    await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div><div>Hello World!</div></div>');
                 });
             }
@@ -423,9 +421,7 @@ describe('template', function() {
                     DNA.render(wrapper, TEMPLATES[type]({
                         promise,
                     }));
-                    await DNA.renderAsync(wrapper, TEMPLATES[type]({
-                        promise,
-                    }));
+                    await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div>Error timeout</div>');
                 });
             }
@@ -448,7 +444,7 @@ describe('template', function() {
             DNA.render(wrapper, template());
             expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
             DNA.render(wrapper, template());
-            await DNA.renderAsync(wrapper, template());
+            await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div>Done</div>');
         });
 
@@ -461,7 +457,7 @@ describe('template', function() {
             });
             const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}</div>`;
             DNA.render(wrapper, template);
-            await DNA.renderAsync(wrapper, template);
+            await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div></div>');
         });
     });

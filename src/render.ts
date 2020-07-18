@@ -1,13 +1,14 @@
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode } from './HyperNode';
+import { isHyperNode, h } from './HyperNode';
 import { DOM, isElement, isText, getAttributeImpl, hasAttributeImpl } from './DOM';
 import { Context, getContext, createContext } from './Context';
-import { isThenable, getThenableState, abort } from './Thenable';
-import { Subscription, isObservable, getObservableState } from './Observable';
+import { isThenable, getThenableState } from './Thenable';
+import { isObservable, getObservableState, Observable } from './Observable';
 import { isArray } from './helpers';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
 import { css } from './css';
+import { TemplateFunction } from 'react/src';
 
 /**
  * A cache for converted class values.
@@ -103,26 +104,18 @@ export const internalRender = (
     let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
     let updateRender = () => internalRender(root, input, renderContext, rootRenderContext, rootNamespaceURI, slot);
 
-    // promises list
     let oldKeys: string[]|undefined;
-    let oldPromises: Promise<any>[]|undefined;
-    let oldSubscriptions: Subscription[]|undefined;
+    let oldFunctions: TemplateFunction[]|undefined;
     let keys = renderContext.keys;
-    let promises = renderContext.promises;
-    let subscriptions = renderContext.subscriptions;
-    let rootPromises = rootRenderContext.promises;
-    let rootSubscriptions = rootRenderContext.subscriptions;
+    let functions = renderContext.functions;
+    let rootFunctions = rootRenderContext.functions;
     if (keys) {
         oldKeys = [];
         while (keys.length) oldKeys.unshift(keys.pop());
     }
-    if (promises) {
-        oldPromises = [];
-        while (promises.length) oldPromises.unshift(promises.pop() as Promise<any>);
-    }
-    if (subscriptions) {
-        oldSubscriptions = [];
-        while (subscriptions.length) oldSubscriptions.unshift(subscriptions.pop() as Subscription);
+    if (functions) {
+        oldFunctions = [];
+        while (functions.length) oldFunctions.unshift(functions.pop() as TemplateFunction);
     }
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
@@ -149,10 +142,21 @@ export const internalRender = (
             let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
+                if (functions) {
+                    functions.push(Function);
+                } else {
+                    functions = renderContext.functions = [Function];
+                }
                 handleItems(Function({
                     children,
                     ...properties,
-                }, renderContext, updateRender), filter);
+                }, renderContext, () => {
+                    if ((rootFunctions as TemplateFunction[]).indexOf(Function as TemplateFunction) !== -1) {
+                        updateRender();
+                        return true;
+                    }
+                    return false;
+                }), filter);
                 return;
             }
 
@@ -327,40 +331,40 @@ export const internalRender = (
         } else if (isObjectTemplate && isText(template)) {
             templateNode = template;
         } else if (isObjectTemplate && isThenable(template)) {
-            let status = getThenableState(template);
-            if (status.pending) {
-                if (promises) {
-                    promises.push(template);
-                } else {
-                    promises = renderContext.promises = [template];
+            handleItems(h((props, context, update) => {
+                let status = getThenableState(template as Promise<unknown>);
+                if (status.pending) {
+                    (template as Promise<unknown>)
+                        .catch(() => 1)
+                        .then(() => {
+                            update();
+                        });
                 }
-                template
-                    .catch(() => 1)
-                    .then(() => {
-                        if (!status.aborted && (rootPromises as Promise<any>[]).indexOf(template as Promise<unknown>) !== -1) {
-                            updateRender();
-                        }
-                    });
-            }
-            handleItems(status.result, filter);
+                return status.result;
+            }), filter);
             return;
         } else if (isObjectTemplate && isObservable(template)) {
-            let status = getObservableState(template);
-            if (!status.complete) {
-                let subscription = template.subscribe(
-                    () => updateRender(),
-                    () => updateRender(),
-                    () => {
-                        subscription.unsubscribe();
-                    }
-                );
-                if (subscriptions) {
-                    subscriptions.push(subscription);
-                } else {
-                    subscriptions = renderContext.subscriptions = [subscription];
+            handleItems(h((props, context, update) => {
+                let status = getObservableState(template);
+                if (!status.complete) {
+                    let subscription = (template as Observable<unknown>).subscribe(
+                        () => {
+                            if (!update()) {
+                                subscription.unsubscribe();
+                            }
+                        },
+                        () => {
+                            if (!update()) {
+                                subscription.unsubscribe();
+                            }
+                        },
+                        () => {
+                            subscription.unsubscribe();
+                        }
+                    );
                 }
-            }
-            handleItems(status.current, filter);
+                return status.current;
+            }), filter);
             return;
         } else {
             if (templateType === 'string' && rootRenderContext.is && renderContext.tagName === 'style') {
@@ -421,47 +425,23 @@ export const internalRender = (
         }
     }
 
-    if (oldPromises) {
-        for (let i = 0, len = oldPromises.length; i < len; i++) {
-            let promise = oldPromises[i];
-            if ((promises as Promise<any>[]).indexOf(promise) === -1) {
-                abort(promise);
-                let io = (rootPromises as Promise<any>[]).indexOf(promise);
+    if (oldFunctions) {
+        for (let i = 0, len = oldFunctions.length; i < len; i++) {
+            let func = oldFunctions[i];
+            if ((functions as TemplateFunction[]).indexOf(func) === -1) {
+                let io = (rootFunctions as TemplateFunction[]).indexOf(func);
                 if (io !== -1) {
-                    (rootPromises as Promise<any>[]).splice(io, 1);
+                    (rootFunctions as TemplateFunction[]).splice(io, 1);
                 }
             }
         }
     }
-    if (promises && promises !== rootPromises) {
-        if (!rootPromises) {
-            rootPromises = rootRenderContext.promises = [];
+    if (functions && functions !== rootFunctions) {
+        if (!rootFunctions) {
+            rootFunctions = rootRenderContext.functions = [];
         }
-        for (let i = 0, len = promises.length; i < len; i++) {
-            let promise = promises[i];
-            rootPromises.push(promise);
-        }
-    }
-
-    if (oldSubscriptions) {
-        for (let i = 0, len = oldSubscriptions.length; i < len; i++) {
-            let subscription = oldSubscriptions[i];
-            if ((subscriptions as Subscription[]).indexOf(subscription) === -1) {
-                subscription.unsubscribe();
-                let io = (rootSubscriptions as Subscription[]).indexOf(subscription);
-                if (io !== -1) {
-                    (rootSubscriptions as Subscription[]).splice(io, 1);
-                }
-            }
-        }
-    }
-    if (subscriptions && subscriptions !== rootSubscriptions) {
-        if (!rootSubscriptions) {
-            rootSubscriptions = rootRenderContext.subscriptions = [];
-        }
-        for (let i = 0, len = subscriptions.length; i < len; i++) {
-            let subscription = subscriptions[i];
-            rootSubscriptions.push(subscription);
+        for (let i = 0, len = functions.length; i < len; i++) {
+            rootFunctions.push(functions[i]);
         }
     }
 
@@ -489,23 +469,4 @@ export const render = (root: HTMLElement, input: Template): Node | Node[] | void
         return childNodes[0];
     }
     return cloneChildNodes(childNodes);
-};
-
-/**
- * Render a set of Nodes into another, with some checks for Nodes in order to avoid
- * useless changes in the tree and to mantain or update the state of compatible Nodes.
- * It await pending rendering promises.
- *
- * @param root The root Node for the render.
- * @param input The child (or the children) to render in Virtual DOM format or already generated.
- * @return The resulting child Nodes.
- */
-export const renderAsync = async (root: HTMLElement, input: Template): Promise<Node | Node[] | void> => {
-    let rootContext = getContext(root) || createContext(root);
-    let result = render(root, input);
-    let promises: Promise<any>[] = rootContext.promises || [];
-    while (promises.length) {
-        await Promise.all(promises);
-    }
-    return result;
 };

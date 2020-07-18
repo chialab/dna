@@ -12,7 +12,6 @@ export {
     DOM,
     connect,
     disconnect,
-    renderAsync,
     Fragment,
     HyperNode,
     h,

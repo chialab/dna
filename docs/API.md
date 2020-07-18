@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#renderasync">renderAsync</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -429,29 +429,6 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <hr />
 
-<strong id="renderasync"><code>constant</code>  renderAsync</strong>
-
-
-
-<p>
-
-Render a set of Nodes into another, with some checks for Nodes in order to avoid
-useless changes in the tree and to mantain or update the state of compatible Nodes.
-It await pending rendering promises.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>): Promise&lt;Node|Node[]|void&gt;</pre>
-
-
-
-
-<hr />
-
 <strong id="fragment"><code>constant</code>  Fragment</strong>
 
 
@@ -845,7 +822,7 @@ A function that returns a template.
 <pre>(props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}, context: <a href="#context">Context</a>, update: (): Node[]): <a href="#template">Template</a></pre>
+}, context: <a href="#context">Context</a>, update: (): boolean): <a href="#template">Template</a></pre>
 
 
 
@@ -906,7 +883,7 @@ A ontext interface.
         [key: string]: any;
     };
     keys?: any[];
-    promises?: Promise&lt;any&gt;[];
+    functions?: <a href="#templatefunction">TemplateFunction</a>[];
     subscriptions?: <a href="#subscription">Subscription</a>[];
     is?: string;
     slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;

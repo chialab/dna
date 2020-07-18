@@ -4,7 +4,7 @@ export { customElements, CustomElementRegistry } from './CustomElementRegistry';
 export { Observable } from './Observable';
 export { TemplateItem, TemplateItems, Template, TemplateFilter, TemplateFunction } from './Template';
 export { DOM, connect, disconnect } from './DOM';
-export { render, renderAsync } from './render';
+export { render } from './render';
 export { Fragment } from './Fragment';
 export { HyperNode, h } from './HyperNode';
 export { html } from './html';
