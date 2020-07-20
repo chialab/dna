@@ -200,6 +200,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         // setup properties
         let propertiesDescriptor = getProperties(constructor);
         for (let propertyKey in propertiesDescriptor) {
+            delete (this as any)[propertyKey];
             let descriptor = propertiesDescriptor[propertyKey];
             if (!(propertyKey in props)) {
                 this.initProperty(propertyKey, descriptor, descriptor.symbol as symbol);
