@@ -1,4 +1,4 @@
-import { isElement, isText, getAttributeImpl, hasAttributeImpl, isArray, defineProperty } from './helpers';
+import { isElement, isText, isArray, defineProperty } from './helpers';
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
@@ -176,14 +176,14 @@ export const internalRender = (
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
                         if (isElement(item)) {
-                            return getAttributeImpl.call(item, 'slot') === properties.name;
+                            return item.getAttribute('slot') === properties.name;
                         }
                         return false;
                     };
                 } else {
                     filter = (item: TemplateItem) => {
                         if (isElement(item)) {
-                            return !getAttributeImpl.call(item, 'slot');
+                            return !item.getAttribute('slot');
                         }
                         return true;
                     };
@@ -318,13 +318,13 @@ export const internalRender = (
                 }
 
                 if (value == null || value === false) {
-                    if (hasAttributeImpl.call(templateNode as Element, propertyKey)) {
-                        DOM.removeAttribute(templateNode as Element, propertyKey);
+                    if ((templateNode as Element).hasAttribute(propertyKey)) {
+                        (templateNode as Element).removeAttribute(propertyKey);
                     }
                 } else if (!isReference) {
                     let attrValue = value === true ? '' : value.toString();
-                    if (getAttributeImpl.call(templateNode as Element, propertyKey) !== attrValue) {
-                        DOM.setAttribute(templateNode as Element, propertyKey, attrValue);
+                    if ((templateNode as Element).getAttribute(propertyKey) !== attrValue) {
+                        (templateNode as Element).setAttribute(propertyKey, attrValue);
                     }
                 }
             }

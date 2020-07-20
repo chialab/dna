@@ -73,7 +73,7 @@ type WithEventDelegations = {
  * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
 export const delegateEventListener = (element: Element, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) => {
-    const delegatedElement: Node & WithEventDelegations = element;
+    let delegatedElement: Node & WithEventDelegations = element;
 
     assertNode(element);
     assertEventName(eventName);
@@ -81,12 +81,12 @@ export const delegateEventListener = (element: Element, eventName: string, selec
     assertEventCallback(callback);
 
     // get all delegations
-    const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
+    let delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
     // initialize the delegation list
-    const callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
+    let callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
         descriptors: [],
     };
-    const descriptors = callbacks.descriptors;
+    let descriptors = callbacks.descriptors;
     // check if the event has already been delegated
     if (!callbacks.listener) {
         // setup the listener
@@ -94,12 +94,12 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             if (!event.target) {
                 return;
             }
-            const eventTarget = event.target as Node;
+            let eventTarget = event.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;
             let stoppedImmediated = false;
-            const originalStopPropagation = event.stopPropagation;
-            const originalImmediatePropagation = event.stopImmediatePropagation;
+            let originalStopPropagation = event.stopPropagation;
+            let originalImmediatePropagation = event.stopImmediatePropagation;
             event.stopPropagation = () => {
                 stopped = true;
                 // exec the real stopPropagation method
@@ -113,7 +113,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             };
 
             // filter matched selector for the event
-            const filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
+            let filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
                 let { selector, callback } = descriptors[i];
                 let selectorTarget;
@@ -343,7 +343,7 @@ export const getListeners = (constructor: ComponentConstructorInterface<HTMLElem
 export const defineListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
     let ctr = constructor;
     let listeners = (constructor as any)[LISTENERS_SYMBOL] = getListeners(constructor) || [];
-    while (ctr !== HTMLElement) {
+    while (ctr && ctr !== HTMLElement) {
         let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
         let listenersGetter = listenersDescriptor && listenersDescriptor.get;
         if (listenersGetter) {

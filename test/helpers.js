@@ -1,6 +1,8 @@
-import 'core-js/es/symbol';
+import Symbol from 'core-js/es/symbol';
 import 'core-js/es/object/assign';
 import 'core-js/es/array/find';
+
+Symbol.useSimple();
 
 if (typeof Symbol() !== 'symbol') {
     /**

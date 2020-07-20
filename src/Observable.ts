@@ -19,7 +19,7 @@ export type Observable<T> = {
  * A Symbol which contains Subscription state.
  * @private
  */
-const symbol: unique symbol = createSymbolKey() as any;
+const SUBSCRIPTION_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * An object representing the status of a Subscribable.
@@ -43,14 +43,14 @@ export const isObservable = (target: any): target is Observable<unknown> => type
  */
 export const getObservableState = (target: any): ObservableState => {
     let subscribable: Observable<unknown> = target;
-    if ((subscribable as any)[symbol]) {
-        return (subscribable as any)[symbol];
+    if ((subscribable as any)[SUBSCRIPTION_SYMBOL]) {
+        return (subscribable as any)[SUBSCRIPTION_SYMBOL];
     }
     let state: ObservableState = {
         complete: false,
         errored: false,
     };
-    (subscribable as any)[symbol] = state;
+    (subscribable as any)[SUBSCRIPTION_SYMBOL] = state;
     subscribable
         .subscribe((value) => {
             state.current = value;

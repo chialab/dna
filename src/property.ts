@@ -110,7 +110,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @param initializer The initial value.
  */
 function initializeProperty(target: ComponentInterface<HTMLElement>, key: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: any) {
-    const initialize = target.initialize;
+    let initialize = target.initialize;
     target.initialize = function(this: ComponentInterface<HTMLElement>, context: Context, props: { [key: string]: any; } = {}) {
         if (!(key in props)) {
             this.initProperty(key, descriptor, symbol, initializer);
@@ -127,7 +127,7 @@ function initializeProperty(target: ComponentInterface<HTMLElement>, key: string
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
     ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
-        const symbol = createSymbolKey();
+        let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
             if (typeof targetOrClassElement === 'function') {
                 defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
@@ -143,8 +143,8 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
         }
 
         // decorators spec 2
-        const element = targetOrClassElement as unknown as ClassElement;
-        const key = String(element.key);
+        let element = targetOrClassElement as unknown as ClassElement;
+        let key = String(element.key);
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
@@ -194,7 +194,7 @@ export const getProperties = (constructor: ComponentConstructorInterface<HTMLEle
  */
 export const defineProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => {
     let ctr = constructor;
-    while (ctr !== HTMLElement) {
+    while (ctr && ctr !== HTMLElement) {
         let propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
         if (propertiesGetter) {
@@ -222,9 +222,9 @@ export const defineProperties = (constructor: ComponentConstructorInterface<HTML
  * @return The symbol used to store property value.
  */
 export const defineProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string, descriptor: ClassFieldDescriptor, symbolKey?: symbol): symbol => {
-    const symbol = symbolKey || createSymbolKey();
-    const observedAttributes = constructor.observedAttributes;
-    const descriptors = (constructor as any)[PROPERTIES_SYMBOL] = getProperties(constructor) || {};
+    let symbol = symbolKey || createSymbolKey(propertyKey);
+    let observedAttributes = constructor.observedAttributes;
+    let descriptors = (constructor as any)[PROPERTIES_SYMBOL] = getProperties(constructor) || {};
     descriptors[propertyKey] = descriptor;
     (descriptor as any).__proto__ = null;
     descriptor.name = propertyKey;
@@ -288,19 +288,19 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
     }
     descriptor.observers = observers;
 
-    const validate = typeof descriptor.validate === 'function' && descriptor.validate;
-    const finalDescriptor: PropertyDescriptor = {
+    let validate = typeof descriptor.validate === 'function' && descriptor.validate;
+    let finalDescriptor: PropertyDescriptor = {
         configurable: true,
         enumerable: true,
     };
 
-    const getter = descriptor.getter || ((value) => value);
-    const get = function get(this: any) {
+    let getter = descriptor.getter || ((value) => value);
+    let get = function get(this: any) {
         return getter.call(this, this[symbol]);
     };
 
-    const setter = descriptor.setter || ((value) => value);
-    const set = function set(this: any, value: any) {
+    let setter = descriptor.setter || ((value) => value);
+    let set = function set(this: any, value: any) {
         return setter.call(this, value);
     };
 
@@ -352,7 +352,7 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
  * @return The class field descriptor.
  */
 export const getProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string) => {
-    const descriptors = getProperties(constructor) || {};
+    let descriptors = getProperties(constructor) || {};
     if (!descriptors) {
         return null;
     }
