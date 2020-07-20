@@ -39,9 +39,36 @@ The DNA environment is pretty common (if you are familiar with other libraries l
         }
         ```
 
-        If you want to use React JSX instead of template strings, you will also need to install the [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx) configuring `h` as pragma.
+        If you want to use React JSX instead of template strings, you will also need to install the [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx):
+
+        ```json
+        {
+            "plugins": [
+                ...
+                ["@babel/plugin-transform-react-jsx", {
+                    // "pragma": "h",
+                    "runtime": "automatic",
+                    "importSource": "@chialab/dna"
+                }]
+            ]
+        }
+        ```
         
         Since the DNA `html` method is provided by the [`htm`](https://github.com/developit/htm) module by [Jason Miller](https://github.com/developit), you can also use the [`babel-plugin-htm`](https://www.npmjs.com/package/babel-plugin-htm) to preprocess templates. 
+
+        ```json
+        {
+            "plugins": [
+                ...
+                ["babel-plugin-htm", {
+                    "pragma": "h",
+                    "import": {
+                        "module": "@chialab/dna"
+                    }
+                }]
+            ]
+        }
+        ```
 4. Install DNA
     ```sh
     $ npm i @chialab/dna
