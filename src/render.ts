@@ -117,7 +117,7 @@ export const internalRender = (
         oldKeys = [];
         while (keys.length) oldKeys.unshift(keys.pop());
     }
-    if (functions) {
+    if (functions && rootFunctions) {
         oldFunctions = [];
         while (functions.length) oldFunctions.unshift(functions.pop() as TemplateFunction);
     }
