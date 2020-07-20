@@ -99,6 +99,10 @@ export const internalRender = (
     } else {
         childNodes = renderContext.childNodes as IterableNodeList;
     }
+    if (!childNodes) {
+        return childNodes;
+    }
+
     let currentIndex = 0;
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
@@ -467,6 +471,9 @@ export const internalRender = (
  */
 export const render = (root: HTMLElement, input: Template): Node | Node[] | void => {
     let childNodes = internalRender(root, input);
+    if (!childNodes) {
+        return;
+    }
     if (childNodes.length < 2) {
         return childNodes[0];
     }

@@ -162,16 +162,31 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
+     * Extract slotted child nodes for initial child nodes.
+     * @return A list of new slotted children.
+     */
+    private initSlotChildNodes() {
+        let slotChildNodes = cloneChildNodes(this.childNodes);
+        for (let i = 0, len = slotChildNodes.length; i < len; i++) {
+            removeChildImpl.call(this, slotChildNodes[i]);
+        }
+        return slotChildNodes;
+    }
+
+    /**
      * Initialize constructor properties.
      * @param context The element context.
      * @param props The propertie to set.
      */
     initialize(context: Context, props: { [key: string]: any; } = {}) {
-        let slotChildNodes = cloneChildNodes(this.childNodes);
-        for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-            removeChildImpl.call(this, slotChildNodes[i]);
+        if (document.readyState === 'complete') {
+            context.slotChildNodes = this.initSlotChildNodes();
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                context.slotChildNodes = this.initSlotChildNodes();
+                this.forceUpdate();
+            });
         }
-        context.slotChildNodes = slotChildNodes;
 
         let constructor = this.constructor as ComponentConstructorInterface<HTMLElement>;
 
@@ -319,7 +334,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Force an element to re-render.
      */
     forceUpdate() {
-        internalRender(this, this.render());
+        if (this.slotChildNodes) {
+            internalRender(this, this.render());
+        }
     }
 
     /**
