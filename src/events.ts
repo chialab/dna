@@ -1,6 +1,8 @@
-import { window } from './window';
+import { HTMLElement } from './window';
 import { createSymbolKey } from './symbols';
-import { DOM, isElement, isEvent } from './DOM';
+import { isElement, isEvent, matchesImpl, createEventImpl } from './helpers';
+import { ComponentConstructorInterface } from './Interfaces';
+import { getOwnPropertyDescriptor } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -118,7 +120,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
                 if (selector) {
                     let target = eventTarget;
                     while (target && target !== element) {
-                        if (isElement(target) && DOM.matches(target, selector)) {
+                        if (isElement(target) && matchesImpl.call(target, selector)) {
                             selectorTarget = target;
                             break;
                         }
@@ -270,7 +272,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
     assertEventCancelable(cancelable);
     assertEventComposed(composed);
 
-    return DOM.createEvent(event, {
+    return createEventImpl(event, {
         detail,
         bubbles,
         cancelable,
@@ -291,7 +293,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
-    return window.HTMLElement.prototype.dispatchEvent.call(element, event);
+    return HTMLElement.prototype.dispatchEvent.call(element, event);
 };
 
 /**
@@ -314,4 +316,64 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
         throw new Error('Event has been canceled');
     }
     return await Promise.all(promises);
+};
+
+/**
+ * A Symbol which contains all listeners instances of a component constructor.
+ * @private
+ */
+const LISTENERS_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * Retrieve all listeners descriptors.
+ * @param constructor The component constructor.
+ * @return A list of listeners.
+ */
+export const getListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => (constructor as any)[LISTENERS_SYMBOL] as {
+    event: string;
+    selector: string | null;
+    callback: DelegatedEventCallback;
+    options?: AddEventListenerOptions,
+}[];
+
+/**
+ * Define component constructor listeners.
+ * @param constructor The component constructor.
+ */
+export const defineListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+    let ctr = constructor;
+    let listeners = (constructor as any)[LISTENERS_SYMBOL] = getListeners(constructor) || [];
+    while (ctr !== HTMLElement) {
+        let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
+        let listenersGetter = listenersDescriptor && listenersDescriptor.get;
+        if (listenersGetter) {
+            let listenerDescriptors = (listenersGetter.call(constructor) || {}) as {
+                [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+            };
+            // register listeners
+            for (let eventPath in listenerDescriptors) {
+                let paths = eventPath.trim().split(' ');
+                let descriptor = listenerDescriptors[eventPath];
+                if (typeof descriptor === 'function') {
+                    listeners.push({
+                        event: paths.shift() as string,
+                        selector: paths.join(' '),
+                        callback: descriptor,
+                    });
+                } else {
+                    listeners.push({
+                        event: paths.shift() as string,
+                        selector: paths.join(' '),
+                        callback: descriptor.callback,
+                        options: {
+                            capture: descriptor.capture,
+                            once: descriptor.once,
+                            passive: descriptor.passive,
+                        },
+                    });
+                }
+            }
+        }
+        ctr = Object.getPrototypeOf(ctr);
+    }
 };

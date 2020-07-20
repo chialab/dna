@@ -819,10 +819,10 @@ A function that returns a template.
 
 
 
-<pre>(props: {
+<pre>((props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}, context: <a href="#context">Context</a>, update: (): boolean): <a href="#template">Template</a></pre>
+}, context: <a href="#context">Context</a>, update: (): boolean): <a href="#template">Template</a>)</pre>
 
 
 
@@ -1099,12 +1099,7 @@ A validation function for the class field.
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
     render(): <a href="#template">Template</a>;
     forceUpdate(): void;
-    getProperties(): {
-        [propertyKey: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
-    };
-    getProperty(propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null;
-    defineProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol?: Symbol): Symbol;
-    initialize(props: {
+    initialize(context: <a href="#context">Context</a>, props: {
         [key: string]: any;
     }): void;
     initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol, initializer?: Function): any;

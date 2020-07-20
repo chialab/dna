@@ -1,5 +1,8 @@
 import { window } from './window';
 import { isComponent, isComponentConstructor } from './Interfaces';
+import { defineProperty } from './helpers';
+import { defineProperties } from './property';
+import { defineListeners } from './events';
 
 /**
  * The native custom elements registry.
@@ -83,8 +86,13 @@ export class CustomElementRegistry {
             throw new Error('The registry already contains an entry with the same name');
         }
 
+        if (isComponentConstructor(constructor)) {
+            defineProperties(constructor);
+            defineListeners(constructor);
+        }
+
         try {
-            Object.defineProperty(constructor.prototype, 'is', {
+            defineProperty(constructor.prototype, 'is', {
                 writable: false,
                 configurable: false,
                 value: name,
@@ -102,8 +110,11 @@ export class CustomElementRegistry {
         } else {
             const queue = this.queue;
             this.upgrade(document.body);
-            if (queue[name]) {
-                queue[name].forEach((resolve) => resolve());
+            let elementQueue = queue[name];
+            if (elementQueue) {
+                for (let i = 0, len = elementQueue.length; i < len; i++) {
+                    elementQueue[i]();
+                }
             }
         }
     }
@@ -168,11 +179,12 @@ export class CustomElementRegistry {
                 }
             }
             let element = new constructor(root);
-            attributes
-                .filter((attr) => element.getAttribute(attr.name) === attr.value)
-                .forEach((attr) => {
-                    element.attributeChangedCallback(attr.name, null, attr.value);
-                });
+            for (let i = 0, len = attributes.length; i < len; i++) {
+                let { name, value } = attributes[i];
+                if (element.getAttribute(name) === value) {
+                    element.attributeChangedCallback(name, null, value);
+                }
+            }
             element.forceUpdate();
         }
     }

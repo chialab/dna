@@ -1,64 +1,20 @@
-import { window } from './window';
+import { HTMLElement, document } from './window';
+import { isConnectedImpl, isElement, isText, isDocument, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, matchesImpl, createEventImpl } from './helpers';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface, isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { cloneChildNodes } from './NodeList';
 
-const { Node, HTMLElement, Event, CustomEvent, document } = window;
-
-if (!Node || !HTMLElement || !Event || !CustomEvent || !document) {
-    throw new Error('invalid DOM implementation');
-}
-
-export const appendChildImpl = Node.prototype.appendChild;
-export const removeChildImpl = Node.prototype.removeChild;
-export const insertBeforeImpl = Node.prototype.insertBefore;
-export const replaceChildImpl = Node.prototype.replaceChild;
-export const getAttributeImpl = HTMLElement.prototype.getAttribute;
-export const hasAttributeImpl = HTMLElement.prototype.hasAttribute;
-export const setAttributeImpl = HTMLElement.prototype.setAttribute;
-export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
-const { DOCUMENT_NODE, TEXT_NODE, ELEMENT_NODE } = Node;
-
-/**
- * Check if a node is a Document instance.
- * @param node The node to check.
- * @return The node is a Document instance.
- */
-export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
-
-/**
- * Check if a node is a Text instance.
- * @param node The node to check.
- * @return The node is a Text instance.
- */
-export const isText = (node: any): node is Text => node && node.nodeType === TEXT_NODE;
-
-/**
- * Check if a node is an Element instance.
- * @param node The node to check.
- * @return The node is an Element instance.
- */
-export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
-
-/**
- * Check if an object is an Event instance.
- * @param node The node to check.
- * @return The object is an Event instance.
- */
-export const isEvent = (event: any): event is Event => event instanceof Event;
-
 /**
  * Check if a Node is connected.
  *
- * @param node The target element to check.
  * @return A truthy value for connected targets.
  */
-export const isConnected = (node: Node | null): boolean => {
-    if (isElement(node) || isText(node)) {
-        return isConnected(node.parentNode);
+export const isConnected: (this: Node | null) => boolean = isConnectedImpl ? (isConnectedImpl as any).get : function(this: Node | null): boolean {
+    if (isElement(this) || isText(this)) {
+        return isConnected.call(this.parentNode);
     }
-    if (isDocument(node)) {
+    if (isDocument(this)) {
         return true;
     }
 
@@ -159,6 +115,9 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
+        if (namespaceURI === 'http://www.w3.org/1999/xhtml') {
+            return this.createElement(tagName);
+        }
         return document.createElementNS(namespaceURI, tagName);
     },
 
@@ -177,15 +136,8 @@ export const DOM = {
      * @param typeArg The name of the event.
      * @param eventInitDict A set of options for the event, such as detail and bubbling.
      */
-    createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> {
-        let event;
-        try {
-            event = new CustomEvent(typeArg, eventInitDict);
-        } catch {
-            event = document.createEvent('CustomEvent');
-            event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
-        }
-        return event;
+    createEvent(typeArg: string, eventInitDict: CustomEventInit<unknown> = {}) {
+        return createEventImpl(typeArg, eventInitDict);
     },
 
     /**

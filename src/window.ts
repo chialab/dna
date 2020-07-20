@@ -11,3 +11,4 @@ const namespace = ((): Window & typeof globalThis => {
 })();
 
 export { namespace as window };
+export const { Node, HTMLElement, Event, CustomEvent, document } = namespace;

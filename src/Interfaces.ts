@@ -82,32 +82,11 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     forceUpdate(): void;
 
     /**
-     * Retrieve all properties descriptors.
-     * @return A list of class field descriptors.
-     */
-    getProperties(): { [propertyKey: string]: ClassFieldDescriptor };
-
-    /**
-     * Retrieve property descriptor.
-     * @param propertyKey The name of the property.
-     * @return The class field descriptor.
-     */
-    getProperty(propertyKey: string): ClassFieldDescriptor | null;
-
-    /**
-     * Define an observed property.
-     * @param propertyKey THe name of the class field.
-     * @param descriptor The property descriptor.
-     * @param symbol The symbol to use to store property value.
-     * @return The symbol used to store property value.
-     */
-    defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol?: symbol): symbol;
-
-    /**
      * Initialize constructor properties.
+     * @param context The element context.
      * @param props The propertie to set.
      */
-    initialize(props: { [key: string]: any; }): void;
+    initialize(context: Context, props: { [key: string]: any; }): void;
 
     /**
      * Initialize instance property.

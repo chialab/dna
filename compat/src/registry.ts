@@ -1,4 +1,4 @@
-import { DOM, customElements } from '@chialab/dna';
+import { DOM, customElements, defineProperties, defineListeners, isComponentConstructor } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
 Object.defineProperty(customElements, 'components', {
@@ -19,6 +19,11 @@ customElements.define = function(name, constructor, options) {
 
     if (customElements.registry[name]) {
         throw new Error('The registry already contains an entry with the same name');
+    }
+
+    if (isComponentConstructor(constructor)) {
+        defineProperties(constructor);
+        defineListeners(constructor);
     }
 
     try {

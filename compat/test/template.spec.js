@@ -10,7 +10,7 @@ describe('[Compat] TemplateComponent', () => {
         wrapper.ownerDocument.body.appendChild(wrapper);
 
         BaseTestComponent = class BaseTestComponent extends BaseComponent {
-            static get properties() {
+            get properties() {
                 return {
                     name: String,
                     lastName: String,
@@ -78,7 +78,7 @@ describe('[Compat] TemplateComponent', () => {
                 };
             }
 
-            static get properties() {
+            get properties() {
                 return {
                     radius: Number,
                 };
@@ -104,7 +104,7 @@ describe('[Compat] IDOMTemplateComponent', () => {
         wrapper.ownerDocument.body.appendChild(wrapper);
 
         BaseTestComponent = class BaseTestComponent extends BaseComponent {
-            static get properties() {
+            get properties() {
                 return {
                     name: String,
                     lastName: String,
@@ -165,7 +165,7 @@ describe('[Compat] IDOMTemplateComponent', () => {
                 ]);
             }
 
-            static get properties() {
+            get properties() {
                 return {
                     radius: Number,
                 };
@@ -189,7 +189,7 @@ describe('[Compat] IDOMTemplateComponent', () => {
                     return ['value'];
                 }
 
-                static get properties() {
+                get properties() {
                     return {
                         value: prop.NUMBER.attribute(),
                         attached: prop.BOOLEAN,
@@ -218,7 +218,7 @@ describe('[Compat] IDOMTemplateComponent', () => {
                     return ['value'];
                 }
 
-                static get properties() {
+                get properties() {
                     return {
                         value: Number,
                     };

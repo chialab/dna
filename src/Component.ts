@@ -1,23 +1,14 @@
-import { window } from './window';
-import { createSymbolKey } from './symbols';
+import { document, HTMLElement } from './window';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { DOM, isElement, isConnected, connect, emulateLifeCycle, removeChildImpl } from './DOM';
-import { DelegatedEventCallback, DelegatedEventDescriptor, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent } from './events';
+import { isElement, removeChildImpl, setAttributeImpl } from './helpers';
+import { DOM, isConnected, connect, emulateLifeCycle } from './DOM';
+import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext, Context, createContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
-import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
-import { isArray, getOwnPropertyDescriptor } from './helpers';
+import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
 import { cloneChildNodes } from './NodeList';
-
-const { document, HTMLElement } = window;
-
-/**
- * A Symbol which contains all Property instances of a Component.
- * @private
- */
-const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -46,7 +37,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * A flag with the connected value of the node.
      */
     get isConnected(): boolean {
-        return isConnected(this);
+        return isConnected.call(this);
     }
 
     /**
@@ -75,80 +66,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    constructor(node?: HTMLElement | { [key: string]: any; }, properties: { [key: string]: any; } = {}) {
+    constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
         super();
 
         let element = node as this;
-        let props = properties as { [key: string]: any; };
+        let props = properties;
         if (!isElement(element)) {
-            props = node || {};
+            props = node;
             element = this;
         } else {
             Object.setPrototypeOf(element, this);
         }
 
-        let context = createContext(element);
-        let slotChildNodes = cloneChildNodes(element.childNodes);
-        slotChildNodes.forEach((child) => removeChildImpl.call(element, child));
-        context.is = element.is;
-        context.slotChildNodes = slotChildNodes;
-
-        let propertyDescriptors = {} as {
-            [key: string]: ClassFieldDescriptor;
-        };
-        let initialConstructor = this.constructor as typeof HTMLElement;
-        let ctr = initialConstructor;
-        while (ctr !== constructor) {
-            let propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
-            let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
-            let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
-            let listenersGetter = listenersDescriptor && listenersDescriptor.get;
-            if (propertiesGetter) {
-                let descriptorProperties = (propertiesGetter.call(initialConstructor) || {}) as {
-                    [key: string]: ClassFieldDescriptor | Function | Function[];
-                };
-                for (let propertyKey in descriptorProperties) {
-                    if (!(propertyKey in propertyDescriptors)) {
-                        let descriptor = descriptorProperties[propertyKey];
-                        if (typeof descriptor === 'function' || isArray(descriptor)) {
-                            descriptor = { type: descriptor };
-                        }
-                        propertyDescriptors[propertyKey] = descriptor;
-                    }
-                }
-            }
-            if (listenersGetter) {
-                let listenerDescriptors = (listenersGetter.call(initialConstructor) || {}) as {
-                    [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
-                };
-                // register listeners
-                for (let eventPath in listenerDescriptors) {
-                    let paths = eventPath.trim().split(' ');
-                    let descriptor = listenerDescriptors[eventPath];
-                    if (typeof descriptor === 'function') {
-                        element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptor);
-                    } else {
-                        element.delegateEventListener(paths.shift() as string, paths.join(' '), descriptor.callback, {
-                            capture: descriptor.capture,
-                            once: descriptor.once,
-                            passive: descriptor.passive,
-                        });
-                    }
-                }
-            }
-            ctr = Object.getPrototypeOf(ctr);
-        }
-
-        // setup properties
-        for (let propertyKey in propertyDescriptors) {
-            let descriptor = propertyDescriptors[propertyKey];
-            let symbol = element.defineProperty(propertyKey, descriptor);
-            if (!(propertyKey in props)) {
-                element.initProperty(propertyKey, descriptor, symbol);
-            }
-        }
-
-        element.initialize(props);
+        element.initialize(createContext(element), props);
 
         if (element.isConnected) {
             connect(element, element !== this);
@@ -163,7 +93,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      */
     connectedCallback() {
         // force the is attribute for styling
-        this.setAttribute('is', this.is);
+        setAttributeImpl.call(this, 'is', this.is);
         // trigger a re-render when the Node is connected
         this.forceUpdate();
     }
@@ -181,7 +111,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-        let properties = this.getProperties();
+        let properties = getProperties(this.constructor as ComponentConstructorInterface<HTMLElement>);
         let property: ClassFieldDescriptor | undefined;
         for (let propertyKey in properties) {
             let prop = properties[propertyKey];
@@ -207,8 +137,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the property (undefined if removed).
      */
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-        const property = this.getProperty(propertyName) as ClassFieldDescriptor;
-        const attrName = property.attribute as string;
+        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
+        let attrName = property.attribute as string;
         if (attrName && property.toAttribute) {
             let value = property.toAttribute.call(this as any, newValue);
             if (value === null) {
@@ -232,159 +162,34 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * Retrieve all properties descriptors.
-     * @return A list of class field descriptors.
-     */
-    getProperties(): { [propertyKey: string]: ClassFieldDescriptor } {
-        return (this as any)[PROPERTIES_SYMBOL] || {};
-    }
-
-    /**
-     * Retrieve property descriptor.
-     * @param propertyKey The name of the property.
-     * @return The class field descriptor.
-     */
-    getProperty(propertyKey: string): ClassFieldDescriptor | null {
-        const descriptors = this.getProperties();
-        if (!descriptors) {
-            return null;
-        }
-        return descriptors[propertyKey] || null;
-    }
-
-    /**
-     * Define an observed property.
-     * @param propertyKey THe name of the class field.
-     * @param descriptor The property descriptor.
-     * @param symbol The symbol to use to store property value.
-     * @return The symbol used to store property value.
-     */
-    defineProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol = createSymbolKey()): symbol {
-        const observedAttributes = (this.constructor as typeof Component).observedAttributes;
-        const descriptors = (this as any)[PROPERTIES_SYMBOL] = this.getProperties();
-        descriptors[propertyKey] = descriptor;
-        (descriptor as any).__proto__ = null;
-        descriptor.name = propertyKey;
-        descriptor.symbol = symbol;
-
-        let hasAttribute = descriptor.attribute || observedAttributes.indexOf(propertyKey) !== -1;
-        let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
-        descriptor.attribute = attribute;
-
-        let type: Function[] = descriptor.type as Function[] || [];
-        if (!Array.isArray(type)) {
-            type = [type];
-        }
-        descriptor.type = type;
-
-        if (attribute) {
-            descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
-                if (type.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
-                    if (newValue === '' || newValue === attribute) {
-                        // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
-                        return true;
-                    }
-                    return false;
-                }
-                if (newValue) {
-                    if (type.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
-                        return parseFloat(newValue);
-                    }
-                    if (type.indexOf(Object) !== -1 || type.indexOf(Array) !== -1) {
-                        try {
-                            return JSON.parse(newValue as string);
-                        } catch {
-                            //
-                        }
-                    }
-                }
-                return newValue;
-            });
-            descriptor.toAttribute = descriptor.toAttribute || ((newValue) => {
-                let falsy = newValue == null || newValue === false;
-                if (falsy) {
-                    // a falsy value should remove the attribute
-                    return null;
-                }
-                if (typeof newValue === 'object') {
-                    // objects should be ignored
-                    return;
-                }
-                // if the value is `true` should set an empty attribute
-                if (newValue === true) {
-                    return '';
-                }
-                // otherwise just set the value
-                return `${newValue}`;
-            });
-        }
-
-        let observers = descriptor.observers || [];
-        if (descriptor.observe) {
-            observers = [descriptor.observe, ...observers];
-        }
-        descriptor.observers = observers;
-
-        const validate = typeof descriptor.validate === 'function' && descriptor.validate;
-        const finalDescriptor: PropertyDescriptor = {
-            configurable: true,
-            enumerable: true,
-        };
-
-        const getter = descriptor.getter || ((value) => value);
-        const get = function get(this: any) {
-            return getter.call(this, this[symbol]);
-        };
-
-        const setter = descriptor.setter || ((value) => value);
-        const set = function set(this: any, value: any) {
-            return setter.call(this, value);
-        };
-
-        finalDescriptor.get = get;
-        finalDescriptor.set = function(this: any, newValue: any) {
-            const oldValue = this[symbol];
-            newValue = set.call(this, newValue);
-
-            if (oldValue === newValue) {
-                // no changes
-                return;
-            }
-
-            // if types or custom validator has been set, check the value validity
-            if (newValue != null && newValue !== false) {
-                let valid = true;
-                if (type.length) {
-                    // check if the value is an instanceof of at least one constructor
-                    valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor === Type)));
-                }
-                if (valid && validate) {
-                    valid = validate.call(this, newValue);
-                }
-                if (!valid) {
-                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
-                }
-            }
-
-            this[symbol] = newValue;
-
-            if (observers) {
-                observers.forEach((observer) => observer.call(this, oldValue, newValue));
-            }
-
-            // trigger Property changes
-            this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
-        };
-
-        Object.defineProperty(this, propertyKey, finalDescriptor);
-        return symbol;
-    }
-
-    /**
      * Initialize constructor properties.
+     * @param context The element context.
      * @param props The propertie to set.
      */
-    initialize(props: { [key: string]: any; }) {
+    initialize(context: Context, props: { [key: string]: any; } = {}) {
+        let slotChildNodes = cloneChildNodes(this.childNodes);
+        for (let i = 0, len = slotChildNodes.length; i < len; i++) {
+            removeChildImpl.call(this, slotChildNodes[i]);
+        }
+        context.slotChildNodes = slotChildNodes;
+
+        let constructor = this.constructor as ComponentConstructorInterface<HTMLElement>;
+
+        // setup listeners
+        let listeners = getListeners(constructor) || [];
+        for (let i = 0, len = listeners.length; i < len; i++) {
+            let listener = listeners[i];
+            this.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
+        }
+
+        // setup properties
+        let propertiesDescriptor = getProperties(constructor);
+        for (let propertyKey in propertiesDescriptor) {
+            let descriptor = propertiesDescriptor[propertyKey];
+            if (!(propertyKey in props)) {
+                this.initProperty(propertyKey, descriptor, descriptor.symbol as symbol);
+            }
+        }
         for (let propertyKey in props) {
             (this as any)[propertyKey] = props[propertyKey];
         }
@@ -424,12 +229,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param callback The callback function
      */
     observe(propertyName: string, callback: ClassFieldObserver) {
-        const property = this.getProperty(propertyName);
+        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
-        const observers = property.observers as Function[];
-        observers.push(callback);
+        (property.observers as Function[]).push(callback);
     }
 
     /**
@@ -439,12 +243,12 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param callback The callback function to remove
      */
     unobserve(propertyName: string, callback: ClassFieldObserver) {
-        const property = this.getProperty(propertyName);
+        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
-        const observers = property.observers as Function[];
-        const io = observers.indexOf(callback);
+        let observers = property.observers as Function[];
+        let io = observers.indexOf(callback);
         if (io !== -1) {
             observers.splice(io, 1);
         }
@@ -515,10 +319,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Force an element to re-render.
      */
     forceUpdate() {
-        const template = this.render();
-        if (template && document.readyState === 'complete') {
-            internalRender(this, template);
-        }
+        internalRender(this, this.render());
     }
 
     /**

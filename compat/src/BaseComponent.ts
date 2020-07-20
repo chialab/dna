@@ -1,4 +1,4 @@
-import { window, render, css, DOM, Component, Template, DelegatedEventCallback, ClassFieldObserver, ClassFieldDescriptor } from '@chialab/dna';
+import { window, render, css, DOM, Component, Template, DelegatedEventCallback, ClassFieldObserver, ClassFieldDescriptor, Context, getProperties } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { CompatibilityPropertyProxy } from './prop';
@@ -177,7 +177,7 @@ export const mixin = (constructor: typeof Component) =>
             // compatibility alias to `getProperties` method
             Object.defineProperty(this, 'properties', {
                 get() {
-                    return this.getProperties();
+                    return getProperties(this.constructor);
                 },
             });
 
@@ -190,9 +190,9 @@ export const mixin = (constructor: typeof Component) =>
         /**
          * @inheritdoc
          */
-        initialize(props: { [key: string]: any; }) {
+        initialize(context: Context, props: { [key: string]: any; }) {
             this.emulateLifeCycle();
-            return super.initialize(props);
+            return super.initialize(context, props);
         }
 
         /**

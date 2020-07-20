@@ -9,7 +9,7 @@ describe('[Compat] PropertiesComponent', () => {
         wrapper.ownerDocument.body.appendChild(wrapper);
 
         class TestComponent extends BaseComponent {
-            static get properties() {
+            get properties() {
                 return {
                     name: prop.STRING.attribute(),
                     title: prop.STRING.attribute(),
@@ -22,7 +22,7 @@ describe('[Compat] PropertiesComponent', () => {
                 return ['name', 'last-name', 'married', 'age', 'var', 'validbool'];
             }
 
-            static get properties() {
+            get properties() {
                 return {
                     lastName: prop.STRING.attribute('last-name'),
                     married: prop.BOOLEAN,
@@ -51,7 +51,7 @@ describe('[Compat] PropertiesComponent', () => {
                 return ['title', 'id', 'alt', 'var', 'mine', 'my-var', 'my-let', 'my-const'];
             }
 
-            static get properties() {
+            get properties() {
                 return {
                     id: prop.STRING.attribute(),
                     alt: prop.STRING.attribute(),
@@ -116,13 +116,13 @@ describe('[Compat] PropertiesComponent', () => {
             let elem = render(wrapper, TestComponent1, {
                 name: 'Alan',
                 lastName: 'Turing',
-                var: '1234',
+                var: 1234,
                 married: true,
             });
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
             assert.equal(elem.married, true);
-            assert.equal(elem.var, '1234');
+            assert.equal(elem.var, 1234);
             assert.equal(elem.type, 2);
         });
 
@@ -130,7 +130,7 @@ describe('[Compat] PropertiesComponent', () => {
             let elem = render(wrapper, TestComponent1, {
                 name: 'Alan',
                 lastName: 'Turing',
-                var: '1234',
+                var: 1234,
                 married: true,
             });
             let changedSingle = 0;

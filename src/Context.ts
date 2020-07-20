@@ -1,8 +1,9 @@
+import { isElement, isText } from './helpers';
+import { createSymbolKey } from './symbols';
 import { TemplateFunction } from './Template';
 import { Subscription } from './Observable';
 import { IterableNodeList } from './NodeList';
-import { isElement, isText } from './DOM';
-import { createSymbolKey } from './symbols';
+import { ComponentInterface } from './Interfaces';
 
 /**
  * A symbol for node context.
@@ -54,5 +55,6 @@ export const createContext = (node: Node) => {
         isText: isTextNode,
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
+        is: (node as ComponentInterface<HTMLElement>).is,
     });
 };

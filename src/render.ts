@@ -1,11 +1,11 @@
+import { isElement, isText, getAttributeImpl, hasAttributeImpl, isArray, defineProperty } from './helpers';
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
-import { DOM, isElement, isText, getAttributeImpl, hasAttributeImpl } from './DOM';
+import { DOM } from './DOM';
 import { Context, getContext, createContext } from './Context';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState, Observable } from './Observable';
-import { isArray } from './helpers';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
 import { css } from './css';
 import { TemplateFunction } from 'react/src';
@@ -244,7 +244,7 @@ export const internalRender = (
                 } else {
                     keys = renderContext.keys = [key];
                 }
-                Object.defineProperty(rootRenderContext, key, {
+                defineProperty(rootRenderContext, key, {
                     configurable: true,
                     writable: false,
                     value: templateNode,
@@ -260,7 +260,7 @@ export const internalRender = (
             }
 
             for (let propertyKey in properties) {
-                if (propertyKey === 'is' || propertyKey === 'key') {
+                if (propertyKey === 'is' || propertyKey === 'key' || propertyKey === 'children') {
                     continue;
                 }
                 let value = properties[propertyKey];
@@ -290,17 +290,19 @@ export const internalRender = (
                     let newClasses: string[] = convertClasses(value);
                     if (oldValue) {
                         let oldClasses: string[] = convertClasses(oldValue);
-                        oldClasses.forEach((className: string) => {
+                        for (let i = 0, len = oldClasses.length; i < len; i++) {
+                            let className = oldClasses[i];
                             if (newClasses.indexOf(className) === -1) {
                                 classList.remove(className);
                             }
-                        });
+                        }
                     }
-                    newClasses.forEach((className: string) => {
+                    for (let i = 0, len = newClasses.length; i < len; i++) {
+                        let className = newClasses[i];
                         if (!classList.contains(className)) {
                             classList.add(className);
                         }
-                    });
+                    }
                     continue;
                 }
 
