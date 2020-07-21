@@ -297,6 +297,14 @@ export const internalRender = (
                         }
                     }
                     continue;
+                } else if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in templateNode.constructor.prototype)) {
+                    let eventName = propertyKey.substr(2);
+                    if (oldValue) {
+                        templateNode.removeEventListener(eventName, oldValue);
+                    }
+                    if (value) {
+                        templateNode.addEventListener(eventName, value);
+                    }
                 }
 
                 let type = typeof value;
