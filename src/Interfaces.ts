@@ -30,7 +30,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     /**
      * The render context reference of the node.
      */
-    readonly $: Context;
+    readonly $: { [key: string]: any };
 
     /**
      * A list of slot nodes.

@@ -4,7 +4,7 @@ import { customElements } from './CustomElementRegistry';
 import { isElement, removeChildImpl, setAttributeImpl } from './helpers';
 import { DOM, isConnected, connect, emulateLifeCycle } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { getContext, Context, createContext } from './Context';
+import { Context, getContext, createContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
@@ -44,14 +44,14 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * The render context reference of the node.
      */
     get $() {
-        return getContext(this) as Context;
+        return getContext(this).keyed;
     }
 
     /**
      * A list of slot nodes.
      */
     get slotChildNodes() {
-        return this.$.slotChildNodes;
+        return getContext(this).slotChildNodes;
     }
 
     /**

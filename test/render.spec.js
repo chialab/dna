@@ -505,7 +505,7 @@ describe('render', function() {
         it('should access keyed element in context', () => {
             class TestElement extends DNA.Component {
                 render() {
-                    return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;
+                    return DNA.html`<form><input key="firstName" placeholder="Eg. Alan" /></form>`;
                 }
             }
 
@@ -515,8 +515,8 @@ describe('render', function() {
             element.forceUpdate();
 
             expect(element.childNodes).to.have.lengthOf(1);
-            expect(element.childNodes[0].tagName).to.be.equal('INPUT');
-            expect(element.childNodes[0]).to.be.equal(element.$.firstName);
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0].childNodes[0]).to.be.equal(element.$.firstName);
         });
     });
 });

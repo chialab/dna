@@ -1,6 +1,6 @@
-import { isElement, isText, isArray, defineProperty } from './helpers';
+import { isElement, isText, isArray } from './helpers';
 import { isComponent } from './Interfaces';
-import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
+import { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
 import { isHyperNode, h } from './HyperNode';
 import { DOM } from './DOM';
 import { Context, getContext, createContext } from './Context';
@@ -8,7 +8,6 @@ import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState, Observable } from './Observable';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
 import { css } from './css';
-import { TemplateFunction } from 'react/src';
 
 /**
  * A cache for converted class values.
@@ -79,8 +78,9 @@ const convertStyles = (value: any) => {
  * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @param context The render context of the root.
- * @param rootContext The render context of the main render.
- * @param rootNamespaceURI The current namespace uri of the render.
+ * @param namespace The current namespace uri of the render.
+ * @param is The root custom element name.
+ * @param slotChildNodes A list of parent slotted children.
  * @param slot Should handle slot children.
  * @return The resulting child nodes list.
  */
@@ -88,11 +88,12 @@ export const internalRender = (
     root: HTMLElement,
     input: Template,
     context?: Context,
-    rootContext?: Context,
-    rootNamespaceURI = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
-    slot = false) => {
+    namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
+    is?: string,
+    slotChildNodes?: IterableNodeList,
+    slot = false,
+) => {
     let renderContext = context || getContext(root) || createContext(root);
-    let rootRenderContext = rootContext || renderContext;
     let childNodes: IterableNodeList;
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
@@ -102,22 +103,19 @@ export const internalRender = (
     if (!childNodes) {
         return childNodes;
     }
+    slotChildNodes = (!slot && renderContext.slotChildNodes) || slotChildNodes;
+    is = (!slot && renderContext.is) || is;
 
     let currentIndex = 0;
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
-    let updateRender = () => internalRender(root, input, renderContext, rootRenderContext, rootNamespaceURI, slot);
+    let updateRender = () => internalRender(root, input, renderContext, namespace, is, slotChildNodes, slot);
 
-    let oldKeys: string[]|undefined;
-    let oldFunctions: TemplateFunction[]|undefined;
-    let keys = renderContext.keys;
+    let keyed = renderContext.keyed;
+    let newKeyed: typeof keyed = {};
     let functions = renderContext.functions;
-    let rootFunctions = rootRenderContext.functions;
-    if (keys) {
-        oldKeys = [];
-        while (keys.length) oldKeys.unshift(keys.pop());
-    }
-    if (functions && rootFunctions) {
+    let oldFunctions: TemplateFunction[]|undefined;
+    if (functions) {
         oldFunctions = [];
         while (functions.length) oldFunctions.unshift(functions.pop() as TemplateFunction);
     }
@@ -132,7 +130,7 @@ export const internalRender = (
         let templateNode: Element | Text | undefined;
         let templateContext: Context|undefined;
         let templateChildren: TemplateItems | undefined;
-        let templateNamespace = rootNamespaceURI;
+        let templateNamespace = namespace;
         let isElementTemplate = false;
         let isComponentTemplate = false;
 
@@ -155,7 +153,7 @@ export const internalRender = (
                     children,
                     ...properties,
                 }, renderContext, () => {
-                    if ((rootFunctions as TemplateFunction[]).indexOf(Function as TemplateFunction) !== -1) {
+                    if ((functions as TemplateFunction[]).indexOf(Function as TemplateFunction) !== -1) {
                         updateRender();
                         return true;
                     }
@@ -171,7 +169,7 @@ export const internalRender = (
 
             // if the current patch is a slot,
             if (isSlot) {
-                let slottedChildren: Node[] = rootRenderContext.slotChildNodes || [];
+                let slottedChildren: Node[] = slotChildNodes || [];
                 let filter;
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
@@ -193,7 +191,7 @@ export const internalRender = (
                 return;
             }
 
-            templateNamespace = namespaceURI || rootNamespaceURI;
+            templateNamespace = namespaceURI || namespace;
 
             check_key: if (currentContext) {
                 let currentKey = currentContext.key;
@@ -243,16 +241,7 @@ export const internalRender = (
 
             if (key) {
                 templateContext.key = key;
-                if (keys) {
-                    keys.push(key);
-                } else {
-                    keys = renderContext.keys = [key];
-                }
-                defineProperty(rootRenderContext, key, {
-                    configurable: true,
-                    writable: false,
-                    value: templateNode,
-                });
+                newKeyed[key] = keyed[key] = templateNode;
             }
 
             if (childProperties) {
@@ -373,9 +362,9 @@ export const internalRender = (
             }), filter);
             return;
         } else {
-            if (templateType === 'string' && rootRenderContext.is && renderContext.tagName === 'style') {
-                template = css(rootRenderContext.is as string, template as string);
-                root.setAttribute('name', rootRenderContext.is);
+            if (templateType === 'string' && is && renderContext.tagName === 'style') {
+                template = css(is as string, template as string);
+                root.setAttribute('name', is);
             }
 
             if (currentContext && currentContext.isText) {
@@ -407,47 +396,30 @@ export const internalRender = (
             currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
         }
 
-        if (isElementTemplate && templateChildren) {
+        if (isElementTemplate && templateChildren && templateContext) {
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,
                 templateChildren,
                 templateContext,
-                rootRenderContext,
                 templateNamespace,
+                is,
+                slotChildNodes,
                 isComponentTemplate
             );
+
+            let templateKeyed = templateContext.keyed;
+            for (let key in templateKeyed) {
+                newKeyed[key] = keyed[key] = templateKeyed[key];
+            }
         }
     };
 
     handleItems(input);
 
-    if (oldKeys) {
-        for (let i = 0, len = oldKeys.length; i < len; i++) {
-            let key = oldKeys[i];
-            if ((keys as string[]).indexOf(key) === -1) {
-                delete rootRenderContext[key];
-            }
-        }
-    }
-
-    if (oldFunctions) {
-        for (let i = 0, len = oldFunctions.length; i < len; i++) {
-            let func = oldFunctions[i];
-            if ((functions as TemplateFunction[]).indexOf(func) === -1) {
-                let io = (rootFunctions as TemplateFunction[]).indexOf(func);
-                if (io !== -1) {
-                    (rootFunctions as TemplateFunction[]).splice(io, 1);
-                }
-            }
-        }
-    }
-    if (functions && functions !== rootFunctions) {
-        if (!rootFunctions) {
-            rootFunctions = rootRenderContext.functions = [];
-        }
-        for (let i = 0, len = functions.length; i < len; i++) {
-            rootFunctions.push(functions[i]);
+    for (let key in keyed) {
+        if (!(key in newKeyed)) {
+            delete keyed[key];
         }
     }
 

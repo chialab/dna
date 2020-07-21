@@ -1,7 +1,6 @@
 import { isElement, isText } from './helpers';
 import { createSymbolKey } from './symbols';
 import { TemplateFunction } from './Template';
-import { Subscription } from './Observable';
 import { IterableNodeList } from './NodeList';
 import { ComponentInterface } from './Interfaces';
 
@@ -17,15 +16,15 @@ export type Context = {
     isElement: boolean,
     isText: boolean,
     tagName?: string,
-    key?: any,
-    childNodes?: IterableNodeList,
-    props?: { [key: string]: any; },
-    keys?: any[];
-    functions?: TemplateFunction[];
-    subscriptions?: Subscription[];
     is?: string;
+    key?: any,
+    props: { [key: string]: any; },
+    childNodes?: IterableNodeList,
     slotChildNodes?: IterableNodeList,
-    [key: string]: any,
+    functions?: TemplateFunction[],
+    keyed: {
+        [key: string]: any,
+    },
 };
 
 /**
@@ -56,5 +55,7 @@ export const createContext = (node: Node) => {
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is: (node as ComponentInterface<HTMLElement>).is,
+        props: {},
+        keyed: {},
     });
 };
