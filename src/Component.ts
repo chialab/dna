@@ -41,13 +41,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * The render context reference of the node.
-     */
-    get $() {
-        return getContext(this).rootKeys;
-    }
-
-    /**
      * A list of slot nodes.
      */
     get slotChildNodes() {

@@ -559,27 +559,3 @@ html`
 ```
 
 In this example, once the last `<option>` element has been created, it never changes its DOM reference, since previous `<option>` generations always re-create the element instead of re-using the keyed one.
-
-Keyed elements are also added to the component's render context (the `$` getter):
-
-```ts
-import { Component, customElements, html } from '@chialab/dna';
-
-class Form extends Component {
-    render() {
-        return html`<input key="firstName" placeholder="Eg. Alan" />`;
-    }
-
-    logValue() {
-        console.log(this.$.firstName.value);
-    }
-}
-
-customElements.define('x-form', Form, { extends: 'form' });
-```
-
-<aside class="note">
-
-However, since reading and writing from the render context can be dangerous for the DOM reliability, [properties](./properties-and-attributes) are the recommended solution.
-
-</aside>

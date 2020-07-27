@@ -107,21 +107,15 @@ export const internalRender = (
         return childNodes;
     }
 
-    let rootRenderContent = rootContext || renderContext;
     let currentIndex: number;
     let renderFragments = renderContext.fragments;
-    let rootKeys = rootRenderContent.rootKeys;
-    let keys: { [key: string]: Node };
-    let newKeys: typeof keys = {};
     let lastNode: Node|undefined;
     if (fragment) {
         currentIndex = indexOf.call(childNodes, fragment.first as Node);
         lastNode = fragment.last as Node;
-        keys = fragment.keys;
     } else {
         emptyFragments(renderContext);
         currentIndex = 0;
-        keys = renderContext.keys;
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
@@ -152,7 +146,6 @@ export const internalRender = (
             if (Function) {
                 let previousCurrentIndex = currentIndex;
                 let previousFragments = renderFragments;
-                let previousKeys = keys;
                 let data: { [key: string]: any };
                 if (fragment) {
                     data = fragment.data;
@@ -166,7 +159,6 @@ export const internalRender = (
                 let renderFragmentContext: Context;
                 let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
                 renderFragments = [];
-                keys = {};
                 handleItems(
                     Function(
                         {
@@ -192,13 +184,11 @@ export const internalRender = (
                 let firstNode = childNodes.item(previousCurrentIndex) as Node;
                 renderFragmentContext = getContext(firstNode) || createContext(firstNode);
                 renderFragmentContext.data = data;
-                renderFragmentContext.keys = keys;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = firstNode;
                 renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
                 renderFragmentContext.fragments.push(...renderFragments);
                 renderFragments = previousFragments;
-                keys = previousKeys;
                 if (!fragment) {
                     renderFragments.push(renderFragmentContext);
                 } else {
@@ -448,10 +438,6 @@ export const internalRender = (
         }
 
         if (isElementTemplate && templateChildren && templateContext) {
-            let key = templateContext.key;
-            if (key) {
-                rootKeys[key] = newKeys[key] = keys[key] = templateNode;
-            }
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,
@@ -461,22 +447,10 @@ export const internalRender = (
                 isComponentTemplate,
                 rootContext
             );
-
-            let templateKeys = templateContext.keys;
-            for (let key in templateKeys) {
-                rootKeys[key] = newKeys[key] = keys[key] = templateKeys[key];
-            }
         }
     };
 
     handleItems(input);
-
-    for (let key in keys) {
-        if (!(key in newKeys)) {
-            delete keys[key];
-            delete rootKeys[key];
-        }
-    }
 
     // all children of the root have been handled,
     // we can start to cleanup the tree

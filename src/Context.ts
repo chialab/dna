@@ -18,8 +18,6 @@ export type Context = {
     tagName?: string,
     is?: string;
     key?: any,
-    rootKeys: { [key: string]: Node },
-    keys: { [key: string]: Node },
     props: { [key: string]: any },
     data: { [key: string]: any },
     childNodes?: IterableNodeList,
@@ -60,8 +58,6 @@ export const createContext = (node: Node) => {
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
         props: {},
-        rootKeys: {},
-        keys: {},
         data: {},
         fragments: [],
     });

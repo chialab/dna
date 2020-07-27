@@ -1028,12 +1028,6 @@ The node context interface.
     tagName?: string;
     is?: string;
     key?: any;
-    rootKeys: {
-        [key: string]: Node;
-    };
-    keys: {
-        [key: string]: Node;
-    };
     props: {
         [key: string]: any;
     };
@@ -1303,9 +1297,6 @@ A descriptor for an event delegation.
 
 <pre>T & {
     is: string;
-    $: {
-        [key: string]: any;
-    };
     slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;

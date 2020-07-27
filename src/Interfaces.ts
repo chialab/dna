@@ -28,11 +28,6 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     readonly is: string;
 
     /**
-     * The render context reference of the node.
-     */
-    readonly $: { [key: string]: any };
-
-    /**
      * A list of slot nodes.
      */
     slotChildNodes: TemplateItems;
