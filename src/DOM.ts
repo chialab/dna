@@ -148,7 +148,7 @@ export const DOM = {
      * @param slot Should add a slot node.
      */
     appendChild<T extends Node>(parent: Element, newChild: T, slot = true): T {
-        if (slot && isComponent(parent)) {
+        if (slot && isComponent(parent) && parent.slotChildNodes) {
             parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
             return newChild;
@@ -171,7 +171,7 @@ export const DOM = {
      * @param slot Should remove a slot node.
      */
     removeChild<T extends Node>(parent: Element, oldChild: T, slot = true): T {
-        if (slot && isComponent(parent)) {
+        if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             let io = slotted.indexOf(oldChild);
             if (io !== -1) {
@@ -197,7 +197,7 @@ export const DOM = {
      * @param slot Should insert a slot node.
      */
     insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = true): T {
-        if (slot && isComponent(parent)) {
+        if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             if (refChild) {
                 let io = slotted.indexOf(refChild);
@@ -229,7 +229,7 @@ export const DOM = {
      * @param slot Should replace a slot node.
      */
     replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = true): T {
-        if (slot && isComponent(parent)) {
+        if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             let io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);

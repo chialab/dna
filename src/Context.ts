@@ -10,21 +10,24 @@ import { ComponentInterface } from './Interfaces';
 const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
- * A ontext interface.
+ * The node context interface.
  */
 export type Context = {
-    isElement: boolean,
-    isText: boolean,
+    isElement?: boolean,
+    isText?: boolean,
     tagName?: string,
     is?: string;
     key?: any,
-    props: { [key: string]: any; },
+    rootKeys: { [key: string]: Node },
+    keys: { [key: string]: Node },
+    props: { [key: string]: any },
+    data: { [key: string]: any },
     childNodes?: IterableNodeList,
     slotChildNodes?: IterableNodeList,
-    functions?: TemplateFunction[],
-    keyed: {
-        [key: string]: any,
-    },
+    first?: Node,
+    last?: Node,
+    function?: TemplateFunction,
+    fragments: Context[],
 };
 
 /**
@@ -49,13 +52,27 @@ export const setContext = (target: any, context: Context): Context => target[CON
 export const createContext = (node: Node) => {
     let isElementNode = isElement(node);
     let isTextNode = !isElementNode && isText(node);
+    let is = (node as ComponentInterface<HTMLElement>).is;
     return setContext(node, {
         isElement: isElementNode,
         isText: isTextNode,
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
-        is: (node as ComponentInterface<HTMLElement>).is,
+        is,
         props: {},
-        keyed: {},
+        rootKeys: {},
+        keys: {},
+        data: {},
+        fragments: [],
     });
+};
+
+export const emptyFragments = (context: Context) => {
+    let fragments = context.fragments;
+    let len = fragments.length;
+    while (len--) {
+        let frag = fragments.pop() as Context;
+        emptyFragments(frag);
+    }
+    return fragments;
 };

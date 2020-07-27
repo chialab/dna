@@ -8,6 +8,11 @@ const { DOCUMENT_NODE, TEXT_NODE, ELEMENT_NODE } = Node;
 export const isArray = Array.isArray;
 
 /**
+ * Alias Array.prototype.indexOf.
+ */
+export const indexOf = Array.prototype.indexOf;
+
+/**
  * Alias to Object.getOwnPropertyDescriptor.
  */
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

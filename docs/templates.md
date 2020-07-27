@@ -363,10 +363,10 @@ function Row({ children, store, id }, context, refresh) {
 
 
 ```ts
-function Row({ children, store, id }, context, refresh) {
+function Row({ children, store, id }, context, update) {
     const select = () => {
         store.select(id);
-        refresh();
+        update();
     };
 
     return h('tr', {

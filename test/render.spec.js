@@ -1,4 +1,4 @@
-import { getModule, getComponentName } from './helpers.js';
+import { getModule, getComponentName, wait, spyFunction } from './helpers.js';
 
 let DNA, wrapper;
 
@@ -111,6 +111,41 @@ describe('render', function() {
 
             DNA.render(wrapper, DNA.h(Test));
             expect(wrapper.childNodes).to.have.lengthOf(6);
+        });
+
+        it('should re-render component function only', async () => {
+            const render1 = spyFunction();
+            const render2 = spyFunction();
+
+            function Test() {
+                render1();
+                return 'hello';
+            }
+
+            function Clock(props, data, update) {
+                render2();
+                data.count = data.count || 0;
+                data.count++;
+                if (data.count === 1) {
+                    setTimeout(() => {
+                        update();
+                    }, 200);
+                }
+                return data.count;
+            }
+
+            DNA.render(wrapper, [
+                DNA.h(Test),
+                DNA.h(Clock),
+            ]);
+            expect(wrapper.childNodes).to.have.lengthOf(2);
+            expect(wrapper.childNodes[0].textContent).to.be.equal('hello');
+            expect(wrapper.childNodes[1].textContent).to.be.equal('1');
+            await wait(500);
+            expect(wrapper.childNodes[0].textContent).to.be.equal('hello');
+            expect(wrapper.childNodes[1].textContent).to.be.equal('2');
+            expect(render1.count).to.be.equal(1);
+            expect(render2.count).to.be.equal(2);
         });
 
         it('should add nodes', () => {
@@ -517,6 +552,71 @@ describe('render', function() {
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
             expect(element.childNodes[0].childNodes[0]).to.be.equal(element.$.firstName);
+        });
+
+        it('should remove keyed element in context', () => {
+            let flag = 0;
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`
+                        <form>
+                            ${flag++ === 0 && DNA.html`<input key="firstName" placeholder="Eg. Alan" />`}
+                        </form>
+                    `;
+                }
+            }
+
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+
+            element.forceUpdate();
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0].childNodes[0]).to.be.equal(element.$.firstName);
+
+            element.forceUpdate();
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].childNodes).to.have.lengthOf(0);
+            expect(element.$.firstName).to.be.undefined;
+        });
+
+        it('should remove keyed element in fragment', async () => {
+            function MyCard(root, data, upgrade) {
+                if (data.flag) {
+                    return '';
+                }
+
+                data.flag = true;
+                setTimeout(() => {
+                    upgrade();
+                }, 500);
+                return DNA.html`<input key="firstName" placeholder="Eg. Alan" />`;
+            }
+
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`
+                        <form>
+                            <${MyCard} />
+                        </form>
+                    `;
+                }
+            }
+
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+
+            element.forceUpdate();
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0].childNodes[0]).to.be.equal(element.$.firstName);
+
+            await wait(1000);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
+            expect(element.$.firstName).to.be.undefined;
         });
     });
 });

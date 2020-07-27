@@ -301,7 +301,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button key="trigger"></button>');
+                    return DNA.html('<button></button>');
                 }
             }
 
@@ -310,7 +310,7 @@ describe('events', function() {
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
             expect(callback.invoked).to.be.false;
-            element.$.trigger.click();
+            element.querySelector('button').click();
             expect(callback.response).to.be.deep.equal(['click', 'BUTTON']);
             expect(callback.invoked).to.be.true;
         });
@@ -329,7 +329,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button key="trigger"></button>');
+                    return DNA.html('<button></button>');
                 }
             }
 
@@ -348,7 +348,7 @@ describe('events', function() {
             expect(callback1.invoked).to.be.false;
             expect(callback2.invoked).to.be.false;
             expect(callback3.invoked).to.be.false;
-            element.$.trigger.click();
+            element.querySelector('button').click();
             element.dispatchEvent(DNA.DOM.createEvent('change', {
                 bubbles: true,
                 cancelable: true,
@@ -425,7 +425,7 @@ describe('events', function() {
             const callback = spyFunction();
             class TestElement extends DNA.Component {
                 render() {
-                    return DNA.html`<button key="trigger"></button>`;
+                    return DNA.html`<button></button>`;
                 }
             }
 
@@ -435,7 +435,7 @@ describe('events', function() {
             DNA.DOM.appendChild(wrapper, element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback.invoked).to.be.false;
-            element.$.trigger.click();
+            element.querySelector('button').click();
             expect(callback.invoked).to.be.true;
         });
     });
@@ -445,7 +445,7 @@ describe('events', function() {
             const callback = spyFunction();
             class TestElement extends DNA.Component {
                 render() {
-                    return DNA.html`<button key="trigger"></button>`;
+                    return DNA.html`<button></button>`;
                 }
             }
 
@@ -455,10 +455,10 @@ describe('events', function() {
             DNA.DOM.appendChild(wrapper, element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback.invoked).to.be.false;
-            element.$.trigger.click();
+            element.querySelector('button').click();
             expect(callback.invoked).to.be.true;
             element.undelegateEventListener('click', 'button', callback);
-            element.$.trigger.click();
+            element.querySelector('button').click();
             expect(callback.count).to.be.equal(1);
         });
     });

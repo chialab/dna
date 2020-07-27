@@ -1,9 +1,9 @@
-import { isElement, isText, isArray } from './helpers';
+import { isElement, isText, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
-import { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
+import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
 import { DOM } from './DOM';
-import { Context, getContext, createContext } from './Context';
+import { Context, getContext, createContext, emptyFragments } from './Context';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState, Observable } from './Observable';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
@@ -79,9 +79,9 @@ const convertStyles = (value: any) => {
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @param context The render context of the root.
  * @param namespace The current namespace uri of the render.
- * @param is The root custom element name.
- * @param slotChildNodes A list of parent slotted children.
  * @param slot Should handle slot children.
+ * @param rootContext The current custom element context of the render.
+ * @param fragment The fragment context to update.
  * @return The resulting child nodes list.
  */
 export const internalRender = (
@@ -89,9 +89,9 @@ export const internalRender = (
     input: Template,
     context?: Context,
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
-    is?: string,
-    slotChildNodes?: IterableNodeList,
     slot = false,
+    rootContext?: Context,
+    fragment?: Context
 ) => {
     let renderContext = context || getContext(root) || createContext(root);
     let childNodes: IterableNodeList;
@@ -99,26 +99,32 @@ export const internalRender = (
         childNodes = renderContext.slotChildNodes as IterableNodeList;
     } else {
         childNodes = renderContext.childNodes as IterableNodeList;
+        if (renderContext.is) {
+            rootContext = renderContext;
+        }
     }
     if (!childNodes) {
         return childNodes;
     }
-    slotChildNodes = (!slot && renderContext.slotChildNodes) || slotChildNodes;
-    is = (!slot && renderContext.is) || is;
 
-    let currentIndex = 0;
+    let rootRenderContent = rootContext || renderContext;
+    let currentIndex: number;
+    let renderFragments = renderContext.fragments;
+    let rootKeys = rootRenderContent.rootKeys;
+    let keys: { [key: string]: Node };
+    let newKeys: typeof keys = {};
+    let lastNode: Node|undefined;
+    if (fragment) {
+        currentIndex = indexOf.call(childNodes, fragment.first as Node);
+        lastNode = fragment.last as Node;
+        keys = fragment.keys;
+    } else {
+        emptyFragments(renderContext);
+        currentIndex = 0;
+        keys = renderContext.keys;
+    }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
-    let updateRender = () => internalRender(root, input, renderContext, namespace, is, slotChildNodes, slot);
-
-    let keyed = renderContext.keyed;
-    let newKeyed: typeof keyed = {};
-    let functions = renderContext.functions;
-    let oldFunctions: TemplateFunction[]|undefined;
-    if (functions) {
-        oldFunctions = [];
-        while (functions.length) oldFunctions.unshift(functions.pop() as TemplateFunction);
-    }
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -144,21 +150,61 @@ export const internalRender = (
             let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
-                if (functions) {
-                    functions.push(Function);
+                let previousCurrentIndex = currentIndex;
+                let previousFragments = renderFragments;
+                let previousKeys = keys;
+                let data: { [key: string]: any };
+                if (fragment) {
+                    data = fragment.data;
+                } else if (currentContext && currentContext.function === Function) {
+                    emptyFragments(currentContext);
+                    data = currentContext.data;
                 } else {
-                    functions = renderContext.functions = [Function];
+                    data = {};
                 }
-                handleItems(Function({
-                    children,
-                    ...properties,
-                }, renderContext, () => {
-                    if ((functions as TemplateFunction[]).indexOf(Function as TemplateFunction) !== -1) {
-                        updateRender();
-                        return true;
-                    }
-                    return false;
-                }), filter);
+
+                let renderFragmentContext: Context;
+                let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
+                renderFragments = [];
+                keys = {};
+                handleItems(
+                    Function(
+                        {
+                            children,
+                            ...properties,
+                        },
+                        data,
+                        () => {
+                            if (!live()) {
+                                return false;
+                            }
+                            internalRender(root, template, renderContext, namespace, slot, rootContext, renderFragmentContext);
+                            return true;
+                        },
+                        live,
+                        renderContext
+                    ) as TemplateItem,
+                    filter
+                );
+                if (previousCurrentIndex === currentIndex) {
+                    handleItems(DOM.createTextNode(''), filter);
+                }
+                let firstNode = childNodes.item(previousCurrentIndex) as Node;
+                renderFragmentContext = getContext(firstNode) || createContext(firstNode);
+                renderFragmentContext.data = data;
+                renderFragmentContext.keys = keys;
+                renderFragmentContext.function = Function;
+                renderFragmentContext.first = firstNode;
+                renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
+                renderFragmentContext.fragments.push(...renderFragments);
+                renderFragments = previousFragments;
+                keys = previousKeys;
+                if (!fragment) {
+                    renderFragments.push(renderFragmentContext);
+                } else {
+                    renderFragments.splice(renderFragments.indexOf(fragment), 1, renderFragmentContext);
+                    fragment = renderFragmentContext;
+                }
                 return;
             }
 
@@ -168,8 +214,8 @@ export const internalRender = (
             }
 
             // if the current patch is a slot,
-            if (isSlot) {
-                let slottedChildren: Node[] = slotChildNodes || [];
+            if (isSlot && rootContext) {
+                let slottedChildren: Node[] = rootContext.slotChildNodes || [];
                 let filter;
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
@@ -238,11 +284,7 @@ export const internalRender = (
             templateContext = templateContext || getContext(templateNode) || createContext(templateNode as HTMLElement);
             let childProperties = templateContext.props;
             templateContext.props = properties;
-
-            if (key) {
-                templateContext.key = key;
-                newKeyed[key] = keyed[key] = templateNode;
-            }
+            templateContext.key = key;
 
             if (childProperties) {
                 for (let propertyKey in childProperties) {
@@ -334,7 +376,7 @@ export const internalRender = (
         } else if (isObjectTemplate && isText(template)) {
             templateNode = template;
         } else if (isObjectTemplate && isThenable(template)) {
-            handleItems(h((props, context, update) => {
+            handleItems(h((props, data, update) => {
                 let status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
                     (template as Promise<unknown>)
@@ -370,12 +412,13 @@ export const internalRender = (
             }), filter);
             return;
         } else {
-            if (templateType === 'string' && is && renderContext.tagName === 'style') {
-                template = css(is as string, template as string);
+            if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {
+                let is = rootContext.is as string;
+                template = css(is, template as string);
                 root.setAttribute('name', is);
             }
 
-            if (currentContext && currentContext.isText) {
+            if (currentContext && currentContext.isText && !currentContext.function) {
                 templateNode = currentNode as Text;
                 if (templateNode.textContent != template) {
                     templateNode.textContent = template as string;
@@ -405,39 +448,49 @@ export const internalRender = (
         }
 
         if (isElementTemplate && templateChildren && templateContext) {
+            let key = templateContext.key;
+            if (key) {
+                rootKeys[key] = newKeys[key] = keys[key] = templateNode;
+            }
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,
                 templateChildren,
                 templateContext,
                 templateNamespace,
-                is,
-                slotChildNodes,
-                isComponentTemplate
+                isComponentTemplate,
+                rootContext
             );
 
-            let templateKeyed = templateContext.keyed;
-            for (let key in templateKeyed) {
-                newKeyed[key] = keyed[key] = templateKeyed[key];
+            let templateKeys = templateContext.keys;
+            for (let key in templateKeys) {
+                rootKeys[key] = newKeys[key] = keys[key] = templateKeys[key];
             }
         }
     };
 
     handleItems(input);
 
-    for (let key in keyed) {
-        if (!(key in newKeyed)) {
-            delete keyed[key];
+    for (let key in keys) {
+        if (!(key in newKeys)) {
+            delete keys[key];
+            delete rootKeys[key];
         }
     }
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
     // remove all Nodes that are outside the result range
-    while (currentNode) {
-        DOM.removeChild(root, currentNode, slot);
-        currentNode = childNodes.item(currentIndex) as Node;
+    let lastIndex: number;
+    if (lastNode) {
+        lastIndex = indexOf.call(childNodes, lastNode) + 1;
+    } else {
+        lastIndex = childNodes.length;
     }
+    while (currentIndex < lastIndex) {
+        DOM.removeChild(root, childNodes.item(--lastIndex) as Node, slot);
+    }
+
     return childNodes;
 };
 

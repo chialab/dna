@@ -1,4 +1,4 @@
-import { getModule, wait, spyPromise, getComponentName } from './helpers.js';
+import { getModule, wait, spyPromise, getComponentName, spyFunction } from './helpers.js';
 
 let DNA;
 
@@ -97,22 +97,54 @@ describe('registry', function() {
     describe('#upgrade', () => {
         it('should upgrade a node after an element definition', () => {
             const is = getComponentName();
-            const MyCard = class extends DNA.Component { };
+            const MyCard = class extends DNA.Component {
+                static get observedAttributes() {
+                    return ['name'];
+                }
+
+                constructor(...args) {
+                    super(...args);
+                    this.spyAttributeChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+                }
+
+                attributeChangedCallback(...args) {
+                    super.attributeChangedCallback(...args);
+                    this.spyAttributeChangedCallback(...args);
+                }
+            };
             const wrapper = DNA.DOM.createElement('div');
             const card = DNA.DOM.createElement(is);
+            card.setAttribute('name', 'Alan');
             wrapper.appendChild(card);
             expect(card).to.not.be.an.instanceof(MyCard);
             DNA.customElements.define(is, MyCard);
             DNA.customElements.upgrade(wrapper);
             expect(card).to.be.an.instanceof(MyCard);
+            expect(card.spyAttributeChangedCallback.invoked).to.be.true;
+            expect(card.spyAttributeChangedCallback.response).to.be.deep.equal(['name', null, 'Alan']);
         });
 
         it('should upgrade a builtin node after an element definition', () => {
             const is = getComponentName();
-            const MyCard = class extends DNA.Component { };
+            const MyCard = class extends DNA.Component {
+                static get observedAttributes() {
+                    return ['name'];
+                }
+
+                constructor(...args) {
+                    super(...args);
+                    this.spyAttributeChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+                }
+
+                attributeChangedCallback(...args) {
+                    super.attributeChangedCallback(...args);
+                    this.spyAttributeChangedCallback(...args);
+                }
+            };
             const wrapper = DNA.DOM.createElement('div');
             const card = DNA.DOM.createElement('article');
             card.setAttribute('is', is);
+            card.setAttribute('name', 'Alan');
             wrapper.appendChild(card);
             expect(card).to.not.be.an.instanceof(MyCard);
             DNA.customElements.define(is, MyCard, {
@@ -120,6 +152,8 @@ describe('registry', function() {
             });
             DNA.customElements.upgrade(wrapper);
             expect(card).to.be.an.instanceof(MyCard);
+            expect(card.spyAttributeChangedCallback.invoked).to.be.true;
+            expect(card.spyAttributeChangedCallback.response).to.be.deep.equal(['name', null, 'Alan']);
         });
     });
 });

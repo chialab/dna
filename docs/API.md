@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#property">property</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#definelisteners">defineListeners</a>, <a href="#property">property</a>, <a href="#getproperty">getProperty</a>, <a href="#getproperties">getProperties</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>
 
 
 <hr />
@@ -600,6 +600,27 @@ Dispatch an async custom Event.
 
 <hr />
 
+<strong id="definelisteners"><code>constant</code>  defineListeners</strong>
+
+
+
+<p>
+
+Define component constructor listeners.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;): void</pre>
+
+
+
+
+<hr />
+
 <strong id="property"><code>constant</code>  property</strong>
 
 
@@ -615,6 +636,134 @@ A decorator for class fields definition.
 <strong>Type:</strong>
 
 <pre>(descriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>): any</pre>
+
+
+
+
+<hr />
+
+<strong id="getproperty"><code>constant</code>  getProperty</strong>
+
+
+
+<p>
+
+Retrieve property descriptor.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null</pre>
+
+
+
+
+<hr />
+
+<strong id="getproperties"><code>constant</code>  getProperties</strong>
+
+
+
+<p>
+
+Retrieve all properties descriptors.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;): {
+    [propertyKey: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="defineproperties"><code>constant</code>  defineProperties</strong>
+
+
+
+<p>
+
+Define component constructor properties.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;): void</pre>
+
+
+
+
+<hr />
+
+<strong id="defineproperty"><code>constant</code>  defineProperty</strong>
+
+
+
+<p>
+
+Define an observed property.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: Symbol|undefined): Symbol</pre>
+
+
+
+
+<hr />
+
+<strong id="iscomponent"><code>constant</code>  isComponent</strong>
+
+
+
+<p>
+
+Check if a node is a component.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(node: any): node is <a href="#componentinterface">ComponentInterface</a></pre>
+
+
+
+
+<hr />
+
+<strong id="iscomponentconstructor"><code>constant</code>  isComponentConstructor</strong>
+
+
+
+<p>
+
+Check if a constructor is a component constructor.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(constructor: Function): constructor is <a href="#componentconstructorinterface">ComponentConstructorInterface</a></pre>
 
 
 
@@ -819,10 +968,10 @@ A function that returns a template.
 
 
 
-<pre>((props: {
+<pre>(props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}, context: <a href="#context">Context</a>, update: (): boolean): <a href="#template">Template</a>)</pre>
+}, store: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
 
 
 
@@ -867,27 +1016,36 @@ A list of template items.
 
 <p>
 
-A ontext interface.
+The node context interface.
 
 </p>
 
 
 
 <pre>{
-    isElement: boolean;
-    isText: boolean;
+    isElement?: boolean;
+    isText?: boolean;
     tagName?: string;
+    is?: string;
     key?: any;
-    childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
-    props?: {
+    rootKeys: {
+        [key: string]: Node;
+    };
+    keys: {
+        [key: string]: Node;
+    };
+    props: {
         [key: string]: any;
     };
-    keys?: any[];
-    functions?: <a href="#templatefunction">TemplateFunction</a>[];
-    subscriptions?: <a href="#subscription">Subscription</a>[];
-    is?: string;
+    data: {
+        [key: string]: any;
+    };
+    childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
     slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
-    [key: string]: any;
+    first?: Node;
+    last?: Node;
+    function?: <a href="#templatefunction">TemplateFunction</a>;
+    fragments: <a href="#context">Context</a>[];
 }</pre>
 
 
@@ -979,6 +1137,42 @@ Describe the signature of a delegated event callback.
 <pre>(event: Event, target?: Node): any</pre>
 
 
+
+
+<hr />
+
+<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
+
+<p>
+
+The basic DNA Component interface.
+It's a Custom Element, but with some extra useful method.
+
+</p>
+
+
+
+<pre>{
+    observedAttributes: string[];
+    properties?: {
+        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
+    };
+    listeners?: {
+        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>|<a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>;
+    };
+    constructor(node?: HTMLElement, properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(properties?: {
+        [key: string]: any;
+    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
+}</pre>
+
+<strong>See also</strong>
+
+* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
 
 
 <hr />
@@ -1082,6 +1276,25 @@ A validation function for the class field.
 
 <hr />
 
+<strong id="delegatedeventdescriptor"><code>type</code>  DelegatedEventDescriptor</strong>
+
+<p>
+
+A descriptor for an event delegation.
+
+</p>
+
+
+
+<pre>AddEventListenerOptions & {
+    callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
+}</pre>
+
+
+
+
+<hr />
+
 <strong id="componentinterface"><code>type</code>  ComponentInterface</strong>
 
 
@@ -1090,7 +1303,9 @@ A validation function for the class field.
 
 <pre>T & {
     is: string;
-    $: <a href="#context">Context</a>;
+    $: {
+        [key: string]: any;
+    };
     slotChildNodes: <a href="#templateitems">TemplateItems</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;
@@ -1112,61 +1327,6 @@ A validation function for the class field.
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     emulateLifeCycle(): void;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="componentconstructorinterface"><code>type</code>  ComponentConstructorInterface</strong>
-
-<p>
-
-The basic DNA Component interface.
-It's a Custom Element, but with some extra useful method.
-
-</p>
-
-
-
-<pre>{
-    observedAttributes: string[];
-    properties?: {
-        [key: string]: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|Function|Function[];
-    };
-    listeners?: {
-        [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>|<a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>;
-    };
-    constructor(node?: HTMLElement, properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(properties?: {
-        [key: string]: any;
-    }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    constructor(): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-    prototype: <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
-}</pre>
-
-<strong>See also</strong>
-
-* [W3C specification][https://w3c.github.io/webcomponents/spec/custom/](https://w3c.github.io/webcomponents/spec/custom/).
-
-
-<hr />
-
-<strong id="delegatedeventdescriptor"><code>type</code>  DelegatedEventDescriptor</strong>
-
-<p>
-
-A descriptor for an event delegation.
-
-</p>
-
-
-
-<pre>AddEventListenerOptions & {
-    callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>;
 }</pre>
 
 
