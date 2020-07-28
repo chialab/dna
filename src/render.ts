@@ -236,11 +236,7 @@ export const internalRender = (
                 check_key: if (currentContext) {
                     let currentKey = currentContext.key;
                     if (currentKey != null && key != null && key !== currentKey) {
-                        if (slot) {
-                            root.removeChild(currentNode);
-                        } else {
-                            DOM.removeChild(root, currentNode, false);
-                        }
+                        DOM.removeChild(root, currentNode, slot);
                         currentNode = childNodes.item(currentIndex) as Node;
                         currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
                         if (!currentContext) {
@@ -439,11 +435,7 @@ export const internalRender = (
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
-            if (slot) {
-                root.insertBefore(templateNode, currentNode);
-            } else {
-                DOM.insertBefore(root, templateNode, currentNode, slot);
-            }
+            DOM.insertBefore(root, templateNode, currentNode, slot);
             currentIndex++;
         } else {
             currentNode = childNodes.item(++currentIndex) as Node;
@@ -475,11 +467,7 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        if (slot) {
-            root.removeChild(childNodes.item(--lastIndex) as Node);
-        } else {
-            DOM.removeChild(root, childNodes.item(--lastIndex) as Node, slot);
-        }
+        DOM.removeChild(root, childNodes.item(--lastIndex) as Node, slot);
     }
 
     return childNodes;
