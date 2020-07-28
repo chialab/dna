@@ -230,6 +230,7 @@ export const internalRender = (
             if (node) {
                 templateNode = node;
                 isElementTemplate = isElement(node);
+                isComponentTemplate = isElementTemplate && isComponent(templateNode);
             } else {
                 templateNamespace = namespaceURI || namespace;
 
