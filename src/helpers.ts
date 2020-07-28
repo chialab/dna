@@ -1,7 +1,6 @@
 import { document, CustomEvent, Node, HTMLElement, Event } from './window';
 const { DOCUMENT_NODE, TEXT_NODE, ELEMENT_NODE } = Node;
 
-
 /**
  * Alias to Array.isArray.
  */
@@ -83,6 +82,13 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
     }
     return event;
 };
+
+/**
+ * Check if the target is a Node instance.
+ * @param target The target to check.
+ * @return The target is a Node instance.
+ */
+export const isNode = (target: any): target is Node => target && target instanceof Node;
 
 /**
  * Check if a node is a Document instance.

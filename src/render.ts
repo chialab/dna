@@ -127,8 +127,8 @@ export const internalRender = (
 
         let templateType = typeof template;
         let isObjectTemplate = templateType === 'object';
-        let templateNode: Element | Text | undefined;
-        let templateContext: Context|undefined;
+        let templateNode: Node | undefined;
+        let templateContext: Context | undefined;
         let templateChildren: TemplateItems | undefined;
         let templateNamespace = namespace;
         let isElementTemplate = false;
@@ -141,7 +141,7 @@ export const internalRender = (
             }
             return;
         } else if (isObjectTemplate && isHyperNode(template)) {
-            let { Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
+            let { node, Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
                 let previousCurrentIndex = currentIndex;
@@ -227,46 +227,51 @@ export const internalRender = (
                 return;
             }
 
-            templateNamespace = namespaceURI || namespace;
+            if (node) {
+                templateNode = node;
+                isElementTemplate = isElement(node);
+            } else {
+                templateNamespace = namespaceURI || namespace;
 
-            check_key: if (currentContext) {
-                let currentKey = currentContext.key;
-                if (currentKey != null && key != null && key !== currentKey) {
-                    DOM.removeChild(root, currentNode, slot);
-                    currentNode = childNodes.item(currentIndex) as Node;
-                    currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
-                    if (!currentContext) {
-                        break check_key;
+                check_key: if (currentContext) {
+                    let currentKey = currentContext.key;
+                    if (currentKey != null && key != null && key !== currentKey) {
+                        DOM.removeChild(root, currentNode, slot);
+                        currentNode = childNodes.item(currentIndex) as Node;
+                        currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+                        if (!currentContext) {
+                            break check_key;
+                        }
+                        currentKey = currentContext.key;
                     }
-                    currentKey = currentContext.key;
-                }
-                if (key != null || currentKey != null) {
-                    if (key === currentKey) {
+                    if (key != null || currentKey != null) {
+                        if (key === currentKey) {
+                            isElementTemplate = true;
+                            templateNode = currentNode as Element;
+                            templateContext = currentContext;
+                            isComponentTemplate = !!Component && isComponent(templateNode);
+                        }
+                    } else if (Component && currentNode instanceof Component) {
+                        isElementTemplate = true;
+                        isComponentTemplate = isComponent(currentNode);
+                        templateNode = currentNode;
+                        templateContext = currentContext;
+                    } else if (tag && currentContext.tagName === tag) {
                         isElementTemplate = true;
                         templateNode = currentNode as Element;
                         templateContext = currentContext;
-                        isComponentTemplate = !!Component && isComponent(templateNode);
                     }
-                } else if (Component && currentNode instanceof Component) {
-                    isElementTemplate = true;
-                    isComponentTemplate = isComponent(currentNode);
-                    templateNode = currentNode;
-                    templateContext = currentContext;
-                } else if (tag && currentContext.tagName === tag) {
-                    isElementTemplate = true;
-                    templateNode = currentNode as Element;
-                    templateContext = currentContext;
                 }
-            }
 
-            if (!templateNode) {
-                isElementTemplate = true;
+                if (!templateNode) {
+                    isElementTemplate = true;
 
-                if (Component) {
-                    templateNode = new Component();
-                    isComponentTemplate = isComponent(templateNode);
-                } else {
-                    templateNode = DOM.createElementNS(templateNamespace, tag as string);
+                    if (Component) {
+                        templateNode = new Component();
+                        isComponentTemplate = isComponent(templateNode);
+                    } else {
+                        templateNode = DOM.createElementNS(templateNamespace, tag as string);
+                    }
                 }
             }
 

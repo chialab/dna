@@ -305,17 +305,8 @@ h(Fragment, null,
 Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can pass properties to template functions:
 
 ```ts
-function Row({ children, store, id }, context, refresh) {
-    const select = () => {
-        store.select(id);
-        refresh();
-    };
-
-    return html`
-        <tr id=${id} onclick=${select}>
-            ${children}
-        </tr>
-    `;
+function Row({ children, id }) {
+    return html`<tr id=${id}>${children}</tr>`;
 }
 
 html`<table>
@@ -333,15 +324,8 @@ html`<table>
 <div>
 
 ```ts
-function Row({ children, store, id }, context, refresh) {
-    const select = () => {
-        store.select(id);
-        refresh();
-    };
-
-    return <tr id=${id} onclick=${select}>
-        ${children}
-    </tr>;
+function Row({ children, id }, context, refresh) {
+    return <tr id=${id}>${children}</tr>;
 }
 
 <table>
@@ -363,16 +347,8 @@ function Row({ children, store, id }, context, refresh) {
 
 
 ```ts
-function Row({ children, store, id }, context, update) {
-    const select = () => {
-        store.select(id);
-        update();
-    };
-
-    return h('tr', {
-        id: id,
-        onclick: select
-    }, ...children);
+function Row({ children, id }, context, update) {
+    return h('tr', { id: id }, ...children);
 }
 
 h('table', null,
@@ -386,6 +362,72 @@ h('table', null,
 ```
 </div>
 </details>
+
+Template functions are also useful for micro views updates: similar to React Hooks, they receive a context and an updater function in order to refresh a part of the DOM:
+
+```ts
+function Row({ children, store, id }, context, update) {
+    const select = () => {
+        store.select(id);
+        update();
+    };
+
+    return html`
+        <tr id=${id} onclick=${select}>
+            ${children}
+        </tr>
+    `;
+}
+```
+
+### Nodes
+
+DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
+
+```ts
+import { DOM, render } from '@chialab/dna';
+
+let paragraph = DOM.createElement('p');
+paragraph.textContent = 'Lorem Ipsum';
+
+render(document.body, html`<div>${paragraph}</div>`);
+```
+
+will render:
+
+```html
+<body>
+    <div>
+        <p>Lorem Ipsum</p>
+    </div>
+</body>
+```
+
+If you want to add some properties to the instance, you can pass it as hyper node. This is useful if you want to reference some nodes in your component:
+
+```ts
+import { DOM, Component, html, customElements } from '@chialab/dna';
+
+class Form extends Component {
+    static get listeners() {
+        return {
+            'change input'(this: Form) {
+                console.log(this.input.value);
+            },
+        };
+    }
+
+    input = DOM.createElement('input');
+
+    render() {
+        return html`<form>
+            <${this.input} name="firstName" placeholder="Alan" />
+        </form>`;
+    }
+}
+
+customElements.define('x-form', Form);
+```
 
 ## HTML content
 

@@ -464,7 +464,7 @@ HyperFunction factory to use as JSX pragma.
 
 <strong>Type:</strong>
 
-<pre>(tagOrComponent: string|HTMLElement|<a href="#fragment">Fragment</a>|<a href="#templatefunction">TemplateFunction</a>, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
+<pre>(tagOrComponent: string|HTMLElement|<a href="#fragment">Fragment</a>|<a href="#templatefunction">TemplateFunction</a>|Node, properties?: <a href="#hyperproperties">HyperProperties</a>|null, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></pre>
 
 
 
@@ -941,6 +941,7 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 
 <pre>{
+    node?: Node;
     Component?: HTMLElement;
     Function?: <a href="#templatefunction">TemplateFunction</a>;
     tag?: string;

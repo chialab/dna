@@ -85,6 +85,14 @@ describe('render', function() {
             expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
         });
 
+        it('should render an element node using the `h` helper', () => {
+            let div = DNA.DOM.createElement('div');
+            DNA.render(wrapper, DNA.html`<${div} id="test" />`);
+            expect(wrapper.childNodes).to.have.lengthOf(1);
+            expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
+            expect(wrapper.childNodes[0].id).to.be.equal('test');
+        });
+
         it('should render mixed content', () => {
             DNA.render(wrapper, [
                 'hello',

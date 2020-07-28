@@ -3,6 +3,7 @@ import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
 import { createSymbolKey } from './symbols';
+import { isNode } from './helpers';
 
 /**
  * A symbol which identify emulated components.
@@ -32,6 +33,7 @@ export enum NamespaceURI {
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
+    node?: Node,
     Component?: typeof HTMLElement,
     Function?: TemplateFunction,
     tag?: string;
@@ -49,16 +51,16 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
+export const isHyperNode = (target: any): target is HyperNode => HYPER_SYMBOL in target;
 
 /**
  * HyperFunction factory to use as JSX pragma.
  *
- * @param tagOrComponent The tag name or the constructor of the Node
- * @param properties The set of properties of the Node
- * @param children The children of the Node
+ * @param tagOrComponent The tag name, the constructor or the instance of the node.
+ * @param properties The set of properties of the Node.
+ * @param children The children of the Node.
  */
-export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction | Node, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
@@ -66,12 +68,15 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
         is: string | undefined = propertiesToSet.is,
         key = propertiesToSet.key,
         xmlns = propertiesToSet.xmlns,
+        node: Node | undefined,
         Component: typeof HTMLElement | undefined,
         Function: TemplateFunction | undefined;
 
     if (!isFragment && !isSlot) {
         if (!tag) {
-            if (((tagOrComponent as Function).prototype instanceof window.HTMLElement)) {
+            if (isNode(tagOrComponent)) {
+                node = tagOrComponent;
+            } else if (((tagOrComponent as Function).prototype instanceof window.HTMLElement)) {
                 Component = tagOrComponent as typeof HTMLElement;
             } else {
                 Function = tagOrComponent as TemplateFunction;
@@ -85,6 +90,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
     }
 
     return {
+        node,
         Component,
         Function,
         tag,
