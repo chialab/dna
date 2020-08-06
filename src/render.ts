@@ -1,4 +1,4 @@
-import { isElement, isText, isArray, indexOf } from './helpers';
+import { isElement, isText, isComment, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
@@ -144,51 +144,56 @@ export const internalRender = (
             let { node, Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
-                let previousCurrentIndex = currentIndex;
                 let previousFragments = renderFragments;
+                let previousFragment = fragment;
                 let data: { [key: string]: any };
+                let placeholder: Node;
                 if (fragment) {
                     data = fragment.data;
+                    placeholder = fragment.first as Node;
                 } else if (currentContext && currentContext.function === Function) {
                     emptyFragments(currentContext);
                     data = currentContext.data;
+                    placeholder = currentContext.first as Node;
                 } else {
                     data = {};
+                    placeholder = DOM.createComment(Function.name);
                 }
 
                 let renderFragmentContext: Context;
                 let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
                 renderFragments = [];
+                fragment = undefined;
                 handleItems(
-                    Function(
-                        {
-                            children,
-                            ...properties,
-                        },
-                        data,
-                        () => {
-                            if (!live()) {
-                                return false;
-                            }
-                            internalRender(root, template, renderContext, namespace, slot, rootContext, renderFragmentContext);
-                            return true;
-                        },
-                        live,
-                        renderContext
-                    ) as TemplateItem,
+                    [
+                        placeholder,
+                        Function(
+                            {
+                                children,
+                                ...properties,
+                            },
+                            data,
+                            () => {
+                                if (!live()) {
+                                    return false;
+                                }
+                                internalRender(root, template, renderContext, namespace, slot, rootContext, renderFragmentContext);
+                                return true;
+                            },
+                            live,
+                            renderContext
+                        ) as TemplateItem,
+                    ],
                     filter
                 );
-                if (previousCurrentIndex === currentIndex) {
-                    handleItems(DOM.createTextNode(''), filter);
-                }
-                let firstNode = childNodes.item(previousCurrentIndex) as Node;
-                renderFragmentContext = getContext(firstNode) || createContext(firstNode);
+                renderFragmentContext = getContext(placeholder) || createContext(placeholder);
                 renderFragmentContext.data = data;
                 renderFragmentContext.function = Function;
-                renderFragmentContext.first = firstNode;
+                renderFragmentContext.first = placeholder;
                 renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
                 renderFragmentContext.fragments.push(...renderFragments);
                 renderFragments = previousFragments;
+                fragment = previousFragment;
                 if (!fragment) {
                     renderFragments.push(renderFragmentContext);
                 } else {
@@ -370,6 +375,8 @@ export const internalRender = (
             isElementTemplate = true;
             isComponentTemplate = isComponent(templateNode);
         } else if (isObjectTemplate && isText(template)) {
+            templateNode = template;
+        } else if (isObjectTemplate && isComment(template)) {
             templateNode = template;
         } else if (isObjectTemplate && isThenable(template)) {
             handleItems(h((props, data, update) => {

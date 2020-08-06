@@ -381,12 +381,12 @@ describe('template', function() {
                         promise,
                     }));
 
-                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...<div></div></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<div><!----></div></div>');
                     DNA.render(wrapper, TEMPLATES[type]( {
                         promise,
                     }));
                     await wait(1500);
-                    expect(wrapper.innerHTML).to.be.equal('<div><div>Hello World!</div></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!----><div><!---->Hello World!</div></div>');
                 });
             }
         });
@@ -417,12 +417,12 @@ describe('template', function() {
                         promise,
                     }));
 
-                    expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<!----></div>');
                     DNA.render(wrapper, TEMPLATES[type]({
                         promise,
                     }));
                     await wait(1500);
-                    expect(wrapper.innerHTML).to.be.equal('<div>Error timeout</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!----><!---->Error timeout</div>');
                 });
             }
         });
@@ -442,7 +442,7 @@ describe('template', function() {
             </div>`;
 
             DNA.render(wrapper, template());
-            expect(wrapper.innerHTML).to.be.equal('<div>Loading...</div>');
+            expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...</div>');
             DNA.render(wrapper, template());
             await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div>Done</div>');
@@ -458,7 +458,7 @@ describe('template', function() {
             const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}</div>`;
             DNA.render(wrapper, template);
             await wait(1500);
-            expect(wrapper.innerHTML).to.be.equal('<div></div>');
+            expect(wrapper.innerHTML).to.be.equal('<div><!----></div>');
         });
     });
 
@@ -492,13 +492,13 @@ describe('template', function() {
                     DNA.render(wrapper, TEMPLATES[type]({ observable$ }));
 
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div>1</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->1</div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div>2</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->2</div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div>3</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->3</div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div>4</div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><!---->4</div>');
                 });
             }
         });
@@ -532,13 +532,13 @@ describe('template', function() {
                     DNA.render(wrapper, TEMPLATES[type]({ observable$ }));
 
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div><span>1</span></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><span><!---->1</span></div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div><span>2</span></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><span><!---->2</span></div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div><span>3</span></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><span><!---->3</span></div>');
                     await wait(100);
-                    expect(wrapper.innerHTML).to.be.equal('<div><span>4</span></div>');
+                    expect(wrapper.innerHTML).to.be.equal('<div><span><!---->4</span></div>');
                 });
             }
         });

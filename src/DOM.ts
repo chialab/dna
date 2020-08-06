@@ -132,6 +132,16 @@ export const DOM = {
     },
 
     /**
+     * Create a new DOM comment node from the specified value.
+     *
+     * @param data The specified value.
+     * @return The new DOM text instance.
+     */
+    createComment(data: string): Comment {
+        return document.createComment(data);
+    },
+
+    /**
      * Instantiate an Event.
      * @param typeArg The name of the event.
      * @param eventInitDict A set of options for the event, such as detail and bubbling.

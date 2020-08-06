@@ -118,7 +118,7 @@ describe('render', function() {
             }
 
             DNA.render(wrapper, DNA.h(Test));
-            expect(wrapper.childNodes).to.have.lengthOf(6);
+            expect(wrapper.childNodes).to.have.lengthOf(7);
         });
 
         it('should re-render component function only', async () => {
@@ -146,12 +146,12 @@ describe('render', function() {
                 DNA.h(Test),
                 DNA.h(Clock),
             ]);
-            expect(wrapper.childNodes).to.have.lengthOf(2);
-            expect(wrapper.childNodes[0].textContent).to.be.equal('hello');
-            expect(wrapper.childNodes[1].textContent).to.be.equal('1');
+            expect(wrapper.childNodes).to.have.lengthOf(4);
+            expect(wrapper.childNodes[1].textContent).to.be.equal('hello');
+            expect(wrapper.childNodes[3].textContent).to.be.equal('1');
             await wait(500);
-            expect(wrapper.childNodes[0].textContent).to.be.equal('hello');
-            expect(wrapper.childNodes[1].textContent).to.be.equal('2');
+            expect(wrapper.childNodes[1].textContent).to.be.equal('hello');
+            expect(wrapper.childNodes[3].textContent).to.be.equal('2');
             expect(render1.count).to.be.equal(1);
             expect(render2.count).to.be.equal(2);
         });

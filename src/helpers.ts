@@ -1,5 +1,5 @@
 import { document, CustomEvent, Node, HTMLElement, Event } from './window';
-const { DOCUMENT_NODE, TEXT_NODE, ELEMENT_NODE } = Node;
+const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
 
 /**
  * Alias to Array.isArray.
@@ -110,6 +110,13 @@ export const isText = (node: any): node is Text => node && node.nodeType === TEX
  * @return The node is an Element instance.
  */
 export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
+
+/**
+ * Check if a node is a Comment instance.
+ * @param node The node to check.
+ * @return The node is a Text instance.
+ */
+export const isComment = (node: any): node is Comment => node && node.nodeType === COMMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
