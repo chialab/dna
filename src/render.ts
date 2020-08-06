@@ -145,6 +145,7 @@ export const internalRender = (
             let { node, Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
+                let rootFragment = fragment;
                 let previousFragments = renderFragments;
                 let previousFragment = currentFragment;
                 let data: { [key: string]: any };
@@ -169,6 +170,7 @@ export const internalRender = (
 
                 renderFragments = [];
                 currentFragment = renderFragmentContext;
+                fragment = undefined;
 
                 handleItems(
                     [
@@ -192,6 +194,8 @@ export const internalRender = (
                     ],
                     filter
                 );
+
+                fragment = rootFragment;
                 renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
                 renderFragmentContext.fragments.push(...renderFragments);
                 renderFragments = previousFragments;
