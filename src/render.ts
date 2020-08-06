@@ -109,6 +109,7 @@ export const internalRender = (
 
     let currentIndex: number;
     let renderFragments = renderContext.fragments;
+    let currentFragment = fragment;
     let lastNode: Node|undefined;
     if (fragment) {
         currentIndex = indexOf.call(childNodes, fragment.first as Node);
@@ -145,7 +146,7 @@ export const internalRender = (
 
             if (Function) {
                 let previousFragments = renderFragments;
-                let previousFragment = fragment;
+                let previousFragment = currentFragment;
                 let data: { [key: string]: any };
                 let placeholder: Node;
                 if (fragment) {
@@ -160,10 +161,15 @@ export const internalRender = (
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                let renderFragmentContext: Context;
+                let renderFragmentContext = getContext(placeholder) || createContext(placeholder);
+                renderFragmentContext.data = data;
+                renderFragmentContext.function = Function;
+                renderFragmentContext.first = placeholder;
                 let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
+
                 renderFragments = [];
-                fragment = undefined;
+                currentFragment = renderFragmentContext;
+
                 handleItems(
                     [
                         placeholder,
@@ -186,14 +192,10 @@ export const internalRender = (
                     ],
                     filter
                 );
-                renderFragmentContext = getContext(placeholder) || createContext(placeholder);
-                renderFragmentContext.data = data;
-                renderFragmentContext.function = Function;
-                renderFragmentContext.first = placeholder;
                 renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
                 renderFragmentContext.fragments.push(...renderFragments);
                 renderFragments = previousFragments;
-                fragment = previousFragment;
+                currentFragment = previousFragment;
                 if (!fragment) {
                     renderFragments.push(renderFragmentContext);
                 } else {
@@ -250,6 +252,15 @@ export const internalRender = (
                         }
                         currentKey = currentContext.key;
                     }
+
+                    if (currentFragment && currentNode) {
+                        let io = indexOf.call(childNodes, currentNode);
+                        let lastIo = indexOf.call(childNodes, currentFragment.last);
+                        if (io !== -1 && io > lastIo) {
+                            break check_key;
+                        }
+                    }
+
                     if (key != null || currentKey != null) {
                         if (key === currentKey) {
                             isElementTemplate = true;
