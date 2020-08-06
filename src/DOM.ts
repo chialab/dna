@@ -138,7 +138,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createComment(data: string): Comment {
-        return document.createComment(data);
+        return document.createComment(data || '');
     },
 
     /**
