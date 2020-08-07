@@ -172,13 +172,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param props The propertie to set.
      */
     initialize(context: Context, props: { [key: string]: any; } = {}) {
-        if (document.readyState === 'complete') {
-            context.slotChildNodes = this.initSlotChildNodes();
-        } else {
+        if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 context.slotChildNodes = this.initSlotChildNodes();
                 this.forceUpdate();
             });
+        } else {
+            context.slotChildNodes = this.initSlotChildNodes();
         }
 
         let constructor = this.constructor as ComponentConstructorInterface<HTMLElement>;
