@@ -18,7 +18,7 @@
 
 ---
 
-DNA is a component library which aims to provide a temporarary interface to define declarative Web Components until browsers support is complete. Instead of requiring heavy polyfills in order to work in all browsers, DNA's philosophy is to use its template engine to handle Custom Elements life cycle and Shadow DOM flexibility, resulting more efficient, reliable and light.
+DNA is a component library which aims to provide a temporarary interface to define declarative Web Components until browsers support is complete. Instead of requiring heavy polyfills in order to work in all browsers, DNA's philosophy is to use its template engine to handle Custom Elements life cycle, resulting more efficient, reliable and light.
 
 ### Design Web Components
 

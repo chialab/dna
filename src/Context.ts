@@ -19,7 +19,7 @@ export type Context = {
     is?: string;
     key?: any,
     props: { [key: string]: any },
-    data: { [key: string]: any },
+    state: Map<string, any>,
     childNodes?: IterableNodeList,
     slotChildNodes?: IterableNodeList,
     first?: Node,
@@ -58,11 +58,15 @@ export const createContext = (node: Node) => {
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
         props: {},
-        data: {},
+        state: new Map(),
         fragments: [],
     });
 };
 
+/**
+ * Cleanup child fragments of a context.
+ * @param context The fragment to empty.
+ */
 export const emptyFragments = (context: Context) => {
     let fragments = context.fragments;
     let len = fragments.length;

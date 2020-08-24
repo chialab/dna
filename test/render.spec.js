@@ -130,16 +130,17 @@ describe('render', function() {
                 return 'hello';
             }
 
-            function Clock(props, data, update) {
+            function Clock(props, state, update) {
                 render2();
-                data.count = data.count || 0;
-                data.count++;
-                if (data.count === 1) {
+                let count = state.get('count') ?? 0;
+                count++;
+                state.set('count', count);
+                if (count === 1) {
                     setTimeout(() => {
                         update();
                     }, 200);
                 }
-                return data.count;
+                return count;
             }
 
             DNA.render(wrapper, [

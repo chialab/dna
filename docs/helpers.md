@@ -86,7 +86,7 @@ Use the `window` namespace instead of the global constructor to make sure to wri
 
 ## css
 
-The `css` helper is a method internally used by DNA convert a CSS string into its scoped Shadow DOM version. This can be used to add extra manipulation to the CSS string:
+The `css` helper is a method internally used by DNA convert a CSS string into its scoped version. This can be used to add extra manipulation to the CSS string:
 
 ```ts
 import { DOM, css } from '@chialab/dna';

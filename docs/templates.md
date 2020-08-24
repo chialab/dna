@@ -300,18 +300,45 @@ h(Fragment, null,
 </div>
 </details>
 
-### Functions
+## HTML content
 
-Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can pass properties to template functions:
+By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you need to pass the code to the `html` helper:
+
+```diff
+import { html } from '@chialab/dna';
+
+const content = '<h1>Hello</h1>';
+
+-<x-label>{content}</x-label>;
++<x-label>{html(content)}</x-label>;
+```
+
+<aside class="note">
+
+Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
+
+</aside>
+
+## Functional components
+
+Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use functional components. Functional components have first class support in many frameworks like React and Vue, but they require hooks in order to update DOM changes. Since DNA's state is reflected to the DOM and a "current context" is missing, the implemention is slightly different and does not require extra abstraction.
+
+
 
 ```ts
-function Row({ children, id }) {
-    return html`<tr id=${id}>${children}</tr>`;
+function Row({ children, id }, state, update) {
+    let selected = state.get('selcted') ?? false;
+    let toggle = () => {
+        state.set('selected', !selected);
+        update();
+    };
+
+    return html`<tr id=${id} class="${{ selected }}" onclick=${toggle}>${children}>${children}</tr>`;
 }
 
 html`<table>
     <tbody>
-        ${store.data.map((item) => html`<${Row} ...${item}>
+        ${items.map((item) => html`<${Row} ...${item}>
             <td>${item.id}</td>
             <td>${item.label}</td>
         </>`)}
@@ -324,13 +351,19 @@ html`<table>
 <div>
 
 ```ts
-function Row({ children, id }, context, refresh) {
-    return <tr id=${id}>${children}</tr>;
+function Row({ children, id }, state, refresh) {
+    let selected = state.get('selcted') ?? false;
+    let toggle = () => {
+        state.set('selected', !selected);
+        update();
+    };
+
+    return <tr id=${id} class={ selected } onclick={toggle}>{...children}</tr>;
 }
 
 <table>
     <tbody>
-        {store.data.map((item) => <Row ...item>
+        {items.map((item) => <Row ...item>
             <td>{item.id}</td>
             <td>{item.label}</td>
         </Row>}
@@ -347,13 +380,19 @@ function Row({ children, id }, context, refresh) {
 
 
 ```ts
-function Row({ children, id }, context, update) {
-    return h('tr', { id: id }, ...children);
+function Row({ children, id }, state, update) {
+    let selected = state.get('selcted') ?? false;
+    let toggle = () => {
+        state.set('selected', !selected);
+        update();
+    };
+
+    return h('tr', { id, selected, onclick: toggle }, ...children);
 }
 
 h('table', null,
     h('tbody', null
-        store.data.map((item) => h(Row, ...item,
+        items.map((item) => h(Row, ...item,
             h('td', null, item.id)
             h('td', null, item.label)
         ))
@@ -363,24 +402,7 @@ h('table', null,
 </div>
 </details>
 
-Template functions are also useful for micro views updates: similar to React Hooks, they receive a context and an updater function in order to refresh a part of the DOM:
-
-```ts
-function Row({ children, store, id }, context, update) {
-    const select = () => {
-        store.select(id);
-        update();
-    };
-
-    return html`
-        <tr id=${id} onclick=${select}>
-            ${children}
-        </tr>
-    `;
-}
-```
-
-### Nodes
+## Nodes
 
 DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
 
@@ -429,29 +451,10 @@ class Form extends Component {
 customElements.define('x-form', Form);
 ```
 
-## HTML content
-
-By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you need to pass the code to the `html` helper:
-
-```diff
-import { html } from '@chialab/dna';
-
-const content = '<h1>Hello</h1>';
-
--<x-label>{content}</x-label>;
-+<x-label>{html(content)}</x-label>;
-```
-
-<aside class="note">
-
-Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
-
-</aside>
-
-## Shadow DOM
+## Slotted children
 
 One of the best practice for Web Components is to use the [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) to render and stylize component's children.
-Shadow DOM is a good choice for encapsulating styles and handling components children, but its cross browser [support is poor](https://caniuse.com/#feat=shadowdomv1). During the render cycle, DNA is able to replicate ShadowDOM implementation as well as for [styles](./styles).
+Shadow DOM is a good choice for encapsulating styles and handling components children but not for composability. During the render cycle, DNA is able to replicate some ShadowDOM features like slotted children and [styles](./styles) encapsulation.
 
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 

@@ -148,22 +148,22 @@ export const internalRender = (
                 let rootFragment = fragment;
                 let previousFragments = renderFragments;
                 let previousFragment = currentFragment;
-                let data: { [key: string]: any };
+                let state: Map<string, any>;
                 let placeholder: Node;
                 if (fragment) {
-                    data = fragment.data;
+                    state = fragment.state;
                     placeholder = fragment.first as Node;
                 } else if (currentContext && currentContext.function === Function) {
                     emptyFragments(currentContext);
-                    data = currentContext.data;
+                    state = currentContext.state;
                     placeholder = currentContext.first as Node;
                 } else {
-                    data = {};
+                    state = new Map();
                     placeholder = DOM.createComment(Function.name);
                 }
 
                 let renderFragmentContext = getContext(placeholder) || createContext(placeholder);
-                renderFragmentContext.data = data;
+                renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = placeholder;
                 let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
@@ -180,7 +180,7 @@ export const internalRender = (
                                 children,
                                 ...properties,
                             },
-                            data,
+                            state,
                             () => {
                                 if (!live()) {
                                     return false;

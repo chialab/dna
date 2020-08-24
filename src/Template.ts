@@ -30,8 +30,10 @@ export type Template = TemplateItem | TemplateItems;
  * A function that returns a template.
  *
  * @param props A set of properties with children.
- * @param context The render context.
+ * @param state The render state.
  * @param update Update the rendering state.
+ * @param live A function that checks if the current template path is still attached to the template.
+ * @param context The current render context.
  * @return A template.
  */
-export type TemplateFunction = (props: { children: Template, [key: string]: any }, store: any, update: () => boolean, live: () => boolean, context: Context) => Template;
+export type TemplateFunction = (props: { children: Template, [key: string]: any }, state: any, update: () => boolean, live: () => boolean, context: Context) => Template;

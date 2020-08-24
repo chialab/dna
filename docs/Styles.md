@@ -67,7 +67,7 @@ is transformed into
 
 ### The `:host` pesudo selector
 
-If you need to style the component root itself, you can use the `:host` selector as specified by Shadow DOM:
+If you need to style the component root itself, you can use the `:host` selector like in Shadow DOM contexts:
 
 ```css
 :host {

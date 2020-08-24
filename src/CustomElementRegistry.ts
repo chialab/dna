@@ -109,7 +109,9 @@ export class CustomElementRegistry {
             nativeCustomElements.define(name, constructor, options);
         } else {
             const queue = this.queue;
-            this.upgrade(document.body);
+            if (document.body) {
+                this.upgrade(document.body);
+            }
             let elementQueue = queue[name];
             if (elementQueue) {
                 for (let i = 0, len = elementQueue.length; i < len; i++) {

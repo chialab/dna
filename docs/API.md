@@ -346,6 +346,7 @@ It also handle element life cycle for custom elements unless otherwise specified
     createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode(data: string): Text;
+    createComment(data: string): Comment;
     createEvent(typeArg: string, eventInitDict?: CustomEventInit&lt;any&gt;): CustomEvent&lt;any&gt;;
     appendChild&lt;T extends Node&gt;(parent: Element, newChild: T, slot?: boolean): T;
     removeChild&lt;T_1 extends Node&gt;(parent: Element, oldChild: T_1, slot?: boolean): T_1;
@@ -972,7 +973,7 @@ A function that returns a template.
 <pre>(props: {
     children: <a href="#template">Template</a>;
     [key: string]: any;
-}, store: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
+}, state: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
 
 
 
@@ -1032,9 +1033,7 @@ The node context interface.
     props: {
         [key: string]: any;
     };
-    data: {
-        [key: string]: any;
-    };
+    state: Map&lt;string, any&gt;;
     childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
     slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
     first?: Node;
