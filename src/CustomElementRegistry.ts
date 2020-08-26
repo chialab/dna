@@ -196,3 +196,7 @@ export class CustomElementRegistry {
  * The global DNA registry instance.
  */
 export const customElements = new CustomElementRegistry();
+
+document.addEventListener('DOMContentLoaded', () => {
+    customElements.upgrade(document.body);
+});

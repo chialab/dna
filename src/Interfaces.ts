@@ -2,7 +2,6 @@ import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 import { Template, TemplateItems } from './Template';
-import { Context } from './Context';
 
 /**
  * A symbol which identify components.
@@ -78,10 +77,9 @@ export type ComponentInterface<T extends HTMLElement> = T & {
 
     /**
      * Initialize constructor properties.
-     * @param context The element context.
      * @param props The propertie to set.
      */
-    initialize(context: Context, props: { [key: string]: any; }): void;
+    initialize(props: { [key: string]: any; }): void;
 
     /**
      * Initialize instance property.
@@ -89,10 +87,9 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param propertyKey The property name.
      * @param descriptor The property descriptor.
      * @param symbol The property symbolic key.
-     * @param initializer The initializer function of the decorator.
      * @return The current property value.
      */
-    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: Function): any;
+    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol): any;
 
     /**
      * Observe a Component Property.

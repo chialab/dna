@@ -4,7 +4,7 @@ import { customElements } from './CustomElementRegistry';
 import { isElement, removeChildImpl, setAttributeImpl } from './helpers';
 import { DOM, isConnected, connect, emulateLifeCycle } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { Context, getContext, createContext } from './Context';
+import { getContext, createContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
@@ -71,7 +71,17 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
-        element.initialize(createContext(element), props);
+        let context = createContext(element);
+        if (!this.childNodes.length && document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                context.slotChildNodes = this.initSlotChildNodes();
+                this.forceUpdate();
+            });
+        } else {
+            context.slotChildNodes = this.initSlotChildNodes();
+        }
+
+        element.initialize(props);
 
         if (element.isConnected) {
             connect(element, element !== this);
@@ -168,19 +178,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
     /**
      * Initialize constructor properties.
-     * @param context The element context.
      * @param props The propertie to set.
      */
-    initialize(context: Context, props: { [key: string]: any; } = {}) {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                context.slotChildNodes = this.initSlotChildNodes();
-                this.forceUpdate();
-            });
-        } else {
-            context.slotChildNodes = this.initSlotChildNodes();
-        }
-
+    initialize(props: { [key: string]: any; } = {}) {
         let constructor = this.constructor as ComponentConstructorInterface<HTMLElement>;
 
         // setup listeners
@@ -210,16 +210,15 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param propertyKey The property name.
      * @param descriptor The property descriptor.
      * @param symbol The property symbolic key.
-     * @param initializer The initializer function of the decorator.
      * @return The current property value.
      */
-    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol, initializer?: Function): any {
+    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol): any {
         let target = this as any;
         if (typeof target[symbol] !== 'undefined') {
             return target[symbol];
         }
-        if (typeof initializer === 'function') {
-            target[symbol] = initializer.call(target);
+        if (typeof descriptor.initializer === 'function') {
+            target[symbol] = descriptor.initializer.call(target);
         } else if ('value' in descriptor) {
             target[symbol] = descriptor.value;
         } else if (descriptor.attribute && this.hasAttribute(descriptor.attribute as string)) {
