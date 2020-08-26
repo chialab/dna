@@ -1,7 +1,7 @@
 import { document, HTMLElement } from './window';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { isElement, removeChildImpl, setAttributeImpl } from './helpers';
+import { isElement, removeChildImpl, setAttributeImpl, nextTick } from './helpers';
 import { DOM, isConnected, connect, emulateLifeCycle } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext, createContext } from './Context';
@@ -74,18 +74,42 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         let context = createContext(element);
         if (!this.childNodes.length && document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
-                context.slotChildNodes = this.initSlotChildNodes();
-                this.forceUpdate();
+                context.slotChildNodes = element.initSlotChildNodes();
+                element.forceUpdate();
             });
         } else {
-            context.slotChildNodes = this.initSlotChildNodes();
+            context.slotChildNodes = element.initSlotChildNodes();
         }
 
-        element.initialize(props);
+        let constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
 
-        if (element.isConnected) {
-            connect(element, element !== this);
+        // setup listeners
+        let listeners = getListeners(constructor) || [];
+        for (let i = 0, len = listeners.length; i < len; i++) {
+            let listener = listeners[i];
+            element.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
         }
+
+        // setup properties
+        let propertiesDescriptor = getProperties(constructor);
+        for (let propertyKey in propertiesDescriptor) {
+            delete (element as any)[propertyKey];
+            let descriptor = propertiesDescriptor[propertyKey];
+            if (!props || !(propertyKey in props)) {
+                element.initProperty(propertyKey, descriptor, descriptor.symbol as symbol);
+            }
+        }
+        if (props) {
+            for (let propertyKey in props) {
+                (element as any)[propertyKey] = props[propertyKey];
+            }
+        }
+
+        nextTick(() => {
+            if (element.isConnected) {
+                connect(element, element !== this);
+            }
+        });
 
         return element;
     }
@@ -174,34 +198,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             removeChildImpl.call(this, slotChildNodes[i]);
         }
         return slotChildNodes;
-    }
-
-    /**
-     * Initialize constructor properties.
-     * @param props The propertie to set.
-     */
-    initialize(props: { [key: string]: any; } = {}) {
-        let constructor = this.constructor as ComponentConstructorInterface<HTMLElement>;
-
-        // setup listeners
-        let listeners = getListeners(constructor) || [];
-        for (let i = 0, len = listeners.length; i < len; i++) {
-            let listener = listeners[i];
-            this.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
-        }
-
-        // setup properties
-        let propertiesDescriptor = getProperties(constructor);
-        for (let propertyKey in propertiesDescriptor) {
-            delete (this as any)[propertyKey];
-            let descriptor = propertiesDescriptor[propertyKey];
-            if (!(propertyKey in props)) {
-                this.initProperty(propertyKey, descriptor, descriptor.symbol as symbol);
-            }
-        }
-        for (let propertyKey in props) {
-            (this as any)[propertyKey] = props[propertyKey];
-        }
     }
 
     /**

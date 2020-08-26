@@ -1,4 +1,4 @@
-import { document, CustomEvent, Node, HTMLElement, Event } from './window';
+import { window, document, CustomEvent, Node, HTMLElement, Event } from './window';
 const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
 
 /**
@@ -125,3 +125,7 @@ export const isComment = (node: any): node is Comment => node && node.nodeType =
  */
 export const isEvent = (event: any): event is Event => event instanceof Event;
 
+/**
+ * Run a task at the next tick.
+ */
+export const nextTick = window.requestAnimationFrame || setTimeout;

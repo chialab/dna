@@ -185,14 +185,8 @@ export const mixin = (constructor: typeof Component) =>
             if (this.template) {
                 warnCode('PREFER_RENDER');
             }
-        }
 
-        /**
-         * @inheritdoc
-         */
-        initialize(props: { [key: string]: any; }) {
             this.emulateLifeCycle();
-            return super.initialize(props);
         }
 
         /**

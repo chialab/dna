@@ -76,12 +76,6 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     forceUpdate(): void;
 
     /**
-     * Initialize constructor properties.
-     * @param props The propertie to set.
-     */
-    initialize(props: { [key: string]: any; }): void;
-
-    /**
      * Initialize instance property.
      *
      * @param propertyKey The property name.
