@@ -2,7 +2,7 @@ import { document, HTMLElement } from './window';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { isElement, removeChildImpl, setAttributeImpl, nextTick } from './helpers';
-import { DOM, isConnected, connect, emulateLifeCycle } from './DOM';
+import { DOM, isConnected, connect, emulateLifeCycle, shouldEmulateLifeCycle } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext, createContext } from './Context';
 import { Template } from './Template';
@@ -55,6 +55,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
+     * Check if the element is still constructing on connectedCallback.
+     */
+    private constructing?: boolean;
+
+    /**
      * Create a new Component instance.
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
@@ -105,11 +110,14 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             }
         }
 
-        nextTick(() => {
-            if (element.isConnected) {
-                connect(element, element !== this);
+        if (element.isConnected) {
+            if (shouldEmulateLifeCycle(element) || element !== this) {
+                this.constructing = true;
+                connect(element, true);
+                this.constructing = false;
+                nextTick(() => this.forceUpdate());
             }
-        });
+        }
 
         return element;
     }
@@ -122,7 +130,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         // force the is attribute for styling
         setAttributeImpl.call(this, 'is', this.is);
         // trigger a re-render when the Node is connected
-        this.forceUpdate();
+        if (!this.constructing) {
+            this.forceUpdate();
+        }
     }
 
     /**

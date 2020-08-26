@@ -31,7 +31,7 @@ export const connect = (node: Node, force = false) => {
     if (!isElement(node)) {
         return;
     }
-    if (shouldEmulateLifeCycle(node) || force) {
+    if (force || shouldEmulateLifeCycle(node)) {
         (node as ComponentInterface<HTMLElement>).connectedCallback();
     }
     let children = cloneChildNodes(node.childNodes);
@@ -68,7 +68,7 @@ const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-const shouldEmulateLifeCycle = (node: any): node is ComponentInterface<HTMLElement> => node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = (node: any): node is ComponentInterface<HTMLElement> => node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Should emulate life cycle.
