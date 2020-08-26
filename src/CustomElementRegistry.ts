@@ -1,6 +1,6 @@
 import { window } from './window';
 import { isComponent, isComponentConstructor } from './Interfaces';
-import { defineProperty } from './helpers';
+import { connect, defineProperty } from './helpers';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
 
@@ -181,6 +181,9 @@ export class CustomElementRegistry {
                 }
             }
             let element = new constructor(root);
+            if (element.isConnected) {
+                connect(element, true);
+            }
             for (let i = 0, len = attributes.length; i < len; i++) {
                 let { name, value } = attributes[i];
                 if (element.getAttribute(name) === value) {

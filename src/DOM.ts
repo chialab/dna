@@ -1,87 +1,7 @@
 import { HTMLElement, document } from './window';
-import { isConnectedImpl, isElement, isText, isDocument, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, matchesImpl, createEventImpl } from './helpers';
-import { createSymbolKey } from './symbols';
-import { ComponentInterface, isComponent, isComponentConstructor } from './Interfaces';
+import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, matchesImpl, createEventImpl, emulatingLifeCycle } from './helpers';
+import { isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { cloneChildNodes } from './NodeList';
-
-/**
- * Check if a Node is connected.
- *
- * @return A truthy value for connected targets.
- */
-export const isConnected: (this: Node | null) => boolean = isConnectedImpl ? (isConnectedImpl as any).get : function(this: Node | null): boolean {
-    if (isElement(this) || isText(this)) {
-        return isConnected.call(this.parentNode);
-    }
-    if (isDocument(this)) {
-        return true;
-    }
-
-    return false;
-};
-
-/**
- * Invoke `connectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The connected node.
- */
-export const connect = (node: Node, force = false) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (force || shouldEmulateLifeCycle(node)) {
-        (node as ComponentInterface<HTMLElement>).connectedCallback();
-    }
-    let children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        connect(children[i]);
-    }
-};
-
-/**
- * Invoke `disconnectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The disconnected node.
- */
-export const disconnect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.disconnectedCallback();
-    }
-    let children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        disconnect(children[i]);
-    }
-};
-
-/**
- * A symbol which identify emulated components.
- */
-const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- */
-export const shouldEmulateLifeCycle = (node: any): node is ComponentInterface<HTMLElement> => node[EMULATE_LIFECYCLE_SYMBOL];
-
-/**
- * Should emulate life cycle.
- */
-let lifeCycleEmulation = typeof customElements === 'undefined';
-
-/**
- * Flag the element for life cycle emulation.
- */
-export const emulateLifeCycle = (node: HTMLElement) => {
-    lifeCycleEmulation = true;
-    (node as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
-};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -163,11 +83,11 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        if (lifeCycleEmulation && newChild.parentNode) {
+        if (emulatingLifeCycle() && newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         appendChildImpl.call(parent, newChild);
-        if (lifeCycleEmulation && isConnected.call(newChild)) {
+        if (emulatingLifeCycle() && isConnected.call(newChild)) {
             connect(newChild);
         }
         return newChild;
@@ -192,7 +112,7 @@ export const DOM = {
         }
         let connected = isConnected.call(oldChild);
         removeChildImpl.call(parent, oldChild);
-        if (lifeCycleEmulation && connected) {
+        if (emulatingLifeCycle() && connected) {
             disconnect(oldChild);
         }
         return oldChild;
@@ -220,11 +140,11 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        if (lifeCycleEmulation && newChild.parentNode) {
+        if (emulatingLifeCycle() && newChild.parentNode) {
             DOM.removeChild(newChild.parentNode as Element, newChild, slot);
         }
         insertBeforeImpl.call(parent, newChild, refChild);
-        if (lifeCycleEmulation && isConnected.call(newChild)) {
+        if (emulatingLifeCycle() && isConnected.call(newChild)) {
             connect(newChild);
         }
         return newChild;
@@ -246,7 +166,7 @@ export const DOM = {
             parent.forceUpdate();
             return oldChild;
         }
-        if (lifeCycleEmulation) {
+        if (emulatingLifeCycle()) {
             if (newChild.parentNode && newChild !== oldChild) {
                 DOM.removeChild(newChild.parentNode as Element, newChild, slot);
             }
@@ -255,7 +175,7 @@ export const DOM = {
             }
         }
         replaceChildImpl.call(parent, newChild, oldChild);
-        if (lifeCycleEmulation && isConnected.call(newChild)) {
+        if (emulatingLifeCycle() && isConnected.call(newChild)) {
             connect(newChild);
         }
         return oldChild;
