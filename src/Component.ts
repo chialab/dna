@@ -96,7 +96,20 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             delete (element as any)[propertyKey];
             let descriptor = propertiesDescriptor[propertyKey];
             if (!props || !(propertyKey in props)) {
-                element.initProperty(propertyKey, descriptor, descriptor.symbol as symbol);
+                let symbol = descriptor.symbol as symbol;
+                if (typeof (element as any)[symbol] !== 'undefined') {
+                    continue;
+                }
+                if (typeof descriptor.initializer === 'function') {
+                    (element as any)[symbol] = descriptor.initializer.call(element);
+                } else if ('value' in descriptor) {
+                    (element as any)[symbol] = descriptor.value;
+                } else if (descriptor.attribute && this.hasAttribute(descriptor.attribute as string)) {
+                    let value = this.getAttribute(descriptor.attribute as string);
+                    (element as any)[symbol] = (descriptor.fromAttribute as ClassFieldAttributeConverter).call(this, value);
+                } else if ('defaultValue' in descriptor) {
+                    (element as any)[symbol] = descriptor.defaultValue;
+                }
             }
         }
         if (props) {
@@ -192,32 +205,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             removeChildImpl.call(this, slotChildNodes[i]);
         }
         return slotChildNodes;
-    }
-
-    /**
-     * Initialize instance property.
-     *
-     * @param propertyKey The property name.
-     * @param descriptor The property descriptor.
-     * @param symbol The property symbolic key.
-     * @return The current property value.
-     */
-    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol): any {
-        let target = this as any;
-        if (typeof target[symbol] !== 'undefined') {
-            return target[symbol];
-        }
-        if (typeof descriptor.initializer === 'function') {
-            target[symbol] = descriptor.initializer.call(target);
-        } else if ('value' in descriptor) {
-            target[symbol] = descriptor.value;
-        } else if (descriptor.attribute && this.hasAttribute(descriptor.attribute as string)) {
-            let value = this.getAttribute(descriptor.attribute as string);
-            target[symbol] = (descriptor.fromAttribute as ClassFieldAttributeConverter).call(this, value);
-        } else if ('defaultValue' in descriptor) {
-            target[symbol] = descriptor.defaultValue;
-        }
-        return target[symbol];
     }
 
     /**

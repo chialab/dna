@@ -114,16 +114,15 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
     ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
         let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
+            // decorators spec 1
+            if (originalDescriptor) {
+                descriptor.defaultValue = originalDescriptor.value;
+            }
             if (typeof targetOrClassElement === 'function') {
                 defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
             } else if (!getProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey)) {
                 defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol);
             }
-            // decorators spec 1
-            if (originalDescriptor) {
-                descriptor.defaultValue = originalDescriptor.value;
-            }
-            targetOrClassElement.initProperty(propertyKey, descriptor, symbol);
             return targetOrClassElement;
         }
 

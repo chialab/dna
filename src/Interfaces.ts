@@ -76,16 +76,6 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     forceUpdate(): void;
 
     /**
-     * Initialize instance property.
-     *
-     * @param propertyKey The property name.
-     * @param descriptor The property descriptor.
-     * @param symbol The property symbolic key.
-     * @return The current property value.
-     */
-    initProperty(propertyKey: string, descriptor: ClassFieldDescriptor, symbol: symbol): any;
-
-    /**
      * Observe a Component Property.
      *
      * @param propertyName The name of the Property to observe.
