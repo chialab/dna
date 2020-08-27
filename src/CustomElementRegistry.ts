@@ -185,6 +185,8 @@ export class CustomElementRegistry {
                 let { name, value } = attributes[i];
                 if (element.getAttribute(name) === value) {
                     element.attributeChangedCallback(name, null, value);
+                } else {
+                    element.setAttribute(name, value);
                 }
             }
             if (element.isConnected) {
