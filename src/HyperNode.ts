@@ -51,7 +51,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
-export const isHyperNode = (target: any): target is HyperNode => HYPER_SYMBOL in target;
+export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
 
 /**
  * HyperFunction factory to use as JSX pragma.
