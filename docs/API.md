@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#dom">DOM</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#definelisteners">defineListeners</a>, <a href="#property">property</a>, <a href="#getproperty">getProperty</a>, <a href="#getproperties">getProperties</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#dom">DOM</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#definelisteners">defineListeners</a>, <a href="#property">property</a>, <a href="#getproperty">getProperty</a>, <a href="#getproperties">getProperties</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -325,45 +325,6 @@ The global DNA registry instance.
 
 <hr />
 
-<strong id="dom"><code>constant</code>  DOM</strong>
-
-
-
-<p>
-
-DOM is a singleton that components uses to access DOM methods.
-By default, it uses browsers' DOM implementation, but it can be set to use a different one.
-For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
-It also handle element life cycle for custom elements unless otherwise specified.
-
-</p>
-
-
-
-<strong>Type:</strong>
-
-<pre>{
-    createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
-    createElementNS(namespaceURI: string, tagName: string): Element;
-    createTextNode(data: string): Text;
-    createComment(data: string): Comment;
-    createEvent(typeArg: string, eventInitDict?: CustomEventInit&lt;any&gt;): CustomEvent&lt;any&gt;;
-    appendChild&lt;T extends Node&gt;(parent: Element, newChild: T, slot?: boolean): T;
-    removeChild&lt;T_1 extends Node&gt;(parent: Element, oldChild: T_1, slot?: boolean): T_1;
-    insertBefore&lt;T_2 extends Node&gt;(parent: Element, newChild: T_2, refChild: Node|null, slot?: boolean): T_2;
-    replaceChild&lt;T_3 extends Node&gt;(parent: Element, newChild: Node, oldChild: T_3, slot?: boolean): T_3;
-    getAttribute(element: Element, qualifiedName: string): string|null;
-    hasAttribute(element: Element, qualifiedName: string): boolean;
-    setAttribute(element: Element, qualifiedName: string, value: string): void;
-    removeAttribute(element: Element, qualifiedName: string): void;
-    matches(element: Element, selectorString: string): boolean;
-}</pre>
-
-
-
-
-<hr />
-
 <strong id="connect"><code>constant</code>  connect</strong>
 
 
@@ -402,6 +363,45 @@ It does nothing if life cycle is disabled.
 <strong>Type:</strong>
 
 <pre>(node: Node): void</pre>
+
+
+
+
+<hr />
+
+<strong id="dom"><code>constant</code>  DOM</strong>
+
+
+
+<p>
+
+DOM is a singleton that components uses to access DOM methods.
+By default, it uses browsers' DOM implementation, but it can be set to use a different one.
+For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
+It also handle element life cycle for custom elements unless otherwise specified.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>{
+    createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
+    createElementNS(namespaceURI: string, tagName: string): Element;
+    createTextNode(data: string): Text;
+    createComment(data: string): Comment;
+    createEvent(typeArg: string, eventInitDict?: CustomEventInit&lt;any&gt;): CustomEvent&lt;any&gt;;
+    appendChild&lt;T extends Node&gt;(parent: Element, newChild: T, slot?: boolean): T;
+    removeChild&lt;T_1 extends Node&gt;(parent: Element, oldChild: T_1, slot?: boolean): T_1;
+    insertBefore&lt;T_2 extends Node&gt;(parent: Element, newChild: T_2, refChild: Node|null, slot?: boolean): T_2;
+    replaceChild&lt;T_3 extends Node&gt;(parent: Element, newChild: Node, oldChild: T_3, slot?: boolean): T_3;
+    getAttribute(element: Element, qualifiedName: string): string|null;
+    hasAttribute(element: Element, qualifiedName: string): boolean;
+    setAttribute(element: Element, qualifiedName: string, value: string): void;
+    removeAttribute(element: Element, qualifiedName: string): void;
+    matches(element: Element, selectorString: string): boolean;
+}</pre>
 
 
 
@@ -722,7 +722,7 @@ Define an observed property.
 
 <strong>Type:</strong>
 
-<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: Symbol|undefined): Symbol</pre>
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: Symbol|undefined, initializer?: Function|undefined): Symbol</pre>
 
 
 
@@ -1195,6 +1195,7 @@ A list of properties for an class field description.
     setter?: (newValue?: any): any;
     event?: true|string;
     symbol?: Symbol;
+    initializer?: Function;
 }</pre>
 
 
@@ -1305,10 +1306,7 @@ A descriptor for an event delegation.
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
     render(): <a href="#template">Template</a>;
     forceUpdate(): void;
-    initialize(context: <a href="#context">Context</a>, props: {
-        [key: string]: any;
-    }): void;
-    initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol, initializer?: Function): any;
+    initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol): any;
     observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     dispatchEvent(event: Event): boolean;
