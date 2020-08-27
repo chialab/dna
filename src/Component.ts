@@ -104,9 +104,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
                     (element as any)[symbol] = descriptor.initializer.call(element);
                 } else if ('value' in descriptor) {
                     (element as any)[symbol] = descriptor.value;
-                } else if (descriptor.attribute && this.hasAttribute(descriptor.attribute as string)) {
-                    let value = this.getAttribute(descriptor.attribute as string);
-                    (element as any)[symbol] = (descriptor.fromAttribute as ClassFieldAttributeConverter).call(this, value);
                 } else if ('defaultValue' in descriptor) {
                     (element as any)[symbol] = descriptor.defaultValue;
                 }

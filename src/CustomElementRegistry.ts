@@ -181,14 +181,14 @@ export class CustomElementRegistry {
                 }
             }
             let element = new constructor(root);
-            if (element.isConnected) {
-                connect(element, true);
-            }
             for (let i = 0, len = attributes.length; i < len; i++) {
                 let { name, value } = attributes[i];
                 if (element.getAttribute(name) === value) {
                     element.attributeChangedCallback(name, null, value);
                 }
+            }
+            if (element.isConnected) {
+                connect(element, true);
             }
             element.forceUpdate();
         }

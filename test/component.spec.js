@@ -690,7 +690,7 @@ describe('Component', function() {
 
             expect(propertyChangedCallback.invoked).to.be.true;
             expect(propertyChangedCallback.response).to.be.deep.equal(['page', 1, 2]);
-            expect(propertyChangedCallback.count).to.be.equal(1);
+            expect(propertyChangedCallback.count).to.be.equal(2);
         });
 
         it('should NOT handle property changes on delete', () => {
