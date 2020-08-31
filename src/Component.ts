@@ -123,8 +123,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
      */
     connectedCallback() {
-        // force the is attribute for styling
-        setAttributeImpl.call(this, 'is', this.is);
+        if (this.is !== this.localName) {
+            // force the is attribute
+            setAttributeImpl.call(this, 'is', this.is);
+        }
+        setAttributeImpl.call(this, ':defined', '');
         // trigger a re-render when the Node is connected
         this.forceUpdate();
     }

@@ -1,5 +1,6 @@
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
+import { customElements } from './CustomElementRegistry';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
 import { DOM } from './DOM';
@@ -432,7 +433,7 @@ export const internalRender = (
         } else {
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {
                 let is = rootContext.is as string;
-                template = css(is, template as string);
+                template = css(is, template as string, customElements.tagNames[is]);
                 root.setAttribute('name', is);
             }
 

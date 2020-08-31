@@ -4,6 +4,7 @@ import { convert } from './template';
 import { CompatibilityPropertyProxy } from './prop';
 import { warnCode } from './deprecations';
 import { DelegatedEventDescriptor } from 'src/events';
+import { registry } from './registry';
 
 /**
  * Map of style elements.
@@ -166,7 +167,7 @@ export const mixin = (constructor: typeof Component) =>
                 // handle css text for the component
                 if (!STYLES[this.is]) {
                     warnCode('PREFER_STYLE');
-                    let content = css(this.is, this.css);
+                    let content = css(this.is, this.css, registry.tagNames[this.is]);
                     let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
                     style.textContent = content;
                     window.document.head.appendChild(style);

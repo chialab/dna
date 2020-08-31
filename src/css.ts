@@ -28,9 +28,10 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
  *
  * @param name The component definition name.
  * @param cssText The CSS string.
+ * @param extend The builtin element.
  * @return A scoped CSS string.
  */
-export const css = (name: string, cssText: string): string => {
+export const css = (name: string, cssText: string, extend?: string): string => {
     if (typeof name !== 'string') {
         throw new TypeError('The provided name must be a string');
     }
@@ -38,14 +39,14 @@ export const css = (name: string, cssText: string): string => {
         throw new TypeError('The provided CSS text must be a string');
     }
 
-    const cached = CACHE[name] = CACHE[name] || {};
-    const scope = `[is="${name}"]`;
+    let cached = CACHE[name] = CACHE[name] || {};
+    let scope = extend && extend !== name ? `${extend}[is="${name}"]` : name;
     if (cssText in cached) {
         return cached[cssText];
     }
     return cached[cssText] = cssText
         .replace(CSS_COMMENTS_REGEX, '\n')
-        .replace(HOST_REGEX, (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1) : ''}`)
+        .replace(HOST_REGEX, (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1).replace(':defined', '[:defined]') : ''}`)
         .replace(CSS_SELECTORS_REGEX, (match) => {
             match = match.trim();
             if (match[0] === '@') {
