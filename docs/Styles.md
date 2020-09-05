@@ -28,7 +28,7 @@ class Card extends Component {
         return html`
             <style>
                 h1 { color: cadetblue; }
-            <style>
+            </style>
             <h1>${this.title}</h1>
         `;
     }

@@ -508,7 +508,7 @@ It also converts `:host` selectors for cross browser compatibility.
 
 <strong>Type:</strong>
 
-<pre>(name: string, cssText: string): string</pre>
+<pre>(name: string, cssText: string, extend?: string|undefined): string</pre>
 
 
 
@@ -1306,7 +1306,6 @@ A descriptor for an event delegation.
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any): void;
     render(): <a href="#template">Template</a>;
     forceUpdate(): void;
-    initProperty(propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbol: Symbol): any;
     observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     dispatchEvent(event: Event): boolean;
