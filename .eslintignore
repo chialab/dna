@@ -7,12 +7,16 @@
 .stylelintcache
 
 # TEST
-/reports
+/test/__coverage__
+/test/__generated__
 
 /dist
 /public
 
 # RNA
 
-packages/**/node_modules/**/*.js
-packages/**/dist/**/*.js
+compat/*
+hooks/*
+react/*
+!src
+!test

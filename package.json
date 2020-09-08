@@ -1,35 +1,78 @@
 {
-  "name": "@dnajs/dna",
-  "description": "Evolution-based components.",
-  "version": "2.9.6",
-  "private": true,
+  "name": "@chialab/dna",
+  "version": "3.0.0-rc.22",
+  "description": "Progressive Web Components",
+  "lib": "src/index.ts",
+  "main": "dist/cjs/dna.js",
+  "module": "dist/esm/dna.js",
+  "browser": "dist/umd/dna.js",
+  "types": "dist/esm/dna.d.ts",
+  "license": "MIT",
+  "directories": {
+    "src": "src",
+    "lib": "dist",
+    "test": "test",
+    "dist": "dist"
+  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Chialab/dna.git"
+    "url": "https://github.com/chialab/dna"
   },
-  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
-  "homepage": "https://dna.chialab.io",
-  "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "chai": "^4.1.2",
-    "eslint": "^6.6.0",
-    "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-mocha": "^6.2.1"
+  "homepage": "https://www.chialab.io/p/dna",
+  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
+  "engines": {
+    "node": ">=10"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "build": "rna build --production",
-    "watch": "rna build --watch",
-    "test": "rna lint + unit 'packages/*/test/**/*.spec.js' --browser --jsx.pragma h --context 'test/context.html'",
-    "test-saucelabs": "rna lint + unit 'packages/*/test/**/*.spec.js' --saucelabs --jsx.pragma h --context 'test/context.html'",
-    "lint": "rna lint",
-    "start": "yarn install --ignore-scripts && rna build --watch",
-    "prepublish": "yarn run build"
+    "symlink": "yarn link && yarn link @chialab/dna",
+    "build": "rm -rf dist && yarn build:core && yarn build:compat && yarn build:react && yarn build:hooks && yarn build:runtime",
+    "build:lite": "rna build --name DNA --bundle",
+    "build:core": "rna build --production --name DNA --typings --bundle",
+    "build:compat": "rna build compat/src/index.ts --output compat/index.js --production --typings --format esm",
+    "build:react": "rna build react/src/index.ts --output react/index.js --production --typings --format esm",
+    "build:hooks": "rna build hooks/src/index.ts --output hooks/index.js --production --typings --format esm",
+    "build:runtime": "rna build jsx-runtime/src/index.ts --output jsx-runtime/index.js --production --typings --format esm",
+    "test": "yarn test:core && yarn test:compat && yarn test:react && yarn test:hooks",
+    "test:core": "yarn test:browser && yarn test:node",
+    "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --browser",
+    "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --concurrency 2 --saucelabs",
+    "test:node": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --node",
+    "test:compat": "yarn symlink && rna unit 'compat/test/*.spec.js' --jsx.pragma 'h' --jsx.module '@dnajs/idom' --browser",
+    "test:react": "yarn symlink && rna unit 'react/test/*.spec.js' --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault --browser",
+    "test:hooks": "yarn symlink && rna unit 'hooks/test/*.spec.js' --no-jsx --browser",
+    "docs": "rna documentate --output docs/API.md --header '# API Reference'",
+    "prepack": "yarn build"
+  },
+  "dependencies": {
+    "jsdom": "^16.0.0"
+  },
+  "optionalDependencies": {
+    "@chialab/proteins": "^3.2.0",
+    "haunted": "^4.7.0",
+    "htm": "^3.0.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@chialab/proteins": "^3.2.0",
+    "@dnajs/idom": "^2.9.8",
+    "@types/jsdom": "^12.2.3",
+    "@types/react": "^16.9.31",
+    "@types/react-dom": "^16.9.6",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "babel-eslint": "^10.0.3",
+    "core-js": "^3.6.4",
+    "eslint": "^6.8.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-mocha": "^6.2.2",
+    "eslint-plugin-mocha-no-only": "^1.1.0",
+    "haunted": "^4.7.0",
+    "htm": "^3.0.3",
+    "rxjs": "^6.5.5",
+    "typescript": "^3.8.0"
   }
 }

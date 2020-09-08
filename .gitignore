@@ -18,4 +18,9 @@ yarn-error.log
 
 # RNA
 
-packages/*/dist
+compat/*
+hooks/*
+react/*
+jsx-runtime/*
+!src
+!test

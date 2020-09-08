@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "es2015",
+    "lib": ["es2017", "dom"],
+    "sourceMap": true,
+    "inlineSources": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "allowJs": false,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@chialab/dna": [
+        "./dist/esm/dna",
+        "./src/index"
+      ],
+      "react": [
+        "./node_modules/react"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "compat/src/**/*.ts",
+    "hooks/src/**/*.ts",
+    "react/src/**/*.ts",
+    "jsx-runtime/src/**/*.ts"
+  ],
+  "exclude": [
+    "test/**/*"
+  ]
+}

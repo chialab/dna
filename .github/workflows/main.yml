@@ -1,0 +1,305 @@
+name: Main
+on: [push, pull_request]
+
+jobs:
+  # BUILD
+  build:
+    name: Build
+    if: "! contains(toJSON(github.event.commits.*.message), 'docs:')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Install project dependencies
+        run: yarn install
+      - name: Run build script
+        run: yarn run build
+      - name: Upload core build
+        uses: actions/upload-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Upload compat build
+        uses: actions/upload-artifact@v2
+        with:
+          name: DNA Compat
+          path: compat/index*
+      - name: Upload hooks build
+        uses: actions/upload-artifact@v2
+        with:
+          name: DNA Hooks
+          path: hooks/index*
+      - name: Upload react build
+        uses: actions/upload-artifact@v2
+        with:
+          name: DNA React
+          path: react/index*
+  # TEST
+  test-browser:
+    name: Test Browsers
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Run tests
+        run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version' --headless
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info
+
+  test-node:
+    name: Test Node
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Run tests
+        run: yarn run test:node
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info
+
+  test-saucelabs:
+    name: Test SauceLabs
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Run tests
+        run: yarn run test:saucelabs
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: test/__coverage__/*/lcov.info
+
+  test-compat:
+    name: Test compat library
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Fetch compat artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA Compat
+          path: compat
+      - name: Run tests
+        run: yarn run test:compat --headless
+
+  test-hooks:
+    name: Test hooks library
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Fetch hooks artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA Hooks
+          path: hooks
+      - name: Run tests
+        run: yarn run test:hooks --headless
+
+  test-react:
+    name: Test react library
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Set up NPM cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('**/yarn.lock') }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install RNA
+        run: npm install -g @chialab/rna-cli
+      - name: Install project dependencies
+        run: yarn install
+      - name: Fetch core artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+      - name: Fetch react artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA React
+          path: react
+      - name: Run tests
+        run: yarn run test:react --headless
