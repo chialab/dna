@@ -94,6 +94,7 @@ The `:host` selector value change for every element definition: if a component c
 
 </aside>
 
+<!-- 
 ## Native CSS modules [WIP]
 
 With the [CSS Module Spec](#native-css-modules-spec) you can import CSS files as `StyleSheet` object and link the reference to a component using setting the `adoptedStyleSheets` property:
@@ -112,19 +113,25 @@ class Card extends Component {
 \* Please note tha Native CSS modules still are a specification draft, but some bundlers may let you to use them. Follow [this thread](https://github.com/w3c/webcomponents/issues/759) for more informations.
 
 </aside>
+-->
 
-## Other styling strategies
+
+## Other styling techniques
 
 Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
 
 ```scss
-[is='x-card'] {
+/* CUSTOM ELEMENT */
+x-card {
     h1 {
         color: cadetblue;
     }
-    .avatar {
-        width: 44px;
-        height: 44px;
+}
+
+/* BUILT IN ELEMENT */
+[is='x-card'] {
+    h1 {
+        color: cadetblue;
     }
 }
 ```
@@ -134,6 +141,12 @@ Every component node has the `is` attribute populated with the defined name of t
 Some bundlers import CSS files in JavaScript and auto-append `<link>` tags. In this case, you have to manually set the scope for your rules:
 
 ```css
+/* CUSTOM ELEMENT */
+x-card .title {
+    color: cadetblue;
+}
+
+/* BUILT IN ELEMENT */
 [is='x-card'] .title {
     color: cadetblue;
 }
