@@ -87,7 +87,7 @@ class HelloWorld extends Component {
         };
     }
 
-    // define an observable property
+    // define an observed property
     @property() name = '';
 
     render() {
