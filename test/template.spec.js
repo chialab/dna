@@ -455,8 +455,9 @@ describe('template', function() {
             const promise2 = new Promise((resolve) => {
                 setTimeout(() => resolve('World!'), 500);
             });
-            const template = DNA.html`<div>${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}</div>`;
-            DNA.render(wrapper, template);
+            DNA.render(wrapper, DNA.html`<div>
+                ${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}
+            </div>`);
             await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div><!----></div>');
         });

@@ -99,7 +99,7 @@ export const internalRender = (
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
     } else {
-        childNodes = renderContext.childNodes as IterableNodeList;
+        childNodes = renderContext.childNodes || (root.childNodes as unknown as IterableNodeList);
         if (renderContext.is) {
             rootContext = renderContext;
         }
@@ -109,7 +109,6 @@ export const internalRender = (
     }
 
     let currentIndex: number;
-    let renderFragments = renderContext.fragments;
     let currentFragment = fragment;
     let lastNode: Node|undefined;
     if (fragment) {
@@ -147,15 +146,15 @@ export const internalRender = (
 
             if (Function) {
                 let rootFragment = fragment;
-                let previousFragments = renderFragments;
+                let previousContext = renderContext;
                 let previousFragment = currentFragment;
+                let fragments = renderContext.fragments;
                 let state: Map<string, any>;
                 let placeholder: Node;
                 if (fragment) {
                     state = fragment.state;
                     placeholder = fragment.first as Node;
                 } else if (currentContext && currentContext.function === Function) {
-                    emptyFragments(currentContext);
                     state = currentContext.state;
                     placeholder = currentContext.first as Node;
                 } else {
@@ -164,12 +163,13 @@ export const internalRender = (
                 }
 
                 let renderFragmentContext = getContext(placeholder) || createContext(placeholder);
+                emptyFragments(renderFragmentContext);
                 renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = placeholder;
-                let live = () => renderFragments.indexOf(renderFragmentContext) !== -1;
+                let live = () => fragments.indexOf(renderFragmentContext) !== -1;
 
-                renderFragments = [];
+                renderContext = renderFragmentContext;
                 currentFragment = renderFragmentContext;
                 fragment = undefined;
 
@@ -186,7 +186,7 @@ export const internalRender = (
                                 if (!live()) {
                                     return false;
                                 }
-                                internalRender(root, template, renderContext, namespace, slot, rootContext, renderFragmentContext);
+                                internalRender(root, template, previousContext, namespace, slot, rootContext, renderFragmentContext);
                                 return true;
                             },
                             live,
@@ -198,13 +198,13 @@ export const internalRender = (
 
                 fragment = rootFragment;
                 renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
-                renderFragmentContext.fragments.push(...renderFragments);
-                renderFragments = previousFragments;
+                renderContext = previousContext;
                 currentFragment = previousFragment;
+
                 if (!fragment) {
-                    renderFragments.push(renderFragmentContext);
+                    fragments.push(renderFragmentContext);
                 } else {
-                    renderFragments.splice(renderFragments.indexOf(fragment), 1, renderFragmentContext);
+                    fragments.splice(fragments.indexOf(fragment), 1, renderFragmentContext);
                     fragment = renderFragmentContext;
                 }
                 return;
