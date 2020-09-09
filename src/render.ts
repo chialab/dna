@@ -474,7 +474,11 @@ export const internalRender = (
             currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
         }
 
-        if (isElementTemplate && templateChildren && templateContext) {
+        if (isElementTemplate &&
+            templateChildren &&
+            templateContext &&
+            (!templateContext.empty || templateChildren.length)) {
+            templateContext.empty = false;
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,

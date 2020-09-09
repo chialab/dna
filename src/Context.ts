@@ -26,6 +26,7 @@ export type Context = {
     last?: Node,
     function?: TemplateFunction,
     fragments: Context[],
+    empty?: boolean,
 };
 
 /**
@@ -60,6 +61,7 @@ export const createContext = (node: Node) => {
         props: {},
         state: new Map(),
         fragments: [],
+        empty: true,
     });
 };
 

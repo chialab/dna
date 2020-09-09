@@ -286,6 +286,16 @@ describe('render', function() {
             expect(line.getAttribute('x2')).to.be.equal('100');
             expect(line.getAttribute('y2')).to.be.equal('200');
         });
+
+        it('should not empty nodes when no slotted children has been passed', () => {
+            DNA.render(wrapper, DNA.h('div'));
+            const elem = wrapper.children[0];
+            expect(elem.childNodes).to.have.lengthOf(0);
+            elem.appendChild(DNA.DOM.createElement('span'));
+            expect(elem.childNodes).to.have.lengthOf(1);
+            DNA.render(wrapper, DNA.h('div'));
+            expect(elem.childNodes).to.have.lengthOf(1);
+        });
     });
 
     describe('not keyed', () => {
