@@ -238,7 +238,7 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
                 if (type.indexOf(Number) !== -1 && !isNaN(newValue as unknown as number)) {
                     return parseFloat(newValue);
                 }
-                if (type.indexOf(Object) !== -1 || type.indexOf(Array) !== -1) {
+                if (type.indexOf(String) === -1) {
                     try {
                         return JSON.parse(newValue as string);
                     } catch {

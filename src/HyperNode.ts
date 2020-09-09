@@ -1,3 +1,4 @@
+import { ComponentConstructorInterface } from './Interfaces';
 import { window } from './window';
 import { customElements } from './CustomElementRegistry';
 import { TemplateItems, TemplateFunction } from './Template';
@@ -34,7 +35,7 @@ export enum NamespaceURI {
  */
 export type HyperNode = {
     node?: Node,
-    Component?: typeof HTMLElement,
+    Component?: ComponentConstructorInterface<HTMLElement>,
     Function?: TemplateFunction,
     tag?: string;
     is?: string,

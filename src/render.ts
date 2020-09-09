@@ -369,8 +369,16 @@ export const internalRender = (
                 let type = typeof value;
                 let isReference = (value && type === 'object') || type === 'function';
 
-                if (isReference || Component) {
+                if (isReference) {
                     (templateNode as any)[propertyKey] = value;
+                } else if (Component) {
+                    if (type === 'string') {
+                        if (Component.observedAttributes.indexOf(propertyKey) === -1) {
+                            (templateNode as any)[propertyKey] = value;
+                        }
+                    } else {
+                        (templateNode as any)[propertyKey] = value;
+                    }
                 }
 
                 if (value == null || value === false) {

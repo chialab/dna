@@ -470,7 +470,7 @@ describe('Component', function() {
             before(() => {
                 class TestElement extends DNA.Component {
                     static get observedAttributes() {
-                        return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'all', 'convertion'];
+                        return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'convertion'];
                     }
 
                     @DNA.property()
@@ -494,9 +494,6 @@ describe('Component', function() {
                     @DNA.property({ type: [Array] })
                     array = [];
 
-                    @DNA.property({ type: [Number, String, Object] })
-                    all = [];
-
                     @DNA.property({
                         fromAttribute(value) {
                             return parseInt(value) * 2;
@@ -516,7 +513,7 @@ describe('Component', function() {
             describe('attribute to property value convertion', () => {
                 it('should handle unspecified type', () => {
                     element.setAttribute('any', '1');
-                    expect(element.any).to.be.equal('1');
+                    expect(element.any).to.be.equal(1);
                     element.setAttribute('any', 'test');
                     expect(element.any).to.be.equal('test');
                     element.removeAttribute('any');
@@ -587,21 +584,6 @@ describe('Component', function() {
                     expect(element.array).to.be.deep.equal([1]);
                     element.removeAttribute('array');
                     expect(element.array).to.be.null;
-                });
-
-                it('should handle all type', () => {
-                    element.setAttribute('all', '');
-                    expect(element.all).to.be.equal('');
-                    element.setAttribute('all', 'test');
-                    expect(element.all).to.be.equal('test');
-                    element.setAttribute('all', '1234');
-                    expect(element.all).to.be.equal(1234);
-                    element.setAttribute('all', '{"test":1}');
-                    expect(element.all).to.be.deep.equal({ test: 1 });
-                    element.setAttribute('all', '[1]');
-                    expect(element.all).to.be.deep.equal([1]);
-                    element.removeAttribute('all');
-                    expect(element.all).to.be.null;
                 });
 
                 it('should convert using configuration', () => {

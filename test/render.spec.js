@@ -212,6 +212,26 @@ describe('render', function() {
             expect(elem.getAttribute('prop3')).to.be.equal('');
         });
 
+        it('should convert observed attributes', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get observedAttributes() {
+                    return ['number'];
+                }
+
+                static get properties() {
+                    return {
+                        number: Number,
+                    };
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            DNA.render(wrapper, DNA.h(TestElement, { number: '2' }));
+            expect(wrapper.querySelector(name).number).to.be.equal(2);
+        });
+
         it('should update add and remove classes', () => {
             DNA.render(wrapper, DNA.h('div', { class: 'test1' }));
             const elem = wrapper.children[0];
