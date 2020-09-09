@@ -1,4 +1,4 @@
-const BASE_URL = 'https://www.chialab.io/p/dna/3.0.0/migration';
+const BASE_URL = 'https://www.chialab.io/p/dna/migration';
 
 export function warn(message: string, url?: string) {
     /* eslint-disable-next-line */

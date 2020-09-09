@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -943,7 +943,7 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
 
 <pre>{
     node?: Node;
-    Component?: HTMLElement;
+    Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
     Function?: <a href="#templatefunction">TemplateFunction</a>;
     tag?: string;
     is?: string;
@@ -954,181 +954,6 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
     properties?: any;
     children: <a href="#templateitems">TemplateItems</a>;
 }</pre>
-
-
-
-
-<hr />
-
-<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
-
-<p>
-
-A function that returns a template.
-
-</p>
-
-
-
-<pre>(props: {
-    children: <a href="#template">Template</a>;
-    [key: string]: any;
-}, state: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
-
-
-
-
-<hr />
-
-<strong id="template"><code>type</code>  Template</strong>
-
-<p>
-
-A generic template. Can be a single atomic item or a list of items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
-
-
-
-
-<hr />
-
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
-
-<p>
-
-A list of template items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
-
-
-
-
-<hr />
-
-<strong id="context"><code>type</code>  Context</strong>
-
-<p>
-
-The node context interface.
-
-</p>
-
-
-
-<pre>{
-    isElement?: boolean;
-    isText?: boolean;
-    tagName?: string;
-    is?: string;
-    key?: any;
-    props: {
-        [key: string]: any;
-    };
-    state: Map&lt;string, any&gt;;
-    childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
-    slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
-    first?: Node;
-    last?: Node;
-    function?: <a href="#templatefunction">TemplateFunction</a>;
-    fragments: <a href="#context">Context</a>[];
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
-
-
-
-
-
-<pre>Node[] & {
-    item(index: number): Node|null;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
-
-<p>
-
-A filter function signature for template items.
-
-</p>
-
-
-
-<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
-
-
-
-
-<hr />
-
-<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
-
-<p>
-
-The properties of a HyperNode.
-
-</p>
-
-
-
-<pre>{
-    is?: string;
-    slot?: string;
-    key?: any;
-    xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
-    children?: <a href="#templateitems">TemplateItems</a>;
-    [key: string]: any;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="asyncevent"><code>type</code>  AsyncEvent</strong>
-
-
-
-
-
-<pre>Event & {
-    respondWith(callback: (): Promise&lt;any&gt;): void;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong>
-
-<p>
-
-Describe the signature of a delegated event callback.
-
-</p>
-
-
-
-<pre>(event: Event, target?: Node): any</pre>
 
 
 
@@ -1271,6 +1096,23 @@ A validation function for the class field.
 
 <hr />
 
+<strong id="delegatedeventcallback"><code>type</code>  DelegatedEventCallback</strong>
+
+<p>
+
+Describe the signature of a delegated event callback.
+
+</p>
+
+
+
+<pre>(event: Event, target?: Node): any</pre>
+
+
+
+
+<hr />
+
 <strong id="delegatedeventdescriptor"><code>type</code>  DelegatedEventDescriptor</strong>
 
 <p>
@@ -1315,6 +1157,165 @@ A descriptor for an event delegation.
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     undelegateEventListener(event?: string, selector?: string|null, callback?: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
     emulateLifeCycle(): void;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+
+<p>
+
+A list of template items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+
+
+
+
+<hr />
+
+<strong id="template"><code>type</code>  Template</strong>
+
+<p>
+
+A generic template. Can be a single atomic item or a list of items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
+
+
+
+
+<hr />
+
+<strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
+
+<p>
+
+A function that returns a template.
+
+</p>
+
+
+
+<pre>(props: {
+    children: <a href="#template">Template</a>;
+    [key: string]: any;
+}, state: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
+
+
+
+
+<hr />
+
+<strong id="context"><code>type</code>  Context</strong>
+
+<p>
+
+The node context interface.
+
+</p>
+
+
+
+<pre>{
+    isElement?: boolean;
+    isText?: boolean;
+    tagName?: string;
+    is?: string;
+    key?: any;
+    props: {
+        [key: string]: any;
+    };
+    state: Map&lt;string, any&gt;;
+    childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+    slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+    first?: Node;
+    last?: Node;
+    function?: <a href="#templatefunction">TemplateFunction</a>;
+    fragments: <a href="#context">Context</a>[];
+    empty?: boolean;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
+
+
+
+
+
+<pre>Node[] & {
+    item(index: number): Node|null;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+
+<p>
+
+A filter function signature for template items.
+
+</p>
+
+
+
+<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
+
+
+
+
+<hr />
+
+<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
+
+<p>
+
+The properties of a HyperNode.
+
+</p>
+
+
+
+<pre>{
+    is?: string;
+    slot?: string;
+    key?: any;
+    xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
+    children?: <a href="#templateitems">TemplateItems</a>;
+    [key: string]: any;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="asyncevent"><code>type</code>  AsyncEvent</strong>
+
+
+
+
+
+<pre>Event & {
+    respondWith(callback: (): Promise&lt;any&gt;): void;
 }</pre>
 
 

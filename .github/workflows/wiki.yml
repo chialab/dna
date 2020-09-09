@@ -2,7 +2,7 @@ name: Wiki
 on:
   push:
     branches:
-      - '3.0.0'
+      - master
     paths:
       - 'docs/**'
     tags-ignore:
