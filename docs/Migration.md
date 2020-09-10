@@ -140,8 +140,8 @@ The `undelegate` method has been deprecated in favour of the [`undelegateEventLi
 The `render` helper changed the signature, now it accepts element instances instead of constructors:
 
 ```diff
-- render(document.body, Article, { title: 'My first blog post' });
-+ render(document.body, new Article({ title: 'My first blog post' }));
+- render(Article, { title: 'My first blog post' }, document.body);
++ render(new Article({ title: 'My first blog post' }), document.body);
 ```
 
 #### `TEMPLATE_FUNCTIONS`

@@ -86,7 +86,7 @@ const convertStyles = (value: any) => {
  * @return The resulting child nodes list.
  */
 export const internalRender = (
-    root: HTMLElement,
+    root: Node,
     input: Template,
     context?: Context,
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
@@ -442,7 +442,7 @@ export const internalRender = (
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {
                 let is = rootContext.is as string;
                 template = css(is, template as string, customElements.tagNames[is]);
-                root.setAttribute('name', is);
+                (root as HTMLStyleElement).setAttribute('name', is);
             }
 
             if (currentContext && currentContext.isText && !currentContext.function) {
@@ -513,11 +513,11 @@ export const internalRender = (
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
- * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @param root The root Node for the render.
  * @return The resulting child Nodes.
  */
-export const render = (root: HTMLElement, input: Template): Node | Node[] | void => {
+export const render = (input: Template, root: Node = DOM.createDocumentFragment()): Node | Node[] | void => {
     let childNodes = internalRender(root, input);
     if (!childNodes) {
         return;

@@ -4,7 +4,7 @@ import { convert } from './template';
 export { h };
 
 export function patch(root: HTMLElement, template: Template, data?: any) {
-    return render(root, convert.call(null, template, data));
+    return render(convert.call(null, template, data), root);
 }
 
 export function text(text: string) {

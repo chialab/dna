@@ -412,7 +412,7 @@ import { DOM, render } from '@chialab/dna';
 let paragraph = DOM.createElement('p');
 paragraph.textContent = 'Lorem Ipsum';
 
-render(document.body, html`<div>${paragraph}</div>`);
+render(html`<div>${paragraph}</div>`, document.body);
 ```
 
 will render:

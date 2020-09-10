@@ -143,7 +143,7 @@ class Card extends Component {
 
 customElements.define('x-card', Card);
 
-render(document.body, new Card());
+render(new Card(), document.body);
 ```
 
 During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template.
@@ -165,7 +165,7 @@ class Card extends Component {
 
 customElements.define('x-card', Card);
 
-render(document.body, html`<x-card />`);
+render(html`<x-card />`, document.body);
 ```
 
 It also work for extended native tags:
@@ -179,7 +179,7 @@ class Article extends Component {
 
 customElements.define('x-article', Article, { extends: 'article' });
 
-render(document.body, html`<article is="x-article" />`);
+render(html`<article is="x-article" />`, document.body);
 ```
 
 You can use the `render` method to inject more complex templates too:
@@ -187,7 +187,7 @@ You can use the `render` method to inject more complex templates too:
 ```ts
 import { render, html } from '@chialab/dna';
 
-render(document.body, html`<div class="wrapper">
+render(html`<div class="wrapper">
     <h1>Title</h1>
-</div>`);
+</div>`, document.body);
 ```

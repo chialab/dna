@@ -20,7 +20,7 @@ class HelloWorld extends Component {
 
 customElements.define('hello-world', HelloWorld);
 
-const card = render(DOM.document, new HelloWorld());
+const card = render(new HelloWorld());
 
 console.log(card.outerHTML);
 // -> "<hello-world><h1>Hello world!</h1></hello-world>"

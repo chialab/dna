@@ -20,88 +20,68 @@ describe('render', function() {
 
     describe('render', () => {
         it('should render string', () => {
-            DNA.render(wrapper, 'hello');
-            expect(wrapper.innerHTML).to.be.equal('hello');
+            expect(DNA.render('hello').textContent).to.be.equal('hello');
         });
 
         it('should render HTML string as simple string', () => {
-            DNA.render(wrapper, '<h1>hello</h1>');
-            expect(wrapper.innerHTML).to.be.equal('&lt;h1&gt;hello&lt;/h1&gt;');
+            expect(DNA.render('<h1>hello</h1>').textContent).to.be.equal('<h1>hello</h1>');
         });
 
         it('should render number', () => {
-            DNA.render(wrapper, 42);
-            expect(wrapper.innerHTML).to.be.equal('42');
+            expect(DNA.render(42).textContent).to.be.equal('42');
         });
 
         it('should render boolean', () => {
-            DNA.render(wrapper, true);
-            expect(wrapper.innerHTML).to.be.equal('true');
-            DNA.render(wrapper, false);
-            expect(wrapper.innerHTML).to.be.equal('');
+            expect(DNA.render(true).textContent).to.be.equal('true');
+            expect(DNA.render(false)).to.be.undefined;
         });
 
         it('should render undefined', () => {
-            DNA.render(wrapper, 'hello');
-            expect(wrapper.innerHTML).to.be.equal('hello');
-            DNA.render(wrapper, undefined);
-            expect(wrapper.innerHTML).to.be.equal('');
+            expect(DNA.render(undefined)).to.be.undefined;
         });
 
         it('should render null', () => {
-            DNA.render(wrapper, 'hello');
-            expect(wrapper.innerHTML).to.be.equal('hello');
-            DNA.render(wrapper, null);
-            expect(wrapper.innerHTML).to.be.equal('');
+            expect(DNA.render(null)).to.be.undefined;
         });
 
         it('should render hyper function', () => {
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
-            expect(wrapper.querySelector('ul.list')).to.exist;
-            expect(wrapper.querySelector('ul.list').childNodes).to.have.lengthOf(2);
-            expect(wrapper.querySelector('ul.list').querySelector('li:nth-child(1)').textContent).to.be.equal('One');
-            expect(wrapper.querySelector('ul.list').querySelector('li:nth-child(2)').textContent).to.be.equal('Two');
+            let ul = DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
+            expect(ul.childNodes).to.have.lengthOf(2);
+            expect(ul.querySelector('li:nth-child(1)').textContent).to.be.equal('One');
+            expect(ul.querySelector('li:nth-child(2)').textContent).to.be.equal('Two');
         });
 
         it('should render component constructor', () => {
             const name = getComponentName();
             class TestElement extends DNA.Component {}
-
             DNA.customElements.define(name, TestElement);
 
-            DNA.render(wrapper, DNA.h(TestElement));
-            expect(wrapper.querySelector(name)).to.exist;
+            expect(DNA.render(DNA.h(TestElement))).to.be.instanceof(TestElement);
         });
 
         it('should render a text node', () => {
-            DNA.render(wrapper, DNA.DOM.createTextNode('Hello'));
-            expect(wrapper.childNodes).to.have.lengthOf(1);
-            expect(wrapper.childNodes[0].textContent).to.be.equal('Hello');
+            expect(DNA.render(DNA.DOM.createTextNode('Hello')).textContent).to.be.equal('Hello');
         });
 
         it('should render an element node', () => {
-            DNA.render(wrapper, DNA.DOM.createElement('div'));
-            expect(wrapper.childNodes).to.have.lengthOf(1);
-            expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
+            expect(DNA.render(DNA.DOM.createElement('div')).tagName).to.be.equal('DIV');
         });
 
         it('should render an element node using the `h` helper', () => {
             let div = DNA.DOM.createElement('div');
-            DNA.render(wrapper, DNA.html`<${div} id="test" />`);
-            expect(wrapper.childNodes).to.have.lengthOf(1);
-            expect(wrapper.childNodes[0].tagName).to.be.equal('DIV');
-            expect(wrapper.childNodes[0].id).to.be.equal('test');
+            DNA.render(DNA.html`<${div} id="test" />`);
+            expect(div.id).to.be.equal('test');
         });
 
         it('should render mixed content', () => {
-            DNA.render(wrapper, [
+            DNA.render([
                 'hello',
                 'world',
                 true,
                 DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
                 DNA.DOM.createTextNode('Hello'),
                 DNA.DOM.createElement('div'),
-            ]);
+            ], wrapper);
             expect(wrapper.childNodes).to.have.lengthOf(6);
         });
 
@@ -117,7 +97,7 @@ describe('render', function() {
                 ];
             }
 
-            DNA.render(wrapper, DNA.h(Test));
+            DNA.render(DNA.h(Test), wrapper);
             expect(wrapper.childNodes).to.have.lengthOf(7);
         });
 
@@ -143,10 +123,10 @@ describe('render', function() {
                 return count;
             }
 
-            DNA.render(wrapper, [
+            DNA.render([
                 DNA.h(Test),
                 DNA.h(Clock),
-            ]);
+            ], wrapper);
             expect(wrapper.childNodes).to.have.lengthOf(4);
             expect(wrapper.childNodes[1].textContent).to.be.equal('hello');
             expect(wrapper.childNodes[3].textContent).to.be.equal('1');
@@ -158,11 +138,11 @@ describe('render', function() {
         });
 
         it('should add nodes', () => {
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')), wrapper);
             const list = wrapper.querySelector('ul.list');
             const children = list.childNodes;
             expect(children).to.have.lengthOf(2);
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')), wrapper);
             const newChildren = list.childNodes;
             expect(newChildren).to.have.lengthOf(4);
             expect(children[0]).to.be.equal(newChildren[0]);
@@ -170,11 +150,11 @@ describe('render', function() {
         });
 
         it('should remove nodes', () => {
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')), wrapper);
             const list = wrapper.querySelector('ul.list');
             const children = list.childNodes;
             expect(children).to.have.lengthOf(4);
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')), wrapper);
             const newChildren = list.childNodes;
             expect(newChildren).to.have.lengthOf(2);
             expect(children[0]).to.be.equal(newChildren[0]);
@@ -182,14 +162,14 @@ describe('render', function() {
         });
 
         it('should update nodes', () => {
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')), wrapper);
             const list = wrapper.querySelector('ul.list');
             const children = list.childNodes;
             expect(children[0].textContent).to.be.equal('One');
             expect(children[1].textContent).to.be.equal('Two');
             expect(children[2].textContent).to.be.equal('Three');
             expect(children[3].textContent).to.be.equal('Four');
-            DNA.render(wrapper, DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'Five'), DNA.h('li', null, 'Six'), DNA.h('li', null, 'Seven'), DNA.h('li', null, 'Height')));
+            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'Five'), DNA.h('li', null, 'Six'), DNA.h('li', null, 'Seven'), DNA.h('li', null, 'Height')), wrapper);
             const newChildren = list.childNodes;
             expect(children[0]).to.be.equal(newChildren[0]);
             expect(children[1]).to.be.equal(newChildren[1]);
@@ -202,11 +182,11 @@ describe('render', function() {
         });
 
         it('should update add and remove attributes', () => {
-            DNA.render(wrapper, DNA.h('div', { prop1: 'test1', prop2: 2 }));
+            DNA.render(DNA.h('div', { prop1: 'test1', prop2: 2 }), wrapper);
             const elem = wrapper.children[0];
             expect(elem.getAttribute('prop1')).to.be.equal('test1');
             expect(elem.getAttribute('prop2')).to.be.equal('2');
-            DNA.render(wrapper, DNA.h('div', { prop1: 'test1', prop3: true }));
+            DNA.render(DNA.h('div', { prop1: 'test1', prop3: true }), wrapper);
             expect(elem.getAttribute('prop1')).to.be.equal('test1');
             expect(elem.getAttribute('prop2')).to.be.null;
             expect(elem.getAttribute('prop3')).to.be.equal('');
@@ -228,31 +208,31 @@ describe('render', function() {
 
             DNA.customElements.define(name, TestElement);
 
-            DNA.render(wrapper, DNA.h(TestElement, { number: '2' }));
+            DNA.render(DNA.h(TestElement, { number: '2' }), wrapper);
             expect(wrapper.querySelector(name).number).to.be.equal(2);
         });
 
         it('should update add and remove classes', () => {
-            DNA.render(wrapper, DNA.h('div', { class: 'test1' }));
+            DNA.render(DNA.h('div', { class: 'test1' }), wrapper);
             const elem = wrapper.children[0];
             expect(elem.getAttribute('class')).to.be.equal('test1');
             elem.classList.add('test2');
             expect(elem.getAttribute('class')).to.be.equal('test1 test2');
-            DNA.render(wrapper, DNA.h('div', { class: { test3: true } }));
+            DNA.render(DNA.h('div', { class: { test3: true } }), wrapper);
             expect(elem.getAttribute('class')).to.be.equal('test2 test3');
         });
 
         it('should update add and remove styles', () => {
-            DNA.render(wrapper, DNA.h('div', { style: 'color: red;' }));
+            DNA.render(DNA.h('div', { style: 'color: red;' }), wrapper);
             const elem = wrapper.children[0];
             elem.style.fontFamily = 'sans-serif';
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
             expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
-            DNA.render(wrapper, DNA.h('div', { style: { backgroundColor: 'blue' } }));
+            DNA.render(DNA.h('div', { style: { backgroundColor: 'blue' } }), wrapper);
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
             expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
             expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
-            DNA.render(wrapper, DNA.h('div', { style: 'font-weight: bold;' }));
+            DNA.render(DNA.h('div', { style: 'font-weight: bold;' }), wrapper);
             expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
             expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgba(0, 0, 0, 0)', '', 'transparent']);
             expect(DNA.window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
@@ -260,7 +240,7 @@ describe('render', function() {
         });
 
         it('should render svgs', () => {
-            DNA.render(wrapper, DNA.h('div', {}, DNA.h('svg', null, DNA.h('g', {}, DNA.h('rect', { width: '100', height: '100' }), DNA.h('foreignObject', {}, DNA.h('body', { xmlns: 'http://www.w3.org/1999/xhtml' }, DNA.h('p')))))));
+            DNA.render(DNA.h('div', {}, DNA.h('svg', null, DNA.h('g', {}, DNA.h('rect', { width: '100', height: '100' }), DNA.h('foreignObject', {}, DNA.h('body', { xmlns: 'http://www.w3.org/1999/xhtml' }, DNA.h('p')))))), wrapper);
             const div = wrapper.querySelector('div');
             const svg = wrapper.querySelector('svg');
             const g = wrapper.querySelector('g');
@@ -278,7 +258,7 @@ describe('render', function() {
         });
 
         it('should not set svgs properties', () => {
-            DNA.render(wrapper, DNA.h('svg', null, DNA.h('line', { x1: '0', y1: '100', x2: '100', y2: '200' })));
+            DNA.render(DNA.h('svg', null, DNA.h('line', { x1: '0', y1: '100', x2: '100', y2: '200' })), wrapper);
             const svg = wrapper.querySelector('svg');
             const line = svg.querySelector('line');
             expect(line.getAttribute('x1')).to.be.equal('0');
@@ -288,12 +268,12 @@ describe('render', function() {
         });
 
         it('should not empty nodes when no slotted children has been passed', () => {
-            DNA.render(wrapper, DNA.h('div'));
+            DNA.render(DNA.h('div'), wrapper);
             const elem = wrapper.children[0];
             expect(elem.childNodes).to.have.lengthOf(0);
             elem.appendChild(DNA.DOM.createElement('span'));
             expect(elem.childNodes).to.have.lengthOf(1);
-            DNA.render(wrapper, DNA.h('div'));
+            DNA.render(DNA.h('div'), wrapper);
             expect(elem.childNodes).to.have.lengthOf(1);
         });
     });
@@ -303,14 +283,14 @@ describe('render', function() {
         const items2 = ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'];
 
         it('should reuse elements', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                     <option value="other">Other</option>
                 </select>
-            `);
+            `, wrapper);
             expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
             expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
 
@@ -330,14 +310,14 @@ describe('render', function() {
             expect(otherOption.tagName).to.be.equal('OPTION');
             expect(otherOption.textContent).to.be.equal('Other');
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items2.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                     <option value="other">Other</option>
                 </select>
-            `);
+            `, wrapper);
 
             expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
             expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
@@ -364,13 +344,13 @@ describe('render', function() {
         });
 
         it('should swap rows', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option1 = wrapper.childNodes[0].childNodes[0];
             const option2 = wrapper.childNodes[0].childNodes[1];
@@ -380,13 +360,13 @@ describe('render', function() {
             expect(option2.textContent).to.be.equal(items[1]);
             expect(option3.textContent).to.be.equal(items[2]);
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.slice(0).reverse().map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option4 = wrapper.childNodes[0].childNodes[0];
             const option5 = wrapper.childNodes[0].childNodes[1];
@@ -402,13 +382,13 @@ describe('render', function() {
         });
 
         it('should delete a row', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option1 = wrapper.childNodes[0].childNodes[0];
             const option2 = wrapper.childNodes[0].childNodes[1];
@@ -418,13 +398,13 @@ describe('render', function() {
             expect(option2.textContent).to.be.equal(items[1]);
             expect(option3.textContent).to.be.equal(items[2]);
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.slice(1).map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option4 = wrapper.childNodes[0].childNodes[0];
             const option5 = wrapper.childNodes[0].childNodes[1];
@@ -444,14 +424,14 @@ describe('render', function() {
         const items2 = ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'];
 
         it('should resuse non keyed elements', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                     <option key="last" value="other">Other</option>
                 </select>
-            `);
+            `, wrapper);
             expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
             expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
 
@@ -471,14 +451,14 @@ describe('render', function() {
             expect(otherOption.tagName).to.be.equal('OPTION');
             expect(otherOption.textContent).to.be.equal('Other');
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items2.map((item) => DNA.html`
                         <option value=${item}>${item}</option>
                     `)}
                     <option key="last" value="other">Other</option>
                 </select>
-            `);
+            `, wrapper);
 
             expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
             expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(5);
@@ -505,25 +485,25 @@ describe('render', function() {
         });
 
         it('should swap rows', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option key=${item} value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option1 = wrapper.childNodes[0].childNodes[0];
             const option2 = wrapper.childNodes[0].childNodes[1];
             const option3 = wrapper.childNodes[0].childNodes[2];
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.slice(0).reverse().map((item) => DNA.html`
                         <option key=${item} value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option4 = wrapper.childNodes[0].childNodes[0];
             const option5 = wrapper.childNodes[0].childNodes[1];
@@ -542,25 +522,25 @@ describe('render', function() {
         });
 
         it('should delete a row', () => {
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`
                         <option key=${item} value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option1 = wrapper.childNodes[0].childNodes[0];
             const option2 = wrapper.childNodes[0].childNodes[1];
             const option3 = wrapper.childNodes[0].childNodes[2];
 
-            DNA.render(wrapper, DNA.html`
+            DNA.render(DNA.html`
                 <select>
                     ${items.slice(1).map((item) => DNA.html`
                         <option key=${item} value=${item}>${item}</option>
                     `)}
                 </select>
-            `);
+            `, wrapper);
 
             const option4 = wrapper.childNodes[0].childNodes[0];
             const option5 = wrapper.childNodes[0].childNodes[1];

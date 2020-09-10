@@ -1,5 +1,4 @@
-import { HTMLElement, document } from './window';
-import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, matchesImpl, createEventImpl, emulatingLifeCycle } from './helpers';
+import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, matchesImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 
@@ -11,6 +10,13 @@ import { customElements } from './CustomElementRegistry';
  */
 export const DOM = {
     /**
+     * Create a document fragment.
+     *
+     * @return The new DOM fragment.
+     */
+    createDocumentFragment: createDocumentFragmentImpl,
+
+    /**
      * Create a new DOM element node for the specified tag.
      *
      * @param tagName The specified tag.
@@ -19,7 +25,7 @@ export const DOM = {
     createElement(tagName: string, options?: ElementCreationOptions): Element {
         const is = options && options.is;
         const name = is || tagName.toLowerCase();
-        const node = document.createElement(tagName);
+        const node = createElementImpl(tagName);
         const constructor = customElements.get(name);
         if (constructor && isComponentConstructor(constructor) && !(node instanceof constructor)) {
             new constructor(node);
@@ -38,7 +44,7 @@ export const DOM = {
         if (namespaceURI === 'http://www.w3.org/1999/xhtml') {
             return this.createElement(tagName);
         }
-        return document.createElementNS(namespaceURI, tagName);
+        return createElementNSImpl(namespaceURI, tagName);
     },
 
     /**
@@ -47,9 +53,7 @@ export const DOM = {
      * @param data The specified value.
      * @return The new DOM text instance.
      */
-    createTextNode(data: string): Text {
-        return document.createTextNode(data);
-    },
+    createTextNode: createTextNodeImpl,
 
     /**
      * Create a new DOM comment node from the specified value.
@@ -58,7 +62,7 @@ export const DOM = {
      * @return The new DOM text instance.
      */
     createComment(data: string): Comment {
-        return document.createComment(data || '');
+        return createCommentImpl(data || '');
     },
 
     /**
@@ -77,7 +81,7 @@ export const DOM = {
      * @param newChild The child to add.
      * @param slot Should add a slot node.
      */
-    appendChild<T extends Node>(parent: Element, newChild: T, slot = true): T {
+    appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
@@ -100,7 +104,7 @@ export const DOM = {
      * @param oldChild The child to remove.
      * @param slot Should remove a slot node.
      */
-    removeChild<T extends Node>(parent: Element, oldChild: T, slot = true): T {
+    removeChild<T extends Node>(parent: Node, oldChild: T, slot = true): T {
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             let io = slotted.indexOf(oldChild);
@@ -126,7 +130,7 @@ export const DOM = {
      * @param refChild The referred node.
      * @param slot Should insert a slot node.
      */
-    insertBefore<T extends Node>(parent: Element, newChild: T, refChild: Node | null, slot = true): T {
+    insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             if (refChild) {
@@ -158,7 +162,7 @@ export const DOM = {
      * @param oldChild The node to replace.
      * @param slot Should replace a slot node.
      */
-    replaceChild<T extends Node>(parent: Element, newChild: Node, oldChild: T, slot = true): T {
+    replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             let io = slotted.indexOf(oldChild);
@@ -231,19 +235,18 @@ export const DOM = {
      * @param qualifiedName The attribute name to remove.
      */
     removeAttribute(element: Element, qualifiedName: string) {
-        const removeAttribute = HTMLElement.prototype.removeAttribute;
         if (shouldEmulateLifeCycle(element)) {
             const constructor = element.constructor;
             const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
-                return removeAttribute.call(element, qualifiedName);
+                return removeAttributeImpl.call(element, qualifiedName);
             }
 
             const oldValue = DOM.getAttribute(element, qualifiedName);
-            removeAttribute.call(element, qualifiedName);
+            removeAttributeImpl.call(element, qualifiedName);
             element.attributeChangedCallback(qualifiedName, oldValue as string, null);
         }
-        return removeAttribute.call(element, qualifiedName);
+        return removeAttributeImpl.call(element, qualifiedName);
     },
 
     /**

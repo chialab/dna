@@ -24,7 +24,7 @@ describe('[Hooks]', () => {
 
             customElements.define('my-app', App);
 
-            const app = render(wrapper, new App());
+            const app = render(new App(), wrapper);
             const hookElement = app.querySelector('div[is="my-hook"]');
 
             // haunted render is async

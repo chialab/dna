@@ -1,4 +1,4 @@
-import { window, document, CustomEvent, Node, HTMLElement, Event } from './window';
+import { document, CustomEvent, Node, HTMLElement, Event } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface } from './Interfaces';
 import { cloneChildNodes } from './NodeList';
@@ -66,9 +66,39 @@ export const hasAttributeImpl = HTMLElement.prototype.hasAttribute;
 export const setAttributeImpl = HTMLElement.prototype.setAttribute;
 
 /**
+ * Alias to HTMLElement.prototype.removeAttribute.
+ */
+export const removeAttributeImpl = HTMLElement.prototype.removeAttribute;
+
+/**
  * Alias to HTMLElement.prototype.matches.
  */
 export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+
+/**
+ * Alias to document.createDocumentFragment.
+ */
+export const createDocumentFragmentImpl = document.createDocumentFragment.bind(document);
+
+/**
+ * Alias to document.createElement.
+ */
+export const createElementImpl = document.createElement.bind(document);
+
+/**
+ * Alias to document.createElementNS.
+ */
+export const createElementNSImpl = document.createElementNS.bind(document);
+
+/**
+ * Alias to document.createTextNode.
+ */
+export const createTextNodeImpl = document.createTextNode.bind(document);
+
+/**
+ * Alias to document.createComment.
+ */
+export const createCommentImpl = document.createComment.bind(document);
 
 /**
  * Create a Custom Event.
@@ -128,11 +158,6 @@ export const isComment = (node: any): node is Comment => node && node.nodeType =
  * @return The object is an Event instance.
  */
 export const isEvent = (event: any): event is Event => event instanceof Event;
-
-/**
- * Run a task at the next tick.
- */
-export const nextTick = window.requestAnimationFrame || setTimeout;
 
 /**
  * Check if a Node is connected.

@@ -85,7 +85,7 @@ TypeScript supports JSX syntax, and it is able to provide typechecking and hints
 import { render } from '@chialab/dna';
 import { Card } from './x-card';
 
-render(document.body, <Card firstName="Alan" age={24} />);
+render(<Card firstName="Alan" age={24} />, document.body);
 ```
 
 But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` in order to bind element's tag name with its prototype:

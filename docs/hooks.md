@@ -22,7 +22,7 @@ const Counter = hook('counter-hook', () => {
     return <button onclick={() => setCount(count + 1)}>Count: {count}</button>;
 });
 
-render(document.body, <Counter />);
+render(<Counter />, document.body);
 ```
 
 You can also use the `hook` factory to define plain template components:
@@ -32,7 +32,7 @@ import { hook, html, render } from '@chialab/dna/hooks';
 
 const HelloWorld = hook('hello-world', () => <h1>Hello world!</h1>);
 
-render(document.body, <HelloWorld />);
+render(<HelloWorld />, document.body);
 ```
 
 Please refer to the haunted documentation for hook methods:

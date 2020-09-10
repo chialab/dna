@@ -1,7 +1,7 @@
 import { document, HTMLElement } from './window';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { isElement, isConnected, emulateLifeCycle, removeChildImpl, setAttributeImpl } from './helpers';
+import { isElement, isConnected, emulateLifeCycle, setAttributeImpl } from './helpers';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext, createContext } from './Context';
@@ -202,7 +202,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     private initSlotChildNodes() {
         let slotChildNodes = cloneChildNodes(this.childNodes);
         for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-            removeChildImpl.call(this, slotChildNodes[i]);
+            this.removeChild(slotChildNodes[i]);
         }
         return slotChildNodes;
     }

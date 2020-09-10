@@ -6,7 +6,7 @@ import haunted, { GenericRenderer } from 'haunted';
  */
 const { component } = haunted({
     render(what, where) {
-        render(where as HTMLElement, what as Template);
+        render(what as Template, where as Node);
     },
 });
 

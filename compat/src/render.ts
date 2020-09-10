@@ -3,5 +3,5 @@ import { warnCode } from './deprecations';
 
 export function render(root: HTMLElement, constructor: typeof Component, props: { [key: string]: any; }) {
     warnCode('RENDER_HELPER');
-    return _render(root, new constructor(props));
+    return _render(new constructor(props), root);
 }

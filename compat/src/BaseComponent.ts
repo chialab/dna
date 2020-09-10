@@ -221,7 +221,7 @@ export const mixin = (constructor: typeof Component) =>
             if (typeof template === 'undefined') {
                 return;
             }
-            render(this, template);
+            render(template, this);
             return template;
         }
 

@@ -34,7 +34,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]());
+                DNA.render(TEMPLATES[type](), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
@@ -54,7 +54,7 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]());
+                DNA.render(TEMPLATES[type](), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
@@ -74,10 +74,10 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]({
+                DNA.render(TEMPLATES[type]({
                     name: 'Alan',
                     num: 42,
-                }));
+                }), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[0].textContent).to.be.equal('Hello! My name is Alan and my favorite number is 42');
@@ -101,10 +101,10 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]({
+                DNA.render(TEMPLATES[type]({
                     name: 'filter',
                     disabled: true,
-                }));
+                }), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('INPUT');
                 expect(wrapper.childNodes[0].outerHTML).to.be.equal('<input name="filter" disabled="" required="">');
@@ -128,9 +128,9 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]({
+                DNA.render(TEMPLATES[type]({
                     items: ['Alan', 'Brian', 'Carl'],
-                }));
+                }), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('UL');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(3);
@@ -165,11 +165,11 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                DNA.render(wrapper, TEMPLATES[type]({
+                DNA.render(TEMPLATES[type]({
                     avatar: 'cat.png',
                     title: 'Romeo',
                     members: [],
-                }));
+                }), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(3);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('IMG');
                 expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal('cat.png');
@@ -201,7 +201,7 @@ describe('template', function() {
 
                 DNA.customElements.define(`${rootName}-${type.toLowerCase()}`, MyElement, { extends: 'div' });
 
-                const element = DNA.render(wrapper, DNA.h(MyElement));
+                const element = DNA.render(DNA.h(MyElement), wrapper);
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].tagName).to.be.equal('STYLE');
                 expect(element.childNodes[0].textContent).to.be.equal(`div[is="${rootName}-${type.toLowerCase()}"] .test {}`);
@@ -252,11 +252,11 @@ describe('template', function() {
 
                 DNA.customElements.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
 
-                const element = DNA.render(wrapper, DNA.h(`${rootName}-${type.toLowerCase()}`, null,
+                const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
                     DNA.h('p', null, 'Body'),
-                ));
+                ), wrapper);
 
                 expect(element.childNodes).to.have.lengthOf(2);
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');
@@ -304,11 +304,11 @@ describe('template', function() {
                     }
                 }
 
-                const element = DNA.render(wrapper, DNA.h(`${name}-${type.toLowerCase()}`, null,
+                const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
                     DNA.h('p', null, 'Body'),
-                ));
+                ), wrapper);
 
                 DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
                 DNA.customElements.upgrade(element);
@@ -343,9 +343,9 @@ describe('template', function() {
             for (let type in TEMPLATES) {
                 it(type, () => {
                     const listener = spyFunction();
-                    DNA.render(wrapper, TEMPLATES[type]({
+                    DNA.render(TEMPLATES[type]({
                         listener,
-                    }));
+                    }), wrapper);
                     const button = wrapper.childNodes[0];
                     button.click();
                     expect(listener.invoked).to.be.true;
@@ -377,14 +377,14 @@ describe('template', function() {
                         setTimeout(() => resolve('World!'), 1000);
                     });
 
-                    DNA.render(wrapper, TEMPLATES[type]( {
+                    DNA.render(TEMPLATES[type]( {
                         promise,
-                    }));
+                    }), wrapper);
 
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<div><!----></div></div>');
-                    DNA.render(wrapper, TEMPLATES[type]( {
+                    DNA.render(TEMPLATES[type]( {
                         promise,
-                    }));
+                    }), wrapper);
                     await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div><!----><div><!---->Hello World!</div></div>');
                 });
@@ -413,14 +413,14 @@ describe('template', function() {
                         setTimeout(() => reject('timeout'), 1000);
                     });
 
-                    DNA.render(wrapper, TEMPLATES[type]({
+                    DNA.render(TEMPLATES[type]({
                         promise,
-                    }));
+                    }), wrapper);
 
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<!----></div>');
-                    DNA.render(wrapper, TEMPLATES[type]({
+                    DNA.render(TEMPLATES[type]({
                         promise,
-                    }));
+                    }), wrapper);
                     await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div><!----><!---->Error timeout</div>');
                 });
@@ -432,7 +432,7 @@ describe('template', function() {
             const promise = new Promise((resolve) => {
                 setTimeout(() => {
                     flag = true;
-                    DNA.render(wrapper, template());
+                    DNA.render(template(), wrapper);
                     resolve('World!');
                 }, 1000);
             });
@@ -441,9 +441,9 @@ describe('template', function() {
                 ${flag && 'Done'}
             </div>`;
 
-            DNA.render(wrapper, template());
+            DNA.render(template(), wrapper);
             expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...</div>');
-            DNA.render(wrapper, template());
+            DNA.render(template(), wrapper);
             await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div>Done</div>');
         });
@@ -455,9 +455,9 @@ describe('template', function() {
             const promise2 = new Promise((resolve) => {
                 setTimeout(() => resolve('World!'), 500);
             });
-            DNA.render(wrapper, DNA.html`<div>
+            DNA.render(DNA.html`<div>
                 ${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}
-            </div>`);
+            </div>`, wrapper);
             await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div><!----></div>');
         });
@@ -490,7 +490,7 @@ describe('template', function() {
                         subscriber.complete();
                     });
 
-                    DNA.render(wrapper, TEMPLATES[type]({ observable$ }));
+                    DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
 
                     await wait(100);
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->1</div>');
@@ -530,7 +530,7 @@ describe('template', function() {
                         subscriber.complete();
                     });
 
-                    DNA.render(wrapper, TEMPLATES[type]({ observable$ }));
+                    DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
 
                     await wait(100);
                     expect(wrapper.innerHTML).to.be.equal('<div><span><!---->1</span></div>');
