@@ -1,8 +1,7 @@
-import { HTMLElement } from './window';
 import { createSymbolKey } from './symbols';
+import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor } from './helpers';
 import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 import { ClassElement } from './ClassElement';
-import { isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor } from './helpers';
 
 /**
  * The observer signature for class fields.

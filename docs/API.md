@@ -377,7 +377,7 @@ It does nothing if life cycle is disabled.
 
 DOM is a singleton that components uses to access DOM methods.
 By default, it uses browsers' DOM implementation, but it can be set to use a different one.
-For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
+For example, in a Node context it is possibile to use DNA thanks to the `jsdom` dom implementation.
 It also handle element life cycle for custom elements unless otherwise specified.
 
 </p>
@@ -387,15 +387,16 @@ It also handle element life cycle for custom elements unless otherwise specified
 <strong>Type:</strong>
 
 <pre>{
+    createDocumentFragment: (): DocumentFragment;
     createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
     createElementNS(namespaceURI: string, tagName: string): Element;
-    createTextNode(data: string): Text;
+    createTextNode: (data: string): Text;
     createComment(data: string): Comment;
     createEvent(typeArg: string, eventInitDict?: CustomEventInit&lt;any&gt;): CustomEvent&lt;any&gt;;
-    appendChild&lt;T extends Node&gt;(parent: Element, newChild: T, slot?: boolean): T;
-    removeChild&lt;T_1 extends Node&gt;(parent: Element, oldChild: T_1, slot?: boolean): T_1;
-    insertBefore&lt;T_2 extends Node&gt;(parent: Element, newChild: T_2, refChild: Node|null, slot?: boolean): T_2;
-    replaceChild&lt;T_3 extends Node&gt;(parent: Element, newChild: Node, oldChild: T_3, slot?: boolean): T_3;
+    appendChild&lt;T extends Node&gt;(parent: Node, newChild: T, slot?: boolean): T;
+    removeChild&lt;T_1 extends Node&gt;(parent: Node, oldChild: T_1, slot?: boolean): T_1;
+    insertBefore&lt;T_2 extends Node&gt;(parent: Node, newChild: T_2, refChild: Node|null, slot?: boolean): T_2;
+    replaceChild&lt;T_3 extends Node&gt;(parent: Node, newChild: Node, oldChild: T_3, slot?: boolean): T_3;
     getAttribute(element: Element, qualifiedName: string): string|null;
     hasAttribute(element: Element, qualifiedName: string): boolean;
     setAttribute(element: Element, qualifiedName: string, value: string): void;
@@ -423,7 +424,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(root: HTMLElement, input: <a href="#template">Template</a>): Node|Node[]|void</pre>
+<pre>(input: <a href="#template">Template</a>, root?: Node): Node|Node[]|void</pre>
 
 
 

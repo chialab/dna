@@ -1,7 +1,6 @@
-import { document, HTMLElement } from './window';
 import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { isElement, isConnected, emulateLifeCycle, setAttributeImpl } from './helpers';
+import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext, createContext } from './Context';
@@ -72,8 +71,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         }
 
         let context = createContext(element);
-        if (!this.childNodes.length && document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
+        if (!this.childNodes.length && this.ownerDocument.readyState === 'loading') {
+            this.ownerDocument.addEventListener('DOMContentLoaded', () => {
                 context.slotChildNodes = element.initSlotChildNodes();
                 element.forceUpdate();
             });
@@ -400,7 +399,7 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
             //
         }
 
-        element = document.createElement(tag) as HTMLElement;
+        element = createElementImpl(tag) as HTMLElement;
         Object.setPrototypeOf(element, constructor.prototype);
         emulateLifeCycle(element as ComponentInterface<InstanceType<T>>);
         return element;

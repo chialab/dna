@@ -5,7 +5,7 @@ import { customElements } from './CustomElementRegistry';
 /**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.
- * For example, in a Node context it is possibile to use DNA via the `jsdom` package and updating `this.Text` and `this.Element` references.
+ * For example, in a Node context it is possibile to use DNA thanks to the `jsdom` dom implementation.
  * It also handle element life cycle for custom elements unless otherwise specified.
  */
 export const DOM = {

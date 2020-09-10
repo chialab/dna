@@ -1,6 +1,5 @@
-import { HTMLElement } from './window';
 import { createSymbolKey } from './symbols';
-import { isElement, isEvent, matchesImpl, createEventImpl } from './helpers';
+import { HTMLElement, isElement, isEvent, matchesImpl, createEventImpl } from './helpers';
 import { ComponentConstructorInterface } from './Interfaces';
 import { getOwnPropertyDescriptor } from './helpers';
 

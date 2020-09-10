@@ -1,9 +1,10 @@
-import { document, CustomEvent, Node, HTMLElement, Event } from './window';
+import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { ComponentInterface } from './Interfaces';
 import { cloneChildNodes } from './NodeList';
 
-const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
+export const { Node, HTMLElement, Event, CustomEvent, document } = window;
+export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
 
 /**
  * Alias to Array.isArray.
