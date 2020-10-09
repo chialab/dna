@@ -110,17 +110,19 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @return The decorator initializer.
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
-    ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: PropertyDescriptor) => {
+    ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: ClassFieldDescriptor) => {
         let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
-            // decorators spec 1
+            // decorators spec 1 and typescript
+            let initializer: Function|undefined;
             if (originalDescriptor) {
                 descriptor.defaultValue = originalDescriptor.value;
+                initializer = originalDescriptor.initializer;
             }
             if (typeof targetOrClassElement === 'function') {
-                defineProperty(targetOrClassElement, propertyKey, descriptor, symbol);
+                defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, initializer);
             } else if (!getProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey)) {
-                defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol);
+                defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol, initializer);
             }
             return targetOrClassElement;
         }
