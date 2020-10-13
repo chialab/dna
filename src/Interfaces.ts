@@ -1,7 +1,8 @@
 import { createSymbolKey } from './symbols';
 import { ClassFieldObserver, ClassFieldDescriptor } from './property';
 import { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-import { Template, TemplateItems } from './Template';
+import { IterableNodeList } from './NodeList';
+import { Template } from './Template';
 
 /**
  * A symbol which identify components.
@@ -29,7 +30,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     /**
      * A list of slot nodes.
      */
-    slotChildNodes: TemplateItems;
+    slotChildNodes: IterableNodeList;
 
     /**
      * A list of CSSStyleSheet to apply to the component.

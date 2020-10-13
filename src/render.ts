@@ -217,7 +217,7 @@ export const internalRender = (
 
             // if the current patch is a slot,
             if (isSlot && rootContext) {
-                let slottedChildren: Node[] = rootContext.slotChildNodes || [];
+                let slotChildNodes: Node[] = rootContext.slotChildNodes || [];
                 let filter;
                 if (properties.name) {
                     filter = (item: TemplateItem) => {
@@ -235,7 +235,7 @@ export const internalRender = (
                     };
                 }
 
-                handleItems(slottedChildren, filter);
+                handleItems(slotChildNodes, filter);
                 return;
             }
 

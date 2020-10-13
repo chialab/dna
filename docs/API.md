@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#templateitems">TemplateItems</a>, <a href="#template">Template</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -1141,7 +1141,7 @@ A descriptor for an event delegation.
 
 <pre>T & {
     is: string;
-    slotChildNodes: <a href="#templateitems">TemplateItems</a>;
+    slotChildNodes: <a href="#iterablenodelist">IterableNodeList</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
     connectedCallback(): void;
     disconnectedCallback(): void;
@@ -1165,17 +1165,15 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
-
-<p>
-
-A list of template items.
-
-</p>
+<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
 
 
 
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+
+
+<pre>Node[] & {
+    item(index: number): Node|null;
+}</pre>
 
 
 
@@ -1193,6 +1191,23 @@ A generic template. Can be a single atomic item or a list of items.
 
 
 <pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
+
+
+
+
+<hr />
+
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+
+<p>
+
+A list of template items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -1246,21 +1261,6 @@ The node context interface.
     function?: <a href="#templatefunction">TemplateFunction</a>;
     fragments: <a href="#context">Context</a>[];
     empty?: boolean;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="iterablenodelist"><code>type</code>  IterableNodeList</strong>
-
-
-
-
-
-<pre>Node[] & {
-    item(index: number): Node|null;
 }</pre>
 
 
