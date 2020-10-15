@@ -392,7 +392,8 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
         let element: HTMLElement;
         if (!(constructor as any).shim &&
             typeof Reflect !== 'undefined' &&
-            typeof Reflect.construct !== 'undefined') {
+            typeof base === 'function'
+        ) {
             element = Reflect.construct(base, args, constructor);
             if (tag === element.localName) {
                 return element;
