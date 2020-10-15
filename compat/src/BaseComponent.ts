@@ -18,6 +18,11 @@ const STYLES: { [key: string]: HTMLStyleElement } = {};
 export const mixin = (constructor: typeof Component) =>
     class CompatComponent extends constructor {
         /**
+         * Always skip native constructors.
+         */
+        static shim = true;
+
+        /**
          * Compatibility alias for `properties` getter.
          */
         static get properties() {
