@@ -30,6 +30,11 @@ const assertValidateCustomElementName = (name: string): boolean => (
  */
 export class CustomElementRegistry {
     /**
+     * Support native registry.
+     */
+    readonly native: boolean = !!nativeCustomElements;
+
+    /**
      * A global registry.
      */
     readonly registry: {
