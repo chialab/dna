@@ -193,7 +193,11 @@ describe('template', function() {
 
         for (let type in TEMPLATES) {
             it(type, () => {
-                class MyElement extends DNA.Component {
+                const Base = DNA.window.HTMLDivElement ?
+                    DNA.extend(DNA.window.HTMLDivElement) :
+                    DNA.Component;
+
+                class MyElement extends Base {
                     render() {
                         return TEMPLATES[type]();
                     }
