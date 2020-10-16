@@ -1,4 +1,4 @@
-import { Template, Component, customElements, DOM, render } from '@chialab/dna';
+import { window, extend, Template, customElements, DOM, render } from '@chialab/dna';
 import haunted, { GenericRenderer } from 'haunted';
 
 /**
@@ -16,9 +16,10 @@ const { component } = haunted({
  * @param hookFunction The hook function.
  * @return A defined hook component.
  */
-export function hook(name : string, hookFunction: GenericRenderer) {
+export function hook(name: string, hookFunction: GenericRenderer) {
+    const BaseElement = extend(window.HTMLDivElement);
     const HookElement = component(hookFunction, {
-        baseElement: Component,
+        baseElement: BaseElement,
         useShadowDOM: false,
     }) as typeof HTMLElement;
 

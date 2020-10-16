@@ -120,9 +120,11 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 initializer = originalDescriptor.initializer;
             }
             if (typeof targetOrClassElement === 'function') {
+                // spec 1
                 defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, initializer);
             } else if (!getProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey)) {
-                defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol, initializer);
+                // typescript
+                return defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol, initializer);
             }
             return targetOrClassElement;
         }
@@ -204,9 +206,9 @@ export const defineProperties = (constructor: ComponentConstructorInterface<HTML
  * @param descriptor The property descriptor.
  * @param symbol The symbol to use to store property value.
  * @param initializer The initializer function.
- * @return The symbol used to store property value.
+ * @return The final descriptor.
  */
-export const defineProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string, descriptor: ClassFieldDescriptor, symbolKey?: symbol, initializer?: Function): symbol => {
+export const defineProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string, descriptor: ClassFieldDescriptor, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
     let symbol = symbolKey || createSymbolKey(propertyKey);
     let observedAttributes = constructor.observedAttributes;
     let descriptors = (constructor as any)[PROPERTIES_SYMBOL] = getProperties(constructor) || {};
@@ -328,7 +330,8 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
     };
 
     _defineProperty(constructor.prototype, propertyKey, finalDescriptor);
-    return symbol;
+
+    return finalDescriptor;
 };
 
 /**

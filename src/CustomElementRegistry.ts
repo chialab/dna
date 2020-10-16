@@ -30,6 +30,11 @@ const assertValidateCustomElementName = (name: string): boolean => (
  */
 export class CustomElementRegistry {
     /**
+     * Support native registry.
+     */
+    readonly native: boolean = !!nativeCustomElements;
+
+    /**
      * A global registry.
      */
     readonly registry: {
@@ -101,11 +106,21 @@ export class CustomElementRegistry {
             throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
         }
 
-        let tagName = options.extends || name;
+        let tagName = (options.extends || name).toLowerCase();
         this.registry[name] = constructor;
-        this.tagNames[name] = tagName.toLowerCase();
+        this.tagNames[name] = tagName;
 
         if (nativeCustomElements) {
+            let shouldShim = (constructor as any).shim;
+            if (tagName !== name) {
+                (constructor as any).shim = true;
+                options = {
+                    get extends() {
+                        (constructor as any).shim = shouldShim;
+                        return tagName;
+                    },
+                };
+            }
             nativeCustomElements.define(name, constructor, options);
         } else {
             const queue = this.queue;

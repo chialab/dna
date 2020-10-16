@@ -167,6 +167,11 @@ export type ComponentConstructorInterface<T extends HTMLElement> = {
     };
 
     /**
+     * Should skip native constructors.
+     */
+    readonly shim?: boolean;
+
+    /**
      * The DNA Custom Element constructor.
      *
      * @param node Instantiate the element using the given node instead of creating a new one.
