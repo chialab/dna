@@ -37,6 +37,7 @@
     "build:runtime": "rna build jsx-runtime/src/index.ts --output jsx-runtime/index.js --production --typings --format esm",
     "test": "yarn test:core && yarn test:compat && yarn test:react && yarn test:hooks",
     "test:core": "yarn test:browser && yarn test:node",
+    "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --browser",
     "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --concurrency 2 --saucelabs",
     "test:node": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --node",
     "test:compat": "yarn symlink && rna unit 'compat/test/*.spec.js' --jsx.pragma 'h' --jsx.module '@dnajs/idom' --browser",
