@@ -71,11 +71,14 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         }
 
         let context = createContext(element);
-        if (!this.childNodes.length && this.ownerDocument.readyState === 'loading') {
-            this.ownerDocument.addEventListener('DOMContentLoaded', () => {
+        let doc = this.ownerDocument;
+        if (!this.childNodes.length && doc.readyState === 'loading') {
+            let onLoad = () => {
+                doc.removeEventListener('DOMContentLoaded', onLoad);
                 context.slotChildNodes = element.initSlotChildNodes();
                 element.forceUpdate();
-            });
+            };
+            doc.addEventListener('DOMContentLoaded', onLoad);
         } else {
             context.slotChildNodes = element.initSlotChildNodes();
         }
