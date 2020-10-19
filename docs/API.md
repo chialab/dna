@@ -53,6 +53,11 @@ The CustomElementRegistry interface provides methods for registering custom elem
     </thead>
     <tbody>
         <tr>
+            <td>native</td>
+            <td><code>boolean</code></td>
+            <td align="center">✓</td>
+            <td>Support native registry.</td></tr>
+<tr>
             <td>registry</td>
             <td><code>{
     [key: string]: HTMLElement;
@@ -723,7 +728,7 @@ Define an observed property.
 
 <strong>Type:</strong>
 
-<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: Symbol|undefined, initializer?: Function|undefined): Symbol</pre>
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: Symbol|undefined, initializer?: Function|undefined): PropertyDescriptor</pre>
 
 
 
@@ -980,6 +985,7 @@ It's a Custom Element, but with some extra useful method.
     listeners?: {
         [key: string]: <a href="#delegatedeventcallback">DelegatedEventCallback</a>|<a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>;
     };
+    shim?: boolean;
     constructor(node?: HTMLElement, properties?: {
         [key: string]: any;
     }): <a href="#componentinterface">ComponentInterface</a>&lt;T&gt;;
