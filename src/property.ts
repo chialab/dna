@@ -218,7 +218,7 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
     descriptor.symbol = symbol;
     descriptor.initializer = initializer;
 
-    let hasAttribute = descriptor.attribute || observedAttributes.indexOf(propertyKey) !== -1;
+    let hasAttribute = descriptor.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey) !== -1);
     let attribute: string = hasAttribute === true ? propertyKey : hasAttribute as string;
     descriptor.attribute = attribute;
 

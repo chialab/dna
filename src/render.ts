@@ -373,7 +373,8 @@ export const internalRender = (
                     (templateNode as any)[propertyKey] = value;
                 } else if (Component) {
                     if (type === 'string') {
-                        if (Component.observedAttributes.indexOf(propertyKey) === -1) {
+                        let observedAttributes: string[] = Component.observedAttributes;
+                        if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
                             (templateNode as any)[propertyKey] = value;
                         }
                     } else {

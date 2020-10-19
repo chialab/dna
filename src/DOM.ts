@@ -214,13 +214,14 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         if (shouldEmulateLifeCycle(element)) {
-            const constructor = element.constructor;
-            const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+            let constructor = element.constructor;
+            let observedAttributes: string[] = (constructor as any).observedAttributes;
+            let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return setAttributeImpl.call(element, qualifiedName, value);
             }
 
-            const oldValue = DOM.getAttribute(element, qualifiedName);
+            let oldValue = DOM.getAttribute(element, qualifiedName);
             setAttributeImpl.call(element, qualifiedName, value);
             element.attributeChangedCallback(qualifiedName, oldValue as string, value);
             return;
@@ -236,13 +237,14 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string) {
         if (shouldEmulateLifeCycle(element)) {
-            const constructor = element.constructor;
-            const observed = (constructor as any).observedAttributes.indexOf(qualifiedName) !== -1;
+            let constructor = element.constructor;
+            let observedAttributes: string[] = (constructor as any).observedAttributes;
+            let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return removeAttributeImpl.call(element, qualifiedName);
             }
 
-            const oldValue = DOM.getAttribute(element, qualifiedName);
+            let oldValue = DOM.getAttribute(element, qualifiedName);
             removeAttributeImpl.call(element, qualifiedName);
             element.attributeChangedCallback(qualifiedName, oldValue as string, null);
         }
