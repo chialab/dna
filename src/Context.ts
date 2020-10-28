@@ -18,7 +18,7 @@ export type Context = {
     tagName?: string,
     is?: string;
     key?: any,
-    props: { [key: string]: any },
+    props: WeakMap<Context, { [key: string]: any }>,
     state: Map<string, any>,
     childNodes?: IterableNodeList,
     slotChildNodes?: IterableNodeList,
@@ -31,10 +31,10 @@ export type Context = {
 
 /**
  * Get the context attached to an object.
- * @param target The context object.
+ * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getContext = (target: any): Context => target[CONTEXT_SYMBOL];
+export const getContext = (target: any): Context => target[CONTEXT_SYMBOL] || createContext(target);
 
 /**
  * Attach a context to an object.
@@ -58,7 +58,7 @@ export const createContext = (node: Node) => {
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        props: {},
+        props: new WeakMap(),
         state: new Map(),
         fragments: [],
         empty: true,

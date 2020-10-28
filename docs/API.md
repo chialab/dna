@@ -1256,9 +1256,9 @@ The node context interface.
     tagName?: string;
     is?: string;
     key?: any;
-    props: {
+    props: WeakMap&lt;<a href="#context">Context</a>, {
         [key: string]: any;
-    };
+    }&gt;;
     state: Map&lt;string, any&gt;;
     childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
     slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;

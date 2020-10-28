@@ -4,7 +4,7 @@ import { customElements } from './CustomElementRegistry';
 import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
 import { isHyperNode, h } from './HyperNode';
 import { DOM } from './DOM';
-import { Context, getContext, createContext, emptyFragments } from './Context';
+import { Context, getContext, emptyFragments } from './Context';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState, Observable } from './Observable';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
@@ -94,7 +94,7 @@ export const internalRender = (
     rootContext?: Context,
     fragment?: Context
 ) => {
-    let renderContext = context || getContext(root) || createContext(root);
+    let renderContext = context || getContext(root);
     let childNodes: IterableNodeList;
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
@@ -119,7 +119,7 @@ export const internalRender = (
         currentIndex = 0;
     }
     let currentNode = childNodes.item(currentIndex) as Node;
-    let currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+    let currentContext = currentNode ? getContext(currentNode) : null;
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -162,7 +162,7 @@ export const internalRender = (
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                let renderFragmentContext = getContext(placeholder) || createContext(placeholder);
+                let renderFragmentContext = getContext(placeholder);
                 emptyFragments(renderFragmentContext);
                 renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
@@ -241,8 +241,6 @@ export const internalRender = (
 
             if (node) {
                 templateNode = node;
-                isElementTemplate = isElement(node);
-                isComponentTemplate = isElementTemplate && isComponent(templateNode);
             } else {
                 templateNamespace = namespaceURI || namespace;
 
@@ -251,7 +249,7 @@ export const internalRender = (
                     if (currentKey != null && key != null && key !== currentKey) {
                         DOM.removeChild(root, currentNode, slot);
                         currentNode = childNodes.item(currentIndex) as Node;
-                        currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+                        currentContext = currentNode ? getContext(currentNode) : null;
                         if (!currentContext) {
                             break check_key;
                         }
@@ -298,9 +296,10 @@ export const internalRender = (
             }
 
             // update the Node properties
-            templateContext = templateContext || getContext(templateNode) || createContext(templateNode as HTMLElement);
-            let childProperties = templateContext.props;
-            templateContext.props = properties;
+            templateContext = templateContext || getContext(templateNode);
+
+            let childProperties = templateContext.props.get(rootContext || templateContext);
+            templateContext.props.set(rootContext || templateContext, properties);
             templateContext.key = key;
 
             if (childProperties) {
@@ -472,7 +471,7 @@ export const internalRender = (
             currentIndex++;
         } else {
             currentNode = childNodes.item(++currentIndex) as Node;
-            currentContext = currentNode ? (getContext(currentNode) || createContext(currentNode)) : null;
+            currentContext = currentNode ? getContext(currentNode) : null;
         }
 
         if (isElementTemplate &&

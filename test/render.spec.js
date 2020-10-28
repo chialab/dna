@@ -69,8 +69,45 @@ describe('render', function() {
 
         it('should render an element node using the `h` helper', () => {
             let div = DNA.DOM.createElement('div');
-            DNA.render(DNA.html`<${div} id="test" />`);
+            div.setAttribute('class', 'test');
+            div.innerHTML = '<span>test</span>';
+            DNA.render(DNA.html`<div><${div} id="test" /></div>`);
             expect(div.id).to.be.equal('test');
+            expect(div.className).to.be.equal('test');
+            expect(div.textContent).to.be.equal('test');
+            expect(div.childNodes).to.have.lengthOf(1);
+            expect(div.parentNode.tagName).to.be.equal('DIV');
+        });
+
+        it('should render an element node using the `h` helper inside a component', () => {
+            const name = getComponentName();
+            const name2 = getComponentName();
+            class TestElement extends DNA.Component {
+                render() {
+                    return this.slotChildNodes.map((node) => DNA.html`<${node} id="test" />`);
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            class TestElement2 extends DNA.Component {
+                render() {
+                    return DNA.h(TestElement, {}, DNA.h('div', { class: 'test' }, 'test'));
+                }
+            }
+
+            DNA.customElements.define(name2, TestElement2);
+
+            DNA.render(DNA.h(TestElement2), wrapper);
+
+            const elem = wrapper.querySelector(name);
+            elem.forceUpdate();
+
+            let div = wrapper.querySelector('div');
+            expect(div.className).to.be.equal('test');
+            expect(div.id).to.be.equal('test');
+            expect(div.textContent).to.be.equal('test');
+            expect(div.childNodes).to.have.lengthOf(1);
         });
 
         it('should render mixed content', () => {
