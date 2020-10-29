@@ -130,7 +130,7 @@ export class CustomElementRegistry {
             let elementQueue = queue[name];
             if (elementQueue) {
                 for (let i = 0, len = elementQueue.length; i < len; i++) {
-                    elementQueue[i]();
+                    elementQueue[i](constructor);
                 }
             }
         }
@@ -141,15 +141,15 @@ export class CustomElementRegistry {
      * @param name The Custom Element name.
      * @return A Promise that resolves when the named element is defined.
      */
-    whenDefined(name: string): Promise<void> {
+    whenDefined(name: string): Promise<typeof HTMLElement> {
         if (nativeCustomElements) {
             return nativeCustomElements
                 .whenDefined(name)
-                // Firefox 83 does not return the constructor class
+                // not all browsers resolve the constructor class
                 .then(() => nativeCustomElements.get(name));
         }
         if (this.registry[name]) {
-            return Promise.resolve();
+            return Promise.resolve(this.registry[name]);
         }
         const queue = this.queue;
         const whenDefinedPromise = new Promise((resolve) => {
@@ -157,7 +157,7 @@ export class CustomElementRegistry {
             queue[name].push(resolve);
         });
 
-        return whenDefinedPromise as Promise<void>;
+        return whenDefinedPromise as Promise<typeof HTMLElement>;
     }
 
     /**

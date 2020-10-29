@@ -70,20 +70,22 @@ describe('registry', function() {
     describe('#whenDefined', () => {
         it('should resolve a promise when an element is defined', async () => {
             const is = getComponentName();
+            const Constructor = class extends DNA.Component { };
             const promise = spyPromise(DNA.customElements.whenDefined(is));
-            DNA.customElements.define(is, class extends DNA.Component { });
+            DNA.customElements.define(is, Constructor);
             await promise;
             expect(promise.resolved).to.be.true;
-            expect(promise.response).to.be.undefined;
+            expect(promise.response).to.be.equal(Constructor);
         });
 
         it('should return a resolved promise when an element has already been defined', async () => {
             const is = getComponentName();
-            DNA.customElements.define(is, class extends DNA.Component { });
+            const Constructor = class extends DNA.Component { };
+            DNA.customElements.define(is, Constructor);
             const promise = spyPromise(DNA.customElements.whenDefined(is));
             await promise;
             expect(promise.resolved).to.be.true;
-            expect(promise.response).to.be.undefined;
+            expect(promise.response).to.be.equal(Constructor);
         });
 
         it('should not resolve for undefined element', async () => {
