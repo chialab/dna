@@ -95,6 +95,7 @@ export const internalRender = (
     fragment?: Context
 ) => {
     let renderContext = context || getContext(root);
+    let refContext = rootContext || renderContext;
     let childNodes: IterableNodeList;
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
@@ -241,6 +242,8 @@ export const internalRender = (
 
             if (node) {
                 templateNode = node;
+                isElementTemplate = isElement(node);
+                isComponentTemplate = isElementTemplate && isComponent(node);
             } else {
                 templateNamespace = namespaceURI || namespace;
 
@@ -298,8 +301,8 @@ export const internalRender = (
             // update the Node properties
             templateContext = templateContext || getContext(templateNode);
 
-            let childProperties = templateContext.props.get(rootContext || templateContext);
-            templateContext.props.set(rootContext || templateContext, properties);
+            let childProperties = templateContext.props.get(refContext);
+            templateContext.props.set(refContext, properties);
             templateContext.key = key;
 
             if (childProperties) {
@@ -477,8 +480,8 @@ export const internalRender = (
         if (isElementTemplate &&
             templateChildren &&
             templateContext &&
-            (!templateContext.empty || templateChildren.length)) {
-            templateContext.empty = false;
+            ((templateContext.context && templateContext.context === refContext) || templateChildren.length)) {
+            templateContext.context = refContext;
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,

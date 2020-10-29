@@ -26,7 +26,7 @@ export type Context = {
     last?: Node,
     function?: TemplateFunction,
     fragments: Context[],
-    empty?: boolean,
+    context?: Context,
 };
 
 /**
@@ -61,7 +61,6 @@ export const createContext = (node: Node) => {
         props: new WeakMap(),
         state: new Map(),
         fragments: [],
-        empty: true,
     });
 };
 
