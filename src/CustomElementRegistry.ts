@@ -143,7 +143,10 @@ export class CustomElementRegistry {
      */
     whenDefined(name: string): Promise<void> {
         if (nativeCustomElements) {
-            return nativeCustomElements.whenDefined(name);
+            return nativeCustomElements
+                .whenDefined(name)
+                // Firefox 83 does not return the constructor class
+                .then(() => nativeCustomElements.get(name));
         }
         if (this.registry[name]) {
             return Promise.resolve();
