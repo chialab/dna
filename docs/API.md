@@ -201,7 +201,7 @@ It returns a Promise that resolves when the named element is defined.
 
 <details>
 <summary>
-<code>(name: string): Promise&lt;void&gt;</code>
+<code>(name: string): Promise&lt;HTMLElement&gt;</code>
 </summary><br />
 
 
@@ -225,7 +225,7 @@ It returns a Promise that resolves when the named element is defined.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>Promise&lt;void&gt;</code> A Promise that resolves when the named element is defined.
+<strong>Returns</strong>: <code>Promise&lt;HTMLElement&gt;</code> A Promise that resolves when the named element is defined.
 
 <br />
 </details>
@@ -1158,7 +1158,7 @@ A descriptor for an event delegation.
     observe(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void;
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
     dispatchAsyncEvent(event: Event): Promise&lt;any[]&gt;;
     dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;;
     delegateEventListener(event: string, selector: string|null, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void;
@@ -1266,7 +1266,7 @@ The node context interface.
     last?: Node;
     function?: <a href="#templatefunction">TemplateFunction</a>;
     fragments: <a href="#context">Context</a>[];
-    empty?: boolean;
+    context?: <a href="#context">Context</a>;
 }</pre>
 
 

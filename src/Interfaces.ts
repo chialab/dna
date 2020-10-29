@@ -103,7 +103,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param composed Is the event composed.
      */
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
 
     /**
      * Dispatch an async custom Event.
