@@ -229,6 +229,24 @@ describe('render', function() {
             expect(elem.getAttribute('prop3')).to.be.equal('');
         });
 
+        it('should update native properties', () => {
+            DNA.render(DNA.html`<form>
+                <input type="radio" name="test" value="1" checked=${false} />
+                <input type="radio" name="test" value="2" checked=${false} />
+            </form>`, wrapper);
+            const elem = wrapper.querySelector('input[value="2"]');
+            expect(elem.getAttribute('checked')).to.be.null;
+            expect(elem.checked).to.be.false;
+            elem.checked = true;
+            expect(elem.checked).to.be.true;
+            DNA.render(DNA.html`<form>
+                <input type="radio" name="test" value="1" checked=${false} />
+                <input type="radio" name="test" value="2" checked=${false} />
+            </form>`, wrapper);
+            expect(elem.getAttribute('checked')).to.be.null;
+            expect(elem.checked).to.be.false;
+        });
+
         it('should convert observed attributes', () => {
             const name = getComponentName();
             class TestElement extends DNA.Component {
