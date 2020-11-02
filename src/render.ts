@@ -82,6 +82,7 @@ const convertStyles = (value: any) => {
  * @param namespace The current namespace uri of the render.
  * @param slot Should handle slot children.
  * @param rootContext The current custom element context of the render.
+ * @param refContext The main context of the render.
  * @param fragment The fragment context to update.
  * @return The resulting child nodes list.
  */
@@ -92,10 +93,10 @@ export const internalRender = (
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
     slot = false,
     rootContext?: Context,
+    mainContext?: Context,
     fragment?: Context
 ) => {
     let renderContext = context || getContext(root);
-    let refContext = rootContext || renderContext;
     let childNodes: IterableNodeList;
     if (slot) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
@@ -121,6 +122,7 @@ export const internalRender = (
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getContext(currentNode) : null;
+    let refContext = mainContext || renderContext;
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
@@ -187,7 +189,7 @@ export const internalRender = (
                                 if (!live()) {
                                     return false;
                                 }
-                                internalRender(root, template, previousContext, namespace, slot, rootContext, renderFragmentContext);
+                                internalRender(root, template, previousContext, namespace, slot, rootContext, refContext, renderFragmentContext);
                                 return true;
                             },
                             live,
@@ -489,7 +491,8 @@ export const internalRender = (
                 templateContext,
                 templateNamespace,
                 isComponentTemplate,
-                rootContext
+                rootContext,
+                refContext
             );
         }
     };
