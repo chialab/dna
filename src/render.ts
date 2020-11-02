@@ -21,11 +21,6 @@ const CLASSES_CACHE: { [key: string]: string[] } = {};
 const STYLES_CACHE: { [key: string]: { [key: string]: any } } = {};
 
 /**
- * Treat checked property differently.
- */
-const INPUT_CHECKED_PROP = 'checked';
-
-/**
  * Convert strings or classes map to a list of classes.
  * @param value The value to convert.
  * @return A list of classes.
@@ -326,7 +321,7 @@ export const internalRender = (
                 let oldValue;
                 if (childProperties) {
                     oldValue = childProperties[propertyKey];
-                    if (oldValue === value && propertyKey !== INPUT_CHECKED_PROP) {
+                    if (oldValue === value && propertyKey !== 'checked' && propertyKey !== 'value') {
                         continue;
                     }
                 }
@@ -376,7 +371,7 @@ export const internalRender = (
                 let type = typeof value;
                 let isReference = (value && type === 'object') || type === 'function';
 
-                if (isReference || (propertyKey === INPUT_CHECKED_PROP && (templateNode as HTMLElement).tagName === 'INPUT')) {
+                if (isReference || ((propertyKey === 'checked' || propertyKey === 'value') && (templateNode as HTMLElement).tagName === 'INPUT')) {
                     (templateNode as any)[propertyKey] = value;
                 } else if (Component) {
                     if (type === 'string') {
