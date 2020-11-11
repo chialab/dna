@@ -22,7 +22,6 @@
   * [Property observers](./properties-and-attributes#property-observers)
   * [Sync with attributes](./properties-and-attributes#sync-with-attributes)
 * [Events](./events)
-  * [Using the decorator](./events#using-the-decorator)
   * [Declarative event listeners](./events#declarative-event-listeners)
   * [Template listeners](./events#template-listeners)
   * [Delegation](./events#delegation)
