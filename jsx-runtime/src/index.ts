@@ -1,4 +1,6 @@
-import { h, Fragment, TemplateItem, TemplateItems, TemplateFunction } from '@chialab/dna';
+import type { TemplateItem, TemplateItems, TemplateFunction } from '@chialab/dna';
+import { h, Fragment } from '@chialab/dna';
+
 export * from '@chialab/dna';
 export const jsx = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction, props: { [key: string]: any, children?: TemplateItems|TemplateItem }) => {
     let children: TemplateItems = [];
