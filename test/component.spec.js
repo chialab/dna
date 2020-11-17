@@ -1130,7 +1130,7 @@ describe('Component', function() {
         let element, TestElement;
 
         before(() => {
-            TestElement = class extends DNA.Component {
+            class Element extends DNA.Component {
                 static get observedAttributes() {
                     return ['title', 'alias', 'age', 'flag'];
                 }
@@ -1145,9 +1145,11 @@ describe('Component', function() {
 
                 @DNA.property() title = '';
                 @DNA.property({ attribute: 'alias' }) test = '';
-            };
+            }
 
-            DNA.customElements.define(getComponentName(), TestElement);
+            TestElement = Element;
+
+            DNA.customElements.define(getComponentName(), Element);
         });
 
         beforeEach(() => {

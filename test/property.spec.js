@@ -11,9 +11,9 @@ describe('property', function() {
 
     describe('@property', () => {
         it('should define a property', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property() testProp = undefined;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -21,9 +21,9 @@ describe('property', function() {
         });
 
         it('should define a property with a defaultValue', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property() testProp = 42;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -32,12 +32,12 @@ describe('property', function() {
         });
 
         it('should define a property with single type checker', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     type: String,
                 })
                 testProp = undefined;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -45,12 +45,12 @@ describe('property', function() {
         });
 
         it('should define a property with multiple type checkers', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     type: [String, Boolean],
                 })
                 testProp = undefined;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -60,7 +60,7 @@ describe('property', function() {
         });
 
         it('should define a property with custom validation', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     type: [String, Boolean],
                     validate(value) {
@@ -72,7 +72,7 @@ describe('property', function() {
                     },
                 })
                 testProp = undefined;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -83,14 +83,14 @@ describe('property', function() {
         });
 
         it('should define a property with custom getter', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     getter(value) {
                         return value * 2;
                     },
                 })
                 testProp = 42;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -99,14 +99,14 @@ describe('property', function() {
         });
 
         it('should define a property with custom setter', () => {
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     setter(value) {
                         return value / 2;
                     },
                 })
                 testProp = 42;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -116,12 +116,12 @@ describe('property', function() {
 
         it('should define a property with a single observer', () => {
             const listener = spyFunction((...args) => args);
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     observe: listener,
                 })
                 testProp = 42;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 
@@ -135,12 +135,12 @@ describe('property', function() {
         it('should define a property with multiple observers', () => {
             const listener1 = spyFunction((...args) => args);
             const listener2 = spyFunction((...args) => args);
-            const MyElement = class extends DNA.Component {
+            class MyElement extends DNA.Component {
                 @DNA.property({
                     observers: [listener1, listener2],
                 })
                 testProp = 42;
-            };
+            }
 
             DNA.customElements.define(getComponentName(), MyElement);
 

@@ -2,7 +2,6 @@ import './DOM';
 import * as IDOM from './IDOM';
 
 export type {
-    CustomElementRegistry,
     Observable,
     TemplateItem,
     TemplateItems,
@@ -23,6 +22,7 @@ export type {
 export {
     window,
     customElements,
+    CustomElementRegistry,
     DOM,
     connect,
     disconnect,

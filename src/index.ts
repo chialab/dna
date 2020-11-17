@@ -1,6 +1,6 @@
 import { window } from './window';
 export { window };
-export { customElements } from './CustomElementRegistry';
+export { customElements, CustomElementRegistry } from './CustomElementRegistry';
 export { connect, disconnect } from './helpers';
 export { DOM } from './DOM';
 export { render } from './render';
@@ -14,7 +14,6 @@ export { isComponent, isComponentConstructor } from './Interfaces';
 export { extend, Component } from './Component';
 export * from './directives';
 
-export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
 export type { TemplateItem, TemplateItems, Template, TemplateFilter, TemplateFunction } from './Template';
 export type { Context } from './Context';
