@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#template">Template</a>, <a href="#templateitems">TemplateItems</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#templateitems">TemplateItems</a>, <a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -880,39 +880,17 @@ A list of namespaceURI bound with their tagName.
 
 <hr />
 
-<strong id="observable"><code>type</code>  Observable</strong>
+<strong id="template"><code>type</code>  Template</strong>
 
 <p>
 
-Observable-like minimal interface.
+A generic template. Can be a single atomic item or a list of items.
 
 </p>
 
 
 
-<pre>{
-    pipe(operator: (value: T): any): <a href="#observable">Observable</a>&lt;T&gt;;
-    subscribe(nextCallback: (value: T): any, errorCallback: (error: Error): any, completeCallback: (): any): <a href="#subscription">Subscription</a>;
-}</pre>
-
-
-
-
-<hr />
-
-<strong id="subscription"><code>type</code>  Subscription</strong>
-
-<p>
-
-Subscription-like minimal interface.
-
-</p>
-
-
-
-<pre>{
-    unsubscribe(): void;
-}</pre>
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
 
 
 
@@ -1186,40 +1164,6 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="template"><code>type</code>  Template</strong>
-
-<p>
-
-A generic template. Can be a single atomic item or a list of items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
-
-
-
-
-<hr />
-
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
-
-<p>
-
-A list of template items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
-
-
-
-
-<hr />
-
 <strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
 
 <p>
@@ -1266,7 +1210,8 @@ The node context interface.
     last?: Node;
     function?: <a href="#templatefunction">TemplateFunction</a>;
     fragments: <a href="#context">Context</a>[];
-    context?: <a href="#context">Context</a>;
+    parent?: <a href="#context">Context</a>;
+    root?: <a href="#context">Context</a>;
 }</pre>
 
 
@@ -1274,17 +1219,56 @@ The node context interface.
 
 <hr />
 
-<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
 
 <p>
 
-A filter function signature for template items.
+A list of template items.
 
 </p>
 
 
 
-<pre>(item: <a href="#templateitem">TemplateItem</a>): boolean</pre>
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+
+
+
+
+<hr />
+
+<strong id="observable"><code>type</code>  Observable</strong>
+
+<p>
+
+Observable-like minimal interface.
+
+</p>
+
+
+
+<pre>{
+    pipe(operator: (value: T): any): <a href="#observable">Observable</a>&lt;T&gt;;
+    subscribe(nextCallback: (value: T): any, errorCallback: (error: Error): any, completeCallback: (): any): <a href="#subscription">Subscription</a>;
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="subscription"><code>type</code>  Subscription</strong>
+
+<p>
+
+Subscription-like minimal interface.
+
+</p>
+
+
+
+<pre>{
+    unsubscribe(): void;
+}</pre>
 
 
 
@@ -1309,6 +1293,23 @@ The properties of a HyperNode.
     children?: <a href="#templateitems">TemplateItems</a>;
     [key: string]: any;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="templatefilter"><code>type</code>  TemplateFilter</strong>
+
+<p>
+
+A filter function signature for template items.
+
+</p>
+
+
+
+<pre>(item: Node): boolean</pre>
 
 
 
