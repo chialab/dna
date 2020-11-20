@@ -3,7 +3,7 @@ import { customElements } from './CustomElementRegistry';
 import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { getContext, createContext } from './Context';
+import { Context, getContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
@@ -70,17 +70,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             Object.setPrototypeOf(element, this);
         }
 
-        let context = createContext(element);
+        let context = getContext(element);
+        context.is = this.is;
+
         let doc = this.ownerDocument;
         if (!this.childNodes.length && doc.readyState === 'loading') {
             let onLoad = () => {
                 doc.removeEventListener('DOMContentLoaded', onLoad);
-                context.slotChildNodes = element.initSlotChildNodes();
+                element.initSlotChildNodes(context);
                 element.forceUpdate();
             };
             doc.addEventListener('DOMContentLoaded', onLoad);
         } else {
-            context.slotChildNodes = element.initSlotChildNodes();
+            element.initSlotChildNodes(context);
         }
 
         let constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
@@ -199,14 +201,15 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
     /**
      * Extract slotted child nodes for initial child nodes.
+     * @param context The compoonent context.
      * @return A list of new slotted children.
      */
-    private initSlotChildNodes() {
+    private initSlotChildNodes(context: Context) {
         let slotChildNodes = cloneChildNodes(this.childNodes);
         for (let i = 0, len = slotChildNodes.length; i < len; i++) {
             this.removeChild(slotChildNodes[i]);
         }
-        return slotChildNodes;
+        context.slotChildNodes = slotChildNodes;
     }
 
     /**

@@ -26,7 +26,8 @@ export type Context = {
     last?: Node,
     function?: TemplateFunction,
     fragments: Context[],
-    context?: Context,
+    parent?: Context,
+    root?: Context,
 };
 
 /**

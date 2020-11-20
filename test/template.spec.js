@@ -246,7 +246,7 @@ describe('template', function() {
 
                 class MyTitle extends DNA.Component {
                     render() {
-                        return DNA.h('slot', { name: 'title' });
+                        return DNA.h('span', { class: 'title' }, DNA.h('slot'));
                     }
                 }
 
@@ -263,7 +263,7 @@ describe('template', function() {
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
                 expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal(`${titleName}-${type}`.toUpperCase());
-                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
                 expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
                 expect(element.childNodes[1].className).to.be.equal('layout-body');

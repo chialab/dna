@@ -220,25 +220,33 @@ export const internalRender = (
 
             // if the current patch is a slot,
             if (isSlot && rootContext) {
-                let slotChildNodes: Node[] = rootContext.slotChildNodes || [];
-                let filter;
-                if (properties.name) {
-                    filter = (item: TemplateItem) => {
-                        if (isElement(item)) {
-                            return item.getAttribute('slot') === properties.name;
+                let slotChildNodes = rootContext.slotChildNodes;
+                if (slotChildNodes) {
+                    for (let i = 0, len = slotChildNodes.length; i < len; i++) {
+                        let node = slotChildNodes.item(i);
+                        let context = getContext(node);
+                        if (!context.root) {
+                            context.root = rootContext;
                         }
-                        return false;
-                    };
-                } else {
-                    filter = (item: TemplateItem) => {
-                        if (isElement(item)) {
-                            return !item.getAttribute('slot');
-                        }
-                        return true;
-                    };
+                    }
                 }
 
-                handleItems(slotChildNodes, filter);
+                let name = properties.name;
+                let filter = (item: Node) => {
+                    if (getContext(item).root === rootContext) {
+                        if (isElement(item)) {
+                            if (!name) {
+                                return !item.getAttribute('slot');
+                            }
+
+                            return item.getAttribute('slot') === name;
+                        }
+                    }
+
+                    return !name;
+                };
+
+                handleItems(slotChildNodes || [], filter);
                 return;
             }
 
@@ -482,8 +490,8 @@ export const internalRender = (
         if (isElementTemplate &&
             templateChildren &&
             templateContext &&
-            ((templateContext.context && templateContext.context === refContext) || templateChildren.length)) {
-            templateContext.context = refContext;
+            ((templateContext.parent && templateContext.parent === refContext) || templateChildren.length)) {
+            templateContext.parent = refContext;
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,
@@ -509,7 +517,17 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        DOM.removeChild(root, childNodes.item(--lastIndex) as Node, slot);
+        let item = childNodes.item(--lastIndex) as Node;
+        if (slot) {
+            let context = getContext(item);
+            if (context.root === rootContext) {
+                delete context.root;
+            }
+            if (context.parent === refContext) {
+                delete context.parent;
+            }
+        }
+        DOM.removeChild(root, item, slot);
     }
 
     return childNodes;

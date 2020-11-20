@@ -19,7 +19,7 @@ export type TemplateItems = TemplateItem[];
  * @param item The template item to check.
  * @return A truthy value for valid items, a falsy for value for invalid ones.
  */
-export type TemplateFilter = (item: TemplateItem) => boolean;
+export type TemplateFilter = (item: Node) => boolean;
 
 /**
  * A generic template. Can be a single atomic item or a list of items.
