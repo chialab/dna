@@ -22,6 +22,11 @@ export const indexOf = Array.prototype.indexOf;
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 /**
+ * Alias to Object.prototype.hasOwnProperty.
+ */
+export const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
  * Alias to Object.defineProperty.
  */
 export const defineProperty = Object.defineProperty;

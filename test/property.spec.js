@@ -336,7 +336,7 @@ describe('property', function() {
         });
 
         it('should inherit and reduce the prototype chain', () => {
-            const BaseElement = class extends DNA.Component {
+            class BaseElement extends DNA.Component {
                 static get properties() {
                     return {
                         inherit: String,
@@ -345,22 +345,70 @@ describe('property', function() {
                         },
                     };
                 }
-            };
-            const MyElement = class extends BaseElement {
+            }
+
+            class MyElement extends BaseElement {
                 static get properties() {
                     return {
                         override: {
                             defaultValue: 84,
                         },
+                        newProp: {
+                            defaultValue: true,
+                        },
                     };
                 }
-            };
-
+            }
             DNA.customElements.define(getComponentName(), MyElement);
+
+            class MyElement2 extends BaseElement {
+                static get properties() {
+                    return {
+                        newProp: {
+                            defaultValue: false,
+                        },
+                    };
+                }
+            }
+            DNA.customElements.define(getComponentName(), MyElement2);
 
             const element = new MyElement();
             expect(element).to.have.property('inherit');
             expect(element).to.have.property('override', 84);
+            expect(element).to.have.property('newProp', true);
+            const element2 = new MyElement2();
+            expect(element2).to.have.property('inherit');
+            expect(element2).to.have.property('override', 42);
+            expect(element2).to.have.property('newProp', false);
+        });
+
+        it('should inherit and reduce the prototype chain with decorator', () => {
+            class BaseElement extends DNA.Component {
+                @DNA.property({
+                    type: String,
+                }) inherit;
+                @DNA.property() override = 42;
+            }
+
+            class MyElement extends BaseElement {
+                @DNA.property() override = 84;
+                @DNA.property() newProp = true;
+            }
+            DNA.customElements.define(getComponentName(), MyElement);
+
+            class MyElement2 extends BaseElement {
+                @DNA.property() newProp = false;
+            }
+            DNA.customElements.define(getComponentName(), MyElement2);
+
+            const element = new MyElement();
+            expect(element).to.have.property('inherit');
+            expect(element).to.have.property('override', 84);
+            expect(element).to.have.property('newProp', true);
+            const element2 = new MyElement2();
+            expect(element2).to.have.property('inherit');
+            expect(element2).to.have.property('override', 42);
+            expect(element2).to.have.property('newProp', false);
         });
     });
 

@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor } from './helpers';
+import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
 import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 import { ClassElement } from './ClassElement';
 
@@ -170,9 +170,29 @@ const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param constructor The component constructor.
  * @return A list of class field descriptors.
  */
-export const getProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => (constructor as any)[PROPERTIES_SYMBOL] as {
-    [propertyKey: string]: ClassFieldDescriptor;
+export const getProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+    let props = (constructor as any)[PROPERTIES_SYMBOL] as {
+        [propertyKey: string]: ClassFieldDescriptor;
+    };
+
+    if (!hasOwnProperty.call(constructor, PROPERTIES_SYMBOL)) {
+        return {
+            __proto__: props,
+        } as {
+            [propertyKey: string]: ClassFieldDescriptor;
+        };
+    }
+
+    return props || {};
 };
+
+/**
+ * Retrieve property descriptor.
+ * @param constructor The component constructor.
+ * @param propertyKey The name of the property.
+ * @return The class field descriptor.
+ */
+export const getProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string) => getProperties(constructor)[propertyKey];
 
 /**
  * Define component constructor properties.
@@ -211,7 +231,7 @@ export const defineProperties = (constructor: ComponentConstructorInterface<HTML
 export const defineProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string, descriptor: ClassFieldDescriptor, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
     let symbol = symbolKey || createSymbolKey(propertyKey);
     let observedAttributes = constructor.observedAttributes;
-    let descriptors = (constructor as any)[PROPERTIES_SYMBOL] = getProperties(constructor) || {};
+    let descriptors = (constructor as any)[PROPERTIES_SYMBOL] = getProperties(constructor);
     descriptors[propertyKey] = descriptor;
     (descriptor as any).__proto__ = null;
     descriptor.name = propertyKey;
@@ -332,18 +352,4 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
     _defineProperty(constructor.prototype, propertyKey, finalDescriptor);
 
     return finalDescriptor;
-};
-
-/**
- * Retrieve property descriptor.
- * @param constructor The component constructor.
- * @param propertyKey The name of the property.
- * @return The class field descriptor.
- */
-export const getProperty = (constructor: ComponentConstructorInterface<HTMLElement>, propertyKey: string) => {
-    let descriptors = getProperties(constructor) || {};
-    if (!descriptors) {
-        return null;
-    }
-    return descriptors[propertyKey] || null;
 };
