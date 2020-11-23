@@ -215,7 +215,7 @@ export const DOM = {
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         if (shouldEmulateLifeCycle(element)) {
             let constructor = element.constructor;
-            let observedAttributes: string[] = (constructor as any).observedAttributes;
+            let observedAttributes = constructor.observedAttributes;
             let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return setAttributeImpl.call(element, qualifiedName, value);
@@ -238,7 +238,7 @@ export const DOM = {
     removeAttribute(element: Element, qualifiedName: string) {
         if (shouldEmulateLifeCycle(element)) {
             let constructor = element.constructor;
-            let observedAttributes: string[] = (constructor as any).observedAttributes;
+            let observedAttributes = constructor.observedAttributes;
             let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return removeAttributeImpl.call(element, qualifiedName);

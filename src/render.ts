@@ -1,8 +1,8 @@
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { Template, TemplateItem, TemplateItems, TemplateFilter } from './Template';
-import { isHyperNode, h } from './HyperNode';
+import { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
+import { isHyperNode, h, HyperClasses, HyperStyles } from './HyperNode';
 import { DOM } from './DOM';
 import { Context, getContext, emptyFragments } from './Context';
 import { isThenable, getThenableState } from './Thenable';
@@ -18,14 +18,14 @@ const CLASSES_CACHE: { [key: string]: string[] } = {};
 /**
  * A cache for converted style values.
  */
-const STYLES_CACHE: { [key: string]: { [key: string]: any } } = {};
+const STYLES_CACHE: { [key: string]: { [key: string]: string } } = {};
 
 /**
  * Convert strings or classes map to a list of classes.
  * @param value The value to convert.
  * @return A list of classes.
  */
-const convertClasses = (value: any) => {
+const convertClasses = (value: HyperClasses) => {
     let classes: string[] = [];
     if (!value) {
         return classes;
@@ -46,7 +46,7 @@ const convertClasses = (value: any) => {
  * @param value The value to convert.
  * @return A set of styles.
  */
-const convertStyles = (value: any) => {
+const convertStyles = (value: HyperStyles) => {
     let styles: { [key: string]: string } = {};
     if (!value) {
         return styles;
@@ -152,7 +152,7 @@ export const internalRender = (
                 let previousContext = renderContext;
                 let previousFragment = currentFragment;
                 let fragments = renderContext.fragments;
-                let state: Map<string, any>;
+                let state: Map<string, unknown>;
                 let placeholder: Node;
                 if (fragment) {
                     state = fragment.state;
@@ -257,14 +257,14 @@ export const internalRender = (
             } else {
                 templateNamespace = namespaceURI || namespace;
 
-                check_key: if (currentContext) {
+                checkKey: if (currentContext) {
                     let currentKey = currentContext.key;
                     if (currentKey != null && key != null && key !== currentKey) {
                         DOM.removeChild(root, currentNode, slot);
                         currentNode = childNodes.item(currentIndex) as Node;
                         currentContext = currentNode ? getContext(currentNode) : null;
                         if (!currentContext) {
-                            break check_key;
+                            break checkKey;
                         }
                         currentKey = currentContext.key;
                     }
@@ -273,7 +273,7 @@ export const internalRender = (
                         let io = indexOf.call(childNodes, currentNode);
                         let lastIo = indexOf.call(childNodes, currentFragment.last);
                         if (io !== -1 && io > lastIo) {
-                            break check_key;
+                            break checkKey;
                         }
                     }
 
@@ -338,8 +338,8 @@ export const internalRender = (
 
                 if (propertyKey === 'style') {
                     let style = (templateNode as HTMLElement).style;
-                    let oldStyles = convertStyles(oldValue);
-                    let newStyles = convertStyles(value);
+                    let oldStyles = convertStyles(oldValue as HyperStyles);
+                    let newStyles = convertStyles(value as HyperStyles);
                     for (let propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
                             style.removeProperty(propertyKey);
@@ -351,9 +351,9 @@ export const internalRender = (
                     continue;
                 } else if (propertyKey === 'class') {
                     let classList = (templateNode as HTMLElement).classList;
-                    let newClasses: string[] = convertClasses(value);
+                    let newClasses: string[] = convertClasses(value as HyperClasses);
                     if (oldValue) {
-                        let oldClasses: string[] = convertClasses(oldValue);
+                        let oldClasses: string[] = convertClasses(oldValue as HyperClasses);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
                             let className = oldClasses[i];
                             if (newClasses.indexOf(className) === -1) {
@@ -371,10 +371,10 @@ export const internalRender = (
                 } else if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in templateNode.constructor.prototype)) {
                     let eventName = propertyKey.substr(2);
                     if (oldValue) {
-                        templateNode.removeEventListener(eventName, oldValue);
+                        templateNode.removeEventListener(eventName, oldValue as EventListener);
                     }
                     if (value) {
-                        templateNode.addEventListener(eventName, value);
+                        templateNode.addEventListener(eventName, value as EventListener);
                     }
                 }
 
@@ -399,7 +399,7 @@ export const internalRender = (
                         (templateNode as Element).removeAttribute(propertyKey);
                     }
                 } else if (!isReference) {
-                    let attrValue = value === true ? '' : value.toString();
+                    let attrValue = value === true ? '' : toString.call(value);
                     if ((templateNode as Element).getAttribute(propertyKey) !== attrValue) {
                         (templateNode as Element).setAttribute(propertyKey, attrValue);
                     }
@@ -425,11 +425,11 @@ export const internalRender = (
                             update();
                         });
                 }
-                return status.result;
+                return status.result as TemplateItem;
             }), filter);
             return;
         } else if (isObjectTemplate && isObservable(template)) {
-            handleItems(h((props, context, update) => {
+            handleItems(h(((props, context, update) => {
                 let status = getObservableState(template);
                 if (!status.complete) {
                     let subscription = (template as Observable<unknown>).subscribe(
@@ -449,7 +449,7 @@ export const internalRender = (
                     );
                 }
                 return status.current;
-            }), filter);
+            }) as TemplateFunction), filter);
             return;
         } else {
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {

@@ -58,13 +58,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
+    constructor(node?: HTMLElement | { [key: string]: unknown }, properties?: { [key: string]: unknown }) {
         super();
 
         let element = node as this;
         let props = properties;
         if (!isElement(element)) {
-            props = node;
+            props = node as { [key: string]: unknown };
             element = this;
         } else {
             Object.setPrototypeOf(element, this);
@@ -139,7 +139,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     /**
      * Invoked each time the Component is disconnected from the document's DOM.
      */
-    disconnectedCallback() { }
+    disconnectedCallback() {}
 
     /**
      * Invoked each time one of the Component's attributes is added, removed, or changed.
@@ -387,15 +387,15 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
  * @return A newable constructor with the same prototype.
  */
 export const shim = <T extends typeof HTMLElement>(base: T): T => {
-    const shim = function(this: any, ...args: any[]) {
-        let constructor = this.constructor as T;
+    const shim = function(this: ComponentInterface<InstanceType<T>>, ...args: any[]) {
+        let constructor = this.constructor;
         let is = this.is;
         if (!is) {
             throw new TypeError('Illegal constructor');
         }
 
         let tag = customElements.tagNames[is];
-        let element: HTMLElement;
+        let element: ComponentInterface<InstanceType<T>>;
         if (customElements.native && !(constructor as any).shim) {
             element = Reflect.construct(base, args, constructor.prototype.constructor);
             if (tag === element.localName) {
@@ -403,9 +403,9 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
             }
         }
 
-        element = createElementImpl(tag) as HTMLElement;
+        element = createElementImpl(tag) as ComponentInterface<InstanceType<T>>;
         Object.setPrototypeOf(element, constructor.prototype);
-        emulateLifeCycle(element as ComponentInterface<InstanceType<T>>);
+        emulateLifeCycle(element);
         return element;
     } as any as T;
     Object.setPrototypeOf(shim, base);

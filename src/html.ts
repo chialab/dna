@@ -9,9 +9,9 @@ const innerHtml = htm.bind(h);
  *
  * @return The virtual DOM template function.
  */
-export const html = (string: string | TemplateStringsArray, ...values: any[]): Template => {
+export const html = (string: string | TemplateStringsArray, ...values: unknown[]): Template => {
     if (typeof string === 'string') {
-        const array = [string];
+        let array = [string];
         (array as any).raw = [string];
         string = array as unknown as TemplateStringsArray;
     }

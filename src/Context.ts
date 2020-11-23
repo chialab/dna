@@ -13,29 +13,22 @@ const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
  * The node context interface.
  */
 export type Context = {
-    isElement?: boolean,
-    isText?: boolean,
-    tagName?: string,
+    isElement?: boolean;
+    isText?: boolean;
+    tagName?: string;
     is?: string;
-    key?: any,
-    props: WeakMap<Context, { [key: string]: any }>,
-    state: Map<string, any>,
-    childNodes?: IterableNodeList,
-    slotChildNodes?: IterableNodeList,
-    first?: Node,
-    last?: Node,
-    function?: TemplateFunction,
-    fragments: Context[],
-    parent?: Context,
-    root?: Context,
+    key?: unknown;
+    props: WeakMap<Context, { [key: string]: unknown }>;
+    state: Map<string, unknown>;
+    childNodes?: IterableNodeList;
+    slotChildNodes?: IterableNodeList;
+    first?: Node;
+    last?: Node;
+    function?: TemplateFunction;
+    fragments: Context[];
+    parent?: Context;
+    root?: Context;
 };
-
-/**
- * Get the context attached to an object.
- * @param target The scope of the context.
- * @return The context object (if it exists).
- */
-export const getContext = (target: any): Context => target[CONTEXT_SYMBOL] || createContext(target);
 
 /**
  * Attach a context to an object.
@@ -64,6 +57,13 @@ export const createContext = (node: Node) => {
         fragments: [],
     });
 };
+
+/**
+ * Get the context attached to an object.
+ * @param target The scope of the context.
+ * @return The context object (if it exists).
+ */
+export const getContext = (target: any): Context => target[CONTEXT_SYMBOL] || createContext(target);
 
 /**
  * Cleanup child fragments of a context.

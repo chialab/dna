@@ -12,15 +12,26 @@ import { isNode } from './helpers';
 const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
+ * Classes dictionary.
+ */
+export type HyperClasses = string | { [key: string]: boolean };
+
+/**
+ * Styles dictionary.
+ */
+export type HyperStyles = string | { [key: string]: string };
+
+/**
  * The properties of a HyperNode.
  */
 export type HyperProperties = {
     is?: string;
     slot?: string;
-    key?: any;
+    key?: unknown;
     xlmns?: NamespaceURI;
-    children?: TemplateItems,
-    [key: string]: any;
+    children?: TemplateItems;
+    class?: HyperClasses;
+    [key: string]: unknown;
 };
 
 /**
@@ -34,17 +45,17 @@ export enum NamespaceURI {
  * A virtual description of a Node, generate by the `h` helper and used in the render function.
  */
 export type HyperNode = {
-    node?: Node,
-    Component?: ComponentConstructorInterface<HTMLElement>,
-    Function?: TemplateFunction,
+    node?: Node;
+    Component?: ComponentConstructorInterface<HTMLElement>;
+    Function?: TemplateFunction;
     tag?: string;
-    is?: string,
-    key?: any,
-    isFragment?: boolean,
-    isSlot?: boolean,
-    namespaceURI?: NamespaceURI,
-    properties?: any,
-    children: TemplateItems,
+    is?: string;
+    key?: unknown;
+    isFragment?: boolean;
+    isSlot?: boolean;
+    namespaceURI?: NamespaceURI;
+    properties: HyperProperties;
+    children: TemplateItems;
 };
 
 /**
@@ -65,7 +76,7 @@ export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment 
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
-        propertiesToSet: any = properties || {},
+        propertiesToSet = properties || {},
         is: string | undefined = propertiesToSet.is,
         key = propertiesToSet.key,
         xmlns = propertiesToSet.xmlns,

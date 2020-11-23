@@ -4,7 +4,7 @@
 const CACHE: {
     [key: string]: {
         [key: string]: string;
-    },
+    };
 } = {};
 
 /**

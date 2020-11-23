@@ -1,4 +1,4 @@
-import { HyperNode } from './HyperNode';
+import { HyperNode, HyperProperties } from './HyperNode';
 import { Observable } from './Observable';
 import { Context } from './Context';
 
@@ -6,7 +6,7 @@ import { Context } from './Context';
  * The atomic template item.
  * It can be a node, a Hyper or Interpolate function or a primitive value.
  */
-export type TemplateItem = Element | Text | Node | HyperNode | Promise<any> | Observable<any> | string | number | boolean | undefined | null;
+export type TemplateItem = Element | Text | Node | HyperNode | Promise<unknown> | Observable<unknown> | string | number | boolean | undefined | null;
 
 /**
  * A list of template items.
@@ -36,4 +36,4 @@ export type Template = TemplateItem | TemplateItems;
  * @param context The current render context.
  * @return A template.
  */
-export type TemplateFunction = (props: { children: Template, [key: string]: any }, state: any, update: () => boolean, live: () => boolean, context: Context) => Template;
+export type TemplateFunction = (props: HyperProperties, state: Map<string, unknown>, update: () => boolean, live: () => boolean, context: Context) => Template;

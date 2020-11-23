@@ -38,6 +38,11 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     adoptedStyleSheets?: CSSStyleSheet[];
 
     /**
+     * The component constructor.
+     */
+    constructor: ComponentConstructorInterface<T>;
+
+    /**
      * Invoked each time the Custom Element is appended into a document-connected element.
      * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
      */
@@ -177,8 +182,8 @@ export type ComponentConstructorInterface<T extends HTMLElement> = {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): ComponentInterface<T>;
-    new(properties?: { [key: string]: any; }): ComponentInterface<T>;
+    new(node?: HTMLElement, properties?: { [key: string]: unknown }): ComponentInterface<T>;
+    new(properties?: { [key: string]: unknown }): ComponentInterface<T>;
     new(): ComponentInterface<T>;
     prototype: ComponentInterface<T>;
 };

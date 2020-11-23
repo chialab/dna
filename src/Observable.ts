@@ -11,8 +11,8 @@ export type Subscription = {
  * Observable-like minimal interface.
  */
 export type Observable<T> = {
-    pipe(operator: (value: T) => any): Observable<T>;
-    subscribe(nextCallback: (value: T) => any, errorCallback: (error: Error) => any, completeCallback: () => any): Subscription;
+    pipe(operator: (value: T) => unknown): Observable<T>;
+    subscribe(nextCallback: (value: T) => unknown, errorCallback: (error: Error) => unknown, completeCallback: () => unknown): Subscription;
 };
 
 /**
@@ -27,7 +27,7 @@ const SUBSCRIPTION_SYMBOL: unique symbol = createSymbolKey() as any;
 export type ObservableState = {
     complete: boolean;
     errored: boolean;
-    current?: any;
+    current?: unknown;
 };
 
 /**

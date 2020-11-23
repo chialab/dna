@@ -7,7 +7,7 @@ import { getThenableState } from './Thenable';
  * @param template The template to render.
  * @return A promise which resolves the template while the Thenable is in pending status.
  */
-export const until = (thenable: any, template: Template) => {
+export const until = (thenable: Promise<unknown>, template: Template) => {
     let original = getThenableState(thenable);
     let wrapper = thenable.then(() => false).catch(() => false);
     let state = getThenableState(wrapper);
