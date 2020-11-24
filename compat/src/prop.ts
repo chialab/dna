@@ -101,11 +101,12 @@ export class CompatibilityPropertyProxy {
      * @return The property instance for chaining.
      */
     dispatch(eventName: string) {
+        let prop = this;
         this.observers = this.observers || [];
         this.observers.push(function(this: any, oldValue: unknown, newValue: unknown) {
             return this.dispatchEvent(eventName, {
                 component: this,
-                property: this.name,
+                property: prop.name,
                 newValue,
                 oldValue,
             });
