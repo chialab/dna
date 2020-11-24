@@ -140,28 +140,28 @@ export const isNode = (target: unknown): target is Node => !!target && target in
  * @param node The node to check.
  * @return The node is a Document instance.
  */
-export const isDocument = (node: unknown): node is Document => isNode(node) && node.nodeType === DOCUMENT_NODE;
+export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
 
 /**
  * Check if a node is a Text instance.
  * @param node The node to check.
  * @return The node is a Text instance.
  */
-export const isText = (node: unknown): node is Text => isNode(node) && node.nodeType === TEXT_NODE;
+export const isText = (node: any): node is Text => node && node.nodeType === TEXT_NODE;
 
 /**
  * Check if a node is an Element instance.
  * @param node The node to check.
  * @return The node is an Element instance.
  */
-export const isElement = (node: unknown): node is HTMLElement => isNode(node) && node.nodeType === ELEMENT_NODE;
+export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
 
 /**
  * Check if a node is a Comment instance.
  * @param node The node to check.
  * @return The node is a Text instance.
  */
-export const isComment = (node: unknown): node is Comment => isNode(node) && node.nodeType === COMMENT_NODE;
+export const isComment = (node: any): node is Comment => node && node.nodeType === COMMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
