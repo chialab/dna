@@ -84,6 +84,28 @@ describe('Component', function() {
             expect(element).to.not.have.property('myCustomProp4');
         });
 
+        it('should setup properties for extended elements', () => {
+            @DNA.customElement(getComponentName(), { extends: 'article' })
+            class TestElement extends DNA.extend(DNA.Component) {
+                static get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                @DNA.property() myCustomProp2 = '';
+                @DNA.property() myCustomProp3 = '';
+            }
+
+            const element = new TestElement();
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.not.have.property('myCustomProp4');
+        });
+
         it('should initialize properties', () => {
             @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
