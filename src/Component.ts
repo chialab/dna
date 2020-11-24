@@ -173,7 +173,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
+    propertyChangedCallback(propertyName: string, oldValue: unknown, newValue: unknown) {
         let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
         let attrName = property.attribute as string;
         if (attrName && property.toAttribute) {

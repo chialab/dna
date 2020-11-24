@@ -40,7 +40,7 @@
     "test:browser": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --browser",
     "test:saucelabs": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --concurrency 2 --saucelabs",
     "test:node": "yarn symlink && rna unit 'test/*.spec.js' --no-jsx --coverage --node",
-    "test:compat": "yarn symlink && rna unit 'compat/test/*.spec.js' --jsx.pragma 'h' --jsx.module '@dnajs/idom' --browser",
+    "test:compat": "yarn symlink && rna unit 'compat/test/*.spec.js' --jsx.pragma 'h' --browser",
     "test:react": "yarn symlink && rna unit 'react/test/*.spec.js' --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault --browser",
     "test:hooks": "yarn symlink && rna unit 'hooks/test/*.spec.js' --no-jsx --browser",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",

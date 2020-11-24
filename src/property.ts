@@ -335,6 +335,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
  */
 export const defineProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => {
     let ctr = constructor;
+    let handled: { [key: string]: boolean }  = {};
     while (ctr && ctr !== HTMLElement) {
         let propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
@@ -343,11 +344,15 @@ export const defineProperties = (constructor: ComponentConstructorInterface<HTML
                 [key: string]: ClassFieldDescriptor | Function | Function[];
             };
             for (let propertyKey in descriptorProperties) {
+                if (propertyKey in handled) {
+                    continue;
+                }
                 let descriptor = descriptorProperties[propertyKey];
                 if (typeof descriptor === 'function' || isArray(descriptor)) {
                     descriptor = { type: descriptor };
                 }
-                defineProperty(ctr, propertyKey, descriptor);
+                defineProperty(constructor, propertyKey, descriptor);
+                handled[propertyKey] = true;
             }
         }
         ctr = Object.getPrototypeOf(ctr);
