@@ -271,7 +271,7 @@ export const mixin = (constructor: typeof Component) =>
             warnCode('PREFER_UNOBSERVE');
             return this.unobserve(propertyName, callback);
         }
-    };
+    } as typeof Component;
 
 /**
  * The DNA 2 base component class.

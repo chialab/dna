@@ -145,8 +145,8 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+    dispatchAsyncEvent(event: Event): Promise<unknown[]>; /* eslint-disable-line no-dupe-class-members */
+    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<unknown[]>;
 
     /**
      * Delegate an Event listener.

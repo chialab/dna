@@ -133,7 +133,7 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
  * @param target The target to check.
  * @return The target is a Node instance.
  */
-export const isNode = (target: unknown): target is Node => target && target instanceof Node;
+export const isNode = (target: unknown): target is Node => !!target && target instanceof Node;
 
 /**
  * Check if a node is a Document instance.

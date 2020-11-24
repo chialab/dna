@@ -289,11 +289,9 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
         let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
             if (typeof targetOrClassElement === 'function') {
-                let initializer: Function|undefined;
                 // spec 1
                 descriptor.defaultValue = originalDescriptor.value;
-                initializer = originalDescriptor.initializer;
-                defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, initializer);
+                defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, originalDescriptor.initializer);
                 return targetOrClassElement;
             }
 
