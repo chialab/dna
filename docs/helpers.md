@@ -2,63 +2,6 @@
 
 The DNA module exports a set of useful methods too. Sometimes those methods are based on Custom Elements specification, others they are internally used helpers with a completly custom logic.
 
-## get
-
-Like the [`CustomElementRegistry.get`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/get) method, it returns the component constructor defined for a given tag:
-
-```ts
-import { Component, customElements, get } from '@chialab/dna';
-
-class CardElement extends Component {}
-
-customElements.define('x-card', Card);
-
-get('x-card') // -> Card
-```
-
-## whenDefined
-
-Like the [`CustomElementRegistry.whenDefined`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/whenDefined) method, it returns a Promise that resolves once a component has been defined with the name:
-
-```ts
-import { customElements } from '@chialab/dna';
-
-customElements.whenDefined('x-card')
-    .then(() => {
-        // -> The x-card has been defined
-    });
-
-import('./x-card.js');
-```
-
-## upgrade
-
-Like the [`CustomElementRegistry.upgrade`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/upgrade) method, it is used to upgrade nodes that had been created before element definition:
-
-```ts
-import { Component, customElements, DOM } from '@chialab/dna';
-
-class Card extends Component {}
-
-const element = DOM.createElement('x-card');
-console.log(Object.getPrototypeOf(element)); // -> HTMLElement
-
-customElements.define('x-card', Card);
-customElements.upgrade(element);
-
-console.log(Object.getPrototypeOf(element)); // -> Card
-```
-
-All children and descendants of the passed element will be upgraded too, so `customElements.upgrade` can be used for tag re-hydration after a server side rendering:
-
-```ts
-import { customElements } from '@chialab/dna';
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    customElements.upgrade(document.body);
-});
-```
-
 ## extend
 
 This function extends a native `HTMLElement` constructor with all DNA prototype capabilities. This is useful to extend native constructors instead of using the default `Component` class:

@@ -79,22 +79,57 @@ The DNA environment is pretty common (if you are familiar with other libraries l
 DNA components are classes which extends the base HTMLElement with helpers for [templating](./templates), [styling](./styles), [events delegation](./events) and [life cycle](./life-cycle).
 
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
-In this example we are going to use the `customElements.define` method to register the component in the DNA registry:
+In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
+
+```ts
+import { Component, customElement, html } from '@chialab/dna';
+
+@customElement('hello-world')
+class HelloWorld extends Component {
+    static get observedAttributes() {
+        return ['name'];
+    }
+
+    @property() name = '';
+
+    // define a template
+    render() {
+        return html`<h1>Hello ${this.name || 'world'}!</h1>`;
+    }
+}
+```
+
+<aside class="note">
+
+You can use the class decorator if you are using TypeScript or this Babel plugin, otherwise you have to fallback directly using `customElements.define`:
 
 ```ts
 import { Component, customElements, html } from '@chialab/dna';
 
-// create a component class
 class HelloWorld extends Component {
+    static get observedAttributes() {
+        return ['name'];
+    }
+
+    static get properties() {
+        return {
+            name: {
+                type: String,
+                defaultValue: '',
+            },
+        };
+    }
+
     // define a template
     render() {
-        return html`<h1>Hello world!</h1>`;
+        return html`<h1>Hello ${this.name || 'world'}!</h1>`;
     }
 }
 
-// link the HTML tag with the class
 customElements.define('hello-world', HelloWorld);
 ```
+
+</aside>
 
 ### Extending native elements
 
@@ -102,8 +137,11 @@ In the Custom Element specification it is possible to define an element using th
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. An example:
 
 ```ts
-import { Component, customElements, html, property } from '@chialab/dna';
+import { Component, customElement, html, property } from '@chialab/dna';
 
+@customElement('blog-post', {
+    extends: 'article'
+})
 class BlogPost extends Component {
     static get observedAttributes() {
         return ['title'];
@@ -115,11 +153,6 @@ class BlogPost extends Component {
         return html`<h1>${this.title}</h1>`;
     }
 }
-
-// extend the article tag
-customElements.define('blog-post', BlogPost, {
-    extends: 'article'
-});
 ```
 
 In the example above, a new instance of `BlogPost` inherits all class methods and properties, but its `tagName` will be `ARTICLE`.
@@ -135,13 +168,12 @@ It also preserve accessibility and usability features: extending the `BUTTON` el
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
 ```ts
-import { Component, customElements, render } from '@chialab/dna';
+import { Component, customElement, render } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     ...
 }
-
-customElements.define('x-card', Card);
 
 render(new Card(), document.body);
 ```
@@ -157,13 +189,12 @@ Make sure to render the component in an empty root: at the end of the cycle, DNA
 This function accepts the render root node as first argument and a node or a template as second one. Another way to instantiate the `Card` component is:
 
 ```ts
-import { Component, customElements, html, render } from '@chialab/dna';
+import { Component, customElement, html, render } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     ...
 }
-
-customElements.define('x-card', Card);
 
 render(html`<x-card />`, document.body);
 ```
@@ -171,13 +202,14 @@ render(html`<x-card />`, document.body);
 It also work for extended native tags:
 
 ```ts
-import { Component, customElements, html, render } from '@chialab/dna';
+import { Component, customElement, html, render } from '@chialab/dna';
 
+@customElement('x-article', {
+    extends: 'article',
+})
 class Article extends Component {
     ...
 }
-
-customElements.define('x-article', Article, { extends: 'article' });
 
 render(html`<article is="x-article" />`, document.body);
 ```

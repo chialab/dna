@@ -12,13 +12,14 @@ If you are using the `html` helper to generate template, you can install the [li
 
 **src/dna-map.ts**
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 /**
  * A map component based on mapbox-gl.
  * @fires zoom - The map zoom level changed.
  * @fires move - The map center point changed.
  */
+@customElement('x-map')
 export class MapboxMap extends Component {
     static get observedAttributes() {
         return ['latitude', 'longitude'];
@@ -27,15 +28,13 @@ export class MapboxMap extends Component {
     /**
      * The latitude value for the map center.
      */
-    latitude: number;
+    @property() latitude: number;
 
     /**
      * The longitude value for the map center.
      */
-    longitude: number;
+    @property() longitude: number;
 }
-
-customElements.define('x-map', MapboxMap);
 ```
 
 Run:
@@ -91,13 +90,12 @@ render(<Card firstName="Alan" age={24} />, document.body);
 But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` in order to bind element's tag name with its prototype:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     ...
 }
-
-customElements.define('x-card', Card);
 
 declare namespace JSX {
     interface IntrinsicElements {

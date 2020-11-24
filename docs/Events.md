@@ -7,8 +7,11 @@ Since Web Components extend the native `HTMLElement`, events handling is complet
 You can declare event listeners on a component using the `listeners` accessor:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-button, {
+    extends: 'button',
+})
 class Button extends Component {
     static get listeners() {
         return {
@@ -25,15 +28,14 @@ class Button extends Component {
         console.log(target.value);
     }
 }
-
-customElements.define('x-button', Button, { extends: 'button' });
 ```
 
 Event declaration accepts a function (in the example above, a prototype method has been referenced) or an object for listener configuration:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-tracker)
 class Tracker extends Component {
     static get listeners(){
         return {
@@ -46,8 +48,6 @@ class Tracker extends Component {
         };
     };
 }
-
-customElements.define('x-tracker', Tracker);
 ```
 
 <aside class="note">
@@ -61,8 +61,11 @@ Please refer to the [addEventListener](https://developer.mozilla.org/it/docs/Web
 Listeners can be added via a template attribute named as the event with the `on` prefix:
 
 ```ts
-import { Component, customElements, html } from '@chialab/dna';
+import { Component, customElement, html } from '@chialab/dna';
 
+@customElement('x-header', {
+    extends: 'header',
+})
 class Header extends Component {
     render() {
         return html`
@@ -73,8 +76,6 @@ class Header extends Component {
         `;
     }
 }
-
-customElements.define('x-header', Header, { extends: 'header' });
 ```
 
 ## Delegation
@@ -90,8 +91,11 @@ Do not confuse the `event.target` property with the second argument of the liste
 Using the `listeners` getter, you can specify the delegated child selector after the event name in the declaration key:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-dialog', {
+    extends: 'dialog',
+})
 class Dialog extends Component {
     static get listeners() {
         return {
@@ -105,17 +109,17 @@ class Dialog extends Component {
         };
     };
 }
-
-customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 Otherwise, you can use `addEventListener`, `removeEventListener`, `delegateEventListener` and `undelegateEventListener` methods:
 
 ```ts
-import { Component, customElements, DOM } from '@chialab/idom';
+import { Component, customElement, DOM } from '@chialab/idom';
 
+@customElement('x-dialog', {
+    extends: 'dialog',
+})
 class Dialog extends Component { ... }
-customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 
 const element = new Dialog();
 const closeDialog = (event, target) => { ... };
@@ -131,10 +135,12 @@ element.undelegateEventListener('click', 'nav button', closeDialog);
 DNA components overrides the `dispatchEvent` method in order to support an alternative signature for easier [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events) creation:
 
 ```ts
-import { Component, customElements, DOM } from '@chialab/dna';
+import { Component, customElement, DOM } from '@chialab/dna';
 
+@customElement('x-button', {
+    extends: 'button',
+})
 class Button extends Component { ... }
-customElements.define('x-button', Button, { extends: 'button' });
 
 const button = new Button();
 DOM.appendChild(document.body, element);
@@ -165,8 +171,9 @@ button.dispatchEvent('sendEmail',
 With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed:
 
 ```ts
-import { Component, customElements, DOM } from '@chialab/dna';
+import { Component, customElement, DOM } from '@chialab/dna';
 
+@customElement('x-paginator')
 class Paginator extends Component {
     static get listeners() {
         return {
@@ -176,8 +183,6 @@ class Paginator extends Component {
         };
     };
 }
-
-customElements.define('x-paginator', Paginator);
 
 const paginator = new Paginator();
 paginator.addEventListener('fetch', (event) => {
