@@ -26,12 +26,11 @@ export const mixin = (constructor: typeof Component) =>
          * Compatibility alias for `properties` getter.
          */
         static get properties() {
-            const properties: { [key: string]: ClassFieldDescriptor | Function | Function[] } = {};
-
+            let properties: { [key: string]: ClassFieldDescriptor | Function | Function[] } = {};
             let initialProto = this.prototype;
             let proto = initialProto;
             let shouldWarn = false;
-            // collect al prototyped event listeners
+            // collect al prototyped properties
             while (proto.constructor !== CompatComponent) {
                 let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
                 let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
@@ -39,7 +38,7 @@ export const mixin = (constructor: typeof Component) =>
                     let descriptorProperties = (propertiesGetter.call(initialProto) || {}) as {
                         [key: string]: ClassFieldDescriptor | Function | Function[];
                     };
-                    // register listeners
+                    // register properties
                     for (let propertyName in descriptorProperties) {
                         shouldWarn = true;
                         if (!(propertyName in properties)) {

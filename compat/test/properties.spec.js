@@ -116,13 +116,13 @@ describe('[Compat] PropertiesComponent', () => {
             let elem = render(wrapper, TestComponent1, {
                 name: 'Alan',
                 lastName: 'Turing',
-                var: 1234,
+                var: '1234',
                 married: true,
             });
             assert.equal(elem.name, 'Alan');
             assert.equal(elem.lastName, 'Turing');
             assert.equal(elem.married, true);
-            assert.equal(elem.var, 1234);
+            assert.equal(elem.var, '1234');
             assert.equal(elem.type, 2);
         });
 
@@ -130,7 +130,7 @@ describe('[Compat] PropertiesComponent', () => {
             let elem = render(wrapper, TestComponent1, {
                 name: 'Alan',
                 lastName: 'Turing',
-                var: 1234,
+                var: '1234',
                 married: true,
             });
             let changedSingle = 0;
