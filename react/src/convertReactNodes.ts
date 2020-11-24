@@ -21,7 +21,7 @@ export type ReferencesMap = Array<[React.RefObject<unknown>, any]>;
  * @param children A list of React nodes to convert.
  * @return A list of converted nodes.
  */
-export function convertReactNodes(children: React.ReactNode | React.ReactNode[], context: React.Context<unknown>): { children: React.ReactNode[], references: ReferencesMap} {
+export function convertReactNodes(children: React.ReactNode | React.ReactNode[], context: React.Context<unknown>): { children: React.ReactNode[]; references: ReferencesMap} {
     let nodes = children as React.ReactNode[];
     if (!Array.isArray(nodes)) {
         nodes = [nodes];

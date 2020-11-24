@@ -8,7 +8,7 @@ import { warnCode } from './deprecations';
 export class CompatibilityPropertyProxy {
     name?: string;
     type?: Function[];
-    defaultValue?: any;
+    defaultValue?: unknown;
     observers?: ClassFieldObserver[];
 
     constructor(type?: Function[]) {
@@ -21,7 +21,7 @@ export class CompatibilityPropertyProxy {
      * Set the default value.
      * @param defaultValue The value to set.
      */
-    default(defaultValue: any) {
+    default(defaultValue: unknown) {
         this.defaultValue = defaultValue;
         return this;
     }
@@ -86,7 +86,7 @@ export class CompatibilityPropertyProxy {
         this.observers = this.observers || [];
         if (typeof observer === 'string') {
             let methodKey = observer;
-            observer = function(this: any, oldValue: any, newValue: any) {
+            observer = function(this: any, oldValue: unknown, newValue: unknown) {
                 return this[methodKey](oldValue, newValue);
             };
         }
@@ -101,12 +101,11 @@ export class CompatibilityPropertyProxy {
      * @return The property instance for chaining.
      */
     dispatch(eventName: string) {
-        let prop = this;
         this.observers = this.observers || [];
-        this.observers.push(function(this: any, oldValue: any, newValue: any) {
+        this.observers.push(function(this: any, oldValue: unknown, newValue: unknown) {
             return this.dispatchEvent(eventName, {
                 component: this,
-                property: prop.name,
+                property: this.name,
                 newValue,
                 oldValue,
             });
@@ -116,10 +115,10 @@ export class CompatibilityPropertyProxy {
 }
 
 type PropertyConstructor = ((type: Function | Function[]) => CompatibilityPropertyProxy) & {
-    readonly STRING: CompatibilityPropertyProxy,
-    readonly NUMBER: CompatibilityPropertyProxy,
-    readonly BOOLEAN: CompatibilityPropertyProxy,
-    readonly ANY: CompatibilityPropertyProxy,
+    readonly STRING: CompatibilityPropertyProxy;
+    readonly NUMBER: CompatibilityPropertyProxy;
+    readonly BOOLEAN: CompatibilityPropertyProxy;
+    readonly ANY: CompatibilityPropertyProxy;
 };
 
 /**

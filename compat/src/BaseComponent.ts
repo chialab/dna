@@ -26,7 +26,7 @@ export const mixin = (constructor: typeof Component) =>
          * Compatibility alias for `properties` getter.
          */
         static get properties() {
-            const properties: { [key: string]: ClassFieldDescriptor | Function | Function[]; } = {};
+            const properties: { [key: string]: ClassFieldDescriptor | Function | Function[] } = {};
 
             let initialProto = this.prototype;
             let proto = initialProto;
@@ -165,7 +165,7 @@ export const mixin = (constructor: typeof Component) =>
          */
         [STYLE_SYMBOL]: HTMLStyleElement;
 
-        constructor(node?: HTMLElement, properties?: { [key: string]: any; }) {
+        constructor(node?: HTMLElement, properties?: { [key: string]: unknown }) {
             super(node, properties);
 
             if (this.css) {
