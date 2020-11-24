@@ -351,9 +351,9 @@ export const internalRender = (
                     continue;
                 } else if (propertyKey === 'class') {
                     let classList = (templateNode as HTMLElement).classList;
-                    let newClasses: string[] = convertClasses(value as HyperClasses);
+                    let newClasses = convertClasses(value as HyperClasses);
                     if (oldValue) {
-                        let oldClasses: string[] = convertClasses(oldValue as HyperClasses);
+                        let oldClasses = convertClasses(oldValue as HyperClasses);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
                             let className = oldClasses[i];
                             if (newClasses.indexOf(className) === -1) {
@@ -399,7 +399,7 @@ export const internalRender = (
                         (templateNode as Element).removeAttribute(propertyKey);
                     }
                 } else if (!isReference) {
-                    let attrValue = value === true ? '' : toString.call(value);
+                    let attrValue = value === true ? '' : (value as string).toString();
                     if ((templateNode as Element).getAttribute(propertyKey) !== attrValue) {
                         (templateNode as Element).setAttribute(propertyKey, attrValue);
                     }

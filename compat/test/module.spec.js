@@ -8,6 +8,7 @@ describe('[Compat] module', function() {
         window: 'object',
         customElements: 'object',
         CustomElementRegistry: 'function',
+        customElement: 'function',
         DOM: 'object',
         connect: 'function',
         disconnect: 'function',

@@ -11,27 +11,26 @@ describe('property', function() {
 
     describe('@property', () => {
         it('should define a property', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property() testProp = undefined;
             }
-
-            DNA.customElements.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', undefined);
         });
 
         it('should define a property with a defaultValue', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property() testProp = 42;
             }
-
-            DNA.customElements.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
         });
 
         it('should define a property with single type checker', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     type: String,
@@ -39,12 +38,11 @@ describe('property', function() {
                 testProp = undefined;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
         });
 
         it('should define a property with multiple type checkers', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     type: [String, Boolean],
@@ -52,14 +50,13 @@ describe('property', function() {
                 testProp = undefined;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
             expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
         });
 
         it('should define a property with custom validation', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     type: [String, Boolean],
@@ -74,8 +71,6 @@ describe('property', function() {
                 testProp = undefined;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
             expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
             expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
@@ -83,6 +78,7 @@ describe('property', function() {
         });
 
         it('should define a property with custom getter', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     getter(value) {
@@ -92,13 +88,12 @@ describe('property', function() {
                 testProp = 42;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement()).to.have.property('testProp', 84);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
         });
 
         it('should define a property with custom setter', () => {
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     setter(value) {
@@ -108,14 +103,14 @@ describe('property', function() {
                 testProp = 42;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
         });
 
         it('should define a property with a single observer', () => {
             const listener = spyFunction((...args) => args);
+
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     observe: listener,
@@ -123,18 +118,18 @@ describe('property', function() {
                 testProp = 42;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([undefined, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84]);
         });
 
         it('should define a property with multiple observers', () => {
             const listener1 = spyFunction((...args) => args);
             const listener2 = spyFunction((...args) => args);
+
+            @DNA.customElement(getComponentName())
             class MyElement extends DNA.Component {
                 @DNA.property({
                     observers: [listener1, listener2],
@@ -142,16 +137,14 @@ describe('property', function() {
                 testProp = 42;
             }
 
-            DNA.customElements.define(getComponentName(), MyElement);
-
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener1.invoked).to.be.false;
             expect(listener2.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([undefined, 84]);
+            expect(listener1.response).to.be.deep.equal([42, 84]);
             expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([undefined, 84]);
+            expect(listener2.response).to.be.deep.equal([42, 84]);
         });
     });
 
@@ -306,7 +299,7 @@ describe('property', function() {
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([undefined, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84]);
         });
 
         it('should define a property with multiple observers', () => {
@@ -330,9 +323,9 @@ describe('property', function() {
             expect(listener2.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([undefined, 84]);
+            expect(listener1.response).to.be.deep.equal([42, 84]);
             expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([undefined, 84]);
+            expect(listener2.response).to.be.deep.equal([42, 84]);
         });
 
         it('should inherit and reduce the prototype chain', () => {
@@ -390,16 +383,16 @@ describe('property', function() {
                 @DNA.property() override = 42;
             }
 
+            @DNA.customElement(getComponentName())
             class MyElement extends BaseElement {
                 @DNA.property() override = 84;
                 @DNA.property() newProp = true;
             }
-            DNA.customElements.define(getComponentName(), MyElement);
 
+            @DNA.customElement(getComponentName())
             class MyElement2 extends BaseElement {
                 @DNA.property() newProp = false;
             }
-            DNA.customElements.define(getComponentName(), MyElement2);
 
             const element = new MyElement();
             expect(element).to.have.property('inherit');

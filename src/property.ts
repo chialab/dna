@@ -1,6 +1,6 @@
 import { createSymbolKey } from './symbols';
 import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
-import { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
+import { ComponentInterface, ComponentConstructorInterface, isConstructed } from './Interfaces';
 import { ClassElement } from './ClassElement';
 
 /**
@@ -233,6 +233,11 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
 
     finalDescriptor.get = get;
     finalDescriptor.set = function(this: ComponentInterface<HTMLElement>, newValue: unknown) {
+        if (!isConstructed(this)) {
+            (this as any)[symbol] = newValue;
+            return;
+        }
+
         let oldValue = (this as any)[symbol];
         newValue = set.call(this, newValue);
 
@@ -283,23 +288,20 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
     ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: ClassFieldDescriptor) => {
         let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
-            // decorators spec 1 and typescript
-            let initializer: Function|undefined;
-            if (originalDescriptor) {
+            if (typeof targetOrClassElement === 'function') {
+                let initializer: Function|undefined;
+                // spec 1
                 descriptor.defaultValue = originalDescriptor.value;
                 initializer = originalDescriptor.initializer;
-            }
-            if (typeof targetOrClassElement === 'function') {
-                // spec 1
                 defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, initializer);
-            } else if (!getProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey)) {
-                // typescript
-                return defineProperty(targetOrClassElement.constructor as ComponentConstructorInterface<HTMLElement>, propertyKey, descriptor, symbol, initializer);
+                return targetOrClassElement;
             }
-            return targetOrClassElement;
+
+            // typescript
+            return defineProperty(targetOrClassElement.constructor, propertyKey, descriptor, symbol);
         }
 
-        // decorators spec 2
+        // spec 2
         let element = targetOrClassElement as unknown as ClassElement;
         let key = String(element.key);
 

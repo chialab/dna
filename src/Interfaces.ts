@@ -10,10 +10,21 @@ import { Template } from './Template';
 export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
+ * A symbol which identify constructed components (properties can be assigned).
+ */
+export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
  * Check if a node is a component.
  * @param node The node to check.
  */
 export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => node[COMPONENT_SYMBOL];
+
+/**
+ * Check if a node is a constructed component.
+ * @param node The node to check.
+ */
+export const isConstructed = (node: any): node is ComponentInterface<HTMLElement> => node[CONSTRUCTED_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
@@ -26,6 +37,16 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * The defined component name.
      */
     readonly is: string;
+
+    /**
+     * Identify components.
+     */
+    [COMPONENT_SYMBOL]: boolean;
+
+    /**
+     * Identify constructed components.
+     */
+    [CONSTRUCTED_SYMBOL]: boolean;
 
     /**
      * A list of slot nodes.
@@ -41,6 +62,11 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * The component constructor.
      */
     constructor: ComponentConstructorInterface<T>;
+
+    /**
+     * Initialize component properties.
+     */
+    initialize(properties?: { [key: string]: unknown }): void;
 
     /**
      * Invoked each time the Custom Element is appended into a document-connected element.

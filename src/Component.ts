@@ -1,4 +1,4 @@
-import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
+import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
@@ -99,27 +99,26 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         for (let propertyKey in propertiesDescriptor) {
             delete (element as any)[propertyKey];
             let descriptor = propertiesDescriptor[propertyKey];
-            if (!props || !(propertyKey in props)) {
-                let symbol = descriptor.symbol as symbol;
-                if (typeof (element as any)[symbol] !== 'undefined') {
-                    continue;
-                }
-                if (typeof descriptor.initializer === 'function') {
-                    (element as any)[symbol] = descriptor.initializer.call(element);
-                } else if ('value' in descriptor) {
-                    (element as any)[symbol] = descriptor.value;
-                } else if ('defaultValue' in descriptor) {
-                    (element as any)[symbol] = descriptor.defaultValue;
-                }
-            }
-        }
-        if (props) {
-            for (let propertyKey in props) {
-                (element as any)[propertyKey] = props[propertyKey];
+            if (typeof descriptor.initializer === 'function') {
+                (element as any)[propertyKey] = descriptor.initializer.call(element);
+            } else if ('value' in descriptor) {
+                (element as any)[propertyKey] = descriptor.value;
+            } else if ('defaultValue' in descriptor) {
+                (element as any)[propertyKey] = descriptor.defaultValue;
             }
         }
 
+        element.initialize(props);
         return element;
+    }
+
+    initialize(properties?: { [key: string]: unknown }) {
+        (this as any)[CONSTRUCTED_SYMBOL] = true;
+        if (properties) {
+            for (let propertyKey in properties) {
+                (this as any)[propertyKey] = properties[propertyKey];
+            }
+        }
     }
 
     /**
@@ -407,10 +406,10 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
         Object.setPrototypeOf(element, constructor.prototype);
         emulateLifeCycle(element);
         return element;
-    } as any as T;
+    } as unknown as T;
     Object.setPrototypeOf(shim, base);
-    (shim as any).apply = Function.apply;
-    (shim as any).call = Function.call;
+    (shim as Function).apply = Function.apply;
+    (shim as Function).call = Function.call;
     shim.prototype = base.prototype;
     return shim;
 };

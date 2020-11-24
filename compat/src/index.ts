@@ -23,6 +23,7 @@ export {
     window,
     customElements,
     CustomElementRegistry,
+    customElement,
     DOM,
     connect,
     disconnect,
