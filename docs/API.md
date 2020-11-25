@@ -13,7 +13,7 @@
 
 **Constants**
 
-<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#dom">DOM</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#definelisteners">defineListeners</a>, <a href="#property">property</a>, <a href="#getproperty">getProperty</a>, <a href="#getproperties">getProperties</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
+<a href="#namespace">namespace</a>, <a href="#customelements">customElements</a>, <a href="#customelement">customElement</a>, <a href="#component_symbol">COMPONENT_SYMBOL</a>, <a href="#constructed_symbol">CONSTRUCTED_SYMBOL</a>, <a href="#connect">connect</a>, <a href="#disconnect">disconnect</a>, <a href="#dom">DOM</a>, <a href="#render">render</a>, <a href="#fragment">Fragment</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#css">css</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#definelisteners">defineListeners</a>, <a href="#property">property</a>, <a href="#getproperty">getProperty</a>, <a href="#getproperties">getProperties</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#extend">extend</a>, <a href="#component">Component</a>, <a href="#until">until</a>
 
 
 **Enums**
@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#context">Context</a>, <a href="#templateitems">TemplateItems</a>, <a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#templateitems">TemplateItems</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#context">Context</a>, <a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#classdescriptor">ClassDescriptor</a>, <a href="#classelement">ClassElement</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -144,7 +144,9 @@ Define a new Custom Element.
 
 <details>
 <summary>
-<code>(name: string, constructor: HTMLElement, options?: ElementDefinitionOptions): void</code>
+<code>(name: string, constructor: HTMLElement & {
+    shim?: boolean;
+}, options?: ElementDefinitionOptions): void</code>
 </summary><br />
 
 
@@ -166,7 +168,9 @@ Define a new Custom Element.
             <td>The tag name for the element.</td></tr>
 <tr>
             <td>constructor</td>
-            <td><code>HTMLElement</code></td>
+            <td><code>HTMLElement & {
+    shim?: boolean;
+}</code></td>
             <td align="center"></td>
             <td>The Custom Element constructor.</td></tr>
 <tr>
@@ -324,6 +328,69 @@ The global DNA registry instance.
 <strong>Type:</strong>
 
 <pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
+
+
+
+
+<hr />
+
+<strong id="customelement"><code>constant</code>  customElement</strong>
+
+
+
+<p>
+
+Decorate and define component classes.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>(name: string, options?: ElementDefinitionOptions|undefined): (classOrDescriptor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;|<a href="#classdescriptor">ClassDescriptor</a>): any</pre>
+
+
+
+
+<hr />
+
+<strong id="component_symbol"><code>constant</code>  COMPONENT_SYMBOL</strong>
+
+
+
+<p>
+
+A symbol which identify components.
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>unique Symbol</pre>
+
+
+
+
+<hr />
+
+<strong id="constructed_symbol"><code>constant</code>  CONSTRUCTED_SYMBOL</strong>
+
+
+
+<p>
+
+A symbol which identify constructed components (properties can be assigned).
+
+</p>
+
+
+
+<strong>Type:</strong>
+
+<pre>unique Symbol</pre>
 
 
 
@@ -642,7 +709,7 @@ A decorator for class fields definition.
 
 <strong>Type:</strong>
 
-<pre>(descriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>): any</pre>
+<pre>(descriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>): (targetOrClassElement: <a href="#componentinterface">ComponentInterface</a>&lt;HTMLElement&gt;|<a href="#classelement">ClassElement</a>, propertyKey: string, originalDescriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>|undefined): any</pre>
 
 
 
@@ -663,7 +730,7 @@ Retrieve property descriptor.
 
 <strong>Type:</strong>
 
-<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a>|null</pre>
+<pre>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;, propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a></pre>
 
 
 
@@ -839,7 +906,7 @@ It renders the template when then provided Thenable is in pending status.
 
 <strong>Type:</strong>
 
-<pre>(thenable: any, template: <a href="#template">Template</a>): any</pre>
+<pre>(thenable: Promise&lt;any&gt;, template: <a href="#template">Template</a>): Promise&lt;boolean&gt;</pre>
 
 
 
@@ -874,70 +941,6 @@ A list of namespaceURI bound with their tagName.
 
 
 
-
-
-
-
-<hr />
-
-<strong id="template"><code>type</code>  Template</strong>
-
-<p>
-
-A generic template. Can be a single atomic item or a list of items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
-
-
-
-
-<hr />
-
-<strong id="templateitem"><code>type</code>  TemplateItem</strong>
-
-<p>
-
-The atomic template item.
-It can be a node, a Hyper or Interpolate function or a primitive value.
-
-</p>
-
-
-
-<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|Promise&lt;any&gt;|<a href="#observable">Observable</a>&lt;any&gt;|string|number|boolean|undefined|null</pre>
-
-
-
-
-<hr />
-
-<strong id="hypernode"><code>type</code>  HyperNode</strong>
-
-<p>
-
-A virtual description of a Node, generate by the `h` helper and used in the render function.
-
-</p>
-
-
-
-<pre>{
-    node?: Node;
-    Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
-    Function?: <a href="#templatefunction">TemplateFunction</a>;
-    tag?: string;
-    is?: string;
-    key?: any;
-    isFragment?: boolean;
-    isSlot?: boolean;
-    namespaceURI?: <a href="#namespaceuri">NamespaceURI</a>;
-    properties?: any;
-    children: <a href="#templateitems">TemplateItems</a>;
-}</pre>
 
 
 
@@ -1125,8 +1128,14 @@ A descriptor for an event delegation.
 
 <pre>T & {
     is: string;
+    [COMPONENT_SYMBOL]: boolean;
+    [CONSTRUCTED_SYMBOL]: boolean;
     slotChildNodes: <a href="#iterablenodelist">IterableNodeList</a>;
     adoptedStyleSheets?: CSSStyleSheet[];
+    constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;T&gt;;
+    initialize(properties?: {
+        [key: string]: any;
+    }): void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     attributeChangedCallback(attributeName: string, oldValue: null|string, newValue: null|string): void;
@@ -1164,6 +1173,70 @@ A descriptor for an event delegation.
 
 <hr />
 
+<strong id="template"><code>type</code>  Template</strong>
+
+<p>
+
+A generic template. Can be a single atomic item or a list of items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>|<a href="#templateitems">TemplateItems</a></pre>
+
+
+
+
+<hr />
+
+<strong id="templateitem"><code>type</code>  TemplateItem</strong>
+
+<p>
+
+The atomic template item.
+It can be a node, a Hyper or Interpolate function or a primitive value.
+
+</p>
+
+
+
+<pre>Element|Text|Node|<a href="#hypernode">HyperNode</a>|Promise&lt;any&gt;|<a href="#observable">Observable</a>&lt;any&gt;|string|number|boolean|undefined|null</pre>
+
+
+
+
+<hr />
+
+<strong id="hypernode"><code>type</code>  HyperNode</strong>
+
+<p>
+
+A virtual description of a Node, generate by the `h` helper and used in the render function.
+
+</p>
+
+
+
+<pre>{
+    node?: Node;
+    Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>&lt;HTMLElement&gt;;
+    Function?: <a href="#templatefunction">TemplateFunction</a>;
+    tag?: string;
+    is?: string;
+    key?: any;
+    isFragment?: boolean;
+    isSlot?: boolean;
+    namespaceURI?: <a href="#namespaceuri">NamespaceURI</a>;
+    properties: <a href="#hyperproperties">HyperProperties</a>;
+    children: <a href="#templateitems">TemplateItems</a>;
+}</pre>
+
+
+
+
+<hr />
+
 <strong id="templatefunction"><code>type</code>  TemplateFunction</strong>
 
 <p>
@@ -1174,10 +1247,68 @@ A function that returns a template.
 
 
 
-<pre>(props: {
-    children: <a href="#template">Template</a>;
+<pre>(props: <a href="#hyperproperties">HyperProperties</a>, state: Map&lt;string, any&gt;, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
+
+
+
+
+<hr />
+
+<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
+
+<p>
+
+The properties of a HyperNode.
+
+</p>
+
+
+
+<pre>{
+    is?: string;
+    slot?: string;
+    key?: any;
+    xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
+    children?: <a href="#templateitems">TemplateItems</a>;
+    class?: <a href="#hyperclasses">HyperClasses</a>;
     [key: string]: any;
-}, state: any, update: (): boolean, live: (): boolean, context: <a href="#context">Context</a>): <a href="#template">Template</a></pre>
+}</pre>
+
+
+
+
+<hr />
+
+<strong id="templateitems"><code>type</code>  TemplateItems</strong>
+
+<p>
+
+A list of template items.
+
+</p>
+
+
+
+<pre><a href="#templateitem">TemplateItem</a>[]</pre>
+
+
+
+
+<hr />
+
+<strong id="hyperclasses"><code>type</code>  HyperClasses</strong>
+
+<p>
+
+Classes dictionary.
+
+</p>
+
+
+
+<pre>string|{
+    [key: string]: boolean;
+}</pre>
 
 
 
@@ -1213,23 +1344,6 @@ The node context interface.
     parent?: <a href="#context">Context</a>;
     root?: <a href="#context">Context</a>;
 }</pre>
-
-
-
-
-<hr />
-
-<strong id="templateitems"><code>type</code>  TemplateItems</strong>
-
-<p>
-
-A list of template items.
-
-</p>
-
-
-
-<pre><a href="#templateitem">TemplateItem</a>[]</pre>
 
 
 
@@ -1275,24 +1389,42 @@ Subscription-like minimal interface.
 
 <hr />
 
-<strong id="hyperproperties"><code>type</code>  HyperProperties</strong>
+<strong id="classdescriptor"><code>type</code>  ClassDescriptor</strong>
 
 <p>
 
-The properties of a HyperNode.
+The class descriptor interface.
 
 </p>
 
 
 
 <pre>{
-    is?: string;
-    slot?: string;
-    key?: any;
-    xlmns?: <a href="#namespaceuri">NamespaceURI</a>;
-    children?: <a href="#templateitems">TemplateItems</a>;
-    [key: string]: any;
+    kind: 'class';
+    elements: <a href="#classelement">ClassElement</a>[];
+    finisher?: &lt;T&gt;(constructor: {
+        constructor(): T;
+    }): undefined|{
+        constructor(): T;
+    };
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="classelement"><code>type</code>  ClassElement</strong>
+
+<p>
+
+Decorator class element descriptor.
+
+</p>
+
+
+
+<pre></pre>
 
 
 

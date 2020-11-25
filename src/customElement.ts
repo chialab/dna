@@ -19,7 +19,9 @@ export type ClassDescriptor = {
  * @return The decorated component class.
  */
 export const customElement = (name: string, options?: ElementDefinitionOptions) =>
-    (classOrDescriptor: ComponentConstructorInterface<HTMLElement>|ClassDescriptor) => {
+    // TypeScript complains about return type because we handle babel output
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (classOrDescriptor: ComponentConstructorInterface<HTMLElement>|ClassDescriptor): any => {
         const upgrade = (constructor: ComponentConstructorInterface<HTMLElement>) => {
             const Component = class extends constructor {
                 /**

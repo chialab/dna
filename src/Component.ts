@@ -3,7 +3,7 @@ import { customElements } from './CustomElementRegistry';
 import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { Context, getContext } from './Context';
+import { getContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
@@ -72,21 +72,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         let context = getContext(element);
         context.is = this.is;
-
-        let doc = this.ownerDocument;
-        if (!this.childNodes.length && doc.readyState === 'loading') {
-            let onLoad = () => {
-                doc.removeEventListener('DOMContentLoaded', onLoad);
-                element.initSlotChildNodes(context);
-                element.forceUpdate();
-            };
-            doc.addEventListener('DOMContentLoaded', onLoad);
-        } else {
-            element.initSlotChildNodes(context);
-        }
+        element.initSlotChildNodes();
 
         let constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
-
         // setup listeners
         let listeners = getListeners(constructor) || [];
         for (let i = 0, len = listeners.length; i < len; i++) {
@@ -112,6 +100,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         return element;
     }
 
+    /**
+     * Initialize component properties.
+     *
+     * @param properties A set of initial properties for the element.
+     */
     initialize(properties?: { [key: string]: unknown }) {
         (this as any)[CONSTRUCTED_SYMBOL] = true;
         if (properties) {
@@ -173,7 +166,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback(propertyName: string, oldValue: unknown, newValue: unknown) {
+    propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
         let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
         let attrName = property.attribute as string;
         if (attrName && property.toAttribute) {
@@ -203,12 +196,18 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param context The compoonent context.
      * @return A list of new slotted children.
      */
-    private initSlotChildNodes(context: Context) {
+    private initSlotChildNodes() {
+        let context = getContext(this);
+        let doc = this.ownerDocument;
+        if (!this.childNodes.length && doc.readyState === 'loading') {
+            return;
+        }
         let slotChildNodes = cloneChildNodes(this.childNodes);
         for (let i = 0, len = slotChildNodes.length; i < len; i++) {
             this.removeChild(slotChildNodes[i]);
         }
         context.slotChildNodes = slotChildNodes;
+        return slotChildNodes;
     }
 
     /**
@@ -308,7 +307,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Force an element to re-render.
      */
     forceUpdate() {
-        if (this.slotChildNodes) {
+        let childNodes = this.slotChildNodes || this.initSlotChildNodes();
+        if (childNodes) {
             internalRender(this, this.render());
         }
     }

@@ -109,9 +109,9 @@
     to-fast-properties "^2.0.0"
 
 "@chialab/eslint-config@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.npmjs.org/@chialab/eslint-config/-/eslint-config-1.1.4.tgz#77242c7118c843897c5cf753f847d4f626ddd09c"
-  integrity sha512-fOkf+LkiZvC+/QJbr6v1g7s+QCTLBss+lEe7tOQ29u/7eFXuqdfWlf/eZwEFrPNEYb7Qryk8PTfyAL1eL2F97w==
+  version "1.1.5"
+  resolved "https://registry.npmjs.org/@chialab/eslint-config/-/eslint-config-1.1.5.tgz#dd1dea4b42fc70f1bfbe3935be8b007dfb9b06cd"
+  integrity sha512-e2kw2YQzrSFBc3IYamA6NgRclf6eYLyvpV2pYo7boIBHQGSOzRvgoQTiTKqnBXdXkHYwkLAhTjj5b+Geu4/Rbg==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^4.8.2"
     "@typescript-eslint/parser" "^4.8.2"

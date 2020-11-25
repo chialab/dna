@@ -307,8 +307,8 @@ export const dispatchEvent = (element: Element, event: Event | string, detail?: 
  * @param composed Is the event composed.
  */
 export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
-    const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
-    const promises: unknown[] = [];
+    let asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
+    let promises: unknown[] = [];
     asyncEvent.respondWith = function(callback) {
         promises.push(callback());
     };

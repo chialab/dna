@@ -65,6 +65,8 @@ export type ComponentInterface<T extends HTMLElement> = T & {
 
     /**
      * Initialize component properties.
+     *
+     * @param properties A set of initial properties for the element.
      */
     initialize(properties?: { [key: string]: unknown }): void;
 
@@ -134,7 +136,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param composed Is the event composed.
      */
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: string, detail?: unknown, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
 
     /**
      * Dispatch an async custom Event.
@@ -146,7 +148,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param composed Is the event composed.
      */
     dispatchAsyncEvent(event: Event): Promise<unknown[]>; /* eslint-disable-line no-dupe-class-members */
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<unknown[]>;
+    dispatchAsyncEvent(event: string, detail?: unknown, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<unknown[]>;
 
     /**
      * Delegate an Event listener.

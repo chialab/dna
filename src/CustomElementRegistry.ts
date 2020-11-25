@@ -1,5 +1,5 @@
 import { window } from './window';
-import { isComponent, isComponentConstructor } from './Interfaces';
+import { isComponent, isComponentConstructor, isConstructed } from './Interfaces';
 import { connect, defineProperty } from './helpers';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -182,7 +182,9 @@ export class CustomElementRegistry {
         }
         // check if already instantiated
         if (isComponent(root)) {
-            root.forceUpdate();
+            if (isConstructed(root)) {
+                root.forceUpdate();
+            }
             return;
         }
 

@@ -38,7 +38,7 @@ export type ClassFieldAttributeConverter = (value: string|null) => unknown;
  * @param value The property value.
  * @return The attributue value.
  */
-export type ClassFieldPropertyConverter = (value: unknown) => string|null|undefined;
+export type ClassFieldPropertyConverter = (value: any) => string|null|undefined;
 
 /**
  * A list of properties for an class field description.
@@ -87,14 +87,14 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (value?: unknown) => unknown;
+    getter?: (value?: any) => any;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (newValue?: unknown) => unknown;
+    setter?: (newValue?: any) => any;
     /**
      * The event to fire on property change.
      */
@@ -285,22 +285,24 @@ export const defineProperty = (constructor: ComponentConstructorInterface<HTMLEl
  * @return The decorator initializer.
  */
 export const property = (descriptor: ClassFieldDescriptor = {}) =>
-    ((targetOrClassElement: ComponentInterface<HTMLElement>, propertyKey: string, originalDescriptor: ClassFieldDescriptor) => {
+    // TypeScript complains about return type because we handle babel output
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ((targetOrClassElement: ComponentInterface<HTMLElement>|ClassElement, propertyKey: string, originalDescriptor?: ClassFieldDescriptor): any => {
         let symbol = createSymbolKey(propertyKey);
         if (propertyKey !== undefined) {
-            if (typeof targetOrClassElement === 'function') {
-                // spec 1
+            // spec 1 and typescript
+            let constructor = (targetOrClassElement as ComponentInterface<HTMLElement>).constructor;
+            let initializer: Function|undefined;
+            if (originalDescriptor) {
                 descriptor.defaultValue = originalDescriptor.value;
-                defineProperty(targetOrClassElement, propertyKey, descriptor, symbol, originalDescriptor.initializer);
-                return targetOrClassElement;
+                initializer = originalDescriptor.initializer;
             }
 
-            // typescript
-            return defineProperty(targetOrClassElement.constructor, propertyKey, descriptor, symbol);
+            return defineProperty(constructor, propertyKey, descriptor, symbol, initializer);
         }
 
         // spec 2
-        let element = targetOrClassElement as unknown as ClassElement;
+        let element = targetOrClassElement as ClassElement;
         let key = String(element.key);
 
         if (element.kind !== 'field' || element.placement !== 'own') {
