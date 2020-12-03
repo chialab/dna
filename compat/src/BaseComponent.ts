@@ -1,9 +1,8 @@
-import { window, render, css, DOM, Component, Template, DelegatedEventCallback, ClassFieldObserver, ClassFieldDescriptor, getProperties } from '@chialab/dna';
+import { window, render, css, DOM, Component, Template, DelegatedEventCallback, DelegatedEventDescriptor, ClassFieldObserver, ClassFieldDescriptor, getProperties, ComponentConstructorInterface } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { CompatibilityPropertyProxy } from './prop';
 import { warnCode } from './deprecations';
-import { DelegatedEventDescriptor } from 'src/events';
 import { registry } from './registry';
 
 /**
@@ -15,8 +14,8 @@ const STYLES: { [key: string]: HTMLStyleElement } = {};
 /**
  * Alias to the `extend` method.
  */
-export const mixin = (constructor: typeof Component) =>
-    class CompatComponent extends constructor {
+export const mixin = <T extends ComponentConstructorInterface<HTMLElement>>(constructor: T) =>
+    class CompatComponent extends (constructor as typeof Component) {
         /**
          * Always skip native constructors.
          */
@@ -164,8 +163,8 @@ export const mixin = (constructor: typeof Component) =>
          */
         [STYLE_SYMBOL]: HTMLStyleElement;
 
-        constructor(node?: HTMLElement, properties?: { [key: string]: unknown }) {
-            super(node, properties);
+        constructor(...args: any[]) {
+            super(...args);
 
             if (this.css) {
                 // handle css text for the component
@@ -270,7 +269,7 @@ export const mixin = (constructor: typeof Component) =>
             warnCode('PREFER_UNOBSERVE');
             return this.unobserve(propertyName, callback);
         }
-    } as typeof Component;
+    } as unknown as T;
 
 /**
  * The DNA 2 base component class.

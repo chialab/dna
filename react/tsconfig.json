@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@chialab/dna": [
+        "../node_modules/@chialab/dna/src/index",
+        "../src/index"
+      ],
+      "react": [
+        "../node_modules/react"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*.ts",
+  ]
+}
