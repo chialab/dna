@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "moduleResolution": "node",
-    "baseUrl": "."
+    "rootDir": "./src",
+    "baseUrl": "./src"
   },
   "include": [
     "./src/**/*.ts",
