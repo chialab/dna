@@ -49,17 +49,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: DNA Compat
-          path: compat/index*
+          path: compat/dist
       - name: Upload hooks build
         uses: actions/upload-artifact@v2
         with:
           name: DNA Hooks
-          path: hooks/index*
+          path: hooks/dist
       - name: Upload react build
         uses: actions/upload-artifact@v2
         with:
           name: DNA React
-          path: react/index*
+          path: react/dist
   # TEST
   test-browser:
     name: Test Browsers
