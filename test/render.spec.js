@@ -1,12 +1,11 @@
-import { getModule, getComponentName, wait, spyFunction } from './helpers.js';
-
-let DNA, wrapper;
+import * as DNA from '@chialab/dna/src/index';
+import { getComponentName, wait, spyFunction } from './helpers.js';
 
 describe('render', function() {
+    let wrapper;
     this.timeout(10 * 1000);
 
     before(async () => {
-        DNA = await getModule();
         wrapper = DNA.DOM.createElement('div');
     });
 

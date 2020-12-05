@@ -13,13 +13,6 @@ if (typeof Symbol() !== 'symbol') {
     Symbol.prototype[Symbol.toPrimitive] = () => `__sym__${num++}__`;
 }
 
-export async function getModule() {
-    if (typeof window === 'undefined') {
-        return require('@chialab/dna');
-    }
-    return await import('@chialab/dna');
-}
-
 export function spyFunction(fn = () => {}) {
     const spied = function(...args) {
         spied.response = fn.call(this, ...args);

@@ -1,4 +1,4 @@
-import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, matchesImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
+import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 
@@ -249,13 +249,5 @@ export const DOM = {
             element.attributeChangedCallback(qualifiedName, oldValue as string, null);
         }
         return removeAttributeImpl.call(element, qualifiedName);
-    },
-
-    /**
-     * The method checks to see if the Element would be selected by the provided selectorString.
-     * @param selectorString The selector to match.
-     */
-    matches(element: Element, selectorString: string): boolean {
-        return matchesImpl.call(element, selectorString);
     },
 };

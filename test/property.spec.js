@@ -1,13 +1,8 @@
-import { getModule, spyFunction, getComponentName } from './helpers.js';
-
-let DNA;
+import * as DNA from '@chialab/dna/src/index';
+import { spyFunction, getComponentName } from './helpers.js';
 
 describe('property', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     describe('@property', () => {
         it('should define a property', () => {
