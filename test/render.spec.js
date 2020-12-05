@@ -228,6 +228,32 @@ describe('render', function() {
             expect(elem.getAttribute('prop3')).to.be.equal('');
         });
 
+        it('should add and remove native listeners', () => {
+            const listener = spyFunction();
+            DNA.render(DNA.h('div', { onclick: listener }), wrapper);
+            const elem = wrapper.children[0];
+            expect(listener.invoked).to.be.false;
+            elem.click();
+            expect(listener.invoked).to.be.true;
+            expect(listener.count).to.be.equal(1);
+            DNA.render(DNA.h('div', { onclick: null }), wrapper);
+            elem.click();
+            expect(listener.count).to.be.equal(1);
+        });
+
+        it('should add and remove custom listeners', () => {
+            const listener = spyFunction();
+            DNA.render(DNA.h('div', { onCustom: listener }), wrapper);
+            const elem = wrapper.children[0];
+            expect(listener.invoked).to.be.false;
+            DNA.dispatchEvent(elem, 'Custom');
+            expect(listener.invoked).to.be.true;
+            expect(listener.count).to.be.equal(1);
+            DNA.render(DNA.h('div', { onCustom: null }), wrapper);
+            elem.click();
+            expect(listener.count).to.be.equal(1);
+        });
+
         it('should update native properties', () => {
             DNA.render(DNA.html`<form>
                 <input type="radio" name="test" value="1" checked=${false} />
@@ -263,6 +289,46 @@ describe('render', function() {
             DNA.customElements.define(name, TestElement);
 
             DNA.render(DNA.h(TestElement, { number: '2' }), wrapper);
+            expect(wrapper.querySelector(name).number).to.be.equal(2);
+        });
+
+        it('should assign not observed attributes', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get observedAttributes() {
+                    return ['number'];
+                }
+
+                static get properties() {
+                    return {
+                        number: Number,
+                    };
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            DNA.render(DNA.h(TestElement, { string: '2' }), wrapper);
+            expect(wrapper.querySelector(name).string).to.be.equal('2');
+        });
+
+        it('should assign not string attribute', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get observedAttributes() {
+                    return ['number'];
+                }
+
+                static get properties() {
+                    return {
+                        number: Number,
+                    };
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            DNA.render(DNA.h(TestElement, { number: 2 }), wrapper);
             expect(wrapper.querySelector(name).number).to.be.equal(2);
         });
 

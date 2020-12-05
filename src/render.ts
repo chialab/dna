@@ -376,12 +376,15 @@ export const internalRender = (
                     if (value) {
                         templateNode.addEventListener(eventName, value as EventListener);
                     }
+                    continue;
                 }
 
                 let type = typeof value;
+                let wasType = typeof oldValue;
                 let isReference = (value && type === 'object') || type === 'function';
+                let wasReference = (oldValue && wasType === 'object') || wasType === 'function';
 
-                if (isReference || ((propertyKey === 'checked' || propertyKey === 'value') && (templateNode as HTMLElement).tagName === 'INPUT')) {
+                if ((isReference || wasReference) || ((propertyKey === 'checked' || propertyKey === 'value') && (templateNode as HTMLElement).tagName === 'INPUT')) {
                     (templateNode as any)[propertyKey] = value;
                 } else if (Component) {
                     if (type === 'string') {
