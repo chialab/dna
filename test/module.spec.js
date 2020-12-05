@@ -1,3 +1,4 @@
+import './helpers';
 import * as DNA from '@chialab/dna/src/index';
 
 describe('module', function() {

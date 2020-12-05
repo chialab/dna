@@ -1,5 +1,5 @@
-import * as DNA from '@chialab/dna/src/index';
 import { getComponentName, wait, spyFunction } from './helpers.js';
+import * as DNA from '@chialab/dna/src/index';
 
 describe('render', function() {
     let wrapper;

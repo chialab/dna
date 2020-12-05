@@ -1,5 +1,5 @@
-import * as DNA from '@chialab/dna/src/index';
 import { wait, spyPromise, getComponentName, spyFunction } from './helpers.js';
+import * as DNA from '@chialab/dna/src/index';
 
 describe('registry', function() {
     this.timeout(10 * 1000);
