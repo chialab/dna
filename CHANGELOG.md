@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0-beta.2](https://github.com/chialab/dna/compare/v3.1.0-beta.1...v3.1.0-beta.2) (2020-12-05)
+
+
+### Bug Fixes
+
+* compat exports ([75ad2cc](https://github.com/chialab/dna/commit/75ad2cca69e61cd3c11af5af8d98258f3689ae61))
+
 ## [3.1.0-beta.1](https://github.com/chialab/dna/compare/v3.1.0-beta.0...v3.1.0-beta.1) (2020-11-25)
 
 
