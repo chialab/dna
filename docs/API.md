@@ -473,7 +473,6 @@ It also handle element life cycle for custom elements unless otherwise specified
     hasAttribute(element: Element, qualifiedName: string): boolean;
     setAttribute(element: Element, qualifiedName: string, value: string): void;
     removeAttribute(element: Element, qualifiedName: string): void;
-    matches(element: Element, selectorString: string): boolean;
 }</pre>
 
 
