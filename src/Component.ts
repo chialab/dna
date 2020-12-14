@@ -199,6 +199,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     private initSlotChildNodes() {
         let context = getContext(this);
         let doc = this.ownerDocument;
+        /* istanbul ignore next */
         if (!this.childNodes.length && doc.readyState === 'loading') {
             return;
         }

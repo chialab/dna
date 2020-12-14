@@ -337,7 +337,7 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
  */
 export const defineProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => {
     let ctr = constructor;
-    let handled: { [key: string]: boolean }  = {};
+    let handled: { [key: string]: boolean } = {};
     while (ctr && ctr !== HTMLElement) {
         let propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;

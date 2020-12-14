@@ -10,8 +10,8 @@
   "license": "MIT",
   "directories": {
     "src": "src",
-    "lib": "dist",
     "test": "test",
+    "lib": "dist",
     "dist": "dist"
   },
   "repository": {
