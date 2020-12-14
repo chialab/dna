@@ -50,8 +50,7 @@
     "test:react": "rna unit 'react/test/*.spec.js' --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault --browser",
     "test:hooks": "rna unit 'hooks/test/*.spec.js' --no-jsx --browser",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
-    "prepack": "yarn build",
-    "release": "standard-version"
+    "prepack": "yarn build"
   },
   "dependencies": {
     "jsdom": "^16.0.0"
@@ -76,7 +75,6 @@
     "haunted": "^4.7.0",
     "htm": "^3.0.3",
     "rxjs": "^6.5.5",
-    "standard-version": "^9.0.0",
     "typescript": "^4.0.0"
   }
 }
