@@ -1,5 +1,5 @@
 import { getComponentName } from './helpers.js';
-import * as DNA from '@chialab/dna/src/index';
+import * as DNA from '@chialab/dna';
 
 describe('DOM', function() {
     this.timeout(10 * 1000);

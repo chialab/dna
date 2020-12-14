@@ -78,9 +78,9 @@ const convertStyles = (value: HyperStyles) => {
  *
  * @param root The root Node for the render.
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @param slot Should handle slot children.
  * @param context The render context of the root.
  * @param namespace The current namespace uri of the render.
- * @param slot Should handle slot children.
  * @param rootContext The current custom element context of the render.
  * @param refContext The main context of the render.
  * @param fragment The fragment context to update.
@@ -89,8 +89,8 @@ const convertStyles = (value: HyperStyles) => {
 export const internalRender = (
     root: Node,
     input: Template,
-    context?: Context,
     slot = isComponent(root),
+    context?: Context,
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
     rootContext?: Context,
     mainContext?: Context,
@@ -189,7 +189,7 @@ export const internalRender = (
                                 if (!live()) {
                                     return false;
                                 }
-                                internalRender(root, template, previousContext, slot, namespace, rootContext, refContext, renderFragmentContext);
+                                internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
                                 return true;
                             },
                             live,
@@ -499,8 +499,8 @@ export const internalRender = (
             internalRender(
                 templateNode as HTMLElement,
                 templateChildren,
-                templateContext,
                 isComponentTemplate,
+                templateContext,
                 templateNamespace,
                 rootContext,
                 refContext
@@ -542,10 +542,11 @@ export const internalRender = (
  *
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @param root The root Node for the render.
+ * @param slot Should render to slot children.
  * @return The resulting child Nodes.
  */
-export const render = (input: Template, root: Node = DOM.createDocumentFragment()): Node | Node[] | void => {
-    let childNodes = internalRender(root, input);
+export const render = (input: Template, root: Node = DOM.createDocumentFragment(), slot: boolean = isComponent(root)): Node | Node[] | void => {
+    let childNodes = internalRender(root, input, slot);
     if (!childNodes) {
         return;
     }

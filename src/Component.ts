@@ -310,7 +310,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     forceUpdate() {
         let childNodes = this.slotChildNodes || this.initSlotChildNodes();
         if (childNodes) {
-            internalRender(this, this.render(), getContext(this), false);
+            internalRender(this, this.render(), false);
         }
     }
 

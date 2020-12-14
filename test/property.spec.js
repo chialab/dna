@@ -1,5 +1,5 @@
 import { spyFunction, getComponentName } from './helpers.js';
-import * as DNA from '@chialab/dna/src/index';
+import * as DNA from '@chialab/dna';
 
 describe('property', function() {
     this.timeout(10 * 1000);

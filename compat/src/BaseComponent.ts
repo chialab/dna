@@ -224,7 +224,7 @@ export const mixin = <T extends ComponentConstructorInterface<HTMLElement>>(cons
             if (typeof template === 'undefined') {
                 return;
             }
-            render(template, this);
+            render(template, this, false);
             return template;
         }
 

@@ -1,6 +1,6 @@
 import { spyFunction, getComponentName, wait } from './helpers.js';
 import { Observable } from 'rxjs';
-import * as DNA from '@chialab/dna/src/index';
+import * as DNA from '@chialab/dna';
 
 describe('template', function() {
     let wrapper;

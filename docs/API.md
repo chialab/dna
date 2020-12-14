@@ -495,7 +495,7 @@ useless changes in the tree and to mantain or update the state of compatible Nod
 
 <strong>Type:</strong>
 
-<pre>(input: <a href="#template">Template</a>, root?: Node): Node|Node[]|void</pre>
+<pre>(input: <a href="#template">Template</a>, root?: Node, slot?: boolean): Node|Node[]|void</pre>
 
 
 

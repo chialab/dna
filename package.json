@@ -5,7 +5,13 @@
   "lib": "src/index.ts",
   "main": "dist/cjs/dna.js",
   "module": "dist/esm/dna.js",
-  "exports": "./dist/esm/dna.js",
+  "exports": {
+    ".": "./dist/esm/dna.js",
+    "./compat": "./compat/index.js",
+    "./hooks": "./hooks/index.js",
+    "./jsx-runtime": "./jsx-runtime/index.js",
+    "./react": "./react/index.js"
+  },
   "browser": "dist/umd/dna.js",
   "types": "types/index.d.ts",
   "license": "MIT",
