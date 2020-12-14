@@ -1,9 +1,9 @@
-import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL } from './Interfaces';
+import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
 import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { Context, getContext } from './Context';
+import { getContext } from './Context';
 import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
@@ -58,13 +58,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    constructor(node?: HTMLElement | { [key: string]: any; }, properties?: { [key: string]: any; }) {
+    constructor(node?: HTMLElement | { [key: string]: unknown }, properties?: { [key: string]: unknown }) {
         super();
 
         let element = node as this;
         let props = properties;
         if (!isElement(element)) {
-            props = node;
+            props = node as { [key: string]: unknown };
             element = this;
         } else {
             Object.setPrototypeOf(element, this);
@@ -72,21 +72,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
         let context = getContext(element);
         context.is = this.is;
-
-        let doc = this.ownerDocument;
-        if (!this.childNodes.length && doc.readyState === 'loading') {
-            let onLoad = () => {
-                doc.removeEventListener('DOMContentLoaded', onLoad);
-                element.initSlotChildNodes(context);
-                element.forceUpdate();
-            };
-            doc.addEventListener('DOMContentLoaded', onLoad);
-        } else {
-            element.initSlotChildNodes(context);
-        }
+        element.initSlotChildNodes();
 
         let constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
-
         // setup listeners
         let listeners = getListeners(constructor) || [];
         for (let i = 0, len = listeners.length; i < len; i++) {
@@ -99,27 +87,31 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         for (let propertyKey in propertiesDescriptor) {
             delete (element as any)[propertyKey];
             let descriptor = propertiesDescriptor[propertyKey];
-            if (!props || !(propertyKey in props)) {
-                let symbol = descriptor.symbol as symbol;
-                if (typeof (element as any)[symbol] !== 'undefined') {
-                    continue;
-                }
-                if (typeof descriptor.initializer === 'function') {
-                    (element as any)[symbol] = descriptor.initializer.call(element);
-                } else if ('value' in descriptor) {
-                    (element as any)[symbol] = descriptor.value;
-                } else if ('defaultValue' in descriptor) {
-                    (element as any)[symbol] = descriptor.defaultValue;
-                }
-            }
-        }
-        if (props) {
-            for (let propertyKey in props) {
-                (element as any)[propertyKey] = props[propertyKey];
+            if (typeof descriptor.initializer === 'function') {
+                (element as any)[propertyKey] = descriptor.initializer.call(element);
+            } else if ('value' in descriptor) {
+                (element as any)[propertyKey] = descriptor.value;
+            } else if ('defaultValue' in descriptor) {
+                (element as any)[propertyKey] = descriptor.defaultValue;
             }
         }
 
+        element.initialize(props);
         return element;
+    }
+
+    /**
+     * Initialize component properties.
+     *
+     * @param properties A set of initial properties for the element.
+     */
+    initialize(properties?: { [key: string]: unknown }) {
+        (this as any)[CONSTRUCTED_SYMBOL] = true;
+        if (properties) {
+            for (let propertyKey in properties) {
+                (this as any)[propertyKey] = properties[propertyKey];
+            }
+        }
     }
 
     /**
@@ -139,7 +131,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     /**
      * Invoked each time the Component is disconnected from the document's DOM.
      */
-    disconnectedCallback() { }
+    disconnectedCallback() {}
 
     /**
      * Invoked each time one of the Component's attributes is added, removed, or changed.
@@ -204,12 +196,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param context The compoonent context.
      * @return A list of new slotted children.
      */
-    private initSlotChildNodes(context: Context) {
+    private initSlotChildNodes() {
+        let context = getContext(this);
+        let doc = this.ownerDocument;
+        /* istanbul ignore next */
+        if (!this.childNodes.length && doc.readyState === 'loading') {
+            return;
+        }
         let slotChildNodes = cloneChildNodes(this.childNodes);
         for (let i = 0, len = slotChildNodes.length; i < len; i++) {
             this.removeChild(slotChildNodes[i]);
         }
         context.slotChildNodes = slotChildNodes;
+        return slotChildNodes;
     }
 
     /**
@@ -309,8 +308,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Force an element to re-render.
      */
     forceUpdate() {
-        if (this.slotChildNodes) {
-            internalRender(this, this.render());
+        let childNodes = this.slotChildNodes || this.initSlotChildNodes();
+        if (childNodes) {
+            internalRender(this, this.render(), false);
         }
     }
 
@@ -387,15 +387,15 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
  * @return A newable constructor with the same prototype.
  */
 export const shim = <T extends typeof HTMLElement>(base: T): T => {
-    const shim = function(this: any, ...args: any[]) {
-        let constructor = this.constructor as T;
+    const shim = function(this: ComponentInterface<InstanceType<T>>, ...args: any[]) {
+        let constructor = this.constructor;
         let is = this.is;
         if (!is) {
             throw new TypeError('Illegal constructor');
         }
 
         let tag = customElements.tagNames[is];
-        let element: HTMLElement;
+        let element: ComponentInterface<InstanceType<T>>;
         if (customElements.native && !(constructor as any).shim) {
             element = Reflect.construct(base, args, constructor.prototype.constructor);
             if (tag === element.localName) {
@@ -403,14 +403,14 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
             }
         }
 
-        element = createElementImpl(tag) as HTMLElement;
+        element = createElementImpl(tag) as ComponentInterface<InstanceType<T>>;
         Object.setPrototypeOf(element, constructor.prototype);
-        emulateLifeCycle(element as ComponentInterface<InstanceType<T>>);
+        emulateLifeCycle(element);
         return element;
-    } as any as T;
+    } as unknown as T;
     Object.setPrototypeOf(shim, base);
-    (shim as any).apply = Function.apply;
-    (shim as any).call = Function.call;
+    (shim as Function).apply = Function.apply;
+    (shim as Function).call = Function.call;
     shim.prototype = base.prototype;
     return shim;
 };

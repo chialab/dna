@@ -11,7 +11,7 @@ const symbol: unique symbol = createSymbolKey() as any;
  */
 export type ThenableState = {
     pending: boolean;
-    result?: any;
+    result?: unknown;
 };
 
 /**

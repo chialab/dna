@@ -1,6 +1,7 @@
 import { window } from './window';
 export { window };
 export { customElements, CustomElementRegistry } from './CustomElementRegistry';
+export { customElement } from './customElement';
 export { connect, disconnect } from './helpers';
 export { DOM } from './DOM';
 export { render } from './render';
@@ -18,6 +19,6 @@ export type { Observable } from './Observable';
 export type { TemplateItem, TemplateItems, Template, TemplateFilter, TemplateFunction } from './Template';
 export type { Context } from './Context';
 export type { HyperNode } from './HyperNode';
-export type { AsyncEvent, DelegatedEventCallback } from './events';
+export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter } from './property';
 export type { ComponentInterface, ComponentConstructorInterface } from './Interfaces';

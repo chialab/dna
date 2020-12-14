@@ -1,5 +1,11 @@
 name: Main
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   # BUILD
@@ -43,17 +49,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: DNA Compat
-          path: compat/index*
+          path: compat/dist
       - name: Upload hooks build
         uses: actions/upload-artifact@v2
         with:
           name: DNA Hooks
-          path: hooks/index*
+          path: hooks/dist
       - name: Upload react build
         uses: actions/upload-artifact@v2
         with:
           name: DNA React
-          path: react/index*
+          path: react/dist
   # TEST
   test-browser:
     name: Test Browsers
@@ -88,6 +94,8 @@ jobs:
         with:
           name: DNA
           path: dist
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:browser --targets 'last 1 chrome version, last 1 firefox version' --headless
       - name: Upload coverage to codecov
@@ -129,6 +137,8 @@ jobs:
         with:
           name: DNA
           path: dist
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:node
       - name: Upload coverage to codecov
@@ -170,6 +180,8 @@ jobs:
         with:
           name: DNA
           path: dist
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:saucelabs
         env:
@@ -219,6 +231,8 @@ jobs:
         with:
           name: DNA Compat
           path: compat
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:compat --headless
 
@@ -260,6 +274,8 @@ jobs:
         with:
           name: DNA Hooks
           path: hooks
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:hooks --headless
 
@@ -301,5 +317,7 @@ jobs:
         with:
           name: DNA React
           path: react
+      - name: Prepare tests
+        run: yarn run symlink
       - name: Run tests
         run: yarn run test:react --headless

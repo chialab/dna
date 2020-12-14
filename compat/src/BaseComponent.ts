@@ -1,9 +1,8 @@
-import { window, render, css, DOM, Component, Template, DelegatedEventCallback, ClassFieldObserver, ClassFieldDescriptor, getProperties } from '@chialab/dna';
+import { window, render, css, DOM, Component, Template, DelegatedEventCallback, DelegatedEventDescriptor, ClassFieldObserver, ClassFieldDescriptor, getProperties, ComponentConstructorInterface } from '@chialab/dna';
 import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMBOL } from './symbols';
 import { convert } from './template';
 import { CompatibilityPropertyProxy } from './prop';
 import { warnCode } from './deprecations';
-import { DelegatedEventDescriptor } from 'src/events';
 import { registry } from './registry';
 
 /**
@@ -15,8 +14,8 @@ const STYLES: { [key: string]: HTMLStyleElement } = {};
 /**
  * Alias to the `extend` method.
  */
-export const mixin = (constructor: typeof Component) =>
-    class CompatComponent extends constructor {
+export const mixin = <T extends ComponentConstructorInterface<HTMLElement>>(constructor: T) =>
+    class CompatComponent extends (constructor as typeof Component) {
         /**
          * Always skip native constructors.
          */
@@ -26,12 +25,11 @@ export const mixin = (constructor: typeof Component) =>
          * Compatibility alias for `properties` getter.
          */
         static get properties() {
-            const properties: { [key: string]: ClassFieldDescriptor | Function | Function[]; } = {};
-
+            let properties: { [key: string]: ClassFieldDescriptor | Function | Function[] } = {};
             let initialProto = this.prototype;
             let proto = initialProto;
             let shouldWarn = false;
-            // collect al prototyped event listeners
+            // collect al prototyped properties
             while (proto.constructor !== CompatComponent) {
                 let propertiesDescriptor = Object.getOwnPropertyDescriptor(proto, 'properties');
                 let propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
@@ -39,7 +37,7 @@ export const mixin = (constructor: typeof Component) =>
                     let descriptorProperties = (propertiesGetter.call(initialProto) || {}) as {
                         [key: string]: ClassFieldDescriptor | Function | Function[];
                     };
-                    // register listeners
+                    // register properties
                     for (let propertyName in descriptorProperties) {
                         shouldWarn = true;
                         if (!(propertyName in properties)) {
@@ -165,8 +163,8 @@ export const mixin = (constructor: typeof Component) =>
          */
         [STYLE_SYMBOL]: HTMLStyleElement;
 
-        constructor(node?: HTMLElement, properties?: { [key: string]: any; }) {
-            super(node, properties);
+        constructor(...args: any[]) {
+            super(...args);
 
             if (this.css) {
                 // handle css text for the component
@@ -226,7 +224,7 @@ export const mixin = (constructor: typeof Component) =>
             if (typeof template === 'undefined') {
                 return;
             }
-            render(template, this);
+            render(template, this, false);
             return template;
         }
 
@@ -271,7 +269,7 @@ export const mixin = (constructor: typeof Component) =>
             warnCode('PREFER_UNOBSERVE');
             return this.unobserve(propertyName, callback);
         }
-    };
+    } as unknown as T;
 
 /**
  * The DNA 2 base component class.

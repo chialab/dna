@@ -16,25 +16,10 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "moduleResolution": "node",
-    "baseUrl": "./",
-    "paths": {
-      "@chialab/dna": [
-        "./dist/esm/dna",
-        "./src/index"
-      ],
-      "react": [
-        "./node_modules/react"
-      ]
-    }
+    "rootDir": "./src",
+    "baseUrl": "./src"
   },
   "include": [
-    "src/**/*.ts",
-    "compat/src/**/*.ts",
-    "hooks/src/**/*.ts",
-    "react/src/**/*.ts",
-    "jsx-runtime/src/**/*.ts"
-  ],
-  "exclude": [
-    "test/**/*"
+    "./src/**/*.ts",
   ]
 }

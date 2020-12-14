@@ -3,15 +3,14 @@
 Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings. Use the `render` method and the `html` helper to return the template for the element:
 
 ```ts
-import { Component, customElements, html } from '@chialab/dna';
+import { Component, customElement, html } from '@chialab/dna';
 
+@customElement('hello-world')
 class HelloWorld extends Component {
     render() {
         return html`<h1>Hello world!</h1>`;
     }
 }
-
-customElements.define('hello-world', HelloWorld);
 ```
 
 ### Using JSX
@@ -19,15 +18,14 @@ customElements.define('hello-world', HelloWorld);
 If you familiar with JSX, you can also use it since DNA templates are 100% compatible with JSX transpiled output:
 
 ```ts
-import { Component, customElements, h } from '@chialab/dna';
+import { Component, customElement, h } from '@chialab/dna';
 
+@customElement('hello-world')
 class HelloWorld extends Component {
     render() {
         return <h1>Hello world!</h1>;
     }
 }
-
-customElements.define('hello-world', HelloWorld);
 ```
 
 Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to use the DNA's `h` and `Fragment` helpers:
@@ -428,8 +426,9 @@ will render:
 If you want to add some properties to the instance, you can pass it as hyper node. This is useful if you want to reference some nodes in your component:
 
 ```ts
-import { DOM, Component, html, customElements } from '@chialab/dna';
+import { DOM, Component, html, customElement } from '@chialab/dna';
 
+@customElement('x-form')
 class Form extends Component {
     static get listeners() {
         return {
@@ -447,8 +446,6 @@ class Form extends Component {
         </form>`;
     }
 }
-
-customElements.define('x-form', Form);
 ```
 
 ## Slotted children
@@ -459,8 +456,11 @@ Shadow DOM is a good choice for encapsulating styles and handling components chi
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
 ```ts
-import { Component, customElements, html, property } from '@chialab/dna';
+import { Component, customElement, html, property } from '@chialab/dna';
 
+@customElement('x-dialog', {
+    extends: 'dialog',
+})
 class Dialog extends Component {
     static get observedAttributes() {
         return ['title', 'content'];
@@ -482,8 +482,6 @@ class Dialog extends Component {
         `;
     }
 }
-
-customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 ```
 
 This example has two problems:

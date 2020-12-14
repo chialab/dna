@@ -1,13 +1,8 @@
-import { getModule, spyFunction, getComponentName } from './helpers.js';
-
-let DNA;
+import { spyFunction, getComponentName } from './helpers.js';
+import * as DNA from '@chialab/dna';
 
 describe('Component', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     let wrapper;
     beforeEach(() => {
@@ -63,6 +58,7 @@ describe('Component', function() {
         });
 
         it('should setup properties', () => {
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -76,10 +72,29 @@ describe('Component', function() {
                 @DNA.property() myCustomProp3 = '';
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
+            const element = new TestElement();
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.not.have.property('myCustomProp4');
+        });
+
+        it('should setup properties for extended elements', () => {
+            @DNA.customElement(getComponentName(), { extends: 'article' })
+            class TestElement extends DNA.extend(DNA.Component) {
+                static get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                @DNA.property() myCustomProp2 = '';
+                @DNA.property() myCustomProp3 = '';
+            }
 
             const element = new TestElement();
-
             expect(element).to.have.property('myCustomProp1');
             expect(element).to.have.property('myCustomProp2');
             expect(element).to.have.property('myCustomProp3');
@@ -87,6 +102,7 @@ describe('Component', function() {
         });
 
         it('should initialize properties', () => {
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -99,8 +115,6 @@ describe('Component', function() {
                 @DNA.property() myCustomProp2 = 'test';
                 @DNA.property() myCustomProp3 = '';
             }
-
-            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement({
                 myCustomProp1: 42,
@@ -468,6 +482,7 @@ describe('Component', function() {
             let element;
 
             before(() => {
+                @DNA.customElement(getComponentName())
                 class TestElement extends DNA.Component {
                     static get observedAttributes() {
                         return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'convertion'];
@@ -504,8 +519,6 @@ describe('Component', function() {
                     })
                     convertion = '';
                 }
-
-                DNA.customElements.define(getComponentName(), TestElement);
 
                 element = new TestElement();
             });
@@ -604,6 +617,8 @@ describe('Component', function() {
     describe('#propertyChangedCallback', () => {
         it('should handle property changes on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -620,8 +635,6 @@ describe('Component', function() {
                     propertyChangedCallback(...args);
                 }
             }
-
-            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
@@ -677,6 +690,8 @@ describe('Component', function() {
 
         it('should NOT handle property changes on delete', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -694,8 +709,6 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
             element.title = 'test';
@@ -706,6 +719,7 @@ describe('Component', function() {
         });
 
         it('should should re-render on property changes', () => {
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 @DNA.property() title = '';
 
@@ -713,8 +727,6 @@ describe('Component', function() {
                     return DNA.html`<h1>${this.title}</h1>`;
                 }
             }
-
-            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
@@ -725,6 +737,8 @@ describe('Component', function() {
 
         it('should render only once after construction', () => {
             const callback = spyFunction();
+
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 @DNA.property() title = '';
                 @DNA.property() description = '';
@@ -752,7 +766,6 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
             expect(callback.invoked).to.be.false;
             const element = new TestElement({
                 title: 'Test',
@@ -767,6 +780,8 @@ describe('Component', function() {
 
         it('should NOT handle property if nothing changed on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -784,8 +799,6 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-
             const element = new TestElement();
             expect(propertyChangedCallback.invoked).to.be.false;
             element.title = 'test';
@@ -798,6 +811,8 @@ describe('Component', function() {
         it('should dispatch custom event', () => {
             const callback1 = spyFunction((event) => event);
             const callback2 = spyFunction((event) => event);
+
+            @DNA.customElement(getComponentName())
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -811,8 +826,6 @@ describe('Component', function() {
 
                 @DNA.property({ event: 'titleupdate' }) title = '';
             }
-
-            DNA.customElements.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             element.addEventListener('agechange', callback1);
@@ -1130,6 +1143,7 @@ describe('Component', function() {
         let element, TestElement;
 
         before(() => {
+            @DNA.customElement(getComponentName())
             class Element extends DNA.Component {
                 static get observedAttributes() {
                     return ['title', 'alias', 'age', 'flag'];
@@ -1148,8 +1162,6 @@ describe('Component', function() {
             }
 
             TestElement = Element;
-
-            DNA.customElements.define(getComponentName(), Element);
         });
 
         beforeEach(() => {

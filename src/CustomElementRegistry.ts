@@ -1,5 +1,5 @@
 import { window } from './window';
-import { isComponent, isComponentConstructor } from './Interfaces';
+import { isComponent, isComponentConstructor, isConstructed } from './Interfaces';
 import { connect, defineProperty } from './helpers';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -52,7 +52,7 @@ export class CustomElementRegistry {
      * Collect "whenDefined" promises.
      */
     readonly queue: {
-        [key: string]: Array<(value?: unknown) => void>
+        [key: string]: Array<(value?: unknown) => void>;
     } = {};
 
     /**
@@ -78,7 +78,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: typeof HTMLElement, options: ElementDefinitionOptions = {}) {
+    define(name: string, constructor: typeof HTMLElement & { shim?: boolean }, options: ElementDefinitionOptions = {}) {
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
@@ -111,12 +111,12 @@ export class CustomElementRegistry {
         this.tagNames[name] = tagName;
 
         if (nativeCustomElements) {
-            let shouldShim = (constructor as any).shim;
+            let shouldShim = constructor.shim;
             if (tagName !== name) {
-                (constructor as any).shim = true;
+                constructor.shim = true;
                 options = {
                     get extends() {
-                        (constructor as any).shim = shouldShim;
+                        constructor.shim = shouldShim;
                         return tagName;
                     },
                 };
@@ -151,8 +151,8 @@ export class CustomElementRegistry {
         if (this.registry[name]) {
             return Promise.resolve(this.registry[name]);
         }
-        const queue = this.queue;
-        const whenDefinedPromise = new Promise((resolve) => {
+        let queue = this.queue;
+        let whenDefinedPromise = new Promise((resolve) => {
             queue[name] = queue[name] || [];
             queue[name].push(resolve);
         });
@@ -165,10 +165,10 @@ export class CustomElementRegistry {
      * @param root A Node instance with descendant elements that are to be upgraded.
      */
     upgrade(root: HTMLElement) {
-        const is = (root.getAttribute('is') || root.tagName).toLowerCase();
-        const constructor = this.get(is);
+        let is = (root.getAttribute('is') || root.tagName).toLowerCase();
+        let constructor = this.get(is);
         // find all root children
-        const nodes = root.children;
+        let nodes = root.children;
         // iterate all nodes found
         for (let i = 0, len = nodes.length; i < len; i++) {
             this.upgrade(nodes[i] as HTMLElement);
@@ -182,12 +182,14 @@ export class CustomElementRegistry {
         }
         // check if already instantiated
         if (isComponent(root)) {
-            root.forceUpdate();
+            if (isConstructed(root)) {
+                root.forceUpdate();
+            }
             return;
         }
 
         if (isComponentConstructor(constructor)) {
-            let attributes: { name: string, value: string }[] = [];
+            let attributes: { name: string; value: string }[] = [];
             let observed = constructor.observedAttributes || [];
             for (let i = 0, len = root.attributes.length; i < len; i++) {
                 let attr = root.attributes[i];

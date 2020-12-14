@@ -74,9 +74,10 @@ customElements.upgrade(element);
 Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are DOM nodes, the integration is possible using the element context as library param:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 import Pickr from '@simonwep/pickr';
 
+@customElement('color-picker')
 export class ColorPicker extends Component {
     private pickr: Pickr;
 
@@ -92,6 +93,4 @@ export class ColorPicker extends Component {
         super.disconnectedCallback();
     }
 }
-
-customElements.define('color-picker', ColorPicker);
 ```

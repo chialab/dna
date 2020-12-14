@@ -9,7 +9,7 @@ import { getOwnPropertyDescriptor } from './helpers';
 const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
 
 export type AsyncEvent = Event & {
-    respondWith(callback: () => Promise<any>): void;
+    respondWith(callback: () => Promise<unknown>): void;
 };
 
 /**
@@ -17,13 +17,13 @@ export type AsyncEvent = Event & {
  * @param event The original DOM event.
  * @param target The matched delegated element.
  */
-export type DelegatedEventCallback = (event: Event, target?: Node) => any;
+export type DelegatedEventCallback = (event: Event, target?: Node) => unknown;
 
 /**
  * A descriptor for an event delegation.
  */
 export type DelegatedEventDescriptor = AddEventListenerOptions & {
-    callback: DelegatedEventCallback,
+    callback: DelegatedEventCallback;
 };
 
 /**
@@ -46,7 +46,8 @@ type DelegationList = {
          * The callback for the delegated event.
          */
         callback?: DelegatedEventCallback;
-    }[],
+    }[];
+
     /**
      * The real event listener.
      */
@@ -61,6 +62,54 @@ type WithEventDelegations = {
         [key: string]: DelegationList;
     };
 }
+
+const assertNode = (element: unknown) => {
+    if (!isElement(element)) {
+        throw new TypeError('The provided element must be a Node');
+    }
+};
+
+const assertEvent = (event: unknown) => {
+    if (!isEvent(event)) {
+        throw new TypeError('The provided object must be an Event');
+    }
+};
+
+const assertEventName = (eventName: unknown) => {
+    if (typeof eventName !== 'string') {
+        throw new TypeError('The provided event name must be a string');
+    }
+};
+
+const assertEventSelector = (selector: unknown) => {
+    if (selector !== null && typeof selector !== 'string') {
+        throw new TypeError('The provided selector must be a string or null');
+    }
+};
+
+const assertEventCallback = (callback: unknown) => {
+    if (typeof callback !== 'function') {
+        throw new TypeError('The provided callback must be a function');
+    }
+};
+
+const assertEventBubbles = (bubbles: unknown) => {
+    if (typeof bubbles !== 'boolean') {
+        throw new TypeError('The provided bubbles option must be a boolean');
+    }
+};
+
+const assertEventCancelable = (cancelable: unknown) => {
+    if (typeof cancelable !== 'boolean') {
+        throw new TypeError('The provided cancelable option must be a boolean');
+    }
+};
+
+const assertEventComposed = (composed: unknown) => {
+    if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
+        throw new TypeError('The provided composed option must be a boolean');
+    }
+};
 
 /**
  * Delegate an Event listener.
@@ -112,7 +161,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             };
 
             // filter matched selector for the event
-            let filtered: { target: Node; callback: DelegatedEventCallback; }[] = [];
+            let filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
                 let { selector, callback } = descriptors[i];
                 let selectorTarget;
@@ -204,54 +253,6 @@ export const undelegateEventListener = (element: Element, eventName: string, sel
     }
 };
 
-const assertNode = (element: any) => {
-    if (!isElement(element)) {
-        throw new TypeError('The provided element must be a Node');
-    }
-};
-
-const assertEvent = (event: any) => {
-    if (!isEvent(event)) {
-        throw new TypeError('The provided object must be an Event');
-    }
-};
-
-const assertEventName = (eventName: any) => {
-    if (typeof eventName !== 'string') {
-        throw new TypeError('The provided event name must be a string');
-    }
-};
-
-const assertEventSelector = (selector: any) => {
-    if (selector !== null && typeof selector !== 'string') {
-        throw new TypeError('The provided selector must be a string or null');
-    }
-};
-
-const assertEventCallback = (callback: any) => {
-    if (typeof callback !== 'function') {
-        throw new TypeError('The provided callback must be a function');
-    }
-};
-
-const assertEventBubbles = (bubbles: any) => {
-    if (typeof bubbles !== 'boolean') {
-        throw new TypeError('The provided bubbles option must be a boolean');
-    }
-};
-
-const assertEventCancelable = (cancelable: any) => {
-    if (typeof cancelable !== 'boolean') {
-        throw new TypeError('The provided cancelable option must be a boolean');
-    }
-};
-
-const assertEventComposed = (composed: any) => {
-    if (typeof composed !== 'undefined' && typeof composed !== 'boolean') {
-        throw new TypeError('The provided composed option must be a boolean');
-    }
-};
-
 /**
  * Create custom Event.
  *
@@ -305,9 +306,9 @@ export const dispatchEvent = (element: Element, event: Event | string, detail?: 
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<any[]> => {
-    const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
-    const promises: any[] = [];
+export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
+    let asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
+    let promises: unknown[] = [];
     asyncEvent.respondWith = function(callback) {
         promises.push(callback());
     };
@@ -332,7 +333,7 @@ export const getListeners = (constructor: ComponentConstructorInterface<HTMLElem
     event: string;
     selector: string | null;
     callback: DelegatedEventCallback;
-    options?: AddEventListenerOptions,
+    options?: AddEventListenerOptions;
 }[];
 
 /**

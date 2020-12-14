@@ -23,6 +23,7 @@ export {
     window,
     customElements,
     CustomElementRegistry,
+    customElement,
     DOM,
     connect,
     disconnect,
@@ -56,6 +57,6 @@ export * from './BaseComponent';
 export * from './render';
 export * from './namespace';
 export * from './mixins';
-export * from './symbols';
+export { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, STYLE_SYMBOL, CONNECTED_SYMBOL } from './symbols';
 export * from './proxy';
 export * from './css';

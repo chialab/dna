@@ -12,8 +12,11 @@ Then, you can import the DNA `Root` component and use it as wrapper for DNA comp
 
 **dialog.ts**
 ```ts
-import { Component, customElements, html, property } from '@chialab/dna';
+import { Component, customElement, html, property } from '@chialab/dna';
 
+@customElement('x-dialog', {
+    extends: 'dialog',
+})
 class Dialog extends Component {
     static get observedAttributes() {
         return ['title'];
@@ -34,8 +37,6 @@ class Dialog extends Component {
         `;
     }
 }
-
-customElements.define('x-dialog', Dialog, { extends: 'dialog' });
 
 declare namespace JSX {
     interface IntrinsicElements {

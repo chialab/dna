@@ -10,10 +10,21 @@ import { Template } from './Template';
 export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
+ * A symbol which identify constructed components (properties can be assigned).
+ */
+export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
  * Check if a node is a component.
  * @param node The node to check.
  */
 export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => node[COMPONENT_SYMBOL];
+
+/**
+ * Check if a node is a constructed component.
+ * @param node The node to check.
+ */
+export const isConstructed = (node: any): node is ComponentInterface<HTMLElement> => node[CONSTRUCTED_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
@@ -28,6 +39,16 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     readonly is: string;
 
     /**
+     * Identify components.
+     */
+    [COMPONENT_SYMBOL]: boolean;
+
+    /**
+     * Identify constructed components.
+     */
+    [CONSTRUCTED_SYMBOL]: boolean;
+
+    /**
      * A list of slot nodes.
      */
     slotChildNodes: IterableNodeList;
@@ -36,6 +57,18 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * A list of CSSStyleSheet to apply to the component.
      */
     adoptedStyleSheets?: CSSStyleSheet[];
+
+    /**
+     * The component constructor.
+     */
+    constructor: ComponentConstructorInterface<T>;
+
+    /**
+     * Initialize component properties.
+     *
+     * @param properties A set of initial properties for the element.
+     */
+    initialize(properties?: { [key: string]: unknown }): void;
 
     /**
      * Invoked each time the Custom Element is appended into a document-connected element.
@@ -103,7 +136,7 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param composed Is the event composed.
      */
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: string, detail?: unknown, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
 
     /**
      * Dispatch an async custom Event.
@@ -114,8 +147,8 @@ export type ComponentInterface<T extends HTMLElement> = T & {
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+    dispatchAsyncEvent(event: Event): Promise<unknown[]>; /* eslint-disable-line no-dupe-class-members */
+    dispatchAsyncEvent(event: string, detail?: unknown, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<unknown[]>;
 
     /**
      * Delegate an Event listener.
@@ -177,8 +210,8 @@ export type ComponentConstructorInterface<T extends HTMLElement> = {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    new(node?: HTMLElement, properties?: { [key: string]: any; }): ComponentInterface<T>;
-    new(properties?: { [key: string]: any; }): ComponentInterface<T>;
+    new(node?: HTMLElement, properties?: { [key: string]: unknown }): ComponentInterface<T>;
+    new(properties?: { [key: string]: unknown }): ComponentInterface<T>;
     new(): ComponentInterface<T>;
     prototype: ComponentInterface<T>;
 };

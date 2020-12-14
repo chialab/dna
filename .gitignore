@@ -1,26 +1,10 @@
-# RNA
-# NPM
-/node_modules
+node_modules
 npm-debug.log
 yarn-error.log
-
-# LINT
 .eslintcache
 .stylelintcache
-
-# TEST
 /test/__coverage__
 /test/__generated__
-
-# BUILD
-/dist
-/public
-
-# RNA
-
-compat/*
-hooks/*
-react/*
-jsx-runtime/*
-!src
-!test
+coverage
+types
+dist

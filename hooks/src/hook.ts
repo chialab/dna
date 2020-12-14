@@ -1,4 +1,4 @@
-import { window, extend, Template, customElements, DOM, render } from '@chialab/dna';
+import { ComponentConstructorInterface, window, extend, Template, customElements, DOM, render } from '@chialab/dna';
 import haunted, { GenericRenderer } from 'haunted';
 
 /**
@@ -21,15 +21,16 @@ export function hook(name: string, hookFunction: GenericRenderer) {
     const HookElement = component(hookFunction, {
         baseElement: BaseElement,
         useShadowDOM: false,
-    }) as typeof HTMLElement;
+    }) as typeof BaseElement;
 
     const HookComponent = class extends HookElement {
         connectedCallback() {
             DOM.setAttribute(this, 'is', name);
-            (HookElement.prototype as any).connectedCallback.call(this);
+            super.connectedCallback();
         }
-    };
+    } as ComponentConstructorInterface<HTMLDivElement>;
 
     customElements.define(name, HookComponent, { extends: 'div' });
+
     return HookComponent;
 }

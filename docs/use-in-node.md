@@ -10,15 +10,14 @@ $ npm i @chialab/dna jsdom
 
 ```js
 // get the module namespace
-const { Component, customElements, DOM, html, render } = require('@chialab/dna');
+const { Component, customElement, DOM, html, render } = require('@chialab/dna');
 
+@customElement('hello-world')
 class HelloWorld extends Component {
     render() {
         return html`<h1>Hello world!</h1>`;
     }
 }
-
-customElements.define('hello-world', HelloWorld);
 
 const card = render(new HelloWorld());
 

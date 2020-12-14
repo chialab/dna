@@ -7,13 +7,12 @@ Component's properties are class fields that can be configured with the `propert
 The preferred way to define a property is to use the `property` decorator on a class field declaration:
 
 ```ts
-import { Component, customElements, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     @property() age = null;
 }
-
-customElements.define('x-card', Card);
 ```
 
 In the example above, the `age` field of every `Card` instance is observed.
@@ -21,8 +20,9 @@ In the example above, the `age` field of every `Card` instance is observed.
 Since class fields are supported by TypeScript and they are a proposal for JavaScript (Babel has a plugin for that), properties can be declared with the static `properties` getter:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get properties() {
         return {
@@ -30,15 +30,14 @@ class Card extends Component {
         };
     }
 }
-
-customElements.define('x-card', Card);
 ```
 
 You can also define properties programmatically with the prototyped `defineProperty` method:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, customElement } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get properties() {
         return {
@@ -46,8 +45,6 @@ class Card extends Component {
         };
     }
 }
-
-customElements.define('x-card', Card);
 
 const card = new Card();
 card.defineProperty('age', {
@@ -60,8 +57,9 @@ card.defineProperty('age', {
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
 
 ```ts
-import { Component, customElements, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get observedAttributes() {
         return ['age'];
@@ -75,8 +73,6 @@ class Card extends Component {
     })
     age = null;
 }
-
-customElements.define('x-card', Card);
 ```
 
 <aside class="note">
@@ -136,8 +132,9 @@ A custom validation function for the property value. If the method returns a fal
 A function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument:
 
 ```ts
-import { Component, customElements, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get observedAttributes() {
         return ['age'];
@@ -151,8 +148,6 @@ class Card extends Component {
     })
     age = null;
 }
-
-customElements.define('x-card', Card);
 ```
 
 You can also pass an array of property observers using the **observers** configuration key instead of **observe**.
@@ -174,8 +169,9 @@ age = null;
 The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
 
 ```ts
-import { Component, customElements, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get observedAttributes() {
         return ['age'];
@@ -187,8 +183,6 @@ class Card extends Component {
     })
     age = null;
 }
-
-customElements.define('x-card', Card);
 
 const card = new Card();
 card.addEventListener('agechange', (event) => {
@@ -215,13 +209,12 @@ Define a custom setter function for the property. It is invoked *before* propert
 Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
 
 ```ts
-import { Component, property } from '@chialab/idom';
+import { Component, customElement, property } from '@chialab/idom';
 
+@customElement('x-card')
 class Card extends Component {
     @property({ type: Number }) age;
 }
-
-customElements.define('x-card', Card);
 
 const element = new Card();
 const logChanges = (newValue, previousValue) => {
@@ -304,8 +297,9 @@ When the property is bound to an attribute, it will reflect the value to the DOM
 Falsy values (`null`, `undefined`, `false`) will completely remove the attribute from the DOM node, while `true` always set the DOM attribute with empty value. For example:
 
 ```ts
-import { Component, customElements, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
+@customElement('x-card')
 class Card extends Component {
     static get observedAttributes() {
         return ['firstName', 'age', 'married'];
@@ -315,8 +309,6 @@ class Card extends Component {
     @property({ type: Number })   age;
     @property({ type: Boolean })  married = false;
 }
-
-customElements.define('x-card', Card);
 
 const card = new Card();
 card.firstName = 'Alan';

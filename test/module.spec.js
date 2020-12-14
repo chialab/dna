@@ -1,18 +1,14 @@
-import { getModule } from './helpers.js';
-
-let DNA;
+import './helpers';
+import * as DNA from '@chialab/dna';
 
 describe('module', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     const EXPECTED_EXPORT_MAP = {
         window: 'object',
         customElements: 'object',
         CustomElementRegistry: 'function',
+        customElement: 'function',
         DOM: 'object',
         connect: 'function',
         disconnect: 'function',

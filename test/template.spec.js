@@ -1,14 +1,10 @@
+import { spyFunction, getComponentName, wait } from './helpers.js';
 import { Observable } from 'rxjs';
-import { getModule, spyFunction, getComponentName, wait } from './helpers.js';
-
-let DNA, wrapper;
+import * as DNA from '@chialab/dna';
 
 describe('template', function() {
+    let wrapper;
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     beforeEach(() => {
         wrapper = DNA.DOM.createElement('div');
@@ -20,6 +16,7 @@ describe('template', function() {
     });
 
     describe('simple', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX() {
                 return DNA.h('h1', null, 'Hello world!');
@@ -31,6 +28,7 @@ describe('template', function() {
                 return DNA.html('<h1>Hello world!</h1>');
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -43,6 +41,7 @@ describe('template', function() {
     });
 
     describe('simple with uppercase', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX() {
                 return DNA.h('H1', null, 'Hello world!');
@@ -51,6 +50,7 @@ describe('template', function() {
                 return DNA.html`<H1>Hello world!</H1>`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -63,6 +63,7 @@ describe('template', function() {
     });
 
     describe('content interpolation', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
                 return DNA.h('h1', null, 'Hello! My name is ', context.name, ' and my favorite number is ', context.num);
@@ -71,6 +72,7 @@ describe('template', function() {
                 return DNA.html`<h1>Hello! My name is ${context.name} and my favorite number is ${context.num}</h1>`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -86,6 +88,7 @@ describe('template', function() {
     });
 
     describe('attribute interpolation', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
                 return DNA.h('input', {
@@ -98,6 +101,7 @@ describe('template', function() {
                 return DNA.html`<input name=${context.name} disabled=${context.disabled} required />`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -113,6 +117,7 @@ describe('template', function() {
     });
 
     describe('loops', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
                 return DNA.h('ul', null, context.items.map((item, index) =>
@@ -125,6 +130,7 @@ describe('template', function() {
                 </ul>`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -145,6 +151,7 @@ describe('template', function() {
     });
 
     describe('conditionals', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
                 return DNA.h(DNA.Fragment, null,
@@ -157,11 +164,12 @@ describe('template', function() {
             },
             HTML(context) {
                 return DNA.html`
-                    ${context.avatar && DNA.html`<img src=${context.avatar} />`}
+                    ${context.avatar && DNA.html`<img src=${context.avatar} alt="" />`}
                     <h1>${context.title || 'Untitled'}</h1>
                     ${context.members.length ? DNA.html`${context.members.length} members` : 'No members'}`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -181,7 +189,7 @@ describe('template', function() {
     });
 
     describe('style', () => {
-        const rootName = getComponentName();
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX() {
                 return DNA.h('style', {}, '.test {}');
@@ -190,9 +198,11 @@ describe('template', function() {
                 return DNA.html`<style>.test {}</style>`;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
+                const rootName = getComponentName();
                 class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
                     render() {
                         return TEMPLATES[type]();
@@ -210,17 +220,15 @@ describe('template', function() {
     });
 
     describe('slot', () => {
-        const rootName = getComponentName();
-        const titleName = getComponentName();
-
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
-            JSX() {
+            JSX(titleName) {
                 return DNA.h(DNA.Fragment, null,
                     DNA.h('div', { class: 'layout-header' }, DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))),
                     DNA.h('div', { class: 'layout-body' }, DNA.h('slot')),
                 );
             },
-            HTML() {
+            HTML(titleName) {
                 return DNA.html`
                     <div class="layout-header">
                         <${`${titleName}-${'html'}`}>
@@ -233,12 +241,15 @@ describe('template', function() {
                 `;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
+                const rootName = getComponentName();
+                const titleName = getComponentName();
                 class MyElement extends DNA.Component {
                     render() {
-                        return TEMPLATES[type]();
+                        return TEMPLATES[type](titleName);
                     }
                 }
 
@@ -276,6 +287,7 @@ describe('template', function() {
     });
 
     describe('slot with upgraded elements', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX() {
                 return DNA.h(DNA.Fragment, null,
@@ -294,6 +306,7 @@ describe('template', function() {
                 `;
             },
         };
+        /* eslint-enable mocha/no-setup-in-describe */
 
         for (let type in TEMPLATES) {
             it(type, () => {
@@ -331,6 +344,7 @@ describe('template', function() {
 
     describe('events', () => {
         describe('should add an event listener', () => {
+            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h('button', { onclick: context.listener });
@@ -339,6 +353,7 @@ describe('template', function() {
                     return DNA.html`<button onclick=${context.listener}></button>`;
                 },
             };
+            /* eslint-enable mocha/no-setup-in-describe */
 
             for (let type in TEMPLATES) {
                 it(type, () => {
@@ -355,21 +370,25 @@ describe('template', function() {
     });
 
     describe('promises', () => {
-        describe('should handle successfull promises', async () => {
+        describe('should handle successfull promises', () => {
+            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.h('div', null,
                         DNA.until(context.promise, 'Loading...'),
                         DNA.h('div', null, context.promise.then((res) => ['Hello ', res]))
                     );
                 },
                 HTML(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
                         ${DNA.until(context.promise, 'Loading...')}
                         <div>${context.promise.then((res) => DNA.html`Hello ${res}`)}</div>
                     </div>`;
                 },
             };
+            /* eslint-enable mocha/no-setup-in-describe */
 
             for (let type in TEMPLATES) {
                 it(type, async () => {
@@ -391,7 +410,8 @@ describe('template', function() {
             }
         });
 
-        describe('should handle failed promises', async () => {
+        describe('should handle failed promises', () => {
+            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h('div', null,
@@ -406,6 +426,7 @@ describe('template', function() {
                     </div>`;
                 },
             };
+            /* eslint-enable mocha/no-setup-in-describe */
 
             for (let type in TEMPLATES) {
                 it(type, async () => {
@@ -464,17 +485,21 @@ describe('template', function() {
     });
 
     describe('observables', () => {
-        describe('should subscribe', async () => {
+        describe('should subscribe', () => {
+            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.h('div', null, context.observable$);
                 },
                 HTML(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
                         ${context.observable$}
                     </div>`;
                 },
             };
+            /* eslint-enable mocha/no-setup-in-describe */
 
             for (let type in TEMPLATES) {
                 it(type, async () => {
@@ -504,17 +529,21 @@ describe('template', function() {
             }
         });
 
-        describe('should subscribe and pipe', async () => {
+        describe('should subscribe and pipe', () => {
+            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.h('div', null, context.observable$.pipe((num) => DNA.h('span', null, num)));
                 },
                 HTML(context) {
+                    /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
                         ${context.observable$.pipe((num) => DNA.html`<span>${num}</span>`)}
                     </div>`;
                 },
             };
+            /* eslint-enable mocha/no-setup-in-describe */
 
             for (let type in TEMPLATES) {
                 it(type, async () => {

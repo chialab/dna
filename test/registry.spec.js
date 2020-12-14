@@ -1,13 +1,8 @@
-import { getModule, wait, spyPromise, getComponentName, spyFunction } from './helpers.js';
-
-let DNA;
+import { wait, spyPromise, getComponentName, spyFunction } from './helpers.js';
+import * as DNA from '@chialab/dna';
 
 describe('registry', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     describe('#get', () => {
         it('should not return undefined component', () => {

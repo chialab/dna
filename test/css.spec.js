@@ -1,13 +1,8 @@
-import { getModule } from './helpers.js';
-
-let DNA;
+import './helpers';
+import * as DNA from '@chialab/dna';
 
 describe('css', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     it('should convert :host selector', () => {
         const style = DNA.css('test-style', ':host { color: red; }');
@@ -144,14 +139,15 @@ test-style #before6:before {
             DNA.css('test-style', null);
         }).to.throw(TypeError, 'The provided CSS text must be a string');
     });
+
+    describe.skip('adoptedStyleSheets', () => {
+        it('should handle style in adoptedStyleSheets', () => {
+            //
+        });
+
+        it('should handle multiple styles in adoptedStyleSheets', () => {
+            //
+        });
+    });
 });
 
-describe.skip('adoptedStyleSheets', () => {
-    it('should handle style in adoptedStyleSheets', () => {
-        //
-    });
-
-    it('should handle multiple styles in adoptedStyleSheets', () => {
-        //
-    });
-});

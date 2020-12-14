@@ -22,6 +22,11 @@ export const indexOf = Array.prototype.indexOf;
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 /**
+ * Alias to Object.prototype.toString.
+ */
+export const toString = Object.prototype.toString;
+
+/**
  * Alias to Object.prototype.hasOwnProperty.
  */
 export const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -128,7 +133,7 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
  * @param target The target to check.
  * @return The target is a Node instance.
  */
-export const isNode = (target: any): target is Node => target && target instanceof Node;
+export const isNode = (target: unknown): target is Node => target instanceof Node;
 
 /**
  * Check if a node is a Document instance.
@@ -163,16 +168,16 @@ export const isComment = (node: any): node is Comment => node && node.nodeType =
  * @param node The node to check.
  * @return The object is an Event instance.
  */
-export const isEvent = (event: any): event is Event => event instanceof Event;
+export const isEvent = (event: unknown): event is Event => event instanceof Event;
 
 /**
  * Check if a Node is connected.
  *
  * @return A truthy value for connected targets.
  */
-export const isConnected: (this: Node | null) => boolean = isConnectedImpl ? (isConnectedImpl as any).get : function(this: Node | null): boolean {
+export const isConnected: (this: Node | void) => boolean = isConnectedImpl ? (isConnectedImpl as any).get : function(this: Node | void): boolean {
     if (isElement(this) || isText(this)) {
-        return isConnected.call(this.parentNode);
+        return isConnected.call(this.parentNode as Node);
     }
     if (isDocument(this)) {
         return true;
@@ -180,6 +185,17 @@ export const isConnected: (this: Node | null) => boolean = isConnectedImpl ? (is
 
     return false;
 };
+
+/**
+ * A symbol which identify emulated components.
+ */
+const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ */
+export const shouldEmulateLifeCycle = (node: Node): node is ComponentInterface<HTMLElement> => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -218,17 +234,6 @@ export const disconnect = (node: Node) => {
         disconnect(children[i]);
     }
 };
-
-/**
- * A symbol which identify emulated components.
- */
-const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- */
-export const shouldEmulateLifeCycle = (node: any): node is ComponentInterface<HTMLElement> => node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Should emulate life cycle.

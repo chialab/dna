@@ -1,3 +1,4 @@
+import { ComponentConstructorInterface } from '@chialab/dna';
 import { DOM, customElements, defineProperties, defineListeners, isComponentConstructor } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
@@ -56,7 +57,7 @@ export const get = (tagName: string) => {
     return registry.get(tagName);
 };
 
-export const define = (tagName: string, constructor: any, options: ElementDefinitionOptions) => {
+export const define = (tagName: string, constructor: ComponentConstructorInterface<HTMLElement>, options: ElementDefinitionOptions) => {
     warnCode('USE_REGISTRY');
     return registry.define(tagName, constructor, options);
 };

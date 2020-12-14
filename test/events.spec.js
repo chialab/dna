@@ -1,13 +1,8 @@
-import { getModule, spyFunction, getComponentName } from './helpers.js';
-
-let DNA;
+import { spyFunction, getComponentName } from './helpers.js';
+import * as DNA from '@chialab/dna';
 
 describe('events', function() {
     this.timeout(10 * 1000);
-
-    before(async () => {
-        DNA = await getModule();
-    });
 
     let wrapper;
     beforeEach(() => {
