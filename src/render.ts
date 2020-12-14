@@ -90,8 +90,8 @@ export const internalRender = (
     root: Node,
     input: Template,
     context?: Context,
+    slot = isComponent(root),
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
-    slot = false,
     rootContext?: Context,
     mainContext?: Context,
     fragment?: Context
@@ -189,7 +189,7 @@ export const internalRender = (
                                 if (!live()) {
                                     return false;
                                 }
-                                internalRender(root, template, previousContext, namespace, slot, rootContext, refContext, renderFragmentContext);
+                                internalRender(root, template, previousContext, slot, namespace, rootContext, refContext, renderFragmentContext);
                                 return true;
                             },
                             live,
@@ -500,8 +500,8 @@ export const internalRender = (
                 templateNode as HTMLElement,
                 templateChildren,
                 templateContext,
-                templateNamespace,
                 isComponentTemplate,
+                templateNamespace,
                 rootContext,
                 refContext
             );
