@@ -1,1 +1,1 @@
-extends: '@chialab'
+extends: '@chialab/eslint-config/typescript'
