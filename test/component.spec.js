@@ -866,6 +866,8 @@ describe('Component', function() {
             DNA.DOM.appendChild(wrapper, element);
             element.appendChild(child);
             expect(connectedCallback.invoked).to.be.true;
+            element.appendChild(child);
+            expect(element.slotChildNodes.length).to.be.equal(1);
         });
 
         it('should move and connect a child from a parent', () => {
@@ -993,6 +995,8 @@ describe('Component', function() {
             element.insertBefore(child2, child1);
             expect(connectedCallback.invoked).to.be.true;
             expect(connectedCallback.count).to.be.equal(2);
+            element.insertBefore(child2, child1);
+            expect(element.slotChildNodes.length).to.be.equal(2);
         });
 
         it('should insert and connect a child (and remove it from the previous parent) before another', () => {

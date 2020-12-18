@@ -82,13 +82,22 @@ export const DOM = {
      * @param slot Should add a slot node.
      */
     appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
+        let parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
+            let slotted = parent.slotChildNodes;
+            if (parentNode) {
+                if (parentNode === parent) {
+                    slotted.splice(slotted.indexOf(newChild), 1);
+                } else {
+                    DOM.removeChild(parentNode, newChild, slot);
+                }
+            }
             parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
             return newChild;
         }
-        if (emulatingLifeCycle() && newChild.parentNode) {
-            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
+        if (emulatingLifeCycle() && parentNode) {
+            DOM.removeChild(parentNode, newChild, slot);
         }
         appendChildImpl.call(parent, newChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
@@ -131,8 +140,16 @@ export const DOM = {
      * @param slot Should insert a slot node.
      */
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
+        let parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
+            if (parentNode) {
+                if (parentNode === parent) {
+                    slotted.splice(slotted.indexOf(newChild), 1);
+                } else {
+                    DOM.removeChild(parentNode, newChild, slot);
+                }
+            }
             if (refChild) {
                 let io = slotted.indexOf(refChild);
                 if (io !== -1) {
@@ -144,8 +161,8 @@ export const DOM = {
             parent.forceUpdate();
             return newChild;
         }
-        if (emulatingLifeCycle() && newChild.parentNode) {
-            DOM.removeChild(newChild.parentNode as Element, newChild, slot);
+        if (emulatingLifeCycle() && parentNode) {
+            DOM.removeChild(parentNode, newChild, slot);
         }
         insertBeforeImpl.call(parent, newChild, refChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
@@ -163,6 +180,7 @@ export const DOM = {
      * @param slot Should replace a slot node.
      */
     replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
+        let parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
             let io = slotted.indexOf(oldChild);
@@ -171,8 +189,8 @@ export const DOM = {
             return oldChild;
         }
         if (emulatingLifeCycle()) {
-            if (newChild.parentNode && newChild !== oldChild) {
-                DOM.removeChild(newChild.parentNode as Element, newChild, slot);
+            if (parentNode && newChild !== oldChild) {
+                DOM.removeChild(parentNode, newChild, slot);
             }
             if (isConnected.call(oldChild)) {
                 disconnect(oldChild);
