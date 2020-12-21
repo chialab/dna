@@ -85,12 +85,11 @@ export const DOM = {
         let parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
-            if (parentNode) {
-                if (parentNode === parent) {
-                    slotted.splice(slotted.indexOf(newChild), 1);
-                } else {
-                    DOM.removeChild(parentNode, newChild, slot);
-                }
+            let previousIndex = slotted.indexOf(newChild);
+            if (previousIndex !== -1) {
+                slotted.splice(previousIndex, 1);
+            } else if (parentNode) {
+                DOM.removeChild(parentNode, newChild, slot);
             }
             parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
@@ -143,17 +142,17 @@ export const DOM = {
         let parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             let slotted = parent.slotChildNodes;
-            if (parentNode) {
-                if (parentNode === parent) {
-                    slotted.splice(slotted.indexOf(newChild), 1);
-                } else {
-                    DOM.removeChild(parentNode, newChild, slot);
-                }
+            let previousIndex = slotted.indexOf(newChild);
+            if (previousIndex !== -1) {
+                slotted.splice(previousIndex, 1);
+            } else if (parentNode) {
+                DOM.removeChild(parentNode, newChild, slot);
             }
+
             if (refChild) {
-                let io = slotted.indexOf(refChild);
-                if (io !== -1) {
-                    slotted.splice(io, 0, newChild);
+                let refIndex = slotted.indexOf(refChild);
+                if (refIndex !== -1) {
+                    slotted.splice(refIndex, 0, newChild);
                 }
             } else {
                 slotted.push(newChild);
