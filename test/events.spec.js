@@ -314,8 +314,9 @@ describe('events', function() {
             const callback1 = spyFunction((event, target) => [event.type, target.tagName]);
             const callback2 = spyFunction((event, target) => [event.type, target.tagName]);
             const callback3 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback4 = spyFunction((event, target) => [event.type, target.tagName]);
 
-            class BaseElement  extends DNA.Component {
+            class BaseElement extends DNA.Component {
                 static get listeners() {
                     return {
                         'click button': callback1,
@@ -328,23 +329,32 @@ describe('events', function() {
                 }
             }
 
-            class TestElement extends BaseElement {
+            class TestElement1 extends BaseElement {
                 static get listeners() {
                     return {
                         'click button': callback3,
+                        'drop': callback4,
                     };
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
+            class TestElement2 extends BaseElement {
+                static get listeners() {
+                    return {};
+                }
+            }
 
-            const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            DNA.customElements.define(getComponentName(), BaseElement);
+            DNA.customElements.define(getComponentName(), TestElement1);
+            DNA.customElements.define(getComponentName(), TestElement2);
+
+            let element1 = new TestElement1();
+            DNA.DOM.appendChild(wrapper, element1);
             expect(callback1.invoked).to.be.false;
             expect(callback2.invoked).to.be.false;
             expect(callback3.invoked).to.be.false;
-            element.querySelector('button').click();
-            element.dispatchEvent(DNA.DOM.createEvent('change', {
+            element1.querySelector('button').click();
+            element1.dispatchEvent(DNA.DOM.createEvent('change', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -352,6 +362,19 @@ describe('events', function() {
             expect(callback1.invoked).to.be.true;
             expect(callback2.invoked).to.be.true;
             expect(callback3.invoked).to.be.true;
+
+            let element2 = new TestElement2();
+            DNA.DOM.appendChild(wrapper, element2);
+            element2.querySelector('button').click();
+            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.count).to.be.equal(2);
+            expect(callback2.count).to.be.equal(1);
+            expect(callback3.count).to.be.equal(1);
+            expect(callback4.invoked).to.be.false;
         });
     });
 

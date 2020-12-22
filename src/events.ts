@@ -1,5 +1,5 @@
 import { createSymbolKey } from './symbols';
-import { HTMLElement, isElement, isEvent, matchesImpl, createEventImpl } from './helpers';
+import { HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty } from './helpers';
 import { ComponentConstructorInterface } from './Interfaces';
 import { getOwnPropertyDescriptor } from './helpers';
 
@@ -329,12 +329,18 @@ const LISTENERS_SYMBOL: unique symbol = createSymbolKey() as any;
  * @param constructor The component constructor.
  * @return A list of listeners.
  */
-export const getListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => (constructor as any)[LISTENERS_SYMBOL] as {
-    event: string;
-    selector: string | null;
-    callback: DelegatedEventCallback;
-    options?: AddEventListenerOptions;
-}[];
+export const getListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+    if (!hasOwnProperty.call(constructor, LISTENERS_SYMBOL)) {
+        return [];
+    }
+
+    return (constructor as any)[LISTENERS_SYMBOL] as {
+        event: string;
+        selector: string | null;
+        callback: DelegatedEventCallback;
+        options?: AddEventListenerOptions;
+    }[];
+};
 
 /**
  * Define component constructor listeners.
@@ -342,7 +348,7 @@ export const getListeners = (constructor: ComponentConstructorInterface<HTMLElem
  */
 export const defineListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
     let ctr = constructor;
-    let listeners = (constructor as any)[LISTENERS_SYMBOL] = getListeners(constructor) || [];
+    let listeners = (constructor as any)[LISTENERS_SYMBOL] = getListeners(constructor);
     while (ctr && ctr !== HTMLElement) {
         let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
         let listenersGetter = listenersDescriptor && listenersDescriptor.get;

@@ -115,7 +115,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
  * @return A list of class field descriptors.
  */
 export const getProperties = (constructor: ComponentConstructorInterface<HTMLElement>) => {
-    let props = (constructor as any)[PROPERTIES_SYMBOL] as {
+    let props = ((constructor as any)[PROPERTIES_SYMBOL] || {}) as {
         [propertyKey: string]: ClassFieldDescriptor;
     };
 
@@ -127,7 +127,7 @@ export const getProperties = (constructor: ComponentConstructorInterface<HTMLEle
         };
     }
 
-    return props || {};
+    return props;
 };
 
 /**
