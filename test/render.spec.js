@@ -103,7 +103,7 @@ describe('render', function() {
             let root = DNA.render(DNA.h(TestElement2), wrapper);
 
             const elem = wrapper.querySelector(name);
-            let divs = [...elem.children];
+            let divs = [elem.children[0], elem.children[1]];
             // force renders in order to check if keyed elements are respected
             root.forceUpdate();
             elem.forceUpdate();
