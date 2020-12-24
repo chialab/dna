@@ -91,22 +91,31 @@ describe('render', function() {
 
             class TestElement2 extends DNA.Component {
                 render() {
-                    return DNA.h(TestElement, {}, DNA.h('div', { class: 'test' }, 'test'));
+                    return DNA.h(TestElement, {},
+                        DNA.h('div', { class: 'test', key: 0 }, 'test'),
+                        DNA.h('div', { class: 'test', key: 1 }, 'test')
+                    );
                 }
             }
 
             DNA.customElements.define(name2, TestElement2);
 
-            DNA.render(DNA.h(TestElement2), wrapper);
+            let root = DNA.render(DNA.h(TestElement2), wrapper);
 
             const elem = wrapper.querySelector(name);
+            let divs = [...elem.children];
+            // force renders in order to check if keyed elements are respected
+            root.forceUpdate();
             elem.forceUpdate();
+            expect(elem.children[0]).to.be.equal(divs[0]);
+            expect(elem.children[1]).to.be.equal(divs[1]);
 
-            let div = wrapper.querySelector('div');
-            expect(div.className).to.be.equal('test');
-            expect(div.id).to.be.equal('test');
-            expect(div.textContent).to.be.equal('test');
-            expect(div.childNodes).to.have.lengthOf(1);
+            divs.forEach((div) => {
+                expect(div.className).to.be.equal('test');
+                expect(div.id).to.be.equal('test');
+                expect(div.textContent).to.be.equal('test');
+                expect(div.childNodes).to.have.lengthOf(1);
+            });
         });
 
         it('should render mixed content', () => {

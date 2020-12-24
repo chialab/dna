@@ -313,7 +313,9 @@ export const internalRender = (
 
             let childProperties = templateContext.props.get(refContext);
             templateContext.props.set(refContext, properties);
-            templateContext.key = key;
+            if (key != null) {
+                templateContext.key = key;
+            }
 
             if (childProperties) {
                 for (let propertyKey in childProperties) {
