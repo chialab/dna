@@ -2,6 +2,8 @@ import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildIm
 import { isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 
+document.createElement;
+
 /**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.
@@ -22,11 +24,11 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement(tagName: string, options?: ElementCreationOptions): Element {
-        const is = options && options.is;
-        const name = is || tagName.toLowerCase();
-        const node = createElementImpl(tagName);
-        const constructor = customElements.get(name);
+    createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
+        let is = options && options.is;
+        let name = is || tagName.toLowerCase();
+        let node = createElementImpl(tagName);
+        let constructor = customElements.get(name);
         if (constructor && isComponentConstructor(constructor) && !(node instanceof constructor)) {
             new constructor(node);
         }
@@ -42,7 +44,7 @@ export const DOM = {
      */
     createElementNS(namespaceURI: string, tagName: string): Element {
         if (namespaceURI === 'http://www.w3.org/1999/xhtml') {
-            return this.createElement(tagName);
+            return this.createElement(tagName as keyof HTMLElementTagNameMap);
         }
         return createElementNSImpl(namespaceURI, tagName);
     },

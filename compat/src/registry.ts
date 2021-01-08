@@ -38,7 +38,7 @@ customElements.define = function(name, constructor, options) {
     }
 
     let tagName = options && options.extends || name;
-    if (tagName !== name && !(constructor.prototype instanceof DOM.createElement(tagName).constructor)) {
+    if (tagName !== name && !(constructor.prototype instanceof DOM.createElement(tagName as keyof HTMLElementTagNameMap).constructor)) {
         warnCode('EXTEND_BUILTIN');
     }
     customElements.registry[name] = constructor;

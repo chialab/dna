@@ -303,7 +303,7 @@ export const internalRender = (
                         templateNode = new Component();
                         isComponentTemplate = isComponent(templateNode);
                     } else {
-                        templateNode = DOM.createElementNS(templateNamespace, tag as string);
+                        templateNode = DOM.createElementNS(templateNamespace, tag as keyof HTMLElementTagNameMap);
                     }
                 }
             }

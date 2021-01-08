@@ -460,7 +460,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <pre>{
     createDocumentFragment: (): DocumentFragment;
-    createElement(tagName: string, options?: ElementCreationOptions|undefined): Element;
+    createElement&lt;K extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(tagName: K, options?: ElementCreationOptions|undefined): HTMLElementTagNameMap[K];
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode: (data: string): Text;
     createComment(data: string): Comment;
