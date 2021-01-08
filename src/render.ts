@@ -98,7 +98,7 @@ export const internalRender = (
 ) => {
     let renderContext = context || getContext(root);
     let childNodes: IterableNodeList;
-    if (slot) {
+    if (slot && renderContext.slotChildNodes) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
     } else {
         childNodes = renderContext.childNodes || (root.childNodes as unknown as IterableNodeList);
