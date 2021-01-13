@@ -35,7 +35,7 @@ CSS Created by Chialab.it
     color: #5F9EA0;
 }
 
-:host > * {
+* {
     background-color: #5F9EA0;
 }
 

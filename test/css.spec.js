@@ -25,7 +25,7 @@ describe('css', function() {
         expect(style).to.be.equal('@media (min-width: 640px) { .test[\\:scope=\'test-style\'] { color: red; } }');
     });
 
-    it('should convert a more complex CSS #1', () => {
+    it('should convert a more complex CSS', () => {
         let style = DNA.css('test-style', `@charset "UTF-8";
 
 /**
@@ -38,6 +38,9 @@ describe('css', function() {
     background-color: #5F9EA0;
 }
 :host(.test) {
+    color: #5F9EA0;
+}
+:host(.test) > p {
     color: #5F9EA0;
 }
 h3 {
@@ -87,6 +90,9 @@ h3 + h4 {
     background-color: #5F9EA0;
 }
 [\\:host='test-style'].test {
+    color: #5F9EA0;
+}
+[\\:host='test-style'].test > p[\\:scope='test-style'] {
     color: #5F9EA0;
 }
 h3[\\:scope='test-style'] {

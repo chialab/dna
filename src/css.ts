@@ -76,12 +76,6 @@ export const css = (name: string, cssText: string): string => {
                 .split(',')
                 .map((selector) => {
                     selector = selector.trim();
-
-                    let hostMatch = selector.match(HOST_REGEX);
-                    if (hostMatch) {
-                        return `[\\${HOST_ATTRIBUTE}='${name}']${hostMatch[2] || ''}`;
-                    }
-
                     return selector.split(/([>+])/)
                         .map((selector, index) => {
                             if (index % 2 === 1) {
@@ -91,6 +85,10 @@ export const css = (name: string, cssText: string): string => {
                             return selector.trim()
                                 .split(/\s+/)
                                 .map((selector) => {
+                                    let hostMatch = selector.match(HOST_REGEX);
+                                    if (hostMatch) {
+                                        return `[\\${HOST_ATTRIBUTE}='${name}']${hostMatch[2] || ''}`;
+                                    }
                                     let chunks = selector.trim().split(':');
                                     selector = `${chunks.shift()}[\\${SCOPE_ATTRIBUTE}='${name}']`;
                                     if (chunks.length) {

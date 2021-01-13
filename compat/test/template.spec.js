@@ -44,15 +44,16 @@ describe('Compat', () => {
         });
 
         it('should handle `template` getter property as string', () => {
+            let name = getComponentName();
             class TestComponent extends BaseTestComponent {
                 get template() {
                     return '<span class="dna-test">Hello DNA!</span>';
                 }
             }
-            define(getComponentName(), TestComponent);
+            define(name, TestComponent);
 
             const element = render(wrapper, TestComponent);
-            assert.equal(element.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+            assert.equal(element.node.innerHTML, `<span :scope="${name}" class="dna-test">Hello DNA!</span>`);
         });
 
         it('should handle `template` getter property as number', () => {
@@ -120,6 +121,7 @@ describe('Compat', () => {
         });
 
         it('should handle `template` with IDOM calls', () => {
+            let name = getComponentName();
             class TestComponent extends BaseTestComponent {
                 get template() {
                     return () => [
@@ -131,26 +133,27 @@ describe('Compat', () => {
                     ];
                 }
             }
-            define(getComponentName(), TestComponent);
+            define(name, TestComponent);
 
             const element = render(wrapper, TestComponent);
-            assert.equal(element.node.innerHTML, '<span>Hello, </span>');
+            assert.equal(element.node.innerHTML, `<span :scope="${name}">Hello, </span>`);
             element.name = 'Alan';
             element.lastName = 'Turing';
             element.title = 'Title';
-            assert.equal(element.node.innerHTML, '<h1>Title</h1><br><span>Hello, Alan Turing</span>');
+            assert.equal(element.node.innerHTML, `<h1 :scope="${name}">Title</h1><br :scope="${name}"><span :scope="${name}">Hello, Alan Turing</span>`);
         });
 
         it('should handle `template` with JSX IDOM calls', () => {
+            let name = getComponentName();
             class TestComponent extends BaseTestComponent {
                 get template() {
                     return IDOM.h('span', { class: 'dna-test' }, 'Hello DNA!');
                 }
             }
-            define(getComponentName(), TestComponent);
+            define(name, TestComponent);
 
             const element = render(wrapper, TestComponent);
-            assert.equal(element.node.innerHTML, '<span class="dna-test">Hello DNA!</span>');
+            assert.equal(element.node.innerHTML, `<span :scope="${name}" class="dna-test">Hello DNA!</span>`);
         });
 
         it('should handle templates with <svg>', () => {
