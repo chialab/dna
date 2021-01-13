@@ -54,11 +54,6 @@ export type ComponentInterface<T extends HTMLElement> = T & {
     slotChildNodes: IterableNodeList;
 
     /**
-     * A list of CSSStyleSheet to apply to the component.
-     */
-    adoptedStyleSheets?: CSSStyleSheet[];
-
-    /**
      * The component constructor.
      */
     constructor: ComponentConstructorInterface<T>;
@@ -198,6 +193,11 @@ export type ComponentConstructorInterface<T extends HTMLElement> = {
     readonly listeners?: {
         [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
     };
+
+    /**
+     * A list of CSSStyleSheet to apply to the component.
+     */
+    readonly adoptedStyleSheets?: CSSStyleSheet[];
 
     /**
      * Should skip native constructors.

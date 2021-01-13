@@ -317,6 +317,9 @@ describe('Component', function() {
         });
 
         it('should render when connected', () => {
+            let name1 = getComponentName();
+            let name2 = getComponentName();
+
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<h1>test</h1>`;
@@ -326,8 +329,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.customElements.define(name1, TestElement1);
+            DNA.customElements.define(name2, TestElement2, {
                 extends: 'article',
             });
 
@@ -337,7 +340,7 @@ describe('Component', function() {
             ].forEach((element) => {
                 expect(element.innerHTML).to.be.equal('');
                 DNA.DOM.appendChild(wrapper, element);
-                expect(element.innerHTML).to.be.equal('<h1>test</h1>');
+                expect(element.innerHTML).to.be.equal(`<h1 :scope="${element.is}">test</h1>`);
             });
         });
     });
@@ -719,7 +722,8 @@ describe('Component', function() {
         });
 
         it('should should re-render on property changes', () => {
-            @DNA.customElement(getComponentName())
+            let name = getComponentName();
+            @DNA.customElement(name)
             class TestElement extends DNA.Component {
                 @DNA.property() title = '';
 
@@ -730,15 +734,16 @@ describe('Component', function() {
 
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
-            expect(element.innerHTML).to.be.equal('<h1></h1>');
+            expect(element.innerHTML).to.be.equal(`<h1 :scope="${name}"></h1>`);
             element.title = 'test';
-            expect(element.innerHTML).to.be.equal('<h1>test</h1>');
+            expect(element.innerHTML).to.be.equal(`<h1 :scope="${name}">test</h1>`);
         });
 
         it('should render only once after construction', () => {
             const callback = spyFunction();
+            let name = getComponentName();
 
-            @DNA.customElement(getComponentName())
+            @DNA.customElement(name)
             class TestElement extends DNA.Component {
                 @DNA.property() title = '';
                 @DNA.property() description = '';
@@ -775,7 +780,7 @@ describe('Component', function() {
             DNA.DOM.appendChild(wrapper, element);
             expect(callback.invoked).to.be.true;
             expect(callback.count).to.be.equal(1);
-            expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');
+            expect(element.innerHTML).to.be.equal(`<div :scope="${name}">Test</div><div :scope="${name}">Test</div><div :scope="${name}">Test</div><div :scope="${name}">Test</div><div :scope="${name}">0</div>`);
         });
 
         it('should NOT handle property if nothing changed on assignment', () => {

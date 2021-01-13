@@ -76,6 +76,7 @@
     "@types/react": "^16.9.31",
     "@types/react-dom": "^16.9.6",
     "babel-eslint": "^10.0.3",
+    "construct-style-sheets-polyfill": "^2.4.6",
     "core-js": "^3.6.4",
     "eslint": "^7.0.0",
     "haunted": "^4.7.0",

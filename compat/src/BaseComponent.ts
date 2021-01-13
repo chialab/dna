@@ -3,7 +3,6 @@ import { DNA_SYMBOL, COMPONENT_SYMBOL, NODE_SYMBOL, CONNECTED_SYMBOL, STYLE_SYMB
 import { convert } from './template';
 import { CompatibilityPropertyProxy } from './prop';
 import { warnCode } from './deprecations';
-import { registry } from './registry';
 
 /**
  * Map of style elements.
@@ -170,7 +169,7 @@ export const mixin = <T extends ComponentConstructorInterface<HTMLElement>>(cons
                 // handle css text for the component
                 if (!STYLES[this.is]) {
                     warnCode('PREFER_STYLE');
-                    let content = css(this.is, this.css, registry.tagNames[this.is]);
+                    let content = css(this.is, this.css);
                     let style = STYLES[this.is] = DOM.createElement('style') as HTMLStyleElement;
                     style.textContent = content;
                     window.document.head.appendChild(style);

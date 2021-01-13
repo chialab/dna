@@ -565,6 +565,11 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
+construct-style-sheets-polyfill@^2.4.6:
+  version "2.4.6"
+  resolved "https://registry.npmjs.org/construct-style-sheets-polyfill/-/construct-style-sheets-polyfill-2.4.6.tgz#3f77f3455b4518df9939e5b1397e3396228fd412"
+  integrity sha512-lU0to7dFDjKslMF+M5NUa4s0RQMBRVyZMXvD/vp7vmjdEPgziTkHSfZHQxfoIvVWajWRJUVJMLfrMwcx8fTh4A==
+
 core-js-pure@^3.0.0:
   version "3.8.1"
   resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.8.1.tgz#23f84048f366fdfcf52d3fd1c68fec349177d119"

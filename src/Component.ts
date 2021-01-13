@@ -8,6 +8,7 @@ import { Template } from './Template';
 import { internalRender } from './render';
 import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
 import { cloneChildNodes } from './NodeList';
+import { HOST_ATTRIBUTE, DEFINED_ATTRIBUTE } from './css';
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -26,11 +27,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     get is(): string {
         return undefined as unknown as string;
     }
-
-    /**
-     * A list of CSSStyleSheet to apply to the component.
-     */
-    adoptedStyleSheets?: CSSStyleSheet[];
 
     /**
      * A flag with the connected value of the node.
@@ -123,7 +119,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             // force the is attribute
             setAttributeImpl.call(this, 'is', this.is);
         }
-        setAttributeImpl.call(this, ':defined', '');
+        setAttributeImpl.call(this, HOST_ATTRIBUTE, this.is);
+        setAttributeImpl.call(this, DEFINED_ATTRIBUTE, '');
         // trigger a re-render when the Node is connected
         this.forceUpdate();
     }

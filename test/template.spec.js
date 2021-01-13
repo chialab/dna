@@ -214,7 +214,7 @@ describe('template', function() {
                 const element = DNA.render(DNA.h(MyElement), wrapper);
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].tagName).to.be.equal('STYLE');
-                expect(element.childNodes[0].textContent).to.be.equal(`div[is="${rootName}-${type.toLowerCase()}"] .test {}`);
+                expect(element.childNodes[0].textContent).to.be.equal(`.test[\\:scope='${rootName}-${type.toLowerCase()}'] {}`);
             });
         }
     });

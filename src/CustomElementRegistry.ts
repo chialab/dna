@@ -3,6 +3,7 @@ import { isComponent, isComponentConstructor, isConstructed } from './Interfaces
 import { connect, defineProperty } from './helpers';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
+import { loadStyleSheets } from './css';
 
 /**
  * The native custom elements registry.
@@ -91,11 +92,6 @@ export class CustomElementRegistry {
             throw new Error('The registry already contains an entry with the same name');
         }
 
-        if (isComponentConstructor(constructor)) {
-            defineProperties(constructor);
-            defineListeners(constructor);
-        }
-
         try {
             defineProperty(constructor.prototype, 'is', {
                 writable: false,
@@ -104,6 +100,12 @@ export class CustomElementRegistry {
             });
         } catch {
             throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
+        }
+
+        if (isComponentConstructor(constructor)) {
+            defineProperties(constructor);
+            defineListeners(constructor);
+            loadStyleSheets(constructor);
         }
 
         let tagName = (options.extends || name).toLowerCase();

@@ -1,6 +1,5 @@
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
-import { customElements } from './CustomElementRegistry';
 import { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
 import { isHyperNode, h, HyperClasses, HyperStyles } from './HyperNode';
 import { DOM } from './DOM';
@@ -8,7 +7,7 @@ import { Context, getContext, emptyFragments } from './Context';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState, Observable } from './Observable';
 import { cloneChildNodes, IterableNodeList } from './NodeList';
-import { css } from './css';
+import { SCOPE_ATTRIBUTE, css } from './css';
 
 /**
  * A cache for converted class values.
@@ -304,6 +303,9 @@ export const internalRender = (
                         isComponentTemplate = isComponent(templateNode);
                     } else {
                         templateNode = DOM.createElementNS(templateNamespace, tag as keyof HTMLElementTagNameMap);
+                        if (rootContext && rootContext.is) {
+                            (templateNode as Element).setAttribute(SCOPE_ATTRIBUTE, rootContext.is);
+                        }
                     }
                 }
             }
@@ -459,7 +461,7 @@ export const internalRender = (
         } else {
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {
                 let is = rootContext.is as string;
-                template = css(is, template as string, customElements.tagNames[is]);
+                template = css(is, template as string);
                 (root as HTMLStyleElement).setAttribute('name', is);
             }
 

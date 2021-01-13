@@ -1,31 +1,32 @@
 import './helpers';
 import * as DNA from '@chialab/dna';
+import { getComponentName } from './helpers';
 
 describe('css', function() {
     this.timeout(10 * 1000);
 
     it('should convert :host selector', () => {
-        const style = DNA.css('test-style', ':host { color: red; }');
-        expect(style).to.be.equal('test-style { color: red; }');
+        let style = DNA.css('test-style', ':host { color: red; }');
+        expect(style).to.be.equal('[\\:host=\'test-style\'] { color: red; }');
     });
 
     it('should convert :host selector with modifiers', () => {
-        const style = DNA.css('test-style', ':host(.test) { color: red; }');
-        expect(style).to.be.equal('test-style.test { color: red; }');
+        let style = DNA.css('test-style', ':host(.test) { color: red; }');
+        expect(style).to.be.equal('[\\:host=\'test-style\'].test { color: red; }');
     });
 
     it('should scope a selector', () => {
-        const style = DNA.css('test-style', '.test { color: red; }');
-        expect(style).to.be.equal('test-style .test { color: red; }');
+        let style = DNA.css('test-style', '.test { color: red; }');
+        expect(style).to.be.equal('.test[\\:scope=\'test-style\'] { color: red; }');
     });
 
     it('should scope a selector inside a media query', () => {
-        const style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
-        expect(style).to.be.equal('@media (min-width: 640px) { test-style .test { color: red; } }');
+        let style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
+        expect(style).to.be.equal('@media (min-width: 640px) { .test[\\:scope=\'test-style\'] { color: red; } }');
     });
 
     it('should convert a more complex CSS #1', () => {
-        const style = DNA.css('test-style', `@charset "UTF-8";
+        let style = DNA.css('test-style', `@charset "UTF-8";
 
 /**
  * This is a comment
@@ -33,17 +34,17 @@ describe('css', function() {
 :host {
     color: #5F9EA0;
 }
-:host > * {
+* {
     background-color: #5F9EA0;
 }
 :host(.test) {
     color: #5F9EA0;
 }
-:host(.test) > * {
-    background-color: #5F9EA0;
-}
 h3 {
     color: blue;
+}
+h3 + h4 {
+    color: red;
 }
 #before1:before {
     content: "Hello";
@@ -79,41 +80,41 @@ h3 {
     100% { top: 10px; }
 }`);
         expect(style).to.be.equal(`@charset "UTF-8";
-test-style {
+[\\:host='test-style'] {
     color: #5F9EA0;
 }
-test-style > * {
+*[\\:scope='test-style'] {
     background-color: #5F9EA0;
 }
-test-style.test {
+[\\:host='test-style'].test {
     color: #5F9EA0;
 }
-test-style.test > * {
-    background-color: #5F9EA0;
-}
-test-style h3 {
+h3[\\:scope='test-style'] {
     color: blue;
 }
-test-style #before1:before {
+h3[\\:scope='test-style'] + h4[\\:scope='test-style'] {
+    color: red;
+}
+#before1[\\:scope='test-style']:before {
     content: "Hello";
 }
-test-style #before2:before {
+#before2[\\:scope='test-style']:before {
     content: attr(id);
 }
-test-style #before3:before {
+#before3[\\:scope='test-style']:before {
     content: "Hello world";
 }
-test-style #before4:before {
+#before4[\\:scope='test-style']:before {
     content: "attr(id)";
 }
-test-style #before5:before {
+#before5[\\:scope='test-style']:before {
     content: "♜";
 }
-test-style #before6:before {
+#before6[\\:scope='test-style']:before {
     content: "hello-world";
 }
 @media (min-width: 0) {
-    test-style h1,test-style h2 {
+    h1[\\:scope='test-style'],h2[\\:scope='test-style'] {
         color: inherit;
     }
 }
@@ -140,13 +141,28 @@ test-style #before6:before {
         }).to.throw(TypeError, 'The provided CSS text must be a string');
     });
 
-    describe.skip('adoptedStyleSheets', () => {
-        it('should handle style in adoptedStyleSheets', () => {
-            //
-        });
+    describe('adoptedStyleSheets', () => {
+        it('should handle styles in adoptedStyleSheets', async () => {
+            if (typeof window === 'undefined') {
+                return;
+            }
 
-        it('should handle multiple styles in adoptedStyleSheets', () => {
-            //
+            let wrapper = DNA.DOM.createElement('div');
+            wrapper.ownerDocument.body.appendChild(wrapper);
+            await import('construct-style-sheets-polyfill');
+            let CSSStyleSheet = window.CSSStyleSheet;
+
+            let style = new CSSStyleSheet();
+            style.replaceSync(':host { color: red; }');
+
+            class TestElement extends DNA.Component {
+                static adoptedStyleSheets = [style];
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            let element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(DNA.window.getComputedStyle(element).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
         });
     });
 });
