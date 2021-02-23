@@ -65,8 +65,8 @@ const convertStyles = (value: HyperStyles) => {
         .split(';')
         .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
             let rulePair = ruleString.split(':');
-            if (rulePair.length == 2) {
-                ruleMap[rulePair[0].trim()] = rulePair[1].trim();
+            if (rulePair.length > 1) {
+                ruleMap[(rulePair.shift() as string).trim()] = rulePair.join(':').trim();
             }
             return ruleMap;
         }, styles);
