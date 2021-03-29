@@ -1,8 +1,8 @@
+import type { ClassFieldObserver, ClassFieldDescriptor } from './property';
+import type { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
+import type { IterableNodeList } from './NodeList';
+import type { Template } from './Template';
 import { createSymbolKey } from './symbols';
-import { ClassFieldObserver, ClassFieldDescriptor } from './property';
-import { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-import { IterableNodeList } from './NodeList';
-import { Template } from './Template';
 
 /**
  * A symbol which identify components.
@@ -18,19 +18,19 @@ export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => node[COMPONENT_SYMBOL];
+export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => !!node[COMPONENT_SYMBOL];
 
 /**
  * Check if a node is a constructed component.
  * @param node The node to check.
  */
-export const isConstructed = (node: any): node is ComponentInterface<HTMLElement> => node[CONSTRUCTED_SYMBOL];
+export const isConstructed = (node: any): node is ComponentInterface<HTMLElement> => !!node[CONSTRUCTED_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  */
-export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructorInterface<HTMLElement> => !!constructor.prototype[COMPONENT_SYMBOL];
 
 export type ComponentInterface<T extends HTMLElement> = T & {
     /**

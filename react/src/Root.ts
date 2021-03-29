@@ -1,7 +1,8 @@
+import type { ReferencesMap } from './convertReactNodes';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect, disconnect, customElements } from '@chialab/dna';
-import { ReferencesMap, convertReactNodes } from './convertReactNodes';
+import { convertReactNodes } from './convertReactNodes';
 
 /**
  * A generic wrapper for DNA components.

@@ -1,13 +1,18 @@
+import type { TemplateFunction } from './Template';
+import type { IterableNodeList } from './NodeList';
+import type { ComponentInterface } from './Interfaces';
 import { isElement, isText } from './helpers';
 import { createSymbolKey } from './symbols';
-import { TemplateFunction } from './Template';
-import { IterableNodeList } from './NodeList';
-import { ComponentInterface } from './Interfaces';
 
 /**
  * A symbol for node context.
  */
 const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+/**
+ * A map of properties for each context.
+ */
+export type PropertiesMap = WeakMap<Context, { [key: string]: unknown }>;
 
 /**
  * The node context interface.
@@ -18,7 +23,7 @@ export type Context = {
     tagName?: string;
     is?: string;
     key?: unknown;
-    props: WeakMap<Context, { [key: string]: unknown }>;
+    props: Map<boolean, PropertiesMap>;
     state: Map<string, unknown>;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
@@ -52,7 +57,7 @@ export const createContext = (node: Node) => {
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        props: new WeakMap(),
+        props: new Map([[true, new WeakMap()], [false, new WeakMap()]]),
         state: new Map(),
         fragments: [],
     });

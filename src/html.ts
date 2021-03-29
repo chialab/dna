@@ -1,5 +1,5 @@
+import type { Template } from './Template';
 import htm from 'htm';
-import { Template } from './Template';
 import { h } from './HyperNode';
 
 const innerHtml = htm.bind(h);

@@ -1,13 +1,17 @@
+import type { Context, PropertiesMap } from './Context';
+import type { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
+import type { Observable } from './Observable';
+import type { IterableNodeList } from './NodeList';
+import type { HyperClasses, HyperStyles } from './HyperNode';
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
 import { isComponent } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
-import { isHyperNode, h, HyperClasses, HyperStyles } from './HyperNode';
+import { isHyperNode, h } from './HyperNode';
 import { DOM } from './DOM';
-import { Context, getContext, emptyFragments } from './Context';
+import { getContext, emptyFragments } from './Context';
 import { isThenable, getThenableState } from './Thenable';
-import { isObservable, getObservableState, Observable } from './Observable';
-import { cloneChildNodes, IterableNodeList } from './NodeList';
+import { isObservable, getObservableState } from './Observable';
+import { cloneChildNodes } from './NodeList';
 import { css } from './css';
 
 /**
@@ -311,8 +315,9 @@ export const internalRender = (
             // update the Node properties
             templateContext = templateContext || getContext(templateNode);
 
-            let childProperties = templateContext.props.get(refContext);
-            templateContext.props.set(refContext, properties);
+            let map = templateContext.props.get(slot) as PropertiesMap;
+            let childProperties = map.get(refContext);
+            map.set(refContext, properties);
             if (key != null) {
                 templateContext.key = key;
             }

@@ -1,6 +1,6 @@
+import type { ComponentInterface } from './Interfaces';
 import { window } from './window';
 import { createSymbolKey } from './symbols';
-import { ComponentInterface } from './Interfaces';
 import { cloneChildNodes } from './NodeList';
 
 export const { Node, HTMLElement, Event, CustomEvent, document } = window;

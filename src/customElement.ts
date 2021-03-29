@@ -1,6 +1,7 @@
 
-import { ClassElement } from './ClassElement';
-import { ComponentConstructorInterface, CONSTRUCTED_SYMBOL, isConstructed } from './Interfaces';
+import type { ClassElement } from './ClassElement';
+import type { ComponentConstructorInterface } from './Interfaces';
+import { CONSTRUCTED_SYMBOL, isConstructed } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 
 /**

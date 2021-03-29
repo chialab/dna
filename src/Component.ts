@@ -1,12 +1,15 @@
-import { ComponentInterface, ComponentConstructorInterface, COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
+import type { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
+import type { DelegatedEventCallback } from './events';
+import type { Template } from './Template';
+import type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
+import { COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
 import { DOM } from './DOM';
-import { DelegatedEventCallback, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
+import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext } from './Context';
-import { Template } from './Template';
 import { internalRender } from './render';
-import { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter, getProperties, getProperty } from './property';
+import { getProperties, getProperty } from './property';
 import { cloneChildNodes } from './NodeList';
 
 /**

@@ -1,7 +1,7 @@
-import { ComponentConstructorInterface } from './Interfaces';
+import type { ComponentConstructorInterface } from './Interfaces';
+import type { TemplateItems, TemplateFunction } from './Template';
 import { window } from './window';
 import { customElements } from './CustomElementRegistry';
-import { TemplateItems, TemplateFunction } from './Template';
 import { Fragment } from './Fragment';
 import { createSymbolKey } from './symbols';
 import { isNode } from './helpers';

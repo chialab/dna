@@ -1,7 +1,8 @@
+import type { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
+import type { ClassElement } from './ClassElement';
 import { createSymbolKey } from './symbols';
 import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
-import { ComponentInterface, ComponentConstructorInterface, isConstructed } from './Interfaces';
-import { ClassElement } from './ClassElement';
+import { isConstructed } from './Interfaces';
 
 /**
  * A Symbol which contains all Property instances of a Component.

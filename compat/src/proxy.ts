@@ -1,4 +1,4 @@
-import { ComponentInterface } from '@chialab/dna';
+import type { ComponentInterface } from '@chialab/dna';
 import { warnCode } from './deprecations';
 
 export function proxy(element: ComponentInterface<any>) {

@@ -1,4 +1,5 @@
-import { ComponentInterface, customElements } from '@chialab/dna';
+import type { ComponentInterface } from '@chialab/dna';
+import { customElements } from '@chialab/dna';
 
 /**
  * Instantiate all defined components in a DOM tree.

@@ -1,6 +1,6 @@
-import { HyperNode, HyperProperties } from './HyperNode';
-import { Observable } from './Observable';
-import { Context } from './Context';
+import type { HyperNode, HyperProperties } from './HyperNode';
+import type { Observable } from './Observable';
+import type { Context } from './Context';
 
 /**
  * The atomic template item.

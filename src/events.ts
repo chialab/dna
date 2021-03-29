@@ -1,6 +1,6 @@
+import type { ComponentConstructorInterface } from './Interfaces';
 import { createSymbolKey } from './symbols';
 import { HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty } from './helpers';
-import { ComponentConstructorInterface } from './Interfaces';
 import { getOwnPropertyDescriptor } from './helpers';
 
 /**
