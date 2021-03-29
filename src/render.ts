@@ -315,7 +315,7 @@ export const internalRender = (
             // update the Node properties
             templateContext = templateContext || getContext(templateNode);
 
-            let map = templateContext.props.get(slot) as PropertiesMap;
+            let map = templateContext.props[slot ? 1 : 0] as PropertiesMap;
             let childProperties = map.get(refContext);
             map.set(refContext, properties);
             if (key != null) {

@@ -23,7 +23,7 @@ export type Context = {
     tagName?: string;
     is?: string;
     key?: unknown;
-    props: Map<boolean, PropertiesMap>;
+    props: [PropertiesMap, PropertiesMap];
     state: Map<string, unknown>;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
@@ -57,7 +57,7 @@ export const createContext = (node: Node) => {
         tagName: isElementNode ? (node as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        props: new Map([[true, new WeakMap()], [false, new WeakMap()]]),
+        props: [new WeakMap(), new WeakMap()],
         state: new Map(),
         fragments: [],
     });
