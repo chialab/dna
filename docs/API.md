@@ -23,7 +23,7 @@
 
 **Types**
 
-<a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#templateitems">TemplateItems</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#context">Context</a>, <a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#classdescriptor">ClassDescriptor</a>, <a href="#classelement">ClassElement</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
+<a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#iterablenodelist">IterableNodeList</a>, <a href="#template">Template</a>, <a href="#templateitem">TemplateItem</a>, <a href="#hypernode">HyperNode</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#templateitems">TemplateItems</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#context">Context</a>, <a href="#propertiesmap">PropertiesMap</a>, <a href="#observable">Observable</a>, <a href="#subscription">Subscription</a>, <a href="#classdescriptor">ClassDescriptor</a>, <a href="#classelement">ClassElement</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#asyncevent">AsyncEvent</a>
 
 
 <hr />
@@ -460,7 +460,7 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <pre>{
     createDocumentFragment: (): DocumentFragment;
-    createElement&lt;K extends "object"|"link"|"small"|"sub"|"sup"|"track"|"progress"|"a"|"abbr"|"address"|"applet"|"area"|"article"|"aside"|"audio"|"b"|"base"|"basefont"|"bdi"|"bdo"|"blockquote"|"body"|"br"|"button"|"canvas"|"caption"|"cite"|"code"|"col"|"colgroup"|"data"|"datalist"|"dd"|"del"|"details"|"dfn"|"dialog"|"dir"|"div"|"dl"|"dt"|"em"|"embed"|"fieldset"|"figcaption"|"figure"|"font"|"footer"|"form"|"frame"|"frameset"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"|"head"|"header"|"hgroup"|"hr"|"html"|"i"|"iframe"|"img"|"input"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"marquee"|"menu"|"meta"|"meter"|"nav"|"noscript"|"ol"|"optgroup"|"option"|"output"|"p"|"param"|"picture"|"pre"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"section"|"select"|"slot"|"source"|"span"|"strong"|"style"|"summary"|"table"|"tbody"|"td"|"template"|"textarea"|"tfoot"|"th"|"thead"|"time"|"title"|"tr"|"u"|"ul"|"var"|"video"|"wbr"&gt;(tagName: K, options?: ElementCreationOptions|undefined): HTMLElementTagNameMap[K];
+    createElement&lt;K extends keyof HTMLElementTagNameMap&gt;(tagName: K, options?: ElementCreationOptions|undefined): HTMLElementTagNameMap[K];
     createElementNS(namespaceURI: string, tagName: string): Element;
     createTextNode: (data: string): Text;
     createComment(data: string): Comment;
@@ -645,7 +645,7 @@ Dispatch a custom Event.
 
 <strong>Type:</strong>
 
-<pre>(element: Element, event: Event|string, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean</pre>
+<pre>(element: Element, event: Event|string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean</pre>
 
 
 
@@ -666,7 +666,7 @@ Dispatch an async custom Event.
 
 <strong>Type:</strong>
 
-<pre>(element: Element, event: Event|string, detail?: CustomEventInit&lt;any&gt;|undefined, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;</pre>
+<pre>(element: Element, event: Event|string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise&lt;any[]&gt;</pre>
 
 
 
@@ -1330,9 +1330,7 @@ The node context interface.
     tagName?: string;
     is?: string;
     key?: any;
-    props: WeakMap&lt;<a href="#context">Context</a>, {
-        [key: string]: any;
-    }&gt;;
+    props: [<a href="#propertiesmap">PropertiesMap</a>, <a href="#propertiesmap">PropertiesMap</a>];
     state: Map&lt;string, any&gt;;
     childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
     slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
@@ -1343,6 +1341,25 @@ The node context interface.
     parent?: <a href="#context">Context</a>;
     root?: <a href="#context">Context</a>;
 }</pre>
+
+
+
+
+<hr />
+
+<strong id="propertiesmap"><code>type</code>  PropertiesMap</strong>
+
+<p>
+
+A map of properties for each context.
+
+</p>
+
+
+
+<pre>WeakMap&lt;<a href="#context">Context</a>, {
+    [key: string]: any;
+}&gt;</pre>
 
 
 
