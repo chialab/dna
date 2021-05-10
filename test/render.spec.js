@@ -157,7 +157,7 @@ describe('render', function() {
 
             function Clock(props, state, update) {
                 render2();
-                let count = state.get('count') ?? 0;
+                let count = state.get('count') || 0;
                 count++;
                 state.set('count', count);
                 if (count === 1) {
