@@ -290,7 +290,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
+export const dispatchEvent = (element: Element, event: Event | string, detail?: any, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
     return HTMLElement.prototype.dispatchEvent.call(element, event);
@@ -306,7 +306,7 @@ export const dispatchEvent = (element: Element, event: Event | string, detail?: 
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
+export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: any, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
     let asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
     let promises: unknown[] = [];
     asyncEvent.respondWith = function(callback) {

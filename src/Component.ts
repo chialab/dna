@@ -255,9 +255,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchEvent(event: Event): boolean; /* eslint-disable-line no-dupe-class-members */
-    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean; /* eslint-disable-line no-dupe-class-members */
-    dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+    dispatchEvent(event: Event): boolean;
+    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
         return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
     }
 
@@ -270,9 +270,9 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
-    dispatchAsyncEvent(event: Event): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>; /* eslint-disable-line no-dupe-class-members */
-    dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) { /* eslint-disable-line no-dupe-class-members */
+    dispatchAsyncEvent(event: Event): Promise<any[]>;
+    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+    dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
         return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
     }
 
