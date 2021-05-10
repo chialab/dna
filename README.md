@@ -56,7 +56,6 @@ $ npm i @chialab/dna
 import { Component, customElements, html, ... } from '@chialab/dna';
 ```
 
-
 ## Define a Component
 
 This is an example of Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
@@ -108,17 +107,12 @@ Then use the element in your HTML:
 
 ### Requirements
 
-In order to build and test DNA, the following requirements are needed:
-* [NodeJS](https://nodejs.org/) (>= 10.0.0)
-* [Yarn](https://yarnpkg.com)
-* [RNA](https://github.com/chialab/rna-cli) (>= 3.0.0)
-
 ### Build the project
 
 Install the dependencies and run the `build` script:
 ```
-$ yarn install
-$ yarn build
+$ npm run install
+$ npm run build
 ```
 
 This will generate the UMD and ESM bundles in the `dist` folder, as well as the declaration file.
@@ -128,7 +122,7 @@ This will generate the UMD and ESM bundles in the `dist` folder, as well as the 
 Run the `test` script:
 
 ```
-$ yarn test
+$ npm run test
 ```
 
 ---
