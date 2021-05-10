@@ -251,6 +251,9 @@ export const internalRender = (
                 };
 
                 handleItems(slotChildNodes || [], filter);
+                if (!childNodes.length) {
+                    handleItems(children);
+                }
                 return;
             }
 

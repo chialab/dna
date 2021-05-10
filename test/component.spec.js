@@ -902,11 +902,33 @@ describe('Component', function() {
             expect(disconnectedCallback.invoked).to.be.true;
         });
 
+        it('should render default slot', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot>
+                            <span>Test</span>
+                        </slot>
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+            expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Test');
+        });
+
         it('should append slot item', () => {
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<div>
-                        <slot />
+                        <slot>
+                            <span>Test</span>
+                        </slot>
                     </div>`;
                 }
             }
