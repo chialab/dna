@@ -1,5 +1,6 @@
-import { spyFunction, getComponentName } from './helpers.js';
+import { spyFunction, getComponentName } from './helpers.spec.js';
 import * as DNA from '@chialab/dna';
+import { expect } from '@open-wc/testing';
 
 describe('events', function() {
     this.timeout(10 * 1000);

@@ -12,14 +12,13 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "allowJs": false,
+    "checkJs": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
-    "moduleResolution": "node",
-    "rootDir": "./src",
-    "baseUrl": "./src"
+    "moduleResolution": "node"
   },
   "include": [
-    "./src/**/*.ts",
-  ]
+    "./src/**/*.ts"
+  ],
 }

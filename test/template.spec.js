@@ -1,6 +1,7 @@
-import { spyFunction, getComponentName, wait } from './helpers.js';
+import { spyFunction, getComponentName, wait } from './helpers.spec.js';
 import { Observable } from 'rxjs';
 import * as DNA from '@chialab/dna';
+import { expect } from '@open-wc/testing';
 
 describe('template', function() {
     let wrapper;
@@ -225,7 +226,7 @@ describe('template', function() {
             JSX(titleName) {
                 return DNA.h(DNA.Fragment, null,
                     DNA.h('div', { class: 'layout-header' }, DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))),
-                    DNA.h('div', { class: 'layout-body' }, DNA.h('slot')),
+                    DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
                 );
             },
             HTML(titleName) {
@@ -266,7 +267,7 @@ describe('template', function() {
                 const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
-                    DNA.h('p', null, 'Body'),
+                    DNA.h('p', null, 'Body')
                 ), wrapper);
 
                 expect(element.childNodes).to.have.lengthOf(2);
@@ -292,7 +293,7 @@ describe('template', function() {
             JSX() {
                 return DNA.h(DNA.Fragment, null,
                     DNA.h('div', { class: 'layout-header' }, DNA.h('slot', { name: 'title' })),
-                    DNA.h('div', { class: 'layout-body' }, DNA.h('slot')),
+                    DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
                 );
             },
             HTML() {
@@ -320,7 +321,7 @@ describe('template', function() {
                 const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: 'cat.png' }),
-                    DNA.h('p', null, 'Body'),
+                    DNA.h('p', null, 'Body')
                 ), wrapper);
 
                 DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
