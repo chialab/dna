@@ -1,19 +1,30 @@
 {
   "name": "@chialab/dna",
-  "version": "3.3.0",
+  "version": "4.0.0",
   "description": "Progressive Web Components",
-  "lib": "src/index.ts",
   "main": "dist/cjs/dna.js",
   "module": "dist/esm/dna.js",
-  "browser": "dist/umd/dna.js",
   "types": "types/index.d.ts",
-  "license": "MIT",
-  "directories": {
-    "src": "src",
-    "test": "test",
-    "lib": "dist",
-    "dist": "dist"
+  "browser": {
+    "jsdom": false
   },
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/dna.js",
+      "node": "./dist/node/dna.js",
+      "browser": "./dist/browser/dna.js",
+      "default": "./dist/esm/dna.js"
+    },
+    "./jsx-runtime": "./jsx-runtime.js"
+  },
+  "files": [
+    "dist",
+    "types",
+    "jsx-runtime.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"
@@ -24,57 +35,34 @@
   "homepage": "https://www.chialab.io/p/dna",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
-    "symlink": "yarn link && yarn link @chialab/dna",
-    "build": "yarn symlink && yarn build:core && yarn build:compat && yarn build:react && yarn build:hooks && yarn build:runtime",
-    "build:lite": "rna build --name DNA --bundle",
-    "build:core": "rm -rf dist types && yarn types:core && rna build --production --name DNA --bundle",
-    "build:compat": "rm -rf compat/dist compat/types && yarn types:compat && rna build compat/src/index.ts --output compat/dist/index.js --production --format esm",
-    "build:react": "rm -rf react/dist react/types && yarn types:react && rna build react/src/index.ts --output react/dist/index.js --production --format esm",
-    "build:hooks": "rm -rf hooks/dist hooks/types && yarn types:hooks && rna build hooks/src/index.ts --output hooks/dist/index.js --production --format esm",
-    "build:runtime": "rm -rf jsx-runtime/dist jsx-runtime/types && yarn types:runtime && rna build jsx-runtime/src/index.ts --output jsx-runtime/dist/index.js --production --format esm",
-    "types:core": "tsc --declaration --emitDeclarationOnly --declarationDir 'types'",
-    "types:compat": "tsc --project compat/tsconfig.json --declaration --emitDeclarationOnly --declarationDir './compat/types'",
-    "types:react": "tsc --project react/tsconfig.json --declaration --emitDeclarationOnly --declarationDir './react/types'",
-    "types:hooks": "tsc --project hooks/tsconfig.json --declaration --emitDeclarationOnly --declarationDir './hooks/types'",
-    "types:runtime": "tsc --project jsx-runtime/tsconfig.json --declaration --emitDeclarationOnly --declarationDir './jsx-runtime/types'",
-    "test": "yarn symlink && yarn test:core && yarn test:compat && yarn test:react && yarn test:hooks",
-    "test:core": "yarn test:browser && yarn test:node",
-    "test:browser": "rna unit 'test/*.spec.js' --no-jsx --coverage --browser",
-    "test:saucelabs": "rna unit 'test/*.spec.js' --no-jsx --coverage --concurrency 2 --saucelabs",
-    "test:node": "rna unit 'test/*.spec.js' --no-jsx --coverage --node",
-    "test:compat": "rna unit 'compat/test/*.spec.js' --jsx.pragma 'h' --browser",
-    "test:react": "rna unit 'react/test/*.spec.js' --jsx.pragma 'React.createElement' --jsx.pragmaFrag 'React.Fragment' --jsx.module 'react' --jsx.pragmaDefault --browser",
-    "test:hooks": "rna unit 'hooks/test/*.spec.js' --no-jsx --browser",
+    "build": "npm run build:esm && npm run build:browser && npm run build:node && npm run build:cjs",
+    "build:esm": "rimraf dist/esm && rna build src/index.ts --output dist/esm/dna.js --format esm --minify --platform neutral",
+    "build:browser": "rimraf dist/browser && rna build src/index.ts --output dist/browser/dna.js --format esm --minify --platform browser",
+    "build:node": "rimraf dist/node && rna build src/index.ts --output dist/node/dna.js --format esm --minify --platform node",
+    "build:cjs": "rimraf dist/cjs && rna build src/index.ts --output dist/cjs/dna.js --format cjs --minify --platform node",
+    "types": "tsc --declaration --emitDeclarationOnly --declarationDir 'types'",
+    "test": "npm run test:browser && npm run test:node",
+    "test:browser": "rna test 'test/*.spec.js' --coverage",
+    "test:saucelabs": "rna test 'test/*.spec.js' --coverage --concurrency 2 --saucelabs",
+    "test:node": "rna test 'test/*.spec.js' --coverage --node",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
-    "prepack": "yarn build"
-  },
-  "dependencies": {
-    "jsdom": "^16.0.0"
-  },
-  "optionalDependencies": {
-    "@chialab/proteins": "^3.2.0",
-    "haunted": "^4.7.0",
-    "htm": "^3.0.3",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@chialab/eslint-config": "^2.0.0",
-    "@chialab/proteins": "^3.2.0",
-    "@dnajs/idom": "^2.9.8",
-    "@lit/reactive-element": "^1.0.0-rc.2",
+    "@chialab/rna": "^0.5.7",
     "@types/jsdom": "^12.2.3",
-    "@types/react": "^16.9.31",
-    "@types/react-dom": "^16.9.6",
-    "babel-eslint": "^10.0.3",
     "core-js": "^3.6.4",
-    "eslint": "^7.0.0",
-    "haunted": "^4.7.0",
+    "eslint": "^7.26.0",
     "htm": "^3.0.3",
+    "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
     "typescript": "^4.0.0"
+  },
+  "peerDependencies": {
+    "jsdom": "^16.0.0"
   }
 }
