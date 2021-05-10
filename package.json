@@ -65,6 +65,7 @@
     "@chialab/eslint-config": "^2.0.0",
     "@chialab/proteins": "^3.2.0",
     "@dnajs/idom": "^2.9.8",
+    "@lit/reactive-element": "^1.0.0-rc.2",
     "@types/jsdom": "^12.2.3",
     "@types/react": "^16.9.31",
     "@types/react-dom": "^16.9.6",
