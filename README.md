@@ -41,12 +41,7 @@ Tests are run against all ever green browsers, Internet Explorer and old Safari 
 
 ## Get the library
 
-Usage via [unpkg.com](https://unpkg.com/), as UMD package:
-```html
-<script src="https://unpkg.com/@chialab/dna" type="text/javascript"></script>
-```
-
-or as ES6 module:
+Usage via [unpkg.com](https://unpkg.com/) as ES6 module:
 
 ```js
 import { Component, customElements, html, ... } from 'https://unpkg.com/@chialab/dna?module';

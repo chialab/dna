@@ -4,11 +4,7 @@ The recommended way to use DNA is to setup an ES7 project with Babel or TypeScri
 
 ### Use a CDN
 
-You can use DNA via CDN thanks to the [Unpkg](https://unpkg.com/) project, which exposes a global `DNA` namespace if fetched via script tag, or the ES module with `?module` param:
-
-```html
-<script src="https://unpkg.com/@chialab/dna"></script>
-```
+You can use DNA via CDN thanks to the [Unpkg](https://unpkg.com/):
 
 ```ts
 import { Component, customElements } from 'https://unpkg.com/@chialab/dna?module';
