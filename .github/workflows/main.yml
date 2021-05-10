@@ -33,7 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Install project dependencies
@@ -86,7 +86,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
@@ -129,7 +129,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
@@ -172,7 +172,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
@@ -218,7 +218,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
@@ -261,7 +261,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
@@ -304,7 +304,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install RNA
-        run: npm install -g @chialab/rna-cli
+        run: npm install -g @chialab/rna-cli@beta
       - name: Install project dependencies
         run: yarn install
       - name: Fetch core artifacts
