@@ -48,6 +48,8 @@
     "test:browser": "rna test 'test/*.spec.js' --coverage",
     "test:saucelabs": "rna test 'test/*.spec.js' --coverage --saucelabs",
     "test:node": "rna test 'test/*.spec.js' --coverage --node",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "npm run build"
   },

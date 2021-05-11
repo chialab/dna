@@ -9,11 +9,37 @@ on:
       - master
 
 jobs:
-  # BUILD
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Set up NPM cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: npm-cache-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
   build:
     name: Build
-    if: "! contains(toJSON(github.event.commits.*.message), 'docs:')"
     runs-on: ubuntu-latest
+    needs: check
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -41,12 +67,10 @@ jobs:
           name: DNA
           path: dist
 
-  # TEST
   test-browser:
     name: Test Browsers
-    needs:
-      - build
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -124,9 +148,8 @@ jobs:
 
   test-saucelabs:
     name: Test SauceLabs
-    needs:
-      - build
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
