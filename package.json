@@ -46,7 +46,7 @@
     "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types'",
     "test": "npm run test:browser && npm run test:node",
     "test:browser": "rna test 'test/*.spec.js' --coverage",
-    "test:saucelabs": "rna test 'test/*.spec.js' --coverage --concurrency 2 --saucelabs",
+    "test:saucelabs": "rna test 'test/*.spec.js' --coverage --saucelabs",
     "test:node": "rna test 'test/*.spec.js' --coverage --node",
     "docs": "rna documentate --output docs/API.md --header '# API Reference'",
     "prepack": "npm run build"
