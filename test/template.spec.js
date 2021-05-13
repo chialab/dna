@@ -1,7 +1,7 @@
 import { spyFunction, getComponentName, wait } from './helpers.spec.js';
 import { Observable } from 'rxjs';
 import * as DNA from '@chialab/dna';
-import { expect } from '@open-wc/testing';
+import { expect } from '@esm-bundle/chai/esm/chai.js';
 
 describe('template', function() {
     let wrapper;

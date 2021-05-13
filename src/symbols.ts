@@ -6,9 +6,10 @@ let symbols = 0;
  * @return An unique key.
  */
 export const createSymbolKey = (description?: string | number) => {
+    /* c8 ignore start */
     if (typeof Symbol !== 'undefined') {
         return Symbol(description);
     }
-    /* istanbul ignore next */
     return `__dna${symbols++}` as unknown as symbol;
+    /* c8 ignore stop */
 };

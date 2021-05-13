@@ -2,8 +2,6 @@ import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildIm
 import { isComponent, isComponentConstructor } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
 
-document.createElement;
-
 /**
  * DOM is a singleton that components uses to access DOM methods.
  * By default, it uses browsers' DOM implementation, but it can be set to use a different one.

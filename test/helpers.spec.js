@@ -1,6 +1,6 @@
-import Symbol from 'core-js/es/symbol';
-import 'core-js/es/object/assign';
-import 'core-js/es/array/find';
+import Symbol from 'core-js/es/symbol/index.js';
+import 'core-js/es/object/assign.js';
+import 'core-js/es/array/find.js';
 
 Symbol.useSimple();
 
