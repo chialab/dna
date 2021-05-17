@@ -2,9 +2,9 @@ import { createSymbolKey } from './symbols';
 
 /**
  * A Symbol which contains Thenable state.
- * @private
  */
-const symbol: unique symbol = createSymbolKey() as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const THENABLE_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
  * An object representing the status of a Thenable.
@@ -27,13 +27,13 @@ export const isThenable = (target: any): target is Promise<unknown> => typeof ta
  */
 export const getThenableState = (target: Promise<unknown>): ThenableState => {
     let thenable: Promise<unknown> = target;
-    if ((thenable as any)[symbol]) {
-        return (thenable as any)[symbol];
+    if ((thenable as any)[THENABLE_SYMBOL]) {
+        return (thenable as any)[THENABLE_SYMBOL];
     }
     let state: ThenableState = {
         pending: true,
     };
-    (thenable as any)[symbol] = state;
+    (thenable as any)[THENABLE_SYMBOL] = state;
     thenable
         .then((result: unknown) => {
             state.result = result;

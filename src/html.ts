@@ -11,7 +11,7 @@ const innerHtml = htm.bind(h);
  */
 export const html = (string: string | TemplateStringsArray, ...values: unknown[]): Template => {
     if (typeof string === 'string') {
-        let array = [string];
+        const array = [string];
         (array as any).raw = [string];
         string = array as unknown as TemplateStringsArray;
     }

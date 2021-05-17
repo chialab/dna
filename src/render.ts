@@ -51,20 +51,20 @@ const convertClasses = (value: HyperClasses) => {
  * @return A set of styles.
  */
 const convertStyles = (value: HyperStyles) => {
-    let styles: { [key: string]: string } = {};
+    const styles: { [key: string]: string } = {};
     if (!value) {
         return styles;
     }
     if (typeof value === 'object') {
         for (let propertyKey in value) {
-            let camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
+            const camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
                 `-${match.toLowerCase()}`
             );
             styles[camelName] = value[propertyKey];
         }
         return styles;
     }
-    return styles = STYLES_CACHE[value] = STYLES_CACHE[value] || value
+    return STYLES_CACHE[value] = STYLES_CACHE[value] || value
         .toString()
         .split(';')
         .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
@@ -101,6 +101,8 @@ export const internalRender = (
     fragment?: Context
 ) => {
     let renderContext = context || getContext(root);
+    const refContext = mainContext || renderContext;
+
     let childNodes: IterableNodeList;
     if (slot && renderContext.slotChildNodes) {
         childNodes = renderContext.slotChildNodes as IterableNodeList;
@@ -126,15 +128,14 @@ export const internalRender = (
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getContext(currentNode) : null;
-    let refContext = mainContext || renderContext;
 
     const handleItems = (template: Template, filter?: TemplateFilter) => {
         if (template == null || template === false) {
             return;
         }
 
-        let templateType = typeof template;
-        let isObjectTemplate = templateType === 'object';
+        const templateType = typeof template;
+        const isObjectTemplate = templateType === 'object';
         let templateNode: Node | undefined;
         let templateContext: Context | undefined;
         let templateChildren: TemplateItems | undefined;
@@ -152,10 +153,10 @@ export const internalRender = (
             let { node, Component, Function, tag, properties, children, key, isFragment, isSlot, namespaceURI } = template;
 
             if (Function) {
-                let rootFragment = fragment;
-                let previousContext = renderContext;
-                let previousFragment = currentFragment;
-                let fragments = renderContext.fragments;
+                const rootFragment = fragment;
+                const previousContext = renderContext;
+                const previousFragment = currentFragment;
+                const fragments = renderContext.fragments;
                 let state: Map<string, unknown>;
                 let placeholder: Node;
                 if (fragment) {
@@ -169,12 +170,12 @@ export const internalRender = (
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                let renderFragmentContext = getContext(placeholder);
+                const renderFragmentContext = getContext(placeholder);
                 emptyFragments(renderFragmentContext);
                 renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = placeholder;
-                let live = () => fragments.indexOf(renderFragmentContext) !== -1;
+                const live = () => fragments.indexOf(renderFragmentContext) !== -1;
 
                 renderContext = renderFragmentContext;
                 currentFragment = renderFragmentContext;
@@ -224,19 +225,19 @@ export const internalRender = (
 
             // if the current patch is a slot,
             if (isSlot && rootContext) {
-                let slotChildNodes = rootContext.slotChildNodes;
+                const slotChildNodes = rootContext.slotChildNodes;
                 if (slotChildNodes) {
                     for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-                        let node = slotChildNodes.item(i);
-                        let context = getContext(node);
+                        const node = slotChildNodes.item(i) as Node;
+                        const context = getContext(node);
                         if (!context.root) {
                             context.root = rootContext;
                         }
                     }
                 }
 
-                let name = properties.name;
-                let filter = (item: Node) => {
+                const name = properties.name;
+                const filter = (item: Node) => {
                     if (getContext(item).root === rootContext) {
                         if (isElement(item)) {
                             if (!name) {
@@ -318,8 +319,8 @@ export const internalRender = (
             // update the Node properties
             templateContext = templateContext || getContext(templateNode);
 
-            let map = templateContext.props[slot ? 1 : 0] as PropertiesMap;
-            let childProperties = map.get(refContext);
+            const map = templateContext.props[slot ? 1 : 0] as PropertiesMap;
+            const childProperties = map.get(refContext);
             map.set(refContext, properties);
             if (key != null) {
                 templateContext.key = key;
@@ -337,7 +338,7 @@ export const internalRender = (
                 if (propertyKey === 'is' || propertyKey === 'key' || propertyKey === 'children') {
                     continue;
                 }
-                let value = properties[propertyKey];
+                const value = properties[propertyKey];
                 let oldValue;
                 if (childProperties) {
                     oldValue = childProperties[propertyKey];
@@ -347,9 +348,9 @@ export const internalRender = (
                 }
 
                 if (propertyKey === 'style') {
-                    let style = (templateNode as HTMLElement).style;
-                    let oldStyles = convertStyles(oldValue as HyperStyles);
-                    let newStyles = convertStyles(value as HyperStyles);
+                    const style = (templateNode as HTMLElement).style;
+                    const oldStyles = convertStyles(oldValue as HyperStyles);
+                    const newStyles = convertStyles(value as HyperStyles);
                     for (let propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
                             style.removeProperty(propertyKey);
@@ -360,8 +361,8 @@ export const internalRender = (
                     }
                     continue;
                 } else if (propertyKey === 'class') {
-                    let classList = (templateNode as HTMLElement).classList;
-                    let newClasses = convertClasses(value as HyperClasses);
+                    const classList = (templateNode as HTMLElement).classList;
+                    const newClasses = convertClasses(value as HyperClasses);
                     if (oldValue) {
                         let oldClasses = convertClasses(oldValue as HyperClasses);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
@@ -372,14 +373,14 @@ export const internalRender = (
                         }
                     }
                     for (let i = 0, len = newClasses.length; i < len; i++) {
-                        let className = newClasses[i];
+                        const className = newClasses[i];
                         if (!classList.contains(className)) {
                             classList.add(className);
                         }
                     }
                     continue;
                 } else if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in templateNode.constructor.prototype)) {
-                    let eventName = propertyKey.substr(2);
+                    const eventName = propertyKey.substr(2);
                     if (oldValue) {
                         templateNode.removeEventListener(eventName, oldValue as EventListener);
                     }
@@ -389,16 +390,16 @@ export const internalRender = (
                     continue;
                 }
 
-                let type = typeof value;
-                let wasType = typeof oldValue;
-                let isReference = (value && type === 'object') || type === 'function';
-                let wasReference = (oldValue && wasType === 'object') || wasType === 'function';
+                const type = typeof value;
+                const wasType = typeof oldValue;
+                const isReference = (value && type === 'object') || type === 'function';
+                const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
 
                 if ((isReference || wasReference) || ((propertyKey === 'checked' || propertyKey === 'value') && (templateNode as HTMLElement).tagName === 'INPUT')) {
                     (templateNode as any)[propertyKey] = value;
                 } else if (Component) {
                     if (type === 'string') {
-                        let observedAttributes: string[] = Component.observedAttributes;
+                        const observedAttributes: string[] = Component.observedAttributes;
                         if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
                             (templateNode as any)[propertyKey] = value;
                         }
@@ -412,7 +413,7 @@ export const internalRender = (
                         (templateNode as Element).removeAttribute(propertyKey);
                     }
                 } else if (!isReference) {
-                    let attrValue = value === true ? '' : (value as string).toString();
+                    const attrValue = value === true ? '' : (value as string).toString();
                     if ((templateNode as Element).getAttribute(propertyKey) !== attrValue) {
                         (templateNode as Element).setAttribute(propertyKey, attrValue);
                     }
@@ -443,9 +444,9 @@ export const internalRender = (
             return;
         } else if (isObjectTemplate && isObservable(template)) {
             handleItems(h(((props, context, update) => {
-                let status = getObservableState(template);
+                const status = getObservableState(template);
                 if (!status.complete) {
-                    let subscription = (template as Observable<unknown>).subscribe(
+                    const subscription = (template as Observable<unknown>).subscribe(
                         () => {
                             if (!update()) {
                                 subscription.unsubscribe();
@@ -466,7 +467,7 @@ export const internalRender = (
             return;
         } else {
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {
-                let is = rootContext.is as string;
+                const is = rootContext.is as string;
                 template = css(is, template as string, customElements.tagNames[is]);
                 (root as HTMLStyleElement).setAttribute('name', is);
             }
@@ -530,9 +531,9 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        let item = childNodes.item(--lastIndex) as Node;
+        const item = childNodes.item(--lastIndex) as Node;
         if (slot) {
-            let context = getContext(item);
+            const context = getContext(item);
             if (context.root === rootContext) {
                 delete context.root;
             }

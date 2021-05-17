@@ -7,7 +7,12 @@ import { createSymbolKey } from './symbols';
 /**
  * A symbol for node context.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+export type WithContext<T> = T & {
+    [CONTEXT_SYMBOL]?: Context;
+};
 
 /**
  * A map of properties for each context.
@@ -40,7 +45,7 @@ export type Context = {
  * @param target The object to context.
  * @param context The context to set.
  */
-export const setContext = (target: any, context: Context): Context => target[CONTEXT_SYMBOL] = context;
+export const setContext = (target: WithContext<Node>, context: Context): Context => target[CONTEXT_SYMBOL] = context;
 
 /**
  * Create a node context.
@@ -68,7 +73,7 @@ export const createContext = (node: Node) => {
  * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getContext = (target: any): Context => target[CONTEXT_SYMBOL] || createContext(target);
+export const getContext = (target: WithContext<Node>): Context => target[CONTEXT_SYMBOL] || createContext(target);
 
 /**
  * Cleanup child fragments of a context.

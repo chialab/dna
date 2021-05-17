@@ -9,6 +9,7 @@ import { isNode } from './helpers';
 /**
  * A symbol which identify emulated components.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const HYPER_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**

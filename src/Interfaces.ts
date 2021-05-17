@@ -7,24 +7,34 @@ import { createSymbolKey } from './symbols';
 /**
  * A symbol which identify components.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+type WithComponentFlag<T> = T & {
+    [COMPONENT_SYMBOL]?: boolean;
+};
 
 /**
  * A symbol which identify constructed components (properties can be assigned).
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
+
+type WithConstructedFlag<T> = T & {
+    [CONSTRUCTED_SYMBOL]?: boolean;
+};
 
 /**
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: any): node is ComponentInterface<HTMLElement> => !!node[COMPONENT_SYMBOL];
+export const isComponent = (node: WithComponentFlag<Node>): node is ComponentInterface<HTMLElement> => !!node[COMPONENT_SYMBOL];
 
 /**
  * Check if a node is a constructed component.
  * @param node The node to check.
  */
-export const isConstructed = (node: any): node is ComponentInterface<HTMLElement> => !!node[CONSTRUCTED_SYMBOL];
+export const isConstructed = (node: WithConstructedFlag<Node>): node is ComponentInterface<HTMLElement> => !!node[CONSTRUCTED_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.

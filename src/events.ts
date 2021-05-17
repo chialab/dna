@@ -6,6 +6,7 @@ import { getOwnPropertyDescriptor } from './helpers';
 /**
  * A Symbol which contains all Node delegation.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
 
 export type AsyncEvent = Event & {
@@ -290,7 +291,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchEvent = (element: Element, event: Event | string, detail?: any, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
+export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
     return HTMLElement.prototype.dispatchEvent.call(element, event);
@@ -306,9 +307,9 @@ export const dispatchEvent = (element: Element, event: Event | string, detail?: 
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: any, bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
-    let asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
-    let promises: unknown[] = [];
+export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
+    const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
+    const promises: unknown[] = [];
     asyncEvent.respondWith = function(callback) {
         promises.push(callback());
     };
@@ -320,21 +321,32 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
 
 /**
  * A Symbol which contains all listeners instances of a component constructor.
- * @private
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LISTENERS_SYMBOL: unique symbol = createSymbolKey() as any;
+
+type WithListeners<T> = T & {
+    [LISTENERS_SYMBOL]?: Listener[];
+};
+
+type Listener = {
+    event: string;
+    selector: string | null;
+    callback: DelegatedEventCallback;
+    options?: AddEventListenerOptions;
+};
 
 /**
  * Retrieve all listeners descriptors.
  * @param constructor The component constructor.
  * @return A list of listeners.
  */
-export const getListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+export const getListeners = (constructor: WithListeners<ComponentConstructorInterface<HTMLElement>>) => {
     if (!hasOwnProperty.call(constructor, LISTENERS_SYMBOL)) {
         return [];
     }
 
-    return (constructor as any)[LISTENERS_SYMBOL] as {
+    return constructor[LISTENERS_SYMBOL] as {
         event: string;
         selector: string | null;
         callback: DelegatedEventCallback;
@@ -346,20 +358,20 @@ export const getListeners = (constructor: ComponentConstructorInterface<HTMLElem
  * Define component constructor listeners.
  * @param constructor The component constructor.
  */
-export const defineListeners = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+export const defineListeners = (constructor: WithListeners<ComponentConstructorInterface<HTMLElement>>) => {
     let ctr = constructor;
-    let listeners = (constructor as any)[LISTENERS_SYMBOL] = getListeners(constructor);
+    const listeners = constructor[LISTENERS_SYMBOL] = getListeners(constructor);
     while (ctr && ctr !== HTMLElement) {
-        let listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
-        let listenersGetter = listenersDescriptor && listenersDescriptor.get;
+        const listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
+        const listenersGetter = listenersDescriptor && listenersDescriptor.get;
         if (listenersGetter) {
-            let listenerDescriptors = (listenersGetter.call(constructor) || {}) as {
+            const listenerDescriptors = (listenersGetter.call(constructor) || {}) as {
                 [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
             };
             // register listeners
             for (let eventPath in listenerDescriptors) {
-                let paths = eventPath.trim().split(' ');
-                let descriptor = listenerDescriptors[eventPath];
+                const paths = eventPath.trim().split(' ');
+                const descriptor = listenerDescriptors[eventPath];
                 if (typeof descriptor === 'function') {
                     listeners.push({
                         event: paths.shift() as string,

@@ -17,8 +17,8 @@ export type Observable<T> = {
 
 /**
  * A Symbol which contains Subscription state.
- * @private
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SUBSCRIPTION_SYMBOL: unique symbol = createSymbolKey() as any;
 
 /**
