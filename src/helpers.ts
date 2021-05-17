@@ -22,6 +22,11 @@ export const indexOf = Array.prototype.indexOf;
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 /**
+ * Alias to Object.setPrototypeOf.
+ */
+export const setPrototypeOf = Object.setPrototypeOf || ((obj, proto) => { obj.__proto__ = proto; });
+
+/**
  * Alias to Object.prototype.toString.
  */
 export const toString = Object.prototype.toString;

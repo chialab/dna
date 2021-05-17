@@ -4,7 +4,7 @@ import type { Template } from './Template';
 import type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
 import { COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
 import { customElements } from './CustomElementRegistry';
-import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl } from './helpers';
+import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf } from './helpers';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getContext } from './Context';
@@ -70,7 +70,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             props = node as { [key: string]: unknown };
             element = this;
         } else {
-            Object.setPrototypeOf(element, this);
+            setPrototypeOf(element, this);
         }
 
         let context = getContext(element);
@@ -407,11 +407,11 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
         }
 
         element = createElementImpl(tag) as ComponentInterface<InstanceType<T>>;
-        Object.setPrototypeOf(element, constructor.prototype);
+        setPrototypeOf(element, constructor.prototype);
         emulateLifeCycle(element);
         return element;
     } as unknown as T;
-    Object.setPrototypeOf(shim, base);
+    setPrototypeOf(shim, base);
     (shim as Function).apply = Function.apply;
     (shim as Function).call = Function.call;
     shim.prototype = base.prototype;

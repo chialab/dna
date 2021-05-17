@@ -144,6 +144,7 @@ jobs:
     name: Test SauceLabs
     runs-on: ubuntu-latest
     needs: build
+    concurrency: saucelabs
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -173,8 +174,3 @@ jobs:
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v1
-        with:
-          file: coverage/lcov.info
