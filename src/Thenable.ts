@@ -6,6 +6,10 @@ import { createSymbolKey } from './symbols';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const THENABLE_SYMBOL: unique symbol = createSymbolKey() as any;
 
+type WithThenableState<T> = T & {
+    [THENABLE_SYMBOL]?: ThenableState;
+};
+
 /**
  * An object representing the status of a Thenable.
  */
@@ -18,6 +22,7 @@ export type ThenableState = {
  * Check if the target is a Thenable (has the `then` method).
  * @param target The object to check.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isThenable = (target: any): target is Promise<unknown> => typeof target.then === 'function';
 
 /**
@@ -25,24 +30,24 @@ export const isThenable = (target: any): target is Promise<unknown> => typeof ta
  * @param target The Thenable to extend.
  * @return The Thenable state instance.
  */
-export const getThenableState = (target: Promise<unknown>): ThenableState => {
-    let thenable: Promise<unknown> = target;
-    if ((thenable as any)[THENABLE_SYMBOL]) {
-        return (thenable as any)[THENABLE_SYMBOL];
+export const getThenableState = (target: WithThenableState<Promise<unknown>>): ThenableState => {
+    const state = target[THENABLE_SYMBOL];
+    if (state) {
+        return state;
     }
-    let state: ThenableState = {
+
+    const newState = target[THENABLE_SYMBOL] = {
         pending: true,
-    };
-    (thenable as any)[THENABLE_SYMBOL] = state;
-    thenable
+    } as ThenableState;
+    target
         .then((result: unknown) => {
-            state.result = result;
-            state.pending = false;
+            newState.result = result;
+            newState.pending = false;
         })
         .catch((error: unknown) => {
-            state.result = error;
-            state.pending = false;
+            newState.result = error;
+            newState.pending = false;
         });
 
-    return state;
+    return newState;
 };

@@ -12,6 +12,7 @@ const innerHtml = htm.bind(h);
 export const html = (string: string | TemplateStringsArray, ...values: unknown[]): Template => {
     if (typeof string === 'string') {
         const array = [string];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (array as any).raw = [string];
         string = array as unknown as TemplateStringsArray;
     }

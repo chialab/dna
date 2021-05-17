@@ -64,6 +64,7 @@ export type HyperNode = {
  * @param target The reference to check.
  * @return The reference is a isHyperNode.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SYMBOL];
 
 /**

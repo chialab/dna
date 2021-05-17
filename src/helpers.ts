@@ -89,7 +89,10 @@ export const removeAttributeImpl = HTMLElement.prototype.removeAttribute;
 /**
  * Alias to HTMLElement.prototype.matches.
  */
-export const matchesImpl = HTMLElement.prototype.matches || HTMLElement.prototype.webkitMatchesSelector || (HTMLElement.prototype as any).msMatchesSelector as typeof Element.prototype.matches;
+export const matchesImpl = HTMLElement.prototype.matches ||
+    HTMLElement.prototype.webkitMatchesSelector ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (HTMLElement.prototype as any).msMatchesSelector;
 
 /**
  * Alias to document.createDocumentFragment.
@@ -145,13 +148,14 @@ export const isNode = (target: unknown): target is Node => target instanceof Nod
  * @param node The node to check.
  * @return The node is a Document instance.
  */
-export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
+export const isDocument = (node: Node): node is Document => node && node.nodeType === DOCUMENT_NODE;
 
 /**
  * Check if a node is a Text instance.
  * @param node The node to check.
  * @return The node is a Text instance.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isText = (node: any): node is Text => node && node.nodeType === TEXT_NODE;
 
 /**
@@ -159,6 +163,7 @@ export const isText = (node: any): node is Text => node && node.nodeType === TEX
  * @param node The node to check.
  * @return The node is an Element instance.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
 
 /**
@@ -166,6 +171,7 @@ export const isElement = (node: any): node is HTMLElement => node && node.nodeTy
  * @param node The node to check.
  * @return The node is a Text instance.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isComment = (node: any): node is Comment => node && node.nodeType === COMMENT_NODE;
 
 /**
@@ -173,34 +179,46 @@ export const isComment = (node: any): node is Comment => node && node.nodeType =
  * @param node The node to check.
  * @return The object is an Event instance.
  */
-export const isEvent = (event: unknown): event is Event => event instanceof Event;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isEvent = (event: any): event is Event => event instanceof Event;
 
 /**
  * Check if a Node is connected.
  *
  * @return A truthy value for connected targets.
  */
-export const isConnected: (this: Node | void) => boolean = isConnectedImpl ? (isConnectedImpl as any).get : function(this: Node | void): boolean {
-    if (isElement(this) || isText(this)) {
-        return isConnected.call(this.parentNode as Node);
-    }
-    if (isDocument(this)) {
-        return true;
-    }
+export const isConnected: (this: Node) => boolean = isConnectedImpl ?
+    (isConnectedImpl.get as (this: Node) => boolean) :
+    function(this: Node): boolean {
+        if (isElement(this) || isText(this)) {
+            const parent = this.parentNode;
+            if (!parent) {
+                return false;
+            }
+            return isConnected.call(parent);
+        }
+        if (isDocument(this)) {
+            return true;
+        }
 
-    return false;
-};
+        return false;
+    };
 
 /**
  * A symbol which identify emulated components.
  */
-const EMULATE_LIFECYCLE_SYMBOL = createSymbolKey();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const EMULATE_LIFECYCLE_SYMBOL: unique symbol = createSymbolKey() as any;
+
+type WithEmulatedLifecycle<T> = T & {
+    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
+};
 
 /**
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-export const shouldEmulateLifeCycle = (node: Node): node is ComponentInterface<HTMLElement> => (node as any)[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = (node: WithEmulatedLifecycle<Node>): node is ComponentInterface<HTMLElement> => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -248,9 +266,9 @@ let lifeCycleEmulation = typeof customElements === 'undefined';
 /**
  * Flag the element for life cycle emulation.
  */
-export const emulateLifeCycle = (node: HTMLElement) => {
+export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
     lifeCycleEmulation = true;
-    (node as any)[EMULATE_LIFECYCLE_SYMBOL] = true;
+    node[EMULATE_LIFECYCLE_SYMBOL] = true;
 };
 
 /**
