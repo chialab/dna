@@ -49,7 +49,7 @@
     "test:node": "rna test:node",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "docs": "rna documentate --output docs/API.md --header '# API Reference'",
+    "docs": "rna apidoc src/index.ts -O docs/API.md",
     "prepack": "npm run build"
   },
   "peerDependencies": {
@@ -63,6 +63,7 @@
   "devDependencies": {
     "@chialab/eslint-config": "^2.0.0",
     "@chialab/rna": "^0.7.0",
+    "@chialab/rna-apidoc": "^0.7.4",
     "@chialab/rna-browser-test-runner": "^0.7.0",
     "@chialab/rna-bundler": "^0.7.0",
     "@chialab/rna-node-test-runner": "^0.7.0",
