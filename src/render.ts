@@ -1,6 +1,5 @@
 import type { Context, PropertiesMap } from './Context';
 import type { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
-import type { Observable } from './Observable';
 import type { IterableNodeList } from './NodeList';
 import type { HyperClasses, HyperStyles } from './HyperNode';
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
@@ -443,10 +442,11 @@ export const internalRender = (
             }), filter);
             return;
         } else if (isObjectTemplate && isObservable(template)) {
+            const observable = template;
             handleItems(h(((props, context, update) => {
-                const status = getObservableState(template);
+                const status = getObservableState(observable);
                 if (!status.complete) {
-                    const subscription = (template as Observable<unknown>).subscribe(
+                    const subscription = observable.subscribe(
                         () => {
                             if (!update()) {
                                 subscription.unsubscribe();

@@ -1,42 +1,30 @@
+# API Reference
 
-**Classes**
+<strong>Classes</strong>
 
 <a href="#customelementregistry">CustomElementRegistry</a>
 
-
-
-**Types**
+<strong>Types</strong>
 
 <a href="#asyncevent">AsyncEvent</a>, <a href="#classfieldattributeconverter">ClassFieldAttributeConverter</a>, <a href="#classfielddescriptor">ClassFieldDescriptor</a>, <a href="#classfieldobserver">ClassFieldObserver</a>, <a href="#classfieldpropertyconverter">ClassFieldPropertyConverter</a>, <a href="#classfieldvalidator">ClassFieldValidator</a>, <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, <a href="#componentinterface">ComponentInterface</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#hypernode">HyperNode</a>, <a href="#observable">Observable</a>, <a href="#template">Template</a>, <a href="#templatefilter">TemplateFilter</a>, <a href="#templatefunction">TemplateFunction</a>, <a href="#templateitem">TemplateItem</a>, <a href="#templateitems">TemplateItems</a>
 
-
-
-**Variables**
+<strong>Variables</strong>
 
 <a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
 
-
-
-**Functions**
+<strong>Functions</strong>
 
 <a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
-
 
 <hr />
 
 <strong id="customelementregistry"><code>Class</code> CustomElementRegistry</strong>
-
-
-
 
 <p>
 
 The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
 
 </p>
-
-
-
 
 <strong>Propertie</strong>
 
@@ -72,33 +60,20 @@ The CustomElementRegistry interface provides methods for registering custom elem
         </tbody>
     </table>
 
-
 <strong>Methods</strong>
 
 <strong><code>Function</code> constructor</strong>
-
-    
-
 
 <details>
 <summary>
     <code>new (): <a href="#customelementregistry">CustomElementRegistry</a></code>
 </summary>
-<br />
 
 <strong>Returns</strong>: <code><a href="#customelementregistry">CustomElementRegistry</a></code> 
 
 </details>
 
-
-
-
-<br />
-
 <strong id="define"><code>Function</code> define</strong>
-
-    
-
 
 <details>
 <summary>
@@ -108,7 +83,6 @@ The CustomElementRegistry interface provides methods for registering custom elem
   shim?: boolean
 }, options: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -142,21 +116,11 @@ The CustomElementRegistry interface provides methods for registering custom elem
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
 
-
-
-
-<br />
-
 <strong id="get"><code>Function</code> get</strong>
-
-    
-
 
 <details>
 <summary>
@@ -164,7 +128,6 @@ The CustomElementRegistry interface provides methods for registering custom elem
   prototype: <a href="#htmlelement">HTMLElement</a>
 }</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -184,28 +147,16 @@ The CustomElementRegistry interface provides methods for registering custom elem
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>undefined | {   prototype: <a href="#htmlelement">HTMLElement</a> }</code> The definition for the given tag.
-
 
 </details>
 
-
-
-
-<br />
-
 <strong id="upgrade"><code>Function</code> upgrade</strong>
-
-    
-
 
 <details>
 <summary>
     <code>(root: <a href="#htmlelement">HTMLElement</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -225,27 +176,16 @@ The CustomElementRegistry interface provides methods for registering custom elem
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
 
-
-
-
-<br />
-
 <strong id="whendefined"><code>Function</code> whenDefined</strong>
-
-    
-
 
 <details>
 <summary>
     <code>(name: string): <a href="#promise">Promise</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -265,39 +205,18 @@ The CustomElementRegistry interface provides methods for registering custom elem
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#promise">Promise</a></code> A Promise that resolves when the named element is defined.
 
-
 </details>
-
-
-
-
-
-
-
-
-
-
-
-
 
 <hr />
 
 <strong id="asyncevent"><code>Type</code> AsyncEvent</strong>
     
 
-
 <pre><a href="#event">Event</a> & {
   respondWith(callback: () => <a href="#promise">Promise</a>): void
 }</pre>
-
-
-
-
-
 
 <hr />
 
@@ -309,13 +228,7 @@ Convert attribute to property value.
 
 </p>
 
-
 <pre>(value: string | null) => unknown</pre>
-
-
-
-
-
 
 <hr />
 
@@ -326,7 +239,6 @@ Convert attribute to property value.
 A list of properties for an class field description.
 
 </p>
-
 
 <pre><a href="#propertydescriptor">PropertyDescriptor</a> & {
   attribute?: true | string;
@@ -345,11 +257,6 @@ A list of properties for an class field description.
   validate?: <a href="#classfieldvalidator">ClassFieldValidator</a>
 }</pre>
 
-
-
-
-
-
 <hr />
 
 <strong id="classfieldobserver"><code>Type</code> ClassFieldObserver</strong>
@@ -360,13 +267,7 @@ The observer signature for class fields.
 
 </p>
 
-
 <pre>(oldValue: unknown, newValue: unknown) => unknown</pre>
-
-
-
-
-
 
 <hr />
 
@@ -378,13 +279,7 @@ Convert property to attribute value.
 
 </p>
 
-
 <pre>(value: any) => string | null | undefined</pre>
-
-
-
-
-
 
 <hr />
 
@@ -396,13 +291,7 @@ A validation function for the class field.
 
 </p>
 
-
 <pre>(value: unknown) => boolean</pre>
-
-
-
-
-
 
 <hr />
 
@@ -415,7 +304,6 @@ It's a Custom Element, but with some extra useful method.
 
 </p>
 
-
 <pre>{
   listeners?: <a href="#delegatedeventcallback">DelegatedEventCallback</a> | <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>;
   observedAttributes: string[];
@@ -424,20 +312,14 @@ It's a Custom Element, but with some extra useful method.
   shim?: boolean
 }</pre>
 
-
-
 <strong>See also</strong>
 
 * [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
-
-
-
 
 <hr />
 
 <strong id="componentinterface"><code>Type</code> ComponentInterface&lt;T extends <a href="#htmlelement">HTMLElement</a>&gt;</strong>
     
-
 
 <pre><a href="#t">T</a> & {
   [COMPONENT_SYMBOL]: boolean;
@@ -464,11 +346,6 @@ It's a Custom Element, but with some extra useful method.
   unobserve(propertyName: string, callback: <a href="#classfieldobserver">ClassFieldObserver</a>): void
 }</pre>
 
-
-
-
-
-
 <hr />
 
 <strong id="context"><code>Type</code> Context</strong>
@@ -478,7 +355,6 @@ It's a Custom Element, but with some extra useful method.
 The node context interface.
 
 </p>
-
 
 <pre>{
   childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
@@ -498,11 +374,6 @@ The node context interface.
   tagName?: string
 }</pre>
 
-
-
-
-
-
 <hr />
 
 <strong id="delegatedeventcallback"><code>Type</code> DelegatedEventCallback</strong>
@@ -513,13 +384,7 @@ Describe the signature of a delegated event callback.
 
 </p>
 
-
 <pre>(event: <a href="#event">Event</a>, target?: <a href="#node">Node</a>) => unknown</pre>
-
-
-
-
-
 
 <hr />
 
@@ -531,15 +396,9 @@ A descriptor for an event delegation.
 
 </p>
 
-
 <pre><a href="#addeventlisteneroptions">AddEventListenerOptions</a> & {
   callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>
 }</pre>
-
-
-
-
-
 
 <hr />
 
@@ -550,7 +409,6 @@ A descriptor for an event delegation.
 A virtual description of a Node, generate by the `h` helper and used in the render function.
 
 </p>
-
 
 <pre>{
   Component?: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>;
@@ -566,11 +424,6 @@ A virtual description of a Node, generate by the `h` helper and used in the rend
   tag?: string
 }</pre>
 
-
-
-
-
-
 <hr />
 
 <strong id="observable"><code>Type</code> Observable&lt;T&gt;</strong>
@@ -581,16 +434,10 @@ Observable-like minimal interface.
 
 </p>
 
-
 <pre>{
   pipe(operator: (value: <a href="#t">T</a>) => unknown): <a href="#observable">Observable</a>;
   subscribe(nextCallback: (value: <a href="#t">T</a>) => unknown, errorCallback: (error: <a href="#error">Error</a>) => unknown, completeCallback: () => unknown): <a href="#subscription">Subscription</a>
 }</pre>
-
-
-
-
-
 
 <hr />
 
@@ -602,13 +449,7 @@ A generic template. Can be a single atomic item or a list of items.
 
 </p>
 
-
 <pre><a href="#templateitem">TemplateItem</a> | <a href="#templateitems">TemplateItems</a></pre>
-
-
-
-
-
 
 <hr />
 
@@ -620,13 +461,7 @@ A filter function signature for template items.
 
 </p>
 
-
 <pre>(item: <a href="#node">Node</a>) => boolean</pre>
-
-
-
-
-
 
 <hr />
 
@@ -638,13 +473,7 @@ A function that returns a template.
 
 </p>
 
-
 <pre>(props: <a href="#hyperproperties">HyperProperties</a>, state: <a href="#map">Map</a>, update: () => boolean, live: () => boolean, context: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
-
-
-
-
-
 
 <hr />
 
@@ -657,13 +486,7 @@ It can be a node, a Hyper or Interpolate function or a primitive value.
 
 </p>
 
-
 <pre><a href="#element">Element</a> | <a href="#text">Text</a> | <a href="#node">Node</a> | <a href="#hypernode">HyperNode</a> | <a href="#promise">Promise</a> | <a href="#observable">Observable</a> | string | number | boolean | undefined | null</pre>
-
-
-
-
-
 
 <hr />
 
@@ -675,13 +498,7 @@ A list of template items.
 
 </p>
 
-
 <pre><a href="#templateitem">TemplateItem</a>[]</pre>
-
-
-
-
-
 
 <hr />
 
@@ -696,9 +513,7 @@ All DNA components **must** extends this class.
 
 </p>
 
-
 <pre><a href="#componentconstructorinterface">ComponentConstructorInterface</a></pre>
-
 
 <hr />
 
@@ -712,7 +527,6 @@ For example, in a Node context it is possibile to use DNA thanks to the `jsdom` 
 It also handle element life cycle for custom elements unless otherwise specified.
 
 </p>
-
 
 <pre>{
   createDocumentFragment: () => <a href="#documentfragment">DocumentFragment</a>;
@@ -731,7 +545,6 @@ It also handle element life cycle for custom elements unless otherwise specified
   setAttribute(element: <a href="#element">Element</a>, qualifiedName: string, value: string): void
 }</pre>
 
-
 <hr />
 
 <strong id="fragment"><code>Variable</code> Fragment</strong>
@@ -742,9 +555,7 @@ A constructor alias used for JSX fragments </>.
 
 </p>
 
-
 <pre>symbol</pre>
-
 
 <hr />
 
@@ -756,31 +567,23 @@ The global DNA registry instance.
 
 </p>
 
-
 <pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
-
 
 <hr />
 
 <strong id="window"><code>Variable</code> window</strong>
     
 
-
 <pre><a href="#window">Window</a> & <a href="#globalthis">globalThis</a></pre>
-
 
 <hr />
 
 <strong id="connect"><code>Function</code> connect</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(node: <a href="#node">Node</a>, force: boolean): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -805,28 +608,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="css"><code>Function</code> css</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(name: string, cssText: string, extend?: string): string</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -856,29 +649,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>string</code> A scoped CSS string.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="customelement"><code>Function</code> customElement</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(name: string, options?: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): (classOrDescriptor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -903,29 +685,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>(classOrDescriptor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code> The decorated component class.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="definelisteners"><code>Function</code> defineListeners</strong>
 
-    
-
-
 <details>
 <summary>
-    <code>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>): void</code>
+    <code>(constructor: <a href="#withlisteners">WithListeners</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -938,35 +709,25 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>constructor</td>
-            <td><code><a href="#componentconstructorinterface">ComponentConstructorInterface</a></code></td>
+            <td><code><a href="#withlisteners">WithListeners</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="defineproperties"><code>Function</code> defineProperties</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -986,28 +747,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="defineproperty"><code>Function</code> defineProperty</strong>
 
-    
-
-
 <details>
 <summary>
-    <code>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: symbol, initializer?: <a href="#function">Function</a>): <a href="#propertydescriptor">PropertyDescriptor</a></code>
+    <code>(constructor: <a href="#withproperties">WithProperties</a>, propertyKey: string, descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>, symbolKey?: symbol, initializer?: <a href="#function">Function</a>): <a href="#propertydescriptor">PropertyDescriptor</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1020,7 +771,7 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>constructor</td>
-            <td><code><a href="#componentconstructorinterface">ComponentConstructorInterface</a></code></td>
+            <td><code><a href="#withproperties">WithProperties</a></code></td>
             <td align="center"></td>
             <td></td></tr>
 <tr>
@@ -1047,29 +798,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#propertydescriptor">PropertyDescriptor</a></code> The final descriptor.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="delegateeventlistener"><code>Function</code> delegateEventListener</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(element: <a href="#element">Element</a>, eventName: string, selector: null | string, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>, options?: <a href="#addeventlisteneroptions">AddEventListenerOptions</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1109,28 +849,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="disconnect"><code>Function</code> disconnect</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(node: <a href="#node">Node</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1150,28 +880,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="dispatchasyncevent"><code>Function</code> dispatchAsyncEvent</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(element: <a href="#element">Element</a>, event: string | <a href="#event">Event</a>, detail?: any, bubbles: boolean, cancelable: boolean, composed: boolean): <a href="#promise">Promise</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1215,29 +935,19 @@ The global DNA registry instance.
         </tr>
     </tbody>
 </table>
-
-
 
 <strong>Returns</strong>: <code><a href="#promise">Promise</a></code> 
 
 </details>
 
-
-
-
-
 <hr />
 
 <strong id="dispatchevent"><code>Function</code> dispatchEvent</strong>
-
-    
-
 
 <details>
 <summary>
     <code>(element: <a href="#element">Element</a>, event: string | <a href="#event">Event</a>, detail?: any, bubbles: boolean, cancelable: boolean, composed: boolean): boolean</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1282,22 +992,13 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>boolean</code> 
 
 </details>
 
-
-
-
-
 <hr />
 
 <strong id="extend"><code>Function</code> extend</strong>
-
-    
-
 
 <details>
 <summary>
@@ -1305,7 +1006,6 @@ The global DNA registry instance.
   prototype: <a href="#htmlelement">HTMLElement</a>
 }&gt;(constructor: <a href="#t">T</a>): <a href="#componentconstructorinterface">ComponentConstructorInterface</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1325,29 +1025,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#componentconstructorinterface">ComponentConstructorInterface</a></code> A proxy that extends the native constructor.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="getproperties"><code>Function</code> getProperties</strong>
 
-    
-
-
 <details>
 <summary>
-    <code>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>): <a href="#classfielddescriptor">ClassFieldDescriptor</a></code>
+    <code>(constructor: <a href="#withproperties">WithProperties</a>): <a href="#classfielddescriptor">ClassFieldDescriptor</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1360,36 +1049,25 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>constructor</td>
-            <td><code><a href="#componentconstructorinterface">ComponentConstructorInterface</a></code></td>
+            <td><code><a href="#withproperties">WithProperties</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#classfielddescriptor">ClassFieldDescriptor</a></code> A list of class field descriptors.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="getproperty"><code>Function</code> getProperty</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(constructor: <a href="#componentconstructorinterface">ComponentConstructorInterface</a>, propertyKey: string): <a href="#classfielddescriptor">ClassFieldDescriptor</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1414,23 +1092,13 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#classfielddescriptor">ClassFieldDescriptor</a></code> The class field descriptor.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="h"><code>Function</code> h</strong>
-
-    
-
 
 <details>
 <summary>
@@ -1438,7 +1106,6 @@ The global DNA registry instance.
   prototype: <a href="#htmlelement">HTMLElement</a>
 } | <a href="#templatefunction">TemplateFunction</a>, properties: null | <a href="#hyperproperties">HyperProperties</a>, children: <a href="#templateitems">TemplateItems</a>): <a href="#hypernode">HyperNode</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1470,28 +1137,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#hypernode">HyperNode</a></code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="html"><code>Function</code> html</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(string: string | <a href="#templatestringsarray">TemplateStringsArray</a>, values: unknown[]): <a href="#template">Template</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1516,29 +1173,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="iscomponent"><code>Function</code> isComponent</strong>
 
-    
-
-
 <details>
 <summary>
-    <code>(node: any): node is <a href="#componentinterface">ComponentInterface</a></code>
+    <code>(node: <a href="#withcomponentflag">WithComponentFlag</a>): node is <a href="#componentinterface">ComponentInterface</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1551,35 +1197,25 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>node</td>
-            <td><code>any</code></td>
+            <td><code><a href="#withcomponentflag">WithComponentFlag</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>node is <a href="#componentinterface">ComponentInterface</a></code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="iscomponentconstructor"><code>Function</code> isComponentConstructor</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(constructor: <a href="#function">Function</a>): constructor is <a href="#componentconstructorinterface">ComponentConstructorInterface</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1599,28 +1235,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>constructor is <a href="#componentconstructorinterface">ComponentConstructorInterface</a></code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="property"><code>Function</code> property</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(descriptor: <a href="#classfielddescriptor">ClassFieldDescriptor</a>): (targetOrClassElement: <a href="#componentinterface">ComponentInterface</a> | <a href="#classelement">ClassElement</a>, propertyKey: string, originalDescriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>) => any</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1640,29 +1266,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>(targetOrClassElement: <a href="#componentinterface">ComponentInterface</a> | <a href="#classelement">ClassElement</a>, propertyKey: string, originalDescriptor?: <a href="#classfielddescriptor">ClassFieldDescriptor</a>) => any</code> The decorator initializer.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="render"><code>Function</code> render</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(input: <a href="#template">Template</a>, root: <a href="#node">Node</a>, slot: boolean): void | <a href="#node">Node</a> | <a href="#node">Node</a>[]</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1692,29 +1307,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void | <a href="#node">Node</a> | <a href="#node">Node</a>[]</code> The resulting child Nodes.
 
-
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="undelegateeventlistener"><code>Function</code> undelegateEventListener</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(element: <a href="#element">Element</a>, eventName: string, selector: null | string, callback: <a href="#delegatedeventcallback">DelegatedEventCallback</a>): void</code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1749,28 +1353,18 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code>void</code> 
 
 </details>
-
-
-
-
 
 <hr />
 
 <strong id="until"><code>Function</code> until</strong>
 
-    
-
-
 <details>
 <summary>
     <code>(thenable: <a href="#promise">Promise</a>, template: <a href="#template">Template</a>): <a href="#promise">Promise</a></code>
 </summary>
-<br />
 
 <strong>Params</strong>
 <table>
@@ -1795,12 +1389,6 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-
-
 <strong>Returns</strong>: <code><a href="#promise">Promise</a></code> A promise which resolves the template while the Thenable is in pending status.
 
-
 </details>
-
-
-
