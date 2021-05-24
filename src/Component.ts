@@ -73,23 +73,23 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
             setPrototypeOf(element, this);
         }
 
-        let context = getContext(element);
+        const context = getContext(element);
         context.is = this.is;
         element.initSlotChildNodes();
 
-        let constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
+        const constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
         // setup listeners
-        let listeners = getListeners(constructor) || [];
+        const listeners = getListeners(constructor) || [];
         for (let i = 0, len = listeners.length; i < len; i++) {
             let listener = listeners[i];
             element.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
         }
 
         // setup properties
-        let propertiesDescriptor = getProperties(constructor);
+        const propertiesDescriptor = getProperties(constructor);
         for (let propertyKey in propertiesDescriptor) {
             delete (element as any)[propertyKey];
-            let descriptor = propertiesDescriptor[propertyKey];
+            const descriptor = propertiesDescriptor[propertyKey];
             if (typeof descriptor.initializer === 'function') {
                 (element as any)[propertyKey] = descriptor.initializer.call(element);
             } else if ('value' in descriptor) {
@@ -144,7 +144,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-        let properties = getProperties(this.constructor as ComponentConstructorInterface<HTMLElement>);
+        const properties = getProperties(this.constructor as ComponentConstructorInterface<HTMLElement>);
         let property: ClassFieldDescriptor | undefined;
         for (let propertyKey in properties) {
             let prop = properties[propertyKey];
@@ -170,10 +170,10 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the property (undefined if removed).
      */
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
-        let attrName = property.attribute as string;
+        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
+        const attrName = property.attribute as string;
         if (attrName && property.toAttribute) {
-            let value = property.toAttribute.call(this as any, newValue);
+            const value = property.toAttribute.call(this as any, newValue);
             if (value === null) {
                 this.removeAttribute(attrName);
             } else if (value !== undefined && value !== this.getAttribute(attrName)) {
@@ -182,7 +182,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
         }
 
         if (property.event) {
-            let eventName = property.event === true ? `${propertyName}change` : property.event;
+            const eventName = property.event === true ? `${propertyName}change` : property.event;
             this.dispatchEvent(eventName, {
                 newValue,
                 oldValue,
@@ -200,13 +200,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @return A list of new slotted children.
      */
     private initSlotChildNodes() {
-        let context = getContext(this);
-        let doc = this.ownerDocument;
+        const context = getContext(this);
+        const doc = this.ownerDocument;
         /* istanbul ignore next */
         if (!this.childNodes.length && doc.readyState === 'loading') {
             return;
         }
-        let slotChildNodes = cloneChildNodes(this.childNodes);
+        const slotChildNodes = cloneChildNodes(this.childNodes);
         for (let i = 0, len = slotChildNodes.length; i < len; i++) {
             this.removeChild(slotChildNodes[i]);
         }
@@ -221,7 +221,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param callback The callback function
      */
     observe(propertyName: string, callback: ClassFieldObserver) {
-        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
+        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
@@ -235,12 +235,12 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param callback The callback function to remove
      */
     unobserve(propertyName: string, callback: ClassFieldObserver) {
-        let property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
+        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
-        let observers = property.observers as Function[];
-        let io = observers.indexOf(callback);
+        const observers = property.observers as Function[];
+        const io = observers.indexOf(callback);
         if (io !== -1) {
             observers.splice(io, 1);
         }
@@ -256,8 +256,8 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param composed Is the event composed.
      */
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
-    dispatchEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+    dispatchEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(event: Event | string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
         return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
     }
 
@@ -270,9 +270,11 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param cancelable Should the event be cancelable.
      * @param composed Is the event composed.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatchAsyncEvent(event: Event): Promise<any[]>;
-    dispatchAsyncEvent(event: string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
-    dispatchAsyncEvent(event: Event | string, detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatchAsyncEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+    dispatchAsyncEvent(event: Event | string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
         return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
     }
 
