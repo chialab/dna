@@ -1,6 +1,6 @@
 import type { TemplateFunction } from './Template';
 import type { IterableNodeList } from './NodeList';
-import type { ComponentInterface } from './Interfaces';
+import type { ComponentInstance } from './Component';
 import { isElement, isText } from './helpers';
 import { createSymbolKey } from './symbols';
 
@@ -53,9 +53,9 @@ export const setContext = (target: WithContext<Node>, context: Context): Context
  * @return A context object for the node.
  */
 export const createContext = (node: Node) => {
-    let isElementNode = isElement(node);
-    let isTextNode = !isElementNode && isText(node);
-    let is = (node as ComponentInterface<HTMLElement>).is;
+    const isElementNode = isElement(node);
+    const isTextNode = !isElementNode && isText(node);
+    const is = (node as ComponentInstance<HTMLElement>).is;
     return setContext(node, {
         isElement: isElementNode,
         isText: isTextNode,
@@ -73,7 +73,7 @@ export const createContext = (node: Node) => {
  * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getContext = (target: WithContext<Node>): Context => target[CONTEXT_SYMBOL] || createContext(target);
+export const getOrCreateContext = (target: WithContext<Node>): Context => target[CONTEXT_SYMBOL] || createContext(target);
 
 /**
  * Cleanup child fragments of a context.

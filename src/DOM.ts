@@ -1,5 +1,6 @@
+import type { ComponentConstructor, ComponentInstance } from './Component';
 import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
-import { isComponent, isComponentConstructor } from './Interfaces';
+import { isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
 
 /**
@@ -23,12 +24,12 @@ export const DOM = {
      * @return The new DOM element instance.
      */
     createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
-        let is = options && options.is;
-        let name = is || tagName.toLowerCase();
-        let node = createElementImpl(tagName);
-        let constructor = customElements.get(name);
+        const is = options && options.is;
+        const name = is || tagName.toLowerCase();
+        const node = createElementImpl(tagName);
+        const constructor = customElements.get(name);
         if (constructor && isComponentConstructor(constructor) && !(node instanceof constructor)) {
-            new constructor(node);
+            constructor.upgrade(node);
         }
         return node;
     },
@@ -82,10 +83,10 @@ export const DOM = {
      * @param slot Should add a slot node.
      */
     appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
-        let parentNode = newChild.parentNode;
+        const parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
-            let slotted = parent.slotChildNodes;
-            let previousIndex = slotted.indexOf(newChild);
+            const slotted = parent.slotChildNodes;
+            const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
             } else if (parentNode) {
@@ -114,15 +115,15 @@ export const DOM = {
      */
     removeChild<T extends Node>(parent: Node, oldChild: T, slot = true): T {
         if (slot && isComponent(parent) && parent.slotChildNodes) {
-            let slotted = parent.slotChildNodes;
-            let io = slotted.indexOf(oldChild);
+            const slotted = parent.slotChildNodes;
+            const io = slotted.indexOf(oldChild);
             if (io !== -1) {
                 slotted.splice(io, 1);
                 parent.forceUpdate();
             }
             return oldChild;
         }
-        let connected = isConnected.call(oldChild);
+        const connected = isConnected.call(oldChild);
         removeChildImpl.call(parent, oldChild);
         if (emulatingLifeCycle() && connected) {
             disconnect(oldChild);
@@ -139,10 +140,10 @@ export const DOM = {
      * @param slot Should insert a slot node.
      */
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
-        let parentNode = newChild.parentNode;
+        const parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
-            let slotted = parent.slotChildNodes;
-            let previousIndex = slotted.indexOf(newChild);
+            const slotted = parent.slotChildNodes;
+            const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
             } else if (parentNode) {
@@ -150,7 +151,7 @@ export const DOM = {
             }
 
             if (refChild) {
-                let refIndex = slotted.indexOf(refChild);
+                const refIndex = slotted.indexOf(refChild);
                 if (refIndex !== -1) {
                     slotted.splice(refIndex, 0, newChild);
                 }
@@ -179,10 +180,10 @@ export const DOM = {
      * @param slot Should replace a slot node.
      */
     replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
-        let parentNode = newChild.parentNode;
+        const parentNode = newChild.parentNode;
         if (slot && isComponent(parent) && parent.slotChildNodes) {
-            let slotted = parent.slotChildNodes;
-            let io = slotted.indexOf(oldChild);
+            const slotted = parent.slotChildNodes;
+            const io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);
             parent.forceUpdate();
             return oldChild;
@@ -231,16 +232,16 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         if (shouldEmulateLifeCycle(element)) {
-            let constructor = element.constructor;
-            let observedAttributes = constructor.observedAttributes;
-            let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
+            const constructor = element.constructor as ComponentConstructor<HTMLElement>;
+            const observedAttributes = constructor.observedAttributes;
+            const observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return setAttributeImpl.call(element, qualifiedName, value);
             }
 
-            let oldValue = DOM.getAttribute(element, qualifiedName);
+            const oldValue = DOM.getAttribute(element, qualifiedName);
             setAttributeImpl.call(element, qualifiedName, value);
-            element.attributeChangedCallback(qualifiedName, oldValue as string, value);
+            (element as ComponentInstance<HTMLElement>).attributeChangedCallback(qualifiedName, oldValue, value);
             return;
         }
         return setAttributeImpl.call(element, qualifiedName, value);
@@ -252,18 +253,18 @@ export const DOM = {
      * @param element The element node to update.
      * @param qualifiedName The attribute name to remove.
      */
-    removeAttribute(element: Element, qualifiedName: string) {
+    removeAttribute(element: Element, qualifiedName: string): void {
         if (shouldEmulateLifeCycle(element)) {
-            let constructor = element.constructor;
-            let observedAttributes = constructor.observedAttributes;
-            let observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
+            const constructor = element.constructor as ComponentConstructor<HTMLElement>;
+            const observedAttributes = constructor.observedAttributes;
+            const observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
                 return removeAttributeImpl.call(element, qualifiedName);
             }
 
-            let oldValue = DOM.getAttribute(element, qualifiedName);
+            const oldValue = DOM.getAttribute(element, qualifiedName);
             removeAttributeImpl.call(element, qualifiedName);
-            element.attributeChangedCallback(qualifiedName, oldValue as string, null);
+            (element as ComponentInstance<HTMLElement>).attributeChangedCallback(qualifiedName, oldValue, null);
         }
         return removeAttributeImpl.call(element, qualifiedName);
     },

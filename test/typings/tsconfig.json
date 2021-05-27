@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "sourceMap": false,
+    "inlineSources": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@chialab/dna": [
+        "../../src/index.ts"
+      ]
+    }
+  }
+}

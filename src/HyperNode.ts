@@ -1,10 +1,14 @@
-import type { ComponentConstructorInterface } from './Interfaces';
+import type { ComponentConstructor } from './Component';
 import type { TemplateItems, TemplateFunction } from './Template';
 import { window } from './window';
 import { customElements } from './CustomElementRegistry';
-import { Fragment } from './Fragment';
 import { createSymbolKey } from './symbols';
 import { isNode } from './helpers';
+
+/**
+ * A constructor alias used for JSX fragments </>.
+ */
+export const Fragment = createSymbolKey();
 
 /**
  * A symbol which identify emulated components.
@@ -47,7 +51,7 @@ export enum NamespaceURI {
  */
 export type HyperNode = {
     node?: Node;
-    Component?: ComponentConstructorInterface<HTMLElement>;
+    Component?: ComponentConstructor<HTMLElement>;
     Function?: TemplateFunction;
     tag?: string;
     is?: string;

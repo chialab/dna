@@ -1,5 +1,5 @@
 import { window } from './window';
-import { isComponent, isComponentConstructor, isConstructed } from './Interfaces';
+import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { connect, defineProperty } from './helpers';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -106,12 +106,12 @@ export class CustomElementRegistry {
             throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
         }
 
-        let tagName = (options.extends || name).toLowerCase();
+        const tagName = (options.extends || name).toLowerCase();
         this.registry[name] = constructor;
         this.tagNames[name] = tagName;
 
         if (nativeCustomElements) {
-            let shouldShim = constructor.shim;
+            const shouldShim = constructor.shim;
             if (tagName !== name) {
                 constructor.shim = true;
                 options = {
@@ -127,7 +127,7 @@ export class CustomElementRegistry {
             if (document.body) {
                 this.upgrade(document.body);
             }
-            let elementQueue = queue[name];
+            const elementQueue = queue[name];
             if (elementQueue) {
                 for (let i = 0, len = elementQueue.length; i < len; i++) {
                     elementQueue[i](constructor);
@@ -151,8 +151,8 @@ export class CustomElementRegistry {
         if (this.registry[name]) {
             return Promise.resolve(this.registry[name]);
         }
-        let queue = this.queue;
-        let whenDefinedPromise = new Promise((resolve) => {
+        const queue = this.queue;
+        const whenDefinedPromise = new Promise((resolve) => {
             queue[name] = queue[name] || [];
             queue[name].push(resolve);
         });
@@ -165,10 +165,10 @@ export class CustomElementRegistry {
      * @param root A Node instance with descendant elements that are to be upgraded.
      */
     upgrade(root: HTMLElement) {
-        let is = (root.getAttribute('is') || root.tagName).toLowerCase();
-        let constructor = this.get(is);
+        const is = (root.getAttribute('is') || root.tagName).toLowerCase();
+        const constructor = this.get(is);
         // find all root children
-        let nodes = root.children;
+        const nodes = root.children;
         // iterate all nodes found
         for (let i = 0, len = nodes.length; i < len; i++) {
             this.upgrade(nodes[i] as HTMLElement);
@@ -176,10 +176,12 @@ export class CustomElementRegistry {
         if (!constructor) {
             return;
         }
+
         if (nativeCustomElements && 'upgrade' in nativeCustomElements) {
             // native upgrade
             nativeCustomElements.upgrade(root);
         }
+
         // check if already instantiated
         if (isComponent(root)) {
             if (isConstructed(root)) {
@@ -189,10 +191,10 @@ export class CustomElementRegistry {
         }
 
         if (isComponentConstructor(constructor)) {
-            let attributes: { name: string; value: string }[] = [];
-            let observed = constructor.observedAttributes || [];
+            const attributes: { name: string; value: string }[] = [];
+            const observed = constructor.observedAttributes || [];
             for (let i = 0, len = root.attributes.length; i < len; i++) {
-                let attr = root.attributes[i];
+                const attr = root.attributes[i];
                 if (observed.indexOf(attr.name) !== -1) {
                     attributes.push({
                         name: attr.name,
@@ -200,9 +202,9 @@ export class CustomElementRegistry {
                     });
                 }
             }
-            let element = new constructor(root);
+            const element = constructor.upgrade(root);
             for (let i = 0, len = attributes.length; i < len; i++) {
-                let { name, value } = attributes[i];
+                const { name, value } = attributes[i];
                 if (element.getAttribute(name) === value) {
                     element.attributeChangedCallback(name, null, value);
                 } else {

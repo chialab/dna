@@ -1,18 +1,15 @@
-import { window } from './window';
-export { window };
+export { window } from './window';
 export { customElements, CustomElementRegistry } from './CustomElementRegistry';
 export { customElement } from './customElement';
 export { connect, disconnect } from './helpers';
 export { DOM } from './DOM';
 export { render } from './render';
-export { Fragment } from './Fragment';
-export { h } from './HyperNode';
+export { Fragment, h } from './HyperNode';
 export { html } from './html';
 export { css } from './css';
 export { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
 export { property, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { isComponent, isComponentConstructor } from './Interfaces';
-export { extend, Component } from './Component';
+export { extend, Component, isComponent, isComponentConstructor } from './Component';
 export * from './directives';
 
 export type { Observable } from './Observable';
@@ -21,4 +18,4 @@ export type { Context } from './Context';
 export type { HyperNode } from './HyperNode';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter } from './property';
-export type { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
+export type { ComponentInstance, ComponentConstructor } from './Component';

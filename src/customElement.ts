@@ -1,7 +1,7 @@
 
 import type { ClassElement } from './ClassElement';
-import type { ComponentConstructorInterface } from './Interfaces';
-import { CONSTRUCTED_SYMBOL, isConstructed } from './Interfaces';
+import type { Constructor, ComponentConstructor } from './Component';
+import { CONSTRUCTED_SYMBOL, isConstructed } from './Component';
 import { customElements } from './CustomElementRegistry';
 
 /**
@@ -22,8 +22,8 @@ export type ClassDescriptor = {
 export const customElement = (name: string, options?: ElementDefinitionOptions) =>
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (classOrDescriptor: ComponentConstructorInterface<HTMLElement>|ClassDescriptor): any => {
-        const upgrade = (constructor: ComponentConstructorInterface<HTMLElement>) => {
+    (classOrDescriptor: ComponentConstructor<HTMLElement>|ClassDescriptor): any => {
+        const upgrade = (constructor: ComponentConstructor<HTMLElement>) => {
             const Component = class extends constructor {
                 /**
                  * Store constructor properties.
@@ -33,8 +33,11 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * @inheritdoc
                  */
-                constructor(node?: HTMLElement | { [key: string]: unknown }, properties?: { [key: string]: unknown }) {
-                    super(node as HTMLElement, properties as { [key: string]: unknown });
+                constructor(...args: any[]) {
+                    // So sorry about this, but I can't get it working otherwise
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    super(...args);
                     this[CONSTRUCTED_SYMBOL] = true;
                     this.initialize(this.initProps);
                 }
@@ -65,8 +68,8 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
         return {
             kind,
             elements,
-            finisher(constructor: typeof HTMLElement) {
-                return upgrade(constructor as ComponentConstructorInterface<HTMLElement>);
+            finisher<T extends HTMLElement>(constructor: Constructor<T>) {
+                return upgrade(constructor as ComponentConstructor<T>);
             },
         };
     };

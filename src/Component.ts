@@ -1,27 +1,119 @@
-import type { ComponentInterface, ComponentConstructorInterface } from './Interfaces';
 import type { DelegatedEventCallback } from './events';
 import type { Template } from './Template';
 import type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldAttributeConverter } from './property';
-import { COMPONENT_SYMBOL, CONSTRUCTED_SYMBOL } from './Interfaces';
+import { createSymbolKey } from './symbols';
 import { customElements } from './CustomElementRegistry';
-import { HTMLElement, isElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf } from './helpers';
+import { HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement } from './helpers';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { getContext } from './Context';
+import { getOrCreateContext } from './Context';
 import { internalRender } from './render';
 import { getProperties, getProperty } from './property';
 import { cloneChildNodes } from './NodeList';
 
 /**
+ * A symbol which identify components.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+
+export type WithComponentFlag<T> = T & {
+    [COMPONENT_SYMBOL]?: boolean;
+};
+
+/**
+ * A symbol which identify constructed components (properties can be assigned).
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
+
+export type WithConstructedFlag<T> = T & {
+    [CONSTRUCTED_SYMBOL]?: boolean;
+};
+
+/**
+ * Check if a node is a component.
+ * @param node The node to check.
+ */
+export const isComponent = (node: WithComponentFlag<Node>): node is ComponentInstance<HTMLElement> => !!node[COMPONENT_SYMBOL];
+
+/**
+ * Check if a node is a constructed component.
+ * @param node The node to check.
+ */
+export const isConstructed = (node: WithConstructedFlag<Node>) => !!node[CONSTRUCTED_SYMBOL];
+
+/**
+ * Check if a constructor is a component constructor.
+ * @param constructor The constructor to check.
+ */
+export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructor<HTMLElement> => !!constructor.prototype[COMPONENT_SYMBOL];
+
+/**
+ * Constructor type helper.
+ */
+export interface Constructor<T extends HTMLElement = HTMLElement> {
+    new(): T;
+    prototype: T;
+}
+
+/**
+ * Extract slotted child nodes for initial child nodes.
+ * @param context The compoonent context.
+ * @return A list of new slotted children.
+ */
+function initSlotChildNodes<T extends HTMLElement>(element: ComponentInstance<T>) {
+    const context = getOrCreateContext(element);
+    const doc = element.ownerDocument;
+    /* istanbul ignore next */
+    if (!element.childNodes.length && doc.readyState === 'loading') {
+        return;
+    }
+    const slotChildNodes = cloneChildNodes(element.childNodes);
+    for (let i = 0, len = slotChildNodes.length; i < len; i++) {
+        element.removeChild(slotChildNodes[i]);
+    }
+    context.slotChildNodes = slotChildNodes;
+    return slotChildNodes;
+}
+
+/**
  * Create a base Component class which extends a native constructor.
- * @param constructor The base HTMLElement constructor to extend.
+ * @param ctor The base HTMLElement constructor to extend.
  * @return The extend class.
  */
-const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component extends (constructor as typeof HTMLElement) {
+const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => class Component extends (ctor as Constructor) {
     /**
      * An array containing the names of the attributes to observe.
      */
     static readonly observedAttributes: string[] = [];
+
+    /**
+     * Identify shimmed constructors.
+     * Constructor will skip native constructing when true.
+     */
+    static shim?: boolean;
+
+    /**
+     * Upgrade a plain element prototype.
+     * @param node The node to upgrade.
+     * @return The new prototyped node.
+     */
+    static upgrade<T extends HTMLElement>(node: T) {
+        return new this(node);
+    }
+
+    /**
+     * Flag DNA components.
+     */
+    get [COMPONENT_SYMBOL]() {
+        return true;
+    }
+
+    /**
+     * Flag constructed components.
+     */
+    [CONSTRUCTED_SYMBOL]?: boolean;
 
     /**
      * The tag name used for Component definition.
@@ -29,11 +121,6 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     get is(): string {
         return undefined as unknown as string;
     }
-
-    /**
-     * A list of CSSStyleSheet to apply to the component.
-     */
-    adoptedStyleSheets?: CSSStyleSheet[];
 
     /**
      * A flag with the connected value of the node.
@@ -46,14 +133,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * A list of slot nodes.
      */
     get slotChildNodes() {
-        return getContext(this).slotChildNodes;
-    }
-
-    /**
-     * Flag DNA components.
-     */
-    get [COMPONENT_SYMBOL]() {
-        return true;
+        return getOrCreateContext(this).slotChildNodes;
     }
 
     /**
@@ -61,23 +141,18 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    constructor(node?: HTMLElement | { [key: string]: unknown }, properties?: { [key: string]: unknown }) {
+    constructor(...args: any[]) {
         super();
 
-        let element = node as this;
-        let props = properties;
-        if (!isElement(element)) {
-            props = node as { [key: string]: unknown };
-            element = this;
-        } else {
-            setPrototypeOf(element, this);
-        }
+        const node = isElement(args[0]) && args[0];
+        const props = (node ? args[1] : args[0]) as { [key: string]: unknown };
 
-        const context = getContext(element);
-        context.is = this.is;
-        element.initSlotChildNodes();
+        const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
+        const constructor = element.constructor as ComponentConstructor<HTMLElement>;
+        const context = getOrCreateContext(element);
+        context.is = element.is;
+        initSlotChildNodes(element);
 
-        const constructor = element.constructor as ComponentConstructorInterface<HTMLElement>;
         // setup listeners
         const listeners = getListeners(constructor) || [];
         for (let i = 0, len = listeners.length; i < len; i++) {
@@ -105,11 +180,10 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
 
     /**
      * Initialize component properties.
-     *
      * @param properties A set of initial properties for the element.
      */
     initialize(properties?: { [key: string]: unknown }) {
-        (this as any)[CONSTRUCTED_SYMBOL] = true;
+        this[CONSTRUCTED_SYMBOL] = true;
         if (properties) {
             for (let propertyKey in properties) {
                 (this as any)[propertyKey] = properties[propertyKey];
@@ -144,7 +218,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-        const properties = getProperties(this.constructor as ComponentConstructorInterface<HTMLElement>);
+        const properties = getProperties(this.constructor as typeof Component);
         let property: ClassFieldDescriptor | undefined;
         for (let propertyKey in properties) {
             let prop = properties[propertyKey];
@@ -170,7 +244,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param newValue The new value for the property (undefined if removed).
      */
     propertyChangedCallback(propertyName: string, oldValue: any, newValue: any) {
-        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName) as ClassFieldDescriptor;
+        const property = getProperty(this.constructor as typeof Component, propertyName) as ClassFieldDescriptor;
         const attrName = property.attribute as string;
         if (attrName && property.toAttribute) {
             const value = property.toAttribute.call(this as any, newValue);
@@ -195,33 +269,13 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     }
 
     /**
-     * Extract slotted child nodes for initial child nodes.
-     * @param context The compoonent context.
-     * @return A list of new slotted children.
-     */
-    private initSlotChildNodes() {
-        const context = getContext(this);
-        const doc = this.ownerDocument;
-        /* istanbul ignore next */
-        if (!this.childNodes.length && doc.readyState === 'loading') {
-            return;
-        }
-        const slotChildNodes = cloneChildNodes(this.childNodes);
-        for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-            this.removeChild(slotChildNodes[i]);
-        }
-        context.slotChildNodes = slotChildNodes;
-        return slotChildNodes;
-    }
-
-    /**
      * Observe a Component Property.
      *
      * @param propertyName The name of the Property to observe
      * @param callback The callback function
      */
     observe(propertyName: string, callback: ClassFieldObserver) {
-        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
+        const property = getProperty(this.constructor as typeof Component, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
@@ -235,7 +289,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * @param callback The callback function to remove
      */
     unobserve(propertyName: string, callback: ClassFieldObserver) {
-        const property = getProperty(this.constructor as ComponentConstructorInterface<HTMLElement>, propertyName);
+        const property = getProperty(this.constructor as typeof Component, propertyName);
         if (!property) {
             throw new Error(`Missing property ${propertyName}`);
         }
@@ -313,7 +367,7 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
      * Force an element to re-render.
      */
     forceUpdate() {
-        let childNodes = this.slotChildNodes || this.initSlotChildNodes();
+        const childNodes = this.slotChildNodes || initSlotChildNodes(this);
         if (childNodes) {
             internalRender(this, this.render(), false);
         }
@@ -382,7 +436,19 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
     emulateLifeCycle() {
         emulateLifeCycle(this);
     }
-} as unknown as ComponentConstructorInterface<InstanceType<T>>;
+};
+
+/**
+ * The basic DNA Component constructor.
+ */
+export type ComponentConstructor<T extends HTMLElement> = ReturnType<typeof mixin> & Constructor<T>;
+
+/**
+ * The basic DNA Component interface.
+ * It's a Custom Element, but with some extra useful method.
+ * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
+ */
+export type ComponentInstance<T extends HTMLElement> = InstanceType<ComponentConstructor<T>>;
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -392,23 +458,23 @@ const mixin = <T extends typeof HTMLElement>(constructor: T) => class Component 
  * @return A newable constructor with the same prototype.
  */
 export const shim = <T extends typeof HTMLElement>(base: T): T => {
-    const shim = function(this: ComponentInterface<InstanceType<T>>, ...args: any[]) {
-        let constructor = this.constructor;
-        let is = this.is;
+    const shim = function(this: InstanceType<ReturnType<typeof mixin>>, ...args: any[]) {
+        const constructor = this.constructor as ReturnType<typeof mixin>;
+        const is = this.is;
         if (!is) {
             throw new TypeError('Illegal constructor');
         }
 
         let tag = customElements.tagNames[is];
-        let element: ComponentInterface<InstanceType<T>>;
-        if (customElements.native && !(constructor as any).shim) {
+        let element: InstanceType<typeof constructor>;
+        if (customElements.native && !constructor.shim) {
             element = Reflect.construct(base, args, constructor.prototype.constructor);
             if (tag === element.localName) {
                 return element;
             }
         }
 
-        element = createElementImpl(tag) as ComponentInterface<InstanceType<T>>;
+        element = createElementImpl(tag) as InstanceType<typeof constructor>;
         setPrototypeOf(element, constructor.prototype);
         emulateLifeCycle(element);
         return element;
@@ -425,7 +491,7 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
  * @param name The name of the constructor (eg. "HTMLAnchorElement").
  * @return A proxy that extends the native constructor.
  */
-export const extend = <T extends typeof HTMLElement>(constructor: T) => mixin(shim(constructor));
+export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(shim(constructor)) as unknown as ComponentConstructor<T>;
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with

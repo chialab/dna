@@ -1,4 +1,4 @@
-import type { ComponentInterface } from './Interfaces';
+import type { ComponentInstance } from './Component';
 import { window } from './window';
 import { createSymbolKey } from './symbols';
 import { cloneChildNodes } from './NodeList';
@@ -210,7 +210,7 @@ export const isConnected: (this: Node) => boolean = isConnectedImpl ?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const EMULATE_LIFECYCLE_SYMBOL: unique symbol = createSymbolKey() as any;
 
-type WithEmulatedLifecycle<T> = T & {
+type WithEmulatedLifecycle<T extends Element> = T & {
     [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
 };
 
@@ -218,7 +218,7 @@ type WithEmulatedLifecycle<T> = T & {
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-export const shouldEmulateLifeCycle = (node: WithEmulatedLifecycle<Node>): node is ComponentInterface<HTMLElement> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = (node: WithEmulatedLifecycle<Element>) => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -231,9 +231,9 @@ export const connect = (node: Node, force = false) => {
         return;
     }
     if (force || shouldEmulateLifeCycle(node)) {
-        (node as ComponentInterface<HTMLElement>).connectedCallback();
+        (node as ComponentInstance<HTMLElement>).connectedCallback();
     }
-    let children = cloneChildNodes(node.childNodes);
+    const children = cloneChildNodes(node.childNodes);
     for (let i = 0, len = children.length; i < len; i++) {
         connect(children[i]);
     }
@@ -250,9 +250,9 @@ export const disconnect = (node: Node) => {
         return;
     }
     if (shouldEmulateLifeCycle(node)) {
-        node.disconnectedCallback();
+        (node as ComponentInstance<HTMLElement>).disconnectedCallback();
     }
-    let children = cloneChildNodes(node.childNodes);
+    const children = cloneChildNodes(node.childNodes);
     for (let i = 0, len = children.length; i < len; i++) {
         disconnect(children[i]);
     }
