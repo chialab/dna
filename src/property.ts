@@ -10,26 +10,31 @@ import { isConstructed } from './Component';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
 
-type WithProperties<T> = T & {
-    [PROPERTIES_SYMBOL]?: {
-        [propertyKey: string]: ClassFieldDescriptor;
-    };
+/**
+ * Retrieve properties declarations of a Component.
+ */
+export type PropertiesOf<T extends ComponentInstance<HTMLElement>> = {
+    [P in keyof T]: Property<T, P>;
+};
+
+export type WithProperties<T extends ComponentInstance<HTMLElement>> = T & {
+    [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
 };
 
 /**
- * The observer signature for class fields.
+ * The observer signature for propertys.
  *
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
  */
-export type ClassFieldObserver = (oldValue: unknown, newValue: unknown) => unknown;
+export type PropertyObserver<T extends ComponentInstance<HTMLElement>, TypeHint> = (this: T, oldValue: TypeHint|undefined, newValue: TypeHint) => void;
 
 /**
- * A validation function for the class field.
+ * A validation function for the property.
  *
  * @param value The value to set.
  */
-export type ClassFieldValidator = (value: unknown) => boolean;
+export type PropertyValidator<T extends ComponentInstance<HTMLElement>> = (this: T, value: unknown) => boolean;
 
 /**
  * Convert attribute to property value.
@@ -37,7 +42,7 @@ export type ClassFieldValidator = (value: unknown) => boolean;
  * @param value The attributue value.
  * @return The property value.
  */
-export type ClassFieldAttributeConverter = (value: string|null) => unknown;
+export type PropertyFromAttributeConverter<T extends ComponentInstance<HTMLElement>, P extends keyof T> = (this: T, value: string|null) => T[P];
 
 /**
  * Convert property to attribute value.
@@ -45,16 +50,12 @@ export type ClassFieldAttributeConverter = (value: string|null) => unknown;
  * @param value The property value.
  * @return The attributue value.
  */
-export type ClassFieldPropertyConverter = (value: any) => string|null|undefined;
+export type PropertyToAttributeConverter<T extends ComponentInstance<HTMLElement>, P extends keyof T> = (value: T[P]) => string|null|undefined;
 
 /**
- * A list of properties for an class field description.
+ * A property declaration.
  */
-export type ClassFieldDescriptor = PropertyDescriptor & {
-    /**
-     * The property name of the field.
-     */
-    name?: PropertyKey;
+export type PropertyDeclaration<T extends ComponentInstance<HTMLElement> = any, P extends keyof T = any> = PropertyDescriptor & {
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
@@ -62,7 +63,7 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
     /**
      * The initial value of the property.
      */
-    defaultValue?: unknown;
+    defaultValue?: T[P];
     /**
      * A list of valid property values prototypes.
      */
@@ -70,46 +71,107 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
     /**
      * Convert attribute to property value.
      */
-    fromAttribute?: ClassFieldAttributeConverter;
+    fromAttribute?: PropertyFromAttributeConverter<T, P>;
     /**
      * Convert property to attribute value.
      * @param value The property value.
      * @return The attributue value.
      */
-    toAttribute?: ClassFieldPropertyConverter;
+    toAttribute?: PropertyToAttributeConverter<T, P>;
     /**
      * Define a property observable.
      */
-    observe?: ClassFieldObserver;
+    observe?: PropertyObserver<T, T[P]>;
     /**
      * A list of field observables.
      */
-    observers?: ClassFieldObserver[];
+    observers?: PropertyObserver<T, T[P]>[];
     /**
      * A custom validation function for the property.
      * Property assignement throws when this function returns falsy values.
      */
-    validate?: ClassFieldValidator;
+    validate?: PropertyValidator<T>;
     /**
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (value?: any) => any;
+    getter?: (value?: T[P]) => any;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (newValue?: any) => any;
+    setter?: (newValue?: any) => T[P];
     /**
      * The event to fire on property change.
      */
     event?: true|string;
     /**
+     * The initializer function.
+     */
+    initializer?: Function;
+ }
+
+/**
+ * A property instance.
+ */
+export type Property<T extends ComponentInstance<HTMLElement>, P extends keyof T>= PropertyDescriptor & {
+    /**
+     * The property name of the field.
+     */
+     readonly name: P;
+    /**
      * The property private symbol.
      */
-    symbol?: symbol;
+    symbol: symbol;
+    /**
+     * The bound attribute name.
+     */
+    attribute?: string;
+    /**
+     * The initial value of the property.
+     */
+    defaultValue?: T[P];
+    /**
+     * A list of valid property values prototypes.
+     */
+    type: Function[];
+    /**
+     * Convert attribute to property value.
+     */
+    fromAttribute?: PropertyFromAttributeConverter<T, P>;
+    /**
+     * Convert property to attribute value.
+     * @param value The property value.
+     * @return The attributue value.
+     */
+    toAttribute?: PropertyToAttributeConverter<T, P>;
+    /**
+     * A list of field observables.
+     */
+    observers: PropertyObserver<T, T[P]>[];
+    /**
+     * A custom validation function for the property.
+     * Property assignement throws when this function returns falsy values.
+     */
+    validate?: PropertyValidator<T>;
+    /**
+     * Define custom getter for the property.
+     * @param value The current property value.
+     */
+    getter?: (value?: T[P]) => any;
+    /**
+     * Define a custom setter for the property.
+     * It runs before property validations.
+     * The returned value will be set to the property.
+     * @param newValue The value to set.
+     */
+    setter?: (newValue?: any) => T[P];
+    /**
+     * The event to fire on property change.
+     */
+    event?: string;
     /**
      * The initializer function.
      */
@@ -118,20 +180,16 @@ export type ClassFieldDescriptor = PropertyDescriptor & {
 
 /**
  * Retrieve all properties descriptors.
- * @param constructor The component constructor.
- * @return A list of class field descriptors.
+ * @param prototype The component prototype.
+ * @return A list of property descriptors.
  */
-export const getProperties = (constructor: WithProperties<ComponentConstructor<HTMLElement>>) => {
-    const props = (constructor[PROPERTIES_SYMBOL] || {}) as {
-        [propertyKey: string]: ClassFieldDescriptor;
-    };
+export const getProperties = <T extends ComponentInstance<HTMLElement>>(prototype: WithProperties<T>) => {
+    const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
-    if (!hasOwnProperty.call(constructor, PROPERTIES_SYMBOL)) {
+    if (!hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
         return {
             __proto__: props,
-        } as {
-            [propertyKey: string]: ClassFieldDescriptor;
-        };
+        } as unknown as PropertiesOf<T>;
     }
 
     return props;
@@ -139,14 +197,19 @@ export const getProperties = (constructor: WithProperties<ComponentConstructor<H
 
 /**
  * Retrieve property descriptor.
- * @param constructor The component constructor.
+ * @param prototype The component prototype.
  * @param propertyKey The name of the property.
- * @return The class field descriptor.
+ * @return The property descriptor.
  */
-export const getProperty = (constructor: ComponentConstructor<HTMLElement>, propertyKey: string) => getProperties(constructor)[propertyKey];
+export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: T, propertyKey: P) => getProperties(prototype)[propertyKey];
 
-const getTypes = (descriptor: ClassFieldDescriptor) => {
-    const type = descriptor.type;
+/**
+ * Get valid constructors for the property.
+ * @param decl The property declaration.
+ * @return A list of constructors.
+ */
+const getTypes = (decl: PropertyDeclaration) => {
+    const type = decl.type;
     if (!type) {
         return [];
     }
@@ -157,40 +220,57 @@ const getTypes = (descriptor: ClassFieldDescriptor) => {
     return [type];
 };
 
-const getObservers = (descriptor: ClassFieldDescriptor) => {
-    const observers = descriptor.observers || [];
-    if (descriptor.observe) {
-        return [descriptor.observe, ...observers];
+/**
+ * Get observers for the property.
+ * @param decl The property declaration.
+ * @return A list of observers.
+ */
+const getObservers = (decl: PropertyDeclaration) => {
+    const observers = decl.observers || [];
+    if (decl.observe) {
+        return [decl.observe, ...observers];
     }
     return observers;
 };
 
 /**
  * Define an observed property.
- * @param constructor The component constructor.
- * @param propertyKey The name of the class field.
- * @param descriptor The property descriptor.
+ * @param prototype The component prototype.
+ * @param propertyKey The name of the property.
+ * @param decl The property descriptor.
  * @param symbol The symbol to use to store property value.
  * @param initializer The initializer function.
  * @return The final descriptor.
  */
-export const defineProperty = (constructor: WithProperties<ComponentConstructor<HTMLElement>>, propertyKey: string, descriptor: ClassFieldDescriptor, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
-    const symbol = symbolKey || createSymbolKey(propertyKey);
+export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, decl: PropertyDeclaration, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
+    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     const observedAttributes = constructor.observedAttributes;
-    const descriptors = constructor[PROPERTIES_SYMBOL] = getProperties(constructor);
-    descriptors[propertyKey] = descriptor;
-    (descriptor as any).__proto__ = null;
-    descriptor.name = propertyKey;
-    descriptor.symbol = symbol;
-    descriptor.initializer = initializer;
+    const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
+    const hasAttribute = decl.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey as string) !== -1);
+    const property = declarations[propertyKey] = {
+        ...decl,
+        name: propertyKey,
+        symbol,
+        type: getTypes(decl),
+        observers: getObservers(decl),
+        initializer,
+        attribute: hasAttribute ?
+            (typeof decl.attribute === 'string' ? decl.attribute : propertyKey) :
+            undefined,
+        event: decl.event ?
+            (decl.event === true ? `${propertyKey}change` : decl.event) :
+            undefined,
+    } as Property<T, P>;
 
-    const hasAttribute = descriptor.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey) !== -1);
-    const attribute = descriptor.attribute = hasAttribute === true ? propertyKey : hasAttribute as string;
-    const type = descriptor.type = getTypes(descriptor);
-    const observers = descriptor.observers = getObservers(descriptor);
+    type E = T & {
+        [symbol]: E[P];
+    };
+    const { attribute, type, observers } = property;
 
     if (attribute) {
-        descriptor.fromAttribute = descriptor.fromAttribute || ((newValue) => {
+        property.fromAttribute = decl.fromAttribute || ((newValue) => {
             if (type.indexOf(Boolean) !== -1 && (!newValue || newValue === attribute)) {
                 if (newValue === '' || newValue === attribute) {
                     // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
@@ -212,7 +292,7 @@ export const defineProperty = (constructor: WithProperties<ComponentConstructor<
             }
             return newValue;
         });
-        descriptor.toAttribute = descriptor.toAttribute || ((newValue) => {
+        property.toAttribute = decl.toAttribute || ((newValue: unknown) => {
             if (newValue == null || newValue === false) {
                 // a falsy value should remove the attribute
                 return null;
@@ -230,31 +310,27 @@ export const defineProperty = (constructor: WithProperties<ComponentConstructor<
         });
     }
 
-    const validate = typeof descriptor.validate === 'function' && descriptor.validate;
+    const validate = typeof property.validate === 'function' && property.validate;
     const finalDescriptor: PropertyDescriptor = {
         configurable: true,
         enumerable: true,
     };
 
-    const getter = descriptor.getter || ((value) => value);
-    const get = function get(this: any) {
+    const getter = property.getter || ((value) => value);
+    const get = function get(this: E) {
         return getter.call(this, this[symbol]);
     };
 
-    const setter = descriptor.setter || ((value) => value);
-    const set = function set(this: any, value: unknown) {
-        return setter.call(this, value);
-    };
-
     finalDescriptor.get = get;
-    finalDescriptor.set = function(this: ComponentInstance<HTMLElement>, newValue: unknown) {
+    const setter = property.setter || ((value) => value);
+    finalDescriptor.set = function(this: E, newValue: any) {
         if (!isConstructed(this)) {
-            (this as any)[symbol] = newValue;
+            this[symbol] = newValue;
             return;
         }
 
-        const oldValue = (this as any)[symbol];
-        newValue = set.call(this, newValue);
+        const oldValue = this[symbol];
+        newValue = setter.call(this, newValue);
 
         if (oldValue === newValue) {
             // no changes
@@ -266,17 +342,17 @@ export const defineProperty = (constructor: WithProperties<ComponentConstructor<
             let valid = true;
             if (type.length) {
                 // check if the value is an instanceof of at least one constructor
-                valid = type.some((Type) => (newValue instanceof Type || ((newValue as any).constructor === Type)));
+                valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor === Type)));
             }
             if (valid && validate) {
                 valid = validate.call(this, newValue);
             }
             if (!valid) {
-                throw new TypeError(`Invalid \`${newValue}\` value for \`${String(descriptor.name)}\` property`);
+                throw new TypeError(`Invalid \`${newValue}\` value for \`${String(property.name)}\` property`);
             }
         }
 
-        (this as any)[symbol] = newValue;
+        this[symbol] = newValue;
 
         if (observers) {
             for (let i = 0, len = observers.length; i < len; i++) {
@@ -285,7 +361,7 @@ export const defineProperty = (constructor: WithProperties<ComponentConstructor<
         }
 
         // trigger Property changes
-        this.propertyChangedCallback(descriptor.name as string, oldValue, newValue);
+        this.propertyChangedCallback(property.name, oldValue, newValue);
     };
 
     _defineProperty(constructor.prototype, propertyKey, finalDescriptor);
@@ -294,38 +370,41 @@ export const defineProperty = (constructor: WithProperties<ComponentConstructor<
 };
 
 /**
- * A decorator for class fields definition.
+ * A decorator for property definition.
  *
- * @param descriptor The class field description.
+ * @param decl The property declaration.
  * @return The decorator initializer.
  */
-export const property = (descriptor: ClassFieldDescriptor = {}) =>
+export const property = (decl: PropertyDeclaration = {}) =>
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ((targetOrClassElement: ComponentInstance<HTMLElement>|ClassElement, propertyKey: string, originalDescriptor?: ClassFieldDescriptor): any => {
-        const symbol = createSymbolKey(propertyKey);
+    function <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T | ClassElement, propertyKey: P, originalDescriptor?: PropertyDeclaration): any {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const symbol: unique symbol = createSymbolKey(propertyKey as string) as any;
         if (propertyKey !== undefined) {
             // spec 1 and typescript
-            const constructor = (targetOrClassElement as ComponentInstance<HTMLElement>).constructor as ComponentConstructor<HTMLElement>;
             let initializer: Function|undefined;
             if (originalDescriptor) {
-                descriptor.defaultValue = originalDescriptor.value;
+                decl.defaultValue = originalDescriptor.value;
                 initializer = originalDescriptor.initializer;
             }
 
-            return defineProperty(constructor, propertyKey, descriptor, symbol, initializer);
+            return defineProperty(targetOrClassElement as T, propertyKey, decl, symbol, initializer);
         }
 
         // spec 2
         const element = targetOrClassElement as ClassElement;
-        const key = String(element.key);
+        const key = String(element.key) as P;
+        type E = T & {
+            [symbol]: E[P];
+        };
 
         if (element.kind !== 'field' || element.placement !== 'own') {
             return element;
         }
 
         if (element.descriptor) {
-            descriptor.defaultValue = element.descriptor.value;
+            decl.defaultValue = element.descriptor.value;
         }
 
         return {
@@ -337,41 +416,59 @@ export const property = (descriptor: ClassFieldDescriptor = {}) =>
                 writable: true,
                 enumerable: false,
             },
-            initializer(this: ComponentInstance<HTMLElement>) {
-                return (this as any)[symbol];
+            initializer(this: E) {
+                return this[symbol];
             },
             finisher(constructor: ComponentConstructor<HTMLElement>) {
-                defineProperty(constructor, key, descriptor, symbol, element.initializer);
+                defineProperty(constructor.prototype as T, key, decl, symbol, element.initializer);
             },
         };
-    });
+    };
 
 /**
  * Define component constructor properties.
- * @param constructor The component constructor.
+ * @param prototype The component prototype.
  */
-export const defineProperties = (constructor: ComponentConstructor<HTMLElement>) => {
+export const defineProperties = <T extends ComponentInstance<HTMLElement>>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
+    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     let ctr = constructor;
     while (ctr && ctr !== HTMLElement) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         const propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
         if (propertiesGetter) {
             const descriptorProperties = (propertiesGetter.call(constructor) || {}) as {
-                [key: string]: ClassFieldDescriptor | Function | Function[];
+                [P in keyof T]: PropertyDeclaration | Function | Function[];
             };
             for (let propertyKey in descriptorProperties) {
                 if (propertyKey in handled) {
                     continue;
                 }
-                let descriptor = descriptorProperties[propertyKey];
+                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration;
                 if (typeof descriptor === 'function' || isArray(descriptor)) {
                     descriptor = { type: descriptor };
                 }
-                defineProperty(constructor, propertyKey, descriptor);
+                defineProperty(prototype, propertyKey, descriptor);
                 handled[propertyKey] = true;
             }
         }
         ctr = Object.getPrototypeOf(ctr);
     }
+};
+
+/**
+ * Get the property bound to the attribute.
+ * @param prototype The prototype of the Component.
+ * @param attributeName The name of the bound attribute.
+ * @return The property declaration.
+ */
+export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>>(prototype: T, attributeName: string) => {
+    const properties = getProperties(prototype);
+    for (let propertyKey in properties) {
+        let prop = properties[propertyKey];
+        if (prop.attribute === attributeName) {
+            return prop;
+        }
+    }
+    return null;
 };

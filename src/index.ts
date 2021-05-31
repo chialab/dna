@@ -17,5 +17,5 @@ export type { TemplateItem, TemplateItems, Template, TemplateFilter, TemplateFun
 export type { Context } from './Context';
 export type { HyperNode } from './HyperNode';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-export type { ClassFieldDescriptor, ClassFieldObserver, ClassFieldValidator, ClassFieldAttributeConverter, ClassFieldPropertyConverter } from './property';
+export type { PropertyDeclaration, PropertyObserver, PropertyValidator, PropertyFromAttributeConverter, PropertyToAttributeConverter } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';

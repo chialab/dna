@@ -1,7 +1,6 @@
-
 import type { ClassElement } from './ClassElement';
 import type { Constructor, ComponentConstructor } from './Component';
-import { CONSTRUCTED_SYMBOL, isConstructed } from './Component';
+import { isConstructed, flagConstructed } from './Component';
 import { customElements } from './CustomElementRegistry';
 
 /**
@@ -10,7 +9,7 @@ import { customElements } from './CustomElementRegistry';
 export type ClassDescriptor = {
     kind: 'class';
     elements: ClassElement[];
-    finisher?: <T>(constructor: { new(): T }) => undefined | { new(): T };
+    finisher?: <T>(constructor: { new(): T }) => void | { new(): T };
 }
 
 /**
@@ -28,7 +27,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private initProps?: { [key: string]: unknown };
+                private initProps?: { [P in keyof this]: this[P] };
 
                 /**
                  * @inheritdoc
@@ -38,14 +37,14 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     super(...args);
-                    this[CONSTRUCTED_SYMBOL] = true;
+                    flagConstructed(this);
                     this.initialize(this.initProps);
                 }
 
                 /**
                  * @inheritdoc
                  */
-                initialize(props?: { [key: string]: unknown }) {
+                initialize(props?: { [P in keyof this]: this[P] }) {
                     if (!isConstructed(this)) {
                         this.initProps = props;
                         return;

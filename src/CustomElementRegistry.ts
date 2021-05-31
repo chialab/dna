@@ -1,6 +1,6 @@
 import { window } from './window';
-import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { connect, defineProperty } from './helpers';
+import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
 
@@ -92,7 +92,7 @@ export class CustomElementRegistry {
         }
 
         if (isComponentConstructor(constructor)) {
-            defineProperties(constructor);
+            defineProperties(constructor.prototype);
             defineListeners(constructor);
         }
 
