@@ -1,5 +1,5 @@
-import type { Context, PropertiesMap } from './Context';
-import type { Template, TemplateItem, TemplateItems, TemplateFilter, TemplateFunction } from './Template';
+import type { Context, ContextProperties } from './Context';
+import type { Template, TemplateFilter } from './Template';
 import type { IterableNodeList } from './NodeList';
 import type { HyperClasses, HyperStyles } from './HyperNode';
 import { isElement, isText, isComment, isArray, indexOf } from './helpers';
@@ -137,7 +137,7 @@ export const internalRender = (
         const isObjectTemplate = templateType === 'object';
         let templateNode: Node | undefined;
         let templateContext: Context | undefined;
-        let templateChildren: TemplateItems | undefined;
+        let templateChildren: Template[] | undefined;
         let templateNamespace = namespace;
         let isElementTemplate = false;
         let isComponentTemplate = false;
@@ -198,7 +198,7 @@ export const internalRender = (
                             },
                             live,
                             renderContext
-                        ) as TemplateItem,
+                        ),
                     ],
                     filter
                 );
@@ -318,7 +318,7 @@ export const internalRender = (
             // update the Node properties
             templateContext = templateContext || getOrCreateContext(templateNode);
 
-            const map = templateContext.props[slot ? 1 : 0] as PropertiesMap;
+            const map = templateContext.props[slot ? 1 : 0] as ContextProperties;
             const childProperties = map.get(refContext);
             map.set(refContext, properties);
             if (key != null) {
@@ -438,12 +438,12 @@ export const internalRender = (
                             update();
                         });
                 }
-                return status.result as TemplateItem;
+                return status.result as Template;
             }), filter);
             return;
         } else if (isObjectTemplate && isObservable(template)) {
             const observable = template;
-            handleItems(h(((props, context, update) => {
+            handleItems(h((props, context, update) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
                     const subscription = observable.subscribe(
@@ -462,8 +462,8 @@ export const internalRender = (
                         }
                     );
                 }
-                return status.current;
-            }) as TemplateFunction), filter);
+                return status.current as Template;
+            }), filter);
             return;
         } else {
             if (templateType === 'string' && rootContext && renderContext.tagName === 'style') {

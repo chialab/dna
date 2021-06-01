@@ -17,7 +17,7 @@ export type WithContext<T> = T & {
 /**
  * A map of properties for each context.
  */
-export type PropertiesMap = WeakMap<Context, { [key: string]: unknown }>;
+export type ContextProperties = WeakMap<Context, { [key: string]: unknown }>;
 
 /**
  * The node context interface.
@@ -28,7 +28,7 @@ export type Context = {
     tagName?: string;
     is?: string;
     key?: unknown;
-    props: [PropertiesMap, PropertiesMap];
+    props: [ContextProperties, ContextProperties];
     state: Map<string, unknown>;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;

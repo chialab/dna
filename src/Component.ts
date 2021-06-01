@@ -418,7 +418,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         removeAttribute(qualifiedName: string) {
             return DOM.removeAttribute(this, qualifiedName);
         }
-    }
+    };
 
     defineProperty(Component.prototype, COMPONENT_SYMBOL, {
         get() {

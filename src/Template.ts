@@ -3,15 +3,21 @@ import type { Observable } from './Observable';
 import type { Context } from './Context';
 
 /**
- * The atomic template item.
- * It can be a node, a Hyper or Interpolate function or a primitive value.
+ * A generic template. Can be a single atomic item or a list of items.
  */
-export type TemplateItem = Element | Text | Node | HyperNode | Promise<unknown> | Observable<unknown> | string | number | boolean | undefined | null;
-
-/**
- * A list of template items.
- */
-export type TemplateItems = TemplateItem[];
+export type Template =
+    Element |
+    Text |
+    Node |
+    HyperNode |
+    Promise<unknown> |
+    Observable<unknown> |
+    string |
+    number |
+    boolean |
+    undefined |
+    null |
+    Template[];
 
 /**
  * A filter function signature for template items.
@@ -20,11 +26,6 @@ export type TemplateItems = TemplateItem[];
  * @return A truthy value for valid items, a falsy for value for invalid ones.
  */
 export type TemplateFilter = (item: Node) => boolean;
-
-/**
- * A generic template. Can be a single atomic item or a list of items.
- */
-export type Template = TemplateItem | TemplateItems;
 
 /**
  * A function that returns a template.

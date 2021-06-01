@@ -1,5 +1,5 @@
 import type { ComponentConstructor } from './Component';
-import type { TemplateItems, TemplateFunction } from './Template';
+import type { Template, TemplateFunction } from './Template';
 import { window } from './window';
 import { customElements } from './CustomElementRegistry';
 import { createSymbolKey } from './symbols';
@@ -34,7 +34,7 @@ export type HyperProperties = {
     slot?: string;
     key?: unknown;
     xlmns?: NamespaceURI;
-    children?: TemplateItems;
+    children?: Template[];
     class?: HyperClasses;
     [key: string]: unknown;
 };
@@ -60,7 +60,7 @@ export type HyperNode = {
     isSlot?: boolean;
     namespaceURI?: NamespaceURI;
     properties: HyperProperties;
-    children: TemplateItems;
+    children: Template[];
 };
 
 /**
@@ -78,7 +78,7 @@ export const isHyperNode = (target: any): target is HyperNode => target[HYPER_SY
  * @param properties The set of properties of the Node.
  * @param children The children of the Node.
  */
-export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction | Node, properties: HyperProperties|null = null, ...children: TemplateItems): HyperNode => {
+export const h = (tagOrComponent: string | typeof HTMLElement | typeof Fragment | TemplateFunction | Node, properties: HyperProperties|null = null, ...children: Template[]): HyperNode => {
     let tag: string | undefined = typeof tagOrComponent === 'string' ? (tagOrComponent as string).toLowerCase() : undefined,
         isFragment: boolean = tagOrComponent === Fragment,
         isSlot: boolean = tag === 'slot',
