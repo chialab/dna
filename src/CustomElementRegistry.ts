@@ -1,3 +1,4 @@
+import type { Constructor } from './types';
 import { window } from './window';
 import { connect, defineProperty } from './helpers';
 import { isComponent, isComponentConstructor, isConstructed } from './Component';
@@ -26,6 +27,29 @@ const assertValidateCustomElementName = (name: string): boolean => (
 );
 
 /**
+ * The plain Custom Element interface.
+ */
+export type CustomElement<T extends HTMLElement> = T & {
+    is: string;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+}
+
+/**
+ * The plain Custom Element constructor.
+ */
+export type CustomElementConstructor<T extends HTMLElement> = Constructor<CustomElement<T>> & {
+    readonly observedAttributes?: string[];
+}
+
+/**
+ * Check if the function is a Custom Element constructor.
+ * @param constructor The function to check.
+ */
+export const isCustomElementConstructor = (constructor: Function): constructor is CustomElementConstructor<HTMLElement> => constructor.prototype instanceof window.HTMLElement;
+
+/**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
  */
 export class CustomElementRegistry {
@@ -38,7 +62,7 @@ export class CustomElementRegistry {
      * A global registry.
      */
     readonly registry: {
-        [key: string]: typeof HTMLElement;
+        [key: string]: CustomElementConstructor<HTMLElement>;
     } = {};
 
     /**
@@ -61,8 +85,8 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): typeof HTMLElement | undefined {
-        let constructor: typeof HTMLElement = this.registry[name];
+    get(name: string): CustomElementConstructor<HTMLElement> | undefined {
+        let constructor: CustomElementConstructor<HTMLElement> = this.registry[name];
         // the native custom elements get method is slow
         // assert valid names before calling it.
         if (!constructor && nativeCustomElements && assertValidateCustomElementName(name)) {
@@ -78,7 +102,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: typeof HTMLElement & { shim?: boolean }, options: ElementDefinitionOptions = {}) {
+    define(name: string, constructor: CustomElementConstructor<HTMLElement> & { shim?: boolean }, options: ElementDefinitionOptions = {}) {
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
@@ -141,7 +165,7 @@ export class CustomElementRegistry {
      * @param name The Custom Element name.
      * @return A Promise that resolves when the named element is defined.
      */
-    whenDefined(name: string): Promise<typeof HTMLElement> {
+    whenDefined(name: string): Promise<CustomElementConstructor<HTMLElement>> {
         if (nativeCustomElements) {
             return nativeCustomElements
                 .whenDefined(name)
@@ -157,7 +181,7 @@ export class CustomElementRegistry {
             queue[name].push(resolve);
         });
 
-        return whenDefinedPromise as Promise<typeof HTMLElement>;
+        return whenDefinedPromise as Promise<CustomElementConstructor<HTMLElement>>;
     }
 
     /**

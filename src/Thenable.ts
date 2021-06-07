@@ -1,4 +1,4 @@
-import { createSymbolKey } from './symbols';
+import { createSymbolKey } from './helpers';
 
 /**
  * A Symbol which contains Thenable state.
@@ -23,7 +23,7 @@ export type ThenableState = {
  * @param target The object to check.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isThenable = (target: any): target is Promise<unknown> => typeof target.then === 'function';
+export const isThenable = (target: any): target is Promise<any> => typeof target.then === 'function';
 
 /**
  * Get or inject a state into a Thenable object.

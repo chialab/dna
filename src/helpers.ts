@@ -1,7 +1,22 @@
+import type { NamespaceURI, TagNameMap, IterableNodeList } from './types';
 import type { ComponentInstance } from './Component';
 import { window } from './window';
-import { createSymbolKey } from './symbols';
-import { cloneChildNodes } from './NodeList';
+
+let symbols = 0;
+
+/**
+ * Create a symbolic key.
+ * When native Symbol is not defined, compute an unique string key.
+ * @return An unique key.
+ */
+export const createSymbolKey = (description?: string | number) => {
+    /* c8 ignore start */
+    if (typeof Symbol !== 'undefined') {
+        return Symbol(description);
+    }
+    return `__dna${symbols++}` as unknown as symbol;
+    /* c8 ignore stop */
+};
 
 export const { Node, HTMLElement, Event, CustomEvent, document } = window;
 export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
@@ -107,7 +122,7 @@ export const createElementImpl = document.createElement.bind(document);
 /**
  * Alias to document.createElementNS.
  */
-export const createElementNSImpl = document.createElementNS.bind(document);
+export const createElementNSImpl: <N extends NamespaceURI, K extends keyof TagNameMap>(namespaceURI: N, qualifiedName: K) => N extends NamespaceURI.xhtml ? HTMLElementTagNameMap[K extends keyof HTMLElementTagNameMap ? K : never] : SVGElementTagNameMap[K extends keyof SVGElementTagNameMap ? K : never] = document.createElementNS.bind(document);
 
 /**
  * Alias to document.createTextNode.
@@ -164,15 +179,7 @@ export const isText = (node: any): node is Text => node && node.nodeType === TEX
  * @return The node is an Element instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isElement = (node: any): node is HTMLElement => node && node.nodeType === ELEMENT_NODE;
-
-/**
- * Check if a node is a Comment instance.
- * @param node The node to check.
- * @return The node is a Text instance.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isComment = (node: any): node is Comment => node && node.nodeType === COMMENT_NODE;
+export const isElement = <T extends Element>(node: any): node is T => node && node.nodeType === ELEMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
@@ -275,3 +282,15 @@ export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
  * Life cycle emulation status.
  */
 export const emulatingLifeCycle = () => lifeCycleEmulation;
+
+/**
+ * Clone an array like instance.
+ * @param arr The array to convert.
+ * @return A shallow clone of the array.
+ */
+export const cloneChildNodes = (arr: NodeList|IterableNodeList) => {
+    let result = [] as unknown as IterableNodeList;
+    result.item = (index) => result[index];
+    for (let i = arr.length; i--; result.unshift(arr.item(i) as Node));
+    return result;
+};

@@ -1,7 +1,5 @@
 import type { ComponentConstructor } from './Component';
-import { createSymbolKey } from './symbols';
-import { HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty } from './helpers';
-import { getOwnPropertyDescriptor } from './helpers';
+import { createSymbolKey, HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.

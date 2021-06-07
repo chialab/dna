@@ -1,7 +1,6 @@
+import type { ClassElement, Constructor } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import type { ClassElement } from './ClassElement';
-import { createSymbolKey } from './symbols';
-import { HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
+import { createSymbolKey, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
 import { isConstructed } from './Component';
 
 /**
@@ -55,7 +54,7 @@ export type PropertyToAttributeConverter<T extends ComponentInstance<HTMLElement
 /**
  * A property declaration.
  */
-export type PropertyDeclaration<T extends ComponentInstance<HTMLElement> = any, P extends keyof T = any> = PropertyDescriptor & {
+export type PropertyDeclaration<T extends ComponentInstance<HTMLElement>, P extends keyof T> = PropertyDescriptor & {
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
@@ -95,14 +94,14 @@ export type PropertyDeclaration<T extends ComponentInstance<HTMLElement> = any, 
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (value?: T[P]) => any;
+    getter?: (value?: T[P]) => ReturnType<NonNullable<PropertyDescriptor['get']>>;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (newValue?: any) => T[P];
+    setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T[P];
     /**
      * The event to fire on property change.
      */
@@ -160,14 +159,14 @@ export type Property<T extends ComponentInstance<HTMLElement>, P extends keyof T
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (value?: T[P]) => any;
+    getter?: (value?: T[P]) => ReturnType<NonNullable<PropertyDescriptor['get']>>;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (newValue?: any) => T[P];
+    setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T[P];
     /**
      * The event to fire on property change.
      */
@@ -208,7 +207,7 @@ export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends 
  * @param decl The property declaration.
  * @return A list of constructors.
  */
-const getTypes = (decl: PropertyDeclaration) => {
+const getTypes = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(decl: PropertyDeclaration<T, P>) => {
     const type = decl.type;
     if (!type) {
         return [];
@@ -225,7 +224,7 @@ const getTypes = (decl: PropertyDeclaration) => {
  * @param decl The property declaration.
  * @return A list of observers.
  */
-const getObservers = (decl: PropertyDeclaration) => {
+const getObservers = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(decl: PropertyDeclaration<T, P>) => {
     const observers = decl.observers || [];
     if (decl.observe) {
         return [decl.observe, ...observers];
@@ -242,7 +241,7 @@ const getObservers = (decl: PropertyDeclaration) => {
  * @param initializer The initializer function.
  * @return The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, decl: PropertyDeclaration, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
+export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, decl: PropertyDeclaration<T, P>, symbolKey?: symbol, initializer?: Function): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
@@ -323,7 +322,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 
     finalDescriptor.get = get;
     const setter = property.setter || ((value) => value);
-    finalDescriptor.set = function(this: E, newValue: any) {
+    finalDescriptor.set = function(this: E, newValue) {
         if (!isConstructed(this)) {
             this[symbol] = newValue;
             return;
@@ -375,10 +374,8 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
  * @param decl The property declaration.
  * @return The decorator initializer.
  */
-export const property = (decl: PropertyDeclaration = {}) =>
-    // TypeScript complains about return type because we handle babel output
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T | ClassElement, propertyKey: P, originalDescriptor?: PropertyDeclaration): any {
+export const property = (decl: PropertyDeclaration<any, any> = {}) =>
+    <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T, propertyKey?: P, originalDescriptor?: PropertyDeclaration<T, P>): any => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const symbol: unique symbol = createSymbolKey(propertyKey as string) as any;
         if (propertyKey !== undefined) {
@@ -393,7 +390,7 @@ export const property = (decl: PropertyDeclaration = {}) =>
         }
 
         // spec 2
-        const element = targetOrClassElement as ClassElement;
+        const element = targetOrClassElement as unknown as ClassElement;
         const key = String(element.key) as P;
         type E = T & {
             [symbol]: E[P];
@@ -419,8 +416,8 @@ export const property = (decl: PropertyDeclaration = {}) =>
             initializer(this: E) {
                 return this[symbol];
             },
-            finisher(constructor: ComponentConstructor<HTMLElement>) {
-                defineProperty(constructor.prototype as T, key, decl, symbol, element.initializer);
+            finisher(constructor: Constructor<T>) {
+                defineProperty(constructor.prototype, key, decl, symbol, element.initializer);
             },
         };
     };
@@ -438,13 +435,13 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
         const propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
         if (propertiesGetter) {
             const descriptorProperties = (propertiesGetter.call(constructor) || {}) as {
-                [P in keyof T]: PropertyDeclaration | Function | Function[];
+                [P in keyof T]: PropertyDeclaration<T, P> | Function | Function[];
             };
             for (let propertyKey in descriptorProperties) {
                 if (propertyKey in handled) {
                     continue;
                 }
-                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration;
+                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration<T, typeof propertyKey>;
                 if (typeof descriptor === 'function' || isArray(descriptor)) {
                     descriptor = { type: descriptor };
                 }

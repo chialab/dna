@@ -1,4 +1,4 @@
-import { createSymbolKey } from './symbols';
+import { createSymbolKey } from './helpers';
 
 /**
  * Subscription-like minimal interface.

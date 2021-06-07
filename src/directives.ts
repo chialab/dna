@@ -1,4 +1,4 @@
-import type { Template } from './Template';
+import type { Template } from './render';
 import { getThenableState } from './Thenable';
 
 /**

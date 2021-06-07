@@ -375,7 +375,7 @@ describe('render', function() {
             const svg = wrapper.querySelector('svg');
             const g = wrapper.querySelector('g');
             const rect = wrapper.querySelector('rect');
-            const foreign = wrapper.querySelector('foreignobject');
+            const foreign = wrapper.querySelector('foreignObject');
             const body = wrapper.querySelector('body');
             const p = wrapper.querySelector('p');
             expect(div.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');

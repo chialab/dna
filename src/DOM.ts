@@ -1,4 +1,6 @@
+import type { TagNameMap } from './types';
 import type { ComponentConstructor, ComponentInstance } from './Component';
+import { NamespaceURI } from './types';
 import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
@@ -20,13 +22,13 @@ export const DOM = {
     /**
      * Create a new DOM element node for the specified tag.
      *
-     * @param tagName The specified tag.
+     * @param qualifiedName The specified tag.
      * @return The new DOM element instance.
      */
-    createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
+    createElement<K extends keyof HTMLElementTagNameMap>(qualifiedName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
         const is = options && options.is;
-        const name = is || tagName.toLowerCase();
-        const node = createElementImpl(tagName);
+        const name = is || qualifiedName.toLowerCase();
+        const node = createElementImpl(qualifiedName);
         const constructor = customElements.get(name);
         if (constructor && isComponentConstructor(constructor) && !(node instanceof constructor)) {
             constructor.upgrade(node);
@@ -41,11 +43,11 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElementNS(namespaceURI: string, tagName: string): Element {
-        if (namespaceURI === 'http://www.w3.org/1999/xhtml') {
-            return this.createElement(tagName as keyof HTMLElementTagNameMap);
+    createElementNS<N extends NamespaceURI, K extends keyof TagNameMap>(namespaceURI: N, qualifiedName: K) {
+        if (namespaceURI === NamespaceURI.xhtml) {
+            return this.createElement(qualifiedName as keyof HTMLElementTagNameMap);
         }
-        return createElementNSImpl(namespaceURI, tagName);
+        return createElementNSImpl(namespaceURI, qualifiedName as keyof SVGElementTagNameMap);
     },
 
     /**

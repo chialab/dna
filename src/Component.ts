@@ -1,15 +1,13 @@
+import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback } from './events';
-import type { Template } from './Template';
 import type { PropertyObserver } from './property';
-import { createSymbolKey } from './symbols';
+import type { Template } from './render';
+import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
-import { HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty } from './helpers';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
-import { getOrCreateContext } from './Context';
-import { internalRender } from './render';
+import { getOrCreateContext, internalRender } from './render';
 import { getProperties, getProperty, getPropertyForAttribute } from './property';
-import { cloneChildNodes } from './NodeList';
 
 /**
  * A symbol which identify components.
@@ -56,14 +54,6 @@ export const flagConstructed = (node: WithConstructedFlag<HTMLElement>) => {
  * @param constructor The constructor to check.
  */
 export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructor<HTMLElement> => !!constructor.prototype[COMPONENT_SYMBOL];
-
-/**
- * Constructor type helper.
- */
-export interface Constructor<T extends HTMLElement = HTMLElement> {
-    new(): T;
-    prototype: T;
-}
 
 /**
  * Extract slotted child nodes for initial child nodes.
@@ -491,3 +481,64 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
  * All DNA components **must** extends this class.
  */
 export const Component = extend(HTMLElement);
+
+/**
+ * Decorate and define component classes.
+ * @param name The name of the custom element.
+ * @param options The custom element options.
+ * @return The decorated component class.
+ */
+export const customElement = (name: string, options?: ElementDefinitionOptions) =>
+    // TypeScript complains about return type because we handle babel output
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (classOrDescriptor: ComponentConstructor<HTMLElement>|ClassDescriptor): any => {
+        const upgrade = (constructor: ComponentConstructor<HTMLElement>) => {
+            const Component = class extends constructor {
+                /**
+                 * Store constructor properties.
+                 */
+                private initProps?: { [P in keyof this]: this[P] };
+
+                /**
+                 * @inheritdoc
+                 */
+                constructor(...args: any[]) {
+                    // So sorry about this, but I can't get it working otherwise
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    super(...args);
+                    flagConstructed(this);
+                    this.initialize(this.initProps);
+                }
+
+                /**
+                 * @inheritdoc
+                 */
+                initialize(props?: { [P in keyof this]: this[P] }) {
+                    if (!isConstructed(this)) {
+                        this.initProps = props;
+                        return;
+                    }
+                    return super.initialize(props);
+                }
+            };
+
+            customElements.define(name, Component, options);
+            return Component as typeof classOrDescriptor;
+        };
+
+        if (typeof classOrDescriptor === 'function') {
+            // typescript
+            return upgrade(classOrDescriptor);
+        }
+
+        // spec 2
+        const { kind, elements } = classOrDescriptor;
+        return {
+            kind,
+            elements,
+            finisher<T extends HTMLElement>(constructor: Constructor<T>) {
+                return upgrade(constructor as ComponentConstructor<T>);
+            },
+        };
+    };
