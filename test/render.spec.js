@@ -285,10 +285,6 @@ describe('render', function() {
         it('should convert observed attributes', () => {
             const name = getComponentName();
             class TestElement extends DNA.Component {
-                static get observedAttributes() {
-                    return ['number'];
-                }
-
                 static get properties() {
                     return {
                         number: Number,
@@ -305,10 +301,6 @@ describe('render', function() {
         it('should assign not observed attributes', () => {
             const name = getComponentName();
             class TestElement extends DNA.Component {
-                static get observedAttributes() {
-                    return ['number'];
-                }
-
                 static get properties() {
                     return {
                         number: Number,
@@ -325,10 +317,6 @@ describe('render', function() {
         it('should assign not string attribute', () => {
             const name = getComponentName();
             class TestElement extends DNA.Component {
-                static get observedAttributes() {
-                    return ['number'];
-                }
-
                 static get properties() {
                     return {
                         number: Number,

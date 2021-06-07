@@ -462,10 +462,6 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'dialog',
 })
 class Dialog extends Component {
-    static get observedAttributes() {
-        return ['title', 'content'];
-    }
-
     @property() title = '';
     @property() content = '';
 
@@ -493,10 +489,6 @@ Shadow DOM solves those two issues, rendering "soft" children of an element into
 
 ```diff
 class Dialog extends Component {
--    static get observedAttributes() {
--        return ['title', 'content'];
--    }
-
 -    @property() title = '';
 -    @property() content = '';
 

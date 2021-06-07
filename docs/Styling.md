@@ -19,10 +19,6 @@ import { Component, customElement, html, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    static get observedAttributes() {
-        return ['title'];
-    }
-
     @property() title = '';
 
     render() {
@@ -173,10 +169,6 @@ import { title } from './x-card.css';
      extends: 'div',
 })
 class Card extends Component {
-    static get observedAttributes() {
-        return ['title'];
-    }
-
     @property() title = '';
 
     render() {

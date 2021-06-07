@@ -21,10 +21,6 @@ import { Component, customElement, property } from '@chialab/dna';
  */
 @customElement('x-map')
 export class MapboxMap extends Component {
-    static get observedAttributes() {
-        return ['latitude', 'longitude'];
-    }
-
     /**
      * The latitude value for the map center.
      */

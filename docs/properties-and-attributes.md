@@ -61,10 +61,6 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    static get observedAttributes() {
-        return ['age'];
-    }
-
     @property({
         type: Number,
         validate(value) {
@@ -83,7 +79,7 @@ Keys of the configuration objects are all optional.
 
 ### attribute
 
-The DOM attribute bound to the property: every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. `true` is also a valid configuration value for **attribute**: in this case, the property name will be used as attribute name. Always remember to add the attribute name to the static `observedAttributes` list.
+The DOM attribute bound to the property: every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. Property are automatically added to the `observedAttributes` list, unless `attribute: false` is specified.
 
 <aside class="note">
 
@@ -136,10 +132,6 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    static get observedAttributes() {
-        return ['age'];
-    }
-
     @property({
         type: Number,
         observe(oldValue, newValue) {
@@ -173,10 +165,6 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    static get observedAttributes() {
-        return ['age'];
-    }
-
     @property({
         type: Number,
         event: true,
@@ -301,12 +289,8 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    static get observedAttributes() {
-        return ['firstName', 'age', 'married'];
-    }
-
     @property({ type: String, attribute: 'name' }) firstName;
-    @property({ type: Number })   age;
+    @property({ type: Number }) age;
     @property({ type: Boolean })  married = false;
 }
 

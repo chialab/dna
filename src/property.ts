@@ -58,7 +58,7 @@ export type PropertyDeclaration<T extends ComponentInstance<HTMLElement>, P exte
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
-    attribute?: true|string;
+    attribute?: boolean|string;
     /**
      * The initial value of the property.
      */
@@ -110,7 +110,7 @@ export type PropertyDeclaration<T extends ComponentInstance<HTMLElement>, P exte
      * The initializer function.
      */
     initializer?: Function;
- }
+}
 
 /**
  * A property instance.
@@ -245,9 +245,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
-    const observedAttributes = constructor.observedAttributes;
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
-    const hasAttribute = decl.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey as string) !== -1);
     const property = declarations[propertyKey] = {
         ...decl,
         name: propertyKey,
@@ -255,7 +253,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
         type: getTypes(decl),
         observers: getObservers(decl),
         initializer,
-        attribute: hasAttribute ?
+        attribute: decl.attribute !== false ?
             (typeof decl.attribute === 'string' ? decl.attribute : propertyKey) :
             undefined,
         event: decl.event ?

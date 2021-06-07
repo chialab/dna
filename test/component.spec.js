@@ -521,10 +521,6 @@ describe('Component', function() {
 
             before(() => {
                 let TestElement = class TestElement extends DNA.Component {
-                    static get observedAttributes() {
-                        return ['any', 'boolean', 'string', 'number', 'string-number', 'object', 'array', 'convertion'];
-                    }
-
                     constructor(...args) {
                         super(...args);
                         this.any = undefined;
@@ -676,6 +672,7 @@ describe('Component', function() {
                     return {
                         age: {
                             type: [Number],
+                            attribute: false,
                         },
                     };
                 }
@@ -692,7 +689,7 @@ describe('Component', function() {
             };
 
             __decorate([
-                DNA.property({ type: [String] }),
+                DNA.property({ type: [String], attribute: false }),
             ], TestElement.prototype, 'title', undefined);
             TestElement = __decorate([
                 DNA.customElement(getComponentName()),
@@ -714,10 +711,6 @@ describe('Component', function() {
         it('should not loop on connection assignement', async () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
             class TestElement extends DNA.Component {
-                static get observedAttributes() {
-                    return ['page'];
-                }
-
                 static get properties() {
                     return {
                         page: {
@@ -1283,10 +1276,6 @@ describe('Component', function() {
 
         before(() => {
             TestElement = class TestElement extends DNA.Component {
-                static get observedAttributes() {
-                    return ['title', 'alias', 'age', 'flag'];
-                }
-
                 static get properties() {
                     return {
                         age: {

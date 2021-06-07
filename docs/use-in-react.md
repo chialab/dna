@@ -18,10 +18,6 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'dialog',
 })
 class Dialog extends Component {
-    static get observedAttributes() {
-        return ['title'];
-    }
-
     @property() title = '';
 
     render() {

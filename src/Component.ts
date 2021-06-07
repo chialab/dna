@@ -85,7 +85,18 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * An array containing the names of the attributes to observe.
          */
-        static readonly observedAttributes: string[] = [];
+        static get observedAttributes(): string[] {
+            const propertiesDescriptor = getProperties(this.prototype);
+            const attributes = [];
+            for (let key in propertiesDescriptor) {
+                const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
+                if (prop && prop.attribute) {
+                    attributes.push(prop.attribute);
+                }
+            }
+
+            return attributes;
+        }
 
         /**
          * Identify shimmed constructors.

@@ -5,10 +5,6 @@ import { Component, customElement, html, property } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    static get observedAttributes() {
-        return ['name'];
-    }
-
     static get listeners() {
         return {
             // delegate an event

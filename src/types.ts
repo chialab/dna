@@ -35,7 +35,7 @@ export type ClassDescriptor = {
     kind: 'class';
     elements: ClassElement[];
     finisher?: <T>(constructor: { new(): T }) => void | { new(): T };
-}
+};
 
 /**
  * Constructor type helper.
@@ -63,23 +63,28 @@ export enum NamespaceURI {
  */
 export type IterableNodeList = Node[] & {
     item(index: number): Node | null;
-}
+};
 
 /**
  * If/else statement for type comparison.
  */
 export type IfEqual<Left, Right, Then, Else = void> = (<A>() => A extends Left ? 1 : 2) extends (<A>() => A extends Right ? 1 : 2) ? Then : Else;
 
+/**
+ * Get all method keys of a type.
+ */
 export type MethodsOf<T> = {
     [P in keyof T]: T[P] extends Function ? IfEqual<{ [Q in P]: T[P] }, { [Q in P]-?: T[P] }, P, never> : never;
 }[keyof T];
 
+/**
+ * Get all field keys of a type.
+ */
 export type FieldsOf<T> = Exclude<keyof T, MethodsOf<T> | undefined>;
 
-export type ReadonlyOf<T> = {
-    [P in FieldsOf<T>]: IfEqual<{ -readonly [Q in P]: T[P] }, { [Q in P]: T[P] }, P, never>;
-}[FieldsOf<T>];
-
+/**
+ * Get all writable field keys of a type.
+ */
 export type WritableOf<T> = Exclude<{
     [P in keyof T]: IfEqual<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, P, never>;
 }[FieldsOf<T>], undefined>;

@@ -82,10 +82,6 @@ import { Component, customElement, html } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    static get observedAttributes() {
-        return ['name'];
-    }
-
     @property() name = '';
 
     // define a template
@@ -103,10 +99,6 @@ You can use the class decorator if you are using TypeScript or this Babel plugin
 import { Component, customElements, html } from '@chialab/dna';
 
 class HelloWorld extends Component {
-    static get observedAttributes() {
-        return ['name'];
-    }
-
     static get properties() {
         return {
             name: {
@@ -139,10 +131,6 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'article'
 })
 class BlogPost extends Component {
-    static get observedAttributes() {
-        return ['title'];
-    }
-
     @property() title = '';
 
     render() {
