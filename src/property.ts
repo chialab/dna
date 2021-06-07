@@ -16,6 +16,10 @@ export type PropertiesOf<T extends ComponentInstance<HTMLElement>> = {
     [P in keyof T]: Property<T, P>;
 };
 
+
+/**
+ * A constructor with observers and properties.
+ */
 export type WithProperties<T extends ComponentInstance<HTMLElement>> = T & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
 };
@@ -65,12 +69,10 @@ export type StateDeclaration<TypeHint = unknown> = PropertyDescriptor & {
     type?: Constructor<TypeHint> | Constructor<TypeHint>[];
     /**
      * Define a property observable.
-     * @deprecated Use the `watch` decorator on class method the `observers` static accessor.
      */
     observe?: PropertyObserver<TypeHint>;
     /**
      * A list of field observables.
-     * @deprecated Use the `watch` decorator on class method the `observers` static accessor.
      */
     observers?: PropertyObserver<TypeHint>[];
     /**
@@ -123,6 +125,11 @@ export type PropertyDeclaration<TypeHint = unknown> = StateDeclaration<TypeHint>
      */
     toAttribute?: PropertyToAttributeConverter<TypeHint>;
 }
+
+/**
+ * Property confgiration in properties accessor.
+ */
+export type PropertyConfig<TypeHint = unknown> = PropertyDeclaration<TypeHint> | (() => TypeHint) | (() => TypeHint)[];
 
 /**
  * A property instance.
@@ -388,6 +395,54 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 };
 
 /**
+ * Define component constructor properties.
+ * @param prototype The component prototype.
+ */
+export const defineProperties = <T extends ComponentInstance<HTMLElement>>(prototype: T) => {
+    const handled: { [key: string]: boolean } = {};
+    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
+    let ctr = constructor;
+    while (ctr && ctr !== HTMLElement) {
+        const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
+        if (propertiesDescriptor) {
+            const descriptorProperties = (propertiesDescriptor.get ? (propertiesDescriptor.get.call(constructor) || {}) : propertiesDescriptor.value) as {
+                [P in keyof T]: PropertyConfig<T[P]>;
+            };
+            for (let propertyKey in descriptorProperties) {
+                if (propertyKey in handled) {
+                    continue;
+                }
+                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration<T[typeof propertyKey]>;
+                if (typeof descriptor === 'function' || isArray(descriptor)) {
+                    descriptor = { type: descriptor };
+                }
+                defineProperty(prototype, propertyKey, descriptor);
+                handled[propertyKey] = true;
+            }
+        }
+
+        ctr = Object.getPrototypeOf(ctr);
+    }
+};
+
+/**
+ * Get the property bound to the attribute.
+ * @param prototype The prototype of the Component.
+ * @param attributeName The name of the bound attribute.
+ * @return The property declaration.
+ */
+export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>>(prototype: T, attributeName: string) => {
+    const properties = getProperties(prototype);
+    for (let propertyKey in properties) {
+        let prop = properties[propertyKey];
+        if (prop.attribute === attributeName) {
+            return prop;
+        }
+    }
+    return null;
+};
+
+/**
  * Add a property to a component prototype.
  * @param targetOrClassElement The component prototype.
  * @param declaration The property declaration.
@@ -395,7 +450,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
  * @param originalDescriptor The native property descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T, declaration: PropertyDeclaration<T[P]>, propertyKey?: P, originalDescriptor?: PropertyDeclaration<T[P]>): any => {
+export const createProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T, declaration: PropertyDeclaration<T[P]>, propertyKey?: P, originalDescriptor?: PropertyDeclaration<T[P]>): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = createSymbolKey(propertyKey as string) as any;
     if (propertyKey !== undefined) {
@@ -467,51 +522,3 @@ export const state = <TypeHint = unknown>(declaration: StateDeclaration<TypeHint
         propertyKey?: P,
         originalDescriptor?: StateDeclaration<T[P]>
     ) => createProperty(targetOrClassElement, { ...(declaration as PropertyDeclaration<T[P]>), state: true, attribute: false }, propertyKey, originalDescriptor);
-
-/**
- * Define component constructor properties.
- * @param prototype The component prototype.
- */
-export const defineProperties = <T extends ComponentInstance<HTMLElement>>(prototype: T) => {
-    const handled: { [key: string]: boolean } = {};
-    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
-    let ctr = constructor;
-    while (ctr && ctr !== HTMLElement) {
-        const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
-        const propertiesGetter = propertiesDescriptor && propertiesDescriptor.get;
-        if (propertiesGetter) {
-            const descriptorProperties = (propertiesGetter.call(constructor) || {}) as {
-                [P in keyof T]: PropertyDeclaration<T[P]> | Function | Function[];
-            };
-            for (let propertyKey in descriptorProperties) {
-                if (propertyKey in handled) {
-                    continue;
-                }
-                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration<T[typeof propertyKey]>;
-                if (typeof descriptor === 'function' || isArray(descriptor)) {
-                    descriptor = { type: descriptor };
-                }
-                defineProperty(prototype, propertyKey, descriptor);
-                handled[propertyKey] = true;
-            }
-        }
-        ctr = Object.getPrototypeOf(ctr);
-    }
-};
-
-/**
- * Get the property bound to the attribute.
- * @param prototype The prototype of the Component.
- * @param attributeName The name of the bound attribute.
- * @return The property declaration.
- */
-export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>>(prototype: T, attributeName: string) => {
-    const properties = getProperties(prototype);
-    for (let propertyKey in properties) {
-        let prop = properties[propertyKey];
-        if (prop.attribute === attributeName) {
-            return prop;
-        }
-    }
-    return null;
-};

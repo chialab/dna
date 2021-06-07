@@ -1,6 +1,6 @@
 import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback } from './events';
-import type { PropertyObserver } from './property';
+import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './render';
 import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
@@ -99,6 +99,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
+         * Define component properties.
+         */
+        static readonly properties?: { [key: string]: PropertyConfig } = {};
+
+        /**
          * Identify shimmed constructors.
          * Constructor will skip native constructing when true.
          */
@@ -154,15 +159,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             // setup listeners
             const listeners = getListeners(constructor) || [];
             for (let i = 0, len = listeners.length; i < len; i++) {
-                let listener = listeners[i];
+                const listener = listeners[i];
                 element.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
             }
 
             // setup properties
-            const propertiesDescriptor = getProperties(this);
-            for (let propertyKey in propertiesDescriptor) {
+            const properties = getProperties(this);
+            for (let propertyKey in properties) {
                 delete element[propertyKey];
-                const descriptor = propertiesDescriptor[propertyKey];
+                const descriptor = properties[propertyKey];
                 if (typeof descriptor.initializer === 'function') {
                     element[propertyKey] = descriptor.initializer.call(element);
                 } else if ('value' in descriptor) {
@@ -289,7 +294,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             if (!property) {
                 throw new Error(`Missing property ${propertyName}`);
             }
-            (property.observers as Function[]).push(callback);
+            property.observers.push(callback);
         }
 
         /**
@@ -303,7 +308,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             if (!property) {
                 throw new Error(`Missing property ${propertyName}`);
             }
-            const observers = property.observers as Function[];
+            const observers = property.observers;
             const io = observers.indexOf(callback);
             if (io !== -1) {
                 observers.splice(io, 1);

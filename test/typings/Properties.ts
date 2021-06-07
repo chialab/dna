@@ -32,10 +32,24 @@ new TestElement5().inherit = true;
 export class TestElement6 extends Component {
     @property({
         type: String,
-        observe(this: TestElement6) {
-            this.check();
+        observe(this: TestElement6, oldValue, newValue) {
+            this.check(oldValue, newValue);
         },
     }) sample?: string;
+
+    check(oldValue: String|undefined, newValue: String) {
+        return `${oldValue}/${newValue}`;
+    }
+}
+
+export class TestElement7 extends Component {
+    static get properties() {
+        return {
+            sample: {
+                type: String,
+            },
+        };
+    }
 
     check() {}
 }
