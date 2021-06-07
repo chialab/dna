@@ -18,7 +18,7 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'dialog',
 })
 class Dialog extends Component {
-    @property() title = '';
+    @property({ attribute: true }) title = '';
 
     render() {
         return html`

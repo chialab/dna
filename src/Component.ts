@@ -140,12 +140,20 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
+         * A list of local property observers.
+         */
+        readonly observers: {
+            [key: string]: Function[];
+        }
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
          */
         constructor(...args: any[]) {
             super();
+            this.observers = {};
 
             const node = isElement(args[0]) && args[0];
             const props = (node ? args[1] : args[0]) as { [P in keyof this]: this[P] };
@@ -167,13 +175,19 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const properties = getProperties(this);
             for (let propertyKey in properties) {
                 delete element[propertyKey];
-                const descriptor = properties[propertyKey];
-                if (typeof descriptor.initializer === 'function') {
-                    element[propertyKey] = descriptor.initializer.call(element);
-                } else if ('value' in descriptor) {
-                    element[propertyKey] = descriptor.value;
-                } else if (typeof descriptor.defaultValue !== 'undefined') {
-                    element[propertyKey] = descriptor.defaultValue;
+                const property = properties[propertyKey];
+                if (typeof property.initializer === 'function') {
+                    element[propertyKey] = property.initializer.call(element);
+                } else if ('value' in property) {
+                    element[propertyKey] = property.value;
+                } else if (typeof property.defaultValue !== 'undefined') {
+                    element[propertyKey] = property.defaultValue;
+                }
+
+                const observers = property.observers;
+                this.observers[property.name] = [];
+                for (let i = 0; i < observers.length; i++) {
+                    this.observe(property.name, observers[i]);
                 }
             }
 
@@ -290,11 +304,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param callback The callback function
          */
         observe<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
-            const property = getProperty(this, propertyName);
-            if (!property) {
+            const observers = this.observers;
+            const callbacks = observers[propertyName as string];
+            if (!callbacks) {
                 throw new Error(`Missing property ${propertyName}`);
             }
-            property.observers.push(callback);
+            callbacks.push(callback);
         }
 
         /**
@@ -304,14 +319,14 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param callback The callback function to remove
          */
         unobserve<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
-            const property = getProperty(this, propertyName);
-            if (!property) {
+            const observers = this.observers;
+            const callbacks = observers[propertyName as string];
+            if (!callbacks) {
                 throw new Error(`Missing property ${propertyName}`);
             }
-            const observers = property.observers;
-            const io = observers.indexOf(callback);
+            const io = callbacks.indexOf(callback);
             if (io !== -1) {
-                observers.splice(io, 1);
+                callbacks.splice(io, 1);
             }
         }
 

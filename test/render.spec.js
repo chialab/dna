@@ -287,7 +287,10 @@ describe('render', function() {
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
-                        number: Number,
+                        number: {
+                            type: Number,
+                            attribute: true,
+                        },
                     };
                 }
             }
@@ -303,7 +306,10 @@ describe('render', function() {
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
-                        number: Number,
+                        number: {
+                            type: Number,
+                            attribute: true,
+                        },
                     };
                 }
             }
@@ -319,7 +325,10 @@ describe('render', function() {
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
-                        number: Number,
+                        number: {
+                            type: Number,
+                            attribute: true,
+                        },
                     };
                 }
             }

@@ -82,7 +82,7 @@ import { Component, customElement, html } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    @property() name = '';
+    @property({ attribute: true }) name = '';
 
     // define a template
     render() {
@@ -103,6 +103,7 @@ class HelloWorld extends Component {
         return {
             name: {
                 type: String,
+                attribute: true,
                 defaultValue: '',
             },
         };
@@ -131,7 +132,7 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'article'
 })
 class BlogPost extends Component {
-    @property() title = '';
+    @property({ attribute: true }) title = '';
 
     render() {
         return html`<h1>${this.title}</h1>`;

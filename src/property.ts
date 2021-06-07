@@ -268,6 +268,8 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
+    const observedAttributes = constructor.observedAttributes;
+    const hasAttribute = decl.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey as string) !== -1);
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
     const property = declarations[propertyKey] = {
         ...decl,
@@ -277,7 +279,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
         type: getTypes(decl),
         observers: getObservers(decl),
         initializer,
-        attribute: decl.attribute !== false ?
+        attribute: hasAttribute ?
             (typeof decl.attribute === 'string' ? decl.attribute : propertyKey) :
             undefined,
         event: decl.event ?
@@ -288,7 +290,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     type E = T & {
         [symbol]: E[P];
     };
-    const { attribute, type, observers } = property;
+    const { attribute, type } = property;
 
     if (attribute) {
         property.fromAttribute = decl.fromAttribute || ((newValue) => {
@@ -375,6 +377,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 
         this[symbol] = newValue;
 
+        const observers = this.observers[property.name as string];
         if (observers) {
             for (let i = 0, len = observers.length; i < len; i++) {
                 observers[i].call(this, oldValue, newValue);
