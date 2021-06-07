@@ -81,7 +81,7 @@ function initSlotChildNodes<T extends HTMLElement>(element: ComponentInstance<T>
  * @return The extend class.
  */
 const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
-    const Component = class Component extends (ctor as Constructor) {
+    const Component = class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -284,7 +284,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the Property to observe
          * @param callback The callback function
          */
-        observe<P extends keyof this>(propertyName: P, callback: PropertyObserver<this, this[P]>) {
+        observe<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
             const property = getProperty(this, propertyName);
             if (!property) {
                 throw new Error(`Missing property ${propertyName}`);
@@ -298,7 +298,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the Property to unobserve
          * @param callback The callback function to remove
          */
-        unobserve<P extends keyof this>(propertyName: P, callback: PropertyObserver<this, this[P]>) {
+        unobserve<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
             const property = getProperty(this, propertyName);
             if (!property) {
                 throw new Error(`Missing property ${propertyName}`);

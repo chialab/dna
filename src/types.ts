@@ -40,10 +40,10 @@ export type ClassDescriptor = {
 /**
  * Constructor type helper.
  */
-export interface Constructor<T extends HTMLElement = HTMLElement> {
+export type Constructor<T> = {
     new(): T;
     prototype: T;
-}
+};
 
 /**
  * A list of valid tag names.

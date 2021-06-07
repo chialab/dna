@@ -31,7 +31,8 @@ new TestElement5().inherit = true;
 // context
 export class TestElement6 extends Component {
     @property({
-        observe() {
+        type: String,
+        observe(this: TestElement6) {
             this.check();
         },
     }) sample?: string;
