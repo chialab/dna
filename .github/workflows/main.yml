@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - chore/4.0.0
+      - main
   pull_request:
     branches:
       - master
