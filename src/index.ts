@@ -5,7 +5,7 @@ export { DOM } from './DOM';
 export { Fragment, html, h, render } from './render';
 export { css } from './css';
 export { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
-export { property, getProperty, getProperties, defineProperties, defineProperty } from './property';
+export { property, state, getProperty, getProperties, defineProperties, defineProperty } from './property';
 export { extend, Component, isComponent, isComponentConstructor, customElement } from './Component';
 export { until } from './directives';
 

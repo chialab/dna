@@ -228,7 +228,27 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
-         * Invoked each time one of the Component's properties is added, removed, or changed.
+         * Invoked each time one of a Component's state property is setted, removed, or changed.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         */
+        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+            const property = getProperty(this, propertyName);
+            if (property.event) {
+                this.dispatchEvent(property.event, {
+                    newValue,
+                    oldValue,
+                });
+            }
+            if (this.isConnected) {
+                this.forceUpdate();
+            }
+        }
+
+        /**
+         * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
          * @param oldValue The previous value of the property.
