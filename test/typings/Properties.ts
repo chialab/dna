@@ -1,4 +1,4 @@
-import { Component, customElement, extend, property } from '@chialab/dna';
+import { Component, customElement, extend, property, observe } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -35,8 +35,10 @@ export class TestElement6 extends Component {
         observe(this: TestElement6, oldValue, newValue) {
             this.check(oldValue, newValue);
         },
-    }) sample?: string;
+    })
+    sample?: string;
 
+    @observe('sample')
     check(oldValue: String|undefined, newValue: String) {
         return `${oldValue}/${newValue}`;
     }

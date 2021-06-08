@@ -29,6 +29,7 @@ describe('module', function() {
         getProperties: 'function',
         property: 'function',
         state: 'function',
+        observe: 'function',
         isComponent: 'function',
         isComponentConstructor: 'function',
         Component: 'function',
