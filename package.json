@@ -1,6 +1,6 @@
 {
   "name": "@chialab/dna",
-  "version": "4.0.0-beta.0",
+  "version": "4.0.0-beta.1",
   "description": "Progressive Web Components",
   "type": "module",
   "main": "dist/cjs/dna.js",
@@ -42,7 +42,7 @@
     "build:esm": "rimraf dist/esm && rna build src/index.ts --output dist/esm/dna.js --format esm --minify --platform browser",
     "build:node": "rimraf dist/node && rna build src/index.ts --output dist/node/dna.js --format esm --minify --platform node",
     "build:cjs": "rimraf dist/cjs && rna build src/index.ts --output dist/cjs/dna.js --format cjs --minify --platform node",
-    "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types'",
+    "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types' --incremental false",
     "test": "npm run test:typings && npm run test:browser && npm run test:node",
     "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "rna test:browser --coverage",
