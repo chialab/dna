@@ -30,6 +30,7 @@ describe('module', function() {
         property: 'function',
         state: 'function',
         observe: 'function',
+        listen: 'function',
         isComponent: 'function',
         isComponentConstructor: 'function',
         Component: 'function',

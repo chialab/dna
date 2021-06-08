@@ -117,7 +117,7 @@ export class CustomElementRegistry {
 
         if (isComponentConstructor(constructor)) {
             defineProperties(constructor.prototype);
-            defineListeners(constructor);
+            defineListeners(constructor.prototype);
         }
 
         try {

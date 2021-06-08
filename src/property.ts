@@ -501,32 +501,6 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
 };
 
 /**
- * A decorator for property definition.
- *
- * @param declaration The property declaration.
- * @return The decorator initializer.
- */
-export const property = <TypeHint = unknown>(declaration: PropertyDeclaration<TypeHint> = {}) =>
-    <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
-        targetOrClassElement: T,
-        propertyKey?: P,
-        originalDescriptor?: PropertyDeclaration<T[P]>
-    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<T[P]>, propertyKey, originalDescriptor);
-
-/**
- * A decorator for state property definition.
- *
- * @param declaration The state property declaration.
- * @return The decorator initializer.
- */
-export const state = <TypeHint = unknown>(declaration: StateDeclaration<TypeHint> = {}) =>
-    <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
-        targetOrClassElement: T,
-        propertyKey?: P,
-        originalDescriptor?: StateDeclaration<T[P]>
-    ) => createProperty(targetOrClassElement, { ...(declaration as PropertyDeclaration<T[P]>), state: true, attribute: false }, propertyKey, originalDescriptor);
-
-/**
  * Add a property observer to a component prototype.
  * @param targetOrClassElement The component prototype.
  * @param propertyKey The property name to watch.
@@ -553,13 +527,42 @@ export const createObserver = <T extends ComponentInstance<HTMLElement>, P exten
 };
 
 /**
+ * A decorator for property definition.
+ *
+ * @param declaration The property declaration.
+ * @return The decorator initializer.
+ */
+export function property<TypeHint = unknown>(declaration: PropertyDeclaration<TypeHint> = {}) {
+    return <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey?: P,
+        originalDescriptor?: PropertyDeclaration<T[P]>
+    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<T[P]>, propertyKey, originalDescriptor);
+}
+
+/**
+ * A decorator for state property definition.
+ *
+ * @param declaration The state property declaration.
+ * @return The decorator initializer.
+ */
+export function state<TypeHint = unknown>(declaration: StateDeclaration<TypeHint> = {}) {
+    return <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey?: P,
+        originalDescriptor?: StateDeclaration<T[P]>
+    ) => createProperty(targetOrClassElement, { ...(declaration as PropertyDeclaration<T[P]>), state: true, attribute: false }, propertyKey, originalDescriptor);
+}
+
+/**
  * A decorator for property observer.
  *
  * @param propertyKey The property key to observe.
  * @return The decorator initializer.
  */
-export const observe = (propertyKey: string) =>
-    <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+export function observe(propertyKey: string) {
+    return <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
         targetOrClassElement: T,
         methodKey: P
     ) => createObserver(targetOrClassElement, propertyKey, methodKey);
+}

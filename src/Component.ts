@@ -165,10 +165,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             initSlotChildNodes(element);
 
             // setup listeners
-            const listeners = getListeners(constructor) || [];
+            const listeners = getListeners(constructor.prototype) || [];
             for (let i = 0, len = listeners.length; i < len; i++) {
-                const listener = listeners[i];
-                element.delegateEventListener(listener.event, listener.selector, listener.callback, listener.options);
+                const { event, target, selector, callback, options } = listeners[i];
+                if (!target) {
+                    element.delegateEventListener(event, selector, callback, options);
+                }
             }
 
             // setup properties
@@ -218,6 +220,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 setAttributeImpl.call(this, 'is', this.is);
             }
             setAttributeImpl.call(this, ':defined', '');
+
+            const listeners = getListeners(this.constructor.prototype) || [];
+            for (let i = 0, len = listeners.length; i < len; i++) {
+                const { event, target, callback, options } = listeners[i];
+                if (target) {
+                    target.addEventListener(event, callback, options);
+                }
+            }
+
             // trigger a re-render when the Node is connected
             this.forceUpdate();
         }
@@ -225,7 +236,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * Invoked each time the Component is disconnected from the document's DOM.
          */
-        disconnectedCallback() { }
+        disconnectedCallback() {
+            const listeners = getListeners(this.constructor.prototype) || [];
+            for (let i = 0, len = listeners.length; i < len; i++) {
+                const { event, target, callback, options } = listeners[i];
+                if (target) {
+                    target.removeEventListener(event, callback, options);
+                }
+            }
+        }
 
         /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.

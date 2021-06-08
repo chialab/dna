@@ -1,4 +1,5 @@
-import type { ComponentConstructor } from './Component';
+import type { Constructor, ClassElement, MethodsOf } from './types';
+import type { ComponentInstance, ComponentConstructor } from './Component';
 import { createSymbolKey, HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor } from './helpers';
 
 /**
@@ -7,6 +8,9 @@ import { createSymbolKey, HTMLElement, isElement, isEvent, matchesImpl, createEv
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbolKey() as any;
 
+/**
+ * Async event interface.
+ */
 export type AsyncEvent = Event & {
     respondWith(callback: () => Promise<unknown>): void;
 };
@@ -22,6 +26,7 @@ export type DelegatedEventCallback = (event: Event, target?: Node) => unknown;
  * A descriptor for an event delegation.
  */
 export type DelegatedEventDescriptor = AddEventListenerOptions & {
+    target?: EventTarget;
     callback: DelegatedEventCallback;
 };
 
@@ -41,6 +46,10 @@ type DelegationList = {
          * The selector for the delegated event.
          */
         selector: string | null;
+        /**
+         * The event target.
+         */
+        target: EventTarget | null;
         /**
          * The callback for the delegated event.
          */
@@ -141,12 +150,12 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             if (!event.target) {
                 return;
             }
-            let eventTarget = event.target as Node;
+            const eventTarget = event.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             let stopped = false;
             let stoppedImmediated = false;
-            let originalStopPropagation = event.stopPropagation;
-            let originalImmediatePropagation = event.stopImmediatePropagation;
+            const originalStopPropagation = event.stopPropagation;
+            const originalImmediatePropagation = event.stopImmediatePropagation;
             event.stopPropagation = () => {
                 stopped = true;
                 // exec the real stopPropagation method
@@ -160,9 +169,9 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             };
 
             // filter matched selector for the event
-            let filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
+            const filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
-                let { selector, callback } = descriptors[i];
+                const { selector, callback } = descriptors[i];
                 let selectorTarget;
                 if (selector) {
                     let target = eventTarget;
@@ -212,7 +221,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
     }
 
     // add the delegation to the list
-    descriptors.push({ event: eventName, callback, selector });
+    descriptors.push({ event: eventName, callback, selector, target: null });
 };
 
 /**
@@ -323,13 +332,20 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LISTENERS_SYMBOL: unique symbol = createSymbolKey() as any;
 
+/**
+ * An object with listeners.
+ */
 type WithListeners<T> = T & {
     [LISTENERS_SYMBOL]?: Listener[];
 };
 
+/**
+ * The listener interface.
+ */
 type Listener = {
     event: string;
     selector: string | null;
+    target: EventTarget | null;
     callback: DelegatedEventCallback;
     options?: AddEventListenerOptions;
 };
@@ -339,26 +355,52 @@ type Listener = {
  * @param constructor The component constructor.
  * @return A list of listeners.
  */
-export const getListeners = (constructor: WithListeners<ComponentConstructor<HTMLElement>>) => {
+export const getListeners = (prototype: ComponentInstance<HTMLElement>) => {
+    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
     if (!hasOwnProperty.call(constructor, LISTENERS_SYMBOL)) {
         return [];
     }
 
-    return constructor[LISTENERS_SYMBOL] as {
-        event: string;
-        selector: string | null;
-        callback: DelegatedEventCallback;
-        options?: AddEventListenerOptions;
-    }[];
+    return constructor[LISTENERS_SYMBOL] as Listener[];
 };
 
 /**
- * Define component constructor listeners.
- * @param constructor The component constructor.
+ * Add an event listener to the prototype.
+ * @param prototype The component prototype.
+ * @param eventName The name of the event to listen.
+ * @param callback The event callback.
+ * @param options The event listener options.
  */
-export const defineListeners = (constructor: WithListeners<ComponentConstructor<HTMLElement>>) => {
+export function defineListener(
+    prototype: ComponentInstance<HTMLElement>,
+    eventName: string,
+    target: EventTarget | null,
+    selector: string | null,
+    callback: DelegatedEventCallback,
+    options: AddEventListenerOptions = {}
+) {
+    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
+    const listeners = constructor[LISTENERS_SYMBOL] = getListeners(prototype);
+    listeners.push({
+        event: eventName,
+        selector,
+        callback,
+        target,
+        options: {
+            capture: options.capture,
+            once: options.once,
+            passive: options.passive,
+        },
+    });
+}
+
+/**
+ * Define component listeners.
+ * @param prototype The component prototype.
+ */
+export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
+    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
     let ctr = constructor;
-    const listeners = constructor[LISTENERS_SYMBOL] = getListeners(constructor);
     while (ctr && ctr !== HTMLElement) {
         const listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
         const listenersGetter = listenersDescriptor && listenersDescriptor.get;
@@ -369,27 +411,75 @@ export const defineListeners = (constructor: WithListeners<ComponentConstructor<
             // register listeners
             for (let eventPath in listenerDescriptors) {
                 const paths = eventPath.trim().split(' ');
+                const eventName = paths.shift() as string;
+                const selector = paths.length ? paths.join(' ') : null;
                 const descriptor = listenerDescriptors[eventPath];
-                if (typeof descriptor === 'function') {
-                    listeners.push({
-                        event: paths.shift() as string,
-                        selector: paths.join(' '),
-                        callback: descriptor,
-                    });
-                } else {
-                    listeners.push({
-                        event: paths.shift() as string,
-                        selector: paths.join(' '),
-                        callback: descriptor.callback,
-                        options: {
-                            capture: descriptor.capture,
-                            once: descriptor.once,
-                            passive: descriptor.passive,
-                        },
-                    });
-                }
+                const { callback, target = null, ...options } = typeof descriptor === 'object' ? descriptor : { callback: descriptor };
+                defineListener(prototype, eventName, target, selector, callback, options);
             }
         }
         ctr = Object.getPrototypeOf(ctr);
     }
 };
+
+/**
+ * Add a property observer to a component prototype.
+ * @param targetOrClassElement The component prototype.
+ * @param propertyKey The property name to watch.
+ * @param methodKey The method name.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createListener = <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+    targetOrClassElement: T,
+    eventName: string,
+    target: EventTarget | null,
+    selector: string | null,
+    options: AddEventListenerOptions,
+    methodKey?: P
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any => {
+    if (methodKey !== undefined) {
+        defineListener(targetOrClassElement, eventName, target, selector, targetOrClassElement[methodKey], options);
+        return;
+    }
+
+    const element = targetOrClassElement as unknown as ClassElement;
+    if (!element.descriptor) {
+        return element;
+    }
+    return {
+        ...element,
+        finisher(constructor: Constructor<T>) {
+            defineListener(constructor.prototype, eventName, target, selector, constructor.prototype[element.key as P], options);
+        },
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isEventTarget = (target: any): target is EventTarget => 'addEventListener' in target;
+
+/**
+ * A decorator for listening DOM events.
+ *
+ * @param eventName The name of the event to listen.
+ * @param options Options to pass to addEventListener.
+ * @return The decorator initializer.
+ */
+function listen(eventName: string, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
+function listen(eventName: string, selector: string, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
+function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
+function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
+    return <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+        targetOrClassElement: T,
+        methodKey: P
+    ) => createListener(
+        targetOrClassElement,
+        eventName,
+        isEventTarget(target) ? target : null,
+        typeof target === 'string' ? target : null,
+        (!isEventTarget(target) && typeof target !== 'string' ? target : options) || {},
+        methodKey
+    );
+}
+
+export { listen };
