@@ -62,6 +62,7 @@
     }
   },
   "devDependencies": {
+    "@babel/runtime": "^7.14.0",
     "@chialab/eslint-config": "^2.0.0",
     "@chialab/rna": "^0.8.0",
     "@chialab/rna-apidoc": "^0.8.0",

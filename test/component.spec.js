@@ -1,4 +1,5 @@
 import { __decorate } from 'tslib';
+import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
 import { spyFunction, getComponentName } from './helpers.spec.js';
@@ -85,6 +86,53 @@ describe('Component', function() {
             TestElement = __decorate([
                 DNA.customElement(getComponentName()),
             ], TestElement);
+
+            const element = new TestElement();
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.not.have.property('myCustomProp4');
+        });
+
+        it('should setup properties with babel decorator', () => {
+            let TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
+                class TestElement extends _DNA$Component {
+                    constructor(...args) {
+                        super(...args);
+                        _initialize(this);
+                    }
+                }
+
+                return {
+                    F: TestElement,
+                    d: [{
+                        kind: 'get',
+                        static: true,
+                        key: 'properties',
+                        value: function properties() {
+                            return {
+                                myCustomProp1: {
+                                    attribute: 'custom-prop',
+                                },
+                            };
+                        },
+                    }, {
+                        kind: 'field',
+                        decorators: [DNA.property()],
+                        key: 'myCustomProp2',
+                        value() {
+                            return '';
+                        },
+                    }, {
+                        kind: 'field',
+                        decorators: [DNA.property()],
+                        key: 'myCustomProp3',
+                        value() {
+                            return '';
+                        },
+                    }],
+                };
+            }, DNA.Component);
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
