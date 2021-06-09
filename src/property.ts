@@ -534,7 +534,7 @@ export function state<TypeConstructorHint extends Constructor<unknown> = Constru
         targetOrClassElement: T,
         propertyKey?: P,
         originalDescriptor?: PropertyDeclaration<Constructor<T[P]>>
-    ) => createProperty(targetOrClassElement, { ...(declaration as PropertyDeclaration<Constructor<T[P]>>), state: true, attribute: false }, propertyKey, originalDescriptor);
+    ) => createProperty(targetOrClassElement, { ...(declaration as PropertyDeclaration<Constructor<T[P]>>), state: true }, propertyKey, originalDescriptor);
 }
 
 /**
