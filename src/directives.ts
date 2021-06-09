@@ -8,9 +8,9 @@ import { getThenableState } from './Thenable';
  * @return A promise which resolves the template while the Thenable is in pending status.
  */
 export const until = (thenable: Promise<unknown>, template: Template) => {
-    let original = getThenableState(thenable);
-    let wrapper = thenable.then(() => false).catch(() => false);
-    let state = getThenableState(wrapper);
+    const original = getThenableState(thenable);
+    const wrapper = thenable.then(() => false).catch(() => false);
+    const state = getThenableState(wrapper);
     state.result = original.pending && template;
     return wrapper;
 };

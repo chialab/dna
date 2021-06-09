@@ -129,7 +129,7 @@ const assertEventComposed = (composed: unknown) => {
  * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
 export const delegateEventListener = (element: Element, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) => {
-    let delegatedElement: Node & WithEventDelegations = element;
+    const delegatedElement: Node & WithEventDelegations = element;
 
     assertNode(element);
     assertEventName(eventName);
@@ -137,12 +137,12 @@ export const delegateEventListener = (element: Element, eventName: string, selec
     assertEventCallback(callback);
 
     // get all delegations
-    let delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
+    const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
     // initialize the delegation list
-    let callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
+    const callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
         descriptors: [],
     };
-    let descriptors = callbacks.descriptors;
+    const descriptors = callbacks.descriptors;
     // check if the event has already been delegated
     if (!callbacks.listener) {
         // setup the listener
@@ -152,10 +152,10 @@ export const delegateEventListener = (element: Element, eventName: string, selec
             }
             const eventTarget = event.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
-            let stopped = false;
-            let stoppedImmediated = false;
             const originalStopPropagation = event.stopPropagation;
             const originalImmediatePropagation = event.stopImmediatePropagation;
+            let stopped = false;
+            let stoppedImmediated = false;
             event.stopPropagation = () => {
                 stopped = true;
                 // exec the real stopPropagation method
@@ -251,7 +251,7 @@ export const undelegateEventListener = (element: Element, eventName: string, sel
     // get the list of delegations
     // find the index of the callback to remove in the list
     for (let i = 0; i < descriptors.length; i++) {
-        let descriptor = descriptors[i];
+        const descriptor = descriptors[i];
         if (descriptor.selector === selector && descriptor.callback === callback) {
             descriptors.splice(i, 1);
             if (descriptors.length === 0) {
@@ -409,7 +409,7 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
                 [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
             };
             // register listeners
-            for (let eventPath in listenerDescriptors) {
+            for (const eventPath in listenerDescriptors) {
                 const paths = eventPath.trim().split(' ');
                 const eventName = paths.shift() as string;
                 const selector = paths.length ? paths.join(' ') : null;

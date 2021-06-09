@@ -2,7 +2,6 @@ import type { TagNameMap, IterableNodeList, Writable, WritableOf } from './types
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
 import htm from 'htm';
-import { NamespaceURI } from './types';
 import { createSymbolKey, isNode, isElement, isArray, isText, indexOf, cloneChildNodes } from './helpers';
 import { isComponent } from './Component';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
@@ -68,7 +67,7 @@ export type TemplateFilter = (item: Node) => boolean;
 * @param context The current render context.
 * @return A template.
 */
-export type TemplateFunction<P> = (props: P, state: Map<string, unknown>, update: () => boolean, live: () => boolean, context: Context<Node>) => Template;
+export type TemplateFunction<P = {}> = (props: P, state: Map<string, unknown>, update: () => boolean, live: () => boolean, context: Context<Node>) => Template;
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -94,7 +93,7 @@ export type HyperProperties = {
     is?: string;
     slot?: string;
     key?: unknown;
-    xmlns?: NamespaceURI;
+    xmlns?: string;
     children?: Template[];
     class?: HyperClasses;
     style?: HyperStyle;
@@ -119,14 +118,14 @@ export type HyperFragment = {
  * The interface of a functional component.
  */
 export type HyperFunction = {
-    Function: TemplateFunction<{}>;
+    Function: TemplateFunction;
     Component?: undefined;
     node?: undefined;
     tag?: undefined;
     isFragment?: false;
     isSlot?: false;
     key?: unknown;
-    namespaceURI?: NamespaceURI;
+    namespaceURI?: string;
     properties: HyperProperties;
     children: Template[];
 };
@@ -142,7 +141,7 @@ export type HyperNode<T extends Node> = {
     isFragment?: false;
     isSlot?: false;
     key?: unknown;
-    namespaceURI?: NamespaceURI;
+    namespaceURI?: string;
     properties: Writable<T> & HyperProperties;
     children: Template[];
 };
@@ -158,7 +157,7 @@ export type HyperComponent<T extends CustomElementConstructor<HTMLElement>> = {
     isFragment?: false;
     isSlot?: false;
     key?: unknown;
-    namespaceURI?: NamespaceURI;
+    namespaceURI?: string;
     properties: Writable<InstanceType<T>> & HyperProperties;
     children: Template[];
 };
@@ -189,7 +188,7 @@ export type HyperTag<T extends keyof TagNameMap> = {
     isFragment?: false;
     isSlot?: false;
     key?: unknown;
-    namespaceURI?: NamespaceURI;
+    namespaceURI?: string;
     properties: Writable<TagNameMap[T]> & HyperProperties;
     children: Template[];
 };
@@ -239,12 +238,12 @@ export const isHyperTag = <T extends keyof TagNameMap>(target: HyperFragment | H
  * @param children The children of the Node.
  */
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): HyperFragment;
-function h<T extends TemplateFunction<{}>>(tagOrComponent: T, properties: HyperProperties | null, ...children: Template[]): HyperFunction;
+function h<T extends TemplateFunction>(tagOrComponent: T, properties: HyperProperties | null, ...children: Template[]): HyperFunction;
 function h<T extends CustomElementConstructor<HTMLElement>>(tagOrComponent: T, properties: Writable<InstanceType<T>> & HyperProperties | null, ...children: Template[]): HyperComponent<T>;
 function h<T extends Node>(tagOrComponent: T, properties: Writable<T> & HyperProperties | null, ...children: Template[]): HyperNode<T>;
 function h(tagOrComponent: 'slot', properties: Writable<HTMLSlotElement> & HyperProperties | null, ...children: Template[]): HyperSlot;
 function h<T extends keyof TagNameMap>(tagOrComponent: T, properties: Writable<TagNameMap[T]> & HyperProperties | null, ...children: Template[]): HyperTag<T>;
-function h(tagOrComponent: typeof Fragment | TemplateFunction<{}> | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
+function h(tagOrComponent: typeof Fragment | TemplateFunction | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns } = (properties || {});
 
     if (tagOrComponent === Fragment) {
@@ -269,7 +268,7 @@ function h(tagOrComponent: typeof Fragment | TemplateFunction<{}> | CustomElemen
             return {
                 tag: tagOrComponent,
                 key,
-                namespaceURI: NamespaceURI.svg,
+                namespaceURI: 'http://www.w3.org/2000/svg',
                 properties,
                 children,
             };
@@ -355,7 +354,7 @@ export type Context<T extends Node, WR = Writable<T>> = {
     slotChildNodes?: IterableNodeList;
     first?: Node;
     last?: Node;
-    function?: TemplateFunction<{}>;
+    function?: TemplateFunction;
     fragments: Context<Node>[];
     parent?: Context<Node>;
     root?: Context<Node>;
@@ -402,11 +401,10 @@ export const getOrCreateContext = <T extends Node>(target: WithContext<T>): Cont
  * @param context The fragment to empty.
  */
 export const emptyFragments = <T extends Node>(context: Context<T>) => {
-    let fragments = context.fragments;
+    const fragments = context.fragments;
     let len = fragments.length;
     while (len--) {
-        let frag = fragments.pop() as Context<Node>;
-        emptyFragments(frag);
+        emptyFragments(fragments.pop() as Context<Node>);
     }
     return fragments;
 };
@@ -422,19 +420,19 @@ const CLASSES_CACHE: { [key: string]: string[] } = {};
  * @return A list of classes.
  */
 const convertClasses = (value: HyperClasses | null | undefined) => {
-    let classes: string[] = [];
+    const classes: string[] = [];
     if (!value) {
         return classes;
     }
     if (typeof value === 'object') {
-        for (let k in value) {
+        for (const k in value) {
             if (value[k]) {
                 classes.push(k);
             }
         }
         return classes;
     }
-    return classes = CLASSES_CACHE[value] = CLASSES_CACHE[value] || value.toString().trim().split(' ');
+    return CLASSES_CACHE[value] = CLASSES_CACHE[value] || value.toString().trim().split(' ');
 };
 
 /**
@@ -453,7 +451,7 @@ const convertStyles = (value: HyperStyle| null | undefined) => {
         return styles;
     }
     if (typeof value === 'object') {
-        for (let propertyKey in value) {
+        for (const propertyKey in value) {
             const camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
                 `-${match.toLowerCase()}`
             );
@@ -465,7 +463,7 @@ const convertStyles = (value: HyperStyle| null | undefined) => {
         .toString()
         .split(';')
         .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
-            let rulePair = ruleString.split(':');
+            const rulePair = ruleString.split(':');
             if (rulePair.length > 1) {
                 ruleMap[(rulePair.shift() as string).trim()] = rulePair.join(':').trim();
             }
@@ -482,14 +480,19 @@ const isRenderingInput = (element: HTMLElement, propertyKey: string): element is
     (propertyKey === 'checked' || propertyKey === 'value') &&
     element.tagName === 'INPUT';
 
-const fillEmptyValues = <T extends {}>(from: T, to: { [key: string]: unknown }) => {
-    for (let key in from) {
-        if (!(key in to)) {
-            to[key] = undefined;
+/**
+ * Add missing keys to properties object.
+ * @param previous The previous object.
+ * @param actual The actual one.
+ */
+const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unknown }) => {
+    for (const key in previous) {
+        if (!(key in actual)) {
+            actual[key] = undefined;
         }
     }
 
-    return to as unknown as T;
+    return actual as unknown as T;
 };
 
 /**
@@ -522,7 +525,7 @@ export const internalRender = (
     input: Template,
     slot = isComponent(root),
     context?: Context<Node>,
-    namespace: NamespaceURI = (root.namespaceURI as NamespaceURI) || NamespaceURI.xhtml,
+    namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
     rootContext?: Context<Node>,
     mainContext?: Context<Node>,
     fragment?: Context<Node>
@@ -823,12 +826,12 @@ export const internalRender = (
                     const style = templateElement.style;
                     const oldStyles = convertStyles(oldProperties.style);
                     const newStyles = convertStyles(properties.style);
-                    for (let propertyKey in oldStyles) {
+                    for (const propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
                             style.removeProperty(propertyKey);
                         }
                     }
-                    for (let propertyKey in newStyles) {
+                    for (const propertyKey in newStyles) {
                         style.setProperty(propertyKey, newStyles[propertyKey]);
                     }
                     continue;

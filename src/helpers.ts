@@ -1,4 +1,4 @@
-import type { NamespaceURI, TagNameMap, IterableNodeList } from './types';
+import type { IterableNodeList } from './types';
 import type { ComponentInstance } from './Component';
 import { window } from './window';
 
@@ -122,7 +122,7 @@ export const createElementImpl = document.createElement.bind(document);
 /**
  * Alias to document.createElementNS.
  */
-export const createElementNSImpl: <N extends NamespaceURI, K extends keyof TagNameMap>(namespaceURI: N, qualifiedName: K) => N extends NamespaceURI.xhtml ? HTMLElementTagNameMap[K extends keyof HTMLElementTagNameMap ? K : never] : SVGElementTagNameMap[K extends keyof SVGElementTagNameMap ? K : never] = document.createElementNS.bind(document);
+export const createElementNSImpl = document.createElementNS.bind(document);
 
 /**
  * Alias to document.createTextNode.
@@ -289,7 +289,7 @@ export const emulatingLifeCycle = () => lifeCycleEmulation;
  * @return A shallow clone of the array.
  */
 export const cloneChildNodes = (arr: NodeList|IterableNodeList) => {
-    let result = [] as unknown as IterableNodeList;
+    const result = [] as unknown as IterableNodeList;
     result.item = (index) => result[index];
     for (let i = arr.length; i--; result.unshift(arr.item(i) as Node));
     return result;

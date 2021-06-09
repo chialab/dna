@@ -1,6 +1,4 @@
-import type { TagNameMap } from './types';
 import type { ComponentConstructor, ComponentInstance } from './Component';
-import { NamespaceURI } from './types';
 import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
@@ -43,8 +41,8 @@ export const DOM = {
      * @param tagName The specified tag.
      * @return The new DOM element instance.
      */
-    createElementNS<N extends NamespaceURI, K extends keyof TagNameMap>(namespaceURI: N, qualifiedName: K) {
-        if (namespaceURI === NamespaceURI.xhtml) {
+    createElementNS(namespaceURI: Parameters<typeof createElementNSImpl>[0], qualifiedName: Parameters<typeof createElementNSImpl>[1]) {
+        if (namespaceURI === 'http://www.w3.org/1999/xhtml') {
             return this.createElement(qualifiedName as keyof HTMLElementTagNameMap);
         }
         return createElementNSImpl(namespaceURI, qualifiedName as keyof SVGElementTagNameMap);

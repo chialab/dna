@@ -1,5 +1,5 @@
 import type { Constructor, ClassDescriptor } from './types';
-import type { DelegatedEventCallback } from './events';
+import type { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './render';
 import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
@@ -88,9 +88,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         static get observedAttributes(): string[] {
             const propertiesDescriptor = getProperties(this.prototype);
             const attributes = [];
-            for (let key in propertiesDescriptor) {
+            for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
-                if (prop && prop.attribute) {
+                if (prop && prop.attribute && !prop.state) {
                     attributes.push(prop.attribute);
                 }
             }
@@ -101,7 +101,14 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * Define component properties.
          */
-        static readonly properties?: { [key: string]: PropertyConfig } = {};
+        static readonly properties?: { [key: string]: PropertyConfig };
+
+        /**
+         * Define component listeners.
+         */
+        static readonly listeners?: {
+            [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+        };
 
         /**
          * Identify shimmed constructors.
@@ -175,7 +182,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             // setup properties
             const properties = getProperties(this);
-            for (let propertyKey in properties) {
+            for (const propertyKey in properties) {
                 delete element[propertyKey];
                 const property = properties[propertyKey];
                 if (typeof property.initializer === 'function') {
@@ -204,7 +211,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         initialize(properties?: { [P in keyof this]: this[P] }) {
             flagConstructed(this);
             if (properties) {
-                for (let propertyKey in properties) {
+                for (const propertyKey in properties) {
                     this[propertyKey] = properties[propertyKey];
                 }
             }
@@ -300,7 +307,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 if (value === null) {
                     this.removeAttribute(attrName);
                 } else if (value !== undefined && value !== this.getAttribute(attrName)) {
-                    this.setAttribute(attrName, value);
+                    this.setAttribute(attrName, value as string);
                 }
             }
 

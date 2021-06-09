@@ -39,8 +39,8 @@ export const css = (name: string, cssText: string, extend?: string): string => {
         throw new TypeError('The provided CSS text must be a string');
     }
 
-    let cached = CACHE[name] = CACHE[name] || {};
-    let scope = extend && extend !== name ? `${extend}[is="${name}"]` : name;
+    const cached = CACHE[name] = CACHE[name] || {};
+    const scope = extend && extend !== name ? `${extend}[is="${name}"]` : name;
     if (cssText in cached) {
         return cached[cssText];
     }

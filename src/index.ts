@@ -13,5 +13,5 @@ export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
 export type { Context, Template, TemplateFilter, TemplateFunction } from './render';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-export type { PropertyDeclaration, PropertyObserver, PropertyValidator, PropertyFromAttributeConverter, PropertyToAttributeConverter } from './property';
+export type { PropertyDeclaration, PropertyObserver } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';
