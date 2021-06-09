@@ -174,7 +174,16 @@ export const internalRender = (
                 renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = placeholder;
-                let live = () => fragments.indexOf(renderFragmentContext) !== -1;
+                renderFragmentContext.isAlive = function() {
+                    return fragments.indexOf(this) !== -1;
+                };
+                renderFragmentContext.requestUpdate = function() {
+                    if (!((this.isAlive as Function))()) {
+                        return false;
+                    }
+                    internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
+                    return true;
+                };
 
                 renderContext = renderFragmentContext;
                 currentFragment = renderFragmentContext;
@@ -189,14 +198,8 @@ export const internalRender = (
                                 ...properties,
                             },
                             state,
-                            () => {
-                                if (!live()) {
-                                    return false;
-                                }
-                                internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
-                                return true;
-                            },
-                            live,
+                            () => (renderFragmentContext.requestUpdate as Function)(),
+                            () => (renderFragmentContext.isAlive as Function)(),
                             renderContext
                         ) as TemplateItem,
                     ],

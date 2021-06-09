@@ -30,6 +30,8 @@ export type Context = {
     first?: Node;
     last?: Node;
     function?: TemplateFunction;
+    isAlive?: () => boolean;
+    requestUpdate?: () => boolean;
     fragments: Context[];
     parent?: Context;
     root?: Context;
