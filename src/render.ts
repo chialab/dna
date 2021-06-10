@@ -67,7 +67,7 @@ export type TemplateFilter = (item: Node) => boolean;
 * @param context The current render context.
 * @return A template.
 */
-export type TemplateFunction<P = {}> = (props: P, state: Map<string, unknown>, update: () => boolean, live: () => boolean, context: Context<Node>) => Template;
+export type TemplateFunction<P = {}> = (props: P, context: Context<Node>) => Template;
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -355,6 +355,8 @@ export type Context<T extends Node, WR = Writable<T>> = {
     first?: Node;
     last?: Node;
     function?: TemplateFunction;
+    isAlive?: () => boolean;
+    requestUpdate?: () => boolean;
     fragments: Context<Node>[];
     parent?: Context<Node>;
     root?: Context<Node>;
@@ -666,8 +668,14 @@ export const internalRender = (
                 renderFragmentContext.state = state;
                 renderFragmentContext.function = Function;
                 renderFragmentContext.first = placeholder;
-                const live = () => fragments.indexOf(renderFragmentContext) !== -1;
-
+                const isAlive = renderFragmentContext.isAlive = () =>  fragments.indexOf(renderFragmentContext) !== -1;
+                renderFragmentContext.requestUpdate = () => {
+                    if (!isAlive()) {
+                        return false;
+                    }
+                    internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
+                    return true;
+                };
                 renderContext = renderFragmentContext;
                 currentFragment = renderFragmentContext;
                 fragment = undefined;
@@ -680,15 +688,6 @@ export const internalRender = (
                                 children,
                                 ...properties,
                             },
-                            state,
-                            () => {
-                                if (!live()) {
-                                    return false;
-                                }
-                                internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
-                                return true;
-                            },
-                            live,
                             renderContext
                         ),
                     ],
