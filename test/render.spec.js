@@ -45,7 +45,7 @@ describe('render', function() {
         });
 
         it('should render hyper function', () => {
-            let ul = DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
+            const ul = DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')));
             expect(ul.childNodes).to.have.lengthOf(2);
             expect(ul.querySelector('li:nth-child(1)').textContent).to.be.equal('One');
             expect(ul.querySelector('li:nth-child(2)').textContent).to.be.equal('Two');
@@ -68,7 +68,7 @@ describe('render', function() {
         });
 
         it('should render an element node using the `h` helper', () => {
-            let div = DNA.DOM.createElement('div');
+            const div = DNA.DOM.createElement('div');
             div.setAttribute('class', 'test');
             div.innerHTML = '<span>test</span>';
             DNA.render(DNA.html`<div><${div} id="test" /></div>`);
@@ -101,10 +101,9 @@ describe('render', function() {
 
             DNA.customElements.define(name2, TestElement2);
 
-            let root = DNA.render(DNA.h(TestElement2), wrapper);
-
+            const root = DNA.render(DNA.h(TestElement2), wrapper);
             const elem = wrapper.querySelector(name);
-            let divs = [elem.children[0], elem.children[1]];
+            const divs = [elem.children[0], elem.children[1]];
             // force renders in order to check if keyed elements are respected
             root.forceUpdate();
             elem.forceUpdate();
@@ -156,14 +155,14 @@ describe('render', function() {
                 return 'hello';
             }
 
-            function Clock(props, state, update) {
+            function Clock(props, context) {
                 render2();
-                let count = state.get('count') || 0;
+                let count = context.store.get('count') || 0;
                 count++;
-                state.set('count', count);
+                context.store.set('count', count);
                 if (count === 1) {
                     setTimeout(() => {
-                        update();
+                        context.requestUpdate();
                     }, 200);
                 }
                 return count;

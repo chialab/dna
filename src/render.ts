@@ -55,19 +55,22 @@ export type Template =
 * @param item The template item to check.
 * @return A truthy value for valid items, a falsy for value for invalid ones.
 */
-export type TemplateFilter = (item: Node) => boolean;
+export type Filter = (item: Node) => boolean;
+
+/**
+ * A re-render function.
+ */
+export type UpdateRequest = () => boolean;
 
 /**
 * A function that returns a template.
 *
 * @param props A set of properties with children.
-* @param state The render state.
-* @param update Update the rendering state.
-* @param live A function that checks if the current template path is still attached to the template.
 * @param context The current render context.
 * @return A template.
 */
-export type TemplateFunction<P = {}> = (props: P, context: Context<Node>) => Template;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FunctionComponent<P = any> = (props: P, context: Context<Node, UpdateRequest, P>) => Template;
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -118,7 +121,7 @@ export type HyperFragment = {
  * The interface of a functional component.
  */
 export type HyperFunction = {
-    Function: TemplateFunction;
+    Function: FunctionComponent;
     Component?: undefined;
     node?: undefined;
     tag?: undefined;
@@ -238,12 +241,12 @@ export const isHyperTag = <T extends keyof TagNameMap>(target: HyperFragment | H
  * @param children The children of the Node.
  */
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): HyperFragment;
-function h<T extends TemplateFunction>(tagOrComponent: T, properties: HyperProperties | null, ...children: Template[]): HyperFunction;
+function h<T extends FunctionComponent>(tagOrComponent: T, properties: HyperProperties | null, ...children: Template[]): HyperFunction;
 function h<T extends CustomElementConstructor<HTMLElement>>(tagOrComponent: T, properties: Writable<InstanceType<T>> & HyperProperties | null, ...children: Template[]): HyperComponent<T>;
 function h<T extends Node>(tagOrComponent: T, properties: Writable<T> & HyperProperties | null, ...children: Template[]): HyperNode<T>;
 function h(tagOrComponent: 'slot', properties: Writable<HTMLSlotElement> & HyperProperties | null, ...children: Template[]): HyperSlot;
 function h<T extends keyof TagNameMap>(tagOrComponent: T, properties: Writable<TagNameMap[T]> & HyperProperties | null, ...children: Template[]): HyperTag<T>;
-function h(tagOrComponent: typeof Fragment | TemplateFunction | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
+function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns } = (properties || {});
 
     if (tagOrComponent === Fragment) {
@@ -331,35 +334,34 @@ export { h };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
 
-export type WithContext<T extends Node> = T & {
-    [CONTEXT_SYMBOL]?: Context<T>;
+export type WithContext<T extends Node, F extends UpdateRequest | undefined> = T & {
+    [CONTEXT_SYMBOL]?: Context<T, F>;
 };
 
 /**
  * The node context interface.
  */
-export type Context<T extends Node, WR = Writable<T>> = {
+export type Context<T extends Node = Node, F extends UpdateRequest | undefined = UpdateRequest | undefined, P = Writable<T>> = {
     node: T;
     isElement?: boolean;
     isText?: boolean;
     tagName?: string;
     is?: string;
     key?: unknown;
-    props: [
-        WeakMap<Context<T>, WR & HyperProperties>,
-        WeakMap<Context<T>, WR & HyperProperties>,
+    properties: [
+        WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
+        WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
     ];
-    state: Map<string, unknown>;
+    store: Map<string, unknown>;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
-    first?: Node;
-    last?: Node;
-    function?: TemplateFunction;
-    isAlive?: () => boolean;
-    requestUpdate?: () => boolean;
-    fragments: Context<Node>[];
-    parent?: Context<Node>;
-    root?: Context<Node>;
+    Function?: FunctionComponent<P>;
+    start?: Node;
+    end?: Node;
+    fragments: Context[];
+    parent?: Context;
+    root?: Context;
+    requestUpdate: F;
 };
 
 /**
@@ -367,14 +369,14 @@ export type Context<T extends Node, WR = Writable<T>> = {
  * @param target The object to context.
  * @param context The context to set.
  */
-export const setContext = <T extends Node>(target: WithContext<T>, context: Context<T>): Context<T> => target[CONTEXT_SYMBOL] = context;
+export const setContext = <T extends Node, F extends UpdateRequest | undefined = undefined>(target: WithContext<T, F>, context: Context<T, F>): Context<T, F> => target[CONTEXT_SYMBOL] = context;
 
 /**
  * Create a node context.
  * @param node The node scope of the context.
  * @return A context object for the node.
  */
-export const createContext = <T extends Node>(node: T) => {
+export const createContext = <T extends Node, F extends UpdateRequest | undefined>(node: T, requestUpdate?: F) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
     const is = (node as unknown as CustomElement<HTMLElement>).is;
@@ -385,10 +387,11 @@ export const createContext = <T extends Node>(node: T) => {
         tagName: isElementNode ? (node as unknown as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        props: [new WeakMap(), new WeakMap()],
-        state: new Map(),
+        properties: [new WeakMap(), new WeakMap()],
+        store: new Map(),
         fragments: [],
-    } as Context<T>);
+        requestUpdate,
+    }) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
 };
 
 /**
@@ -396,7 +399,7 @@ export const createContext = <T extends Node>(node: T) => {
  * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getOrCreateContext = <T extends Node>(target: WithContext<T>): Context<T> => target[CONTEXT_SYMBOL] || createContext(target);
+export const getOrCreateContext = <T extends Node, F extends UpdateRequest | undefined>(target: WithContext<T, F>, requestUpdate?: F) => (target[CONTEXT_SYMBOL] || createContext(target, requestUpdate)) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
 
 /**
  * Cleanup child fragments of a context.
@@ -406,7 +409,7 @@ export const emptyFragments = <T extends Node>(context: Context<T>) => {
     const fragments = context.fragments;
     let len = fragments.length;
     while (len--) {
-        emptyFragments(fragments.pop() as Context<Node>);
+        emptyFragments(fragments.pop() as Context);
     }
     return fragments;
 };
@@ -526,11 +529,11 @@ export const internalRender = (
     root: Node,
     input: Template,
     slot = isComponent(root),
-    context?: Context<Node>,
+    context?: Context,
     namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
-    rootContext?: Context<Node>,
-    mainContext?: Context<Node>,
-    fragment?: Context<Node>
+    rootContext?: Context,
+    mainContext?: Context,
+    fragment?: Context
 ) => {
     let renderContext = context || getOrCreateContext(root);
     const refContext = mainContext || renderContext;
@@ -552,8 +555,8 @@ export const internalRender = (
     let currentFragment = fragment;
     let lastNode: Node|undefined;
     if (fragment) {
-        currentIndex = indexOf.call(childNodes, fragment.first as Node);
-        lastNode = fragment.last as Node;
+        currentIndex = indexOf.call(childNodes, fragment.start as Node);
+        lastNode = fragment.end as Node;
     } else {
         emptyFragments(renderContext);
         currentIndex = 0;
@@ -561,13 +564,13 @@ export const internalRender = (
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
 
-    const handleItems = (template: Template, filter?: TemplateFilter) => {
+    const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
             return;
         }
 
         let templateNode;
-        let templateContext: Context<Node> | undefined;
+        let templateContext: Context | undefined;
         let templateChildren: Template[] | undefined;
         let templateNamespace = namespace;
 
@@ -580,13 +583,13 @@ export const internalRender = (
         }
 
         if (isThenable(template)) {
-            handleItems(h((props, data, requestUpdate) => {
+            handleItems(h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
                     (template as Promise<unknown>)
                         .catch(() => 1)
                         .then(() => {
-                            requestUpdate();
+                            context.requestUpdate();
                         });
                 }
                 return status.result as Template;
@@ -596,17 +599,17 @@ export const internalRender = (
 
         if (isObservable(template)) {
             const observable = template;
-            handleItems(h((props, context, requestUpdate) => {
+            handleItems(h((props, context) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
                     const subscription = observable.subscribe(
                         () => {
-                            if (!requestUpdate()) {
+                            if (!context.requestUpdate()) {
                                 subscription.unsubscribe();
                             }
                         },
                         () => {
-                            if (!requestUpdate()) {
+                            if (!context.requestUpdate()) {
                                 subscription.unsubscribe();
                             }
                         },
@@ -629,7 +632,7 @@ export const internalRender = (
                 (root as HTMLStyleElement).setAttribute('name', is);
             }
 
-            if (currentContext && currentContext.isText && !currentContext.function) {
+            if (currentContext && currentContext.isText) {
                 templateNode = currentNode as Text;
                 if (templateNode.textContent != template) {
                     templateNode.textContent = template as string;
@@ -650,32 +653,25 @@ export const internalRender = (
                 const previousContext = renderContext;
                 const previousFragment = currentFragment;
                 const fragments = renderContext.fragments;
-                let state: Map<string, unknown>;
                 let placeholder: Node;
                 if (fragment) {
-                    state = fragment.state;
-                    placeholder = fragment.first as Node;
-                } else if (currentContext && currentContext.function === Function) {
-                    state = currentContext.state;
-                    placeholder = currentContext.first as Node;
+                    placeholder = fragment.start as Node;
+                } else if (currentContext && currentContext.Function === Function) {
+                    placeholder = currentContext.start as Node;
                 } else {
-                    state = new Map();
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                const renderFragmentContext = getOrCreateContext(placeholder);
-                emptyFragments(renderFragmentContext);
-                renderFragmentContext.state = state;
-                renderFragmentContext.function = Function;
-                renderFragmentContext.first = placeholder;
-                const isAlive = renderFragmentContext.isAlive = () =>  fragments.indexOf(renderFragmentContext) !== -1;
-                renderFragmentContext.requestUpdate = () => {
-                    if (!isAlive()) {
+                const renderFragmentContext = getOrCreateContext(placeholder, () => {
+                    if (fragments.indexOf(renderFragmentContext) === -1) {
                         return false;
                     }
                     internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
                     return true;
-                };
+                });
+                emptyFragments(renderFragmentContext);
+                renderFragmentContext.Function = Function;
+                renderFragmentContext.start = placeholder;
                 renderContext = renderFragmentContext;
                 currentFragment = renderFragmentContext;
                 fragment = undefined;
@@ -688,14 +684,14 @@ export const internalRender = (
                                 children,
                                 ...properties,
                             },
-                            renderContext
+                            renderFragmentContext
                         ),
                     ],
                     filter
                 );
 
                 fragment = rootFragment;
-                renderFragmentContext.last = childNodes.item(currentIndex - 1) as Node;
+                renderFragmentContext.end = childNodes.item(currentIndex - 1) as Node;
                 renderContext = previousContext;
                 currentFragment = previousFragment;
 
@@ -766,7 +762,7 @@ export const internalRender = (
 
                     if (currentFragment && currentNode) {
                         const io = indexOf.call(childNodes, currentNode);
-                        const lastIo = indexOf.call(childNodes, currentFragment.last);
+                        const lastIo = indexOf.call(childNodes, currentFragment.end);
                         if (io !== -1 && io > lastIo) {
                             break checkKey;
                         }
@@ -798,8 +794,8 @@ export const internalRender = (
             // update the Node properties
             const templateElement = templateNode as HTMLElement;
 
-            templateContext = templateContext || getOrCreateContext(templateElement);
-            const map = templateContext.props[slot ? 1 : 0];
+            templateContext = templateContext || getOrCreateContext(templateNode);
+            const map = templateContext.properties[slot ? 1 : 0];
             const oldProperties = (map.get(refContext) || {}) as Writable<HTMLElement> & HyperProperties;
             const properties = fillEmptyValues(oldProperties, template.properties);
             map.set(refContext, properties);
