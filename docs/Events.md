@@ -4,26 +4,21 @@ Since Web Components extend the native `HTMLElement`, events handling is complet
 
 ## Declarative event listeners
 
-You can declare event listeners on a component using the `listeners` accessor:
+You can declare event listeners on a component using the `listen` decorator or the `listeners` static accessor:
 
 ```ts
-import { Component, customElement } from '@chialab/dna';
+import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-button, {
     extends: 'button',
 })
 class Button extends Component {
-    static get listeners() {
-        return {
-            'click': Button.prototype.onClick,
-            'input [name="age"]': Button.prototype.onInputAge,
-        };
-    };
-
+    @listen('click')
     onClick(event) {
         event.preventDefault();
     }
 
+    @listen('input', '[name="age"]')
     onInputAge(event, target) {
         console.log(target.value);
     }
@@ -33,20 +28,23 @@ class Button extends Component {
 Event declaration accepts a function (in the example above, a prototype method has been referenced) or an object for listener configuration:
 
 ```ts
-import { Component, customElement } from '@chialab/dna';
+import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-tracker)
 class Tracker extends Component {
     static get listeners(){
         return {
             touchmove: {
-                callback: function(event) {
-                    // ...
-                },
+                callback: function(event) {}
                 passive: true,
             },
         };
-    };
+    }
+
+    @listen('touchmove', { passive: true })
+    onTouchMove() {
+        // ...
+    }
 }
 ```
 
@@ -88,10 +86,10 @@ Do not confuse the `event.target` property with the second argument of the liste
 
 </aside>
 
-Using the `listeners` getter, you can specify the delegated child selector after the event name in the declaration key:
+Using the `listen` decorator or the `listeners` static getter, you can specify the delegated child selector after the event name in the declaration key:
 
 ```ts
-import { Component, customElement } from '@chialab/dna';
+import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
@@ -101,13 +99,14 @@ class Dialog extends Component {
         return {
             // event name + selector
             'click nav button': {
-                callback: function(event, target) {
-                    ...
-                },
+                callback(event, target) {},
                 passive: false,
             },
         };
     };
+
+    @listen('click', 'nav button', { passive: false })
+    onClick() {}
 }
 ```
 
@@ -171,17 +170,14 @@ button.dispatchEvent('sendEmail',
 With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed:
 
 ```ts
-import { Component, customElement, DOM } from '@chialab/dna';
+import { Component, customElement, listen, DOM } from '@chialab/dna';
 
 @customElement('x-paginator')
 class Paginator extends Component {
-    static get listeners() {
-        return {
-            'click button.next': async function() {
-                this.data = await this.dispatchAsyncEvent('fetch');
-            },
-        };
-    };
+    @listen('click', 'button.next')
+    async onClick() {
+        this.data = await this.dispatchAsyncEvent('fetch');
+    }
 }
 
 const paginator = new Paginator();

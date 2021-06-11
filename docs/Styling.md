@@ -19,7 +19,7 @@ import { Component, customElement, html, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ attribute: true }) title = '';
+    @property() title = '';
 
     render() {
         return html`
@@ -169,7 +169,7 @@ import { title } from './x-card.css';
      extends: 'div',
 })
 class Card extends Component {
-    @property({ attribute: true }) title = '';
+    @property() title = '';
 
     render() {
         return html`<h1 class="${title}"></h1>`;

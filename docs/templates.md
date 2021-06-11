@@ -426,24 +426,21 @@ will render:
 If you want to add some properties to the instance, you can pass it as hyper node. This is useful if you want to reference some nodes in your component:
 
 ```ts
-import { DOM, Component, html, customElement } from '@chialab/dna';
+import { DOM, Component, html, customElement, listen } from '@chialab/dna';
 
 @customElement('x-form')
 class Form extends Component {
-    static get listeners() {
-        return {
-            'change input'(this: Form) {
-                console.log(this.input.value);
-            },
-        };
-    }
-
     input = DOM.createElement('input');
 
     render() {
         return html`<form>
             <${this.input} name="firstName" placeholder="Alan" />
         </form>`;
+    }
+
+    @listen('change', this.input)
+    private onChange() {
+        console.log(this.input.value);
     }
 }
 ```
@@ -462,8 +459,8 @@ import { Component, customElement, html, property } from '@chialab/dna';
     extends: 'dialog',
 })
 class Dialog extends Component {
-    @property({ attribute: true }) title = '';
-    @property({ attribute: true }) content = '';
+    @property() title = '';
+    @property() content = '';
 
     render() {
         return html`
@@ -489,8 +486,8 @@ Shadow DOM solves those two issues, rendering "soft" children of an element into
 
 ```diff
 class Dialog extends Component {
--    @property({ attribute: true }) title = '';
--    @property({ attribute: true }) content = '';
+-    @property() title = '';
+-    @property() content = '';
 
     render() {
         return html`

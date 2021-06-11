@@ -62,19 +62,10 @@ This is an example of Component defined via DNA. Please refer to the [documentat
 
 **Define the Component**
 ```ts
-import { Component, customElement, html, property } from '@chialab/dna';
+import { Component, customElement, html, property, listen } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    static get listeners() {
-        return {
-            // delegate an event
-            'change input[name="firstName"]': function() {
-                this.name = target.value;
-            },
-        };
-    }
-
     // define an observed property
     @property() name = '';
 
@@ -83,6 +74,12 @@ class HelloWorld extends Component {
             <input name="firstName" value="${this.name}" />
             <h1>Hello ${this.name || 'World'}!</h1>
         `;
+    }
+
+    // delegate an event
+    @listen('change', 'input[name="firstName"]')
+    private onChange(event: Event, target: HTMLInputElement) {
+        this.name = target.value;
     }
 }
 ```

@@ -288,7 +288,6 @@ describe('render', function() {
                     return {
                         number: {
                             type: Number,
-                            attribute: true,
                         },
                     };
                 }
@@ -307,7 +306,6 @@ describe('render', function() {
                     return {
                         number: {
                             type: Number,
-                            attribute: true,
                         },
                     };
                 }
@@ -326,7 +324,6 @@ describe('render', function() {
                     return {
                         number: {
                             type: Number,
-                            attribute: true,
                         },
                     };
                 }

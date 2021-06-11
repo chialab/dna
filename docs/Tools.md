@@ -24,12 +24,12 @@ export class MapboxMap extends Component {
     /**
      * The latitude value for the map center.
      */
-    @property({ attribute: true }) latitude: number;
+    @property() latitude: number;
 
     /**
      * The longitude value for the map center.
      */
-    @property({ attribute: true }) longitude: number;
+    @property() longitude: number;
 }
 ```
 

@@ -583,29 +583,28 @@ describe('Component', function() {
                 };
 
                 __decorate([
-                    DNA.property({ attribute: true }),
+                    DNA.property(),
                 ], TestElement.prototype, 'any', undefined);
                 __decorate([
-                    DNA.property({ type: Boolean, attribute: true }),
+                    DNA.property({ type: Boolean }),
                 ], TestElement.prototype, 'boolean', undefined);
                 __decorate([
-                    DNA.property({ type: String, attribute: true }),
+                    DNA.property({ type: String }),
                 ], TestElement.prototype, 'string', undefined);
                 __decorate([
-                    DNA.property({ type: Number, attribute: true }),
+                    DNA.property({ type: Number }),
                 ], TestElement.prototype, 'number', undefined);
                 __decorate([
                     DNA.property({ type: [String, Number], attribute: 'string-number' }),
                 ], TestElement.prototype, 'stringNumber', undefined);
                 __decorate([
-                    DNA.property({ type: [Object], attribute: true }),
+                    DNA.property({ type: [Object] }),
                 ], TestElement.prototype, 'object', undefined);
                 __decorate([
-                    DNA.property({ type: [Array], attribute: true }),
+                    DNA.property({ type: [Array] }),
                 ], TestElement.prototype, 'array', undefined);
                 __decorate([
                     DNA.property({
-                        attribute: true,
                         fromAttribute(value) {
                             return parseInt(value) * 2;
                         },
@@ -763,7 +762,6 @@ describe('Component', function() {
                     return {
                         page: {
                             type: Number,
-                            attribute: true,
                         },
                     };
                 }
@@ -1329,7 +1327,6 @@ describe('Component', function() {
                     return {
                         age: {
                             type: [Number],
-                            attribute: true,
                         },
                     };
                 }
@@ -1342,7 +1339,7 @@ describe('Component', function() {
             };
 
             __decorate([
-                DNA.property({ attribute: true }),
+                DNA.property(),
             ], TestElement.prototype, 'title', undefined);
             __decorate([
                 DNA.property({ attribute: 'alias' }),

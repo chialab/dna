@@ -270,8 +270,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
-    const observedAttributes = constructor.observedAttributes;
-    const hasAttribute = declaration.attribute || (observedAttributes && observedAttributes.indexOf(propertyKey as string) !== -1);
+    const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
     const property = declarations[propertyKey] = {
         ...declaration,
@@ -580,7 +579,7 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
         targetOrClassElement: T,
         propertyKey?: P,
         originalDescriptor?: PropertyDeclaration<Constructor<T[P]>>
-    ) => createProperty(targetOrClassElement, { attribute: true, ...(declaration as PropertyDeclaration<Constructor<T[P]>>) }, propertyKey, originalDescriptor);
+    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<Constructor<T[P]>>, propertyKey, originalDescriptor);
 }
 
 /**
