@@ -7,7 +7,7 @@ import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
 import { getOrCreateContext, internalRender } from './render';
-import { getProperties, getProperty, getPropertyForAttribute } from './property';
+import { getProperties, getPropertyForAttribute } from './property';
 
 /**
  * A symbol which identify components.
@@ -279,18 +279,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
-            const property = getProperty(this, propertyName);
-            if (property.event) {
-                this.dispatchEvent(property.event, {
-                    newValue,
-                    oldValue,
-                });
-            }
-            if (this.isConnected) {
-                this.forceUpdate();
-            }
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {}
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -299,29 +289,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
-            const property = getProperty(this, propertyName);
-            const attrName = property.attribute;
-            if (attrName && property.toAttribute) {
-                const value = property.toAttribute.call(this, newValue);
-                if (value === null) {
-                    this.removeAttribute(attrName);
-                } else if (value !== undefined && value !== this.getAttribute(attrName)) {
-                    this.setAttribute(attrName, value as string);
-                }
-            }
-
-            if (property.event) {
-                this.dispatchEvent(property.event, {
-                    newValue,
-                    oldValue,
-                });
-            }
-
-            if (this.isConnected) {
-                this.forceUpdate();
-            }
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) { }
 
         /**
          * Observe a Component Property.

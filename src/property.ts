@@ -367,11 +367,32 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
             }
         }
 
+        const attrName = property.attribute;
+        if (attrName && property.toAttribute) {
+            const value = property.toAttribute.call(this, newValue);
+            if (value === null) {
+                this.removeAttribute(attrName);
+            } else if (value !== undefined && value !== this.getAttribute(attrName)) {
+                this.setAttribute(attrName, value as string);
+            }
+        }
+
+        if (property.event) {
+            this.dispatchEvent(property.event, {
+                newValue,
+                oldValue,
+            });
+        }
+
         // trigger Property changes
         if (property.state) {
             this.stateChangedCallback(property.name, oldValue, newValue);
         } else {
             this.propertyChangedCallback(property.name, oldValue, newValue);
+        }
+
+        if (this.isConnected) {
+            this.forceUpdate();
         }
     };
 
