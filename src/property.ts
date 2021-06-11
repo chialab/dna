@@ -580,7 +580,7 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
         targetOrClassElement: T,
         propertyKey?: P,
         originalDescriptor?: PropertyDeclaration<Constructor<T[P]>>
-    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<Constructor<T[P]>>, propertyKey, originalDescriptor);
+    ) => createProperty(targetOrClassElement, { attribute: true, ...(declaration as PropertyDeclaration<Constructor<T[P]>>) }, propertyKey, originalDescriptor);
 }
 
 /**

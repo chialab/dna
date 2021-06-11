@@ -355,13 +355,17 @@ type Listener = {
  * @param constructor The component constructor.
  * @return A list of listeners.
  */
-export const getListeners = (prototype: ComponentInstance<HTMLElement>) => {
-    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
-    if (!hasOwnProperty.call(constructor, LISTENERS_SYMBOL)) {
+export const getListeners = (prototype: WithListeners<ComponentInstance<HTMLElement>>) => {
+    const listeners = prototype[LISTENERS_SYMBOL];
+    if (!listeners) {
         return [];
     }
 
-    return constructor[LISTENERS_SYMBOL] as Listener[];
+    if (!hasOwnProperty.call(prototype, LISTENERS_SYMBOL)) {
+        return listeners.slice(0);
+    }
+
+    return listeners;
 };
 
 /**
@@ -372,15 +376,14 @@ export const getListeners = (prototype: ComponentInstance<HTMLElement>) => {
  * @param options The event listener options.
  */
 export function defineListener(
-    prototype: ComponentInstance<HTMLElement>,
+    prototype: WithListeners<ComponentInstance<HTMLElement>>,
     eventName: string,
     target: EventTarget | null,
     selector: string | null,
     callback: DelegatedEventCallback,
     options: AddEventListenerOptions = {}
 ) {
-    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
-    const listeners = constructor[LISTENERS_SYMBOL] = getListeners(prototype);
+    const listeners = prototype[LISTENERS_SYMBOL] = getListeners(prototype);
     listeners.push({
         event: eventName,
         selector,
@@ -402,6 +405,9 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
     const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
     let ctr = constructor;
     while (ctr && ctr !== HTMLElement) {
+        if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
+            break;
+        }
         const listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
         const listenersGetter = listenersDescriptor && listenersDescriptor.get;
         if (listenersGetter) {

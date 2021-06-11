@@ -158,13 +158,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const props = (node ? args[1] : args[0]) as { [P in keyof this]: this[P] };
 
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-            const constructor = element.constructor as typeof Component;
             const context = getOrCreateContext(element);
             context.is = element.is;
             initSlotChildNodes(element);
 
             // setup listeners
-            const listeners = getListeners(constructor.prototype) || [];
+            const listeners = getListeners(this);
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, selector, callback, options } = listeners[i];
                 if (!target) {
@@ -219,7 +218,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             }
             setAttributeImpl.call(this, ':defined', '');
 
-            const listeners = getListeners(this.constructor.prototype) || [];
+            const listeners = getListeners(this);
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, callback, options } = listeners[i];
                 if (target) {
@@ -235,7 +234,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Invoked each time the Component is disconnected from the document's DOM.
          */
         disconnectedCallback() {
-            const listeners = getListeners(this.constructor.prototype) || [];
+            const listeners = getListeners(this);
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, callback, options } = listeners[i];
                 if (target) {
