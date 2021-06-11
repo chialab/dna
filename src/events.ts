@@ -456,7 +456,7 @@ export const createListener = <T extends ComponentInstance<HTMLElement>, P exten
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isEventTarget = (target: any): target is EventTarget => 'addEventListener' in target;
+const isEventTarget = (target: any): target is EventTarget => typeof target === 'object' && 'addEventListener' in target;
 
 /**
  * A decorator for listening DOM events.
