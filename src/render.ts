@@ -13,13 +13,29 @@ import { css } from './css';
 const innerHtml = htm.bind(h);
 
 /**
+ * Compile a string into template string.
+ *
+ * @return The template string.
+ */
+export const compile = (string: string) => {
+    const array = [string];
+    (array as string[] & { raw?: string[] }).raw = [string];
+    return array as unknown as TemplateStringsArray;
+};
+
+/**
  * Compile a template string into virtual DOM template.
  *
  * @return The virtual DOM template function.
  */
-export const html = (string: string | TemplateStringsArray, ...values: unknown[]): Template => {
+function html(string: TemplateStringsArray, ...values: unknown[]): Template;
+function html(string: string, useVirtualDom?: boolean): Template;
+function html(string: string | TemplateStringsArray, useVirtualDom?: boolean|unknown, ...values: unknown[]): Template {
     if (typeof string === 'string') {
         const source = string;
+        if (useVirtualDom) {
+            return innerHtml(compile(string));
+        }
         return h(function unsafeInnerHTML(properties, context) {
             let dom = context.store.get('dom') as Node[];
             if (dom) {
@@ -34,7 +50,9 @@ export const html = (string: string | TemplateStringsArray, ...values: unknown[]
         } as FunctionComponent, null);
     }
     return innerHtml(string, ...values);
-};
+}
+
+export { html };
 
 /**
  * A generic template. Can be a single atomic item or a list of items.
