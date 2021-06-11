@@ -31,12 +31,12 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type](), wrapper);
-                expect(wrapper.childNodes).to.have.lengthOf(1);
-                expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
-                expect(wrapper.childNodes[0].textContent).to.be.equal('Hello world!');
+                expect(wrapper.children).to.have.lengthOf(1);
+                expect(wrapper.children[0].tagName).to.be.equal('H1');
+                expect(wrapper.children[0].textContent).to.be.equal('Hello world!');
             });
         }
     });
@@ -53,7 +53,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type](), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(1);
@@ -75,7 +75,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type]({
                     name: 'Alan',
@@ -104,7 +104,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type]({
                     name: 'filter',
@@ -133,7 +133,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type]({
                     items: ['Alan', 'Brian', 'Carl'],
@@ -172,7 +172,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type]({
                     avatar: 'cat.png',
@@ -201,7 +201,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 const rootName = getComponentName();
                 class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
@@ -244,7 +244,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 const rootName = getComponentName();
                 const titleName = getComponentName();
@@ -309,7 +309,7 @@ describe('template', function() {
         };
         /* eslint-enable mocha/no-setup-in-describe */
 
-        for (let type in TEMPLATES) {
+        for (const type in TEMPLATES) {
             it(type, () => {
                 const name = getComponentName();
                 class MyElement extends DNA.Component {
@@ -356,7 +356,7 @@ describe('template', function() {
             };
             /* eslint-enable mocha/no-setup-in-describe */
 
-            for (let type in TEMPLATES) {
+            for (const type in TEMPLATES) {
                 it(type, () => {
                     const listener = spyFunction();
                     DNA.render(TEMPLATES[type]({
@@ -391,7 +391,7 @@ describe('template', function() {
             };
             /* eslint-enable mocha/no-setup-in-describe */
 
-            for (let type in TEMPLATES) {
+            for (const type in TEMPLATES) {
                 it(type, async () => {
                     const promise = new Promise((resolve) => {
                         setTimeout(() => resolve('World!'), 1000);
@@ -429,7 +429,7 @@ describe('template', function() {
             };
             /* eslint-enable mocha/no-setup-in-describe */
 
-            for (let type in TEMPLATES) {
+            for (const type in TEMPLATES) {
                 it(type, async () => {
                     const promise = new Promise((resolve, reject) => {
                         setTimeout(() => reject('timeout'), 1000);
@@ -502,7 +502,7 @@ describe('template', function() {
             };
             /* eslint-enable mocha/no-setup-in-describe */
 
-            for (let type in TEMPLATES) {
+            for (const type in TEMPLATES) {
                 it(type, async () => {
                     const observable$ = new Observable(async (subscriber) => {
                         await wait(100);
@@ -546,7 +546,7 @@ describe('template', function() {
             };
             /* eslint-enable mocha/no-setup-in-describe */
 
-            for (let type in TEMPLATES) {
+            for (const type in TEMPLATES) {
                 it(type, async () => {
                     const observable$ = new Observable(async (subscriber) => {
                         await wait(100);

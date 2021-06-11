@@ -349,7 +349,7 @@ describe('events', function() {
             DNA.customElements.define(getComponentName(), TestElement1);
             DNA.customElements.define(getComponentName(), TestElement2);
 
-            let element1 = new TestElement1();
+            const element1 = new TestElement1();
             DNA.DOM.appendChild(wrapper, element1);
             expect(callback1.invoked).to.be.false;
             expect(callback2.invoked).to.be.false;
@@ -364,7 +364,7 @@ describe('events', function() {
             expect(callback2.invoked).to.be.true;
             expect(callback3.invoked).to.be.true;
 
-            let element2 = new TestElement2();
+            const element2 = new TestElement2();
             DNA.DOM.appendChild(wrapper, element2);
             element2.querySelector('button').click();
             element2.dispatchEvent(DNA.DOM.createEvent('drop', {

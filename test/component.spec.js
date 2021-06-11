@@ -95,7 +95,7 @@ describe('Component', function() {
         });
 
         it('should setup properties with babel decorator', () => {
-            let TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
+            const TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
                 class TestElement extends _DNA$Component {
                     constructor(...args) {
                         super(...args);

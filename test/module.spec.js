@@ -37,7 +37,7 @@ describe('module', function() {
         until: 'function',
     };
 
-    for (let ref in EXPECTED_EXPORT_MAP) {
+    for (const ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
             if (ref === 'window') {
                 expect(DNA).to.have.property(ref);

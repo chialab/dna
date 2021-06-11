@@ -19,10 +19,19 @@ const innerHtml = htm.bind(h);
  */
 export const html = (string: string | TemplateStringsArray, ...values: unknown[]): Template => {
     if (typeof string === 'string') {
-        const array = [string];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (array as any).raw = [string];
-        string = array as unknown as TemplateStringsArray;
+        const source = string;
+        return h(function unsafeInnerHTML(properties, context) {
+            let dom = context.store.get('dom') as Node[];
+            if (dom) {
+                return dom;
+            }
+
+            const wrapper = DOM.createElement('div');
+            wrapper.innerHTML = source;
+            dom = cloneChildNodes(wrapper.childNodes);
+            context.store.set('dom', dom);
+            return dom;
+        } as FunctionComponent, null);
     }
     return innerHtml(string, ...values);
 };

@@ -447,7 +447,7 @@ describe('property', function() {
         });
 
         it('should inherit and reduce the prototype chain with decorator', () => {
-            let BaseElement = class BaseElement extends DNA.Component {
+            const BaseElement = class BaseElement extends DNA.Component {
                 constructor(...args) {
                     super(...args);
                     this.override = 42;
