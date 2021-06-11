@@ -1,6 +1,6 @@
 import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-import type { PropertyConfig, PropertyObserver } from './property';
+import { addObserver, PropertyConfig, PropertyObserver, removeObserver } from './property';
 import type { Template } from './render';
 import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
@@ -147,20 +147,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
-         * A list of local property observers.
-         */
-        readonly observers: {
-            [key: string]: Function[];
-        }
-
-        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
          */
         constructor(...args: any[]) {
             super();
-            this.observers = {};
 
             const node = isElement(args[0]) && args[0];
             const props = (node ? args[1] : args[0]) as { [P in keyof this]: this[P] };
@@ -194,7 +186,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 }
 
                 const observers = property.observers;
-                this.observers[property.name] = [];
                 for (let i = 0; i < observers.length; i++) {
                     this.observe(property.name, observers[i]);
                 }
@@ -296,33 +287,20 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Observe a Component Property.
          *
          * @param propertyName The name of the Property to observe
-         * @param callback The callback function
+         * @param observer The callback function
          */
-        observe<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
-            const observers = this.observers;
-            const callbacks = observers[propertyName as string];
-            if (!callbacks) {
-                throw new Error(`Missing property ${propertyName}`);
-            }
-            callbacks.push(callback);
+        observe<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>) {
+            addObserver(this, propertyName, observer);
         }
 
         /**
          * Unobserve a Component Property.
          *
          * @param propertyName The name of the Property to unobserve
-         * @param callback The callback function to remove
+         * @param observer The callback function to remove
          */
-        unobserve<P extends keyof this>(propertyName: P, callback: PropertyObserver<this[P]>) {
-            const observers = this.observers;
-            const callbacks = observers[propertyName as string];
-            if (!callbacks) {
-                throw new Error(`Missing property ${propertyName}`);
-            }
-            const io = callbacks.indexOf(callback);
-            if (io !== -1) {
-                callbacks.splice(io, 1);
-            }
+        unobserve<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>) {
+            removeObserver(this, propertyName, observer);
         }
 
         /**
