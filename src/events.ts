@@ -471,9 +471,9 @@ const isEventTarget = (target: any): target is EventTarget => typeof target === 
  * @param options Options to pass to addEventListener.
  * @return The decorator initializer.
  */
-function listen(eventName: string, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
-function listen(eventName: string, selector: string, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
-function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): ReturnType<typeof createListener>;
+function listen(eventName: string, options?: AddEventListenerOptions): Function;
+function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
+function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
     return <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
         targetOrClassElement: T,

@@ -186,7 +186,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
                 const observers = property.observers;
                 for (let i = 0; i < observers.length; i++) {
-                    this.observe(property.name, observers[i]);
+                    element.observe(propertyKey, observers[i]);
                 }
             }
 
