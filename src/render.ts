@@ -821,7 +821,7 @@ export const internalRender = (
                 const oldValue = oldProperties[propertyKey];
                 if (oldValue === value) {
                     if (isRenderingInput(templateElement, propertyKey)) {
-                        templateElement[propertyKey as unknown as 'value'] = value as string;
+                        setValue(templateElement, propertyKey as unknown as 'value', value);
                     }
                     continue;
                 }
@@ -874,7 +874,7 @@ export const internalRender = (
                 const isReference = (value && type === 'object') || type === 'function';
                 const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
 
-                if (isReference || wasReference) {
+                if (isReference || wasReference || isRenderingInput(templateElement, propertyKey)) {
                     setValue(templateElement, propertyKey, value);
                 } else if (isHyperComponent(template)) {
                     if (type === 'string') {
