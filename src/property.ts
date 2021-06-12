@@ -518,10 +518,12 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance<HTMLEleme
  * @param descriptor The field descriptor.
  */
 const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: PropertyDescriptor & { initializer?: Function }) => {
+    declaration.initializer = descriptor.initializer;
     declaration.get = descriptor.get;
     declaration.set = descriptor.set;
-    declaration.defaultValue = descriptor.value;
-    declaration.initializer = descriptor.initializer;
+    if (!descriptor.get) {
+        declaration.defaultValue = descriptor.value;
+    }
 };
 
 /**
