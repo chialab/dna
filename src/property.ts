@@ -107,6 +107,14 @@ export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = C
      */
     validate?: (value: unknown) => boolean;
     /**
+     * Native custom getter for the property.
+     */
+    get?: PropertyDescriptor['get'];
+    /**
+     * Native custom setter for the property.
+     */
+    set?: PropertyDescriptor['set'];
+    /**
      * Define custom getter for the property.
      * @param value The current property value.
      */
@@ -184,6 +192,14 @@ export type Property<T extends ComponentInstance<HTMLElement>, P extends keyof T
      */
     validate?: (value: unknown) => boolean;
     /**
+     * Native custom getter for the property.
+     */
+    get?: PropertyDescriptor['get'];
+     /**
+      * Native custom setter for the property.
+      */
+    set?: PropertyDescriptor['set'];
+    /**
      * Define custom getter for the property.
      * @param value The current property value.
      */
@@ -223,12 +239,19 @@ export const getProperties = <T extends ComponentInstance<HTMLElement>>(prototyp
 };
 
 /**
- * Retrieve property descriptor.
+ * Retrieve property declaration.
  * @param prototype The component prototype.
  * @param propertyKey The name of the property.
- * @return The property descriptor.
+ * @param failIfMissing Should throw an exception if the property is not defined.
+ * @return The property declaration.
  */
-export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: T, propertyKey: P) => getProperties(prototype)[propertyKey];
+export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: T, propertyKey: P, failIfMissing = false) => {
+    const property = getProperties(prototype)[propertyKey];
+    if (failIfMissing && !property) {
+        throw new Error(`Missing property ${propertyKey}`);
+    }
+    return property;
+};
 
 /**
  * Get valid constructors for the property.
@@ -331,7 +354,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
         event,
     } as Property<T, P>;
 
-    const { getter, setter } = property;
+    const { get, set, getter, setter } = property;
 
     type E = T & {
         [symbol]: E[P];
@@ -342,9 +365,12 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
         configurable: true,
         enumerable: true,
         get(this: E) {
-            const value = this[symbol];
+            let value = this[symbol];
+            if (get) {
+                value = get.call(this);
+            }
             if (getter) {
-                return getter.call(this, value);
+                value = getter.call(this, value);
             }
             return value;
         },
@@ -357,6 +383,10 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
             const oldValue = this[symbol];
             if (setter) {
                 newValue = setter.call(this, newValue);
+            }
+            if (set) {
+                set.call(this, newValue);
+                newValue = this[symbol];
             }
 
             if (oldValue === newValue) {
@@ -431,7 +461,7 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
                 }
                 const config = descriptorProperties[propertyKey];
                 const declaration = (typeof config === 'function' || isArray(config) ? { type: config } : config) as PropertyDeclaration<Constructor<T[typeof propertyKey]>>;
-                const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string) as any;
+                const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string);
                 defineProperty(
                     prototype,
                     propertyKey,
@@ -469,8 +499,8 @@ export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>
  * @param descriptor The field descriptor.
  */
 const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: PropertyDescriptor & { initializer?: Function }) => {
-    declaration.getter = declaration.getter || descriptor.get;
-    declaration.setter = declaration.setter || descriptor.set as typeof declaration.setter;
+    declaration.get = descriptor.get;
+    declaration.set = descriptor.set;
     declaration.defaultValue = descriptor.value;
     declaration.initializer = descriptor.initializer;
 };
@@ -537,11 +567,7 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createObserver = <T extends ComponentInstance<HTMLElement>, P extends keyof T, M extends keyof T>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
-    const property = getProperty(targetOrClassElement, propertyKey);
-    if (!property) {
-        throw new Error(`Missing property ${propertyKey}`);
-    }
-
+    const property = getProperty(targetOrClassElement, propertyKey, true);
     if (methodKey !== undefined) {
         property.observers.push(targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
         return;

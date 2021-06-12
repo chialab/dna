@@ -281,11 +281,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param newValue The new value for the property (undefined if removed).
          */
         propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
-            const property = getProperty(this, propertyName);
-            if (!property) {
-                return;
-            }
-
+            const property = getProperty(this, propertyName, true);
             const { attribute, toAttribute } = property;
             if (attribute && toAttribute) {
                 const value = toAttribute.call(this, newValue);
@@ -295,6 +291,28 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     this.setAttribute(attribute, value as string);
                 }
             }
+        }
+
+        /**
+         * Get the inner value of a property.
+         * This is an helper method for properties getters and setters.
+         * @param propertyName The name of the property to get.
+         * @return The inner value of the property.
+         */
+        getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P] {
+            const property = getProperty(this, propertyName, true);
+            return this[property.symbol as keyof this] as this[P];
+        }
+
+        /**
+         * Set the inner value of a property.
+         * This is an helper method for properties getters and setters.
+         * @param propertyName The name of the property to get.
+         * @param value The inner value to set.
+         */
+        setInnerPropertyValue<P extends keyof this>(propertyName: P, value: this[P]) {
+            const property = getProperty(this, propertyName, true);
+            this[property.symbol as keyof this] = value;
         }
 
         /**
