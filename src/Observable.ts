@@ -1,4 +1,4 @@
-import { createSymbolKey } from './helpers';
+import { createSymbol } from './helpers';
 
 /**
  * Subscription-like minimal interface.
@@ -18,8 +18,7 @@ export type Observable<T> = {
 /**
  * A Symbol which contains Subscription state.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const SUBSCRIPTION_SYMBOL: unique symbol = createSymbolKey() as any;
+const SUBSCRIPTION_SYMBOL: unique symbol = createSymbol();
 
 type WithObservableState<T> = T & {
     [SUBSCRIPTION_SYMBOL]?: ObservableState;

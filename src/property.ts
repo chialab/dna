@@ -1,19 +1,17 @@
 import type { ClassElement, Constructor, MethodsOf, Replace } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import { createSymbolKey, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { createSymbol, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PROPERTIES_SYMBOL: unique symbol = createSymbolKey() as any;
+const PROPERTIES_SYMBOL: unique symbol = createSymbol();
 
 /**
  * A Symbol which contains all Property observers of a Component.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const OBSERVERS_SYMBOL: unique symbol = createSymbolKey() as any;
+const OBSERVERS_SYMBOL: unique symbol = createSymbol();
 
 /**
  * Retrieve properties declarations of a Component.
@@ -62,6 +60,10 @@ type ConvertConstructorTypes<C extends Constructor<unknown>> = Replace<Replace<R
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = Constructor<any>> = PropertyDescriptor & {
+    /**
+     * The property private symbol.
+     */
+    symbol?: symbol;
     /**
      * Flag state properties.
      */
@@ -266,16 +268,15 @@ const extractObservers = <T extends ComponentInstance<HTMLElement>, P extends ke
  * @param symbol The symbol to use to store property value.
  * @return The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey?: symbol): PropertyDescriptor => {
+export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const symbol: unique symbol = symbolKey || createSymbolKey(propertyKey as string) as any;
+    const symbol: unique symbol = symbolKey as any;
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
     const attribute = hasAttribute ?
         (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
         undefined;
-    console.log('>>>', attribute);
     const event = declaration.event ?
         (declaration.event === true ? `${propertyKey}change` : declaration.event) :
         undefined;
@@ -428,11 +429,15 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
                 if (propertyKey in handled) {
                     continue;
                 }
-                let descriptor = descriptorProperties[propertyKey] as PropertyDeclaration<Constructor<T[typeof propertyKey]>>;
-                if (typeof descriptor === 'function' || isArray(descriptor)) {
-                    descriptor = { type: descriptor };
-                }
-                defineProperty(prototype, propertyKey, descriptor);
+                const config = descriptorProperties[propertyKey];
+                const declaration = (typeof config === 'function' || isArray(config) ? { type: config } : config) as PropertyDeclaration<Constructor<T[typeof propertyKey]>>;
+                const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string) as any;
+                defineProperty(
+                    prototype,
+                    propertyKey,
+                    declaration,
+                    symbol
+                );
                 handled[propertyKey] = true;
             }
         }
@@ -467,7 +472,7 @@ const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: Prop
     declaration.getter = declaration.getter || descriptor.get;
     declaration.setter = declaration.setter || descriptor.set as typeof declaration.setter;
     declaration.defaultValue = descriptor.value;
-    declaration.initializer = descriptor.initializer || descriptor.get;
+    declaration.initializer = descriptor.initializer;
 };
 
 /**
@@ -480,7 +485,7 @@ const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: Prop
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const symbol: unique symbol = createSymbolKey(propertyKey as string) as any;
+    const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string) as any;
     if (propertyKey !== undefined) {
         if (descriptor) {
             assignFromDescriptor(declaration, descriptor);

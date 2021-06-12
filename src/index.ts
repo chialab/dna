@@ -1,5 +1,5 @@
 export { window } from './window';
-export { connect, disconnect } from './helpers';
+export { createSymbol, connect, disconnect } from './helpers';
 export { customElements } from './CustomElementRegistry';
 export { DOM } from './DOM';
 export { Fragment, html, h, render } from './render';

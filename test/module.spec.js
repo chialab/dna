@@ -7,6 +7,7 @@ describe('module', function() {
 
     const EXPECTED_EXPORT_MAP = {
         window: 'object',
+        createSymbol: 'function',
         customElements: 'object',
         customElement: 'function',
         DOM: 'object',

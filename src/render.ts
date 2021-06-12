@@ -2,7 +2,7 @@ import type { TagNameMap, IterableNodeList, Writable, WritableOf } from './types
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
 import htm from 'htm';
-import { createSymbolKey, isNode, isElement, isArray, isText, indexOf, cloneChildNodes } from './helpers';
+import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes } from './helpers';
 import { isComponent } from './Component';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -102,8 +102,7 @@ export type FunctionComponent<P = any> = (props: P, context: Context<Node, Updat
 /**
  * A constructor alias used for JSX fragments </>.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Fragment: unique symbol = createSymbolKey() as any;
+export const Fragment: unique symbol = createSymbol();
 
 /**
  * Classes dictionary.
@@ -358,8 +357,7 @@ export { h };
 /**
  * A symbol for node context.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CONTEXT_SYMBOL: unique symbol = createSymbolKey() as any;
+const CONTEXT_SYMBOL: unique symbol = createSymbol();
 
 export type WithContext<T extends Node, F extends UpdateRequest | undefined> = T & {
     [CONTEXT_SYMBOL]?: Context<T, F>;

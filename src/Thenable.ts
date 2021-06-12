@@ -1,10 +1,9 @@
-import { createSymbolKey } from './helpers';
+import { createSymbol } from './helpers';
 
 /**
  * A Symbol which contains Thenable state.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const THENABLE_SYMBOL: unique symbol = createSymbolKey() as any;
+const THENABLE_SYMBOL: unique symbol = createSymbol();
 
 type WithThenableState<T> = T & {
     [THENABLE_SYMBOL]?: ThenableState;

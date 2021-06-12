@@ -9,12 +9,13 @@ let symbols = 0;
  * When native Symbol is not defined, compute an unique string key.
  * @return An unique key.
  */
-export const createSymbolKey = (description?: string | number) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createSymbol = (description?: string | number): any => {
     /* c8 ignore start */
     if (typeof Symbol !== 'undefined') {
         return Symbol(description);
     }
-    return `__dna${symbols++}` as unknown as symbol;
+    return `__dna${symbols++}`;
     /* c8 ignore stop */
 };
 
@@ -219,8 +220,7 @@ export const isConnected: (this: Node) => boolean = isConnectedImpl ?
 /**
  * A symbol which identify emulated components.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const EMULATE_LIFECYCLE_SYMBOL: unique symbol = createSymbolKey() as any;
+const EMULATE_LIFECYCLE_SYMBOL: unique symbol = createSymbol();
 
 type WithEmulatedLifecycle<T extends Element> = T & {
     [EMULATE_LIFECYCLE_SYMBOL]?: boolean;

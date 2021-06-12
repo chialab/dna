@@ -2,7 +2,7 @@ import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import { addObserver, getProperty, PropertyConfig, PropertyObserver, removeObserver } from './property';
 import type { Template } from './render';
-import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { createSymbol, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
@@ -12,8 +12,7 @@ import { getProperties, getPropertyForAttribute } from './property';
 /**
  * A symbol which identify components.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const COMPONENT_SYMBOL: unique symbol = createSymbolKey() as any;
+export const COMPONENT_SYMBOL: unique symbol = createSymbol();
 
 export type WithComponentFlag<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
@@ -22,8 +21,7 @@ export type WithComponentFlag<T> = T & {
 /**
  * A symbol which identify constructed components (properties can be assigned).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const CONSTRUCTED_SYMBOL: unique symbol = createSymbolKey() as any;
+export const CONSTRUCTED_SYMBOL: unique symbol = createSymbol();
 
 export type WithConstructedFlag<T> = T & {
     [CONSTRUCTED_SYMBOL]?: boolean;
