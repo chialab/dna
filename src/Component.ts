@@ -497,7 +497,7 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
         const tag = customElements.tagNames[is];
         let element: InstanceType<typeof constructor>;
         if (customElements.native && !constructor.shim) {
-            element = Reflect.construct(base, args, constructor.prototype.constructor);
+            element = Reflect.construct(base, args, constructor);
             if (tag === element.localName) {
                 return element;
             }

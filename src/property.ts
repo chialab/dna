@@ -294,7 +294,6 @@ const extractObservers = <T extends ComponentInstance<HTMLElement>, P extends ke
 export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
-    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
     const attribute = hasAttribute ?
@@ -436,7 +435,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
         },
     };
 
-    _defineProperty(constructor.prototype, propertyKey, finalDescriptor);
+    _defineProperty(prototype, propertyKey, finalDescriptor);
 
     return finalDescriptor;
 };
