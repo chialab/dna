@@ -290,7 +290,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     type E = T & {
         [symbol]: E[P];
     };
-    const { attribute, type } = property;
+    const { attribute, type, getter, setter } = property;
 
     if (attribute) {
         property.fromAttribute = declaration.fromAttribute || ((newValue) => {
@@ -337,78 +337,79 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     const finalDescriptor: PropertyDescriptor = {
         configurable: true,
         enumerable: true,
-    };
+        get(this: E) {
+            const value = this[symbol];
+            if (getter) {
+                return getter.call(this, value);
+            }
+            return value;
+        },
+        set(this: E, newValue) {
+            if (!isConstructed(this)) {
+                this[symbol] = newValue;
+                return;
+            }
 
-    const getter = property.getter || ((value) => value);
-    const get = function get(this: E) {
-        return getter.call(this, this[symbol]);
-    };
+            const oldValue = this[symbol];
+            if (setter) {
+                newValue = setter.call(this, newValue);
+            }
 
-    finalDescriptor.get = get;
-    const setter = property.setter || ((value) => value);
-    finalDescriptor.set = function(this: E, newValue) {
-        if (!isConstructed(this)) {
+            if (oldValue === newValue) {
+                // no changes
+                return;
+            }
+
+            // if types or custom validator has been set, check the value validity
+            if (newValue != null && newValue !== false) {
+                let valid = true;
+                if (type.length) {
+                    // check if the value is an instanceof of at least one constructor
+                    valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor === Type)));
+                }
+                if (valid && validate) {
+                    valid = validate.call(this, newValue);
+                }
+                if (!valid) {
+                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(property.name)}\` property`);
+                }
+            }
+
             this[symbol] = newValue;
-            return;
-        }
 
-        const oldValue = this[symbol];
-        newValue = setter.call(this, newValue);
-
-        if (oldValue === newValue) {
-            // no changes
-            return;
-        }
-
-        // if types or custom validator has been set, check the value validity
-        if (newValue != null && newValue !== false) {
-            let valid = true;
-            if (type.length) {
-                // check if the value is an instanceof of at least one constructor
-                valid = type.some((Type) => (newValue instanceof Type || (newValue.constructor === Type)));
+            const observers = getPropertyObservers(this, property.name);
+            for (let i = 0, len = observers.length; i < len; i++) {
+                observers[i].call(this, oldValue, newValue);
             }
-            if (valid && validate) {
-                valid = validate.call(this, newValue);
+
+            const attrName = property.attribute;
+            if (attrName && property.toAttribute) {
+                const value = property.toAttribute.call(this, newValue);
+                if (value === null) {
+                    this.removeAttribute(attrName);
+                } else if (value !== undefined && value !== this.getAttribute(attrName)) {
+                    this.setAttribute(attrName, value as string);
+                }
             }
-            if (!valid) {
-                throw new TypeError(`Invalid \`${newValue}\` value for \`${String(property.name)}\` property`);
+
+            if (property.event) {
+                this.dispatchEvent(property.event, {
+                    newValue,
+                    oldValue,
+                });
             }
-        }
 
-        this[symbol] = newValue;
-
-        const observers = getPropertyObservers(this, property.name);
-        for (let i = 0, len = observers.length; i < len; i++) {
-            observers[i].call(this, oldValue, newValue);
-        }
-
-        const attrName = property.attribute;
-        if (attrName && property.toAttribute) {
-            const value = property.toAttribute.call(this, newValue);
-            if (value === null) {
-                this.removeAttribute(attrName);
-            } else if (value !== undefined && value !== this.getAttribute(attrName)) {
-                this.setAttribute(attrName, value as string);
+            // trigger Property changes
+            if (property.state) {
+                this.stateChangedCallback(property.name, oldValue, newValue);
+            } else {
+                this.propertyChangedCallback(property.name, oldValue, newValue);
             }
-        }
 
-        if (property.event) {
-            this.dispatchEvent(property.event, {
-                newValue,
-                oldValue,
-            });
-        }
-
-        // trigger Property changes
-        if (property.state) {
-            this.stateChangedCallback(property.name, oldValue, newValue);
-        } else {
-            this.propertyChangedCallback(property.name, oldValue, newValue);
-        }
-
-        if (this.isConnected) {
-            this.forceUpdate();
-        }
+            if (this.isConnected) {
+                this.forceUpdate();
+            }
+        },
     };
 
     _defineProperty(constructor.prototype, propertyKey, finalDescriptor);

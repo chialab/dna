@@ -30,26 +30,26 @@ export const compile = (string: string) => {
  */
 function html(string: TemplateStringsArray, ...values: unknown[]): Template;
 function html(string: string, useVirtualDom?: boolean): Template;
-function html(string: string | TemplateStringsArray, useVirtualDom?: boolean|unknown, ...values: unknown[]): Template {
+function html(string: string | TemplateStringsArray, useVirtualDom?: boolean | unknown, ...values: unknown[]): Template {
     if (typeof string === 'string') {
         const source = string;
         if (useVirtualDom) {
             return innerHtml(compile(string));
         }
-        return h(function unsafeInnerHTML(properties, context) {
-            let dom = context.store.get('dom') as Node[];
-            if (dom) {
-                return dom;
+        return h(function unsafeInnerHTML(properties, { store }) {
+            if (store.get('source') === source) {
+                return store.get('dom') as Node[];
             }
 
             const wrapper = DOM.createElement('div');
             wrapper.innerHTML = source;
-            dom = cloneChildNodes(wrapper.childNodes);
-            context.store.set('dom', dom);
+            const dom = cloneChildNodes(wrapper.childNodes);
+            store.set('source', source);
+            store.set('dom', dom);
             return dom;
         } as FunctionComponent, null);
     }
-    return innerHtml(string, ...values);
+    return innerHtml(string, useVirtualDom, ...values);
 }
 
 export { html };
