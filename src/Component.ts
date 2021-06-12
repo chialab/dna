@@ -1,6 +1,6 @@
 import type { Constructor, ClassDescriptor } from './types';
-import type { DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-import { addObserver, PropertyConfig, PropertyObserver, removeObserver } from './property';
+import type { DelegatedEventCallback, ListenerConfig } from './events';
+import { addObserver, getProperty, PropertyConfig, PropertyObserver, removeObserver } from './property';
 import type { Template } from './render';
 import { createSymbolKey, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
@@ -101,13 +101,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * Define component properties.
          */
-        static readonly properties?: { [key: string]: PropertyConfig };
+        static readonly properties?: {
+            [key: string]: PropertyConfig;
+        };
 
         /**
          * Define component listeners.
          */
         static readonly listeners?: {
-            [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+            [key: string]: ListenerConfig;
         };
 
         /**
@@ -257,8 +259,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             }
 
             // update the Component Property value
-            if (property.fromAttribute) {
-                this[property.name] = property.fromAttribute.call(this, newValue);
+            const { name, attribute, fromAttribute } = property;
+            if (attribute && fromAttribute) {
+                this[name] = fromAttribute.call(this, newValue);
             }
         }
 
@@ -279,8 +282,22 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) { }
+        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+            const property = getProperty(this, propertyName);
+            if (!property) {
+                return;
+            }
+
+            const { attribute, toAttribute } = property;
+            if (attribute && toAttribute) {
+                const value = toAttribute.call(this, newValue);
+                if (value === null) {
+                    this.removeAttribute(attribute);
+                } else if (value !== undefined && value !== this.getAttribute(attribute)) {
+                    this.setAttribute(attribute, value as string);
+                }
+            }
+        }
 
         /**
          * Observe a Component Property.

@@ -1,6 +1,6 @@
 import type { ClassElement, Constructor, MethodsOf, Replace } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import { createSymbolKey, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty } from './helpers';
+import { createSymbolKey, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';
 
 /**
@@ -44,7 +44,7 @@ export type WithObservers<T extends ComponentInstance<HTMLElement>> = T & {
 };
 
 /**
- * The observer signature for propertys.
+ * The observer signature for properties.
  *
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
@@ -127,7 +127,7 @@ export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = C
 };
 
 /**
- * Property confgiration in properties accessor.
+ * Property configuration for properties accessor.
  */
 export type PropertyConfig<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>> = PropertyDeclaration<TypeConstructorHint> | TypeConstructorHint | TypeConstructorHint[];
 
@@ -272,28 +272,17 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
     const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
+    const attribute = hasAttribute ?
+        (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
+        undefined;
+    console.log('>>>', attribute);
+    const event = declaration.event ?
+        (declaration.event === true ? `${propertyKey}change` : declaration.event) :
+        undefined;
+    const state = !!declaration.state;
+    const type = extractTypes(declaration);
     const property = declarations[propertyKey] = {
-        ...declaration,
-        name: propertyKey,
-        symbol,
-        state: !!declaration.state,
-        type: extractTypes(declaration),
-        observers: extractObservers(declaration),
-        attribute: hasAttribute ?
-            (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
-            undefined,
-        event: declaration.event ?
-            (declaration.event === true ? `${propertyKey}change` : declaration.event) :
-            undefined,
-    } as Property<T, P>;
-
-    type E = T & {
-        [symbol]: E[P];
-    };
-    const { attribute, type, getter, setter } = property;
-
-    if (attribute) {
-        property.fromAttribute = declaration.fromAttribute || ((newValue) => {
+        fromAttribute(newValue) {
             if (type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1 && (!newValue || newValue === attribute)) {
                 if (newValue === '' || newValue === attribute) {
                     // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
@@ -314,8 +303,8 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
                 }
             }
             return newValue;
-        });
-        property.toAttribute = (declaration.toAttribute || ((newValue: unknown) => {
+        },
+        toAttribute(newValue: unknown) {
             if (newValue == null || newValue === false) {
                 // a falsy value should remove the attribute
                 return null;
@@ -330,8 +319,22 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
             }
             // otherwise just set the value
             return `${newValue}`;
-        })) as typeof property.toAttribute;
-    }
+        },
+        ...declaration,
+        name: propertyKey,
+        symbol,
+        state,
+        type,
+        observers: extractObservers(declaration),
+        attribute,
+        event,
+    } as Property<T, P>;
+
+    const { getter, setter } = property;
+
+    type E = T & {
+        [symbol]: E[P];
+    };
 
     const validate = typeof property.validate === 'function' && property.validate;
     const finalDescriptor: PropertyDescriptor = {
@@ -371,39 +374,29 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
                     valid = validate.call(this, newValue);
                 }
                 if (!valid) {
-                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(property.name)}\` property`);
+                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(propertyKey)}\` property`);
                 }
             }
 
             this[symbol] = newValue;
 
-            const observers = getPropertyObservers(this, property.name);
+            const observers = getPropertyObservers(this, propertyKey);
             for (let i = 0, len = observers.length; i < len; i++) {
                 observers[i].call(this, oldValue, newValue);
             }
 
-            const attrName = property.attribute;
-            if (attrName && property.toAttribute) {
-                const value = property.toAttribute.call(this, newValue);
-                if (value === null) {
-                    this.removeAttribute(attrName);
-                } else if (value !== undefined && value !== this.getAttribute(attrName)) {
-                    this.setAttribute(attrName, value as string);
-                }
-            }
-
-            if (property.event) {
-                this.dispatchEvent(property.event, {
+            if (event) {
+                this.dispatchEvent(event, {
                     newValue,
                     oldValue,
                 });
             }
 
             // trigger Property changes
-            if (property.state) {
-                this.stateChangedCallback(property.name, oldValue, newValue);
+            if (state) {
+                this.stateChangedCallback(propertyKey, oldValue, newValue);
             } else {
-                this.propertyChangedCallback(property.name, oldValue, newValue);
+                this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
             if (this.isConnected) {
@@ -444,7 +437,7 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
             }
         }
 
-        ctr = Object.getPrototypeOf(ctr);
+        ctr = getPrototypeOf(ctr);
     }
 };
 

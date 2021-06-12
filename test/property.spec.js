@@ -149,6 +149,7 @@ describe('property', function() {
 
             __decorate([
                 DNA.property({
+                    attribute: false,
                     setter(value) {
                         return value / 2;
                     },
@@ -336,6 +337,7 @@ describe('property', function() {
                 static get properties() {
                     return {
                         testProp: {
+                            attribute: false,
                             defaultValue: 42,
                             setter(value) {
                                 return value / 2;

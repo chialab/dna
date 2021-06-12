@@ -1,6 +1,6 @@
 import type { Constructor, ClassElement, MethodsOf } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import { createSymbolKey, HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor } from './helpers';
+import { createSymbolKey, HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -29,6 +29,11 @@ export type DelegatedEventDescriptor = AddEventListenerOptions & {
     target?: EventTarget;
     callback: DelegatedEventCallback;
 };
+
+/**
+ * Property configuration for properties accessor.
+ */
+export type ListenerConfig = DelegatedEventCallback | DelegatedEventDescriptor;
 
 /**
  * A collector for event delegations.
@@ -404,7 +409,7 @@ export function defineListener(
 export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
     const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
     let ctr = constructor;
-    while (ctr && ctr !== HTMLElement) {
+    while (ctr && ctr.prototype && ctr !== HTMLElement) {
         if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
             break;
         }
@@ -412,7 +417,7 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
         const listenersGetter = listenersDescriptor && listenersDescriptor.get;
         if (listenersGetter) {
             const listenerDescriptors = (listenersGetter.call(constructor) || {}) as {
-                [key: string]: DelegatedEventCallback | DelegatedEventDescriptor;
+                [key: string]: ListenerConfig;
             };
             // register listeners
             for (const eventPath in listenerDescriptors) {
@@ -424,7 +429,7 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
                 defineListener(prototype, eventName, target, selector, callback, options);
             }
         }
-        ctr = Object.getPrototypeOf(ctr);
+        ctr = getPrototypeOf(ctr);
     }
 };
 
