@@ -494,6 +494,26 @@ export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>
 };
 
 /**
+ * Reflect property values to attributes.
+ *
+ * @param element The node to update.
+ * @param propertyName The name of the changed property.
+ * @param newValue The new value for the property (undefined if removed).
+ */
+export const reflectPropertyToAttribute = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(element: T, propertyName: P, newValue: T[P]) => {
+    const property = getProperty(element, propertyName, true);
+    const { attribute, toAttribute } = property;
+    if (attribute && toAttribute) {
+        const value = toAttribute.call(element, newValue);
+        if (value === null) {
+            element.removeAttribute(attribute);
+        } else if (value !== undefined && value !== element.getAttribute(attribute)) {
+            element.setAttribute(attribute, value as string);
+        }
+    }
+};
+
+/**
  * Populate property declaration using its field descriptor.
  * @param declaration The declaration to update.
  * @param descriptor The field descriptor.

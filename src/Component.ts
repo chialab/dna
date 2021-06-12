@@ -1,6 +1,6 @@
 import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
-import { addObserver, getProperty, PropertyConfig, PropertyObserver, removeObserver } from './property';
+import { addObserver, getProperty, PropertyConfig, PropertyObserver, reflectPropertyToAttribute, removeObserver } from './property';
 import type { Template } from './render';
 import { createSymbol, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
@@ -270,8 +270,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {}
+        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+            reflectPropertyToAttribute(this, propertyName, newValue);
+        }
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -281,16 +282,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param newValue The new value for the property (undefined if removed).
          */
         propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
-            const property = getProperty(this, propertyName, true);
-            const { attribute, toAttribute } = property;
-            if (attribute && toAttribute) {
-                const value = toAttribute.call(this, newValue);
-                if (value === null) {
-                    this.removeAttribute(attribute);
-                } else if (value !== undefined && value !== this.getAttribute(attribute)) {
-                    this.setAttribute(attribute, value as string);
-                }
-            }
+            reflectPropertyToAttribute(this, propertyName, newValue);
         }
 
         /**
