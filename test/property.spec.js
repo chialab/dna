@@ -1,4 +1,5 @@
 import { __decorate } from 'tslib';
+import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
 import { spyFunction, getComponentName } from './helpers.spec.js';
@@ -163,6 +164,33 @@ describe('property', function() {
             expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
         });
 
+        it('should define a property with decorated accessor', () => {
+            let MyElement = class MyElement extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.testProp = 42;
+                }
+
+                get testProp() {
+                    return this.getInnerPropertyValue('testProp') * 2;
+                }
+
+                set testProp(value) {
+                    this.setInnerPropertyValue('testProp', value);
+                }
+            };
+
+            __decorate([
+                DNA.property(),
+            ], MyElement.prototype, 'testProp', undefined);
+            MyElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyElement);
+
+            expect(new MyElement()).to.have.property('testProp', 84);
+            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
+        });
+
         it('should define a property with a single observer', () => {
             const listener = spyFunction((...args) => args);
 
@@ -181,6 +209,77 @@ describe('property', function() {
             MyElement = __decorate([
                 DNA.customElement(getComponentName()),
             ], MyElement);
+
+            expect(new MyElement()).to.have.property('testProp', 42);
+            expect(listener.invoked).to.be.false;
+            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.deep.equal([42, 84]);
+        });
+
+        it('should define a property with observe decorator', () => {
+            const listener = spyFunction((...args) => args);
+
+            let MyElement = class MyElement extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.testProp = 42;
+                }
+
+                listener(...args) {
+                    listener(...args);
+                }
+            };
+
+            __decorate([
+                DNA.property(),
+            ], MyElement.prototype, 'testProp', undefined);
+            __decorate([
+                DNA.observe('testProp'),
+            ], MyElement.prototype, 'listener', undefined);
+            MyElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyElement);
+
+            expect(new MyElement()).to.have.property('testProp', 42);
+            expect(listener.invoked).to.be.false;
+            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            expect(listener.invoked).to.be.true;
+            expect(listener.response).to.be.deep.equal([42, 84]);
+        });
+
+        it('should define a property with observe decorator (babel)', () => {
+            const listener = spyFunction((...args) => args);
+
+            const MyElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
+                class MyElement extends _DNA$Component {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: MyElement,
+                    d: [{
+                        kind: 'field',
+                        decorators: [DNA.property()],
+                        key: 'testProp',
+
+                        value() {
+                            return 42;
+                        },
+
+                    }, {
+                        kind: 'method',
+                        decorators: [DNA.observe('testProp')],
+                        key: 'listener',
+                        value: listener,
+                    }],
+                };
+            }, DNA.Component);
 
             expect(new MyElement()).to.have.property('testProp', 42);
             expect(listener.invoked).to.be.false;

@@ -711,7 +711,7 @@ describe('Component', function() {
         });
     });
 
-    describe('#propertyChangedCallback', () => {
+    describe('#propertyChangedCallback/stateChangedCallback', () => {
         it('should handle property changes on assignment', () => {
             const propertyChangedCallback = spyFunction((name, old, value) => [name, old, value]);
 
@@ -753,6 +753,50 @@ describe('Component', function() {
             expect(propertyChangedCallback.response).to.be.deep.equal(['age', undefined, 42]);
             element.setAttribute('title', 'test');
             expect(propertyChangedCallback.count).to.be.equal(3);
+        });
+
+        it('should handle stateful property changes on assignment', () => {
+            const stateChangedCallback = spyFunction((name, old, value) => [name, old, value]);
+
+            let TestElement = class TestElement extends DNA.Component {
+                static get properties() {
+                    return {
+                        age: {
+                            type: [Number],
+                            state: true,
+                        },
+                    };
+                }
+
+                constructor(...args) {
+                    super(...args);
+                    this.title = '';
+                }
+
+                stateChangedCallback(...args) {
+                    super.stateChangedCallback(...args);
+                    stateChangedCallback(...args);
+                }
+            };
+
+            __decorate([
+                DNA.state({ type: [String] }),
+            ], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], TestElement);
+
+            const element = new TestElement();
+            expect(stateChangedCallback.invoked).to.be.false;
+            element.title = 'test';
+            expect(stateChangedCallback.invoked).to.be.true;
+            expect(stateChangedCallback.response).to.be.deep.equal(['title', '', 'test']);
+            element.title = 'test2';
+            expect(stateChangedCallback.response).to.be.deep.equal(['title', 'test', 'test2']);
+            element.age = 42;
+            expect(stateChangedCallback.response).to.be.deep.equal(['age', undefined, 42]);
+            element.setAttribute('title', 'test');
+            expect(stateChangedCallback.count).to.be.equal(3);
         });
 
         it('should not loop on connection assignement', async () => {
@@ -1315,6 +1359,90 @@ describe('Component', function() {
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+        });
+    });
+
+    describe('#insertAdjacentElement', () => {
+        it('should insert and connect a child at first position', () => {
+            const connectedCallback = spyFunction();
+            class TestElement extends DNA.Component {}
+            class TestChild extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+            }
+
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
+
+            const element = new TestElement();
+            const child1 = new TestChild();
+            const child2 = new TestChild();
+
+            expect(connectedCallback.invoked).to.be.false;
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendChild(child1);
+            element.insertAdjacentElement('afterbegin', child2);
+            expect(connectedCallback.invoked).to.be.true;
+            expect(connectedCallback.count).to.be.equal(2);
+            element.insertBefore(child2, child1);
+            expect(element.slotChildNodes.length).to.be.equal(2);
+        });
+
+        it('should insert and connect a child (and remove it from the previous parent) at last position', () => {
+            const connectedCallback = spyFunction();
+            const disconnectedCallback = spyFunction();
+            class TestElement extends DNA.Component {}
+            class TestChild extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    connectedCallback();
+                }
+                disconnectedCallback() {
+                    super.disconnectedCallback();
+                    disconnectedCallback();
+                }
+            }
+
+            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.customElements.define(getComponentName(), TestChild);
+
+            const element = new TestElement();
+            const child1 = new TestChild();
+            const child2 = new TestChild();
+
+            expect(connectedCallback.invoked).to.be.false;
+            expect(disconnectedCallback.invoked).to.be.false;
+            DNA.DOM.appendChild(wrapper, element);
+            DNA.DOM.appendChild(wrapper, child2);
+            element.appendChild(child1);
+            element.insertAdjacentElement('beforeend', child2);
+            expect(connectedCallback.invoked).to.be.true;
+            expect(connectedCallback.count).to.be.equal(3);
+            expect(disconnectedCallback.count).to.be.equal(1);
+        });
+
+        it('should insert slot item', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot />
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            const span = DNA.DOM.createElement('span');
+            const input = DNA.DOM.createElement('input');
+            DNA.DOM.appendChild(wrapper, element);
+            element.appendChild(span);
+            element.insertAdjacentElement('afterbegin', input);
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('SPAN');
         });
     });
 

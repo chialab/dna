@@ -1,4 +1,6 @@
 import { spyFunction, getComponentName } from './helpers.spec.js';
+import { __decorate } from 'tslib';
+import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
 
@@ -117,7 +119,7 @@ describe('events', function() {
     });
 
     describe('delegateEventListener', () => {
-        it('should add delegate a listener', () => {
+        it('should delegate a listener', () => {
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
             const listener = spyFunction();
@@ -267,11 +269,7 @@ describe('events', function() {
             const element = new TestElement();
             DNA.DOM.appendChild(wrapper, element);
             expect(callback.invoked).to.be.false;
-            element.dispatchEvent(DNA.DOM.createEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element.click();
             expect(callback.invoked).to.be.true;
             expect(callback.response).to.be.deep.equal(['click', is.toUpperCase()]);
             element.dispatchEvent(DNA.DOM.createEvent('change', {
@@ -379,6 +377,328 @@ describe('events', function() {
         });
     });
 
+    describe('listener decorator', () => {
+        it('should add a listener', () => {
+            const is = getComponentName();
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            let TestElement = class TestElement extends DNA.Component {
+                method(event, target) {
+                    callback(event, target);
+                }
+            };
+
+            __decorate([
+                DNA.listen('click'),
+            ], TestElement.prototype, 'method', undefined);
+            TestElement = __decorate([
+                DNA.customElement(is),
+            ], TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.click();
+            expect(callback.invoked).to.be.true;
+            expect(callback.response).to.be.deep.equal(['click', is.toUpperCase()]);
+        });
+
+        it('should add a delegated listener', () => {
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            let TestElement = class TestElement extends DNA.Component {
+                method(event, target) {
+                    callback(event, target);
+                }
+
+                render() {
+                    return DNA.html('<button></button>');
+                }
+            };
+
+            __decorate([
+                DNA.listen('click', 'button'),
+            ], TestElement.prototype, 'method', undefined);
+            TestElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.querySelector('button').click();
+            expect(callback.response).to.be.deep.equal(['click', 'BUTTON']);
+            expect(callback.invoked).to.be.true;
+        });
+
+        it('should inherit listeners', () => {
+            const callback1 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback2 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback3 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback4 = spyFunction((event, target) => [event.type, target.tagName]);
+
+            let BaseElement = class BaseElement extends DNA.Component {
+                callback1(event, target) {
+                    callback1(event, target);
+                }
+
+                callback2(event, target) {
+                    callback2(event, target);
+                }
+
+                render() {
+                    return DNA.html('<button></button>');
+                }
+            };
+
+            let TestElement1 = class TestElement1 extends BaseElement {
+                callback3(event, target) {
+                    callback3(event, target);
+                }
+
+                callback4(event, target) {
+                    callback4(event, target);
+                }
+            };
+
+            let TestElement2 = class TestElement2 extends BaseElement { };
+
+            __decorate([
+                DNA.listen('click', 'button'),
+            ], BaseElement.prototype, 'callback1', undefined);
+            __decorate([
+                DNA.listen('change'),
+            ], BaseElement.prototype, 'callback2', undefined);
+            BaseElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], BaseElement);
+
+            __decorate([
+                DNA.listen('click', 'button'),
+            ], TestElement1.prototype, 'callback3', undefined);
+            __decorate([
+                DNA.listen('drop'),
+            ], TestElement1.prototype, 'callback4', undefined);
+            TestElement1 = __decorate([
+                DNA.customElement(getComponentName()),
+            ], TestElement1);
+
+            TestElement2 = __decorate([
+                DNA.customElement(getComponentName()),
+            ], TestElement2);
+
+            const element1 = new TestElement1();
+            DNA.DOM.appendChild(wrapper, element1);
+            expect(callback1.invoked).to.be.false;
+            expect(callback2.invoked).to.be.false;
+            expect(callback3.invoked).to.be.false;
+            element1.querySelector('button').click();
+            element1.dispatchEvent(DNA.DOM.createEvent('change', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.invoked).to.be.true;
+            expect(callback2.invoked).to.be.true;
+            expect(callback3.invoked).to.be.true;
+
+            const element2 = new TestElement2();
+            DNA.DOM.appendChild(wrapper, element2);
+            element2.querySelector('button').click();
+            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.count).to.be.equal(2);
+            expect(callback2.count).to.be.equal(1);
+            expect(callback3.count).to.be.equal(1);
+            expect(callback4.invoked).to.be.false;
+        });
+    });
+
+    describe('listener decorator (babel)', () => {
+        it('should add a listener', () => {
+            const is = getComponentName();
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            const TestElement = _decorate([DNA.customElement(is)], (_initialize, _DNA$Component) => {
+                class TestElement extends _DNA$Component {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: TestElement,
+                    d: [{
+                        kind: 'method',
+                        decorators: [DNA.listen('click')],
+                        key: 'method',
+                        value: function method(event, target) {
+                            callback(event, target);
+                        },
+                    }],
+                };
+            }, DNA.Component);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.click();
+            expect(callback.invoked).to.be.true;
+            expect(callback.response).to.be.deep.equal(['click', is.toUpperCase()]);
+        });
+
+        it('should add a delegated listener', () => {
+            const callback = spyFunction((event, target) => [event.type, target.tagName]);
+            const TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
+                class TestElement extends _DNA$Component {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: TestElement,
+                    d: [{
+                        kind: 'method',
+                        decorators: [DNA.listen('click', 'button')],
+                        key: 'method',
+                        value: function method(event, target) {
+                            callback(event, target);
+                        },
+                    }, {
+                        kind: 'method',
+                        key: 'render',
+                        value: function render() {
+                            return DNA.html('<button></button>');
+                        },
+                    }],
+                };
+            }, DNA.Component);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            element.querySelector('button').click();
+            expect(callback.response).to.be.deep.equal(['click', 'BUTTON']);
+            expect(callback.invoked).to.be.true;
+        });
+
+        it('should inherit listeners', () => {
+            const callback1 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback2 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback3 = spyFunction((event, target) => [event.type, target.tagName]);
+            const callback4 = spyFunction((event, target) => [event.type, target.tagName]);
+
+            const BaseElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
+                class BaseElement extends _DNA$Component {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: BaseElement,
+                    d: [{
+                        kind: 'method',
+                        decorators: [DNA.listen('click', 'button')],
+                        key: 'callback1',
+                        value: callback1,
+                    }, {
+                        kind: 'method',
+                        decorators: [DNA.listen('change')],
+                        key: 'callback2',
+                        value: callback2,
+                    }, {
+                        kind: 'method',
+                        key: 'render',
+                        value: function render() {
+                            return DNA.html('<button></button>');
+                        },
+                    }],
+                };
+            }, DNA.Component);
+
+            const TestElement1 = _decorate([DNA.customElement(getComponentName())], (_initialize, _BaseElement) => {
+                class TestElement1 extends _BaseElement {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: TestElement1,
+                    d: [{
+                        kind: 'method',
+                        decorators: [DNA.listen('click', 'button')],
+                        key: 'callback3',
+                        value: callback3,
+                    }, {
+                        kind: 'method',
+                        decorators: [DNA.listen('drop')],
+                        key: 'callback4',
+                        value: callback4,
+                    }],
+                };
+            }, BaseElement);
+
+            const TestElement2 = _decorate([DNA.customElement(getComponentName())], (_initialize, _BaseElement) => {
+                class TestElement2 extends _BaseElement {
+                    constructor(...args) {
+                        super(...args);
+
+                        _initialize(this);
+                    }
+
+                }
+
+                return {
+                    F: TestElement2,
+                    d: [],
+                };
+            }, BaseElement);
+
+            const element1 = new TestElement1();
+            DNA.DOM.appendChild(wrapper, element1);
+            expect(callback1.invoked).to.be.false;
+            expect(callback2.invoked).to.be.false;
+            expect(callback3.invoked).to.be.false;
+            element1.querySelector('button').click();
+            element1.dispatchEvent(DNA.DOM.createEvent('change', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.invoked).to.be.true;
+            expect(callback2.invoked).to.be.true;
+            expect(callback3.invoked).to.be.true;
+
+            const element2 = new TestElement2();
+            DNA.DOM.appendChild(wrapper, element2);
+            element2.querySelector('button').click();
+            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            }));
+            expect(callback1.count).to.be.equal(2);
+            expect(callback2.count).to.be.equal(1);
+            expect(callback3.count).to.be.equal(1);
+            expect(callback4.invoked).to.be.false;
+        });
+    });
+
     describe('#dispatchEvent', () => {
         it('should dispatch an event', () => {
             const callback = spyFunction();
@@ -390,11 +710,7 @@ describe('events', function() {
             DNA.DOM.appendChild(wrapper, element);
             wrapper.addEventListener('click', callback);
             expect(callback.invoked).to.be.false;
-            element.dispatchEvent(DNA.DOM.createEvent('click', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element.click();
             expect(callback.invoked).to.be.true;
             wrapper.removeEventListener('click', callback);
         });
@@ -478,6 +794,34 @@ describe('events', function() {
             expect(callback.invoked).to.be.true;
             element.undelegateEventListener('click', 'button', callback);
             element.querySelector('button').click();
+            expect(callback.count).to.be.equal(1);
+        });
+    });
+
+    describe('listener target', () => {
+        it('should delegate an event to document', () => {
+            const target = DNA.window.document.body;
+            const callback = spyFunction();
+            class TestElement extends DNA.Component {
+                static get listeners() {
+                    return {
+                        click: {
+                            callback,
+                            target,
+                        },
+                    };
+                }
+            }
+
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            DNA.DOM.appendChild(wrapper, element);
+            expect(callback.invoked).to.be.false;
+            target.click();
+            expect(callback.invoked).to.be.true;
+            DNA.DOM.removeChild(wrapper, element);
+            target.click();
             expect(callback.count).to.be.equal(1);
         });
     });

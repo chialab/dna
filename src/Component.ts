@@ -178,8 +178,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 const property = properties[propertyKey];
                 if (typeof property.initializer === 'function') {
                     element[propertyKey] = property.initializer.call(element);
-                } else if ('value' in property) {
-                    element[propertyKey] = property.value;
                 } else if (typeof property.defaultValue !== 'undefined') {
                     element[propertyKey] = property.defaultValue;
                 }

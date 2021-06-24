@@ -422,7 +422,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
                 });
             }
 
-            // trigger Property changes
+            // trigger changes
             if (state) {
                 this.stateChangedCallback(propertyKey, oldValue, newValue);
             } else {
@@ -538,6 +538,7 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string) as any;
     if (propertyKey !== undefined) {
+        descriptor = descriptor || getOwnPropertyDescriptor(targetOrClassElement, propertyKey);
         if (descriptor) {
             assignFromDescriptor(declaration, descriptor);
         }
@@ -588,8 +589,8 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createObserver = <T extends ComponentInstance<HTMLElement>, P extends keyof T, M extends keyof T>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
-    const property = getProperty(targetOrClassElement, propertyKey, true);
     if (methodKey !== undefined) {
+        const property = getProperty(targetOrClassElement, propertyKey, true);
         property.observers.push(targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
         return;
     }
@@ -598,7 +599,11 @@ export const createObserver = <T extends ComponentInstance<HTMLElement>, P exten
     if (!element.descriptor) {
         return element;
     }
-    property.observers.push(element.descriptor.value as PropertyObserver<T[P]>);
+    const observer = element.descriptor.value as PropertyObserver<T[P]>;
+    element.finisher = (constructor) => {
+        const property = getProperty(constructor.prototype, propertyKey, true);
+        property.observers.push(observer);
+    };
     return element;
 };
 

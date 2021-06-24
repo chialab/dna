@@ -163,6 +163,30 @@ describe('DOM', function() {
         });
     });
 
+    describe('#insertAdjacentElement', () => {
+        it('should insert a child at first position', () => {
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(wrapper, child1);
+            DNA.DOM.insertAdjacentElement(wrapper, 'afterbegin', child2);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes[0]).to.be.equal(child2);
+            expect(wrapper.childNodes[1]).to.be.equal(child1);
+        });
+
+        it('should insert a child at last position', () => {
+            const child1 = DNA.DOM.createElement('div');
+            const child2 = DNA.DOM.createElement('div');
+            DNA.DOM.appendChild(wrapper, child1);
+            DNA.DOM.insertAdjacentElement(wrapper, 'beforeend', child2);
+            expect(child1.parentNode).to.be.equal(wrapper);
+            expect(child2.parentNode).to.be.equal(wrapper);
+            expect(wrapper.childNodes[0]).to.be.equal(child1);
+            expect(wrapper.childNodes[1]).to.be.equal(child2);
+        });
+    });
+
     describe('#getAttribute', () => {
         it('should get an empty node attribute', () => {
             const element = DNA.DOM.createElement('button');

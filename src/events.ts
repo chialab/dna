@@ -392,11 +392,7 @@ export function defineListener(
         selector,
         callback,
         target,
-        options: {
-            capture: options.capture,
-            once: options.once,
-            passive: options.passive,
-        },
+        options,
     });
 }
 
