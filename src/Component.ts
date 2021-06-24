@@ -439,6 +439,17 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
+         * Insert a child at the given position.
+         *
+         * @param postion The position of the insertion.
+         * @param insertedElement The child to insert.
+         * @param slot Should insert a slot node.
+         */
+        insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element | null {
+            return DOM.insertAdjacentElement(this, position, insertedElement);
+        }
+
+        /**
          * Set a Component attribute.
          *
          * @param ualifiedName The attribute name.

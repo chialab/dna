@@ -83,6 +83,11 @@ export const insertBeforeImpl = Node.prototype.insertBefore;
 export const replaceChildImpl = Node.prototype.replaceChild;
 
 /**
+ * Alias to HTMLElement.prototype.insertAdjacentElement.
+ */
+export const insertAdjacentElementImpl = HTMLElement.prototype.insertAdjacentElement;
+
+/**
  * Alias to Node.prototype.isConnected.
  */
 export const isConnectedImpl = getOwnPropertyDescriptor(Node.prototype, 'isConnected');

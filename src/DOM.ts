@@ -1,5 +1,5 @@
 import type { ComponentConstructor, ComponentInstance } from './Component';
-import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
+import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, insertAdjacentElementImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
 
@@ -201,6 +201,26 @@ export const DOM = {
             connect(newChild);
         }
         return oldChild;
+    },
+
+    /**
+     * Insert a child at the given position.
+     *
+     * @param parent The parent element.
+     * @param postion The position of the insertion.
+     * @param insertedElement The child to insert.
+     * @param slot Should insert a slot node.
+     */
+    insertAdjacentElement(parent: Element, position: InsertPosition, insertedElement: Element, slot = true): Element | null {
+        if (position === 'afterbegin') {
+            const refChild = isComponent(parent) && parent.slotChildNodes ? parent.slotChildNodes[0] : parent.firstChild;
+            return DOM.insertBefore(parent, insertedElement, refChild, slot);
+        }
+        if (position === 'beforeend') {
+            return DOM.insertBefore(parent, insertedElement, null, slot);
+        }
+
+        return insertAdjacentElementImpl.call(parent, position, insertedElement);
     },
 
     /**
