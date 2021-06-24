@@ -1,6 +1,6 @@
 # Use in Node.js
 
-DNA is a component library based on [Document Object Model](https://developer.mozilla.org/docs/Web/API/Document_Object_Model). In order to work in Node.js it uses the [`jsdom`](https://github.com/jsdom/jsdom) library to create a DOM environment.
+DNA is a component library based on the [Document Object Model](https://developer.mozilla.org/docs/Web/API/Document_Object_Model). In order to work in Node.js it uses the [`jsdom`](https://github.com/jsdom/jsdom) library to create a DOM environment.
 
 ```sh
 $ npm i @chialab/dna jsdom
@@ -8,18 +8,18 @@ $ npm i @chialab/dna jsdom
 
 **Sample:**
 
-```js
-// get the module namespace
-const { Component, customElement, DOM, html, render } = require('@chialab/dna');
+```ts
+import { Component, customElements, html, render } from '@chialab/dna';
 
-@customElement('hello-world')
 class HelloWorld extends Component {
     render() {
         return html`<h1>Hello world!</h1>`;
     }
 }
 
-const card = render(new HelloWorld());
+customElements.define('hello-world', HelloWorld);
+
+const card = render(html`<${HelloWorld} />`);
 
 console.log(card.outerHTML);
 // -> "<hello-world><h1>Hello world!</h1></hello-world>"

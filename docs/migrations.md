@@ -1,5 +1,29 @@
 ## From v3 to v4
 
+**Changes**
+
+* [⚠️ Breaking] Function Component signature has changed:
+
+```diff
+- function Card(properties, store, requestUpdate) {
++ function Card(properties, { store, requestUpdate }) {
+```
+
+* Typings improvements
+
+* The `html()` function will now generate a Function Component that renders a Node instance. Previously, it used to convert the provided source to VDOM nodes. In order to preserve this behavior, you can pass `true` as second argument: 
+
+```diff
+- ${html(model.title)}
++ ${html(model.title, true)}
+```
+
+Please note that VDOM convertion does not handle HTML entities and it can lead to unexpected output, reason why the default behavior changed.
+
+**Removed**
+
+Hooks, React and compatibility modules are now out of the scope of the DNA library and have been removed.
+
 ## From v2 to v3
 
 This is a list of changes requested to completely migrate to the DNA 3.0 version.
@@ -16,42 +40,42 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 + class Card extends Component {
 ```
 
-* Convert `template` getter to `render` method ([PREFER_RENDER](./#prefer_render))
+* Convert `template` getter to `render` method.
 
-* Convert `css` getter to `<style>` elements in `render` method ([PREFER_STYLE](./#prefer_style))
+* Convert `css` getter to `<style>` elements in `render` method.
 
-* Replace the `prop` helper with a property descriptor ([PREFER_PROPERTY_DESCRIPTOR](./#prefer_property_descriptor))
+* Replace the `prop` helper with a property descriptor.
 
-* Replace `events` getters with the new `listeners` getter ([PREFER_LISTENERS](./#prefer_listeners))
+* Replace `events` getters with the new `listeners` getter.
 
-* Replace stringed prototype references with real references in event listeners ([LISTENER_STRING_REFERENCE](./#listener_string_reference))
+* Replace stringed prototype references with real references in event listeners.
 
-* Replace `trigger` references with `dispatchEvents` ([PREFER_DISPATCH_EVENT](./#prefer_dispatch_event))
+* Replace `trigger` references with `dispatchEvent`.
 
-* Replace `delegate` calls with `delegateEventListener` ([PREFER_DELEGATE_EVENT_LISTENER](./#prefer_delegate_event_listener))
+* Replace `delegate` calls with `delegateEventListener`.
 
-* Replace `undelegate` calls with `undelegateEventListener` ([PREFER_UNDELEGATE_EVENT_LISTENER](./#prefer_undelegate_event_listener))
+* Replace `undelegate` calls with `undelegateEventListener`.
 
-* Replace `observeProperty` calls with `observe` ([PREFER_OBSERVE](./#prefer_observe))
+* Replace `observeProperty` calls with `observe`.
 
-* Replace `unobserveProperty` calls with `unobserve` ([PREFER_UNOBSERVE](./#prefer_unobserve))
+* Replace `unobserveProperty` calls with `unobserve`.
 
-* Update `render` invokations ([RENDER_HELPER](./#render_helper))
+* Update `render` invokations.
 
-* Remove template functions ([TEMPLATE_FUNCTIONS](./#template_functions))
+* Remove template functions.
 
-* Check that your templates does not rely on the falsity of zero and empty string values ([TEMPLATE_EMPTY_VALUES](./#template_empty_values))
+* Check that your templates does not rely on the falsity of zero and empty string values.
 
-* Replace all core mixins with the `Component` class ([AVOID_MIXINS](./#avoid_mixins))
+* Replace all core mixins with the `Component` class.
 
-* Remove all `proxy` occurrences ([PROXY_HELPER](./#proxy_helper))
+* Remove all `proxy` occurrences.
 
-* Replace `trust` occurrences with `html` ([TRUST_HELPER](./#trust_helper))
+* Replace `trust` occurrences with `html`.
 
-* Import the `mix` helper from `@chialab/proteins` ([MIX_HELPER](./#mix_helper))
+* Import the `mix` helper from `@chialab/proteins`.
 
-* Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references ([PREFER_INSTANCE](./#prefer_instance))
+* Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references.
 
-* Correctly extend builtin elements using the `extend` helper ([EXTEND_BUILTIN](./#extend_builtin))
+* Correctly extend builtin elements using the `extend` helper.
 
-* Replace `define` invokations with `customElements.define` ([USE_REGISTRY](./#use_registry))
+* Replace `define` invokations with `customElements.define`.

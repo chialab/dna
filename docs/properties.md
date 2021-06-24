@@ -88,7 +88,7 @@ age = null;
 
 ### defaultValue
 
-The initial value of the property. This will not trigger a `propertyChangedCallback` but it will update the bound attribute.
+The initial value of the property.
 
 <aside class="note">
 
