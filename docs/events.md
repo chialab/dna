@@ -1,18 +1,19 @@
 # Events
 
-Since Web Components extend the native `HTMLElement`, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback. DNA add some extra features like declarative event listeners and delegations.
+Since Web Components extend the native `HTMLElement`, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback.  
+DNA add some extra features like declarative event listeners and delegations.
 
 ## Declarative event listeners
 
-You can declare event listeners on a component using the `listen` decorator or the `listeners` static accessor:
+You can declare event listeners on a component using the `listen` decorator:
 
 ```ts
-import { Component, customElement, listen } from '@chialab/dna';
+import { window, extend, customElement, listen } from '@chialab/dna';
 
-@customElement('x-button, {
+@customElement('x-button', {
     extends: 'button',
 })
-class Button extends Component {
+class Button extends extend(window.HTMLButtonElement) {
     @listen('click')
     onClick(event) {
         event.preventDefault();
@@ -25,28 +26,68 @@ class Button extends Component {
 }
 ```
 
-Event declaration accepts a function (in the example above, a prototype method has been referenced) or an object for listener configuration:
+Or the `listeners` static accessor:
+
+```ts
+import { window, extend, customElements } from '@chialab/dna';
+
+class Button extends extend(window.HTMLButtonElement) {
+    static get listeners() {
+        return {
+            'click': function(event) {
+                event.preventDefault();
+            },
+            'input [name="age"]': function(event, target) {
+                console.log(target.value);
+            },
+        };
+    }
+}
+
+customElements.define('x-button', Button, {
+    extends: 'button',
+});
+```
+
+Declarations can be configured with event listener options:
 
 ```ts
 import { Component, customElement, listen } from '@chialab/dna';
 
-@customElement('x-tracker)
+@customElement('x-tracker')
 class Tracker extends Component {
-    static get listeners(){
-        return {
-            touchmove: {
-                callback: function(event) {}
-                passive: true,
-            },
-        };
-    }
-
     @listen('touchmove', { passive: true })
     onTouchMove() {
         // ...
     }
 }
 ```
+
+<details>
+<summary>JavaScript</summary>
+<div>
+
+```ts
+import { Component, customElements } from '@chialab/dna';
+
+class Tracker extends Component {
+    static get listeners(){
+        return {
+            touchmove: {
+                callback(event) {
+                    // ...
+                },
+                passive: true,
+            },
+        };
+    }
+}
+
+customElements.define('x-tracker', Tracker);
+```
+
+</div>
+</details>
 
 <aside class="note">
 
@@ -89,26 +130,46 @@ Do not confuse the `event.target` property with the second argument of the liste
 Using the `listen` decorator or the `listeners` static getter, you can specify the delegated child selector after the event name in the declaration key:
 
 ```ts
-import { Component, customElement, listen } from '@chialab/dna';
+import { window, extend, customElement, listen } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
-class Dialog extends Component {
+class Dialog extends extend(window.HTMLDialogElement) {
+    @listen('click', 'nav button', { passive: false })
+    onClick() {
+        // ...
+    }
+}
+```
+
+<details>
+<summary>JavaScript</summary>
+<div>
+
+```ts
+import { window, extend, customElements } from '@chialab/dna';
+
+class Dialog extends extend(window.HTMLDialogElement) {
     static get listeners() {
         return {
-            // event name + selector
             'click nav button': {
-                callback(event, target) {},
+                callback(event, target) {
+                    // ...
+                },
                 passive: false,
             },
         };
     };
-
-    @listen('click', 'nav button', { passive: false })
-    onClick() {}
 }
+
+customElements.define('x-dialog', Dialog, {
+    extends: 'dialog',
+})
 ```
+
+</div>
+</details>
 
 Otherwise, you can use `addEventListener`, `removeEventListener`, `delegateEventListener` and `undelegateEventListener` methods:
 

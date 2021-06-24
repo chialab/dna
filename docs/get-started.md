@@ -37,12 +37,24 @@ The DNA environment is pretty common (if you are familiar with other libraries l
 
         If you want to use React JSX instead of template strings, you will also need to install the [`@babel/plugin-transform-react-jsx`](https://www.npmjs.com/package/@babel/plugin-transform-react-jsx):
 
+        **Classic**
+
         ```json
         {
             "plugins": [
-                ...
                 ["@babel/plugin-transform-react-jsx", {
-                    // "pragma": "h",
+                    "pragma": "h"
+                }]
+            ]
+        }
+        ```
+
+        **Automatic**
+
+        ```json
+        {
+            "plugins": [
+                ["@babel/plugin-transform-react-jsx", {
                     "runtime": "automatic",
                     "importSource": "@chialab/dna"
                 }]
@@ -55,7 +67,6 @@ The DNA environment is pretty common (if you are familiar with other libraries l
         ```json
         {
             "plugins": [
-                ...
                 ["babel-plugin-htm", {
                     "pragma": "h",
                     "import": {

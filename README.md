@@ -25,7 +25,7 @@ DNA does not introduce any custom pattern for Component definitions, since it is
 
 In order to be fast, predictive and easier to install, DNA uses a custom template engine. Components automatically re-render when the state change and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
 
-### Interpolation and JSX
+### Tagged templates and JSX
 
 If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use template strings to avoid the build step in your workflow.
 
@@ -132,9 +132,6 @@ Then use the element in your HTML:
 
 [![Build status](https://github.com/chialab/dna/workflows/Main/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
 [![codecov](https://codecov.io/gh/chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
-
-
-### Requirements
 
 ### Build the project
 
