@@ -59,31 +59,18 @@ A map component based on mapbox-gl.
 | `zoom` | The map zoom level changed.   |
 ```
 
-
-### Storybook
-
-Storybook is a fantastic tool for components development: you can create samples for your elements, provide a documentation and an API reference, run accessibility tests and more. Since version 5.6, it also supports Web Components.
-
-A DNA preset for storybook is available with full [docs addon](https://github.com/storybookjs/storybook/tree/master/addons/docs) support and automatic Web Components Analyzer runs across your components for documentation and knobs. You can install it using the `@chialab/storybook-dna` package from NPM:
-
-```sh
-$ npm i @chialab/storybook-dna -D
-```
-
-Please follow the instructions in the preset [README](https://github.com/chialab/storybook-dna) for the full configuration.
-
-### Typescript JSX IntrinsicElements
+### Typescript, JSX, IntrinsicElements, HTMLElementTagNameMap
 
 TypeScript supports JSX syntax, and it is able to provide typechecking and hints for component properties automatically if you use class constructors as tag name:
 
-```ts
+```tsx
 import { render } from '@chialab/dna';
 import { Card } from './x-card';
 
 render(<Card firstName="Alan" age={24} />, document.body);
 ```
 
-But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` in order to bind element's tag name with its prototype:
+But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` (for JSX) and `HTMLElementTagNameMap` (for DOM methods) in order to bind element's tag name with its prototype:
 
 ```ts
 import { Component, customElement } from '@chialab/dna';
@@ -98,4 +85,11 @@ declare namespace JSX {
         'x-card': Card;
     }
 }
+
+declare global {
+    interface HTMLElementTagNameMap {
+        'x-card': Card;
+    }
+}
+
 ```

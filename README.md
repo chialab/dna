@@ -15,7 +15,7 @@
 
 ---
 
-DNA is a component library which aims to provide a temporary interface to define declarative Web Components until browsers support is complete. Instead of requiring heavy polyfills in order to work in all browsers, DNA's philosophy is to use its template engine to handle Custom Elements life cycle, resulting more efficient, reliable and light.
+DNA is a view library with first class support for reactive and functional Web Components. No polyfills are required: DNA uses its template engine to handle Custom Elements life cycle, resulting more efficient, reliable and light.
 
 ### Design Web Components
 
@@ -58,9 +58,10 @@ import { Component, customElements, html, ... } from '@chialab/dna';
 
 ## Define a Component
 
-This is an example of Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
+This is an example of a Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
 
-**Define the Component**
+**Define the component (TypeScript)**
+
 ```ts
 import { Component, customElement, html, property, listen } from '@chialab/dna';
 
@@ -84,10 +85,45 @@ class HelloWorld extends Component {
 }
 ```
 
+**Define the component (JavaScript)**
+
+```ts
+import { Component, customElement, html, property, listen } from '@chialab/dna';
+
+@customElement('hello-world')
+class HelloWorld extends Component {
+    static get properties() {
+        return {
+            // define an observed property
+            name: {
+                type: String,
+                defaultValue: '',
+            },
+        };
+    }
+
+    static get listeners() {
+        return {
+            // delegate an event
+            'change input[name="firstName"]': function(event, target) {
+                this.name = target.value;
+            }
+        };
+    }
+
+    render() {
+        return html`
+            <input name="firstName" value="${this.name}" />
+            <h1>Hello ${this.name || 'World'}!</h1>
+        `;
+    }
+}
+```
+
 Then use the element in your HTML:
 
 ```html
-<hello-world />
+<hello-world></hello-world>
 ```
 
 ---

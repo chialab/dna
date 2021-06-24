@@ -2,7 +2,7 @@
 
 DNA can render plain `<style>` tags in a template, but what about style encapsulation?
 
-Since components can be extended and stylesheets inherited, we need to be able to scope CSS rules based on the final component definition. As well as for [slotted templates](./templates#shadow-dom), DNA can replicate the ShadowDOM specifications for styles in order to encapsulate styles which affects only nodes in the local tree.
+Since components can be extended and stylesheets inherited, we need to be able to scope CSS rules based on the final component definition.
 
 <aside class="note">
 

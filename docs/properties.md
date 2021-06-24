@@ -1,56 +1,37 @@
-# Properties and attributes
+# Properties, states and attributes
 
-Component's properties are class fields that can be configured with the `property` decorator. As they represent the state of the element, every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
+Component's properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
 
 ## Declare a property
 
-The preferred way to define a property is to use the `property` decorator on a class field declaration:
+Properties can be defined using the `property` decorator on a class field declaration:
 
 ```ts
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property() age = null;
+    @property() age?: number;
 }
 ```
 
-In the example above, the `age` field of every `Card` instance is observed.
-
-Since class fields are supported by TypeScript and they are a proposal for JavaScript (Babel has a plugin for that), properties can be declared with the static `properties` getter:
+Or using the static `properties` getter:
 
 ```ts
-import { Component, customElement } from '@chialab/dna';
+import { Component, customElements } from '@chialab/dna';
 
-@customElement('x-card')
 class Card extends Component {
     static get properties() {
         return {
-            age: {},
-        };
-    }
-}
-```
-
-You can also define properties programmatically with the prototyped `defineProperty` method:
-
-```ts
-import { Component, customElement } from '@chialab/dna';
-
-@customElement('x-card')
-class Card extends Component {
-    static get properties() {
-        return {
-            age: {},
+            age: Number,
         };
     }
 }
 
-const card = new Card();
-card.defineProperty('age', {
-    type: Number,
-});
+customElements.define('x-card', Card);
 ```
+
+Once defined, the computed `observedAttributes` of the Card component will include the `age` attribute.
 
 ## Property descriptor
 
@@ -79,7 +60,7 @@ Keys of the configuration objects are all optional.
 
 ### attribute
 
-The DOM attribute bound to the property: every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. Properties are automatically added to the `observedAttributes` list if using the `@property` decorator or `state` is a falsy value.
+The name of the attribute bound with the property. Every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. If specified, it also works for `state` fields.
 
 <aside class="note">
 
@@ -138,7 +119,7 @@ class Card extends Component {
             console.log(`Happy birthday! You are now ${newValue}`);
         },
     })
-    age = null;
+    age?: number;
 }
 ```
 
@@ -153,7 +134,7 @@ You can also pass an array of property observers using the **observers** configu
         },
     ],
 })
-age = null;
+age?: number;
 ```
 
 ### event
@@ -169,7 +150,7 @@ class Card extends Component {
         type: Number,
         event: true,
     })
-    age = null;
+    age?: number;
 }
 
 const card = new Card();
@@ -178,9 +159,9 @@ card.addEventListener('agechange', (event) => {
 }):
 ```
 
-### getter
+### getter and setters
 
-Define a custom getter function for the property. It receives the actual property value as argument and it can return the same reference or any new value.
+Property's getter receives the actual property value as argument and it can return the same reference or any new value.
 
 <aside class="note">
 
@@ -188,11 +169,9 @@ The returned value of the **getter** function does not represent the actual prop
 
 </aside>
 
-### setter
+Setter is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the real property value.
 
-Define a custom setter function for the property. It is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the real property value.
-
-## Property observers
+## Observers
 
 Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
 
@@ -217,7 +196,7 @@ element.unobserve('age', logChanges);
 element.unobserve('age');
 ```
 
-## Sync with attributes
+## Attributes
 
 Attributes can be used to update the component properties and viceversa. Every time an attribute is added, removed or changed in a render cycle or using the [`DOM`](./render-a-component#manipulating-the-dom) helper.
 
@@ -234,7 +213,7 @@ If you are using the `html` helper or JSX templates, the value of an attribute w
 <x-card firstName="Alan" />
 ```
 ```js
-console.log(element.firstName); // 'Alan'
+card.firstName // "Alan"
 ```
 
 * passing a **number** value:
@@ -246,7 +225,7 @@ console.log(element.firstName); // 'Alan'
 <x-card age="24" />
 ```
 ```js
-console.log(element.age); // 24
+card.age // 24
 ```
 
 * passing a **boolean** value:
@@ -258,7 +237,7 @@ console.log(element.age); // 24
 <x-button disabled />
 ```
 ```js
-console.log(element.disabled); // true
+button.disabled // true
 ```
 
 * passing an **object** or **array** value:
@@ -270,7 +249,7 @@ console.log(element.disabled); // true
 <x-list items="['Alan','Bob','Charlie']" />
 ```
 ```js
-console.log(element.items); // ['Alan', 'Bob', 'Charlie']
+list.items // ["Alan", "Bob", "Charlie"]
 ```
 
 <aside class="note">

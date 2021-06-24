@@ -24,6 +24,7 @@ All methods inherit the prototype signature with the context node as first argum
 | `removeChild(oldChild)` | `removeChild(parent, oldChild)` |
 | `insertBefore(newChild, refChild)` | `insertBefore(parent, newChild, refChild)` |
 | `replaceChild(newChild, oldChild)` | `replaceChild(parent, newChild, oldChild)` |
+| `insertAdjacentElement(position, instertedElement)` | `insertAdjacentElement(parent, position, instertedElement)` |
 | `getAttribute(qualifiedName)` | `getAttribute(element, qualifiedName)` |
 | `hasAttribute(qualifiedName)` | `hasAttribute(element, qualifiedName)` |
 | `setAttribute(qualifiedName, value)` | `setAttribute(element, qualifiedName, value)` |

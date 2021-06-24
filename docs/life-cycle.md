@@ -5,6 +5,7 @@ DNA components follow the Custom Element life cycle specification, with the addi
 * [disconnectedCallback](#disconnectedcallback)
 * [attributeChangedCallback](#attributechangedcallback)
 * [propertyChangedCallback](#propertychangedcallback)
+* [stateChangedCallback](#statechangedcallback)
 
 Life cycle methods are dispatched by the DNA Virtual DOM implementation by default. When you are not using templates to update the tree, always use the [`DOM`](./render-a-component#manipulating-the-dom) helper.
 
@@ -30,3 +31,7 @@ The method receives the attribute name as first argument, as well as the new val
 This method is very similar to `attributeChangedCallback` and it is invoked each time one of the element's property is changed.
 
 The signature is equivalent too: it receives the property name as first argument, as well as the new value and the previous value (default `undefined`).
+
+## stateChangedCallback
+
+The same of `propertyChangedCallback`, but for stateful properties.

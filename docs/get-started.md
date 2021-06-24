@@ -1,6 +1,6 @@
 # Get started
 
-The recommended way to use DNA is to setup an ES7 project with Babel or TypeScript which has a lot of life saver features like modules, decorators and typechecking, but it can also work without transpilers and bundlers directly in the browser.
+The recommended way to use DNA is to setup a project with Babel or TypeScript which has a lot of life saver features like modules, decorators and typechecking, but it also works untranspiled in the browser.
 
 ### Use a CDN
 
@@ -78,7 +78,7 @@ Defining a component means to link a HTML tag with the element's constructor, as
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
 
 ```ts
-import { Component, customElement, html } from '@chialab/dna';
+import { Component, customElement, html, property } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
@@ -91,7 +91,9 @@ class HelloWorld extends Component {
 }
 ```
 
-<aside class="note">
+<details>
+<summary>JavaScript</summary>
+<div>
 
 You can use the class decorator if you are using TypeScript or this Babel plugin, otherwise you have to fallback directly using `customElements.define`:
 
@@ -117,7 +119,8 @@ class HelloWorld extends Component {
 customElements.define('hello-world', HelloWorld);
 ```
 
-</aside>
+</div>
+</details>
 
 ### Extending native elements
 
@@ -139,6 +142,36 @@ class BlogPost extends Component {
 }
 ```
 
+<details>
+<summary>JavaScript</summary>
+<div>
+
+```ts
+import { Component, customElements, html } from '@chialab/dna';
+
+class BlogPost extends Component {
+    static get properties() {
+        return {
+            title: {
+                type: String,
+                defaultValue: '',
+            },
+        };
+    }
+
+    render() {
+        return html`<h1>${this.title}</h1>`;
+    }
+}
+
+customElements.define('blog-post', BlogPost, {
+    extends: 'article'
+});
+```
+
+</div>
+</details>
+
 In the example above, a new instance of `BlogPost` inherits all class methods and properties, but its `tagName` will be `ARTICLE`.
 
 <aside class="note">
@@ -147,19 +180,19 @@ It also preserve accessibility and usability features: extending the `BUTTON` el
 
 </aside>
 
-## Render a component
+## Render a component
 
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
 ```ts
-import { Component, customElement, render } from '@chialab/dna';
+import { Component, customElement, render, html } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     ...
 }
 
-render(new Card(), document.body);
+render(html`<${Card} />`, document.body);
 ```
 
 During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template.
