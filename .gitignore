@@ -1,6 +1,7 @@
 node_modules
 npm-debug.log
 .eslintcache
+.env
 coverage
 types
 dist

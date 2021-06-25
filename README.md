@@ -10,7 +10,6 @@
 
 <p align="center">
     <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
-    <a href="https://github.com/chialab/dna/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg"></a>
 </p>
 
 ---
@@ -48,8 +47,10 @@ import { Component, customElements, html, ... } from 'https://unpkg.com/@chialab
 ```
 
 Install via NPM:
+
 ```sh
 $ npm i @chialab/dna
+$ yarn add @chialab/dna
 ```
 
 ```ts
@@ -149,6 +150,22 @@ Run the `test` script:
 
 ```
 $ npm run test
+```
+
+### Release
+
+The `release` script uses [Semantic Release](https://github.com/semantic-release/semantic-release) to update package version, create a Github release and publish to the NPM registry.
+
+An environment variable named `GH_TOKEN` with a [generated Github Access Token](https://github.com/settings/tokens/new?scopes=repo) needs to be defined in a local `.env` file.
+
+```shell
+$ echo 'export GH_TOKEN="abcxyz"' > .env
+```
+
+Now you are ready to run the `release` command:
+
+```sh
+$ npm run release
 ```
 
 ---
