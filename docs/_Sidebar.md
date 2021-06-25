@@ -16,7 +16,7 @@
   * [Declare a property](./properties#declare-a-property)
   * [Declare a state](./properties#declare-a-state)
   * [Configuration](./properties#configuration)
-  * [Getters and setters](./properties#getters-and-setters)
+  * [Accessors](./properties#accessors)
   * [Observers](./properties#observers)
   * [Attributes](./properties#attributes)
 * [Events](./events)

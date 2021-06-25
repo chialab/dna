@@ -108,21 +108,21 @@ You can also customize the default converters between attributes and properties 
 age = null;
 ```
 
-### defaultValue
+#### defaultValue
 
 The initial value of the property.
 
 💁 If you are using class fields and decorators, probably you won't use this configuration key.
 
-### type
+#### type
 
 A list of valid constructors for the property value. If the value is not an instance of the specified constructors, an exception is thrown.
 
-### validate
+#### validate
 
 A custom validation function for the property value. If the method returns a falsy value, an exception is thrown.
 
-### event
+#### event
 
 The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
 
@@ -144,17 +144,65 @@ card.addEventListener('agechange', (event) => {
 }):
 ```
 
-## Getter and setters
+## Accessors
 
-Property's getter receives the actual property value as argument and it can return the same reference or any new value.
+### Decorated accessors
 
-<aside class="note">
+The `property` decorator can be used also for accessor fields. This is useful when you want to transform the value of an assignment before setting it, or you want to modify the inner value of a property when getted.  
+For this scenario you need to use the `getInnerPropertyValue` and `setInnerPropertyValue` in order to execute the correct life-cycle:
 
-The returned value of the **getter** function does not represent the actual property value, but it is used for bound attribute update and property access. In order to actually trigger a property change, the new value should be different from the real property value and not from the one returned by the **getter**. The `propertyChangedCallback` will receive the real property value too.
+```ts
+import { Component, customElement, property } from '@chialab/dna';
 
-</aside>
+@customElement('x-card')
+class Card extends Component {
+    @property()
+    get phone() {
+        return this.getInnerPropertyValue('phone');
+    }
+    set phone(value) {
+        if (!value.startsWith('+') && !value.startsWith('00')) {
+            value = `+44 ${value}`;
+        }
 
-Setter is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the real property value.
+        this.setInnerPropertyValue('phone', value);
+    }
+}
+```
+
+### Getter and setters
+
+You can also configure a getter and a setter method along with the property declaration.
+
+The **getter** function receives the actual property value as argument and it can return the same reference or any new value.  
+The returned value of the getter does not represent the actual property value, but it is used for bound attribute update and property access. In order to actually trigger a property change, the new value should be different from the real property value and not from the one returned by the getter. The `propertyChangedCallback` will receive the inner property value too.
+
+The **setter** function is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the inner property value.
+
+```ts
+import { Component, customElements } from '@chialab/dna';
+
+class Card extends Component {
+    static get properties() {
+        return {
+            phone: {
+                type: String,
+                getter(innerValue) {
+                    return innerValue;
+                },
+                setter(value) {
+                    if (!value.startsWith('+') && !value.startsWith('00')) {
+                        value = `+44 ${value}`;
+                    }
+                    return value;
+                },
+            },
+        };
+    }
+}
+
+customElements.define('x-card', Card);
+```
 
 ## Observers
 
@@ -216,18 +264,24 @@ class Card extends Component {
 }
 ```
 
-You can also pass an array of property observers using the **observers** configuration key instead of **observe**.
+You can also observe multiple properties at one time:
 
 ```ts
-@property({
-    type: Number,
-    observers: [
-        function(oldValue, newValue) {
-            console.log(`Happy birthday! You are now ${newValue}`);
-        },
-    ],
-})
-age?: number;
+import { Component, customElement, property, observe } from '@chialab/dna';
+
+@customElement('x-card')
+class Card extends Component {
+    @property({ type: String }) firstName?: string;
+    @property({ type: String }) lastName?: string;
+    @property({ type: Date }) birthdate?: Date;
+
+    @observe('fisrtName')
+    @observe('lastName')
+    @observe('birthdate')
+    private validateData() {
+        // ...
+    }
+}
 ```
 
 ## Attributes

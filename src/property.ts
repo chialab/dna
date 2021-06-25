@@ -47,7 +47,7 @@ export type WithObservers<T extends ComponentInstance<HTMLElement>> = T & {
  * @param oldValue The previous value of the property.
  * @param newValue The current value of the property.
  */
-export type PropertyObserver<TypeHint = unknown> = (oldValue: TypeHint | undefined, newValue: TypeHint) => void;
+export type PropertyObserver<TypeHint = unknown> = (oldValue: TypeHint | undefined, newValue: TypeHint, propertyKey: string) => void;
 
 /**
  * Convert constructor types to their normalised instance types.
@@ -412,7 +412,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 
             const observers = getPropertyObservers(this, propertyKey);
             for (let i = 0, len = observers.length; i < len; i++) {
-                observers[i].call(this, oldValue, newValue);
+                observers[i].call(this, oldValue, newValue, propertyKey as string);
             }
 
             if (event) {
