@@ -21,11 +21,7 @@ a.setAttribute('href', '/demo');
 console.log(a.href); // -> https://my.domain/demo
 ```
 
-<aside class="note">
-
-Use the `window` namespace instead of the global constructor to make sure to write Node compatible components.
-
-</aside>
+💁 Use the `window` namespace instead of the global constructor to make sure to write compatible components with the NodeJS environment.
 
 ## css
 

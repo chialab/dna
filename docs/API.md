@@ -340,7 +340,7 @@ Observable-like minimal interface.
     
 <p>
 
-A stateful property declaration.
+A state property declaration.
 
 </p>
 

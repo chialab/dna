@@ -25,8 +25,4 @@ console.log(card.outerHTML);
 // -> "<hello-world><h1>Hello world!</h1></hello-world>"
 ```
 
-<aside class="note">
-
-The `card` reference in the example above is full (js)DOM Node instance, so you can use any `HTMLElement.prototype` methods or update a property and get the re-render result with `.outerHTML`.
-
-</aside>
+The `card` reference in the example above is a Node instance, so you can use any `HTMLElement.prototype` methods or update a property and get the re-render result with `.outerHTML`.

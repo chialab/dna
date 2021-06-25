@@ -311,11 +311,7 @@ const content = '<h1>Hello</h1>';
 +<x-label>{html(content)}</x-label>;
 ```
 
-<aside class="note">
-
-Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
-
-</aside>
+⚠️ Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
 
 ## Function components
 

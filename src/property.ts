@@ -56,7 +56,7 @@ export type PropertyObserver<TypeHint = unknown> = (oldValue: TypeHint | undefin
 type ConvertConstructorTypes<C extends Constructor<unknown>> = Replace<Replace<Replace<Replace<Replace<InstanceType<C>, Number, number>, String, string>, Boolean, boolean>, unknown[], any[]>, Object, any>;
 
 /**
- * A stateful property declaration.
+ * A state property declaration.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = Constructor<any>> = PropertyDescriptor & {

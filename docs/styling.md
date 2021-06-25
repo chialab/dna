@@ -4,11 +4,7 @@ DNA can render plain `<style>` tags in a template, but what about style encapsul
 
 Since components can be extended and stylesheets inherited, we need to be able to scope CSS rules based on the final component definition.
 
-<aside class="note">
-
-You don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with styles lazy loading.
-
-</aside>
+💁 You may don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with lazy loading styles.
 
 ## Scoped styles
 
@@ -83,11 +79,7 @@ You can also define styles for component states with `:host(*selector*)` rule:
 }
 ```
 
-<aside class="note">
-
-The `:host` selector value change for every element definition: if a component class extends another one and inherits its template with a scoped style, the `:host` will reflect the correct definition for each components instances.
-
-</aside>
+The `:host` selector will respect component definition also for inherited styles.
 
 <!-- 
 ## Native CSS modules [WIP]

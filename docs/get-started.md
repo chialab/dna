@@ -135,8 +135,8 @@ customElements.define('hello-world', HelloWorld);
 
 ### Extending native elements
 
-In the Custom Element specification it is possible to define an element using the `is` attribute instead of the tag (unfortunately, no browser vendor had implemented it at the moment).
-This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. An example:
+Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
+This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
 ```ts
 import { Component, customElement, html, property } from '@chialab/dna';
@@ -185,11 +185,7 @@ customElements.define('blog-post', BlogPost, {
 
 In the example above, a new instance of `BlogPost` inherits all class methods and properties, but its `tagName` will be `ARTICLE`.
 
-<aside class="note">
-
-It also preserve accessibility and usability features: extending the `BUTTON` element will make the component reachable and clickable via keyboard navigation.
-
-</aside>
+💁 Extending builtin elements also preserves accessibility and usability features: extending the `BUTTON` element will make the component reachable and clickable via keyboard navigation without setting `role` and `tabindex`.
 
 ## Render a component
 
@@ -206,15 +202,11 @@ class Card extends Component {
 render(html`<${Card} />`, document.body);
 ```
 
-During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template.
-
-<aside class="note">
-
-Make sure to render the component in an empty root: at the end of the cycle, DNA will remove any node outside the template, including elements and texts of the original HTML document.
+During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template. At the end of the render cycle, DNA will remove any node outside the template, including elements and texts of the original HTML document.
 
 </aside>
 
-This function accepts the render root node as first argument and a node or a template as second one. Another way to instantiate the `Card` component is:
+This function accepts the template as first argument and an optional render root node as second one. You can also use bound tag name instead of constructor reference:
 
 ```ts
 import { Component, customElement, html, render } from '@chialab/dna';

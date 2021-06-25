@@ -3,7 +3,7 @@
 Since Web Components extend the native `HTMLElement`, events handling is completly delegated to the DOM implementation, so you can use `addEventListener` and `removeEventListener` to properly setup a callback.  
 DNA add some extra features like declarative event listeners and delegations.
 
-## Declarative event listeners
+## Declarative listeners
 
 You can declare event listeners on a component using the `listen` decorator:
 
@@ -49,7 +49,7 @@ customElements.define('x-button', Button, {
 });
 ```
 
-Declarations can be configured with event listener options:
+Declarations can be configured with [event listener options]((https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener)):
 
 ```ts
 import { Component, customElement, listen } from '@chialab/dna';
@@ -89,12 +89,6 @@ customElements.define('x-tracker', Tracker);
 </div>
 </details>
 
-<aside class="note">
-
-Please refer to the [addEventListener](https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener) documentation for a complete list of listener options.
-
-</aside>
-
 ## Template listeners
 
 Listeners can be added via a template attribute named as the event with the `on` prefix:
@@ -117,15 +111,52 @@ class Header extends Component {
 }
 ```
 
+## Target
+
+Event listeners are automatically bound with the component. If you need a different target, such as the document or the window, you can pass the target to the declaration. In this case, event listeners are added once the element has been added to the DOM tree and removed once disconnected.
+
+```ts
+import { window, Component, customElement, listen } from '@chialab/dna';
+
+@customElement('x-tracker')
+class Tracker extends Component {
+    @listen('touchmove', window, { passive: true })
+    onTouchMove() {
+        // ...
+    }
+}
+```
+
+<details>
+<summary>JavaScript</summary>
+<div>
+
+```ts
+import { window, Component, customElements } from '@chialab/dna';
+
+class Tracker extends Component {
+    static get listeners(){
+        return {
+            touchmove: {
+                callback(event) {
+                    // ...
+                },
+                target: window,
+                passive: true,
+            },
+        };
+    }
+}
+
+customElements.define('x-tracker', Tracker);
+```
+
+</div>
+</details>
+
 ## Delegation
 
-DNA supports event delegation for both imperatively and declaratively declarations. The listener callback will receive the original fired event as first argument and the matched target as second argument.
-
-<aside class="note">
-
-Do not confuse the `event.target` property with the second argument of the listener: the first one is the node which actually fired the event, the second one is the node which matches the selector and it is in the event path (`event.target` may be a descending child of the matched one).
-
-</aside>
+DNA supports event delegation for both imperatively and declaratively declarations. The listener callback will receive the original fired event as first argument and the matched target as second argument. Do not confuse the `event.target` property with the second argument of the listener: the first one is the node which actually fired the event, the second one is the node which matches the selector and it is in the event path (`event.target` may be a descending child of the matched one).
 
 Using the `listen` decorator or the `listeners` static getter, you can specify the delegated child selector after the event name in the declaration key:
 
@@ -137,7 +168,7 @@ import { window, extend, customElement, listen } from '@chialab/dna';
 })
 class Dialog extends extend(window.HTMLDialogElement) {
     @listen('click', 'nav button', { passive: false })
-    onClick() {
+    onClick(event, target) {
         // ...
     }
 }
@@ -171,7 +202,7 @@ customElements.define('x-dialog', Dialog, {
 </div>
 </details>
 
-Otherwise, you can use `addEventListener`, `removeEventListener`, `delegateEventListener` and `undelegateEventListener` methods:
+You can also use `delegateEventListener` and `undelegateEventListener` methods:
 
 ```ts
 import { Component, customElement, DOM } from '@chialab/idom';
@@ -228,7 +259,7 @@ button.dispatchEvent('sendEmail',
 
 ## Async dispatch
 
-With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed:
+With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed. This is useful for events based communication with other components:
 
 ```ts
 import { Component, customElement, listen, DOM } from '@chialab/dna';
@@ -249,9 +280,3 @@ paginator.addEventListener('fetch', (event) => {
     });
 });
 ```
-
-<aside class="note">
-
-This is useful for events based communication with other components.
-
-</aside>

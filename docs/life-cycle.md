@@ -34,4 +34,4 @@ The signature is equivalent too: it receives the property name as first argument
 
 ## stateChangedCallback
 
-The same of `propertyChangedCallback`, but for stateful properties.
+The same of `propertyChangedCallback`, but for state properties.

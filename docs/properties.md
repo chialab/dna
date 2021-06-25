@@ -1,6 +1,8 @@
 # Properties, states and attributes
 
-Component's properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
+Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
+
+State properties store component's data that can't be configured from the outside using attributes. Like properties, states changes trigger a new render cycle and they have the dedicated [`stateChangedCallback`](./life-cycle#statechangedcallback) method callback
 
 ## Declare a property
 
@@ -33,7 +35,39 @@ customElements.define('x-card', Card);
 
 Once defined, the computed `observedAttributes` of the Card component will include the `age` attribute.
 
-## Property descriptor
+## Declare a state
+
+States can be defined using the `state` decorator on a class field declaration:
+
+```ts
+import { Component, customElement, state } from '@chialab/dna';
+
+@customElement('x-card')
+class Card extends Component {
+    @state() collapsed?: boolean;
+}
+```
+
+Or using the static `properties` getter and configuring the field:
+
+```ts
+import { Component, customElements } from '@chialab/dna';
+
+class Card extends Component {
+    static get properties() {
+        return {
+            collapsed: {
+                type: Boolean,
+                state: true
+            },
+        };
+    }
+}
+
+customElements.define('x-card', Card);
+```
+
+## Configuration
 
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
 
@@ -52,21 +86,9 @@ class Card extends Component {
 }
 ```
 
-<aside class="note">
-
-Keys of the configuration objects are all optional.
-
-</aside>
-
 ### attribute
 
 The name of the attribute bound with the property. Every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. If specified, it also works for `state` fields.
-
-<aside class="note">
-
-You can still set or update component's property value via attributes even when the property is not bound to any attribute.
-
-</aside>
 
 You can also customize the default converters between attributes and properties with `fromAttribute` and `toAttribute`.
 
@@ -90,11 +112,7 @@ age = null;
 
 The initial value of the property.
 
-<aside class="note">
-
-If you are using class fields, probably you won't use this configuration key.
-
-</aside>
+💁 If you are using class fields and decorators, probably you won't use this configuration key.
 
 ### type
 
@@ -104,9 +122,84 @@ A list of valid constructors for the property value. If the value is not an inst
 
 A custom validation function for the property value. If the method returns a falsy value, an exception is thrown.
 
-### observe
+### event
 
-A function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument:
+The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
+
+```ts
+import { Component, customElement, property } from '@chialab/dna';
+
+@customElement('x-card')
+class Card extends Component {
+    @property({
+        type: Number,
+        event: true,
+    })
+    age?: number;
+}
+
+const card = new Card();
+card.addEventListener('agechange', (event) => {
+    console.log(`Happy birthday! You are now ${event.detail.newValue}`);
+}):
+```
+
+## Getter and setters
+
+Property's getter receives the actual property value as argument and it can return the same reference or any new value.
+
+<aside class="note">
+
+The returned value of the **getter** function does not represent the actual property value, but it is used for bound attribute update and property access. In order to actually trigger a property change, the new value should be different from the real property value and not from the one returned by the **getter**. The `propertyChangedCallback` will receive the real property value too.
+
+</aside>
+
+Setter is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the real property value.
+
+## Observers
+
+An observer is a function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument:
+
+Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
+
+```ts
+import { Component, customElement, property } from '@chialab/idom';
+
+@customElement('x-card')
+class Card extends Component {
+    @property({ type: Number }) age?: number;
+}
+
+const element = new Card();
+const logChanges = (newValue, previousValue) => {
+    console.log('age changed from', previousValue, 'to', newValue);
+};
+
+// add an observer listener
+element.observe('age', logChanges);
+// remove an observer listener
+element.unobserve('age', logChanges);
+// remove all listeners
+element.unobserve('age');
+```
+
+Observers can also be defined using the `observe` decorator:
+
+```ts
+import { Component, customElement, property, observe } from '@chialab/dna';
+
+@customElement('x-card')
+class Card extends Component {
+    @property({ type: Number }) age?: number;
+
+    @observe('age')
+    private ageChanged(oldValue: number, newValue: number) {
+        console.log(`Happy birthday! You are now ${newValue}`);
+    }
+}
+```
+
+or directly using the property definition:
 
 ```ts
 import { Component, customElement, property } from '@chialab/dna';
@@ -135,65 +228,6 @@ You can also pass an array of property observers using the **observers** configu
     ],
 })
 age?: number;
-```
-
-### event
-
-The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
-
-```ts
-import { Component, customElement, property } from '@chialab/dna';
-
-@customElement('x-card')
-class Card extends Component {
-    @property({
-        type: Number,
-        event: true,
-    })
-    age?: number;
-}
-
-const card = new Card();
-card.addEventListener('agechange', (event) => {
-    console.log(`Happy birthday! You are now ${event.detail.newValue}`);
-}):
-```
-
-### getter and setters
-
-Property's getter receives the actual property value as argument and it can return the same reference or any new value.
-
-<aside class="note">
-
-The returned value of the **getter** function does not represent the actual property value, but it is used for bound attribute update and property access. In order to actually trigger a property change, the new value should be different from the real property value and not from the one returned by the **getter**. The `propertyChangedCallback` will receive the real property value too.
-
-</aside>
-
-Setter is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the real property value.
-
-## Observers
-
-Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
-
-```ts
-import { Component, customElement, property } from '@chialab/idom';
-
-@customElement('x-card')
-class Card extends Component {
-    @property({ type: Number }) age;
-}
-
-const element = new Card();
-const logChanges = (newValue, previousValue) => {
-    console.log('age changed from', previousValue, 'to', newValue);
-};
-
-// add an observer listener
-element.observe('age', logChanges);
-// remove an observer listener
-element.unobserve('age', logChanges);
-// remove all listeners
-element.unobserve('age');
 ```
 
 ## Attributes
@@ -252,11 +286,7 @@ button.disabled // true
 list.items // ["Alan", "Bob", "Charlie"]
 ```
 
-<aside class="note">
-
-Removing the attribute from the template, the property will be set as `undefined`.
-
-</aside>
+* removing the attribute from the template will set the property value as `undefined`.
 
 ### Attribute updates
 

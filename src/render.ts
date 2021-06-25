@@ -43,6 +43,7 @@ function html(string: string | TemplateStringsArray, useVirtualDom?: boolean | u
 
             const wrapper = DOM.createElement('div');
             wrapper.innerHTML = source;
+            customElements.upgrade(wrapper);
             const dom = cloneChildNodes(wrapper.childNodes);
             store.set('source', source);
             store.set('dom', dom);

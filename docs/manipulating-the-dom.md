@@ -32,28 +32,11 @@ All methods inherit the prototype signature with the context node as first argum
 | `dispatchEvent(event)` | `dispatchEvent(element, event)` |
 | `matches(selector)` | `matches(element, selector)` |
 
-<aside class="note">
-
-Please note that all DNA components already wrap those methods with the `DOM` helper, so if you are appending or removing children from a component you can directly use the prototyped `appendChild` and `removeChild` methods:
-
-```ts
-import { DOM } from '@chialab/dna';
-import { ParentComponent } from './parent-component';
-import { ChildComponent } from './child-component';
-
-const parent = new ParentComponent();
-const child = new ChildComponent();
-
-// ✔︎ OK!
-parent.appendChild(child);
-
-```
-
 </aside>
 
 ## Setting `innerHTML`
 
-Since DNA render cycle is responsible for Custom Element's life cycle support in old browser, directly setting the `innerHTML` to an element can lead to unespected behavior. You should always consider to use the `html` helper coombine with the `render` method, but where it is not possible remember to invoke the `customElements.upgrade` method to the root of the change:
+Since DNA render cycle is responsible for Custom Element's life cycle support in old browser, directly setting the `innerHTML` to an element can lead to unexpected behavior. You should always consider to use the `html` helper coombine with the `render` method, but when it is not possible you can always invoke the `customElements.upgrade` method to the changed root node:
 
 ```ts
 import { customElements } from '@chialab/dna';

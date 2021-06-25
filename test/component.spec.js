@@ -755,7 +755,7 @@ describe('Component', function() {
             expect(propertyChangedCallback.count).to.be.equal(3);
         });
 
-        it('should handle stateful property changes on assignment', () => {
+        it('should handle state property changes on assignment', () => {
             const stateChangedCallback = spyFunction((name, old, value) => [name, old, value]);
 
             let TestElement = class TestElement extends DNA.Component {

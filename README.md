@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg?style=flat-square"></a>
-    <a href="https://github.com/chialab/dna/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
+    <a href="https://github.com/chialab/dna/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@chialab/dna.svg"></a>
 </p>
 
 ---
