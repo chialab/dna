@@ -11,7 +11,7 @@
   },
   "exports": {
     ".": {
-      "require": "./dist/cjs/dna.js",
+      "require": "./dist/cjs/dna.cjs",
       "node": "./dist/node/dna.js",
       "default": "./dist/esm/dna.js"
     },
@@ -41,7 +41,7 @@
     "build": "rimraf dist && npm run types && npm run build:esm && npm run build:node && npm run build:cjs",
     "build:esm": "rimraf dist/esm && rna build src/index.ts --output dist/esm/dna.js --format esm --minify --platform browser",
     "build:node": "rimraf dist/node && rna build src/index.ts --output dist/node/dna.js --format esm --minify --platform node",
-    "build:cjs": "rimraf dist/cjs && rna build src/index.ts --output dist/cjs/dna.js --format cjs --minify --platform node",
+    "build:cjs": "rimraf dist/cjs && rna build src/index.ts --output dist/cjs/dna.cjs --format cjs --minify --platform node",
     "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types' --incremental false",
     "test": "npm run test:typings && npm run test:browser && npm run test:node",
     "test:typings": "tsc -p test/typings --noEmit",
