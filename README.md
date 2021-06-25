@@ -158,7 +158,7 @@ The `release` script uses [Semantic Release](https://github.com/semantic-release
 
 An environment variable named `GH_TOKEN` with a [generated Github Access Token](https://github.com/settings/tokens/new?scopes=repo) needs to be defined in a local `.env` file.
 
-```shell
+```sh
 $ echo 'export GH_TOKEN="abcxyz"' > .env
 ```
 
