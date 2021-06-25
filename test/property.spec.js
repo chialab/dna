@@ -214,7 +214,7 @@ describe('property', function() {
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
         it('should define a property with observe decorator', () => {
@@ -245,7 +245,7 @@ describe('property', function() {
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
         it('should define a property with observe decorator (babel)', () => {
@@ -285,7 +285,7 @@ describe('property', function() {
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
         it('should define a property with multiple observers', () => {
@@ -313,9 +313,9 @@ describe('property', function() {
             expect(listener2.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([42, 84]);
+            expect(listener1.response).to.be.deep.equal([42, 84, 'testProp']);
             expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([42, 84]);
+            expect(listener2.response).to.be.deep.equal([42, 84, 'testProp']);
         });
     });
 
@@ -471,7 +471,7 @@ describe('property', function() {
             expect(listener.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84]);
+            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
         it('should define a property with multiple observers', () => {
@@ -495,9 +495,9 @@ describe('property', function() {
             expect(listener2.invoked).to.be.false;
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
             expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([42, 84]);
+            expect(listener1.response).to.be.deep.equal([42, 84, 'testProp']);
             expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([42, 84]);
+            expect(listener2.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
         it('should inherit and reduce the prototype chain', () => {
@@ -629,7 +629,7 @@ describe('property', function() {
             element.observe('testProp', listener);
             element.testProp = 84;
             expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([100, 84]);
+            expect(listener.response).to.be.deep.equal([100, 84, 'testProp']);
         });
 
         it('should throw for undeclared properties', () => {
