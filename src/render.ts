@@ -239,13 +239,13 @@ export const isHyperFunction = (target: HyperFragment | HyperFunction | HyperCom
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  */
-export const isHyperComponent = <T extends CustomElementConstructor<HTMLElement>>(target: HyperFragment | HyperFunction | HyperComponent<T> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperComponent<T> => !!target.Component;
+export const isHyperComponent = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperComponent<CustomElementConstructor<HTMLElement>> => !!target.Component;
 
 /**
  * Check if the current virtual node is an HTML node instance.
  * @param target The node to check.
  */
-export const isHyperNode = <T extends Node>(target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<T> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperNode<T> => !!target.node;
+export const isHyperNode = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperNode<Node> => !!target.node;
 
 /**
  * Check if the current virtual node is a slot element.
@@ -257,7 +257,7 @@ export const isHyperSlot = (target: HyperFragment | HyperFunction | HyperCompone
  * Check if the current virtual node is a generic tag to render.
  * @param target The node to check.
  */
-export const isHyperTag = <T extends keyof TagNameMap>(target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<T>): target is HyperTag<T> => !!target.tag;
+export const isHyperTag = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperTag<'div'> => !!target.tag;
 
 
 /**
