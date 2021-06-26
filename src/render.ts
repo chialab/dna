@@ -238,6 +238,13 @@ export type HyperTag<T extends keyof TagNameMap> = {
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isHyperObject = (target: any): target is HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap> => typeof target === 'object' && !!target[HyperObject];
+
+/**
+ * Check if the current virtual node is a fragment.
+ * @param target The node to check.
+ */
 export const isHyperFragment = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperFragment => !!target.isFragment;
 
 /**
@@ -614,11 +621,6 @@ export const internalRender = (
             return;
         }
 
-        let templateNode;
-        let templateContext: Context | undefined;
-        let templateChildren: Template[] | undefined;
-        let templateNamespace = namespace;
-
         if (isArray(template)) {
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
@@ -627,66 +629,12 @@ export const internalRender = (
             return;
         }
 
-        if (isThenable(template)) {
-            handleItems(h((props, context) => {
-                const status = getThenableState(template as Promise<unknown>);
-                if (status.pending) {
-                    (template as Promise<unknown>)
-                        .catch(() => 1)
-                        .then(() => {
-                            context.requestUpdate();
-                        });
-                }
-                return status.result as Template;
-            }, null), filter);
-            return;
-        }
+        let templateNode;
+        let templateContext: Context | undefined;
+        let templateChildren: Template[] | undefined;
+        let templateNamespace = namespace;
 
-        if (isObservable(template)) {
-            const observable = template;
-            handleItems(h((props, context) => {
-                const status = getObservableState(observable);
-                if (!status.complete) {
-                    const subscription = observable.subscribe(
-                        () => {
-                            if (!context.requestUpdate()) {
-                                subscription.unsubscribe();
-                            }
-                        },
-                        () => {
-                            if (!context.requestUpdate()) {
-                                subscription.unsubscribe();
-                            }
-                        },
-                        () => {
-                            subscription.unsubscribe();
-                        }
-                    );
-                }
-                return status.current as Template;
-            }, null), filter);
-            return;
-        }
-
-        if (isNode(template)) {
-            templateNode = template;
-        } else if (typeof template !== 'object' || !template[HyperObject]) {
-            if (typeof template === 'string' && rootContext && renderContext.tagName === 'style') {
-                const is = rootContext.is as string;
-                template = css(is, template as string, customElements.tagNames[is]);
-                (root as HTMLStyleElement).setAttribute('name', is);
-            }
-
-            if (currentContext && currentContext.isText) {
-                templateNode = currentNode as Text;
-                if (templateNode.textContent != template) {
-                    templateNode.textContent = template as string;
-                }
-            } else {
-                // convert non-Node template into Text
-                templateNode = DOM.createTextNode(template as string);
-            }
-        } else {
+        if (isHyperObject(template)) {
             if (isHyperFragment(template)) {
                 handleItems(template.children, filter);
                 return;
@@ -936,6 +884,61 @@ export const internalRender = (
             }
 
             templateChildren = children;
+        } else if (isThenable(template)) {
+            handleItems(h((props, context) => {
+                const status = getThenableState(template as Promise<unknown>);
+                if (status.pending) {
+                    (template as Promise<unknown>)
+                        .catch(() => 1)
+                        .then(() => {
+                            context.requestUpdate();
+                        });
+                }
+                return status.result as Template;
+            }, null), filter);
+            return;
+        } else if (isObservable(template)) {
+            const observable = template;
+            handleItems(h((props, context) => {
+                const status = getObservableState(observable);
+                if (!status.complete) {
+                    const subscription = observable.subscribe(
+                        () => {
+                            if (!context.requestUpdate()) {
+                                subscription.unsubscribe();
+                            }
+                        },
+                        () => {
+                            if (!context.requestUpdate()) {
+                                subscription.unsubscribe();
+                            }
+                        },
+                        () => {
+                            subscription.unsubscribe();
+                        }
+                    );
+                }
+                return status.current as Template;
+            }, null), filter);
+            return;
+        } else if (isNode(template)) {
+            templateNode = template;
+        } else  {
+            if (typeof template === 'string' && rootContext && renderContext.tagName === 'style') {
+                const is = rootContext.is as string;
+                template = css(is, template as string, customElements.tagNames[is]);
+                (root as HTMLStyleElement).setAttribute('name', is);
+            }
+
+            if (currentContext && currentContext.isText) {
+                templateNode = currentNode as Text;
+                if (templateNode.textContent != template) {
+                    templateNode.textContent = template as string;
+                }
+            } else {
+                // convert non-Node template into Text
+                templateNode = DOM.createTextNode(template as string);
+            }
         }
 
         if (filter && !filter(templateNode)) {
