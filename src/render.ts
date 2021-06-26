@@ -101,6 +101,11 @@ export type UpdateRequest = () => boolean;
 export type FunctionComponent<P = any> = (props: P, context: Context<Node, UpdateRequest, P>) => Template;
 
 /**
+ * Identify hyper objects..
+ */
+export const HyperObject: unique symbol = createSymbol();
+
+/**
  * A constructor alias used for JSX fragments </>.
  */
 export const Fragment: unique symbol = createSymbol();
@@ -142,6 +147,7 @@ export type HyperFragment = {
     key?: unknown;
     properties?: {};
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -158,6 +164,7 @@ export type HyperFunction = {
     namespaceURI?: string;
     properties: HyperProperties;
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -174,6 +181,7 @@ export type HyperNode<T extends Node> = {
     namespaceURI?: string;
     properties: Writable<T> & HyperProperties;
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -190,6 +198,7 @@ export type HyperComponent<T extends CustomElementConstructor<HTMLElement>> = {
     namespaceURI?: string;
     properties: Writable<InstanceType<T>> & HyperProperties;
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -205,6 +214,7 @@ export type HyperSlot = {
     key?: unknown;
     properties: Writable<HTMLElementTagNameMap['slot']> & HyperProperties;
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -221,6 +231,7 @@ export type HyperTag<T extends keyof TagNameMap> = {
     namespaceURI?: string;
     properties: Writable<TagNameMap[T]> & HyperProperties;
     children: Template[];
+    [HyperObject]: true;
 };
 
 /**
@@ -280,6 +291,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
         return {
             isFragment: true,
             children,
+            [HyperObject]: true,
         } as HyperFragment;
     }
 
@@ -290,6 +302,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
+            [HyperObject]: true,
         } as HyperNode<typeof tagOrComponent>;
     }
 
@@ -301,6 +314,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 namespaceURI: 'http://www.w3.org/2000/svg',
                 properties,
                 children,
+                [HyperObject]: true,
             };
         }
 
@@ -311,6 +325,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 key,
                 properties: properties || {},
                 children,
+                [HyperObject]: true,
             } as HyperSlot;
         }
 
@@ -322,6 +337,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 namespaceURI: xmlns,
                 properties: properties || {},
                 children,
+                [HyperObject]: true,
             } as HyperComponent<typeof Component>;
         }
 
@@ -331,6 +347,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
+            [HyperObject]: true,
         } as HyperTag<typeof tagOrComponent>;
     }
 
@@ -341,6 +358,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
+            [HyperObject]: true,
         } as HyperComponent<typeof tagOrComponent>;
     }
 
@@ -350,6 +368,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
         namespaceURI: xmlns,
         properties: properties || {},
         children,
+        [HyperObject]: true,
     } as HyperFunction;
 }
 
@@ -651,7 +670,7 @@ export const internalRender = (
 
         if (isNode(template)) {
             templateNode = template;
-        } else if (typeof template !== 'object') {
+        } else if (typeof template !== 'object' || !template[HyperObject]) {
             if (typeof template === 'string' && rootContext && renderContext.tagName === 'style') {
                 const is = rootContext.is as string;
                 template = css(is, template as string, customElements.tagNames[is]);

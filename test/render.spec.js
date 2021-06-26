@@ -380,6 +380,18 @@ describe('render', function() {
             expect(p.namespaceURI).to.be.equal('http://www.w3.org/1999/xhtml');
         });
 
+        it('should render plain objects', () => {
+            const obj = {
+                toString() {
+                    return 'Test';
+                },
+            };
+            DNA.render(DNA.h('div', {}, obj), wrapper);
+            const elem = wrapper.children[0];
+            expect(elem.childNodes).to.have.lengthOf(1);
+            expect(elem.textContent).to.be.equal('Test');
+        });
+
         it('should not set svgs properties', () => {
             DNA.render(DNA.h('svg', null, DNA.h('line', { x1: '0', y1: '100', x2: '100', y2: '200' })), wrapper);
             const svg = wrapper.querySelector('svg');
