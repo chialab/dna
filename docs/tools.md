@@ -6,9 +6,10 @@ A list of tools and how-to that will improve your experience with DNA.
 
 If you are using the `html` helper to generate template, you can install the [lit-html](https://github.com/mjbvz/vscode-lit-html) VSCode extension to enable HTML syntax highlightinh.
 
-### Web Components Analyzer
+### Custom Elements Manifest
 
-[WCA](https://www.npmjs.com/package/web-component-analyzer) is a CLI that analyzes Web components and generates a report in many formats like JSON and Markdown in order to provide component documentation. It natively supports JSDoc comments and TypeScript syntax so a lot of informations are infered from the source code. WCA supports a large variety of frameworks and a DNA specific flavor is something we are considering. By the way, you can use JSDoc comments and some native features to properly get a report:
+The [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) is a JSON file that describes Custom Elements definitions. It can be used to generate documentation or to provide hints to the IDE when using them. The [CEM Analyzer](https://www.npmjs.com/package/@custom-elements-manifest/analyzer) is a CLI to generate the manifest with suppoort for JSDoc, TypeScript and a bunch of flavors based on most common frameworks. Since DNA components interface is similar to the [`lit`](https://lit.dev), the provided plugin can be used.  
+For example:
 
 **src/dna-map.ts**
 ```ts
@@ -36,7 +37,7 @@ export class MapboxMap extends Component {
 Run:
 
 ```sh
-$ wca analyze src/dna-map.ts
+$ cem analyze src/dna-map.ts --litelement
 ```
 
 ```md
@@ -57,6 +58,29 @@ A map component based on mapbox-gl.
 |--------|-------------------------------|
 | `move` | The map center point changed. |
 | `zoom` | The map zoom level changed.   |
+```
+
+### Storybook
+
+[Storybook](https://storybook.js.org/) is a fantastic tool for components development. You can create samples for your elements, provide a documentation and an API reference, run accessibility tests and more. Since version 5.6 it also supports [Web Components](https://storybook.js.org/docs/web-components/get-started/introduction).
+
+A DNA addon for Storybook is available with automatic Custom Elements Manifest scans that run across your components to generate documentation and controls.  
+You can install it using the `@chialab/storybook-addon-dna` package from NPM:
+
+```sh
+$ npm i @chialab/storybook-addon-dna -D
+```
+
+And load it in the **main.js** config file:
+
+```js
+module.exports = {
+    addons: [
+        '@storybook/addon-a11y',
+        '@storybook/addon-essentials',
+        '@chialab/storybook-addon-dna',
+    ],
+};
 ```
 
 ### Typescript, JSX, IntrinsicElements, HTMLElementTagNameMap
