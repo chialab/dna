@@ -1,4 +1,4 @@
-import { decorator, hasDecorator, isAlsoAttribute, createAttributeFromField, getAttributeName } from './utils.js';
+import { getDecorator, isAlsoAttribute, createAttributeFromField, getAttributeName, hasKeyword } from './utils.js';
 
 export function propertyDecorator() {
     return {
@@ -9,7 +9,8 @@ export function propertyDecorator() {
                     if (!node.members) {
                         return;
                     }
-                    const hasDefaultModifier = node.modifiers?.some(mod => ts.SyntaxKind.DefaultKeyword === mod.kind) ?? false;
+
+                    const hasDefaultModifier = hasKeyword(node, ts.SyntaxKind.DefaultKeyword);
                     const className = hasDefaultModifier ? 'default' : node.name?.getText();
                     const currClass = moduleDoc.declarations?.find((declaration) => declaration.name === className);
                     if (!currClass) {
@@ -17,16 +18,16 @@ export function propertyDecorator() {
                     }
 
                     node.members.forEach((member) => {
-                        const memberName = member.name.getText();
-                        if (!hasDecorator(ts, member, 'property')) {
-                            if (currClass.properties) {
-                                currClass.properties = currClass.properties.filter((attr) => attr.name !== memberName);
-                            }
+                        if (!member.name) {
                             return;
                         }
 
-                        const propertyDecorator = member.decorators.find(decorator('property'));
+                        const memberName = member.name.getText();
+                        const propertyDecorator = getDecorator(member, 'property');
                         if (!propertyDecorator) {
+                            if (currClass.members) {
+                                currClass.members = currClass.members.filter((attr) => attr.name !== memberName);
+                            }
                             return;
                         }
 
@@ -35,16 +36,17 @@ export function propertyDecorator() {
                             return;
                         }
 
-                        if (isAlsoAttribute(ts, propertyOptions)) {
-                            const field = currClass.members.find(classMember => classMember.name === memberName);
-                            const attribute = createAttributeFromField(field, getAttributeName(ts, propertyOptions) || memberName);
+                        if (!isAlsoAttribute(ts, propertyOptions)) {
+                            return;
+                        }
 
-                            const existingAttribute = currClass.attributes.find((attr) => attr.name === attribute.name);
-                            if (!existingAttribute) {
-                                currClass.attributes.push(attribute);
-                            } else {
-                                currClass.attributes = currClass.attributes.map((attr) => (attr.name === attribute.name ? ({ ...attr, ...attribute }) : attr));
-                            }
+                        const field = currClass.members.find(classMember => classMember.name === memberName);
+                        const attribute = createAttributeFromField(field, getAttributeName(ts, propertyOptions) || memberName);
+                        const existingAttribute = currClass.attributes.find((attr) => attr.name === attribute.name);
+                        if (!existingAttribute) {
+                            currClass.attributes = [...(currClass.attributes || []), attribute];
+                        } else {
+                            currClass.attributes = currClass.attributes.map((attr) => (attr.name === attribute.name ? ({ ...attr, ...attribute }) : attr));
                         }
                     });
                     break;

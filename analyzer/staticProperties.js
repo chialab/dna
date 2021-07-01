@@ -1,4 +1,4 @@
-import { isAlsoAttribute, createAttributeFromField, getAttributeName, hasStaticKeyword, getPropertiesObject } from './utils.js';
+import { isAlsoAttribute, createAttributeFromField, getAttributeName, hasKeyword, getPropertiesObject } from './utils.js';
 
 export function staticProperties() {
     return {
@@ -10,7 +10,7 @@ export function staticProperties() {
                         return;
                     }
 
-                    const hasDefaultModifier = node.modifiers.some((mod) => ts.SyntaxKind.DefaultKeyword === mod.kind);
+                    const hasDefaultModifier = hasKeyword(node, ts.SyntaxKind.DefaultKeyword);
                     const className = hasDefaultModifier ? 'default' : node.name?.getText();
                     const currClass = moduleDoc.declarations?.find(declaration => declaration.name === className);
                     if (!currClass?.members) {
@@ -18,12 +18,12 @@ export function staticProperties() {
                     }
 
                     node.members.forEach((member) => {
-                        if (!hasStaticKeyword(member) || member.name.text === 'properties') {
+                        if (!member || !hasKeyword(member, ts.SyntaxKind.StaticKeyword) || member.name.text !== 'properties') {
                             return;
                         }
 
                         const properties = getPropertiesObject(ts, member)?.properties;
-                        if (properties) {
+                        if (!properties) {
                             return;
                         }
 
@@ -42,7 +42,7 @@ export function staticProperties() {
 
                             const existingField = currClass.members.find((field) => field.name === classMember.name);
                             if (!existingField) {
-                                currClass.members.push(classMember);
+                                currClass.members = [...(currClass.members || []), classMember];
                             } else {
                                 currClass.members = currClass.members.map((field) => (field.name === classMember.name ? ({ ...field, ...classMember }) : field));
                             }

@@ -1,13 +1,11 @@
-export function decorator(type) {
-    return (decorator) => (decorator.expression?.expression?.getText() === type) || (decorator.expression?.getText() === type);
+export function hasKeyword(node, keyword) {
+    return node.modifiers?.some((mod) => mod.kind === keyword) ?? false;
 }
 
-export function hasStaticKeyword(ts, node) {
-    return node.modifiers?.some((mod) => mod.kind === ts.SyntaxKind.StaticKeyword) ?? false;
-}
-
-export function hasDecorator(ts, node, name) {
-    return node.decorators?.some((decorator) => ts.isDecorator(decorator) && decorator.expression?.expression?.getText() === name) ?? false;
+export function getDecorator(node, name) {
+    return node.decorators?.find((decorator) =>
+        (decorator.expression?.expression?.getText() === name) || (decorator.expression?.getText() === name)
+    );
 }
 
 export function isAlsoAttribute(ts, node) {
