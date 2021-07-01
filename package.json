@@ -1,6 +1,6 @@
 {
   "name": "@chialab/dna",
-  "version": "4.0.0-rc.4",
+  "version": "4.0.0-rc.5",
   "description": "Progressive Web Components",
   "type": "module",
   "main": "dist/cjs/dna.js",
@@ -21,6 +21,7 @@
   "files": [
     "dist",
     "types",
+    "analyzer",
     "jsx-runtime.js",
     "LICENSE",
     "README.md"
