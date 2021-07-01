@@ -23,7 +23,8 @@ export function propertyDecorator() {
                         }
 
                         const memberName = member.name.getText();
-                        const propertyDecorator = getDecorator(member, 'property');
+                        const accessorMembers = member.parent.members.filter((m) => m.name && m.name.getText() === memberName);
+                        const propertyDecorator = accessorMembers.map((m) => getDecorator(m, 'property')).filter(Boolean)[0];
                         if (!propertyDecorator) {
                             if (currClass.members) {
                                 currClass.members = currClass.members.filter((attr) => attr.name !== memberName);
@@ -32,17 +33,13 @@ export function propertyDecorator() {
                         }
 
                         const propertyOptions = propertyDecorator.expression?.arguments?.find((arg) => ts.isObjectLiteralExpression(arg));
-                        if (!propertyOptions) {
+                        if (!propertyOptions || !isAlsoAttribute(ts, propertyOptions)) {
                             return;
                         }
 
-                        if (!isAlsoAttribute(ts, propertyOptions)) {
-                            return;
-                        }
-
-                        const field = currClass.members.find(classMember => classMember.name === memberName);
+                        const field = currClass.members.find((classMember) => classMember.name === memberName);
                         const attribute = createAttributeFromField(field, getAttributeName(ts, propertyOptions) || memberName);
-                        const existingAttribute = currClass.attributes.find((attr) => attr.name === attribute.name);
+                        const existingAttribute = currClass.attributes?.find((attr) => attr.name === attribute.name);
                         if (!existingAttribute) {
                             currClass.attributes = [...(currClass.attributes || []), attribute];
                         } else {
