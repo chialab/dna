@@ -1,0 +1,3 @@
+test/* linguist-vendored=false
+analyzer/* linguist-vendored=false
+docs/* linguist-vendored=false

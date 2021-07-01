@@ -15,7 +15,8 @@
       "node": "./dist/node/dna.js",
       "default": "./dist/esm/dna.js"
     },
-    "./jsx-runtime": "./jsx-runtime.js"
+    "./jsx-runtime": "./jsx-runtime.js",
+    "./analyzer": "./analyzer/index.js"
   },
   "files": [
     "dist",

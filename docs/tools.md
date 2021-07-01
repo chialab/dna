@@ -8,7 +8,7 @@ If you are using the `html` helper to generate template, you can install the [li
 
 ### Custom Elements Manifest
 
-The [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) is a JSON file that describes Custom Elements definitions. It can be used to generate documentation or to provide hints to the IDE when using them. The [CEM Analyzer](https://www.npmjs.com/package/@custom-elements-manifest/analyzer) is a CLI to generate the manifest with suppoort for JSDoc, TypeScript and a bunch of flavors based on most common frameworks. Since DNA components interface is similar to the [`lit`](https://lit.dev), the provided plugin can be used.  
+The [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) is a JSON file that describes Custom Elements definitions. It can be used to generate documentation or to provide hints to the IDE when using them. The [CEM Analyzer](https://www.npmjs.com/package/@custom-elements-manifest/analyzer) is a CLI to generate the manifest with suppoort for JSDoc, TypeScript and a bunch of flavors based on most common frameworks. You can use the analyzer DNA plugin to correctly detect features by components interface.  
 For example:
 
 **src/dna-map.ts**
@@ -34,10 +34,21 @@ export class MapboxMap extends Component {
 }
 ```
 
+**custom-elements-manifest.config.js**
+```js
+import dnaPlugins from '@chialab/dna/analyzer';
+
+export default {
+    plugins: [
+        ...dnaPlugins(),
+    ],
+}
+```
+
 Run:
 
 ```sh
-$ cem analyze src/dna-map.ts --litelement
+$ cem analyze src/dna-map.ts
 ```
 
 ```md
