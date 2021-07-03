@@ -1,4 +1,4 @@
-import type { FunctionComponent, Template } from './render';
+import type { Template } from './render';
 import { cloneChildNodes } from './helpers';
 import { DOM } from './DOM';
 import { h } from './render';
@@ -11,7 +11,7 @@ import { getThenableState } from './Thenable';
  */
 export const parseDOM = (string: string): Template => {
     const source = string;
-    return h(function unsafeInnerHTML(properties, { store }) {
+    return h((props, { store }) => {
         if (store.get('source') === source) {
             return store.get('dom') as Node[];
         }
@@ -23,7 +23,7 @@ export const parseDOM = (string: string): Template => {
         store.set('source', source);
         store.set('dom', dom);
         return dom;
-    } as FunctionComponent, null);
+    }, null);
 };
 
 /**

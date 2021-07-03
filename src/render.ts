@@ -78,14 +78,29 @@ export type Filter = (item: Node) => boolean;
 export type UpdateRequest = () => boolean;
 
 /**
-* A function that returns a template.
-*
-* @param props A set of properties with children.
-* @param context The current render context.
-* @return A template.
-*/
+ * A function that returns a template.
+ *
+ * @param props A set of properties with children.
+ * @param context The current render context.
+ * @return A template.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FunctionComponent<P = any> = (props: P, context: Context<Node, UpdateRequest, P>) => Template;
+export type FunctionComponent<P = any> = (
+    props: P,
+    context: Context<Node, UpdateRequest, P>,
+    /**
+     * @deprecated Use context.requestUpdate method.
+     */
+    requestUpdate: UpdateRequest,
+    /**
+     * @deprecated Use the returned value of the context.requestUpdate method.
+     */
+    isAttached: () => boolean,
+    /**
+     * @deprecated Use context.
+     */
+    sameContext: Context<Node, UpdateRequest, P>
+) => Template;
 
 /**
  * Identify hyper objects..
@@ -380,7 +395,12 @@ export type WithContext<T extends Node, F extends UpdateRequest | undefined> = T
 /**
  * The node context interface.
  */
-export type Context<T extends Node = Node, F extends UpdateRequest | undefined = UpdateRequest | undefined, P = Writable<T>> = {
+export type Context<
+    T extends Node = Node,
+    F extends UpdateRequest | undefined = UpdateRequest | undefined,
+    P = Writable<T>,
+    S = Map<string, unknown>
+> = {
     node: T;
     isElement?: boolean;
     isText?: boolean;
@@ -391,7 +411,7 @@ export type Context<T extends Node = Node, F extends UpdateRequest | undefined =
         WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
         WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
     ];
-    store: Map<string, unknown>;
+    store: S;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
     Function?: FunctionComponent<P>;
@@ -401,6 +421,7 @@ export type Context<T extends Node = Node, F extends UpdateRequest | undefined =
     parent?: Context;
     root?: Context;
     requestUpdate: F;
+    __proto__: S;
 };
 
 /**
@@ -415,10 +436,14 @@ export const setContext = <T extends Node, F extends UpdateRequest | undefined =
  * @param node The node scope of the context.
  * @return A context object for the node.
  */
-export const createContext = <T extends Node, F extends UpdateRequest | undefined>(node: T, requestUpdate?: F) => {
+export const createContext = <
+    T extends Node,
+    F extends UpdateRequest | undefined
+>(node: T, requestUpdate?: F) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
     const is = (node as unknown as CustomElement<HTMLElement>).is;
+    const store = new Map() as Map<string, unknown>;
     return setContext(node, {
         node,
         isElement: isElementNode,
@@ -427,9 +452,10 @@ export const createContext = <T extends Node, F extends UpdateRequest | undefine
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
         properties: [new WeakMap(), new WeakMap()],
-        store: new Map(),
+        store,
         fragments: [],
         requestUpdate,
+        __proto__: store,
     }) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
 };
 
@@ -438,7 +464,10 @@ export const createContext = <T extends Node, F extends UpdateRequest | undefine
  * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getOrCreateContext = <T extends Node, F extends UpdateRequest | undefined>(target: WithContext<T, F>, requestUpdate?: F) => (target[CONTEXT_SYMBOL] || createContext(target, requestUpdate)) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
+export const getOrCreateContext = <
+    T extends Node,
+    F extends UpdateRequest | undefined
+>(target: WithContext<T, F>, requestUpdate?: F) => (target[CONTEXT_SYMBOL] || createContext(target, requestUpdate)) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
 
 /**
  * Cleanup child fragments of a context.
@@ -664,6 +693,9 @@ export const internalRender = (
                                 children,
                                 ...properties,
                             },
+                            renderFragmentContext,
+                            renderFragmentContext.requestUpdate.bind(renderFragmentContext),
+                            () => fragments.indexOf(renderFragmentContext) !== -1,
                             renderFragmentContext
                         ),
                     ],
@@ -1010,4 +1042,9 @@ export const render = (input: Template, root: Node = DOM.createDocumentFragment(
         return childNodes[0];
     }
     return cloneChildNodes(childNodes);
+};
+
+export const F: FunctionComponent = function(props, context, update) {
+    update();
+    return null;
 };

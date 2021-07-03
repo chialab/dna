@@ -252,7 +252,7 @@ It's a Custom Element, but with some extra useful method.
 
 <hr />
 
-<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, F extends <a href="#updaterequest">UpdateRequest</a> | undefined, P&gt;</strong>
+<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, F extends <a href="#updaterequest">UpdateRequest</a> | undefined, P, S&gt;</strong>
     
 <p>
 
@@ -262,6 +262,7 @@ The node context interface.
 
 <pre>{
   Function?: <a href="#functioncomponent">FunctionComponent</a>;
+  __proto__: <a href="#s">S</a>;
   childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
   end?: <a href="#node">Node</a>;
   fragments: <a href="#context">Context</a>[];
@@ -276,7 +277,7 @@ The node context interface.
   root?: <a href="#context">Context</a>;
   slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
   start?: <a href="#node">Node</a>;
-  store: <a href="#map">Map</a>;
+  store: <a href="#s">S</a>;
   tagName?: string
 }</pre>
 
@@ -317,7 +318,7 @@ A function that returns a template.
 
 </p>
 
-<pre>(props: <a href="#p">P</a>, context: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
+<pre>(props: <a href="#p">P</a>, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
 
 <hr />
 
