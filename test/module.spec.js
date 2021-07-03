@@ -16,6 +16,7 @@ describe('module', function() {
         render: 'function',
         Fragment: 'symbol',
         h: 'function',
+        compile: 'function',
         html: 'function',
         css: 'function',
         defineListeners: 'function',
@@ -34,6 +35,7 @@ describe('module', function() {
         isComponent: 'function',
         isComponentConstructor: 'function',
         Component: 'function',
+        parseDOM: 'function',
         until: 'function',
     };
 

@@ -26,7 +26,7 @@ describe('template', function() {
                 return DNA.html`<h1>Hello world!</h1>`;
             },
             PLAIN_HTML() {
-                return DNA.html('<h1>Hello world!</h1>');
+                return DNA.compile('<h1>Hello world!</h1>');
             },
         };
         /* eslint-enable mocha/no-setup-in-describe */

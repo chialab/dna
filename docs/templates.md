@@ -300,15 +300,15 @@ h(Fragment, null,
 
 ## HTML content
 
-By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you need to pass the code to the `html` helper:
+By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you can use the `parseDOM` directive:
 
 ```diff
-import { html } from '@chialab/dna';
+import { html, parseDOM } from '@chialab/dna';
 
 const content = '<h1>Hello</h1>';
 
--<x-label>{content}</x-label>;
-+<x-label>{html(content)}</x-label>;
+-html`<x-label>${content}</x-label>`;
++html`<x-label>${parseDOM(content)}</x-label>`;
 ```
 
 ⚠️ Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!

@@ -11,11 +11,14 @@
 
 * Typings improvements
 
-* The `html()` function will now generate a Function Component that renders a Node instance. Previously, it used to convert the provided source to VDOM nodes. In order to preserve this behavior, you can pass `true` as second argument: 
+* Using the `compile` function is now the preferred way to compile on the fly an HTML string into a virtual DOM template: 
 
 ```diff
+-import { html } from '@chialab/dna';
++import { compile } from '@chialab/dna';
+
 - ${html(model.title)}
-+ ${html(model.title, true)}
++ ${compile(model.title)}
 ```
 
 Please note that VDOM convertion does not handle HTML entities and it can lead to unexpected output, reason why the default behavior changed.

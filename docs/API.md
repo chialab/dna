@@ -6,15 +6,15 @@
 
 <strong>Types</strong>
 
-<a href="#asyncevent">AsyncEvent</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
+<a href="#asyncevent">AsyncEvent</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
 
 <strong>Variables</strong>
 
-<a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
+<a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#hyperobject">HyperObject</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
 
 <strong>Functions</strong>
 
-<a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#listen">listen</a>, <a href="#observe">observe</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#state">state</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
+<a href="#compile">compile</a>, <a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#listen">listen</a>, <a href="#observe">observe</a>, <a href="#parsedom">parseDOM</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#state">state</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
 
 <hr />
 
@@ -321,6 +321,195 @@ A function that returns a template.
 
 <hr />
 
+<strong id="hyperclasses"><code>Type</code> HyperClasses</strong>
+    
+<p>
+
+Classes dictionary.
+
+</p>
+
+<pre>string | boolean</pre>
+
+<hr />
+
+<strong id="hypercomponent"><code>Type</code> HyperComponent&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;</strong>
+    
+<p>
+
+The interface of a Component constructor used as JSX tag.
+
+</p>
+
+<pre>{
+  Component: <a href="#t">T</a>;
+  Function?: undefined;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="hyperfragment"><code>Type</code> HyperFragment</strong>
+    
+<p>
+
+The interface of a JSX fragment node.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment: true;
+  isSlot?: false;
+  key?: unknown;
+  node?: undefined;
+  properties?: {
+  
+  };
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="hyperfunction"><code>Type</code> HyperFunction</strong>
+    
+<p>
+
+The interface of a functional component.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function: <a href="#functioncomponent">FunctionComponent</a>;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#hyperproperties">HyperProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="hypernode"><code>Type</code> HyperNode&lt;T extends <a href="#node">Node</a>&gt;</strong>
+    
+<p>
+
+The interface of an HTML node used as JSX tag.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node: <a href="#t">T</a>;
+  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="hyperproperties"><code>Type</code> HyperProperties</strong>
+    
+<p>
+
+Properties used by the render engine.
+They can be assigned to a node but they are not part of the node prototype.
+
+</p>
+
+<pre>{
+  children?: <a href="#template">Template</a>[];
+  class?: <a href="#hyperclasses">HyperClasses</a>;
+  is?: string;
+  key?: unknown;
+  slot?: string;
+  style?: <a href="#hyperstyle">HyperStyle</a>;
+  xmlns?: string
+}</pre>
+
+<hr />
+
+<strong id="hyperslot"><code>Type</code> HyperSlot</strong>
+    
+<p>
+
+The interface of slot element.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot: true;
+  key?: unknown;
+  node?: undefined;
+  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  tag: slot
+}</pre>
+
+<hr />
+
+<strong id="hyperstyle"><code>Type</code> HyperStyle</strong>
+    
+<p>
+
+Styles dictionary.
+
+</p>
+
+<pre>string | string</pre>
+
+<hr />
+
+<strong id="hypertag"><code>Type</code> HyperTag&lt;T extends &gt;</strong>
+    
+<p>
+
+The interface of a generic JSX tag.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [HyperObject]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  tag: <a href="#t">T</a>
+}</pre>
+
+<hr />
+
 <strong id="observable"><code>Type</code> Observable&lt;T&gt;</strong>
     
 <p>
@@ -373,7 +562,7 @@ The observer signature for properties.
 
 </p>
 
-<pre>(oldValue: <a href="#typehint">TypeHint</a> | undefined, newValue: <a href="#typehint">TypeHint</a>) => void</pre>
+<pre>(oldValue: <a href="#typehint">TypeHint</a> | undefined, newValue: <a href="#typehint">TypeHint</a>, propertyKey: string) => void</pre>
 
 <hr />
 
@@ -447,6 +636,18 @@ A constructor alias used for JSX fragments </>.
 
 <hr />
 
+<strong id="hyperobject"><code>Variable</code> HyperObject</strong>
+    
+<p>
+
+Identify hyper objects..
+
+</p>
+
+<pre></pre>
+
+<hr />
+
 <strong id="customelements"><code>Variable</code> customElements</strong>
     
 <p>
@@ -463,6 +664,37 @@ The global DNA registry instance.
     
 
 <pre><a href="#window">Window</a> & <a href="#globalthis">globalThis</a></pre>
+
+<hr />
+
+<strong id="compile"><code>Function</code> compile</strong>
+
+<details>
+<summary>
+    <code>(string: string): <a href="#template">Template</a></code>
+</summary>
+
+<strong>Params</strong>
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>string</td>
+            <td><code>string</code></td>
+            <td align="center"></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template.
+
+</details>
 
 <hr />
 
@@ -1235,12 +1467,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template.
 
 </details>
 <details>
 <summary>
-    <code>(string: string, useVirtualDom?: boolean): <a href="#template">Template</a></code>
+    <code>(string: string): <a href="#template">Template</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1256,17 +1488,12 @@ The global DNA registry instance.
             <td>string</td>
             <td><code>string</code></td>
             <td align="center"></td>
-            <td></td></tr>
-<tr>
-            <td>useVirtualDom</td>
-            <td><code>boolean</code></td>
-            <td align="center">✓</td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template.
 
 </details>
 
@@ -1468,6 +1695,37 @@ The global DNA registry instance.
 </table>
 
 <strong>Returns</strong>: <code><a href="#function">Function</a></code> The decorator initializer.
+
+</details>
+
+<hr />
+
+<strong id="parsedom"><code>Function</code> parseDOM</strong>
+
+<details>
+<summary>
+    <code>(string: string): <a href="#template">Template</a></code>
+</summary>
+
+<strong>Params</strong>
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>string</td>
+            <td><code>string</code></td>
+            <td align="center"></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template function.
 
 </details>
 

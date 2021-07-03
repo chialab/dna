@@ -13,44 +13,31 @@ import { css } from './css';
 const innerHtml = htm.bind(h);
 
 /**
- * Compile a string into template string.
+ * Compile a string into virtual DOM template.
  *
- * @return The template string.
+ * @return The virtual DOM template.
  */
-export const compile = (string: string) => {
-    const array = [string];
-    (array as string[] & { raw?: string[] }).raw = [string];
-    return array as unknown as TemplateStringsArray;
+export const compile = (string: string): Template => {
+    const array = [string] as string[] & { raw?: string[] };
+    array.raw = [string];
+    return innerHtml(array as unknown as TemplateStringsArray);
 };
 
 /**
  * Compile a template string into virtual DOM template.
  *
- * @return The virtual DOM template function.
+ * @return The virtual DOM template.
  */
 function html(string: TemplateStringsArray, ...values: unknown[]): Template;
-function html(string: string, useVirtualDom?: boolean): Template;
-function html(string: string | TemplateStringsArray, useVirtualDom?: boolean | unknown, ...values: unknown[]): Template {
+/**
+ * @deprecated use compile function instead.
+ */
+function html(string: string): Template;
+function html(string: string | TemplateStringsArray, ...values: unknown[]): Template {
     if (typeof string === 'string') {
-        const source = string;
-        if (useVirtualDom) {
-            return innerHtml(compile(string));
-        }
-        return h(function unsafeInnerHTML(properties, { store }) {
-            if (store.get('source') === source) {
-                return store.get('dom') as Node[];
-            }
-
-            const wrapper = DOM.createElement('div');
-            wrapper.innerHTML = source;
-            customElements.upgrade(wrapper);
-            const dom = cloneChildNodes(wrapper.childNodes);
-            store.set('source', source);
-            store.set('dom', dom);
-            return dom;
-        } as FunctionComponent, null);
+        return compile(string);
     }
-    return innerHtml(string, useVirtualDom, ...values);
+    return innerHtml(string, ...values);
 }
 
 export { html };

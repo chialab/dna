@@ -295,7 +295,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button></button>');
+                    return DNA.compile('<button></button>');
                 }
             }
 
@@ -324,7 +324,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button></button>');
+                    return DNA.compile('<button></button>');
                 }
             }
 
@@ -410,7 +410,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button></button>');
+                    return DNA.compile('<button></button>');
                 }
             };
 
@@ -445,7 +445,7 @@ describe('events', function() {
                 }
 
                 render() {
-                    return DNA.html('<button></button>');
+                    return DNA.compile('<button></button>');
                 }
             };
 
@@ -575,7 +575,7 @@ describe('events', function() {
                         kind: 'method',
                         key: 'render',
                         value: function render() {
-                            return DNA.html('<button></button>');
+                            return DNA.compile('<button></button>');
                         },
                     }],
                 };
@@ -621,7 +621,7 @@ describe('events', function() {
                         kind: 'method',
                         key: 'render',
                         value: function render() {
-                            return DNA.html('<button></button>');
+                            return DNA.compile('<button></button>');
                         },
                     }],
                 };

@@ -1,5 +1,30 @@
-import type { Template } from './render';
+import type { FunctionComponent, Template } from './render';
+import { cloneChildNodes } from './helpers';
+import { DOM } from './DOM';
+import { h } from './render';
 import { getThenableState } from './Thenable';
+
+/**
+ * Convert an HTML string to DOM nodes.
+ * @param string The HTML string to conver.
+ * @return The virtual DOM template function.
+ */
+export const parseDOM = (string: string): Template => {
+    const source = string;
+    return h(function unsafeInnerHTML(properties, { store }) {
+        if (store.get('source') === source) {
+            return store.get('dom') as Node[];
+        }
+
+        const wrapper = DOM.createElement('div');
+        wrapper.innerHTML = source;
+        customElements.upgrade(wrapper);
+        const dom = cloneChildNodes(wrapper.childNodes);
+        store.set('source', source);
+        store.set('dom', dom);
+        return dom;
+    } as FunctionComponent, null);
+};
 
 /**
  * It renders the template when then provided Thenable is in pending status.
