@@ -103,9 +103,9 @@ export type FunctionComponent<P = any> = (
 ) => Template;
 
 /**
- * Identify hyper objects..
+ * Identify hyper objects.
  */
-export const HyperObject: unique symbol = createSymbol();
+export const HYPER_OBJECT_SYM: unique symbol = createSymbol();
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -149,7 +149,7 @@ export type HyperFragment = {
     key?: unknown;
     properties?: {};
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
 
 /**
@@ -166,7 +166,7 @@ export type HyperFunction = {
     namespaceURI?: string;
     properties: HyperProperties;
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
 
 /**
@@ -183,7 +183,7 @@ export type HyperNode<T extends Node> = {
     namespaceURI?: string;
     properties: Writable<T> & HyperProperties;
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
 
 /**
@@ -200,7 +200,7 @@ export type HyperComponent<T extends CustomElementConstructor<HTMLElement>> = {
     namespaceURI?: string;
     properties: Writable<InstanceType<T>> & HyperProperties;
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
 
 /**
@@ -216,7 +216,7 @@ export type HyperSlot = {
     key?: unknown;
     properties: Writable<HTMLElementTagNameMap['slot']> & HyperProperties;
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
 
 /**
@@ -233,51 +233,56 @@ export type HyperTag<T extends keyof TagNameMap> = {
     namespaceURI?: string;
     properties: Writable<TagNameMap[T]> & HyperProperties;
     children: Template[];
-    [HyperObject]: true;
+    [HYPER_OBJECT_SYM]: true;
 };
+
+/**
+ * Generic hyper object.
+ */
+export type HyperObject = HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>;
 
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isHyperObject = (target: any): target is HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap> => typeof target === 'object' && !!target[HyperObject];
+export const isHyperObject = (target: any): target is HyperObject => typeof target === 'object' && !!target[HYPER_OBJECT_SYM];
 
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  */
-export const isHyperFragment = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperFragment => !!target.isFragment;
+export const isHyperFragment = (target: HyperObject): target is HyperFragment => !!target.isFragment;
 
 /**
  * Check if the current virtual node is a functional component.
  * @param target The node to check.
  */
-export const isHyperFunction = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperFunction => !!target.Function;
+export const isHyperFunction = (target: HyperObject): target is HyperFunction => !!target.Function;
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  */
-export const isHyperComponent = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperComponent<CustomElementConstructor<HTMLElement>> => !!target.Component;
+export const isHyperComponent = (target: HyperObject): target is HyperComponent<CustomElementConstructor<HTMLElement>> => !!target.Component;
 
 /**
  * Check if the current virtual node is an HTML node instance.
  * @param target The node to check.
  */
-export const isHyperNode = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperNode<Node> => !!target.node;
+export const isHyperNode = (target: HyperObject): target is HyperNode<Node> => !!target.node;
 
 /**
  * Check if the current virtual node is a slot element.
  * @param target The node to check.
  */
-export const isHyperSlot = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperSlot => !!target.isSlot;
+export const isHyperSlot = (target: HyperObject): target is HyperSlot => !!target.isSlot;
 
 /**
  * Check if the current virtual node is a generic tag to render.
  * @param target The node to check.
  */
-export const isHyperTag = (target: HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>): target is HyperTag<'div'> => !!target.tag;
+export const isHyperTag = (target: HyperObject): target is HyperTag<'div'> => !!target.tag;
 
 
 /**
@@ -300,7 +305,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
         return {
             isFragment: true,
             children,
-            [HyperObject]: true,
+            [HYPER_OBJECT_SYM]: true,
         } as HyperFragment;
     }
 
@@ -311,7 +316,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
-            [HyperObject]: true,
+            [HYPER_OBJECT_SYM]: true,
         } as HyperNode<typeof tagOrComponent>;
     }
 
@@ -323,7 +328,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 namespaceURI: 'http://www.w3.org/2000/svg',
                 properties,
                 children,
-                [HyperObject]: true,
+                [HYPER_OBJECT_SYM]: true,
             };
         }
 
@@ -334,7 +339,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 key,
                 properties: properties || {},
                 children,
-                [HyperObject]: true,
+                [HYPER_OBJECT_SYM]: true,
             } as HyperSlot;
         }
 
@@ -346,7 +351,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
                 namespaceURI: xmlns,
                 properties: properties || {},
                 children,
-                [HyperObject]: true,
+                [HYPER_OBJECT_SYM]: true,
             } as HyperComponent<typeof Component>;
         }
 
@@ -356,7 +361,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
-            [HyperObject]: true,
+            [HYPER_OBJECT_SYM]: true,
         } as HyperTag<typeof tagOrComponent>;
     }
 
@@ -367,7 +372,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
-            [HyperObject]: true,
+            [HYPER_OBJECT_SYM]: true,
         } as HyperComponent<typeof tagOrComponent>;
     }
 
@@ -377,7 +382,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
         namespaceURI: xmlns,
         properties: properties || {},
         children,
-        [HyperObject]: true,
+        [HYPER_OBJECT_SYM]: true,
     } as HyperFunction;
 }
 
