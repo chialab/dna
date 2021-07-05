@@ -236,7 +236,7 @@ export class CustomElementRegistry {
                 }
             }
             if (element.isConnected) {
-                connect(element, true);
+                connect(element);
             }
             element.forceUpdate();
         }

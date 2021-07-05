@@ -243,11 +243,11 @@ export const shouldEmulateLifeCycle = (node: WithEmulatedLifecycle<Element>) => 
  *
  * @param node The connected node.
  */
-export const connect = (node: Node, force = false) => {
+export const connect = (node: Node) => {
     if (!isElement(node)) {
         return;
     }
-    if (force || shouldEmulateLifeCycle(node)) {
+    if (shouldEmulateLifeCycle(node)) {
         (node as ComponentInstance<HTMLElement>).connectedCallback();
     }
     const children = cloneChildNodes(node.childNodes);
@@ -278,7 +278,7 @@ export const disconnect = (node: Node) => {
 /**
  * Should emulate life cycle.
  */
-let lifeCycleEmulation = typeof customElements === 'undefined';
+let lifeCycleEmulation = typeof window.customElements === 'undefined';
 
 /**
  * Flag the element for life cycle emulation.

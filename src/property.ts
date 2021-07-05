@@ -517,8 +517,8 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance<HTMLEleme
  * @param declaration The declaration to update.
  * @param descriptor The field descriptor.
  */
-const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: PropertyDescriptor & { initializer?: Function }) => {
-    declaration.initializer = descriptor.initializer;
+const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: PropertyDescriptor, initializer?: Function) => {
+    declaration.initializer = initializer;
     declaration.get = descriptor.get;
     declaration.set = descriptor.set;
     if (!descriptor.get) {
@@ -557,10 +557,7 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
     }
 
     if (element.descriptor) {
-        assignFromDescriptor(declaration, {
-            ...element.descriptor,
-            initializer: element.initializer,
-        });
+        assignFromDescriptor(declaration, element.descriptor, element.initializer);
     }
 
     return {

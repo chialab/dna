@@ -561,9 +561,6 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                  * @inheritdoc
                  */
                 constructor(...args: any[]) {
-                    // So sorry about this, but I can't get it working otherwise
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     super(...args);
                     flagConstructed(this);
                     this.initialize(this.initProps);

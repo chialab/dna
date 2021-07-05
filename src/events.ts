@@ -433,7 +433,6 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
  * @param propertyKey The property name to watch.
  * @param methodKey The method name.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createListener = <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
     targetOrClassElement: T,
     eventName: string,
@@ -449,9 +448,6 @@ export const createListener = <T extends ComponentInstance<HTMLElement>, P exten
     }
 
     const element = targetOrClassElement as unknown as ClassElement;
-    if (!element.descriptor) {
-        return element;
-    }
     return {
         ...element,
         finisher(constructor: Constructor<T>) {
