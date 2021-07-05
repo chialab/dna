@@ -10,7 +10,7 @@ import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
-import { getProperties } from './property';
+import { getProperty } from './property';
 
 const innerHtml = htm.bind(h);
 
@@ -888,9 +888,17 @@ export const internalRender = (
                     setValue(templateElement, propertyKey, value);
                 } else if (isHyperComponent(template)) {
                     const Component = template.Component;
-                    const properties = getProperties(Component.prototype as ComponentInstance<HTMLElement>);
-                    const observedAttributes = Component.observedAttributes;
-                    if (!properties[propertyKey] && type === 'string' && (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1)) {
+                    if (type === 'string') {
+                        const observedAttributes = Component.observedAttributes;
+                        if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
+                            setValue(templateElement, propertyKey, value);
+                        } else {
+                            const property = getProperty(Component.prototype as ComponentInstance<HTMLElement>, propertyKey);
+                            if (property && property.fromAttribute) {
+                                setValue(templateElement, propertyKey, property.fromAttribute(value as string));
+                            }
+                        }
+                    } else {
                         setValue(templateElement, propertyKey, value);
                     }
                 }
