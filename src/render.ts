@@ -1,6 +1,7 @@
 import type { TagNameMap, IterableNodeList, Writable, WritableOf } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
+import type { ComponentInstance } from './Component';
 import htm from 'htm';
 import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes } from './helpers';
 import { isComponent } from './Component';
@@ -9,6 +10,7 @@ import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
+import { getProperties } from './property';
 
 const innerHtml = htm.bind(h);
 
@@ -885,12 +887,10 @@ export const internalRender = (
                 if (isReference || wasReference || isRenderingInput(templateElement, propertyKey)) {
                     setValue(templateElement, propertyKey, value);
                 } else if (isHyperComponent(template)) {
-                    if (type === 'string') {
-                        const observedAttributes = template.Component.observedAttributes;
-                        if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                            setValue(templateElement, propertyKey, value);
-                        }
-                    } else {
+                    const Component = template.Component;
+                    const properties = getProperties(Component.prototype as ComponentInstance<HTMLElement>);
+                    const observedAttributes = Component.observedAttributes;
+                    if (!properties[propertyKey] && type === 'string' && (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1)) {
                         setValue(templateElement, propertyKey, value);
                     }
                 }
@@ -1047,9 +1047,4 @@ export const render = (input: Template, root: Node = DOM.createDocumentFragment(
         return childNodes[0];
     }
     return cloneChildNodes(childNodes);
-};
-
-export const F: FunctionComponent = function(props, context, update) {
-    update();
-    return null;
 };

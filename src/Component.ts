@@ -1,7 +1,8 @@
 import type { Constructor, ClassDescriptor } from './types';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
-import { addObserver, getProperty, PropertyConfig, PropertyObserver, reflectPropertyToAttribute, removeObserver } from './property';
+import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './render';
+import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver } from './property';
 import { createSymbol, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
