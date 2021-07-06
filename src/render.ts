@@ -428,7 +428,15 @@ export type Context<
     parent?: Context;
     root?: Context;
     requestUpdate: F;
-    __proto__: S;
+    __proto__: {
+        readonly size: number;
+        has: Map<string, unknown>['has'];
+        get: Map<string, unknown>['get'];
+        set: Map<string, unknown>['set'];
+        delete: Map<string, unknown>['delete'];
+        clear: Map<string, unknown>['clear'];
+        forEach: Map<string, unknown>['forEach'];
+    };
 };
 
 /**
@@ -462,7 +470,17 @@ export const createContext = <
         store,
         fragments: [],
         requestUpdate,
-        __proto__: store,
+        __proto__: {
+            get size() {
+                return store.size;
+            },
+            has: store.has.bind(store),
+            get: store.get.bind(store),
+            set: store.set.bind(store),
+            delete: store.delete.bind(store),
+            clear: store.clear.bind(store),
+            forEach: store.forEach.bind(store),
+        },
     }) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
 };
 
