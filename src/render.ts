@@ -89,7 +89,7 @@ export type UpdateRequest = () => boolean;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = any> = (
     props: P,
-    context: Context<Node, UpdateRequest, P>,
+    context: Context<Node, P>,
     /**
      * @deprecated Use context.requestUpdate method.
      */
@@ -101,7 +101,7 @@ export type FunctionComponent<P = any> = (
     /**
      * @deprecated Use context.
      */
-    sameContext: Context<Node, UpdateRequest, P>
+    sameContext: Context<Node, P>
 ) => Template;
 
 /**
@@ -395,8 +395,8 @@ export { h };
  */
 const CONTEXT_SYMBOL: unique symbol = createSymbol();
 
-export type WithContext<T extends Node, F extends UpdateRequest | undefined> = T & {
-    [CONTEXT_SYMBOL]?: Context<T, F>;
+export type WithContext<T extends Node> = T & {
+    [CONTEXT_SYMBOL]?: Context<T>;
 };
 
 /**
@@ -404,7 +404,6 @@ export type WithContext<T extends Node, F extends UpdateRequest | undefined> = T
  */
 export type Context<
     T extends Node = Node,
-    F extends UpdateRequest | undefined = UpdateRequest | undefined,
     P = Writable<T>,
     S = Map<string, unknown>
 > = {
@@ -415,8 +414,8 @@ export type Context<
     is?: string;
     key?: unknown;
     properties: [
-        WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
-        WeakMap<Context<T, UpdateRequest | undefined, P>, P & HyperProperties>,
+        WeakMap<Context<T, P>, P & HyperProperties>,
+        WeakMap<Context<T, P>, P & HyperProperties>,
     ];
     store: S;
     childNodes?: IterableNodeList;
@@ -427,7 +426,7 @@ export type Context<
     fragments: Context[];
     parent?: Context;
     root?: Context;
-    requestUpdate: F;
+    requestUpdate?: UpdateRequest;
     __proto__: {
         readonly size: number;
         has: Map<string, unknown>['has'];
@@ -444,17 +443,14 @@ export type Context<
  * @param target The object to context.
  * @param context The context to set.
  */
-export const setContext = <T extends Node, F extends UpdateRequest | undefined = undefined>(target: WithContext<T, F>, context: Context<T, F>): Context<T, F> => target[CONTEXT_SYMBOL] = context;
+export const setContext = <T extends Node>(target: WithContext<T>, context: Context<T>): Context<T> => target[CONTEXT_SYMBOL] = context;
 
 /**
  * Create a node context.
  * @param node The node scope of the context.
  * @return A context object for the node.
  */
-export const createContext = <
-    T extends Node,
-    F extends UpdateRequest | undefined
->(node: T, requestUpdate?: F) => {
+export const createContext = <T extends Node>(node: T) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
     const is = (node as unknown as CustomElement<HTMLElement>).is;
@@ -469,7 +465,6 @@ export const createContext = <
         properties: [new WeakMap(), new WeakMap()],
         store,
         fragments: [],
-        requestUpdate,
         __proto__: {
             get size() {
                 return store.size;
@@ -481,7 +476,7 @@ export const createContext = <
             clear: store.clear.bind(store),
             forEach: store.forEach.bind(store),
         },
-    }) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
+    }) as Context<T>;
 };
 
 /**
@@ -489,10 +484,7 @@ export const createContext = <
  * @param target The scope of the context.
  * @return The context object (if it exists).
  */
-export const getOrCreateContext = <
-    T extends Node,
-    F extends UpdateRequest | undefined
->(target: WithContext<T, F>, requestUpdate?: F) => (target[CONTEXT_SYMBOL] || createContext(target, requestUpdate)) as Context<T, F extends UpdateRequest ? UpdateRequest : undefined>;
+export const getOrCreateContext = <T extends Node>(target: WithContext<T>) => (target[CONTEXT_SYMBOL] || createContext(target)) as Context<T>;
 
 /**
  * Cleanup child fragments of a context.
@@ -682,7 +674,7 @@ export const internalRender = (
             }
 
             if (isHyperFunction(template)) {
-                const { Function, properties, children } = template;
+                const { Function, key, properties, children } = template;
                 const rootFragment = fragment;
                 const previousContext = renderContext;
                 const previousFragment = currentFragment;
@@ -690,13 +682,14 @@ export const internalRender = (
                 let placeholder: Node;
                 if (fragment) {
                     placeholder = fragment.start as Node;
-                } else if (currentContext && currentContext.Function === Function) {
+                } else if (currentContext && currentContext.Function === Function && currentContext.key === key) {
                     placeholder = currentContext.start as Node;
                 } else {
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                const renderFragmentContext = getOrCreateContext(placeholder, () => {
+                const renderFragmentContext = getOrCreateContext(placeholder);
+                const requestUpdate = renderFragmentContext.requestUpdate = renderFragmentContext.requestUpdate || (() => {
                     if (fragments.indexOf(renderFragmentContext) === -1) {
                         return false;
                     }
@@ -719,7 +712,7 @@ export const internalRender = (
                                 ...properties,
                             },
                             renderFragmentContext,
-                            renderFragmentContext.requestUpdate.bind(renderFragmentContext),
+                            requestUpdate,
                             () => fragments.indexOf(renderFragmentContext) !== -1,
                             renderFragmentContext
                         ),
@@ -941,7 +934,7 @@ export const internalRender = (
                     (template as Promise<unknown>)
                         .catch(() => 1)
                         .then(() => {
-                            context.requestUpdate();
+                            (context.requestUpdate as UpdateRequest)();
                         });
                 }
                 return status.result as Template;
@@ -954,12 +947,12 @@ export const internalRender = (
                 if (!status.complete) {
                     const subscription = observable.subscribe(
                         () => {
-                            if (!context.requestUpdate()) {
+                            if (!(context.requestUpdate as UpdateRequest)()) {
                                 subscription.unsubscribe();
                             }
                         },
                         () => {
-                            if (!context.requestUpdate()) {
+                            if (!(context.requestUpdate as UpdateRequest)()) {
                                 subscription.unsubscribe();
                             }
                         },
