@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://www.chialab.io/p/dna">
-        <img alt="DNA logo" width="144" height="144" src="https://raw.githack.com/chialab/dna/master/logo.svg" />
+        <img alt="DNA logo" width="144" height="144" src="https://raw.githack.com/chialab/dna/main/logo.svg" />
     </a>
 </p>
 
@@ -132,7 +132,7 @@ Then use the element in your HTML:
 ## Development
 
 [![Build status](https://github.com/chialab/dna/workflows/Main/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3ABuild)
-[![codecov](https://codecov.io/gh/chialab/dna/branch/master/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
+[![codecov](https://codecov.io/gh/chialab/dna/branch/main/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
 
 ### Build the project
 
@@ -172,4 +172,4 @@ $ npm run release
 
 ## License
 
-DNA is released under the [MIT](https://github.com/chialab/dna/blob/master/LICENSE) license.
+DNA is released under the [MIT](https://github.com/chialab/dna/blob/main/LICENSE) license.
