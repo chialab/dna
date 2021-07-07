@@ -540,7 +540,7 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
     if (propertyKey !== undefined) {
         descriptor = descriptor || getOwnPropertyDescriptor(targetOrClassElement, propertyKey);
         if (descriptor) {
-            assignFromDescriptor(declaration, descriptor);
+            assignFromDescriptor(declaration, descriptor, descriptor.initializer);
         }
         return defineProperty(targetOrClassElement as T, propertyKey, declaration, symbol);
     }
