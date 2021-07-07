@@ -689,13 +689,17 @@ export const internalRender = (
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
-                const requestUpdate = renderFragmentContext.requestUpdate = renderFragmentContext.requestUpdate || (() => {
-                    if (fragments.indexOf(renderFragmentContext) === -1) {
+                const isAttached = () => fragments.indexOf(renderFragmentContext) !== -1;
+                const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
+                    if (renderFragmentContext.requestUpdate !== requestUpdate) {
+                        return (renderFragmentContext.requestUpdate as UpdateRequest)();
+                    }
+                    if (!isAttached()) {
                         return false;
                     }
                     internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
                     return true;
-                });
+                };
                 emptyFragments(renderFragmentContext);
                 renderFragmentContext.Function = Function;
                 renderFragmentContext.start = placeholder;
@@ -713,7 +717,7 @@ export const internalRender = (
                             },
                             renderFragmentContext,
                             requestUpdate,
-                            () => fragments.indexOf(renderFragmentContext) !== -1,
+                            isAttached,
                             renderFragmentContext
                         ),
                     ],
@@ -781,6 +785,7 @@ export const internalRender = (
                 checkKey: if (currentContext) {
                     let currentKey = currentContext.key;
                     if (currentKey != null && key != null && key !== currentKey) {
+                        emptyFragments(currentContext);
                         DOM.removeChild(root, currentNode, slot);
                         currentNode = childNodes.item(currentIndex) as Node;
                         currentContext = currentNode ? getOrCreateContext(currentNode) : null;
@@ -1033,8 +1038,8 @@ export const internalRender = (
     }
     while (currentIndex < lastIndex) {
         const item = childNodes.item(--lastIndex) as Node;
+        const context = getOrCreateContext(item);
         if (slot) {
-            const context = getOrCreateContext(item);
             if (context.root === rootContext) {
                 delete context.root;
             }
@@ -1042,6 +1047,7 @@ export const internalRender = (
                 delete context.parent;
             }
         }
+        emptyFragments(context);
         DOM.removeChild(root, item, slot);
     }
 
