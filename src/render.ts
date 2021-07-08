@@ -3,7 +3,7 @@ import type { CustomElement, CustomElementConstructor } from './CustomElementReg
 import type { Observable } from './Observable';
 import type { ComponentInstance } from './Component';
 import htm from 'htm';
-import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes } from './helpers';
+import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes, getPropertyDescriptor } from './helpers';
 import { isComponent } from './Component';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -690,9 +690,13 @@ export const internalRender = (
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
                 const isAttached = () => fragments.indexOf(renderFragmentContext) !== -1;
+                let running = true;
                 const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
                     if (renderFragmentContext.requestUpdate !== requestUpdate) {
                         return (renderFragmentContext.requestUpdate as UpdateRequest)();
+                    }
+                    if (running) {
+                        throw new Error('An update request is already running');
                     }
                     if (!isAttached()) {
                         return false;
@@ -735,6 +739,8 @@ export const internalRender = (
                     fragments.splice(fragments.indexOf(fragment), 1, renderFragmentContext);
                     fragment = renderFragmentContext;
                 }
+
+                running = false;
                 return;
             }
 
@@ -907,7 +913,10 @@ export const internalRender = (
                     if (type === 'string') {
                         const observedAttributes = Component.observedAttributes;
                         if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                            setValue(templateElement, propertyKey, value);
+                            const descriptor = (propertyKey in templateElement) && getPropertyDescriptor(templateElement, propertyKey);
+                            if (!descriptor || !descriptor.get || descriptor.set) {
+                                setValue(templateElement, propertyKey, value);
+                            }
                         } else {
                             const property = getProperty(Component.prototype as ComponentInstance<HTMLElement>, propertyKey);
                             if (property && property.fromAttribute) {

@@ -38,6 +38,16 @@ export const indexOf = Array.prototype.indexOf;
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 /**
+ * Like Object.getOwnPropertyDescriptor, but for all the property chain.
+ */
+export const getPropertyDescriptor = (...args: Parameters<typeof getOwnPropertyDescriptor>): ReturnType<typeof getOwnPropertyDescriptor> => {
+    if (!args[0]) {
+        return;
+    }
+    return getOwnPropertyDescriptor(...args) || getPropertyDescriptor(getPrototypeOf(args[0]), args[1]);
+};
+
+/**
  * Alias to Object.setPrototypeOf.
  */
 export const getPrototypeOf = Object.getPrototypeOf;
