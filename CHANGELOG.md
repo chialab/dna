@@ -1,3 +1,10 @@
+## [3.4.6](https://github.com/chialab/dna/compare/v3.4.5...v3.4.6) (2021-07-16)
+
+
+### Bug Fixes
+
+* from attribute context in render ([080da1f](https://github.com/chialab/dna/commit/080da1f7385060b9e9016bb1972259899087a81b))
+
 ## [3.4.5](https://github.com/chialab/dna/compare/v3.4.4...v3.4.5) (2021-07-08)
 
 
