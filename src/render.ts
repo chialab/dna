@@ -918,9 +918,9 @@ export const internalRender = (
                                 setValue(templateElement, propertyKey, value);
                             }
                         } else {
-                            const property = getProperty(Component.prototype as ComponentInstance<HTMLElement>, propertyKey);
+                            const property = getProperty(templateElement as ComponentInstance<HTMLElement>, propertyKey);
                             if (property && property.fromAttribute) {
-                                setValue(templateElement, propertyKey, property.fromAttribute(value as string));
+                                setValue(templateElement, propertyKey, (property.fromAttribute as Function).call(templateElement, value as string));
                             }
                         }
                     } else {
