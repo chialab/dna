@@ -2,7 +2,7 @@
 
 **Changes**
 
-* [⚠️ Breaking] Function Component signature has changed:
+* Function Component signature has changed:
 
 ```diff
 - function Card(properties, store, requestUpdate) {
