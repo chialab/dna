@@ -4,6 +4,7 @@ DNA is a component library based on the [Document Object Model](https://develope
 
 ```sh
 $ npm i @chialab/dna jsdom
+$ yarn add @chialab/dna jsdom
 ```
 
 **Sample:**

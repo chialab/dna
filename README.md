@@ -138,8 +138,8 @@ Then use the element in your HTML:
 
 Install the dependencies and run the `build` script:
 ```
-$ npm run install
-$ npm run build
+$ yarn install
+$ yarn build
 ```
 
 This will generate the the ESM bundles in the `dist` folder, as well as the declaration files.
@@ -149,7 +149,7 @@ This will generate the the ESM bundles in the `dist` folder, as well as the decl
 Run the `test` script:
 
 ```
-$ npm run test
+$ yarn test
 ```
 
 ### Release
@@ -165,7 +165,7 @@ $ echo 'export GH_TOKEN="abcxyz"' > .env
 Now you are ready to run the `release` command:
 
 ```sh
-$ npm run release
+$ yarn release
 ```
 
 ---
