@@ -107,7 +107,7 @@ export class CustomElementRegistry {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
 
-        if (typeof constructor !== 'function') {
+        if (typeof (constructor as unknown) !== 'function') {
             throw new TypeError('The referenced constructor must be a constructor');
         }
 
