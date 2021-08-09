@@ -6,11 +6,11 @@
 
 <strong>Types</strong>
 
-<a href="#asyncevent">AsyncEvent</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
+<a href="#asyncevent">AsyncEvent</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperobject">HyperObject</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
 
 <strong>Variables</strong>
 
-<a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#hyperobject">HyperObject</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
+<a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
 
 <strong>Functions</strong>
 
@@ -252,7 +252,7 @@ It's a Custom Element, but with some extra useful method.
 
 <hr />
 
-<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, F extends <a href="#updaterequest">UpdateRequest</a> | undefined, P, S&gt;</strong>
+<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, P, S&gt;</strong>
     
 <p>
 
@@ -262,7 +262,15 @@ The node context interface.
 
 <pre>{
   Function?: <a href="#functioncomponent">FunctionComponent</a>;
-  __proto__: <a href="#s">S</a>;
+  __proto__: {
+    clear: ;
+    delete: ;
+    forEach: ;
+    get: ;
+    has: ;
+    set: ;
+    size: number
+  };
   childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
   end?: <a href="#node">Node</a>;
   fragments: <a href="#context">Context</a>[];
@@ -273,7 +281,7 @@ The node context interface.
   node: <a href="#t">T</a>;
   parent?: <a href="#context">Context</a>;
   properties: [<a href="#weakmap">WeakMap</a>, <a href="#weakmap">WeakMap</a>];
-  requestUpdate: <a href="#f">F</a>;
+  requestUpdate?: <a href="#updaterequest">UpdateRequest</a>;
   root?: <a href="#context">Context</a>;
   slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
   start?: <a href="#node">Node</a>;
@@ -285,11 +293,6 @@ The node context interface.
 
 <strong id="delegatedeventcallback"><code>Type</code> DelegatedEventCallback</strong>
     
-<p>
-
-Describe the signature of a delegated event callback.
-
-</p>
 
 <pre>(event: <a href="#event">Event</a>, target?: <a href="#node">Node</a>) => unknown</pre>
 
@@ -312,11 +315,6 @@ A descriptor for an event delegation.
 
 <strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P&gt;</strong>
     
-<p>
-
-A function that returns a template.
-
-</p>
 
 <pre>(props: <a href="#p">P</a>, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
 
@@ -345,7 +343,7 @@ The interface of a Component constructor used as JSX tag.
 <pre>{
   Component: <a href="#t">T</a>;
   Function?: undefined;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment?: false;
   isSlot?: false;
@@ -369,7 +367,7 @@ The interface of a JSX fragment node.
 <pre>{
   Component?: undefined;
   Function?: undefined;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment: true;
   isSlot?: false;
@@ -394,7 +392,7 @@ The interface of a functional component.
 <pre>{
   Component?: undefined;
   Function: <a href="#functioncomponent">FunctionComponent</a>;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment?: false;
   isSlot?: false;
@@ -418,7 +416,7 @@ The interface of an HTML node used as JSX tag.
 <pre>{
   Component?: undefined;
   Function?: undefined;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment?: false;
   isSlot?: false;
@@ -428,6 +426,18 @@ The interface of an HTML node used as JSX tag.
   properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
   tag?: undefined
 }</pre>
+
+<hr />
+
+<strong id="hyperobject"><code>Type</code> HyperObject</strong>
+    
+<p>
+
+Generic hyper object.
+
+</p>
+
+<pre><a href="#hyperfragment">HyperFragment</a> | <a href="#hyperfunction">HyperFunction</a> | <a href="#hypercomponent">HyperComponent</a> | <a href="#hypernode">HyperNode</a> | <a href="#hyperslot">HyperSlot</a> | <a href="#hypertag">HyperTag</a></pre>
 
 <hr />
 
@@ -463,7 +473,7 @@ The interface of slot element.
 <pre>{
   Component?: undefined;
   Function?: undefined;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment?: false;
   isSlot: true;
@@ -498,7 +508,7 @@ The interface of a generic JSX tag.
 <pre>{
   Component?: undefined;
   Function?: undefined;
-  [HyperObject]: true;
+  [HYPER_OBJECT_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment?: false;
   isSlot?: false;
@@ -538,30 +548,25 @@ A state property declaration.
   attribute?: boolean | string;
   defaultValue?: <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
   event?: true | string;
-  fromAttribute?: (value: string | null) => <a href="#convertconstructortypes">ConvertConstructorTypes</a> | undefined;
   get?: ;
-  getter?: (value?: <a href="#convertconstructortypes">ConvertConstructorTypes</a>) => <a href="#returntype">ReturnType</a>;
   initializer?: <a href="#function">Function</a>;
   observe?: <a href="#propertyobserver">PropertyObserver</a>;
   observers?: <a href="#propertyobserver">PropertyObserver</a>[];
   set?: ;
-  setter?: (newValue?: ) => <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
   state?: boolean;
   symbol?: symbol;
-  toAttribute?: (value: <a href="#convertconstructortypes">ConvertConstructorTypes</a>) => string | null | undefined;
   type?: <a href="#typeconstructorhint">TypeConstructorHint</a> | <a href="#typeconstructorhint">TypeConstructorHint</a>[];
-  validate?: (value: unknown) => boolean
+  fromAttribute(value: null | string): undefined | <a href="#ifequal">IfEqual</a>;
+  getter(value?: <a href="#ifequal">IfEqual</a>): any;
+  setter(newValue?: any): <a href="#ifequal">IfEqual</a>;
+  toAttribute(value: <a href="#ifequal">IfEqual</a>): undefined | null | string;
+  validate(value: unknown): boolean
 }</pre>
 
 <hr />
 
 <strong id="propertyobserver"><code>Type</code> PropertyObserver&lt;TypeHint&gt;</strong>
     
-<p>
-
-The observer signature for properties.
-
-</p>
 
 <pre>(oldValue: <a href="#typehint">TypeHint</a> | undefined, newValue: <a href="#typehint">TypeHint</a>, propertyKey: string) => void</pre>
 
@@ -637,18 +642,6 @@ A constructor alias used for JSX fragments </>.
 
 <hr />
 
-<strong id="hyperobject"><code>Variable</code> HyperObject</strong>
-    
-<p>
-
-Identify hyper objects..
-
-</p>
-
-<pre></pre>
-
-<hr />
-
 <strong id="customelements"><code>Variable</code> customElements</strong>
     
 <p>
@@ -703,7 +696,7 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(node: <a href="#node">Node</a>, force: boolean): void</code>
+    <code>(node: <a href="#node">Node</a>): void</code>
 </summary>
 
 <strong>Params</strong>
@@ -718,11 +711,6 @@ The global DNA registry instance.
         <tr>
             <td>node</td>
             <td><code><a href="#node">Node</a></code></td>
-            <td align="center"></td>
-            <td></td></tr>
-<tr>
-            <td>force</td>
-            <td><code>boolean</code></td>
             <td align="center"></td>
             <td></td>
         </tr>
@@ -1401,7 +1389,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends symbol | object | a | abbr | address | applet | area | article | aside | audio | b | base | basefont | bdi | bdo | blockquote | body | br | button | canvas | caption | cite | code | col | colgroup | data | datalist | dd | del | details | dfn | dialog | dir | div | dl | dt | em | embed | fieldset | figcaption | figure | font | footer | form | frame | frameset | h1 | h2 | h3 | h4 | h5 | h6 | head | header | hgroup | hr | html | i | iframe | img | input | ins | kbd | label | legend | li | link | main | map | mark | marquee | menu | meta | meter | nav | noscript | ol | optgroup | option | output | p | param | picture | pre | progress | q | rp | rt | ruby | s | samp | script | section | select | slot | small | source | span | strong | style | sub | summary | sup | table | tbody | td | template | textarea | tfoot | th | thead | time | title | tr | track | u | ul | var | video | wbr | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypertag">HyperTag</a></code>
+    <code>&lt;T extends symbol | object | a | abbr | address | applet | area | article | aside | audio | b | base | bdi | bdo | blockquote | body | br | button | canvas | caption | cite | code | col | colgroup | data | datalist | dd | del | details | dfn | dialog | dir | div | dl | dt | em | embed | fieldset | figcaption | figure | font | footer | form | frame | frameset | h1 | h2 | h3 | h4 | h5 | h6 | head | header | hgroup | hr | html | i | iframe | img | input | ins | kbd | label | legend | li | link | main | map | mark | marquee | menu | meta | meter | nav | noscript | ol | optgroup | option | output | p | param | picture | pre | progress | q | rp | rt | ruby | s | samp | script | section | select | slot | small | source | span | strong | style | sub | summary | sup | table | tbody | td | template | textarea | tfoot | th | thead | time | title | tr | track | u | ul | var | video | wbr | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypertag">HyperTag</a></code>
 </summary>
 
 <strong>Params</strong>

@@ -1091,20 +1091,20 @@
     "@chialab/node-resolve" "^0.11.13"
 
 "@chialab/rna-apidoc@^0.11.0":
-  version "0.11.13"
-  resolved "https://registry.npmjs.org/@chialab/rna-apidoc/-/rna-apidoc-0.11.13.tgz#98b992c0039757de47dce15478600673463f0214"
-  integrity sha512-FnKa1rt7+3vLB+32545S2Pok4RDcPhgaoyRfJvkfh/1UImXmjkG96oIyOrR2+OobueA7PQ+PA1AMlIlegPzNHw==
+  version "0.11.15"
+  resolved "https://registry.npmjs.org/@chialab/rna-apidoc/-/rna-apidoc-0.11.15.tgz#8525e44cf7b2a54977f64263753259ec0b4f0b48"
+  integrity sha512-iEcXMesFRivYxEOBFtpx9tzicdpPAHwNiFWwf2Euy4fPbOxg8guXmW+JgwVrzhV9iBWDiDw3KYbakJ88dEP5pw==
   dependencies:
     "@chialab/rna-logger" "^0.11.13"
     typedoc "^0.21.5"
 
-"@chialab/rna-browser-test-runner@^0.11.0", "@chialab/rna-browser-test-runner@^0.11.13":
-  version "0.11.13"
-  resolved "https://registry.npmjs.org/@chialab/rna-browser-test-runner/-/rna-browser-test-runner-0.11.13.tgz#60b21cce8c2493e1abe495792d50d5e8fb7d3fee"
-  integrity sha512-rGEkypn3TzXIl7HdM0FVBAMBHOHyyxIcMh47aIuABa2hQ1zfQnM+7YwcGHRIbIH49VBFLtAbiajZEMnDSzfg6g==
+"@chialab/rna-browser-test-runner@^0.11.0", "@chialab/rna-browser-test-runner@^0.11.15":
+  version "0.11.15"
+  resolved "https://registry.npmjs.org/@chialab/rna-browser-test-runner/-/rna-browser-test-runner-0.11.15.tgz#c86215f3dba442ebbd42224e0873eb4501990863"
+  integrity sha512-MRnzs5jR+xefb2siwCMFuYZQGmDi35UBDste20trk9myACGgPsg9/NQXeuC8ROOq78mhxvyvhxBF8s6V8WP0fw==
   dependencies:
     "@chialab/rna-config-loader" "^0.11.13"
-    "@chialab/rna-dev-server" "^0.11.13"
+    "@chialab/rna-dev-server" "^0.11.15"
     "@chialab/rna-logger" "^0.11.13"
     "@chialab/wtr-mocha-reporter" "^0.11.13"
     "@web/test-runner-chrome" "^0.10.0"
@@ -1137,10 +1137,10 @@
   resolved "https://registry.npmjs.org/@chialab/rna-config-loader/-/rna-config-loader-0.11.13.tgz#cd247f5ae9d8d2f9fbee27f705b0ef2422f7581d"
   integrity sha512-94SYwsDm+0RSeCgkbmezPVZvD/VMnSGHiZQtQfrDGHJO77wiK/KDTWfN3ErWmXzpK/RjHsZAk/Gn8RgCb5wF6A==
 
-"@chialab/rna-dev-server@^0.11.13":
-  version "0.11.13"
-  resolved "https://registry.npmjs.org/@chialab/rna-dev-server/-/rna-dev-server-0.11.13.tgz#3eac5ec9268198d9184fbbff268c22a0f877fa43"
-  integrity sha512-k8W6GgR2F1pBLYY5QD4JAejcT/sQcvZhOwhivAWavXpT31GIibJhi1EhxrdseBFGsXIAJfxCzQH1mxw4M15kVQ==
+"@chialab/rna-dev-server@^0.11.15":
+  version "0.11.15"
+  resolved "https://registry.npmjs.org/@chialab/rna-dev-server/-/rna-dev-server-0.11.15.tgz#06ce626e2614f0fd835c5b22a2ee12eb0eee9904"
+  integrity sha512-w5QvNT8k+/l++dRspXqjSGl/uoAXxpHqO/cnfqr9z1hufeI8Ks/jlx9UDXof1rLh9xJ+HQATkGrfAdDPQitebQ==
   dependencies:
     "@chialab/rna-config-loader" "^0.11.13"
     "@chialab/rna-logger" "^0.11.13"
@@ -1162,9 +1162,9 @@
     debug "^4.3.2"
 
 "@chialab/rna-node-test-runner@^0.11.0":
-  version "0.11.13"
-  resolved "https://registry.npmjs.org/@chialab/rna-node-test-runner/-/rna-node-test-runner-0.11.13.tgz#093b1a251fb492bb284cd24c00c49ec0bc667264"
-  integrity sha512-CytOW0k1nMnVJkyfZXVzsy4rZ+OdPEHFs6Bqs7zWltH8GdD/ymTiwUbMOHey8IpXgkqraVd7bdF72FGwwR006w==
+  version "0.11.15"
+  resolved "https://registry.npmjs.org/@chialab/rna-node-test-runner/-/rna-node-test-runner-0.11.15.tgz#81d8f1b93ae947f7e4009a13bc278c5366da6183"
+  integrity sha512-zLkbbsc6sPCbU65PpV/KsZofhG4O/QyVTkzmLFSCsK7hsPyGTlv0X5k4JIMhFSPO5V5nmABAGLfpo75Xgtm+9w==
   dependencies:
     "@chialab/rna-config-loader" "^0.11.13"
     c8 "^7.7.2"
@@ -1172,11 +1172,11 @@
     mocha "^8.4.0"
 
 "@chialab/rna-saucelabs-test-runner@^0.11.0":
-  version "0.11.14"
-  resolved "https://registry.npmjs.org/@chialab/rna-saucelabs-test-runner/-/rna-saucelabs-test-runner-0.11.14.tgz#24c90ffa6f70cb2b7c844eb351173625f586d81e"
-  integrity sha512-AUD7LYdZMjT0zKBLBllVvHTjcgdcEgK7nTi357JkEJDbIDgays9MKswftjYjSbLq+TLiKf7OfzSkR0a1fXqlpw==
+  version "0.11.15"
+  resolved "https://registry.npmjs.org/@chialab/rna-saucelabs-test-runner/-/rna-saucelabs-test-runner-0.11.15.tgz#f4bb00d487abb14fa4367636515750afbc496e0f"
+  integrity sha512-nzW4g46bae+a/U3PRXzwNgwOldwCbar1hs/nqm5b4FentdmXB3lLoa8jnuxEfFvwt2DGomGBHn6i2/V2khHFOg==
   dependencies:
-    "@chialab/rna-browser-test-runner" "^0.11.13"
+    "@chialab/rna-browser-test-runner" "^0.11.15"
     "@chialab/rna-config-loader" "^0.11.13"
     "@chialab/rna-logger" "^0.11.0"
     "@chialab/wds-plugin-legacy" "^0.11.13"
