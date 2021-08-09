@@ -355,7 +355,7 @@ type Listener = {
 
 /**
  * Retrieve all listeners descriptors.
- * @param constructor The component constructor.
+ * @param prototype The component prototype.
  * @return A list of listeners.
  */
 export const getListeners = (prototype: WithListeners<ComponentInstance<HTMLElement>>) => {
@@ -369,6 +369,15 @@ export const getListeners = (prototype: WithListeners<ComponentInstance<HTMLElem
     }
 
     return listeners;
+};
+
+/**
+ * Set listeners to a prototype.
+ * @param prototype The component prototype.
+ * @param listeners The list of listeners to set.
+ */
+export const setListeners = (prototype: WithListeners<ComponentInstance<HTMLElement>>, listeners: Listener[]) => {
+    prototype[LISTENERS_SYMBOL] = listeners;
 };
 
 /**
@@ -386,7 +395,8 @@ export function defineListener(
     callback: DelegatedEventCallback,
     options: AddEventListenerOptions = {}
 ) {
-    const listeners = prototype[LISTENERS_SYMBOL] = getListeners(prototype);
+    const listeners = getListeners(prototype);
+    setListeners(prototype, listeners);
     listeners.push({
         event: eventName,
         selector,

@@ -6,7 +6,7 @@ import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver } 
 import { createSymbol, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
-import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners } from './events';
+import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
 import { getOrCreateContext, internalRender } from './render';
 import { getProperties, getPropertyForAttribute } from './property';
 
@@ -164,7 +164,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             initSlotChildNodes(element);
 
             // setup listeners
-            const listeners = getListeners(this);
+            const listeners = getListeners(this).map((listener) => ({
+                ...listener,
+                callback: listener.callback.bind(this),
+            }));
+            setListeners(this, listeners);
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, selector, callback, options } = listeners[i];
                 if (!target) {
