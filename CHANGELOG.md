@@ -1,3 +1,11 @@
+## [3.4.7](https://github.com/chialab/dna/compare/v3.4.6...v3.4.7) (2021-08-09)
+
+
+### Bug Fixes
+
+* context of listeners with target ([7c6c5a2](https://github.com/chialab/dna/commit/7c6c5a267da662116cae0a6993d755d4bb6c9f99))
+* typyings ([7842ddb](https://github.com/chialab/dna/commit/7842ddba9e18663de94943254d0db028ff2003b9))
+
 ## [3.4.6](https://github.com/chialab/dna/compare/v3.4.5...v3.4.6) (2021-07-16)
 
 
