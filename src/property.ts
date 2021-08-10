@@ -332,8 +332,11 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
                 // a falsy value should remove the attribute
                 return null;
             }
-            if (typeof newValue === 'object') {
-                // objects should be ignored
+            const valueType = typeof newValue;
+            if (valueType === 'object' ||
+                valueType === 'symbol' ||
+                valueType === 'function') {
+                // references should be ignored
                 return;
             }
             // if the value is `true` should set an empty attribute
