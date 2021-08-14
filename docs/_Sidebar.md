@@ -9,7 +9,7 @@
   * [Using JSX](./templates#using-jsx)
   * [Interpolation rules](./templates#interpolation-rules)
   * [Functional components](./templates#functional-components)
-  * [Nodes](./templates#nodes)
+  * [Nodes and references](./templates#nodes-and-references)
   * [Slotted children](./templates#slotted-children)
   * [Keyed elements](./templates#keyed-elements)
 * [Properties, states and attributes](./properties)

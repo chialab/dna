@@ -67,6 +67,18 @@ describe('render', function() {
             expect(DNA.render(DNA.DOM.createElement('div')).tagName).to.be.equal('DIV');
         });
 
+        it('should render an element node using the `ref` property', () => {
+            const div = DNA.DOM.createElement('div');
+            div.setAttribute('class', 'test');
+            div.innerHTML = '<span>test</span>';
+            DNA.render(DNA.html`<div><div ref=${div} id="test" /></div>`);
+            expect(div.id).to.be.equal('test');
+            expect(div.className).to.be.equal('test');
+            expect(div.textContent).to.be.equal('test');
+            expect(div.childNodes).to.have.lengthOf(1);
+            expect(div.parentNode.tagName).to.be.equal('DIV');
+        });
+
         it('should render an element node using the `h` helper', () => {
             const div = DNA.DOM.createElement('div');
             div.setAttribute('class', 'test');

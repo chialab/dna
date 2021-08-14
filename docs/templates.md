@@ -397,7 +397,7 @@ h('table', null,
 </div>
 </details>
 
-## Nodes
+## Nodes and references
 
 DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
 
@@ -420,7 +420,7 @@ will render:
 </body>
 ```
 
-If you want to add some properties to the instance, you can pass it as hyper node. This is useful if you want to reference some nodes in your component:
+If you want to add some properties to the instance, you can pass it as an hyper node using the `ref` property. This is useful if you want to reference some nodes in your component:
 
 ```ts
 import { DOM, Component, html, customElement, listen } from '@chialab/dna';
@@ -431,7 +431,7 @@ class Form extends Component {
 
     render() {
         return html`<form>
-            <${this.input} name="firstName" placeholder="Alan" />
+            <input ref=${this.input} name="firstName" placeholder="Alan" />
         </form>`;
     }
 
