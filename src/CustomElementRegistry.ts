@@ -1,6 +1,6 @@
 import type { Constructor } from './types';
 import { window } from './window';
-import { connect, defineProperty } from './helpers';
+import { connect, defineProperty, HTMLElementConstructor, document } from './helpers';
 import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -9,11 +9,6 @@ import { defineListeners } from './events';
  * The native custom elements registry.
  */
 const nativeCustomElements = window.customElements;
-
-/**
- * The current document instance.
- */
-const document = window.document;
 
 /**
  * Check the validity of a Custom Element name.
@@ -47,7 +42,7 @@ export type CustomElementConstructor<T extends HTMLElement> = Constructor<Custom
  * Check if the function is a Custom Element constructor.
  * @param constructor The function to check.
  */
-export const isCustomElementConstructor = (constructor: Function): constructor is CustomElementConstructor<HTMLElement> => constructor.prototype instanceof window.HTMLElement;
+export const isCustomElementConstructor = <T extends HTMLElement = HTMLElement>(constructor: Function): constructor is CustomElementConstructor<T> => constructor.prototype instanceof HTMLElementConstructor;
 
 /**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.
@@ -85,8 +80,8 @@ export class CustomElementRegistry {
      * @param name The name of the tag.
      * @return The definition for the given tag.
      */
-    get(name: string): CustomElementConstructor<HTMLElement> | undefined {
-        let constructor: CustomElementConstructor<HTMLElement> = this.registry[name];
+    get<T extends HTMLElement = HTMLElement>(name: string): CustomElementConstructor<T> | undefined {
+        let constructor = this.registry[name] as CustomElementConstructor<T>;
         // the native custom elements get method is slow
         // assert valid names before calling it.
         if (!constructor && nativeCustomElements && assertValidateCustomElementName(name)) {
@@ -102,7 +97,7 @@ export class CustomElementRegistry {
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
      */
-    define(name: string, constructor: CustomElementConstructor<HTMLElement> & { shim?: boolean }, options: ElementDefinitionOptions = {}) {
+    define<T extends HTMLElement = HTMLElement>(name: string, constructor: CustomElementConstructor<T> & { shim?: boolean }, options: ElementDefinitionOptions = {}) {
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
@@ -165,7 +160,7 @@ export class CustomElementRegistry {
      * @param name The Custom Element name.
      * @return A Promise that resolves when the named element is defined.
      */
-    whenDefined(name: string): Promise<CustomElementConstructor<HTMLElement>> {
+    whenDefined<T extends HTMLElement = HTMLElement>(name: string): Promise<CustomElementConstructor<T>> {
         if (nativeCustomElements) {
             return nativeCustomElements
                 .whenDefined(name)
@@ -173,7 +168,7 @@ export class CustomElementRegistry {
                 .then(() => nativeCustomElements.get(name));
         }
         if (this.registry[name]) {
-            return Promise.resolve(this.registry[name]);
+            return Promise.resolve(this.registry[name] as CustomElementConstructor<T>);
         }
         const queue = this.queue;
         const whenDefinedPromise = new Promise((resolve) => {
@@ -181,7 +176,7 @@ export class CustomElementRegistry {
             queue[name].push(resolve);
         });
 
-        return whenDefinedPromise as Promise<CustomElementConstructor<HTMLElement>>;
+        return whenDefinedPromise as Promise<CustomElementConstructor<T>>;
     }
 
     /**

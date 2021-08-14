@@ -32,7 +32,7 @@ export type WithConstructedFlag<T> = T & {
  * Check if a node is a component.
  * @param node The node to check.
  */
-export const isComponent = (node: WithComponentFlag<Node>): node is ComponentInstance<HTMLElement> => !!node[COMPONENT_SYMBOL];
+export const isComponent = <T extends HTMLElement = HTMLElement>(node: WithComponentFlag<Node>): node is ComponentInstance<T> => !!node[COMPONENT_SYMBOL];
 
 /**
  * Check if a node is a constructed component.
@@ -44,7 +44,7 @@ export const isConstructed = (node: WithConstructedFlag<Node>) => !!node[CONSTRU
  * Add the constructed flag to the node.
  * @param node The constructed node.
  */
-export const flagConstructed = (node: WithConstructedFlag<HTMLElement>) => {
+export const flagConstructed = <T extends HTMLElement>(node: WithConstructedFlag<T>) => {
     node[CONSTRUCTED_SYMBOL] = true;
 };
 
@@ -52,7 +52,7 @@ export const flagConstructed = (node: WithConstructedFlag<HTMLElement>) => {
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  */
-export const isComponentConstructor = (constructor: Function): constructor is ComponentConstructor<HTMLElement> => !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = <T extends HTMLElement = HTMLElement>(constructor: Function): constructor is ComponentConstructor<T> => !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
  * Extract slotted child nodes for initial child nodes.
@@ -725,7 +725,7 @@ export interface ComponentConstructor<T extends HTMLElement> {
      * @param node The node to upgrade.
      * @return The new prototyped node.
      */
-    upgrade<N extends HTMLElement>(node: N): ComponentInstance<T>;
+    upgrade(node: HTMLElement): ComponentInstance<T>;
 
     /**
      * Create a new Component instance.

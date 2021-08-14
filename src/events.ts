@@ -358,7 +358,7 @@ type Listener = {
  * @param prototype The component prototype.
  * @return A list of listeners.
  */
-export const getListeners = (prototype: WithListeners<ComponentInstance<HTMLElement>>) => {
+export const getListeners = <T extends ComponentInstance<HTMLElement>>(prototype: WithListeners<T>) => {
     const listeners = prototype[LISTENERS_SYMBOL];
     if (!listeners) {
         return [];
@@ -413,7 +413,7 @@ export function defineListener(
 export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
     const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
     let ctr = constructor;
-    while (ctr && ctr.prototype && ctr !== HTMLElement) {
+    while (ctr && ctr.prototype && ctr !== HTMLElementConstructor) {
         if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
             break;
         }
