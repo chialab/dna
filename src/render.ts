@@ -294,12 +294,13 @@ export const isHyperTag = (target: HyperObject): target is HyperTag<'div'> => !!
  * @param properties The set of properties of the Node.
  * @param children The children of the Node.
  */
+function h(tagOrComponent: typeof Fragment): HyperFragment;
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): HyperFragment;
-function h<T extends FunctionComponent>(tagOrComponent: T, properties: HyperProperties | null, ...children: Template[]): HyperFunction;
-function h<T extends CustomElementConstructor<HTMLElement>>(tagOrComponent: T, properties: Writable<InstanceType<T>> & HyperProperties | null, ...children: Template[]): HyperComponent<T>;
-function h<T extends Node>(tagOrComponent: T, properties: Writable<T> & HyperProperties | null, ...children: Template[]): HyperNode<T>;
-function h(tagOrComponent: 'slot', properties: Writable<HTMLSlotElement> & HyperProperties | null, ...children: Template[]): HyperSlot;
-function h<T extends keyof TagNameMap>(tagOrComponent: T, properties: Writable<TagNameMap[T]> & HyperProperties | null, ...children: Template[]): HyperTag<T>;
+function h<T extends FunctionComponent>(tagOrComponent: T, properties?: HyperProperties | null, ...children: Template[]): HyperFunction;
+function h<T extends CustomElementConstructor<HTMLElement>>(tagOrComponent: T, properties?: Writable<InstanceType<T>> & HyperProperties | null, ...children: Template[]): HyperComponent<T>;
+function h<T extends Node>(tagOrComponent: T, properties?: Writable<T> & HyperProperties | null, ...children: Template[]): HyperNode<T>;
+function h(tagOrComponent: 'slot', properties?: Writable<HTMLSlotElement> & HyperProperties | null, ...children: Template[]): HyperSlot;
+function h<T extends keyof TagNameMap>(tagOrComponent: T, properties?: Writable<TagNameMap[T]> & HyperProperties | null, ...children: Template[]): HyperTag<T>;
 function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns } = (properties || {});
 

@@ -89,4 +89,4 @@ export type WritableOf<T> = Exclude<{
 /**
  * Remove readonly properties from a type.
  */
-export type Writable<T> = Pick<T, WritableOf<T>>;
+export type Writable<T> = Partial<Pick<T, WritableOf<T>>>;
