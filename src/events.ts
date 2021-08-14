@@ -1,6 +1,6 @@
 import type { Constructor, ClassElement, MethodsOf } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import { createSymbol, HTMLElement, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
+import { createSymbol, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -305,7 +305,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
-    return HTMLElement.prototype.dispatchEvent.call(element, event);
+    return HTMLElementConstructor.prototype.dispatchEvent.call(element, event);
 };
 
 /**

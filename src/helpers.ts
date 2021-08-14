@@ -19,8 +19,14 @@ export const createSymbol = (description?: string | number): any => {
     /* c8 ignore stop */
 };
 
-export const { Node, HTMLElement, Event, CustomEvent, document } = window;
-export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = Node;
+export const {
+    Node: NodeConstructor,
+    HTMLElement: HTMLElementConstructor,
+    Event: EventConstructor,
+    CustomEvent: CustomEventConstructor,
+    document,
+} = window;
+export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = NodeConstructor;
 
 /**
  * Alias to Array.isArray.
@@ -75,60 +81,60 @@ export const defineProperty = Object.defineProperty;
 /**
  * Alias to Node.prototype.appendChild.
  */
-export const appendChildImpl = Node.prototype.appendChild;
+export const appendChildImpl = NodeConstructor.prototype.appendChild;
 
 /**
  * Alias to Node.prototype.removeChild.
  */
-export const removeChildImpl = Node.prototype.removeChild;
+export const removeChildImpl = NodeConstructor.prototype.removeChild;
 
 /**
  * Alias to Node.prototype.insertBefore.
  */
-export const insertBeforeImpl = Node.prototype.insertBefore;
+export const insertBeforeImpl = NodeConstructor.prototype.insertBefore;
 
 /**
  * Alias to Node.prototype.replaceChild.
  */
-export const replaceChildImpl = Node.prototype.replaceChild;
+export const replaceChildImpl = NodeConstructor.prototype.replaceChild;
 
 /**
  * Alias to HTMLElement.prototype.insertAdjacentElement.
  */
-export const insertAdjacentElementImpl = HTMLElement.prototype.insertAdjacentElement;
+export const insertAdjacentElementImpl = HTMLElementConstructor.prototype.insertAdjacentElement;
 
 /**
  * Alias to Node.prototype.isConnected.
  */
-export const isConnectedImpl = getOwnPropertyDescriptor(Node.prototype, 'isConnected');
+export const isConnectedImpl = getOwnPropertyDescriptor(NodeConstructor.prototype, 'isConnected');
 
 /**
  * Alias to HTMLElement.prototype.getAttribute.
  */
-export const getAttributeImpl = HTMLElement.prototype.getAttribute;
+export const getAttributeImpl = HTMLElementConstructor.prototype.getAttribute;
 
 /**
  * Alias to HTMLElement.prototype.hasAttribute.
  */
-export const hasAttributeImpl = HTMLElement.prototype.hasAttribute;
+export const hasAttributeImpl = HTMLElementConstructor.prototype.hasAttribute;
 
 /**
  * Alias to HTMLElement.prototype.setAttribute.
  */
-export const setAttributeImpl = HTMLElement.prototype.setAttribute;
+export const setAttributeImpl = HTMLElementConstructor.prototype.setAttribute;
 
 /**
  * Alias to HTMLElement.prototype.removeAttribute.
  */
-export const removeAttributeImpl = HTMLElement.prototype.removeAttribute;
+export const removeAttributeImpl = HTMLElementConstructor.prototype.removeAttribute;
 
 /**
  * Alias to HTMLElement.prototype.matches.
  */
-export const matchesImpl = HTMLElement.prototype.matches ||
-    HTMLElement.prototype.webkitMatchesSelector ||
+export const matchesImpl = HTMLElementConstructor.prototype.matches ||
+    HTMLElementConstructor.prototype.webkitMatchesSelector ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (HTMLElement.prototype as any).msMatchesSelector;
+    (HTMLElementConstructor.prototype as any).msMatchesSelector;
 
 /**
  * Alias to document.createDocumentFragment.
@@ -164,7 +170,7 @@ export const createCommentImpl = document.createComment.bind(document);
 export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> => {
     let event;
     try {
-        event = new CustomEvent(typeArg, eventInitDict);
+        event = new CustomEventConstructor(typeArg, eventInitDict);
     } catch {
         event = document.createEvent('CustomEvent');
         event.initCustomEvent(typeArg, eventInitDict.bubbles || false, eventInitDict.cancelable || false, eventInitDict.detail);
@@ -177,7 +183,7 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
  * @param target The target to check.
  * @return The target is a Node instance.
  */
-export const isNode = (target: unknown): target is Node => target instanceof Node;
+export const isNode = (target: unknown): target is Node => target instanceof NodeConstructor;
 
 /**
  * Check if a node is a Document instance.
@@ -208,7 +214,7 @@ export const isElement = <T extends Element>(node: any): node is T => node && no
  * @return The object is an Event instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isEvent = (event: any): event is Event => event instanceof Event;
+export const isEvent = (event: any): event is Event => event instanceof EventConstructor;
 
 /**
  * Check if a Node is connected.

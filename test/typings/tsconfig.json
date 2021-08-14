@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "moduleResolution": "node",
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "../..",
     "paths": {
       "@chialab/dna": [
         "../../src/index.ts"

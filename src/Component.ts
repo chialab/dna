@@ -1,9 +1,9 @@
-import type { Constructor, ClassDescriptor } from './types';
+import type { Constructor, ClassDescriptor, Writable, IterableNodeList } from './types';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './render';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver } from './property';
-import { createSymbol, HTMLElement, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { createSymbol, HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
@@ -478,20 +478,265 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         },
     });
 
-    return Component;
+    return Component as unknown as ComponentConstructor<T>;
 };
-
-/**
- * The basic DNA Component constructor.
- */
-export type ComponentConstructor<T extends HTMLElement> = ReturnType<typeof mixin> & Constructor<T>;
 
 /**
  * The basic DNA Component interface.
  * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
-export type ComponentInstance<T extends HTMLElement> = InstanceType<ComponentConstructor<T>>;
+interface ComponentMixin {
+    /**
+     * The tag name used for Component definition.
+     */
+    get is(): string;
+
+    /**
+     * A flag with the connected value of the node.
+     */
+    get isConnected(): boolean;
+
+    /**
+     * A list of slot nodes.
+     */
+    get slotChildNodes(): IterableNodeList | undefined;
+
+    /**
+     * Initialize component properties.
+     * @param properties A set of initial properties for the element.
+     */
+    initialize(properties?: { [P in keyof this]: this[P] }): void;
+
+    /**
+     * Invoked each time the Component is appended into a document-connected element.
+     * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+     */
+    connectedCallback(): void;
+
+    /**
+     * Invoked each time the Component is disconnected from the document's DOM.
+     */
+    disconnectedCallback(): void;
+
+    /**
+     * Invoked each time one of the Component's attributes is added, removed, or changed.
+     *
+     * @param attributeName The name of the updated attribute.
+     * @param oldValue The previous value of the attribute.
+     * @param newValue The new value for the attribute (null if removed).
+     */
+    attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null): void;
+
+    /**
+     * Invoked each time one of a Component's state property is setted, removed, or changed.
+     *
+     * @param propertyName The name of the changed property.
+     * @param oldValue The previous value of the property.
+     * @param newValue The new value for the property (undefined if removed).
+     */
+    stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+
+    /**
+     * Invoked each time one of a Component's property is setted, removed, or changed.
+     *
+     * @param propertyName The name of the changed property.
+     * @param oldValue The previous value of the property.
+     * @param newValue The new value for the property (undefined if removed).
+     */
+    propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+
+    /**
+     * Get the inner value of a property.
+     * This is an helper method for properties getters and setters.
+     * @param propertyName The name of the property to get.
+     * @return The inner value of the property.
+     */
+    getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P];
+
+    /**
+     * Set the inner value of a property.
+     * This is an helper method for properties getters and setters.
+     * @param propertyName The name of the property to get.
+     * @param value The inner value to set.
+     */
+    setInnerPropertyValue<P extends keyof this>(propertyName: P, value: this[P]): void;
+
+    /**
+     * Observe a Component Property.
+     *
+     * @param propertyName The name of the Property to observe
+     * @param observer The callback function
+     */
+    observe<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+
+    /**
+     * Unobserve a Component Property.
+     *
+     * @param propertyName The name of the Property to unobserve
+     * @param observer The callback function to remove
+     */
+    unobserve<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+
+    /**
+     * Dispatch a custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    dispatchEvent(event: Event): boolean;
+    dispatchEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+
+    /**
+     * Dispatch an async custom Event.
+     *
+     * @param event The event to dispatch or the name of the synthetic event to create.
+     * @param detail Detail object of the event.
+     * @param bubbles Should the event bubble.
+     * @param cancelable Should the event be cancelable.
+     * @param composed Is the event composed.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatchAsyncEvent(event: Event): Promise<any[]>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatchAsyncEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+
+    /**
+     * Delegate an Event listener.
+     *
+     * @param eventName The event name to listen
+     * @param selector The selector to delegate
+     * @param callback The callback to trigger when an Event matches the delegation
+     */
+    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback, options ?: AddEventListenerOptions): void;
+
+    /**
+     * Remove an Event delegation.
+     *
+     * @param eventName The Event name to undelegate
+     * @param selector The selector to undelegate
+     * @param callback The callback to remove
+     */
+    undelegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback): void;
+
+    /**
+     * Render method of the Component.
+     *
+     * @return The instances of the rendered Components and/or Nodes
+     */
+    render(): Template | undefined;
+
+    /**
+     * Force an element to re-render.
+     */
+    forceUpdate(): void;
+
+    /**
+     * Append a child to the Component.
+     *
+     * @param newChild The child to add.
+     */
+    appendChild<T extends Node>(newChild: T): T;
+
+    /**
+     * Remove a child from the Component.
+     *
+     * @param {Node} oldChild The child to remove.
+     */
+    removeChild<T extends Node>(oldChild: T): T;
+
+    /**
+     * Insert a child before another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param refChild The referred Node.
+     */
+    insertBefore<T extends Node>(newChild: T, refChild: Node | null): T;
+
+    /**
+     * Replace a child with another in the Component.
+     *
+     * @param newChild The child to insert.
+     * @param oldChild The Node to replace.
+     */
+    replaceChild<T extends Node>(newChild: Node, oldChild: T): T;
+
+    /**
+     * Insert a child at the given position.
+     *
+     * @param postion The position of the insertion.
+     * @param insertedElement The child to insert.
+     * @param slot Should insert a slot node.
+     */
+    insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element | null;
+
+    /**
+     * Set a Component attribute.
+     *
+     * @param ualifiedName The attribute name.
+     * @param value The value to set.
+     */
+    setAttribute(qualifiedName: string, value: string): void;
+
+    /**
+     * Remove a Component attribute.
+     *
+     * @param qualifiedName The attribute name.
+     */
+    removeAttribute(qualifiedName: string): void;
+}
+
+export type ComponentInstance<T extends HTMLElement> = T & ComponentMixin;
+
+/**
+ * The basic DNA Component constructor.
+ */
+export interface ComponentConstructor<T extends HTMLElement> {
+    /**
+     * An array containing the names of the attributes to observe.
+     */
+    get observedAttributes(): string[];
+
+    /**
+     * Define component properties.
+     */
+    readonly properties?: {
+        [key: string]: PropertyConfig;
+    };
+
+    /**
+     * Define component listeners.
+     */
+    readonly listeners?: {
+        [key: string]: ListenerConfig;
+    };
+
+    /**
+     * Identify shimmed constructors.
+     * Constructor will skip native constructing when true.
+     */
+    shim?: boolean;
+
+    /**
+     * Upgrade a plain element prototype.
+     * @param node The node to upgrade.
+     * @return The new prototyped node.
+     */
+    upgrade<N extends HTMLElement>(node: N): ComponentInstance<T>;
+
+    /**
+     * Create a new Component instance.
+     * @param node Instantiate the element using the given node instead of creating a new one.
+     * @param properties A set of initial properties for the element.
+     */
+    new(node?: T, properties?: Writable<ComponentInstance<T>>): ComponentInstance<T>;
+    new(properties?: Writable<ComponentInstance<T>>): ComponentInstance<T>;
+
+    prototype: ComponentInstance<T>;
+}
 
 /**
  * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
@@ -534,7 +779,7 @@ export const shim = <T extends typeof HTMLElement>(base: T): T => {
  * @param name The name of the constructor (eg. "HTMLAnchorElement").
  * @return A proxy that extends the native constructor.
  */
-export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(shim(constructor)) as unknown as ComponentConstructor<T>;
+export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(shim(constructor));
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with
@@ -542,7 +787,7 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(HTMLElement);
+export const Component = extend(HTMLElementConstructor);
 
 /**
  * Decorate and define component classes.
@@ -554,8 +799,8 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (classOrDescriptor: ComponentConstructor<HTMLElement>|ClassDescriptor): any => {
-        const upgrade = (constructor: ComponentConstructor<HTMLElement>) => {
-            const Component = class extends constructor {
+        const upgrade = <T extends HTMLElement>(constructor: ComponentConstructor<T>) => {
+            const Component = class Component extends (constructor as ComponentConstructor<HTMLElement>) {
                 /**
                  * Store constructor properties.
                  */

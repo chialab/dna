@@ -1,6 +1,6 @@
 import type { ClassElement, Constructor, MethodsOf, Replace } from './types';
 import type { ComponentInstance, ComponentConstructor } from './Component';
-import { createSymbol, HTMLElement, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';
 
 /**
@@ -451,7 +451,7 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
     const handled: { [key: string]: boolean } = {};
     const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
     let ctr = constructor;
-    while (ctr && ctr !== HTMLElement) {
+    while (ctr && ctr !== HTMLElementConstructor) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         if (propertiesDescriptor) {
             const descriptorProperties = (propertiesDescriptor.get ? (propertiesDescriptor.get.call(constructor) || {}) : propertiesDescriptor.value) as {
