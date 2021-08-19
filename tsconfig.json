@@ -15,7 +15,7 @@
     "checkJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "incremental": true,
     "moduleResolution": "node"
   },

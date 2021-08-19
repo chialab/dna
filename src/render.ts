@@ -1,4 +1,4 @@
-import type { TagNameMap, IterableNodeList, Writable, WritableOf } from './types';
+import type { TagNameMap, IterableNodeList, Fields } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
 import type { ComponentInstance } from './Component';
@@ -53,7 +53,7 @@ export type Template =
     Node |
     HyperFragment |
     HyperFunction |
-    HyperComponent<CustomElementConstructor<HTMLElement>> |
+    HyperComponent<CustomElementConstructor> |
     HyperNode<Node> |
     HyperSlot |
     HyperTag<keyof TagNameMap> |
@@ -140,6 +140,11 @@ export type HyperProperties = {
 };
 
 /**
+ * Properties that can be assigned to a node.
+ */
+export type HyperElementProperties<T extends {} = {}> = Fields<T> & HyperProperties;
+
+/**
  * The interface of a JSX fragment node.
  */
 export type HyperFragment = {
@@ -184,7 +189,7 @@ export type HyperNode<T extends Node> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: Writable<T> & HyperProperties;
+    properties: HyperElementProperties<T>;
     children: Template[];
     [HYPER_OBJECT_SYM]: true;
 };
@@ -192,7 +197,7 @@ export type HyperNode<T extends Node> = {
 /**
  * The interface of a Component constructor used as JSX tag.
  */
-export type HyperComponent<T extends CustomElementConstructor<HTMLElement>> = {
+export type HyperComponent<T extends CustomElementConstructor> = {
     Function?: undefined;
     Component: T;
     node?: undefined;
@@ -201,7 +206,7 @@ export type HyperComponent<T extends CustomElementConstructor<HTMLElement>> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: Writable<InstanceType<T>> & HyperProperties;
+    properties: HyperElementProperties<InstanceType<T>>;
     children: Template[];
     [HYPER_OBJECT_SYM]: true;
 };
@@ -217,7 +222,7 @@ export type HyperSlot = {
     isFragment?: false;
     isSlot: true;
     key?: unknown;
-    properties: Writable<HTMLElementTagNameMap['slot']> & HyperProperties;
+    properties: HyperElementProperties<HTMLSlotElement>;
     children: Template[];
     [HYPER_OBJECT_SYM]: true;
 };
@@ -234,7 +239,7 @@ export type HyperTag<T extends keyof TagNameMap> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: Writable<TagNameMap[T]> & HyperProperties;
+    properties: HyperElementProperties<TagNameMap[T]>;
     children: Template[];
     [HYPER_OBJECT_SYM]: true;
 };
@@ -242,7 +247,7 @@ export type HyperTag<T extends keyof TagNameMap> = {
 /**
  * Generic hyper object.
  */
-export type HyperObject = HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor<HTMLElement>> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>;
+export type HyperObject = HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>;
 
 /**
  * Check if the current virtual node is a fragment.
@@ -267,7 +272,7 @@ export const isHyperFunction = (target: HyperObject): target is HyperFunction =>
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  */
-export const isHyperComponent = (target: HyperObject): target is HyperComponent<CustomElementConstructor<HTMLElement>> => !!target.Component;
+export const isHyperComponent = (target: HyperObject): target is HyperComponent<CustomElementConstructor> => !!target.Component;
 
 /**
  * Check if the current virtual node is an HTML node instance.
@@ -298,14 +303,14 @@ export const isHyperTag = (target: HyperObject): target is HyperTag<'div'> => !!
 function h(tagOrComponent: typeof Fragment): HyperFragment;
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): HyperFragment;
 function h<T extends FunctionComponent>(tagOrComponent: T, properties?: HyperProperties | null, ...children: Template[]): HyperFunction;
-function h<T extends CustomElementConstructor<HTMLElement>>(tagOrComponent: T, properties?: Writable<InstanceType<T>> & HyperProperties | null, ...children: Template[]): HyperComponent<T>;
+function h<T extends CustomElementConstructor>(tagOrComponent: T, properties?: HyperProperties | null, ...children: Template[]): HyperComponent<T>;
 /**
  * @deprecated Use the `ref` property instead.
  */
-function h<T extends Node>(tagOrComponent: T, properties?: Writable<T> & HyperProperties | null, ...children: Template[]): HyperNode<T>;
-function h(tagOrComponent: 'slot', properties?: Writable<HTMLSlotElement> & HyperProperties | null, ...children: Template[]): HyperSlot;
-function h<T extends keyof TagNameMap>(tagOrComponent: T, properties?: Writable<TagNameMap[T]> & HyperProperties | null, ...children: Template[]): HyperTag<T>;
-function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor<HTMLElement> | Node | keyof TagNameMap, properties: HyperProperties | null = null, ...children: Template[]) {
+function h<T extends Node>(tagOrComponent: T, properties?: HyperElementProperties<T> | null, ...children: Template[]): HyperNode<T>;
+function h(tagOrComponent: 'slot', properties?: HyperElementProperties<HTMLSlotElement> | null, ...children: Template[]): HyperSlot;
+function h<T extends keyof TagNameMap>(tagOrComponent: T, properties?: HyperElementProperties<TagNameMap[T]> | null, ...children: Template[]): HyperTag<T>;
+function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Node | keyof TagNameMap, properties: HyperElementProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns, ref } = (properties || {});
 
     if (tagOrComponent === Fragment) {
@@ -420,7 +425,7 @@ export type WithContext<T extends Node> = T & {
  */
 export type Context<
     T extends Node = Node,
-    P = Writable<T>,
+    P = Fields<T>,
     S = Map<string, unknown>
 > = {
     node: T;
@@ -469,7 +474,7 @@ export const setContext = <T extends Node>(target: WithContext<T>, context: Cont
 export const createContext = <T extends Node>(node: T) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
-    const is = (node as unknown as CustomElement<HTMLElement>).is;
+    const is = (node as unknown as CustomElement).is;
     const store = new Map() as Map<string, unknown>;
     return setContext(node, {
         node,
@@ -608,7 +613,7 @@ const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unk
  * @param value The value to set.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const setValue = <T extends HTMLElement>(element: T, propertyKey: WritableOf<T>, value: any) => {
+const setValue = <T extends HTMLElement>(element: T, propertyKey: keyof T, value: any) => {
     element[propertyKey] = value;
 };
 
@@ -853,7 +858,7 @@ export const internalRender = (
 
             templateContext = templateContext || getOrCreateContext(templateNode);
             const map = templateContext.properties[slot ? 1 : 0];
-            const oldProperties = (map.get(refContext) || {}) as Writable<HTMLElement> & HyperProperties;
+            const oldProperties = (map.get(refContext) || {}) as HyperElementProperties<typeof templateElement>;
             const properties = fillEmptyValues(oldProperties, template.properties);
             map.set(refContext, properties);
             if (key != null) {
@@ -939,7 +944,7 @@ export const internalRender = (
                                 setValue(templateElement, propertyKey, value);
                             }
                         } else {
-                            const property = getProperty(templateElement as ComponentInstance<HTMLElement>, propertyKey);
+                            const property = getProperty(templateElement as ComponentInstance, propertyKey);
                             if (property && property.fromAttribute) {
                                 setValue(templateElement, propertyKey, (property.fromAttribute as Function).call(templateElement, value as string));
                             }

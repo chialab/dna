@@ -4,9 +4,13 @@
 
 <a href="#customelementregistry">CustomElementRegistry</a>
 
+<strong>Interfaces</strong>
+
+<a href="#componentconstructor">ComponentConstructor</a>
+
 <strong>Types</strong>
 
-<a href="#asyncevent">AsyncEvent</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperobject">HyperObject</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
+<a href="#asyncevent">AsyncEvent</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperelementproperties">HyperElementProperties</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperobject">HyperObject</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
 
 <strong>Variables</strong>
 
@@ -77,11 +81,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
 
 <details>
 <summary>
-    <code>(name: string, constructor: <a href="#constructor">Constructor</a> & {
-  observedAttributes?: string[]
-} & {
-  shim?: boolean
-}, options: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): void</code>
+    <code>&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;(name: string, constructor: <a href="#t">T</a>, options: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): void</code>
 </summary>
 
 <strong>Params</strong>
@@ -100,11 +100,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
             <td></td></tr>
 <tr>
             <td>constructor</td>
-            <td><code><a href="#constructor">Constructor</a> & {
-  observedAttributes?: string[]
-} & {
-  shim?: boolean
-}</code></td>
+            <td><code><a href="#t">T</a></code></td>
             <td align="center"></td>
             <td></td></tr>
 <tr>
@@ -124,7 +120,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
 
 <details>
 <summary>
-    <code>(name: string): undefined | <a href="#customelementconstructor">CustomElementConstructor</a></code>
+    <code>&lt;K extends string&gt;(name: <a href="#k">K</a>): <a href="#customelementconstructor">CustomElementConstructor</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -138,14 +134,14 @@ The CustomElementRegistry interface provides methods for registering custom elem
     <tbody>
         <tr>
             <td>name</td>
-            <td><code>string</code></td>
+            <td><code><a href="#k">K</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>undefined | <a href="#customelementconstructor">CustomElementConstructor</a></code> The definition for the given tag.
+<strong>Returns</strong>: <code><a href="#customelementconstructor">CustomElementConstructor</a></code> The definition for the given tag.
 
 </details>
 
@@ -182,7 +178,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
 
 <details>
 <summary>
-    <code>(name: string): <a href="#promise">Promise</a></code>
+    <code>&lt;K extends string&gt;(name: <a href="#k">K</a>): <a href="#promise">Promise</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -196,7 +192,7 @@ The CustomElementRegistry interface provides methods for registering custom elem
     <tbody>
         <tr>
             <td>name</td>
-            <td><code>string</code></td>
+            <td><code><a href="#k">K</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
@@ -206,6 +202,10 @@ The CustomElementRegistry interface provides methods for registering custom elem
 <strong>Returns</strong>: <code><a href="#promise">Promise</a></code> A Promise that resolves when the named element is defined.
 
 </details>
+
+<hr />
+
+<span id="componentconstructor"><code>Interface</code> ComponentConstructor</span>
 
 <hr />
 
@@ -223,18 +223,6 @@ Async event interface.
 
 <hr />
 
-<strong id="componentconstructor"><code>Type</code> ComponentConstructor&lt;T extends <a href="#htmlelement">HTMLElement</a>&gt;</strong>
-    
-<p>
-
-The basic DNA Component constructor.
-
-</p>
-
-<pre><a href="#returntype">ReturnType</a> & <a href="#constructor">Constructor</a></pre>
-
-<hr />
-
 <strong id="componentinstance"><code>Type</code> ComponentInstance&lt;T extends <a href="#htmlelement">HTMLElement</a>&gt;</strong>
     
 <p>
@@ -244,7 +232,7 @@ It's a Custom Element, but with some extra useful method.
 
 </p>
 
-<pre><a href="#instancetype">InstanceType</a></pre>
+<pre><a href="#customelement">CustomElement</a> & <a href="#componentmixin">ComponentMixin</a></pre>
 
 <strong>See also</strong>
 
@@ -350,9 +338,23 @@ The interface of a Component constructor used as JSX tag.
   key?: unknown;
   namespaceURI?: string;
   node?: undefined;
-  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
   tag?: undefined
 }</pre>
+
+<hr />
+
+<strong id="hyperelementproperties"><code>Type</code> HyperElementProperties&lt;T extends {
+
+}&gt;</strong>
+    
+<p>
+
+Properties that can be assigned to a node.
+
+</p>
+
+<pre><a href="#fields">Fields</a> & <a href="#hyperproperties">HyperProperties</a></pre>
 
 <hr />
 
@@ -423,7 +425,7 @@ The interface of an HTML node used as JSX tag.
   key?: unknown;
   namespaceURI?: string;
   node: <a href="#t">T</a>;
-  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
   tag?: undefined
 }</pre>
 
@@ -455,6 +457,7 @@ They can be assigned to a node but they are not part of the node prototype.
   class?: <a href="#hyperclasses">HyperClasses</a>;
   is?: string;
   key?: unknown;
+  ref?: <a href="#node">Node</a>;
   slot?: string;
   style?: <a href="#hyperstyle">HyperStyle</a>;
   xmlns?: string
@@ -479,7 +482,7 @@ The interface of slot element.
   isSlot: true;
   key?: unknown;
   node?: undefined;
-  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
   tag: slot
 }</pre>
 
@@ -515,7 +518,7 @@ The interface of a generic JSX tag.
   key?: unknown;
   namespaceURI?: string;
   node?: undefined;
-  properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a>;
+  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
   tag: <a href="#t">T</a>
 }</pre>
 
@@ -556,10 +559,10 @@ A state property declaration.
   state?: boolean;
   symbol?: symbol;
   type?: <a href="#typeconstructorhint">TypeConstructorHint</a> | <a href="#typeconstructorhint">TypeConstructorHint</a>[];
-  fromAttribute(value: null | string): undefined | <a href="#ifequal">IfEqual</a>;
-  getter(value?: <a href="#ifequal">IfEqual</a>): any;
-  setter(newValue?: any): <a href="#ifequal">IfEqual</a>;
-  toAttribute(value: <a href="#ifequal">IfEqual</a>): undefined | null | string;
+  fromAttribute(value: null | string): undefined | <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
+  getter(value?: <a href="#convertconstructortypes">ConvertConstructorTypes</a>): any;
+  setter(newValue?: any): <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
+  toAttribute(value: <a href="#convertconstructortypes">ConvertConstructorTypes</a>): undefined | null | string;
   validate(value: unknown): boolean
 }</pre>
 
@@ -768,7 +771,7 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(name: string, options?: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): (classOrDescriptor: <a href="#componentconstructor">ComponentConstructor</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code>
+    <code>(name: string, options?: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): &lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#t">T</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code>
 </summary>
 
 <strong>Params</strong>
@@ -794,7 +797,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>(classOrDescriptor: <a href="#componentconstructor">ComponentConstructor</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code> The decorated component class.
+<strong>Returns</strong>: <code>&lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#t">T</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code> The decorated component class.
 
 </details>
 
@@ -804,7 +807,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(prototype: <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>): void</code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>&gt;(prototype: <a href="#t">T</a>): void</code>
 </summary>
 
 <strong>Params</strong>
@@ -818,7 +826,7 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>prototype</td>
-            <td><code><a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a></code></td>
+            <td><code><a href="#t">T</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
@@ -835,7 +843,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>&gt;(prototype: <a href="#t">T</a>): void</code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>&gt;(prototype: <a href="#t">T</a>): void</code>
 </summary>
 
 <strong>Params</strong>
@@ -866,7 +879,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol): <a href="#propertydescriptor">PropertyDescriptor</a></code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol): <a href="#propertydescriptor">PropertyDescriptor</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1137,7 +1155,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>&gt;(prototype: <a href="#withproperties">WithProperties</a>): <a href="#propertiesof">PropertiesOf</a></code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>&gt;(prototype: <a href="#withproperties">WithProperties</a>): <a href="#propertiesof">PropertiesOf</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1168,7 +1191,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(prototype: <a href="#t">T</a>, propertyKey: <a href="#p">P</a>, failIfMissing: boolean): </code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#t">T</a>, propertyKey: <a href="#p">P</a>, failIfMissing: boolean): </code>
 </summary>
 
 <strong>Params</strong>
@@ -1209,6 +1237,32 @@ The global DNA registry instance.
 
 <details>
 <summary>
+    <code>(tagOrComponent: <a href="#fragment">Fragment</a>): <a href="#hyperfragment">HyperFragment</a></code>
+</summary>
+
+<strong>Params</strong>
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>tagOrComponent</td>
+            <td><code><a href="#fragment">Fragment</a></code></td>
+            <td align="center"></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code><a href="#hyperfragment">HyperFragment</a></code> 
+
+</details>
+<details>
+<summary>
     <code>(tagOrComponent: <a href="#fragment">Fragment</a>, properties: null, children: <a href="#template">Template</a>[]): <a href="#hyperfragment">HyperFragment</a></code>
 </summary>
 
@@ -1245,7 +1299,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#functioncomponent">FunctionComponent</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperfunction">HyperFunction</a></code>
+    <code>&lt;T extends <a href="#functioncomponent">FunctionComponent</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperfunction">HyperFunction</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1265,7 +1319,7 @@ The global DNA registry instance.
 <tr>
             <td>properties</td>
             <td><code><a href="#hyperproperties">HyperProperties</a> | null</code></td>
-            <td align="center"></td>
+            <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>children</td>
@@ -1281,7 +1335,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypercomponent">HyperComponent</a></code>
+    <code>&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypercomponent">HyperComponent</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1300,8 +1354,8 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null</code></td>
-            <td align="center"></td>
+            <td><code><a href="#hyperproperties">HyperProperties</a> | null</code></td>
+            <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>children</td>
@@ -1317,7 +1371,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#node">Node</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypernode">HyperNode</a></code>
+    <code>&lt;T extends <a href="#node">Node</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypernode">HyperNode</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1336,8 +1390,8 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null</code></td>
-            <td align="center"></td>
+            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>children</td>
@@ -1353,7 +1407,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>(tagOrComponent: slot, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperslot">HyperSlot</a></code>
+    <code>(tagOrComponent: slot, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperslot">HyperSlot</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1372,8 +1426,8 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null</code></td>
-            <td align="center"></td>
+            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>children</td>
@@ -1389,7 +1443,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends symbol | object | a | abbr | address | applet | area | article | aside | audio | b | base | bdi | bdo | blockquote | body | br | button | canvas | caption | cite | code | col | colgroup | data | datalist | dd | del | details | dfn | dialog | dir | div | dl | dt | em | embed | fieldset | figcaption | figure | font | footer | form | frame | frameset | h1 | h2 | h3 | h4 | h5 | h6 | head | header | hgroup | hr | html | i | iframe | img | input | ins | kbd | label | legend | li | link | main | map | mark | marquee | menu | meta | meter | nav | noscript | ol | optgroup | option | output | p | param | picture | pre | progress | q | rp | rt | ruby | s | samp | script | section | select | slot | small | source | span | strong | style | sub | summary | sup | table | tbody | td | template | textarea | tfoot | th | thead | time | title | tr | track | u | ul | var | video | wbr | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view&gt;(tagOrComponent: <a href="#t">T</a>, properties: <a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypertag">HyperTag</a></code>
+    <code>&lt;T extends symbol | object | a | abbr | address | applet | area | article | aside | audio | b | base | bdi | bdo | blockquote | body | br | button | canvas | caption | cite | code | col | colgroup | data | datalist | dd | del | details | dfn | dialog | dir | div | dl | dt | em | embed | fieldset | figcaption | figure | font | footer | form | frame | frameset | h1 | h2 | h3 | h4 | h5 | h6 | head | header | hgroup | hr | html | i | iframe | img | input | ins | kbd | label | legend | li | link | main | map | mark | marquee | menu | meta | meter | nav | noscript | ol | optgroup | option | output | p | param | picture | pre | progress | q | rp | rt | ruby | s | samp | script | section | select | slot | small | source | span | strong | style | sub | summary | sup | table | tbody | td | template | textarea | tfoot | th | thead | time | title | tr | track | u | ul | var | video | wbr | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypertag">HyperTag</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1408,8 +1462,8 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#writable">Writable</a> & <a href="#hyperproperties">HyperProperties</a> | null</code></td>
-            <td align="center"></td>
+            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td align="center">✓</td>
             <td></td></tr>
 <tr>
             <td>children</td>
@@ -1492,7 +1546,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(node: <a href="#withcomponentflag">WithComponentFlag</a>): node is <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a></code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>&gt;(node: <a href="#node">Node</a> | <a href="#t">T</a>): node is <a href="#t">T</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1506,14 +1565,14 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>node</td>
-            <td><code><a href="#withcomponentflag">WithComponentFlag</a></code></td>
+            <td><code><a href="#node">Node</a> | <a href="#t">T</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>node is <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a></code> 
+<strong>Returns</strong>: <code>node is <a href="#t">T</a></code> 
 
 </details>
 
@@ -1523,7 +1582,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(constructor: <a href="#function">Function</a>): constructor is <a href="#componentconstructor">ComponentConstructor</a></code>
+    <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>, C extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(constructor: <a href="#function">Function</a> | <a href="#c">C</a>): constructor is <a href="#c">C</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1537,14 +1601,14 @@ The global DNA registry instance.
     <tbody>
         <tr>
             <td>constructor</td>
-            <td><code><a href="#function">Function</a></code></td>
+            <td><code><a href="#function">Function</a> | <a href="#c">C</a></code></td>
             <td align="center"></td>
             <td></td>
         </tr>
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>constructor is <a href="#componentconstructor">ComponentConstructor</a></code> 
+<strong>Returns</strong>: <code>constructor is <a href="#c">C</a></code> 
 
 </details>
 
@@ -1724,7 +1788,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;TypeConstructorHint extends <a href="#constructor">Constructor</a>&gt;(declaration: <a href="#propertydeclaration">PropertyDeclaration</a>): &lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code>
+    <code>&lt;TypeConstructorHint extends <a href="#constructor">Constructor</a>&gt;(declaration: <a href="#propertydeclaration">PropertyDeclaration</a>): &lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code>
 </summary>
 
 <strong>Params</strong>
@@ -1745,7 +1814,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code> The decorator initializer.
+<strong>Returns</strong>: <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {   is: string;   attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;   connectedCallback(): void;   disconnectedCallback(): void } & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code> The decorator initializer.
 
 </details>
 
@@ -1796,7 +1865,12 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>&lt;TypeConstructorHint extends <a href="#constructor">Constructor</a>&gt;(declaration: <a href="#propertydeclaration">PropertyDeclaration</a>): &lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code>
+    <code>&lt;TypeConstructorHint extends <a href="#constructor">Constructor</a>&gt;(declaration: <a href="#propertydeclaration">PropertyDeclaration</a>): &lt;T extends <a href="#htmlelement">HTMLElement</a> & {
+  is: string;
+  attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code>
 </summary>
 
 <strong>Params</strong>
@@ -1817,7 +1891,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>&lt;T extends <a href="#component">Component</a> & <a href="#htmlelement">HTMLElement</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code> The decorator initializer.
+<strong>Returns</strong>: <code>&lt;T extends <a href="#htmlelement">HTMLElement</a> & {   is: string;   attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;   connectedCallback(): void;   disconnectedCallback(): void } & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(targetOrClassElement: <a href="#t">T</a>, propertyKey?: <a href="#p">P</a>, descriptor?: <a href="#propertydeclaration">PropertyDeclaration</a>) => any</code> The decorator initializer.
 
 </details>
 

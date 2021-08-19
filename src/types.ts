@@ -46,11 +46,6 @@ export type Constructor<T> = {
 };
 
 /**
- * Replace a type in union.
- */
-export type Replace<T, E, N> = IfEqual<T, Exclude<T, E>, T, N | Exclude<T, E>>;
-
-/**
  * A list of valid tag names.
  */
 export type TagNameMap = HTMLElementTagNameMap & SVGElementTagNameMap;
@@ -63,30 +58,11 @@ export type IterableNodeList = Node[] & {
 };
 
 /**
- * If/else statement for type comparison.
- */
-export type IfEqual<Left, Right, Then, Else = void> = (<A>() => A extends Left ? 1 : 2) extends (<A>() => A extends Right ? 1 : 2) ? Then : Else;
-
-/**
  * Get all method keys of a type.
  */
-export type MethodsOf<T> = {
-    [P in keyof T]: T[P] extends Function ? IfEqual<{ [Q in P]: T[P] }, { [Q in P]-?: T[P] }, P, never> : never;
-}[keyof T];
+export type MethodsOf<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
 
 /**
- * Get all field keys of a type.
+ * Get all fields keys of a type.
  */
-export type FieldsOf<T> = Exclude<keyof T, MethodsOf<T> | undefined>;
-
-/**
- * Get all writable field keys of a type.
- */
-export type WritableOf<T> = Exclude<{
-    [P in keyof T]: IfEqual<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, P, never>;
-}[FieldsOf<T>], undefined>;
-
-/**
- * Remove readonly properties from a type.
- */
-export type Writable<T> = Partial<Pick<T, WritableOf<T>>>;
+export type Fields<T> = { [K in keyof T]?: T[K] };

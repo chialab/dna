@@ -338,7 +338,7 @@ const LISTENERS_SYMBOL: unique symbol = createSymbol();
 /**
  * An object with listeners.
  */
-type WithListeners<T> = T & {
+type WithListeners<T extends ComponentInstance> = T & {
     [LISTENERS_SYMBOL]?: Listener[];
 };
 
@@ -358,7 +358,7 @@ type Listener = {
  * @param prototype The component prototype.
  * @return A list of listeners.
  */
-export const getListeners = <T extends ComponentInstance<HTMLElement>>(prototype: WithListeners<T>) => {
+export const getListeners = <T extends ComponentInstance>(prototype: WithListeners<T>) => {
     const listeners = prototype[LISTENERS_SYMBOL];
     if (!listeners) {
         return [];
@@ -376,7 +376,7 @@ export const getListeners = <T extends ComponentInstance<HTMLElement>>(prototype
  * @param prototype The component prototype.
  * @param listeners The list of listeners to set.
  */
-export const setListeners = (prototype: WithListeners<ComponentInstance<HTMLElement>>, listeners: Listener[]) => {
+export const setListeners = <T extends ComponentInstance>(prototype: WithListeners<T>, listeners: Listener[]) => {
     prototype[LISTENERS_SYMBOL] = listeners;
 };
 
@@ -387,8 +387,8 @@ export const setListeners = (prototype: WithListeners<ComponentInstance<HTMLElem
  * @param callback The event callback.
  * @param options The event listener options.
  */
-export function defineListener(
-    prototype: WithListeners<ComponentInstance<HTMLElement>>,
+export function defineListener<T extends ComponentInstance>(
+    prototype: WithListeners<T>,
     eventName: string,
     target: EventTarget | null,
     selector: string | null,
@@ -410,8 +410,8 @@ export function defineListener(
  * Define component listeners.
  * @param prototype The component prototype.
  */
-export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
-    const constructor = prototype.constructor as WithListeners<ComponentConstructor<HTMLElement>>;
+export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
+    const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
     while (ctr && ctr.prototype && ctr !== HTMLElementConstructor) {
         if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
@@ -443,7 +443,7 @@ export const defineListeners = (prototype: ComponentInstance<HTMLElement>) => {
  * @param propertyKey The property name to watch.
  * @param methodKey The method name.
  */
-export const createListener = <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+export const createListener = <T extends ComponentInstance, P extends MethodsOf<T>>(
     targetOrClassElement: T,
     eventName: string,
     target: EventTarget | null,
@@ -461,7 +461,8 @@ export const createListener = <T extends ComponentInstance<HTMLElement>, P exten
     return {
         ...element,
         finisher(constructor: Constructor<T>) {
-            defineListener(constructor.prototype, eventName, target, selector, constructor.prototype[element.key as P], options);
+            const prototype = constructor.prototype as T;
+            defineListener(prototype, eventName, target, selector, prototype[element.key as P], options);
         },
     };
 };
@@ -480,7 +481,7 @@ function listen(eventName: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
-    return <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+    return <T extends ComponentInstance, P extends MethodsOf<T>>(
         targetOrClassElement: T,
         methodKey: P
     ) => createListener(

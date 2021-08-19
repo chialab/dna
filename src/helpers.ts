@@ -251,7 +251,7 @@ type WithEmulatedLifecycle<T extends Element> = T & {
  * Check if a node require emulated life cycle.
  * @param node The node to check.
  */
-export const shouldEmulateLifeCycle = (node: WithEmulatedLifecycle<Element>) => !!node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -264,7 +264,7 @@ export const connect = (node: Node) => {
         return;
     }
     if (shouldEmulateLifeCycle(node)) {
-        (node as ComponentInstance<HTMLElement>).connectedCallback();
+        node.connectedCallback();
     }
     const children = cloneChildNodes(node.childNodes);
     for (let i = 0, len = children.length; i < len; i++) {
@@ -283,7 +283,7 @@ export const disconnect = (node: Node) => {
         return;
     }
     if (shouldEmulateLifeCycle(node)) {
-        (node as ComponentInstance<HTMLElement>).disconnectedCallback();
+        node.disconnectedCallback();
     }
     const children = cloneChildNodes(node.childNodes);
     for (let i = 0, len = children.length; i < len; i++) {

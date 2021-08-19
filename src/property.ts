@@ -1,5 +1,6 @@
-import type { ClassElement, Constructor, MethodsOf, Replace } from './types';
-import type { ComponentInstance, ComponentConstructor } from './Component';
+import type { ClassElement, Constructor, MethodsOf } from './types';
+import type { ComponentConstructor, ComponentInstance } from './Component';
+import { isComponent } from './Component';
 import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';
 
@@ -53,7 +54,7 @@ export type PropertyObserver<TypeHint = unknown> = (oldValue: TypeHint | undefin
  * Convert constructor types to their normalised instance types.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ConvertConstructorTypes<C extends Constructor<unknown>> = Replace<Replace<Replace<Replace<Replace<InstanceType<C>, Number, number>, String, string>, Boolean, boolean>, unknown[], any[]>, Object, any>;
+type ConvertConstructorTypes<C extends Constructor<unknown>, T = InstanceType<C>> = T extends Number ? number : T extends String ? string : T extends Boolean ? boolean : T extends unknown[] ? any[] : T extends Object ? any : T;
 
 /**
  * A state property declaration.
@@ -258,7 +259,7 @@ export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends 
  * @param declaration The property declaration.
  * @return A list of constructors.
  */
-const extractTypes = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
+const extractTypes = <T extends HTMLElement, P extends keyof T>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
     const type = declaration.type;
     if (!type) {
         return [];
@@ -358,9 +359,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 
     const { get, set, getter, setter } = property;
 
-    type E = T & {
-        [symbol]: E[P];
-    };
+    type E = T & { [symbol]: E[P] };
 
     const validate = typeof property.validate === 'function' && property.validate;
     const finalDescriptor: PropertyDescriptor = {
@@ -377,7 +376,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
             return value;
         },
         set(this: E, newValue) {
-            if (!isConstructed(this)) {
+            if (!isConstructed(this) || !isComponent(this)) {
                 this[symbol] = newValue;
                 return;
             }
@@ -449,7 +448,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
  */
 export const defineProperties = <T extends ComponentInstance<HTMLElement>>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
-    const constructor = prototype.constructor as ComponentConstructor<HTMLElement>;
+    const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
     while (ctr && ctr !== HTMLElementConstructor) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');

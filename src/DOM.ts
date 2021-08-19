@@ -252,7 +252,7 @@ export const DOM = {
      */
     setAttribute(element: Element, qualifiedName: string, value: string): void {
         if (shouldEmulateLifeCycle(element)) {
-            const constructor = element.constructor as ComponentConstructor<HTMLElement>;
+            const constructor = element.constructor as ComponentConstructor<typeof element>;
             const observedAttributes = constructor.observedAttributes;
             const observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
@@ -261,7 +261,7 @@ export const DOM = {
 
             const oldValue = DOM.getAttribute(element, qualifiedName);
             setAttributeImpl.call(element, qualifiedName, value);
-            (element as ComponentInstance<HTMLElement>).attributeChangedCallback(qualifiedName, oldValue, value);
+            (element as ComponentInstance).attributeChangedCallback(qualifiedName, oldValue, value);
             return;
         }
         return setAttributeImpl.call(element, qualifiedName, value);
@@ -275,7 +275,7 @@ export const DOM = {
      */
     removeAttribute(element: Element, qualifiedName: string): void {
         if (shouldEmulateLifeCycle(element)) {
-            const constructor = element.constructor as ComponentConstructor<HTMLElement>;
+            const constructor = element.constructor as ComponentConstructor<typeof element>;
             const observedAttributes = constructor.observedAttributes;
             const observed = observedAttributes && observedAttributes.indexOf(qualifiedName) !== -1;
             if (!observed) {
@@ -284,7 +284,7 @@ export const DOM = {
 
             const oldValue = DOM.getAttribute(element, qualifiedName);
             removeAttributeImpl.call(element, qualifiedName);
-            (element as ComponentInstance<HTMLElement>).attributeChangedCallback(qualifiedName, oldValue, null);
+            (element as ComponentInstance).attributeChangedCallback(qualifiedName, oldValue, null);
         }
         return removeAttributeImpl.call(element, qualifiedName);
     },
