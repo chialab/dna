@@ -249,7 +249,7 @@ export const getProperties = <T extends ComponentInstance<HTMLElement>>(prototyp
 export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: T, propertyKey: P, failIfMissing = false) => {
     const property = getProperties(prototype)[propertyKey];
     if (failIfMissing && !property) {
-        throw new Error(`Missing property ${propertyKey}`);
+        throw new Error(`Missing property ${String(propertyKey)}`);
     }
     return property;
 };

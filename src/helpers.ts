@@ -183,14 +183,16 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
  * @param target The target to check.
  * @return The target is a Node instance.
  */
-export const isNode = (target: unknown): target is Node => target instanceof NodeConstructor;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isNode = (target: any): target is Node => target instanceof NodeConstructor;
 
 /**
  * Check if a node is a Document instance.
  * @param node The node to check.
  * @return The node is a Document instance.
  */
-export const isDocument = (node: Node): node is Document => node && node.nodeType === DOCUMENT_NODE;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
 
 /**
  * Check if a node is a Text instance.

@@ -48,7 +48,17 @@ export type Constructor<T> = {
 /**
  * A list of valid tag names.
  */
-export type TagNameMap = HTMLElementTagNameMap & SVGElementTagNameMap;
+export type ElementTagNameMap = HTMLElementTagNameMap & SVGElementTagNameMap & {
+    'big': HTMLElement;
+    'keygen': HTMLElement;
+    'menuitem': HTMLElement;
+    'noindex': HTMLElement;
+    'animate': SVGElement;
+    'animateMotion': SVGElement;
+    'animateTransform': SVGElement;
+    'feDropShadow': SVGElement;
+    'mpath': SVGElement;
+};
 
 /**
  * A Node.prototype.childNodes like interface.
@@ -61,8 +71,3 @@ export type IterableNodeList = Node[] & {
  * Get all method keys of a type.
  */
 export type MethodsOf<T> = { [K in keyof T]: T[K] extends Function ? K : never }[keyof T];
-
-/**
- * Get all fields keys of a type.
- */
-export type Fields<T> = { [K in keyof T]?: T[K] };

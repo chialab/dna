@@ -1,7 +1,8 @@
-import type { TagNameMap, IterableNodeList, Fields } from './types';
+import type { ElementTagNameMap, IterableNodeList } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
 import type { ComponentInstance } from './Component';
+import type { Attributes } from './Attributes';
 import htm from 'htm';
 import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes, getPropertyDescriptor } from './helpers';
 import { isComponent } from './Component';
@@ -51,12 +52,12 @@ export type Template =
     Element |
     Text |
     Node |
-    HyperFragment |
-    HyperFunction |
-    HyperComponent<CustomElementConstructor> |
-    HyperNode<Node> |
-    HyperSlot |
-    HyperTag<keyof TagNameMap> |
+    VFragment |
+    VFunction<FunctionComponent> |
+    VComponent<CustomElementConstructor> |
+    VElement<Element> |
+    VSlot |
+    VTag<keyof ElementTagNameMap> |
     Promise<unknown> |
     Observable<unknown> |
     string |
@@ -105,9 +106,9 @@ export type FunctionComponent<P = any> = (
 ) => Template;
 
 /**
- * Identify hyper objects.
+ * Identify virtual dom objects.
  */
-export const HYPER_OBJECT_SYM: unique symbol = createSymbol();
+export const V_SYM: unique symbol = createSymbol();
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -117,37 +118,39 @@ export const Fragment: unique symbol = createSymbol();
 /**
  * Classes dictionary.
  */
-export type HyperClasses = string | { [key: string]: boolean };
+export type VClasses = string | { [key: string]: boolean };
 
 /**
  * Styles dictionary.
  */
-export type HyperStyle = string | { [key: string]: string };
+export type VStyle = string | { [key: string]: string };
 
 /**
- * Properties used by the render engine.
- * They can be assigned to a node but they are not part of the node prototype.
+ * Properties that can be assigned to a node through the render engine.
  */
-export type HyperProperties = {
-    is?: string;
-    slot?: string;
-    key?: unknown;
-    xmlns?: string;
-    ref?: Node;
-    children?: Template[];
-    class?: HyperClasses;
-    style?: HyperStyle;
-};
-
-/**
- * Properties that can be assigned to a node.
- */
-export type HyperElementProperties<T extends {} = {}> = Fields<T> & HyperProperties;
+export type VProperties<T = {}> = T extends typeof Fragment ? null :
+    Omit<
+        (
+            T extends Element ? (Partial<T> & Attributes<'div', T>) :
+            T extends keyof ElementTagNameMap ? (Partial<ElementTagNameMap[T]> & Attributes<T>) :
+            T extends FunctionComponent ? Parameters<T>[0] : T
+        ),
+        'is' | 'slot' | 'key' | 'xmlns' | 'ref' | 'children' | 'class' | 'style'
+    > & {
+        is?: string;
+        slot?: string;
+        key?: unknown;
+        xmlns?: string;
+        ref?: Element;
+        children?: Template[];
+        class?: VClasses;
+        style?: VStyle;
+    };
 
 /**
  * The interface of a JSX fragment node.
  */
-export type HyperFragment = {
+export type VFragment = {
     Function?: undefined;
     Component?: undefined;
     node?: undefined;
@@ -157,14 +160,14 @@ export type HyperFragment = {
     key?: unknown;
     properties?: {};
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
  * The interface of a functional component.
  */
-export type HyperFunction = {
-    Function: FunctionComponent;
+export type VFunction<T extends FunctionComponent> = {
+    Function: T;
     Component?: undefined;
     node?: undefined;
     tag?: undefined;
@@ -172,15 +175,15 @@ export type HyperFunction = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: HyperProperties;
+    properties: VProperties<T>;
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
  * The interface of an HTML node used as JSX tag.
  */
-export type HyperNode<T extends Node> = {
+export type VElement<T extends Element> = {
     Function?: undefined;
     Component?: undefined;
     node: T;
@@ -189,15 +192,15 @@ export type HyperNode<T extends Node> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: HyperElementProperties<T>;
+    properties: VProperties<T>;
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
  * The interface of a Component constructor used as JSX tag.
  */
-export type HyperComponent<T extends CustomElementConstructor> = {
+export type VComponent<T extends CustomElementConstructor> = {
     Function?: undefined;
     Component: T;
     node?: undefined;
@@ -206,15 +209,15 @@ export type HyperComponent<T extends CustomElementConstructor> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: HyperElementProperties<InstanceType<T>>;
+    properties: VProperties<InstanceType<T>>;
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
  * The interface of slot element.
  */
-export type HyperSlot = {
+export type VSlot = {
     Function?: undefined;
     Component?: undefined;
     node?: undefined;
@@ -222,15 +225,15 @@ export type HyperSlot = {
     isFragment?: false;
     isSlot: true;
     key?: unknown;
-    properties: HyperElementProperties<HTMLSlotElement>;
+    properties: VProperties<'slot'>;
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
  * The interface of a generic JSX tag.
  */
-export type HyperTag<T extends keyof TagNameMap> = {
+export type VTag<T extends keyof ElementTagNameMap> = {
     Function?: undefined;
     Component?: undefined;
     node?: undefined;
@@ -239,86 +242,123 @@ export type HyperTag<T extends keyof TagNameMap> = {
     isSlot?: false;
     key?: unknown;
     namespaceURI?: string;
-    properties: HyperElementProperties<TagNameMap[T]>;
+    properties: VProperties<T>;
     children: Template[];
-    [HYPER_OBJECT_SYM]: true;
+    [V_SYM]: true;
 };
 
 /**
- * Generic hyper object.
+ * Generic virtual dom object.
  */
-export type HyperObject = HyperFragment | HyperFunction | HyperComponent<CustomElementConstructor> | HyperNode<Node> | HyperSlot | HyperTag<keyof TagNameMap>;
+export type VObject = VFunction<FunctionComponent> |
+    VComponent<CustomElementConstructor> |
+    VElement<Element> |
+    VSlot |
+    VTag<keyof ElementTagNameMap> |
+    VFragment;
 
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isHyperObject = (target: any): target is HyperObject => typeof target === 'object' && !!target[HYPER_OBJECT_SYM];
+export const isVObject = (target: any): target is VObject => typeof target === 'object' && !!target[V_SYM];
 
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  */
-export const isHyperFragment = (target: HyperObject): target is HyperFragment => !!target.isFragment;
+export const isVFragment = (target: VObject): target is VFragment => !!target.isFragment;
 
 /**
  * Check if the current virtual node is a functional component.
  * @param target The node to check.
  */
-export const isHyperFunction = (target: HyperObject): target is HyperFunction => !!target.Function;
+export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => !!target.Function;
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  */
-export const isHyperComponent = (target: HyperObject): target is HyperComponent<CustomElementConstructor> => !!target.Component;
+export const isVComponent = (target: VObject): target is VComponent<CustomElementConstructor> => !!target.Component;
 
 /**
  * Check if the current virtual node is an HTML node instance.
  * @param target The node to check.
  */
-export const isHyperNode = (target: HyperObject): target is HyperNode<Node> => !!target.node;
+export const isVNode = (target: VObject): target is VElement<Element> => !!target.node;
 
 /**
  * Check if the current virtual node is a slot element.
  * @param target The node to check.
  */
-export const isHyperSlot = (target: HyperObject): target is HyperSlot => !!target.isSlot;
+export const isVSlot = (target: VObject): target is VSlot => !!target.isSlot;
 
 /**
  * Check if the current virtual node is a generic tag to render.
  * @param target The node to check.
  */
-export const isHyperTag = (target: HyperObject): target is HyperTag<'div'> => !!target.tag;
-
+export const isVTag = (target: VObject): target is VTag<'div'> => !!target.tag;
 
 /**
- * HyperFunction factory to use as JSX pragma.
+ * Function factory to use as JSX pragma.
  *
  * @param tagOrComponent The tag name, the constructor or the instance of the node.
  * @param properties The set of properties of the Node.
  * @param children The children of the Node.
  */
-function h(tagOrComponent: typeof Fragment): HyperFragment;
-function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): HyperFragment;
-function h<T extends FunctionComponent>(tagOrComponent: T, properties?: HyperProperties | null, ...children: Template[]): HyperFunction;
-function h<T extends CustomElementConstructor>(tagOrComponent: T, properties?: HyperProperties | null, ...children: Template[]): HyperComponent<T>;
+function h(tagOrComponent: typeof Fragment): VFragment;
+function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): VFragment;
+function h<T extends FunctionComponent>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VFunction<T>;
+function h<T extends CustomElementConstructor>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VComponent<T>;
 /**
  * @deprecated Use the `ref` property instead.
  */
-function h<T extends Node>(tagOrComponent: T, properties?: HyperElementProperties<T> | null, ...children: Template[]): HyperNode<T>;
-function h(tagOrComponent: 'slot', properties?: HyperElementProperties<HTMLSlotElement> | null, ...children: Template[]): HyperSlot;
-function h<T extends keyof TagNameMap>(tagOrComponent: T, properties?: HyperElementProperties<TagNameMap[T]> | null, ...children: Template[]): HyperTag<T>;
-function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Node | keyof TagNameMap, properties: HyperElementProperties | null = null, ...children: Template[]) {
+function h<T extends Element>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VElement<T>;
+function h(tagOrComponent: 'slot', properties?: VProperties<'slot'> | null, ...children: Template[]): VSlot;
+function h<T extends keyof ElementTagNameMap>(tagOrComponent: T, properties?: VProperties<ElementTagNameMap[T]> | null, ...children: Template[]): VTag<T>;
+function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | keyof ElementTagNameMap, properties: VProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns, ref } = (properties || {});
 
     if (tagOrComponent === Fragment) {
         return {
             isFragment: true,
             children,
-            [HYPER_OBJECT_SYM]: true,
-        } as HyperFragment;
+            [V_SYM]: true,
+        } as VFragment;
+    }
+
+    if (isElement(tagOrComponent)) {
+        return {
+            node: tagOrComponent,
+            key,
+            namespaceURI: xmlns,
+            properties: properties || {},
+            children,
+            [V_SYM]: true,
+        } as VElement<typeof tagOrComponent>;
+    }
+
+    if (typeof tagOrComponent === 'function') {
+        if (isCustomElementConstructor(tagOrComponent)) {
+            return {
+                Component: tagOrComponent,
+                key,
+                namespaceURI: xmlns,
+                properties: properties || {},
+                children,
+                [V_SYM]: true,
+            } as VComponent<typeof tagOrComponent>;
+        }
+
+        return {
+            Function: tagOrComponent,
+            key,
+            namespaceURI: xmlns,
+            properties: properties || {},
+            children,
+            [V_SYM]: true,
+        } as VFunction<typeof tagOrComponent>;
     }
 
     if (ref) {
@@ -328,85 +368,52 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
             namespaceURI: xmlns,
             properties: properties || {},
             children,
-            [HYPER_OBJECT_SYM]: true,
-        } as HyperNode<typeof ref>;
+            [V_SYM]: true,
+        } as VElement<typeof ref>;
     }
 
-    if (isNode(tagOrComponent)) {
+    if (tagOrComponent === 'svg') {
         return {
-            node: tagOrComponent,
+            tag: tagOrComponent,
+            key,
+            namespaceURI: 'http://www.w3.org/2000/svg',
+            properties,
+            children,
+            [V_SYM]: true,
+        } as VTag<typeof tagOrComponent>;
+    }
+
+    if (tagOrComponent === 'slot') {
+        return {
+            tag: tagOrComponent,
+            isSlot: true,
+            key,
+            properties: properties || {},
+            children,
+            [V_SYM]: true,
+        } as VSlot;
+    }
+
+    const Component = customElements.get(is || tagOrComponent);
+    if (Component) {
+        return {
+            Component,
             key,
             namespaceURI: xmlns,
             properties: properties || {},
             children,
-            [HYPER_OBJECT_SYM]: true,
-        } as HyperNode<typeof tagOrComponent>;
-    }
-
-    if (typeof tagOrComponent === 'string') {
-        if (tagOrComponent === 'svg') {
-            return {
-                tag: tagOrComponent,
-                key,
-                namespaceURI: 'http://www.w3.org/2000/svg',
-                properties,
-                children,
-                [HYPER_OBJECT_SYM]: true,
-            };
-        }
-
-        if (tagOrComponent === 'slot') {
-            return {
-                tag: tagOrComponent,
-                isSlot: true,
-                key,
-                properties: properties || {},
-                children,
-                [HYPER_OBJECT_SYM]: true,
-            } as HyperSlot;
-        }
-
-        const Component = customElements.get(is || tagOrComponent);
-        if (Component) {
-            return {
-                Component,
-                key,
-                namespaceURI: xmlns,
-                properties: properties || {},
-                children,
-                [HYPER_OBJECT_SYM]: true,
-            } as HyperComponent<typeof Component>;
-        }
-
-        return {
-            tag: tagOrComponent as keyof TagNameMap,
-            key,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [HYPER_OBJECT_SYM]: true,
-        } as HyperTag<typeof tagOrComponent>;
-    }
-
-    if (isCustomElementConstructor(tagOrComponent)) {
-        return {
-            Component: tagOrComponent,
-            key,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [HYPER_OBJECT_SYM]: true,
-        } as HyperComponent<typeof tagOrComponent>;
+            [V_SYM]: true,
+        } as VComponent<typeof Component>;
     }
 
     return {
-        Function: tagOrComponent,
+        tag: tagOrComponent,
         key,
         namespaceURI: xmlns,
         properties: properties || {},
         children,
-        [HYPER_OBJECT_SYM]: true,
-    } as HyperFunction;
+        [V_SYM]: true,
+    } as VTag<typeof tagOrComponent>;
 }
 
 export { h };
@@ -423,11 +430,7 @@ export type WithContext<T extends Node> = T & {
 /**
  * The node context interface.
  */
-export type Context<
-    T extends Node = Node,
-    P = Fields<T>,
-    S = Map<string, unknown>
-> = {
+export type Context<T extends Node = Node, P = T extends Element ? Partial<T> : {}, S = Map<string, unknown>> = {
     node: T;
     isElement?: boolean;
     isText?: boolean;
@@ -435,8 +438,8 @@ export type Context<
     is?: string;
     key?: unknown;
     properties: [
-        WeakMap<Context<T, P>, P & HyperProperties>,
-        WeakMap<Context<T, P>, P & HyperProperties>,
+        WeakMap<Context<T, P>, P>,
+        WeakMap<Context<T, P>, P>,
     ];
     store: S;
     childNodes?: IterableNodeList;
@@ -530,7 +533,7 @@ const CLASSES_CACHE: { [key: string]: string[] } = {};
  * @param value The value to convert.
  * @return A list of classes.
  */
-const convertClasses = (value: HyperClasses | null | undefined) => {
+const convertClasses = (value: VClasses | null | undefined) => {
     const classes: string[] = [];
     if (!value) {
         return classes;
@@ -556,7 +559,7 @@ const STYLES_CACHE: { [key: string]: { [key: string]: string } } = {};
  * @param value The value to convert.
  * @return A set of styles.
  */
-const convertStyles = (value: HyperStyle| null | undefined) => {
+const convertStyles = (value: VStyle| null | undefined) => {
     const styles: { [key: string]: string } = {};
     if (!value) {
         return styles;
@@ -613,8 +616,8 @@ const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unk
  * @param value The value to set.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const setValue = <T extends HTMLElement>(element: T, propertyKey: keyof T, value: any) => {
-    element[propertyKey] = value;
+const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, value: any) => {
+    element[propertyKey as keyof T] = value;
 };
 
 /**
@@ -688,13 +691,13 @@ export const internalRender = (
         let templateChildren: Template[] | undefined;
         let templateNamespace = namespace;
 
-        if (isHyperObject(template)) {
-            if (isHyperFragment(template)) {
+        if (isVObject(template)) {
+            if (isVFragment(template)) {
                 handleItems(template.children, filter);
                 return;
             }
 
-            if (isHyperFunction(template)) {
+            if (isVFunction(template)) {
                 const { Function, key, properties, children } = template;
                 const rootFragment = fragment;
                 const previousContext = renderContext;
@@ -766,7 +769,7 @@ export const internalRender = (
             }
 
             // if the current patch is a slot,
-            if (isHyperSlot(template)) {
+            if (isVSlot(template)) {
                 if (rootContext) {
                     const { properties, children } = template;
                     const slotChildNodes = rootContext.slotChildNodes;
@@ -804,7 +807,7 @@ export const internalRender = (
             }
 
             const { key, children, namespaceURI } = template;
-            if (isHyperNode(template)) {
+            if (isVNode(template)) {
                 templateNode = template.node;
             } else {
                 templateNamespace = namespaceURI || namespace;
@@ -835,17 +838,17 @@ export const internalRender = (
                             templateNode = currentNode;
                             templateContext = currentContext;
                         }
-                    } else if (isHyperComponent(template) && currentNode instanceof template.Component) {
+                    } else if (isVComponent(template) && currentNode instanceof template.Component) {
                         templateNode = currentNode;
                         templateContext = currentContext;
-                    } else if (isHyperTag(template) && currentContext.tagName === template.tag) {
+                    } else if (isVTag(template) && currentContext.tagName === template.tag) {
                         templateNode = currentNode;
                         templateContext = currentContext;
                     }
                 }
 
                 if (!templateNode) {
-                    if (isHyperComponent(template)) {
+                    if (isVComponent(template)) {
                         templateNode = new template.Component();
                     } else {
                         templateNode = DOM.createElementNS(templateNamespace, template.tag);
@@ -858,7 +861,7 @@ export const internalRender = (
 
             templateContext = templateContext || getOrCreateContext(templateNode);
             const map = templateContext.properties[slot ? 1 : 0];
-            const oldProperties = (map.get(refContext) || {}) as HyperElementProperties<typeof templateElement>;
+            const oldProperties = (map.get(refContext) || {}) as VProperties<typeof templateElement>;
             const properties = fillEmptyValues(oldProperties, template.properties);
             map.set(refContext, properties);
             if (key != null) {
@@ -934,7 +937,7 @@ export const internalRender = (
 
                 if (isReference || wasReference || isRenderingInput(templateElement, propertyKey)) {
                     setValue(templateElement, propertyKey, value);
-                } else if (isHyperComponent(template)) {
+                } else if (isVComponent(template)) {
                     const Component = template.Component;
                     if (type === 'string') {
                         const observedAttributes = Component.observedAttributes;
@@ -944,7 +947,7 @@ export const internalRender = (
                                 setValue(templateElement, propertyKey, value);
                             }
                         } else {
-                            const property = getProperty(templateElement as ComponentInstance, propertyKey);
+                            const property = getProperty(templateElement as ComponentInstance, propertyKey as keyof ComponentInstance);
                             if (property && property.fromAttribute) {
                                 setValue(templateElement, propertyKey, (property.fromAttribute as Function).call(templateElement, value as string));
                             }

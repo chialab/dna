@@ -1,4 +1,4 @@
-import type { Constructor, ClassDescriptor, IterableNodeList, Fields } from './types';
+import type { Constructor, ClassDescriptor, IterableNodeList } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
@@ -333,7 +333,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const node = isElement(args[0]) && args[0];
-            const props = (node ? args[1] : args[0]) as Fields<this>;
+            const props = (node ? args[1] : args[0]) as Partial<this>;
 
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
             const context = getOrCreateContext(element);
@@ -378,11 +378,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Initialize component properties.
          * @param properties A set of initial properties for the element.
          */
-        initialize(properties?: Fields<this>) {
+        initialize(properties?: Partial<this>) {
             flagConstructed(this);
             if (properties) {
                 for (const propertyKey in properties) {
-                    this[propertyKey] = properties[propertyKey] as (this[typeof propertyKey] extends undefined ? never : this[typeof propertyKey]);
+                    this[propertyKey] = properties[propertyKey] as this[typeof propertyKey];
                 }
             }
         }

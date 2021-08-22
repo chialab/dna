@@ -12,7 +12,7 @@ export { parseDOM, until } from './directives';
 
 export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
-export type { Context, Template, FunctionComponent, HyperObject, HyperProperties, HyperElementProperties, HyperComponent, HyperFragment, HyperFunction, HyperNode, HyperSlot, HyperTag, HyperClasses, HyperStyle } from './render';
+export type { Context, Template, FunctionComponent, VObject, VClasses, VStyle, VProperties, VComponent, VFragment, VFunction, VElement, VSlot, VTag } from './render';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { PropertyDeclaration, PropertyObserver } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';
