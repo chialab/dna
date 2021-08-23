@@ -1,5 +1,5 @@
-import type { ClassElement, Constructor, MethodsOf } from './types';
-import type { ComponentConstructor, ComponentInstance } from './Component';
+import type { ClassElement, Constructor } from './types';
+import type { ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
 import { isComponent } from './Component';
 import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';

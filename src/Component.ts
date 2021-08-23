@@ -29,7 +29,10 @@ export type WithConstructedFlag<T> = T & {
     [CONSTRUCTED_SYMBOL]?: boolean;
 };
 
-interface ComponentMixin {
+/**
+ * The component mixin interface.
+ */
+export interface ComponentMixin {
     /**
      * A flag with the connected value of the node.
      */
@@ -44,7 +47,7 @@ interface ComponentMixin {
      * Initialize component properties.
      * @param properties A set of initial properties for the element.
      */
-    initialize(properties?: { [P in keyof this]: this[P] }): void;
+    initialize(properties?: Props<this>): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -53,7 +56,7 @@ interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    stateChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -62,7 +65,7 @@ interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    propertyChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Get the inner value of a property.
@@ -70,7 +73,7 @@ interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @return The inner value of the property.
      */
-    getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P];
+    getInnerPropertyValue<P extends keyof Props<this>>(propertyName: P): this[P];
 
     /**
      * Set the inner value of a property.
@@ -78,7 +81,7 @@ interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @param value The inner value to set.
      */
-    setInnerPropertyValue<P extends keyof this>(propertyName: P, value: this[P]): void;
+    setInnerPropertyValue<P extends keyof Props<this>>(propertyName: P, value: this[P]): void;
 
     /**
      * Observe a Component Property.
@@ -86,7 +89,7 @@ interface ComponentMixin {
      * @param propertyName The name of the Property to observe
      * @param observer The callback function
      */
-    observe<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    observe<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Unobserve a Component Property.
@@ -94,7 +97,7 @@ interface ComponentMixin {
      * @param propertyName The name of the Property to unobserve
      * @param observer The callback function to remove
      */
-    unobserve<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    unobserve<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Dispatch a custom Event.
@@ -158,7 +161,26 @@ interface ComponentMixin {
  * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
-export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomElement<T> & ComponentMixin
+export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomElement<T> & ComponentMixin;
+
+/**
+ * Component prototype keys.
+ */
+export type PrototypeKeys = keyof HTMLElement & keyof CustomElement & keyof ComponentMixin;
+
+/**
+ * Get all methods of a class, excluding inherited methods.
+ */
+export type MethodsOf<T> = Exclude<{
+    [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T], never & PrototypeKeys>;
+
+/**
+ * Get all members of a class, excluding inherited members.
+ */
+export type Props<T> = {
+    [K in keyof T]?: K extends PrototypeKeys ? never : T[K];
+};
 
 /**
  * The basic DNA Component constructor.
@@ -333,7 +355,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const node = isElement(args[0]) && args[0];
-            const props = (node ? args[1] : args[0]) as Partial<this>;
+            const props = (node ? args[1] : args[0]) as Props<this>;
 
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
             const context = getOrCreateContext(element);
@@ -341,23 +363,23 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             initSlotChildNodes(element);
 
             // setup listeners
-            const listeners = getListeners(this).map((listener) => ({
+            const computedListeners = getListeners(element).map((listener) => ({
                 ...listener,
-                callback: listener.callback.bind(this),
+                callback: listener.callback.bind(element),
             }));
-            setListeners(this, listeners);
-            for (let i = 0, len = listeners.length; i < len; i++) {
-                const { event, target, selector, callback, options } = listeners[i];
+            setListeners(element, computedListeners);
+            for (let i = 0, len = computedListeners.length; i < len; i++) {
+                const { event, target, selector, callback, options } = computedListeners[i];
                 if (!target) {
                     element.delegateEventListener(event, selector, callback, options);
                 }
             }
 
             // setup properties
-            const properties = getProperties(this);
-            for (const propertyKey in properties) {
+            const computedProperties = getProperties(element);
+            for (const propertyKey in computedProperties) {
                 delete element[propertyKey];
-                const property = properties[propertyKey];
+                const property = computedProperties[propertyKey];
                 if (typeof property.initializer === 'function') {
                     element[propertyKey] = property.initializer.call(element);
                 } else if (typeof property.defaultValue !== 'undefined') {
@@ -378,7 +400,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Initialize component properties.
          * @param properties A set of initial properties for the element.
          */
-        initialize(properties?: Partial<this>) {
+        initialize(properties?: Props<this>) {
             flagConstructed(this);
             if (properties) {
                 for (const propertyKey in properties) {
@@ -727,7 +749,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private initProps?: { [P in keyof this]: this[P] };
+                private initProps?: Props<this>;
 
                 /**
                  * @inheritdoc
@@ -741,12 +763,12 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * @inheritdoc
                  */
-                initialize(props?: { [P in keyof this]: this[P] }) {
+                initialize(properties?: Props<this>) {
                     if (!isConstructed(this)) {
-                        this.initProps = props;
+                        this.initProps = properties;
                         return;
                     }
-                    return super.initialize(props);
+                    return super.initialize(properties);
                 }
             };
 

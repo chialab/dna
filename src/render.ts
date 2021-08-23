@@ -1,7 +1,7 @@
 import type { ElementTagNameMap, IterableNodeList } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
-import type { ComponentInstance } from './Component';
+import type { ComponentInstance, Props } from './Component';
 import type { Attributes } from './Attributes';
 import htm from 'htm';
 import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes, getPropertyDescriptor } from './helpers';
@@ -125,27 +125,24 @@ export type VClasses = string | { [key: string]: boolean };
  */
 export type VStyle = string | { [key: string]: string };
 
+type GetProps<T = {}> = T extends Element ? (Props<T> & Attributes<'div', T>) :
+    T extends keyof ElementTagNameMap ? (Props<ElementTagNameMap[T]> & Attributes<T>) :
+    T extends FunctionComponent ? Parameters<T>[0] :
+    T;
+
 /**
  * Properties that can be assigned to a node through the render engine.
  */
-export type VProperties<T = {}> = T extends typeof Fragment ? null :
-    Omit<
-        (
-            T extends Element ? (Partial<T> & Attributes<'div', T>) :
-            T extends keyof ElementTagNameMap ? (Partial<ElementTagNameMap[T]> & Attributes<T>) :
-            T extends FunctionComponent ? Parameters<T>[0] : T
-        ),
-        'is' | 'slot' | 'key' | 'xmlns' | 'ref' | 'children' | 'class' | 'style'
-    > & {
-        is?: string;
-        slot?: string;
-        key?: unknown;
-        xmlns?: string;
-        ref?: Element;
-        children?: Template[];
-        class?: VClasses;
-        style?: VStyle;
-    };
+export type VProperties<T = {}> = Omit<GetProps<T>, 'is'|'slot'|'key'|'xmlns'|'ref'|'children'|'class'|'style'> & {
+    is?: string;
+    slot?: string;
+    key?: unknown;
+    xmlns?: string;
+    ref?: Element;
+    children?: Template[];
+    class?: VClasses;
+    style?: VStyle;
+};
 
 /**
  * The interface of a JSX fragment node.
@@ -430,7 +427,7 @@ export type WithContext<T extends Node> = T & {
 /**
  * The node context interface.
  */
-export type Context<T extends Node = Node, P = T extends Element ? Partial<T> : {}, S = Map<string, unknown>> = {
+export type Context<T extends Node = Node, P = T extends Element ? Props<T> : {}, S = Map<string, unknown>> = {
     node: T;
     isElement?: boolean;
     isText?: boolean;

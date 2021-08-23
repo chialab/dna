@@ -94,21 +94,13 @@ module.exports = {
 };
 ```
 
-### Typescript, JSX, IntrinsicElements, ElementTagNameMap
+### Typescript, JSX, ElementTagNameMap, IntrinsicElements
 
-TypeScript supports JSX syntax, and it is able to provide typechecking and hints for component properties automatically if you use class constructors as tag name:
+TypeScript supports JSX syntax, and it is able to provide typechecking and hints for component properties if you register its tag name to the global [`HTMLElementTagNameMap`](https://www.typescriptlang.org/docs/handbook/dom-manipulation.html#documentcreateelement) interface. The JSX typings provided by DNA will make it automatically available as [`IntrinsicElement`](https://www.typescriptlang.org/docs/handbook/jsx.html#intrinsic-elements).
+
+**x-card.tsx**
 
 ```tsx
-import { render } from '@chialab/dna';
-import { Card } from './x-card';
-
-render(<Card firstName="Alan" age={24} />, document.body);
-```
-
-But how does it work with defined custom elements? It is possibile to declare `IntrinsicElements` (for JSX) and `ElementTagNameMap` (for DOM methods) in order to bind element's tag name with its prototype:
-
-```ts
-import type { VProperties } from '@chialab/dna';
 import { Component, customElement } from '@chialab/dna';
 
 @customElement('x-card')
@@ -117,13 +109,16 @@ class Card extends Component {
 }
 
 declare global {
-    interface IntrinsicElements {
-        'x-card': VProperties<Card>;
-    }
-
-    interface ElementTagNameMap {
+    interface HTMLElementTagNameMap {
         'x-card': Card;
     }
 }
+```
 
+**app.tsx**
+```tsx
+import { render } from '@chialab/dna';
+import './x-card';
+
+render(<x-card firstName="Alan" age={24} />, document.body);
 ```
