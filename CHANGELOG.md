@@ -1,3 +1,17 @@
+# [3.5.0](https://github.com/chialab/dna/compare/v3.4.8...v3.5.0) (2021-08-23)
+
+
+### Bug Fixes
+
+* event typings ([3fc4610](https://github.com/chialab/dna/commit/3fc4610ef3875ab7e09f34ea579f9de13cd3c8d8))
+* partial writable ([7e0a6ad](https://github.com/chialab/dna/commit/7e0a6ade79fb4d8c0c56ae63b1a5d4dadfaa9e51))
+
+
+### Features
+
+* full jsx typescript support ([eb4b6ef](https://github.com/chialab/dna/commit/eb4b6efa0c47a8dd9afe72a0dec86b2b277aaaa3))
+* reference nodes in jsx using the ref property ([36a3000](https://github.com/chialab/dna/commit/36a3000a543cda34e1e809bb609572dbb4fef27c))
+
 ## [3.4.8](https://github.com/chialab/dna/compare/v3.4.7...v3.4.8) (2021-08-10)
 
 
