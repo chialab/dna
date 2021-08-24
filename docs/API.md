@@ -10,7 +10,7 @@
 
 <strong>Types</strong>
 
-<a href="#asyncevent">AsyncEvent</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#hyperclasses">HyperClasses</a>, <a href="#hypercomponent">HyperComponent</a>, <a href="#hyperelementproperties">HyperElementProperties</a>, <a href="#hyperfragment">HyperFragment</a>, <a href="#hyperfunction">HyperFunction</a>, <a href="#hypernode">HyperNode</a>, <a href="#hyperobject">HyperObject</a>, <a href="#hyperproperties">HyperProperties</a>, <a href="#hyperslot">HyperSlot</a>, <a href="#hyperstyle">HyperStyle</a>, <a href="#hypertag">HyperTag</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>
+<a href="#asyncevent">AsyncEvent</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vclasses">VClasses</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vstyle">VStyle</a>, <a href="#vtag">VTag</a>
 
 <strong>Variables</strong>
 
@@ -308,222 +308,6 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="hyperclasses"><code>Type</code> HyperClasses</strong>
-    
-<p>
-
-Classes dictionary.
-
-</p>
-
-<pre>string | boolean</pre>
-
-<hr />
-
-<strong id="hypercomponent"><code>Type</code> HyperComponent&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;</strong>
-    
-<p>
-
-The interface of a Component constructor used as JSX tag.
-
-</p>
-
-<pre>{
-  Component: <a href="#t">T</a>;
-  Function?: undefined;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
-  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
-  tag?: undefined
-}</pre>
-
-<hr />
-
-<strong id="hyperelementproperties"><code>Type</code> HyperElementProperties&lt;T extends {
-
-}&gt;</strong>
-    
-<p>
-
-Properties that can be assigned to a node.
-
-</p>
-
-<pre><a href="#fields">Fields</a> & <a href="#hyperproperties">HyperProperties</a></pre>
-
-<hr />
-
-<strong id="hyperfragment"><code>Type</code> HyperFragment</strong>
-    
-<p>
-
-The interface of a JSX fragment node.
-
-</p>
-
-<pre>{
-  Component?: undefined;
-  Function?: undefined;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment: true;
-  isSlot?: false;
-  key?: unknown;
-  node?: undefined;
-  properties?: {
-  
-  };
-  tag?: undefined
-}</pre>
-
-<hr />
-
-<strong id="hyperfunction"><code>Type</code> HyperFunction</strong>
-    
-<p>
-
-The interface of a functional component.
-
-</p>
-
-<pre>{
-  Component?: undefined;
-  Function: <a href="#functioncomponent">FunctionComponent</a>;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
-  properties: <a href="#hyperproperties">HyperProperties</a>;
-  tag?: undefined
-}</pre>
-
-<hr />
-
-<strong id="hypernode"><code>Type</code> HyperNode&lt;T extends <a href="#node">Node</a>&gt;</strong>
-    
-<p>
-
-The interface of an HTML node used as JSX tag.
-
-</p>
-
-<pre>{
-  Component?: undefined;
-  Function?: undefined;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node: <a href="#t">T</a>;
-  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
-  tag?: undefined
-}</pre>
-
-<hr />
-
-<strong id="hyperobject"><code>Type</code> HyperObject</strong>
-    
-<p>
-
-Generic hyper object.
-
-</p>
-
-<pre><a href="#hyperfragment">HyperFragment</a> | <a href="#hyperfunction">HyperFunction</a> | <a href="#hypercomponent">HyperComponent</a> | <a href="#hypernode">HyperNode</a> | <a href="#hyperslot">HyperSlot</a> | <a href="#hypertag">HyperTag</a></pre>
-
-<hr />
-
-<strong id="hyperproperties"><code>Type</code> HyperProperties</strong>
-    
-<p>
-
-Properties used by the render engine.
-They can be assigned to a node but they are not part of the node prototype.
-
-</p>
-
-<pre>{
-  children?: <a href="#template">Template</a>[];
-  class?: <a href="#hyperclasses">HyperClasses</a>;
-  is?: string;
-  key?: unknown;
-  ref?: <a href="#node">Node</a>;
-  slot?: string;
-  style?: <a href="#hyperstyle">HyperStyle</a>;
-  xmlns?: string
-}</pre>
-
-<hr />
-
-<strong id="hyperslot"><code>Type</code> HyperSlot</strong>
-    
-<p>
-
-The interface of slot element.
-
-</p>
-
-<pre>{
-  Component?: undefined;
-  Function?: undefined;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot: true;
-  key?: unknown;
-  node?: undefined;
-  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
-  tag: slot
-}</pre>
-
-<hr />
-
-<strong id="hyperstyle"><code>Type</code> HyperStyle</strong>
-    
-<p>
-
-Styles dictionary.
-
-</p>
-
-<pre>string | string</pre>
-
-<hr />
-
-<strong id="hypertag"><code>Type</code> HyperTag&lt;T extends &gt;</strong>
-    
-<p>
-
-The interface of a generic JSX tag.
-
-</p>
-
-<pre>{
-  Component?: undefined;
-  Function?: undefined;
-  [HYPER_OBJECT_SYM]: true;
-  children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
-  properties: <a href="#hyperelementproperties">HyperElementProperties</a>;
-  tag: <a href="#t">T</a>
-}</pre>
-
-<hr />
-
 <strong id="observable"><code>Type</code> Observable&lt;T&gt;</strong>
     
 <p>
@@ -583,7 +367,208 @@ A generic template. Can be a single atomic item or a list of items.
 
 </p>
 
-<pre><a href="#element">Element</a> | <a href="#text">Text</a> | <a href="#node">Node</a> | <a href="#hyperfragment">HyperFragment</a> | <a href="#hyperfunction">HyperFunction</a> | <a href="#hypercomponent">HyperComponent</a> | <a href="#hypernode">HyperNode</a> | <a href="#hyperslot">HyperSlot</a> | <a href="#hypertag">HyperTag</a> | <a href="#promise">Promise</a> | <a href="#observable">Observable</a> | string | number | boolean | undefined | null | <a href="#template">Template</a>[]</pre>
+<pre><a href="#element">Element</a> | <a href="#text">Text</a> | <a href="#node">Node</a> | <a href="#vfragment">VFragment</a> | <a href="#vfunction">VFunction</a> | <a href="#vcomponent">VComponent</a> | <a href="#velement">VElement</a> | <a href="#vslot">VSlot</a> | <a href="#vtag">VTag</a> | <a href="#promise">Promise</a> | <a href="#observable">Observable</a> | string | number | boolean | undefined | null | <a href="#template">Template</a>[]</pre>
+
+<hr />
+
+<strong id="vclasses"><code>Type</code> VClasses</strong>
+    
+<p>
+
+Classes dictionary.
+
+</p>
+
+<pre>string | boolean | undefined</pre>
+
+<hr />
+
+<strong id="vcomponent"><code>Type</code> VComponent&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;</strong>
+    
+<p>
+
+The interface of a Component constructor used as JSX tag.
+
+</p>
+
+<pre>{
+  Component: <a href="#t">T</a>;
+  Function?: undefined;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#vproperties">VProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="velement"><code>Type</code> VElement&lt;T extends <a href="#element">Element</a>&gt;</strong>
+    
+<p>
+
+The interface of an HTML node used as JSX tag.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node: <a href="#t">T</a>;
+  properties: <a href="#vproperties">VProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="vfragment"><code>Type</code> VFragment</strong>
+    
+<p>
+
+The interface of a JSX fragment node.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment: true;
+  isSlot?: false;
+  key?: unknown;
+  node?: undefined;
+  properties?: {
+  
+  };
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="vfunction"><code>Type</code> VFunction&lt;T extends <a href="#functioncomponent">FunctionComponent</a>&gt;</strong>
+    
+<p>
+
+The interface of a functional component.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function: <a href="#t">T</a>;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#vproperties">VProperties</a>;
+  tag?: undefined
+}</pre>
+
+<hr />
+
+<strong id="vobject"><code>Type</code> VObject</strong>
+    
+<p>
+
+Generic virtual dom object.
+
+</p>
+
+<pre><a href="#vfunction">VFunction</a> | <a href="#vcomponent">VComponent</a> | <a href="#velement">VElement</a> | <a href="#vslot">VSlot</a> | <a href="#vtag">VTag</a> | <a href="#vfragment">VFragment</a></pre>
+
+<hr />
+
+<strong id="vproperties"><code>Type</code> VProperties&lt;T&gt;</strong>
+    
+<p>
+
+Properties that can be assigned to a node through the render engine.
+
+</p>
+
+<pre><a href="#omit">Omit</a> & {
+  children?: <a href="#template">Template</a> | <a href="#template">Template</a>[];
+  class?: <a href="#vclasses">VClasses</a>;
+  is?: string;
+  key?: unknown;
+  ref?: <a href="#element">Element</a>;
+  slot?: string;
+  style?: <a href="#vstyle">VStyle</a>;
+  xmlns?: string
+}</pre>
+
+<hr />
+
+<strong id="vslot"><code>Type</code> VSlot</strong>
+    
+<p>
+
+The interface of slot element.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot: true;
+  key?: unknown;
+  node?: undefined;
+  properties: <a href="#vproperties">VProperties</a>;
+  tag: slot
+}</pre>
+
+<hr />
+
+<strong id="vstyle"><code>Type</code> VStyle</strong>
+    
+<p>
+
+Styles dictionary.
+
+</p>
+
+<pre>string | string | undefined</pre>
+
+<hr />
+
+<strong id="vtag"><code>Type</code> VTag&lt;T extends &gt;</strong>
+    
+<p>
+
+The interface of a generic JSX tag.
+
+</p>
+
+<pre>{
+  Component?: undefined;
+  Function?: undefined;
+  [V_SYM]: true;
+  children: <a href="#template">Template</a>[];
+  isFragment?: false;
+  isSlot?: false;
+  key?: unknown;
+  namespaceURI?: string;
+  node?: undefined;
+  properties: <a href="#vproperties">VProperties</a>;
+  tag: <a href="#t">T</a>
+}</pre>
 
 <hr />
 
@@ -1237,7 +1222,7 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(tagOrComponent: <a href="#fragment">Fragment</a>): <a href="#hyperfragment">HyperFragment</a></code>
+    <code>(tagOrComponent: <a href="#fragment">Fragment</a>): <a href="#vfragment">VFragment</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1258,12 +1243,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hyperfragment">HyperFragment</a></code> 
+<strong>Returns</strong>: <code><a href="#vfragment">VFragment</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>(tagOrComponent: <a href="#fragment">Fragment</a>, properties: null, children: <a href="#template">Template</a>[]): <a href="#hyperfragment">HyperFragment</a></code>
+    <code>(tagOrComponent: <a href="#fragment">Fragment</a>, properties: null, children: <a href="#template">Template</a>[]): <a href="#vfragment">VFragment</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1294,12 +1279,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hyperfragment">HyperFragment</a></code> 
+<strong>Returns</strong>: <code><a href="#vfragment">VFragment</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#functioncomponent">FunctionComponent</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperfunction">HyperFunction</a></code>
+    <code>&lt;T extends <a href="#functioncomponent">FunctionComponent</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vfunction">VFunction</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1318,7 +1303,7 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#hyperproperties">HyperProperties</a> | null</code></td>
+            <td><code><a href="#vproperties">VProperties</a> | null</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -1330,12 +1315,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hyperfunction">HyperFunction</a></code> 
+<strong>Returns</strong>: <code><a href="#vfunction">VFunction</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperproperties">HyperProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypercomponent">HyperComponent</a></code>
+    <code>&lt;T extends <a href="#customelementconstructor">CustomElementConstructor</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vcomponent">VComponent</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1354,7 +1339,7 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#hyperproperties">HyperProperties</a> | null</code></td>
+            <td><code><a href="#vproperties">VProperties</a> | null</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -1366,12 +1351,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hypercomponent">HyperComponent</a></code> 
+<strong>Returns</strong>: <code><a href="#vcomponent">VComponent</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>&lt;T extends <a href="#node">Node</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypernode">HyperNode</a></code>
+    <code>&lt;T extends <a href="#element">Element</a>&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#velement">VElement</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1390,7 +1375,7 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td><code><a href="#vproperties">VProperties</a> | null</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -1402,12 +1387,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hypernode">HyperNode</a></code> 
+<strong>Returns</strong>: <code><a href="#velement">VElement</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>(tagOrComponent: slot, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hyperslot">HyperSlot</a></code>
+    <code>(tagOrComponent: slot, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vslot">VSlot</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1426,7 +1411,7 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td><code><a href="#vproperties">VProperties</a> | null</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -1438,12 +1423,12 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hyperslot">HyperSlot</a></code> 
+<strong>Returns</strong>: <code><a href="#vslot">VSlot</a></code> 
 
 </details>
 <details>
 <summary>
-    <code>&lt;T extends symbol | object | a | abbr | address | applet | area | article | aside | audio | b | base | bdi | bdo | blockquote | body | br | button | canvas | caption | cite | code | col | colgroup | data | datalist | dd | del | details | dfn | dialog | dir | div | dl | dt | em | embed | fieldset | figcaption | figure | font | footer | form | frame | frameset | h1 | h2 | h3 | h4 | h5 | h6 | head | header | hgroup | hr | html | i | iframe | img | input | ins | kbd | label | legend | li | link | main | map | mark | marquee | menu | meta | meter | nav | noscript | ol | optgroup | option | output | p | param | picture | pre | progress | q | rp | rt | ruby | s | samp | script | section | select | slot | small | source | span | strong | style | sub | summary | sup | table | tbody | td | template | textarea | tfoot | th | thead | time | title | tr | track | u | ul | var | video | wbr | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#hyperelementproperties">HyperElementProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#hypertag">HyperTag</a></code>
+    <code>&lt;T extends symbol |  | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view | big | keygen | menuitem | noindex | animate | animateMotion | animateTransform | feDropShadow | mpath&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vtag">VTag</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1462,7 +1447,7 @@ The global DNA registry instance.
             <td></td></tr>
 <tr>
             <td>properties</td>
-            <td><code><a href="#hyperelementproperties">HyperElementProperties</a> | null</code></td>
+            <td><code><a href="#vproperties">VProperties</a> | null</code></td>
             <td align="center">✓</td>
             <td></td></tr>
 <tr>
@@ -1474,7 +1459,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#hypertag">HyperTag</a></code> 
+<strong>Returns</strong>: <code><a href="#vtag">VTag</a></code> 
 
 </details>
 
