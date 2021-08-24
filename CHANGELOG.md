@@ -1,3 +1,10 @@
+## [3.6.1](https://github.com/chialab/dna/compare/v3.6.0...v3.6.1) (2021-08-24)
+
+
+### Bug Fixes
+
+* vstyle and vclasses should accept undefined values ([377279e](https://github.com/chialab/dna/commit/377279ee51a2098320e813be125e3f1caceacb27))
+
 # [3.6.0](https://github.com/chialab/dna/compare/v3.5.0...v3.6.0) (2021-08-24)
 
 
