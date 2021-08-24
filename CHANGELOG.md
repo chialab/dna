@@ -1,3 +1,15 @@
+# [3.6.0](https://github.com/chialab/dna/compare/v3.5.0...v3.6.0) (2021-08-24)
+
+
+### Bug Fixes
+
+* support single child in jsx templates ([2b63d38](https://github.com/chialab/dna/commit/2b63d38bdf88cb05930c016267684b56a98da123))
+
+
+### Features
+
+* jsx runtime typings ([41e1abe](https://github.com/chialab/dna/commit/41e1abee06bb06242982a2ad869c37dd27989a65))
+
 # [3.5.0](https://github.com/chialab/dna/compare/v3.4.8...v3.5.0) (2021-08-23)
 
 
