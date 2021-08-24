@@ -23,6 +23,7 @@
     "types",
     "analyzer",
     "jsx-runtime.js",
+    "jsx-runtime.d.ts",
     "LICENSE",
     "README.md"
   ],
