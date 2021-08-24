@@ -118,12 +118,16 @@ export const Fragment: unique symbol = createSymbol();
 /**
  * Classes dictionary.
  */
-export type VClasses = string | { [key: string]: boolean };
+export type VClasses = string | {
+    [key: string]: boolean | undefined;
+};
 
 /**
  * Styles dictionary.
  */
-export type VStyle = string | { [key: string]: string };
+export type VStyle = string | {
+    [key: string]: string | undefined;
+};
 
 type GetProps<T = {}> = T extends Element ? (Props<T> & Attributes<'div', T>) :
     T extends keyof ElementTagNameMap ? (Props<ElementTagNameMap[T]> & Attributes<T>) :
@@ -566,7 +570,10 @@ const convertStyles = (value: VStyle| null | undefined) => {
             const camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
                 `-${match.toLowerCase()}`
             );
-            styles[camelName] = value[propertyKey];
+            const propValue = value[propertyKey];
+            if (propValue != null) {
+                styles[camelName] = propValue;
+            }
         }
         return styles;
     }
