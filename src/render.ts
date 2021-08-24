@@ -139,7 +139,7 @@ export type VProperties<T = {}> = Omit<GetProps<T>, 'is'|'slot'|'key'|'xmlns'|'r
     key?: unknown;
     xmlns?: string;
     ref?: Element;
-    children?: Template[];
+    children?: Template | Template[];
     class?: VClasses;
     style?: VStyle;
 };
