@@ -60,6 +60,7 @@ export interface ElementTagNameMap extends HTMLElementTagNameMap {
     'keygen': HTMLElement;
     'menuitem': HTMLElement;
     'noindex': HTMLElement;
+    'iframe': HTMLIFrameElement;
 
     'animate': SVGElement;
     'animateMotion': SVGElement;
@@ -1153,7 +1154,7 @@ export type Attributes<E extends keyof ElementTagNameMap, T extends Element = El
     T extends HTMLDataElement ? DataHTMLAttributes :
     E extends 'del' ? DelHTMLAttributes :
     E extends 'details' ? DetailsHTMLAttributes :
-    T extends HTMLDialogElement ? DialogHTMLAttributes :
+    E extends 'dialog' ? DialogHTMLAttributes :
     T extends HTMLEmbedElement ? EmbedHTMLAttributes :
     T extends HTMLFieldSetElement ? FieldsetHTMLAttributes :
     T extends HTMLFormElement ? FormHTMLAttributes :
