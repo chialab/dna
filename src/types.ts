@@ -872,7 +872,7 @@ export interface VideoHTMLAttributes extends MediaHTMLAttributes {
     disablePictureInPicture?: boolean | undefined;
 }
 
-export type SVGAttributes = AriaAttributes & {
+export interface SVGAttributes extends AriaAttributes {
     // Attributes which also defined in HTMLAttributes
     // See comment in SVGDOMPropertyConfig.js
     class?: string | undefined;

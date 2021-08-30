@@ -27,31 +27,34 @@ export const Fragment: unique symbol = createSymbol();
 /**
  * Classes dictionary.
  */
-export type VClasses = string | {
-    [key: string]: boolean | undefined;
-};
+export type VClasses = string
+    | { [key: string]: boolean | undefined };
 
 /**
  * Styles dictionary.
  */
-export type VStyle = string | {
-    [key: string]: string | undefined;
-};
+export type VStyle = string
+    | { [key: string]: string | undefined };
 
-type VKeys = 'is' | 'slot' | 'key' | 'xmlns' | 'ref' | 'children' | 'class' | 'style';
+type VKeys = 'is'
+    | 'slot'
+    | 'key'
+    | 'xmlns'
+    | 'ref'
+    | 'children'
+    | 'class'
+    | 'style';
 
 /**
  * Properties that can be assigned to a node through the render engine.
  */
-export type VProperties<
-    T = {},
-    A = T extends Element ? (Props<T> & Attributes<'div', T>) :
-        T extends keyof ElementTagNameMap ? (Props<ElementTagNameMap[T]> & Attributes<T>) :
-        T extends FunctionComponent ? Parameters<T>[0] :
-        T
-> = {
-    [K in keyof A]: K extends VKeys ? never : A[K];
-} & {
+export type VProperties<T = {}> = Omit<
+    T extends Element ? (Omit<Props<T>, keyof Attributes<'div', T>> & Attributes<'div', T>) :
+    T extends keyof ElementTagNameMap ? (Omit<Props<ElementTagNameMap[T]>, keyof Attributes<T>> & Attributes<T>) :
+    T extends FunctionComponent ? Parameters<T>[0] :
+    T,
+    VKeys | `on${string}`
+> & {
     is?: string;
     slot?: string;
     key?: unknown;
