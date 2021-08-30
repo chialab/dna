@@ -1,3 +1,16 @@
+# [3.7.0](https://github.com/chialab/dna/compare/v3.6.1...v3.7.0) (2021-08-30)
+
+
+### Bug Fixes
+
+* correctly merge vproperties ([e8034f7](https://github.com/chialab/dna/commit/e8034f70716a21a25a2ce079169d90cd8d0eb6bf))
+* do not use deprecated html dialog element ([0cc6737](https://github.com/chialab/dna/commit/0cc673791ff64e7b10d2d2616a8458216d21d9bd))
+
+
+### Features
+
+* add event listeners to vproperties ([d36364a](https://github.com/chialab/dna/commit/d36364aa6abfd90cc31c8a268b2032d62a1adb0b))
+
 ## [3.6.1](https://github.com/chialab/dna/compare/v3.6.0...v3.6.1) (2021-08-24)
 
 
