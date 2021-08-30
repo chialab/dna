@@ -1,8 +1,7 @@
-import type { ElementTagNameMap, IterableNodeList } from './types';
+import type { ElementTagNameMap, Attributes, IterableNodeList } from './types';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { Observable } from './Observable';
 import type { ComponentInstance, Props } from './Component';
-import type { Attributes } from './Attributes';
 import htm from 'htm';
 import { createSymbol, isNode, isElement, isArray, isText, indexOf, cloneChildNodes, getPropertyDescriptor } from './helpers';
 import { isComponent } from './Component';
@@ -14,96 +13,6 @@ import { css } from './css';
 import { getProperty } from './property';
 
 const innerHtml = htm.bind(h);
-
-/**
- * Compile a string into virtual DOM template.
- *
- * @return The virtual DOM template.
- */
-export const compile = (string: string): Template => {
-    const array = [string] as string[] & { raw?: string[] };
-    array.raw = [string];
-    return innerHtml(array as unknown as TemplateStringsArray);
-};
-
-/**
- * Compile a template string into virtual DOM template.
- *
- * @return The virtual DOM template.
- */
-function html(string: TemplateStringsArray, ...values: unknown[]): Template;
-/**
- * @deprecated use compile function instead.
- */
-function html(string: string): Template;
-function html(string: string | TemplateStringsArray, ...values: unknown[]): Template {
-    if (typeof string === 'string') {
-        return compile(string);
-    }
-    return innerHtml(string, ...values);
-}
-
-export { html };
-
-/**
- * A generic template. Can be a single atomic item or a list of items.
- */
-export type Template =
-    Element |
-    Text |
-    Node |
-    VFragment |
-    VFunction<FunctionComponent> |
-    VComponent<CustomElementConstructor> |
-    VElement<Element> |
-    VSlot |
-    VTag<keyof ElementTagNameMap> |
-    Promise<unknown> |
-    Observable<unknown> |
-    string |
-    number |
-    boolean |
-    undefined |
-    null |
-    Template[];
-
-/**
-* A filter function signature for template items.
-*
-* @param item The template item to check.
-* @return A truthy value for valid items, a falsy for value for invalid ones.
-*/
-export type Filter = (item: Node) => boolean;
-
-/**
- * A re-render function.
- */
-export type UpdateRequest = () => boolean;
-
-/**
- * A function that returns a template.
- *
- * @param props A set of properties with children.
- * @param context The current render context.
- * @return A template.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FunctionComponent<P = any> = (
-    props: P,
-    context: Context<Node, P>,
-    /**
-     * @deprecated Use context.requestUpdate method.
-     */
-    requestUpdate: UpdateRequest,
-    /**
-     * @deprecated Use the returned value of the context.requestUpdate method.
-     */
-    isAttached: () => boolean,
-    /**
-     * @deprecated Use context.
-     */
-    sameContext: Context<Node, P>
-) => Template;
 
 /**
  * Identify virtual dom objects.
@@ -129,15 +38,20 @@ export type VStyle = string | {
     [key: string]: string | undefined;
 };
 
-type GetProps<T = {}> = T extends Element ? (Props<T> & Attributes<'div', T>) :
-    T extends keyof ElementTagNameMap ? (Props<ElementTagNameMap[T]> & Attributes<T>) :
-    T extends FunctionComponent ? Parameters<T>[0] :
-    T;
+type VKeys = 'is' | 'slot' | 'key' | 'xmlns' | 'ref' | 'children' | 'class' | 'style';
 
 /**
  * Properties that can be assigned to a node through the render engine.
  */
-export type VProperties<T = {}> = Omit<GetProps<T>, 'is'|'slot'|'key'|'xmlns'|'ref'|'children'|'class'|'style'> & {
+export type VProperties<
+    T = {},
+    A = T extends Element ? (Props<T> & Attributes<'div', T>) :
+        T extends keyof ElementTagNameMap ? (Props<ElementTagNameMap[T]> & Attributes<T>) :
+        T extends FunctionComponent ? Parameters<T>[0] :
+        T
+> = {
+    [K in keyof A]: K extends VKeys ? never : A[K];
+} & {
     is?: string;
     slot?: string;
     key?: unknown;
@@ -146,6 +60,7 @@ export type VProperties<T = {}> = Omit<GetProps<T>, 'is'|'slot'|'key'|'xmlns'|'r
     children?: Template | Template[];
     class?: VClasses;
     style?: VStyle;
+    [listener: `on${string}`]: EventListener | undefined;
 };
 
 /**
@@ -257,6 +172,28 @@ export type VObject = VFunction<FunctionComponent> |
     VSlot |
     VTag<keyof ElementTagNameMap> |
     VFragment;
+
+/**
+ * A generic template. Can be a single atomic item or a list of items.
+ */
+export type Template =
+    Element |
+    Text |
+    Node |
+    VFragment |
+    VFunction<FunctionComponent> |
+    VComponent<CustomElementConstructor> |
+    VElement<Element> |
+    VSlot |
+    VTag<keyof ElementTagNameMap> |
+    Promise<unknown> |
+    Observable<unknown> |
+    string |
+    number |
+    boolean |
+    undefined |
+    null |
+    Template[];
 
 /**
  * Check if the current virtual node is a fragment.
@@ -418,6 +355,74 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
 }
 
 export { h };
+
+/**
+ * Compile a string into virtual DOM template.
+ *
+ * @return The virtual DOM template.
+ */
+export const compile = (string: string): Template => {
+    const array = [string] as string[] & { raw?: string[] };
+    array.raw = [string];
+    return innerHtml(array as unknown as TemplateStringsArray);
+};
+
+/**
+ * Compile a template string into virtual DOM template.
+ *
+ * @return The virtual DOM template.
+ */
+function html(string: TemplateStringsArray, ...values: unknown[]): Template;
+/**
+ * @deprecated use compile function instead.
+ */
+function html(string: string): Template;
+function html(string: string | TemplateStringsArray, ...values: unknown[]): Template {
+    if (typeof string === 'string') {
+        return compile(string);
+    }
+    return innerHtml(string, ...values);
+}
+
+export { html };
+
+/**
+* A filter function signature for template items.
+*
+* @param item The template item to check.
+* @return A truthy value for valid items, a falsy for value for invalid ones.
+*/
+export type Filter = (item: Node) => boolean;
+
+/**
+ * A re-render function.
+ */
+export type UpdateRequest = () => boolean;
+
+/**
+ * A function that returns a template.
+ *
+ * @param props A set of properties with children.
+ * @param context The current render context.
+ * @return A template.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FunctionComponent<P = any> = (
+    props: P,
+    context: Context<Node, P>,
+    /**
+     * @deprecated Use context.requestUpdate method.
+     */
+    requestUpdate: UpdateRequest,
+    /**
+     * @deprecated Use the returned value of the context.requestUpdate method.
+     */
+    isAttached: () => boolean,
+    /**
+     * @deprecated Use context.
+     */
+    sameContext: Context<Node, P>
+) => Template;
 
 /**
  * A symbol for node context.
@@ -625,6 +630,12 @@ const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, v
 };
 
 /**
+ * Check if a property key is a listener key and it should be valued as event listener.
+ * @param propertyKey The property to check.
+ */
+const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
+
+/**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
@@ -643,7 +654,7 @@ export const internalRender = (
     input: Template,
     slot = isComponent(root),
     context?: Context,
-    namespace = root.namespaceURI || 'http://www.w3.org/1999/xhtml',
+    namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
     rootContext?: Context,
     mainContext?: Context,
     fragment?: Context
@@ -865,7 +876,7 @@ export const internalRender = (
 
             templateContext = templateContext || getOrCreateContext(templateNode);
             const map = templateContext.properties[slot ? 1 : 0];
-            const oldProperties = (map.get(refContext) || {}) as VProperties<typeof templateElement>;
+            const oldProperties = (map.get(refContext) || {}) as VProperties<HTMLElement>;
             const properties = fillEmptyValues(oldProperties, template.properties);
             map.set(refContext, properties);
             if (key != null) {
@@ -923,7 +934,7 @@ export const internalRender = (
                         }
                     }
                     continue;
-                } else if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in templateElement.constructor.prototype)) {
+                } else if (isListenerProperty(propertyKey) && !(propertyKey in templateElement.constructor.prototype)) {
                     const eventName = propertyKey.substr(2);
                     if (oldValue) {
                         templateElement.removeEventListener(eventName, oldValue as EventListener);

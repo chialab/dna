@@ -492,7 +492,7 @@ Generic virtual dom object.
 
 <hr />
 
-<strong id="vproperties"><code>Type</code> VProperties&lt;T&gt;</strong>
+<strong id="vproperties"><code>Type</code> VProperties&lt;T, A&gt;</strong>
     
 <p>
 
@@ -500,16 +500,7 @@ Properties that can be assigned to a node through the render engine.
 
 </p>
 
-<pre><a href="#omit">Omit</a> & {
-  children?: <a href="#template">Template</a> | <a href="#template">Template</a>[];
-  class?: <a href="#vclasses">VClasses</a>;
-  is?: string;
-  key?: unknown;
-  ref?: <a href="#element">Element</a>;
-  slot?: string;
-  style?: <a href="#vstyle">VStyle</a>;
-  xmlns?: string
-}</pre>
+<pre> & <a href="#eventlistener">EventListener</a> | undefined</pre>
 
 <hr />
 
@@ -1428,7 +1419,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends symbol |  | circle | clipPath | defs | desc | ellipse | feBlend | feColorMatrix | feComponentTransfer | feComposite | feConvolveMatrix | feDiffuseLighting | feDisplacementMap | feDistantLight | feFlood | feFuncA | feFuncB | feFuncG | feFuncR | feGaussianBlur | feImage | feMerge | feMergeNode | feMorphology | feOffset | fePointLight | feSpecularLighting | feSpotLight | feTile | feTurbulence | filter | foreignObject | g | image | line | linearGradient | marker | mask | metadata | path | pattern | polygon | polyline | radialGradient | rect | stop | svg | switch | text | textPath | tspan | use | view | big | keygen | menuitem | noindex | animate | animateMotion | animateTransform | feDropShadow | mpath&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vtag">VTag</a></code>
+    <code>&lt;T extends &gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vtag">VTag</a></code>
 </summary>
 
 <strong>Params</strong>

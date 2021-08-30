@@ -1,9 +1,9 @@
 import type { ElementTagNameMap } from './types';
-import type { VProperties, VObject } from './render';
+import type { VProperties, Template } from './render';
 
 declare global {
     namespace JSX {
-        type Element = VObject;
+        type Element = Template;
         type IntrinsicElements = {
             [K in keyof ElementTagNameMap]: VProperties<K>;
         }

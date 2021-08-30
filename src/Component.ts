@@ -16,16 +16,16 @@ import { getProperties, getPropertyForAttribute } from './property';
  */
 export const COMPONENT_SYMBOL: unique symbol = createSymbol();
 
-export type WithComponentFlag<T> = T & {
-    [COMPONENT_SYMBOL]?: boolean;
-};
-
 /**
  * A symbol which identify constructed components (properties can be assigned).
  */
 export const CONSTRUCTED_SYMBOL: unique symbol = createSymbol();
 
-export type WithConstructedFlag<T> = T & {
+type WithComponentFlag<T> = T & {
+    [COMPONENT_SYMBOL]?: boolean;
+};
+
+type WithConstructedFlag<T> = T & {
     [CONSTRUCTED_SYMBOL]?: boolean;
 };
 
@@ -166,7 +166,7 @@ export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomEleme
 /**
  * Component prototype keys.
  */
-export type PrototypeKeys = keyof HTMLElement & keyof CustomElement & keyof ComponentMixin;
+export type PrototypeKeys = keyof CustomElement | keyof ComponentMixin;
 
 /**
  * Get all methods of a class, excluding inherited methods.
@@ -176,10 +176,16 @@ export type MethodsOf<T> = Exclude<{
 }[keyof T], never & PrototypeKeys>;
 
 /**
+ * Check if a property is flagged as readonly.
+ */
+export type IsReadonly<T, K extends keyof T> =
+    (<C>() => C extends { [Q in K]: T[K] } ? 1 : 2) extends (<C>() => C extends { -readonly [Q in K]: T[K] } ? 1 : 2) ? never : K;
+
+/**
  * Get all members of a class, excluding inherited members.
  */
 export type Props<T> = {
-    [K in keyof T]?: K extends PrototypeKeys ? never : T[K];
+    [K in keyof T]?: K extends PrototypeKeys ? never : K extends IsReadonly<T, K> ? never : T[K];
 };
 
 /**

@@ -108,7 +108,7 @@ export class CustomElementRegistry {
         // the native custom elements get method is slow
         // assert valid names before calling it.
         if (!constructor && nativeCustomElements && assertValidateCustomElementName(name)) {
-            constructor = nativeCustomElements.get(name);
+            constructor = nativeCustomElements.get(name) as typeof constructor;
         }
         return constructor;
     }
@@ -188,7 +188,7 @@ export class CustomElementRegistry {
             return nativeCustomElements
                 .whenDefined(name)
                 // not all browsers resolve the constructor class
-                .then(() => nativeCustomElements.get(name));
+                .then(() => nativeCustomElements.get(name) as CustomElementRegistryMap[K]);
         }
         if (this.registry[name]) {
             return Promise.resolve(this.registry[name]);

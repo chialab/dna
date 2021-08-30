@@ -1,5 +1,5 @@
 import type { ClassElement, Constructor } from './types';
-import type { ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
+import type { Props, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
 import { isComponent } from './Component';
 import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isConstructed } from './Component';
@@ -17,28 +17,28 @@ const OBSERVERS_SYMBOL: unique symbol = createSymbol();
 /**
  * Retrieve properties declarations of a Component.
  */
-export type PropertiesOf<T extends ComponentInstance<HTMLElement>> = {
-    [P in keyof T]: Property<T, P>;
+export type PropertiesOf<T extends ComponentInstance> = {
+    [P in keyof Props<T>]: Property<T, P>;
 };
 
 /**
  * Retrieve properties declarations of a Component.
  */
-export type ObserversOf<T extends ComponentInstance<HTMLElement>> = {
-    [P in keyof T]: PropertyObserver<T[P]>[];
+export type ObserversOf<T extends ComponentInstance> = {
+    [P in keyof PropertiesOf<T>]: PropertyObserver<T[P]>[];
 };
 
 /**
  * A prototype with properties.
  */
-export type WithProperties<T extends ComponentInstance<HTMLElement>> = T & {
+export type WithProperties<T extends ComponentInstance> = T & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
 };
 
 /**
  * A prototype with observers.
  */
-export type WithObservers<T extends ComponentInstance<HTMLElement>> = T & {
+export type WithObservers<T extends ComponentInstance> = T & {
     [OBSERVERS_SYMBOL]?: ObserversOf<T>;
 };
 
@@ -145,7 +145,7 @@ export type PropertyConfig<TypeConstructorHint extends Constructor<unknown> = Co
 /**
  * A property instance.
  */
-export type Property<T extends ComponentInstance<HTMLElement>, P extends keyof T>= PropertyDescriptor & {
+export type Property<T extends ComponentInstance, P extends keyof Props<T>>= PropertyDescriptor & {
     /**
      * The property name of the field.
      */
@@ -227,7 +227,7 @@ export type Property<T extends ComponentInstance<HTMLElement>, P extends keyof T
  * @param prototype The component prototype.
  * @return A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance<HTMLElement>>(prototype: WithProperties<T>) => {
+export const getProperties = <T extends ComponentInstance>(prototype: WithProperties<T>) => {
     const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (!hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
@@ -246,7 +246,7 @@ export const getProperties = <T extends ComponentInstance<HTMLElement>>(prototyp
  * @param failIfMissing Should throw an exception if the property is not defined.
  * @return The property declaration.
  */
-export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: T, propertyKey: P, failIfMissing = false) => {
+export const getProperty = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(prototype: T, propertyKey: P, failIfMissing = false) => {
     const property = getProperties(prototype)[propertyKey];
     if (failIfMissing && !property) {
         throw new Error(`Missing property ${String(propertyKey)}`);
@@ -259,7 +259,7 @@ export const getProperty = <T extends ComponentInstance<HTMLElement>, P extends 
  * @param declaration The property declaration.
  * @return A list of constructors.
  */
-const extractTypes = <T extends HTMLElement, P extends keyof T>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
+const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
     const type = declaration.type;
     if (!type) {
         return [];
@@ -276,7 +276,7 @@ const extractTypes = <T extends HTMLElement, P extends keyof T>(declaration: Pro
  * @param declaration The property declaration.
  * @return A list of observers.
  */
-const extractObservers = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
+const extractObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
     const observers = declaration.observers || [];
     if (declaration.observe) {
         return [declaration.observe, ...observers];
@@ -292,7 +292,7 @@ const extractObservers = <T extends ComponentInstance<HTMLElement>, P extends ke
  * @param symbol The symbol to use to store property value.
  * @return The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
+export const defineProperty = <T extends ComponentInstance, P extends keyof Props<T>>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
@@ -412,7 +412,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
 
             this[symbol] = newValue;
 
-            const observers = getPropertyObservers(this, propertyKey);
+            const observers = getPropertyObservers(this as T, propertyKey);
             for (let i = 0, len = observers.length; i < len; i++) {
                 observers[i].call(this, oldValue, newValue, propertyKey as string);
             }
@@ -446,7 +446,7 @@ export const defineProperty = <T extends ComponentInstance<HTMLElement>, P exten
  * Define component constructor properties.
  * @param prototype The component prototype.
  */
-export const defineProperties = <T extends ComponentInstance<HTMLElement>>(prototype: T) => {
+export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
@@ -454,7 +454,7 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         if (propertiesDescriptor) {
             const descriptorProperties = (propertiesDescriptor.get ? (propertiesDescriptor.get.call(constructor) || {}) : propertiesDescriptor.value) as {
-                [P in keyof T]: PropertyConfig<Constructor<T[P]>>;
+                [P in keyof Props<T>]: PropertyConfig<Constructor<T[P]>>;
             };
             for (const propertyKey in descriptorProperties) {
                 if (propertyKey in handled) {
@@ -483,7 +483,7 @@ export const defineProperties = <T extends ComponentInstance<HTMLElement>>(proto
  * @param attributeName The name of the bound attribute.
  * @return The property declaration.
  */
-export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>>(prototype: T, attributeName: string) => {
+export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: T, attributeName: string) => {
     const properties = getProperties(prototype);
     for (const propertyKey in properties) {
         const property = properties[propertyKey];
@@ -501,7 +501,7 @@ export const getPropertyForAttribute = <T extends ComponentInstance<HTMLElement>
  * @param propertyName The name of the changed property.
  * @param newValue The new value for the property (undefined if removed).
  */
-export const reflectPropertyToAttribute = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(element: T, propertyName: P, newValue: T[P]) => {
+export const reflectPropertyToAttribute = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P, newValue: T[P]) => {
     const property = getProperty(element, propertyName, true);
     const { attribute, toAttribute } = property;
     if (attribute && toAttribute) {
@@ -536,7 +536,7 @@ const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: Prop
  * @param descriptor The native property descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createProperty = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
+export const createProperty = <T extends ComponentInstance, P extends keyof Props<T>>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = declaration.symbol || createSymbol(propertyKey as string) as any;
     if (propertyKey !== undefined) {
@@ -587,7 +587,7 @@ export const createProperty = <T extends ComponentInstance<HTMLElement>, P exten
  * @param methodKey The method name.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createObserver = <T extends ComponentInstance<HTMLElement>, P extends keyof T, M extends keyof T>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
+export const createObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>, M extends keyof Props<T>>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
     if (methodKey !== undefined) {
         const property = getProperty(targetOrClassElement, propertyKey, true);
         property.observers.push(targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
@@ -611,7 +611,7 @@ export const createObserver = <T extends ComponentInstance<HTMLElement>, P exten
  * @param element The node.
  * @return The map of observers.
  */
-export const getObservers = <T extends ComponentInstance<HTMLElement>>(element: WithObservers<T>) => element[OBSERVERS_SYMBOL] = element[OBSERVERS_SYMBOL] || {} as ObserversOf<T>;
+export const getObservers = <T extends ComponentInstance>(element: WithObservers<T>) => element[OBSERVERS_SYMBOL] = element[OBSERVERS_SYMBOL] || {} as ObserversOf<T>;
 
 /**
  * Get observers for an element property.
@@ -619,7 +619,7 @@ export const getObservers = <T extends ComponentInstance<HTMLElement>>(element: 
  * @param propertyName The name of the property.
  * @return A list of observers.
  */
-export const getPropertyObservers = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(element: WithObservers<T>, propertyName: P) => {
+export const getPropertyObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P) => {
     if (!getProperty(element, propertyName)) {
         throw new Error(`Missing property ${propertyName}`);
     }
@@ -633,7 +633,7 @@ export const getPropertyObservers = <T extends ComponentInstance<HTMLElement>, P
  * @param propertyName The name of the property to watch.
  * @param observer The observer function to add.
  */
-export const addObserver = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
+export const addObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
     getPropertyObservers(element, propertyName).push(observer);
 };
 
@@ -643,7 +643,7 @@ export const addObserver = <T extends ComponentInstance<HTMLElement>, P extends 
  * @param propertyName The name of the watched property.
  * @param observer The observer function to remove.
  */
-export const removeObserver = <T extends ComponentInstance<HTMLElement>, P extends keyof T>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
+export const removeObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
     const observers = getPropertyObservers(element, propertyName);
     const io = observers.indexOf(observer);
     if (io !== -1) {
@@ -658,7 +658,7 @@ export const removeObserver = <T extends ComponentInstance<HTMLElement>, P exten
  * @return The decorator initializer.
  */
 export function property<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
-    return <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
+    return <T extends ComponentInstance, P extends keyof Props<T>>(
         targetOrClassElement: T,
         propertyKey?: P,
         descriptor?: PropertyDeclaration<Constructor<T[P]>>
@@ -672,7 +672,7 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
  * @return The decorator initializer.
  */
 export function state<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
-    return <T extends ComponentInstance<HTMLElement>, P extends keyof T>(
+    return <T extends ComponentInstance, P extends keyof Props<T>>(
         targetOrClassElement: T,
         propertyKey?: P,
         descriptor?: PropertyDeclaration<Constructor<T[P]>>
@@ -686,8 +686,8 @@ export function state<TypeConstructorHint extends Constructor<unknown> = Constru
  * @return The decorator initializer.
  */
 export function observe(propertyKey: string): Function {
-    return <T extends ComponentInstance<HTMLElement>, P extends MethodsOf<T>>(
+    return <T extends ComponentInstance, P extends MethodsOf<T>>(
         targetOrClassElement: T,
         methodKey?: P
-    ) => createObserver(targetOrClassElement, propertyKey as keyof T, methodKey);
+    ) => createObserver(targetOrClassElement, propertyKey as keyof PropertiesOf<T>, methodKey);
 }

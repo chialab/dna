@@ -55,7 +55,7 @@
     "release": "source .env && semantic-release --no-ci"
   },
   "peerDependencies": {
-    "jsdom": "^16.0.0"
+    "jsdom": "^17.0.0"
   },
   "peerDependenciesMeta": {
     "jsdom": {
@@ -73,11 +73,11 @@
     "@chialab/rna-saucelabs-test-runner": "^0.11.0",
     "@chialab/semantic-release-config": "^1.0.0",
     "@esm-bundle/chai": "^4.3.4",
-    "@types/jsdom": "^12.2.3",
+    "@types/jsdom": "^16.0.0",
     "core-js": "^3.6.4",
     "eslint": "^7.26.0",
     "htm": "^3.0.3",
-    "jsdom": "^16.5.3",
+    "jsdom": "^17.0.0",
     "mocha": "^8.4.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
