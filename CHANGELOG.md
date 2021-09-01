@@ -1,3 +1,11 @@
+# [3.8.0](https://github.com/chialab/dna/compare/v3.7.0...v3.8.0) (2021-09-01)
+
+
+### Bug Fixes
+
+* jsx builtin extension ([90821ba](https://github.com/chialab/dna/commit/90821ba80125e914875d6d218b066cea84ab7539))
+* jsx typings for custom elements attributes ([4db9842](https://github.com/chialab/dna/commit/4db98428e52f828113b8a326c5de0a34316d03a3))
+
 # [3.7.0](https://github.com/chialab/dna/compare/v3.6.1...v3.7.0) (2021-08-30)
 
 
