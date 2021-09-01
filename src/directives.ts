@@ -1,7 +1,8 @@
-import type { Template } from './render';
+import type { Template } from './JSX';
 import { cloneChildNodes } from './helpers';
 import { DOM } from './DOM';
-import { h } from './render';
+import { h } from './JSX';
+import { customElements } from './CustomElementRegistry';
 import { getThenableState } from './Thenable';
 
 /**

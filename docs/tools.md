@@ -94,23 +94,35 @@ module.exports = {
 };
 ```
 
-### Typescript, JSX, ElementTagNameMap, IntrinsicElements
+### Typescript, JSX, HTMLElementTagNameMap, IntrinsicElements
 
-TypeScript supports JSX syntax, and it is able to provide typechecking and hints for component properties if you register its tag name to the global [`HTMLElementTagNameMap`](https://www.typescriptlang.org/docs/handbook/dom-manipulation.html#documentcreateelement) interface. The JSX typings provided by DNA will make it automatically available as [`IntrinsicElement`](https://www.typescriptlang.org/docs/handbook/jsx.html#intrinsic-elements).
+TypeScript supports JSX syntax, and it is able to provide typechecking and hints for component properties if you register the tag name to the DNA's `JSX.CustomElements` interface. The JSX typings provided by DNA will make it automatically available as [`IntrinsicElement`](https://www.typescriptlang.org/docs/handbook/jsx.html#intrinsic-elements) and to the [`HTMLElementTagNameMap`](https://www.typescriptlang.org/docs/handbook/dom-manipulation.html#documentcreateelement) interface.
 
 **x-card.tsx**
 
 ```tsx
-import { Component, customElement } from '@chialab/dna';
+import { Component, extend, window, customElement } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     ...
 }
 
-declare global {
-    interface HTMLElementTagNameMap {
-        'x-card': Card;
+@customElement('x-card', {
+    extends: 'a',
+})
+class Link extends extend(window.HTMLAnchorElement) {
+    ...
+}
+
+declare module '@chialab/dna' {
+    namespace JSX {
+        interface CustomElements {
+            'x-card': Card;
+            'x-link': [Link, {
+                extends: 'a';
+            }];
+        }
     }
 }
 ```

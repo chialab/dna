@@ -1,14 +1,15 @@
-import type { Constructor, ClassDescriptor, IterableNodeList } from './types';
+import type { Constructor, ClassDescriptor, IterableNodeList } from './helpers';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
-import type { Template } from './render';
+import type { Template } from './JSX';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver } from './property';
 import { createSymbol, HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
-import { getOrCreateContext, internalRender } from './render';
+import { getOrCreateContext } from './Context';
+import { internalRender } from './render';
 import { getProperties, getPropertyForAttribute } from './property';
 
 /**
@@ -47,7 +48,7 @@ export interface ComponentMixin {
      * Initialize component properties.
      * @param properties A set of initial properties for the element.
      */
-    initialize(properties?: Props<this>): void;
+    initialize(properties?: Members<this>): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -56,7 +57,7 @@ export interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    stateChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    stateChangedCallback<P extends keyof Members<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -65,7 +66,7 @@ export interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    propertyChangedCallback<P extends keyof Members<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Get the inner value of a property.
@@ -73,7 +74,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @return The inner value of the property.
      */
-    getInnerPropertyValue<P extends keyof Props<this>>(propertyName: P): this[P];
+    getInnerPropertyValue<P extends keyof Members<this>>(propertyName: P): this[P];
 
     /**
      * Set the inner value of a property.
@@ -81,7 +82,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @param value The inner value to set.
      */
-    setInnerPropertyValue<P extends keyof Props<this>>(propertyName: P, value: this[P]): void;
+    setInnerPropertyValue<P extends keyof Members<this>>(propertyName: P, value: this[P]): void;
 
     /**
      * Observe a Component Property.
@@ -89,7 +90,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the Property to observe
      * @param observer The callback function
      */
-    observe<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    observe<P extends keyof Members<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Unobserve a Component Property.
@@ -97,7 +98,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the Property to unobserve
      * @param observer The callback function to remove
      */
-    unobserve<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    unobserve<P extends keyof Members<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Dispatch a custom Event.
@@ -184,9 +185,21 @@ export type IsReadonly<T, K extends keyof T> =
 /**
  * Get all members of a class, excluding inherited members.
  */
-export type Props<T> = {
+export type Members<T> = {
     [K in keyof T]?: K extends PrototypeKeys ? never : K extends IsReadonly<T, K> ? never : T[K];
 };
+
+/**
+ * Get all members names of a class, excluding inherited members.
+ */
+export type MemberKeys<T> = Exclude<{
+    [K in keyof T]?: K extends PrototypeKeys ? never : K extends IsReadonly<T, K> ? never : K;
+}[keyof T], never | undefined>;
+
+/**
+ * Get a filtered list of available members of a class, excluding inherited members.
+ */
+export type Props<T> = Partial<Pick<Members<T>, MemberKeys<T>>>;
 
 /**
  * The basic DNA Component constructor.
@@ -361,7 +374,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const node = isElement(args[0]) && args[0];
-            const props = (node ? args[1] : args[0]) as Props<this>;
+            const props = (node ? args[1] : args[0]) as Members<this>;
 
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
             const context = getOrCreateContext(element);
@@ -406,7 +419,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Initialize component properties.
          * @param properties A set of initial properties for the element.
          */
-        initialize(properties?: Props<this>) {
+        initialize(properties?: Members<this>) {
             flagConstructed(this);
             if (properties) {
                 for (const propertyKey in properties) {
@@ -755,7 +768,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private initProps?: Props<this>;
+                private initProperties?: Members<this>;
 
                 /**
                  * @inheritdoc
@@ -763,15 +776,15 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 constructor(...args: any[]) {
                     super(...args);
                     flagConstructed(this);
-                    this.initialize(this.initProps);
+                    this.initialize(this.initProperties);
                 }
 
                 /**
                  * @inheritdoc
                  */
-                initialize(properties?: Props<this>) {
+                initialize(properties?: Members<this>) {
                     if (!isConstructed(this)) {
-                        this.initProps = properties;
+                        this.initProperties = properties;
                         return;
                     }
                     return super.initialize(properties);

@@ -1,4 +1,4 @@
-import { h, Fragment } from './types/render';
+import { h, Fragment } from './types/JSX';
 
 export { h, Fragment };
 export const jsx: (tagOrComponent, props) => ReturnType<typeof h>;

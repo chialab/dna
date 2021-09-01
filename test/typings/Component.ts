@@ -18,9 +18,13 @@ if (new TestBuiltinElement().open === true) {
     new TestBuiltinElement().focus();
 }
 
-declare global {
-    interface HTMLElementTagNameMap {
-        'x-test': TestElement;
-        'x-test-bultin': TestBuiltinElement;
+declare module '@chialab/dna' {
+    namespace JSX {
+        interface CustomElements {
+            'x-test': TestElement;
+            'x-test-bultin': [TestBuiltinElement, {
+                extends: 'details';
+            }];
+        }
     }
 }

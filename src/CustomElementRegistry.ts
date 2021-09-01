@@ -1,4 +1,4 @@
-import type { Constructor } from './types';
+import type { Constructor } from './helpers';
 import { window } from './window';
 import { connect, defineProperty, HTMLElementConstructor, document } from './helpers';
 import { isComponent, isComponentConstructor, isConstructed } from './Component';
