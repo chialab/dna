@@ -141,14 +141,14 @@ test-style #before6:before {
         }).to.throw(TypeError, 'The provided CSS text must be a string');
     });
 
-    describe.skip('adoptedStyleSheets', () => {
-        it('should handle style in adoptedStyleSheets', () => {
-            //
-        });
+    // describe.skip('adoptedStyleSheets', () => {
+    //     it('should handle style in adoptedStyleSheets', () => {
+    //         //
+    //     });
 
-        it('should handle multiple styles in adoptedStyleSheets', () => {
-            //
-        });
-    });
+    //     it('should handle multiple styles in adoptedStyleSheets', () => {
+    //         //
+    //     });
+    // });
 });
 
