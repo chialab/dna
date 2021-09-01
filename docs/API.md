@@ -1,16 +1,20 @@
 # API Reference
 
+<strong>Namespaces</strong>
+
+<a href="#jsx">JSX</a>
+
 <strong>Classes</strong>
 
 <a href="#customelementregistry">CustomElementRegistry</a>
 
 <strong>Interfaces</strong>
 
-<a href="#componentconstructor">ComponentConstructor</a>
+<a href="#anchorhtmlattributes">AnchorHTMLAttributes</a>, <a href="#areahtmlattributes">AreaHTMLAttributes</a>, <a href="#ariaattributes">AriaAttributes</a>, <a href="#basehtmlattributes">BaseHTMLAttributes</a>, <a href="#blockquotehtmlattributes">BlockquoteHTMLAttributes</a>, <a href="#buttonhtmlattributes">ButtonHTMLAttributes</a>, <a href="#canvashtmlattributes">CanvasHTMLAttributes</a>, <a href="#colhtmlattributes">ColHTMLAttributes</a>, <a href="#colgrouphtmlattributes">ColgroupHTMLAttributes</a>, <a href="#componentconstructor">ComponentConstructor</a>, <a href="#datahtmlattributes">DataHTMLAttributes</a>, <a href="#delhtmlattributes">DelHTMLAttributes</a>, <a href="#detailshtmlattributes">DetailsHTMLAttributes</a>, <a href="#dialoghtmlattributes">DialogHTMLAttributes</a>, <a href="#embedhtmlattributes">EmbedHTMLAttributes</a>, <a href="#fieldsethtmlattributes">FieldsetHTMLAttributes</a>, <a href="#formhtmlattributes">FormHTMLAttributes</a>, <a href="#htmlattributes">HTMLAttributes</a>, <a href="#htmltagnamemap">HTMLTagNameMap</a>, <a href="#htmlhtmlattributes">HtmlHTMLAttributes</a>, <a href="#iframehtmlattributes">IframeHTMLAttributes</a>, <a href="#imghtmlattributes">ImgHTMLAttributes</a>, <a href="#inputhtmlattributes">InputHTMLAttributes</a>, <a href="#inshtmlattributes">InsHTMLAttributes</a>, <a href="#keygenhtmlattributes">KeygenHTMLAttributes</a>, <a href="#labelhtmlattributes">LabelHTMLAttributes</a>, <a href="#lihtmlattributes">LiHTMLAttributes</a>, <a href="#linkhtmlattributes">LinkHTMLAttributes</a>, <a href="#maphtmlattributes">MapHTMLAttributes</a>, <a href="#mediahtmlattributes">MediaHTMLAttributes</a>, <a href="#menuhtmlattributes">MenuHTMLAttributes</a>, <a href="#metahtmlattributes">MetaHTMLAttributes</a>, <a href="#meterhtmlattributes">MeterHTMLAttributes</a>, <a href="#objecthtmlattributes">ObjectHTMLAttributes</a>, <a href="#olhtmlattributes">OlHTMLAttributes</a>, <a href="#optgrouphtmlattributes">OptgroupHTMLAttributes</a>, <a href="#optionhtmlattributes">OptionHTMLAttributes</a>, <a href="#outputhtmlattributes">OutputHTMLAttributes</a>, <a href="#paramhtmlattributes">ParamHTMLAttributes</a>, <a href="#progresshtmlattributes">ProgressHTMLAttributes</a>, <a href="#quotehtmlattributes">QuoteHTMLAttributes</a>, <a href="#svgattributes">SVGAttributes</a>, <a href="#svgtagnamemap">SVGTagNameMap</a>, <a href="#scripthtmlattributes">ScriptHTMLAttributes</a>, <a href="#selecthtmlattributes">SelectHTMLAttributes</a>, <a href="#slothtmlattributes">SlotHTMLAttributes</a>, <a href="#sourcehtmlattributes">SourceHTMLAttributes</a>, <a href="#stylehtmlattributes">StyleHTMLAttributes</a>, <a href="#tablehtmlattributes">TableHTMLAttributes</a>, <a href="#tdhtmlattributes">TdHTMLAttributes</a>, <a href="#textareahtmlattributes">TextareaHTMLAttributes</a>, <a href="#thhtmlattributes">ThHTMLAttributes</a>, <a href="#timehtmlattributes">TimeHTMLAttributes</a>, <a href="#trackhtmlattributes">TrackHTMLAttributes</a>, <a href="#videohtmlattributes">VideoHTMLAttributes</a>
 
 <strong>Types</strong>
 
-<a href="#asyncevent">AsyncEvent</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vclasses">VClasses</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vstyle">VStyle</a>, <a href="#vtag">VTag</a>
+<a href="#ariarole">AriaRole</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#attributesmap">AttributesMap</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#htmlattributereferrerpolicy">HTMLAttributeReferrerPolicy</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vtag">VTag</a>
 
 <strong>Variables</strong>
 
@@ -19,6 +23,10 @@
 <strong>Functions</strong>
 
 <a href="#compile">compile</a>, <a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#listen">listen</a>, <a href="#observe">observe</a>, <a href="#parsedom">parseDOM</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#state">state</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
+
+<hr />
+
+<span id="jsx"><code>Namespace</code> JSX</span>
 
 <hr />
 
@@ -205,7 +213,232 @@ The CustomElementRegistry interface provides methods for registering custom elem
 
 <hr />
 
+<span id="anchorhtmlattributes"><code>Interface</code> AnchorHTMLAttributes</span>
+
+<hr />
+
+<span id="areahtmlattributes"><code>Interface</code> AreaHTMLAttributes</span>
+
+<hr />
+
+<span id="ariaattributes"><code>Interface</code> AriaAttributes</span>
+
+<hr />
+
+<span id="basehtmlattributes"><code>Interface</code> BaseHTMLAttributes</span>
+
+<hr />
+
+<span id="blockquotehtmlattributes"><code>Interface</code> BlockquoteHTMLAttributes</span>
+
+<hr />
+
+<span id="buttonhtmlattributes"><code>Interface</code> ButtonHTMLAttributes</span>
+
+<hr />
+
+<span id="canvashtmlattributes"><code>Interface</code> CanvasHTMLAttributes</span>
+
+<hr />
+
+<span id="colhtmlattributes"><code>Interface</code> ColHTMLAttributes</span>
+
+<hr />
+
+<span id="colgrouphtmlattributes"><code>Interface</code> ColgroupHTMLAttributes</span>
+
+<hr />
+
 <span id="componentconstructor"><code>Interface</code> ComponentConstructor</span>
+
+<hr />
+
+<span id="datahtmlattributes"><code>Interface</code> DataHTMLAttributes</span>
+
+<hr />
+
+<span id="delhtmlattributes"><code>Interface</code> DelHTMLAttributes</span>
+
+<hr />
+
+<span id="detailshtmlattributes"><code>Interface</code> DetailsHTMLAttributes</span>
+
+<hr />
+
+<span id="dialoghtmlattributes"><code>Interface</code> DialogHTMLAttributes</span>
+
+<hr />
+
+<span id="embedhtmlattributes"><code>Interface</code> EmbedHTMLAttributes</span>
+
+<hr />
+
+<span id="fieldsethtmlattributes"><code>Interface</code> FieldsetHTMLAttributes</span>
+
+<hr />
+
+<span id="formhtmlattributes"><code>Interface</code> FormHTMLAttributes</span>
+
+<hr />
+
+<span id="htmlattributes"><code>Interface</code> HTMLAttributes</span>
+
+<hr />
+
+<span id="htmltagnamemap"><code>Interface</code> HTMLTagNameMap</span>
+
+<hr />
+
+<span id="htmlhtmlattributes"><code>Interface</code> HtmlHTMLAttributes</span>
+
+<hr />
+
+<span id="iframehtmlattributes"><code>Interface</code> IframeHTMLAttributes</span>
+
+<hr />
+
+<span id="imghtmlattributes"><code>Interface</code> ImgHTMLAttributes</span>
+
+<hr />
+
+<span id="inputhtmlattributes"><code>Interface</code> InputHTMLAttributes</span>
+
+<hr />
+
+<span id="inshtmlattributes"><code>Interface</code> InsHTMLAttributes</span>
+
+<hr />
+
+<span id="keygenhtmlattributes"><code>Interface</code> KeygenHTMLAttributes</span>
+
+<hr />
+
+<span id="labelhtmlattributes"><code>Interface</code> LabelHTMLAttributes</span>
+
+<hr />
+
+<span id="lihtmlattributes"><code>Interface</code> LiHTMLAttributes</span>
+
+<hr />
+
+<span id="linkhtmlattributes"><code>Interface</code> LinkHTMLAttributes</span>
+
+<hr />
+
+<span id="maphtmlattributes"><code>Interface</code> MapHTMLAttributes</span>
+
+<hr />
+
+<span id="mediahtmlattributes"><code>Interface</code> MediaHTMLAttributes</span>
+
+<hr />
+
+<span id="menuhtmlattributes"><code>Interface</code> MenuHTMLAttributes</span>
+
+<hr />
+
+<span id="metahtmlattributes"><code>Interface</code> MetaHTMLAttributes</span>
+
+<hr />
+
+<span id="meterhtmlattributes"><code>Interface</code> MeterHTMLAttributes</span>
+
+<hr />
+
+<span id="objecthtmlattributes"><code>Interface</code> ObjectHTMLAttributes</span>
+
+<hr />
+
+<span id="olhtmlattributes"><code>Interface</code> OlHTMLAttributes</span>
+
+<hr />
+
+<span id="optgrouphtmlattributes"><code>Interface</code> OptgroupHTMLAttributes</span>
+
+<hr />
+
+<span id="optionhtmlattributes"><code>Interface</code> OptionHTMLAttributes</span>
+
+<hr />
+
+<span id="outputhtmlattributes"><code>Interface</code> OutputHTMLAttributes</span>
+
+<hr />
+
+<span id="paramhtmlattributes"><code>Interface</code> ParamHTMLAttributes</span>
+
+<hr />
+
+<span id="progresshtmlattributes"><code>Interface</code> ProgressHTMLAttributes</span>
+
+<hr />
+
+<span id="quotehtmlattributes"><code>Interface</code> QuoteHTMLAttributes</span>
+
+<hr />
+
+<span id="svgattributes"><code>Interface</code> SVGAttributes</span>
+
+<hr />
+
+<span id="svgtagnamemap"><code>Interface</code> SVGTagNameMap</span>
+
+<hr />
+
+<span id="scripthtmlattributes"><code>Interface</code> ScriptHTMLAttributes</span>
+
+<hr />
+
+<span id="selecthtmlattributes"><code>Interface</code> SelectHTMLAttributes</span>
+
+<hr />
+
+<span id="slothtmlattributes"><code>Interface</code> SlotHTMLAttributes</span>
+
+<hr />
+
+<span id="sourcehtmlattributes"><code>Interface</code> SourceHTMLAttributes</span>
+
+<hr />
+
+<span id="stylehtmlattributes"><code>Interface</code> StyleHTMLAttributes</span>
+
+<hr />
+
+<span id="tablehtmlattributes"><code>Interface</code> TableHTMLAttributes</span>
+
+<hr />
+
+<span id="tdhtmlattributes"><code>Interface</code> TdHTMLAttributes</span>
+
+<hr />
+
+<span id="textareahtmlattributes"><code>Interface</code> TextareaHTMLAttributes</span>
+
+<hr />
+
+<span id="thhtmlattributes"><code>Interface</code> ThHTMLAttributes</span>
+
+<hr />
+
+<span id="timehtmlattributes"><code>Interface</code> TimeHTMLAttributes</span>
+
+<hr />
+
+<span id="trackhtmlattributes"><code>Interface</code> TrackHTMLAttributes</span>
+
+<hr />
+
+<span id="videohtmlattributes"><code>Interface</code> VideoHTMLAttributes</span>
+
+<hr />
+
+<strong id="ariarole"><code>Type</code> AriaRole</strong>
+    
+
+<pre>alert | alertdialog | application | article | banner | button | cell | checkbox | columnheader | combobox | complementary | contentinfo | definition | dialog | directory | document | feed | figure | form | grid | gridcell | group | heading | img | link | list | listbox | listitem | log | main | marquee | math | menu | menubar | menuitem | menuitemcheckbox | menuitemradio | navigation | none | note | option | presentation | progressbar | radio | radiogroup | region | row | rowgroup | rowheader | scrollbar | search | searchbox | separator | slider | spinbutton | status | switch | tab | table | tablist | tabpanel | term | textbox | timer | toolbar | tooltip | tree | treegrid | treeitem | string & {
+
+}</pre>
 
 <hr />
 
@@ -220,6 +453,13 @@ Async event interface.
 <pre><a href="#event">Event</a> & {
   respondWith(callback: () => <a href="#promise">Promise</a>): void
 }</pre>
+
+<hr />
+
+<strong id="attributesmap"><code>Type</code> AttributesMap</strong>
+    
+
+<pre> & <a href="#htmlattributes">HTMLAttributes</a></pre>
 
 <hr />
 
@@ -308,6 +548,13 @@ A descriptor for an event delegation.
 
 <hr />
 
+<strong id="htmlattributereferrerpolicy"><code>Type</code> HTMLAttributeReferrerPolicy</strong>
+    
+
+<pre> | no-referrer | no-referrer-when-downgrade | origin | origin-when-cross-origin | same-origin | strict-origin | strict-origin-when-cross-origin | unsafe-url</pre>
+
+<hr />
+
 <strong id="observable"><code>Type</code> Observable&lt;T&gt;</strong>
     
 <p>
@@ -368,18 +615,6 @@ A generic template. Can be a single atomic item or a list of items.
 </p>
 
 <pre><a href="#element">Element</a> | <a href="#text">Text</a> | <a href="#node">Node</a> | <a href="#vfragment">VFragment</a> | <a href="#vfunction">VFunction</a> | <a href="#vcomponent">VComponent</a> | <a href="#velement">VElement</a> | <a href="#vslot">VSlot</a> | <a href="#vtag">VTag</a> | <a href="#promise">Promise</a> | <a href="#observable">Observable</a> | string | number | boolean | undefined | null | <a href="#template">Template</a>[]</pre>
-
-<hr />
-
-<strong id="vclasses"><code>Type</code> VClasses</strong>
-    
-<p>
-
-Classes dictionary.
-
-</p>
-
-<pre>string | boolean | undefined</pre>
 
 <hr />
 
@@ -492,7 +727,7 @@ Generic virtual dom object.
 
 <hr />
 
-<strong id="vproperties"><code>Type</code> VProperties&lt;T, A&gt;</strong>
+<strong id="vproperties"><code>Type</code> VProperties&lt;TagOrFunctionOrProps, Extends extends string | null&gt;</strong>
     
 <p>
 
@@ -500,7 +735,7 @@ Properties that can be assigned to a node through the render engine.
 
 </p>
 
-<pre> & <a href="#eventlistener">EventListener</a> | undefined</pre>
+<pre></pre>
 
 <hr />
 
@@ -527,19 +762,7 @@ The interface of slot element.
 
 <hr />
 
-<strong id="vstyle"><code>Type</code> VStyle</strong>
-    
-<p>
-
-Styles dictionary.
-
-</p>
-
-<pre>string | string | undefined</pre>
-
-<hr />
-
-<strong id="vtag"><code>Type</code> VTag&lt;T extends &gt;</strong>
+<strong id="vtag"><code>Type</code> VTag&lt;T extends string&gt;</strong>
     
 <p>
 
@@ -1419,7 +1642,7 @@ The global DNA registry instance.
 </details>
 <details>
 <summary>
-    <code>&lt;T extends &gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vtag">VTag</a></code>
+    <code>&lt;T extends string&gt;(tagOrComponent: <a href="#t">T</a>, properties?: <a href="#vproperties">VProperties</a> | null, children: <a href="#template">Template</a>[]): <a href="#vtag">VTag</a></code>
 </summary>
 
 <strong>Params</strong>

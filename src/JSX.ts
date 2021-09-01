@@ -1403,9 +1403,12 @@ type VProps<T> = Omit<
 /**
  * Get a list of html attributes that can be assigned to the node.
  */
-type VAttrs<T, E = T> = Omit<
+type VAttrs<T, E> = Omit<
     E extends keyof HTMLTagNameMap ? AttributesMap[E] :
     E extends keyof SVGTagNameMap ? AttributesMap[E] :
+    T extends keyof HTMLTagNameMap ? AttributesMap[T] :
+    T extends keyof SVGTagNameMap ? AttributesMap[T] :
+    T extends SVGElement ? SVGAttributes :
     T extends Element ? HTMLAttributes :
     {},
     keyof VRenderProperties
@@ -1415,21 +1418,22 @@ type VAttrs<T, E = T> = Omit<
  * Get all valid prototypes properties that extends a builtin element.
  */
 export type VExtends<T> =
-    T extends keyof HTMLTagNameMap ?
-        Exclude<
-            {
-                [K in keyof JSXInternal.CustomElements]:
-                    'extends' extends keyof JSXInternal.CustomElements[K] ?
-                        JSXInternal.CustomElements[K]['extends'] extends T ?
-                            (Omit<Props<JSXInternal.CustomElements[K]>, keyof VRenderProperties | 'extends'> & { is: K }) :
-                            never :
-                        never;
-            }[keyof JSXInternal.CustomElements],
-            never
-        > :
-    T extends keyof SVGTagNameMap ? { is?: never } :
-    T extends Element ? { is?: never } :
-    { is?: unknown };
+    Exclude<
+        {
+            [K in keyof JSXInternal.CustomElements]:
+                'extends' extends keyof JSXInternal.CustomElements[K] ?
+                    JSXInternal.CustomElements[K]['extends'] extends T ?
+                        (
+                            { is: K }
+                            & Omit<Props<JSXInternal.CustomElements[K]>, keyof VRenderProperties | 'extends'>
+                            & VAttrs<JSXInternal.CustomElements[K], JSXInternal.CustomElements[K]['extends']>
+                            & VRenderProperties
+                        ) :
+                        never :
+                    never;
+        }[keyof JSXInternal.CustomElements],
+        never
+    >;
 
 /**
  * Properties that can be assigned to a node through the render engine.
@@ -1437,23 +1441,17 @@ export type VExtends<T> =
 export type VProperties<
     TagOrFunctionOrProps = { [key: string]: unknown },
     Extends extends string | null = null
-> =
-    (
-        VProps<TagOrFunctionOrProps>
-        | VExtends<TagOrFunctionOrProps>
-    ) & (
-        VAttrs<TagOrFunctionOrProps, Extends> &
-        {
-            slot?: string;
-            key?: unknown;
-            xmlns?: string;
-            ref?: Element;
-            children?: Template | Template[];
-            class?: VClasses;
-            style?: VStyle;
-            [listener: `on${string}`]: EventListener | undefined;
-        }
-    );
+> = TagOrFunctionOrProps extends keyof HTMLTagNameMap ?
+        (
+            (VProps<TagOrFunctionOrProps>
+            & VAttrs<TagOrFunctionOrProps, Extends>
+            & VRenderProperties)
+            | VExtends<TagOrFunctionOrProps>
+        ) : (
+            VProps<TagOrFunctionOrProps>
+            & VAttrs<TagOrFunctionOrProps, Extends>
+            & VRenderProperties
+        );
 
 /**
  * The interface of a JSX fragment node.
@@ -1759,9 +1757,7 @@ export namespace JSXInternal {
     export type IntrinsicElements = {
         [K in keyof CustomElements]:
             'extends' extends keyof JSXInternal.CustomElements[K] ?
-                CustomElements[K]['extends'] extends keyof HTMLTagNameMap ?
-                    VProperties<CustomElements[K], K> :
-                    never :
+                never :
                 VProperties<CustomElements[K]>;
     } & {
         [K in keyof HTMLTagNameMap]: VProperties<K>;
