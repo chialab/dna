@@ -119,9 +119,9 @@ declare module '@chialab/dna' {
     namespace JSX {
         interface CustomElements {
             'x-card': Card;
-            'x-link': [Link, {
+            'x-link': Link & {
                 extends: 'a';
-            }];
+            };
         }
     }
 }

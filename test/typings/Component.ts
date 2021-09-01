@@ -6,7 +6,7 @@ export class TestElement extends Component {
 }
 new TestElement().focus();
 
-@customElement('x-test-bultin')
+@customElement('x-test-builtin', { extends: 'details' })
 export class TestBuiltinElement extends extend(HTMLDetailsElement) {
     /**
      * Active prop.
@@ -22,9 +22,9 @@ declare module '@chialab/dna' {
     namespace JSX {
         interface CustomElements {
             'x-test': TestElement;
-            'x-test-bultin': [TestBuiltinElement, {
+            'x-test-builtin': TestBuiltinElement & {
                 extends: 'details';
-            }];
+            };
         }
     }
 }

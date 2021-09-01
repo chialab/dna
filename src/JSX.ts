@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 
 import type { Observable } from './Observable';
-import type { CustomElementConstructor, CustomElement } from './CustomElementRegistry';
+import type { CustomElementConstructor } from './CustomElementRegistry';
 import type { Props } from './Component';
 import type { FunctionComponent } from './FunctionComponent';
 import { createSymbol, isElement } from './helpers';
@@ -1344,30 +1344,16 @@ export const V_SYM: unique symbol = createSymbol();
 export const Fragment: unique symbol = createSymbol();
 
 /**
- * The definition of a custom element in the jsx namaespace.
- */
-type CustomElementDefinition = [CustomElement, {
-    extends?: keyof HTMLTagNameMap;
-}];
-
-/**
- * Get the constructor class type of a custom element.
- */
-type ExtractCustomElementClass<T extends HTMLElement | CustomElementDefinition> = T extends CustomElementDefinition ? T[0] : T;
-
-/**
- * Get the tag name of the builtin element extends by the custom element.
- */
-type ExtractCustomElementExtends<T extends HTMLElement | CustomElementDefinition> = T extends CustomElementDefinition ? T[1]['extends'] extends string ? T[1]['extends'] : never : never;
-
-/**
  * Get all the property keys that extends a builtin element.
  */
-type ExtractCustomElementsKeys<T> = Exclude<{
-    [K in keyof JSXInternal.CustomElements]: ExtractCustomElementExtends<JSXInternal.CustomElements[K]> extends T ?
-        (keyof Props<ExtractCustomElementClass<JSXInternal.CustomElements[K]>>) :
-        never;
-}[keyof JSXInternal.CustomElements], never | keyof VRenderProperties>;
+export type ExtractCustomElementsKeys<T extends keyof HTMLTagNameMap> = Exclude<{
+    [K in keyof JSXInternal.CustomElements]:
+        'extends' extends keyof JSXInternal.CustomElements[K] ?
+            JSXInternal.CustomElements[K]['extends'] extends T ?
+                (keyof Props<JSXInternal.CustomElements[K]>) :
+                never :
+            never;
+}[keyof JSXInternal.CustomElements], never | keyof VRenderProperties | 'extends' | keyof Props<HTMLTagNameMap[T]>>;
 
 /**
  * Classes dictionary.
@@ -1407,7 +1393,7 @@ type VProps<T> = Omit<
     keyof VRenderProperties
 > & (
     T extends keyof HTMLTagNameMap ? { is?: never } & {
-        [K in Exclude<ExtractCustomElementsKeys<T>, keyof Props<HTMLTagNameMap[T]>>]?: never;
+        [K in ExtractCustomElementsKeys<T>]?: never;
     } :
     T extends keyof SVGTagNameMap ? { is?: never } :
     T extends Element ? { is?: never } :
@@ -1428,13 +1414,16 @@ type VAttrs<T, E = T> = Omit<
 /**
  * Get all valid prototypes properties that extends a builtin element.
  */
-type VExtends<T> =
+export type VExtends<T> =
     T extends keyof HTMLTagNameMap ?
         Exclude<
             {
-                [K in keyof JSXInternal.CustomElements]: ExtractCustomElementExtends<JSXInternal.CustomElements[K]> extends T ?
-                    (Omit<Props<ExtractCustomElementClass<JSXInternal.CustomElements[K]>>, keyof VRenderProperties> & { is: K }) :
-                    never;
+                [K in keyof JSXInternal.CustomElements]:
+                    'extends' extends keyof JSXInternal.CustomElements[K] ?
+                        JSXInternal.CustomElements[K]['extends'] extends T ?
+                            (Omit<Props<JSXInternal.CustomElements[K]>, keyof VRenderProperties | 'extends'> & { is: K }) :
+                            never :
+                        never;
             }[keyof JSXInternal.CustomElements],
             never
         > :
@@ -1767,15 +1756,13 @@ export namespace JSXInternal {
 
     export type Element = Template;
 
-    export type IntrinsicCustomElements = Exclude<
-        {
-            [K in keyof CustomElements]: ExtractCustomElementExtends<CustomElements[K]> extends string ? never : K;
-        }[keyof CustomElements],
-        never
-    >;
-
     export type IntrinsicElements = {
-        [K in IntrinsicCustomElements]: VProperties<ExtractCustomElementClass<CustomElements[K]>, K>;
+        [K in keyof CustomElements]:
+            'extends' extends keyof JSXInternal.CustomElements[K] ?
+                CustomElements[K]['extends'] extends keyof HTMLTagNameMap ?
+                    VProperties<CustomElements[K], K> :
+                    never :
+                VProperties<CustomElements[K]>;
     } & {
         [K in keyof HTMLTagNameMap]: VProperties<K>;
     } & {
