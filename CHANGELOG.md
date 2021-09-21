@@ -1,3 +1,10 @@
+## [3.8.1](https://github.com/chialab/dna/compare/v3.8.0...v3.8.1) (2021-09-21)
+
+
+### Bug Fixes
+
+* improve parseDOM performance by defining a DOMParse component function ([8896ad2](https://github.com/chialab/dna/commit/8896ad201b49f7062bc2ec34611520624df5acaa))
+
 # [3.8.0](https://github.com/chialab/dna/compare/v3.7.0...v3.8.0) (2021-09-01)
 
 
