@@ -1,4 +1,5 @@
 import type { Template } from './JSX';
+import type { FunctionComponent } from './FunctionComponent';
 import { cloneChildNodes } from './helpers';
 import { DOM } from './DOM';
 import { h } from './JSX';
@@ -6,26 +7,29 @@ import { customElements } from './CustomElementRegistry';
 import { getThenableState } from './Thenable';
 
 /**
+ * A dom parser function component.
+ * @param props The props of the parser,
+ */
+const DOMParse: FunctionComponent = ({ source }: { source: string }, { store }) => {
+    if (store.get('source') === source) {
+        return store.get('dom') as Node[];
+    }
+
+    const wrapper = DOM.createElement('div');
+    wrapper.innerHTML = source;
+    customElements.upgrade(wrapper);
+    const dom = cloneChildNodes(wrapper.childNodes);
+    store.set('source', source);
+    store.set('dom', dom);
+    return dom;
+};
+
+/**
  * Convert an HTML string to DOM nodes.
  * @param string The HTML string to conver.
  * @return The virtual DOM template function.
  */
-export const parseDOM = (string: string): Template => {
-    const source = string;
-    return h((props, { store }) => {
-        if (store.get('source') === source) {
-            return store.get('dom') as Node[];
-        }
-
-        const wrapper = DOM.createElement('div');
-        wrapper.innerHTML = source;
-        customElements.upgrade(wrapper);
-        const dom = cloneChildNodes(wrapper.childNodes);
-        store.set('source', source);
-        store.set('dom', dom);
-        return dom;
-    }, null);
-};
+export const parseDOM = (string: string): Template => h(DOMParse, { source: string });
 
 /**
  * It renders the template when then provided Thenable is in pending status.
