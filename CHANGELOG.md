@@ -1,3 +1,5 @@
+# [3.9.0](https://github.com/chialab/dna/compare/v3.8.1...v3.9.0) (2021-09-23)
+
 ## [3.8.1](https://github.com/chialab/dna/compare/v3.8.0...v3.8.1) (2021-09-21)
 
 
