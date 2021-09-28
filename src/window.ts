@@ -1,15 +1,17 @@
 import jsdom from 'jsdom';
 
-let namespace: Window & typeof globalThis & {
+export type GlobalNamespace = Window & typeof globalThis & {
     _jsdom?: jsdom.JSDOM;
 };
+
+let namespace: GlobalNamespace;
 if (typeof window !== 'undefined') {
     // browser
     namespace = window;
 } else if (typeof global !== 'undefined') {
     // node
     const jsd = new jsdom.JSDOM();
-    namespace = jsd.window as unknown as Window & typeof globalThis;
+    namespace = jsd.window as unknown as GlobalNamespace;
     namespace._jsdom = jsd;
 } else {
     // ¯\_(ツ)_/¯
