@@ -84,5 +84,6 @@ export type { Observable } from './Observable';
 export type { Context } from './Context';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { PropertyDeclaration, PropertyObserver } from './property';
+export type { GlobalNamespace } from './window';
 export type { ComponentInstance, ComponentConstructor } from './Component';
 export type { FunctionComponent } from './FunctionComponent';
