@@ -1,7 +1,7 @@
 import jsdom from 'jsdom';
 
 let namespace: Window & typeof globalThis & {
-    _jsdomReconfigure?: jsdom.JSDOM['reconfigure'];
+    _jsdom?: jsdom.JSDOM;
 };
 if (typeof window !== 'undefined') {
     // browser
@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
     // node
     const jsd = new jsdom.JSDOM();
     namespace = jsd.window as unknown as Window & typeof globalThis;
-    namespace._jsdomReconfigure = jsd.reconfigure.bind(jsd);
+    namespace._jsdom = jsd;
 } else {
     // ¯\_(ツ)_/¯
     const throwPlatform = function() {
