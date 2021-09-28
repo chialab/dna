@@ -14,7 +14,7 @@
 
 <strong>Types</strong>
 
-<a href="#ariarole">AriaRole</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#attributesmap">AttributesMap</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#htmlattributereferrerpolicy">HTMLAttributeReferrerPolicy</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vtag">VTag</a>
+<a href="#ariarole">AriaRole</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#attributesmap">AttributesMap</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#globalnamespace">GlobalNamespace</a>, <a href="#htmlattributereferrerpolicy">HTMLAttributeReferrerPolicy</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vtag">VTag</a>
 
 <strong>Variables</strong>
 
@@ -548,6 +548,15 @@ A descriptor for an event delegation.
 
 <hr />
 
+<strong id="globalnamespace"><code>Type</code> GlobalNamespace</strong>
+    
+
+<pre><a href="#window">Window</a> & <a href="#globalthis">globalThis</a> & {
+  _jsdom?: <a href="#jsdomjsdom">jsdom.JSDOM</a>
+}</pre>
+
+<hr />
+
 <strong id="htmlattributereferrerpolicy"><code>Type</code> HTMLAttributeReferrerPolicy</strong>
     
 
@@ -859,7 +868,7 @@ The global DNA registry instance.
 <strong id="window"><code>Variable</code> window</strong>
     
 
-<pre><a href="#window">Window</a> & <a href="#globalthis">globalThis</a></pre>
+<pre><a href="#globalnamespace">GlobalNamespace</a></pre>
 
 <hr />
 
