@@ -1,3 +1,10 @@
+## [3.10.1](https://github.com/chialab/dna/compare/v3.10.0...v3.10.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* add jsdom typings dependency ([f848bc8](https://github.com/chialab/dna/commit/f848bc8544b09767d73cc3333a571530f970f427))
+
 # [3.10.0](https://github.com/chialab/dna/compare/v3.9.0...v3.10.0) (2021-09-28)
 
 # [3.9.0](https://github.com/chialab/dna/compare/v3.8.1...v3.9.0) (2021-09-23)
