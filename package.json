@@ -62,6 +62,9 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@types/jsdom": "^16.0.0"
+  },
   "devDependencies": {
     "@babel/runtime": "^7.14.0",
     "@chialab/eslint-config": "^2.0.0",
