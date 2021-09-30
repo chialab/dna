@@ -1,3 +1,10 @@
+# [3.11.0](https://github.com/chialab/dna/compare/v3.10.1...v3.11.0) (2021-09-30)
+
+
+### Features
+
+* export common global constructors ([9a89461](https://github.com/chialab/dna/commit/9a894617100b76bbc1726c8f751e1168b83bee52))
+
 ## [3.10.1](https://github.com/chialab/dna/compare/v3.10.0...v3.10.1) (2021-09-29)
 
 
