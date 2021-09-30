@@ -1,5 +1,13 @@
 export { window } from './window';
-export { connect, disconnect } from './helpers';
+export {
+    NodeConstructor as Node,
+    HTMLElementConstructor as HTMLElement,
+    EventConstructor as Event,
+    CustomEventConstructor as CustomEvent,
+    document,
+    connect,
+    disconnect
+} from './helpers';
 export { customElements } from './CustomElementRegistry';
 export { DOM } from './DOM';
 export { h, Fragment } from './JSX';

@@ -18,7 +18,7 @@
 
 <strong>Variables</strong>
 
-<a href="#component">Component</a>, <a href="#dom">DOM</a>, <a href="#fragment">Fragment</a>, <a href="#customelements">customElements</a>, <a href="#window">window</a>
+<a href="#component">Component</a>, <a href="#customevent">CustomEvent</a>, <a href="#dom">DOM</a>, <a href="#event">Event</a>, <a href="#fragment">Fragment</a>, <a href="#htmlelement">HTMLElement</a>, <a href="#node">Node</a>, <a href="#customelements">customElements</a>, <a href="#document">document</a>, <a href="#window">window</a>
 
 <strong>Functions</strong>
 
@@ -810,6 +810,15 @@ All DNA components **must** extends this class.
 
 <hr />
 
+<strong id="customevent"><code>Variable</code> CustomEvent</strong>
+    
+
+<pre>{
+  prototype: <a href="#customevent">CustomEvent</a>
+}</pre>
+
+<hr />
+
 <strong id="dom"><code>Variable</code> DOM</strong>
     
 <p>
@@ -841,6 +850,19 @@ It also handle element life cycle for custom elements unless otherwise specified
 
 <hr />
 
+<strong id="event"><code>Variable</code> Event</strong>
+    
+
+<pre>{
+  AT_TARGET: number;
+  BUBBLING_PHASE: number;
+  CAPTURING_PHASE: number;
+  NONE: number;
+  prototype: <a href="#event">Event</a>
+}</pre>
+
+<hr />
+
 <strong id="fragment"><code>Variable</code> Fragment</strong>
     
 <p>
@@ -853,6 +875,42 @@ A constructor alias used for JSX fragments </>.
 
 <hr />
 
+<strong id="htmlelement"><code>Variable</code> HTMLElement</strong>
+    
+
+<pre>{
+  prototype: <a href="#htmlelement">HTMLElement</a>
+}</pre>
+
+<hr />
+
+<strong id="node"><code>Variable</code> Node</strong>
+    
+
+<pre>{
+  ATTRIBUTE_NODE: number;
+  CDATA_SECTION_NODE: number;
+  COMMENT_NODE: number;
+  DOCUMENT_FRAGMENT_NODE: number;
+  DOCUMENT_NODE: number;
+  DOCUMENT_POSITION_CONTAINED_BY: number;
+  DOCUMENT_POSITION_CONTAINS: number;
+  DOCUMENT_POSITION_DISCONNECTED: number;
+  DOCUMENT_POSITION_FOLLOWING: number;
+  DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: number;
+  DOCUMENT_POSITION_PRECEDING: number;
+  DOCUMENT_TYPE_NODE: number;
+  ELEMENT_NODE: number;
+  ENTITY_NODE: number;
+  ENTITY_REFERENCE_NODE: number;
+  NOTATION_NODE: number;
+  PROCESSING_INSTRUCTION_NODE: number;
+  TEXT_NODE: number;
+  prototype: <a href="#node">Node</a>
+}</pre>
+
+<hr />
+
 <strong id="customelements"><code>Variable</code> customElements</strong>
     
 <p>
@@ -862,6 +920,13 @@ The global DNA registry instance.
 </p>
 
 <pre><a href="#customelementregistry">CustomElementRegistry</a></pre>
+
+<hr />
+
+<strong id="document"><code>Variable</code> document</strong>
+    
+
+<pre><a href="#document">Document</a></pre>
 
 <hr />
 

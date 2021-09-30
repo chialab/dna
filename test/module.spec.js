@@ -9,6 +9,11 @@ describe('module', function() {
         window: 'object',
         customElements: 'object',
         customElement: 'function',
+        Node: 'function',
+        HTMLElement: 'function',
+        Event: 'function',
+        CustomEvent: 'function',
+        document: 'object',
         DOM: 'object',
         connect: 'function',
         disconnect: 'function',
@@ -42,6 +47,8 @@ describe('module', function() {
     for (const ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
             if (ref === 'window') {
+                expect(DNA).to.have.property(ref);
+            } else if (ref === 'document') {
                 expect(DNA).to.have.property(ref);
             } else {
                 expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
