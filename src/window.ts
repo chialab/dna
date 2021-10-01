@@ -31,7 +31,7 @@ if (typeof window !== 'undefined') {
             createComment: throwPlatform,
             addEventListener() { },
         },
-    } as unknown as Window & typeof globalThis;
+    } as unknown as GlobalNamespace;
 }
 
 export { namespace as window };
