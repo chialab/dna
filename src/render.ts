@@ -361,52 +361,49 @@ export const internalRender = (
             }
 
             const { key, children, namespaceURI } = template;
-            if (isVNode(template)) {
-                templateNode = template.node;
-            } else {
-                templateNamespace = namespaceURI || namespace;
-
-                checkKey: if (currentContext) {
-                    let currentKey = currentContext.key;
-                    if (currentKey != null && key != null && key !== currentKey) {
-                        emptyFragments(currentContext);
-                        DOM.removeChild(root, currentNode, slot);
-                        currentNode = childNodes.item(currentIndex) as Node;
-                        currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-                        if (!currentContext) {
-                            break checkKey;
-                        }
-                        currentKey = currentContext.key;
+            templateNamespace = namespaceURI || namespace;
+            checkKey: if (currentContext) {
+                let currentKey = currentContext.key;
+                if (currentKey != null && key != null && key !== currentKey) {
+                    emptyFragments(currentContext);
+                    DOM.removeChild(root, currentNode, slot);
+                    currentNode = childNodes.item(currentIndex) as Node;
+                    currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+                    if (!currentContext) {
+                        break checkKey;
                     }
+                    currentKey = currentContext.key;
+                }
 
-                    if (currentFragment && currentNode) {
-                        const io = indexOf.call(childNodes, currentNode);
-                        const lastIo = indexOf.call(childNodes, currentFragment.end);
-                        if (io !== -1 && io > lastIo) {
-                            break checkKey;
-                        }
-                    }
-
-                    if (key != null || currentKey != null) {
-                        if (key === currentKey) {
-                            templateNode = currentNode;
-                            templateContext = currentContext;
-                        }
-                    } else if (isVComponent(template) && currentNode instanceof template.Component) {
-                        templateNode = currentNode;
-                        templateContext = currentContext;
-                    } else if (isVTag(template) && currentContext.tagName === template.tag) {
-                        templateNode = currentNode;
-                        templateContext = currentContext;
+                if (currentFragment && currentNode) {
+                    const io = indexOf.call(childNodes, currentNode);
+                    const lastIo = indexOf.call(childNodes, currentFragment.end);
+                    if (io !== -1 && io > lastIo) {
+                        break checkKey;
                     }
                 }
 
-                if (!templateNode) {
-                    if (isVComponent(template)) {
-                        templateNode = new template.Component();
-                    } else {
-                        templateNode = DOM.createElementNS(templateNamespace, template.tag);
+                if (key != null || currentKey != null) {
+                    if (key === currentKey) {
+                        templateNode = currentNode;
+                        templateContext = currentContext;
                     }
+                } else if (isVComponent(template) && currentNode instanceof template.Component) {
+                    templateNode = currentNode;
+                    templateContext = currentContext;
+                } else if (isVTag(template) && currentContext.tagName === template.tag) {
+                    templateNode = currentNode;
+                    templateContext = currentContext;
+                }
+            }
+
+            if (!templateNode) {
+                if (isVNode(template)) {
+                    templateNode = template.node;
+                } else if (isVComponent(template)) {
+                    templateNode = new template.Component();
+                } else {
+                    templateNode = DOM.createElementNS(templateNamespace, template.tag);
                 }
             }
 

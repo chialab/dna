@@ -213,7 +213,10 @@ export class CustomElementRegistry {
         const nodes = root.children;
         // iterate all nodes found
         for (let i = 0, len = nodes.length; i < len; i++) {
-            this.upgrade(nodes[i] as HTMLElement);
+            const node = nodes[i] as HTMLElement;
+            if (node) {
+                this.upgrade(node);
+            }
         }
         if (!constructor) {
             return;

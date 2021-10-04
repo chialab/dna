@@ -1692,7 +1692,7 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
     if (ref) {
         return {
             node: ref,
-            key,
+            key: ref,
             namespaceURI: xmlns,
             properties: properties || {},
             children,
