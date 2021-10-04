@@ -1,3 +1,11 @@
+## [3.11.1](https://github.com/chialab/dna/compare/v3.11.0...v3.11.1) (2021-10-04)
+
+
+### Bug Fixes
+
+* diff for referenced nodes ([1ee38f0](https://github.com/chialab/dna/commit/1ee38f0aba934b1aa72cac4d11c11d2d48a217c4))
+* use global namespace alias ([702eaba](https://github.com/chialab/dna/commit/702eaba0e2406674a5726a85f38b7ff0186d6a11))
+
 # [3.11.0](https://github.com/chialab/dna/compare/v3.10.1...v3.11.0) (2021-09-30)
 
 
