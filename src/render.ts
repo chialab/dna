@@ -182,9 +182,8 @@ const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` =
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
- * @param namespace The current namespace uri of the render.
  * @param rootContext The current custom element context of the render.
- * @param refContext The main context of the render.
+ * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
  * @return The resulting child nodes list.
  */
@@ -192,23 +191,16 @@ export const internalRender = (
     root: Node,
     input: Template,
     slot = isComponent(root),
-    context?: Context,
+    context: Context = getOrCreateContext(root),
+    rootContext: Context = isComponent(root) ? getOrCreateContext(root) : context,
     namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
-    rootContext?: Context,
-    mainContext?: Context,
     fragment?: Context
 ) => {
-    let renderContext = context || getOrCreateContext(root);
-    const refContext = mainContext || renderContext;
-
     let childNodes: IterableNodeList;
-    if (slot && renderContext.slotChildNodes) {
-        childNodes = renderContext.slotChildNodes as IterableNodeList;
+    if (slot && (root as ComponentInstance).slotChildNodes) {
+        childNodes = (root as ComponentInstance).slotChildNodes as IterableNodeList;
     } else {
-        childNodes = renderContext.childNodes || (root.childNodes as unknown as IterableNodeList);
-        if (renderContext.is) {
-            rootContext = renderContext;
-        }
+        childNodes = context.childNodes || (root.childNodes as unknown as IterableNodeList);
     }
     if (!childNodes) {
         return childNodes;
@@ -221,11 +213,11 @@ export const internalRender = (
         currentIndex = indexOf.call(childNodes, fragment.start as Node);
         lastNode = fragment.end as Node;
     } else {
-        emptyFragments(renderContext);
+        emptyFragments(context);
         currentIndex = 0;
     }
     let currentNode = childNodes.item(currentIndex) as Node;
-    let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+    let currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
 
     const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
@@ -254,9 +246,9 @@ export const internalRender = (
             if (isVFunction(template)) {
                 const { Function, key, properties, children } = template;
                 const rootFragment = fragment;
-                const previousContext = renderContext;
+                const previousContext = context;
                 const previousFragment = currentFragment;
-                const fragments = renderContext.fragments;
+                const fragments = context.fragments;
                 let placeholder: Node;
                 if (fragment) {
                     placeholder = fragment.start as Node;
@@ -266,7 +258,7 @@ export const internalRender = (
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                const renderFragmentContext = getOrCreateContext(placeholder);
+                const renderFragmentContext = getOrCreateContext(placeholder, rootContext);
                 const isAttached = () => fragments.indexOf(renderFragmentContext) !== -1;
                 let running = true;
                 const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
@@ -279,13 +271,21 @@ export const internalRender = (
                     if (!isAttached()) {
                         return false;
                     }
-                    internalRender(root, template, slot, previousContext, namespace, rootContext, refContext, renderFragmentContext);
+                    internalRender(
+                        root,
+                        template,
+                        slot,
+                        previousContext,
+                        rootContext,
+                        namespace,
+                        renderFragmentContext
+                    );
                     return true;
                 };
                 emptyFragments(renderFragmentContext);
                 renderFragmentContext.Function = Function;
                 renderFragmentContext.start = placeholder;
-                renderContext = renderFragmentContext;
+                context = renderFragmentContext;
                 currentFragment = renderFragmentContext;
                 fragment = undefined;
 
@@ -308,7 +308,7 @@ export const internalRender = (
 
                 fragment = rootFragment;
                 renderFragmentContext.end = childNodes.item(currentIndex - 1) as Node;
-                renderContext = previousContext;
+                context = previousContext;
                 currentFragment = previousFragment;
 
                 if (!fragment) {
@@ -324,16 +324,14 @@ export const internalRender = (
 
             // if the current patch is a slot,
             if (isVSlot(template)) {
-                if (rootContext) {
+                if (rootContext.slotChildNodes) {
                     const { properties, children } = template;
                     const slotChildNodes = rootContext.slotChildNodes;
-                    if (slotChildNodes) {
-                        for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-                            const node = slotChildNodes.item(i) as Node;
-                            const context = getOrCreateContext(node);
-                            if (!context.root) {
-                                context.root = rootContext;
-                            }
+                    for (let i = 0, len = slotChildNodes.length; i < len; i++) {
+                        const node = slotChildNodes.item(i) as Node;
+                        const context = getOrCreateContext(node);
+                        if (!context.root) {
+                            context.root = rootContext;
                         }
                     }
 
@@ -368,7 +366,7 @@ export const internalRender = (
                     emptyFragments(currentContext);
                     DOM.removeChild(root, currentNode, slot);
                     currentNode = childNodes.item(currentIndex) as Node;
-                    currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+                    currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
                     if (!currentContext) {
                         break checkKey;
                     }
@@ -410,11 +408,10 @@ export const internalRender = (
             // update the Node properties
             const templateElement = templateNode as HTMLElement;
 
-            templateContext = templateContext || getOrCreateContext(templateNode);
-            const map = templateContext.properties[slot ? 1 : 0];
-            const oldProperties = (map.get(refContext) || {}) as VProperties<HTMLElement>;
+            templateContext = templateContext || getOrCreateContext(templateNode, rootContext);
+            const oldProperties = templateContext.properties[slot ? 1 : 0] as VProperties<HTMLElement>;
             const properties = fillEmptyValues(oldProperties, template.properties);
-            map.set(refContext, properties);
+            templateContext.properties[slot ? 1 : 0] = properties;
             if (key != null) {
                 templateContext.key = key;
             }
@@ -561,7 +558,7 @@ export const internalRender = (
         } else if (isNode(template)) {
             templateNode = template;
         } else  {
-            if (typeof template === 'string' && rootContext && renderContext.tagName === 'style') {
+            if (typeof template === 'string' && rootContext.is && context.tagName === 'style') {
                 const is = rootContext.is as string;
                 template = css(is, template as string, customElements.tagNames[is]);
                 (root as HTMLStyleElement).setAttribute('name', is);
@@ -593,23 +590,21 @@ export const internalRender = (
             currentIndex++;
         } else {
             currentNode = childNodes.item(++currentIndex) as Node;
-            currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+            currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
         }
 
         if (isElement(templateNode) &&
             templateChildren &&
             templateContext &&
-            ((templateContext.parent && templateContext.parent === refContext) || templateChildren.length)) {
-            templateContext.parent = refContext;
+            templateChildren.length) {
             // the Node has slotted children, trigger a new render context for them
             internalRender(
                 templateNode as HTMLElement,
                 templateChildren,
                 isComponent(templateNode),
                 templateContext,
-                templateNamespace,
                 rootContext,
-                refContext
+                templateNamespace
             );
         }
     };
@@ -627,13 +622,10 @@ export const internalRender = (
     }
     while (currentIndex < lastIndex) {
         const item = childNodes.item(--lastIndex) as Node;
-        const context = getOrCreateContext(item);
+        const context = getOrCreateContext(item, rootContext);
         if (slot) {
             if (context.root === rootContext) {
                 delete context.root;
-            }
-            if (context.parent === refContext) {
-                delete context.parent;
             }
         }
         emptyFragments(context);

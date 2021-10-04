@@ -10,7 +10,7 @@ import { createSymbol, isElement, isText } from './helpers';
 const CONTEXT_SYMBOL: unique symbol = createSymbol();
 
 export type WithContext<T extends Node> = T & {
-    [CONTEXT_SYMBOL]?: Context<T>;
+    [CONTEXT_SYMBOL]?: WeakMap<Context | T, Context<T>>;
 };
 
 /**
@@ -23,10 +23,7 @@ export type Context<T extends Node = Node, P = T extends Element ? Members<T> : 
     tagName?: string;
     is?: string;
     key?: unknown;
-    properties: [
-        WeakMap<Context<T, P>, P>,
-        WeakMap<Context<T, P>, P>,
-    ];
+    properties: [P, P];
     store: S;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
@@ -34,7 +31,6 @@ export type Context<T extends Node = Node, P = T extends Element ? Members<T> : 
     start?: Node;
     end?: Node;
     fragments: Context[];
-    parent?: Context;
     root?: Context;
     requestUpdate?: UpdateRequest;
     __proto__: {
@@ -50,17 +46,23 @@ export type Context<T extends Node = Node, P = T extends Element ? Members<T> : 
 
 /**
  * Attach a context to an object.
- * @param target The object to context.
+ * @param node The object to context.
  * @param context The context to set.
+ * @param parent The parent context.
  */
-export const setContext = <T extends Node>(target: WithContext<T>, context: Context<T>): Context<T> => target[CONTEXT_SYMBOL] = context;
+export const setContext = <T extends Node>(node: WithContext<T>, context: Context<T>, parent?: Context): Context<T> => {
+    const map = node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || new WeakMap();
+    map.set(parent || node, context);
+    return context;
+};
 
 /**
  * Create a node context.
  * @param node The node scope of the context.
+ * @param parent The parent context.
  * @return A context object for the node.
  */
-export const createContext = <T extends Node>(node: T) => {
+export const createContext = <T extends Node>(node: T, parent?: Context) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
     const is = (node as unknown as CustomElement).is;
@@ -72,7 +74,7 @@ export const createContext = <T extends Node>(node: T) => {
         tagName: isElementNode ? (node as unknown as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        properties: [new WeakMap(), new WeakMap()],
+        properties: [{}, {}],
         store,
         fragments: [],
         __proto__: {
@@ -86,12 +88,20 @@ export const createContext = <T extends Node>(node: T) => {
             clear: store.clear.bind(store),
             forEach: store.forEach.bind(store),
         },
-    }) as Context<T>;
+    }, parent) as Context<T>;
 };
 
 /**
  * Get the context attached to an object.
- * @param target The scope of the context.
+ * @param node The scope of the context.
+ * @param parent The parent context.
  * @return The context object (if it exists).
  */
-export const getOrCreateContext = <T extends Node>(target: WithContext<T>) => (target[CONTEXT_SYMBOL] || createContext(target)) as Context<T>;
+export const getOrCreateContext = <T extends Node>(node: WithContext<T>, parent?: Context): Context<T> => {
+    const map = node[CONTEXT_SYMBOL];
+    if (!map) {
+        return createContext(node, parent);
+    }
+
+    return map.get(parent || node) || createContext(node, parent);
+};
