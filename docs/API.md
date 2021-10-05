@@ -507,8 +507,7 @@ The node context interface.
   isText?: boolean;
   key?: unknown;
   node: <a href="#t">T</a>;
-  parent?: <a href="#context">Context</a>;
-  properties: [<a href="#weakmap">WeakMap</a>, <a href="#weakmap">WeakMap</a>];
+  properties: [<a href="#p">P</a>, <a href="#p">P</a>];
   requestUpdate?: <a href="#updaterequest">UpdateRequest</a>;
   root?: <a href="#context">Context</a>;
   slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;

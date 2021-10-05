@@ -84,20 +84,21 @@ export const DOM = {
      */
     appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
+        const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             const slotted = parent.slotChildNodes;
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
             } else if (parentNode) {
-                DOM.removeChild(parentNode, newChild, slot);
+                DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
             }
             parent.slotChildNodes.push(newChild);
             parent.forceUpdate();
             return newChild;
         }
         if (emulatingLifeCycle() && parentNode) {
-            DOM.removeChild(parentNode, newChild, slot);
+            DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
         }
         appendChildImpl.call(parent, newChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
@@ -141,13 +142,14 @@ export const DOM = {
      */
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
         const parentNode = newChild.parentNode;
+        const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             const slotted = parent.slotChildNodes;
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
             } else if (parentNode) {
-                DOM.removeChild(parentNode, newChild, slot);
+                DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
             }
 
             if (refChild) {
@@ -162,7 +164,7 @@ export const DOM = {
             return newChild;
         }
         if (emulatingLifeCycle() && parentNode) {
-            DOM.removeChild(parentNode, newChild, slot);
+            DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
         }
         insertBeforeImpl.call(parent, newChild, refChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
@@ -181,6 +183,7 @@ export const DOM = {
      */
     replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
+        const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
         if (slot && isComponent(parent) && parent.slotChildNodes) {
             const slotted = parent.slotChildNodes;
             const io = slotted.indexOf(oldChild);
@@ -190,7 +193,7 @@ export const DOM = {
         }
         if (emulatingLifeCycle()) {
             if (parentNode && newChild !== oldChild) {
-                DOM.removeChild(parentNode, newChild, slot);
+                DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
             }
             if (isConnected.call(oldChild)) {
                 disconnect(oldChild);

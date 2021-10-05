@@ -343,6 +343,83 @@ describe('template', function() {
         }
     });
 
+    describe('slot moved across elements', () => {
+        /* eslint-disable mocha/no-setup-in-describe */
+        const TEMPLATES = {
+            JSX(cardName, collapsed) {
+                if (collapsed) {
+                    return DNA.h('slot');
+                }
+
+                return DNA.h(cardName, {}, DNA.h('slot'));
+            },
+            HTML(cardName, collapsed) {
+                if (collapsed) {
+                    return DNA.html`<slot />`;
+                }
+
+                return DNA.html`<${cardName}>
+                    <slot />
+                </div>`;
+            },
+        };
+        /* eslint-enable mocha/no-setup-in-describe */
+
+        for (const type in TEMPLATES) {
+            it(type, () => {
+                const name = getComponentName();
+                const cardName = getComponentName();
+
+                class MyElement extends DNA.Component {
+                    render() {
+                        return TEMPLATES[type](`${cardName}-${type.toLowerCase()}`, this.collapsed);
+                    }
+                }
+
+                class MyCard extends DNA.Component {
+                    render() {
+                        return DNA.h('slot');
+                    }
+                }
+
+                DNA.customElements.define(`${cardName}-${type.toLowerCase()}`, MyCard);
+
+                const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
+                    DNA.h('h1', {}, 'Title'),
+                    DNA.h('img', { src: 'cat.png' }),
+                    DNA.h('p', null, 'Body')
+                ), wrapper);
+
+                DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
+                DNA.customElements.upgrade(element);
+
+                expect(element.childNodes).to.have.lengthOf(1);
+                expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
+                expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('IMG');
+                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
+                expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
+                element.collapsed = true;
+                element.forceUpdate();
+                expect(element.childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].textContent).to.be.equal('Title');
+                expect(element.childNodes[1].tagName).to.be.equal('IMG');
+                expect(element.childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[2].tagName).to.be.equal('P');
+                expect(element.childNodes[2].textContent).to.be.equal('Body');
+                element.collapsed = false;
+                element.forceUpdate();
+                expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
+                expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
+                expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('IMG');
+                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
+                expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
+            });
+        }
+    });
+
     describe('events', () => {
         describe('should add an event listener', () => {
             /* eslint-disable mocha/no-setup-in-describe */
