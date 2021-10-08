@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
 
+const IMG = 'data:image/png;base64,';
+
 describe('template', function() {
     let wrapper;
     this.timeout(10 * 1000);
@@ -175,13 +177,13 @@ describe('template', function() {
         for (const type in TEMPLATES) {
             it(type, () => {
                 DNA.render(TEMPLATES[type]({
-                    avatar: 'cat.png',
+                    avatar: IMG,
                     title: 'Romeo',
                     members: [],
                 }), wrapper);
                 expect(wrapper.childNodes).to.have.lengthOf(3);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('IMG');
-                expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal('cat.png');
+                expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal(IMG);
                 expect(wrapper.childNodes[1].tagName).to.be.equal('H1');
                 expect(wrapper.childNodes[1].textContent).to.be.equal('Romeo');
                 expect(wrapper.childNodes[2].textContent).to.be.equal('No members');
@@ -266,7 +268,7 @@ describe('template', function() {
 
                 const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
-                    DNA.h('img', { src: 'cat.png' }),
+                    DNA.h('img', { src: IMG }),
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
@@ -280,7 +282,7 @@ describe('template', function() {
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
                 expect(element.childNodes[1].className).to.be.equal('layout-body');
                 expect(element.childNodes[1].childNodes[0].tagName).to.be.equal('IMG');
-                expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
                 expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
             });
@@ -320,7 +322,7 @@ describe('template', function() {
 
                 const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
-                    DNA.h('img', { src: 'cat.png' }),
+                    DNA.h('img', { src: IMG }),
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
@@ -336,7 +338,7 @@ describe('template', function() {
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
                 expect(element.childNodes[1].className).to.be.equal('layout-body');
                 expect(element.childNodes[1].childNodes[0].tagName).to.be.equal('IMG');
-                expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
                 expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
             });
@@ -386,7 +388,7 @@ describe('template', function() {
 
                 const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', {}, 'Title'),
-                    DNA.h('img', { src: 'cat.png' }),
+                    DNA.h('img', { src: IMG }),
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
@@ -397,7 +399,7 @@ describe('template', function() {
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('IMG');
-                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
                 element.collapsed = true;
@@ -405,7 +407,7 @@ describe('template', function() {
                 expect(element.childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('IMG');
-                expect(element.childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[2].textContent).to.be.equal('Body');
                 element.collapsed = false;
@@ -413,7 +415,7 @@ describe('template', function() {
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('IMG');
-                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal('cat.png');
+                expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
             });
