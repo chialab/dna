@@ -362,7 +362,8 @@ export const internalRender = (
             templateNamespace = namespaceURI || namespace;
             checkKey: if (currentContext) {
                 let currentKey = currentContext.key;
-                if (currentKey != null && key != null && key !== currentKey) {
+                while (currentKey != null && key != null && key !== currentKey) {
+                    // if keys conflict, we can safely remove previous keyed element.
                     emptyFragments(currentContext);
                     DOM.removeChild(root, currentNode, slot);
                     currentNode = childNodes.item(currentIndex) as Node;
@@ -582,15 +583,19 @@ export const internalRender = (
         // now, we are confident that if the input is a Node or a Component,
         // check if Nodes are the same instance
         // (patch result should return same Node instances for compatible types)
-        if (templateNode !== currentNode) {
+        if (templateNode.parentNode === root) {
+            while (templateNode !== currentNode) {
+                DOM.removeChild(root, currentNode, slot);
+                currentNode = childNodes.item(currentIndex) as Node;
+            }
+            currentNode = childNodes.item(++currentIndex) as Node;
+            currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
+        } else {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
             DOM.insertBefore(root, templateNode, currentNode, slot);
             currentIndex++;
-        } else {
-            currentNode = childNodes.item(++currentIndex) as Node;
-            currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
         }
 
         if (isElement(templateNode) &&

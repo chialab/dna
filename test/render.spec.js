@@ -664,8 +664,9 @@ describe('render', function() {
             expect(option6.textContent).to.be.equal(items[0]);
 
             expect(option1).to.be.not.equal(option4);
-            expect(option2).to.be.equal(option5);
+            expect(option2).to.be.not.equal(option5);
             expect(option3).to.be.not.equal(option6);
+            expect(option3).to.be.equal(option4);
         });
 
         it('should delete a row', () => {
@@ -701,6 +702,37 @@ describe('render', function() {
             expect(option1).to.be.not.equal(option4);
             expect(option2).to.be.equal(option4);
             expect(option3).to.be.equal(option5);
+        });
+
+        it('should delete nodes untile the attached one', () => {
+            const spyConnectedCallback = spyFunction();
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                connectedCallback() {
+                    super.connectedCallback();
+                    spyConnectedCallback();
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            const ref = new TestElement();
+
+            DNA.render(DNA.html`
+                <h1>Title</h1>
+                <h2>Subtitle</h2>
+                <div ref=${ref} />
+            `, wrapper);
+
+            expect(spyConnectedCallback.invoked).to.be.true;
+            expect(spyConnectedCallback.count).to.be.equal(1);
+
+            DNA.render(DNA.html`
+                <h1>Title</h1>
+                <div ref=${ref} />
+            `, wrapper);
+
+            expect(spyConnectedCallback.count).to.be.equal(1);
         });
     });
 });
