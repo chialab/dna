@@ -217,7 +217,7 @@ export const internalRender = (
         currentIndex = 0;
     }
     let currentNode = childNodes.item(currentIndex) as Node;
-    let currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
+    let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
 
     const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
@@ -258,7 +258,7 @@ export const internalRender = (
                     placeholder = DOM.createComment(Function.name);
                 }
 
-                const renderFragmentContext = getOrCreateContext(placeholder, rootContext);
+                const renderFragmentContext = getOrCreateContext(placeholder);
                 const isAttached = () => fragments.indexOf(renderFragmentContext) !== -1;
                 let running = true;
                 const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
@@ -367,7 +367,7 @@ export const internalRender = (
                     emptyFragments(currentContext);
                     DOM.removeChild(root, currentNode, slot);
                     currentNode = childNodes.item(currentIndex) as Node;
-                    currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
+                    currentContext = currentNode ? getOrCreateContext(currentNode) : null;
                     if (!currentContext) {
                         break checkKey;
                     }
@@ -409,10 +409,12 @@ export const internalRender = (
             // update the Node properties
             const templateElement = templateNode as HTMLElement;
 
-            templateContext = templateContext || getOrCreateContext(templateNode, rootContext);
-            const oldProperties = templateContext.properties[slot ? 1 : 0] as VProperties<HTMLElement>;
+            templateContext = templateContext || getOrCreateContext(templateNode);
+            const oldPropertiesMap = templateContext.properties.get(context) || [{}, {}];
+            const oldProperties = oldPropertiesMap[slot ? 1 : 0] as VProperties<HTMLElement>;
             const properties = fillEmptyValues(oldProperties, template.properties);
-            templateContext.properties[slot ? 1 : 0] = properties;
+            oldPropertiesMap[slot ? 1 : 0] = properties;
+            templateContext.properties.set(context, oldPropertiesMap);
             if (key != null) {
                 templateContext.key = key;
             }
@@ -589,7 +591,7 @@ export const internalRender = (
                 currentNode = childNodes.item(currentIndex) as Node;
             }
             currentNode = childNodes.item(++currentIndex) as Node;
-            currentContext = currentNode ? getOrCreateContext(currentNode, rootContext) : null;
+            currentContext = currentNode ? getOrCreateContext(currentNode) : null;
         } else {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
@@ -627,7 +629,7 @@ export const internalRender = (
     }
     while (currentIndex < lastIndex) {
         const item = childNodes.item(--lastIndex) as Node;
-        const context = getOrCreateContext(item, rootContext);
+        const context = getOrCreateContext(item);
         if (slot) {
             if (context.root === rootContext) {
                 delete context.root;

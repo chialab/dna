@@ -10,7 +10,7 @@ import { createSymbol, isElement, isText } from './helpers';
 const CONTEXT_SYMBOL: unique symbol = createSymbol();
 
 export type WithContext<T extends Node> = T & {
-    [CONTEXT_SYMBOL]?: WeakMap<Context | T, Context<T>>;
+    [CONTEXT_SYMBOL]?: Context<T>;
 };
 
 /**
@@ -23,7 +23,7 @@ export type Context<T extends Node = Node, P = T extends Element ? Members<T> : 
     tagName?: string;
     is?: string;
     key?: unknown;
-    properties: [P, P];
+    properties: WeakMap<Context, [P, P]>;
     store: S;
     childNodes?: IterableNodeList;
     slotChildNodes?: IterableNodeList;
@@ -50,9 +50,8 @@ export type Context<T extends Node = Node, P = T extends Element ? Members<T> : 
  * @param context The context to set.
  * @param parent The parent context.
  */
-export const setContext = <T extends Node>(node: WithContext<T>, context: Context<T>, parent?: Context): Context<T> => {
-    const map = node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || new WeakMap();
-    map.set(parent || node, context);
+export const setContext = <T extends Node>(node: WithContext<T>, context: Context<T>): Context<T> => {
+    node[CONTEXT_SYMBOL] = context;
     return context;
 };
 
@@ -62,7 +61,7 @@ export const setContext = <T extends Node>(node: WithContext<T>, context: Contex
  * @param parent The parent context.
  * @return A context object for the node.
  */
-export const createContext = <T extends Node>(node: T, parent?: Context) => {
+export const createContext = <T extends Node>(node: T) => {
     const isElementNode = isElement(node);
     const isTextNode = !isElementNode && isText(node);
     const is = (node as unknown as CustomElement).is;
@@ -74,7 +73,7 @@ export const createContext = <T extends Node>(node: T, parent?: Context) => {
         tagName: isElementNode ? (node as unknown as HTMLElement).tagName.toLowerCase() : undefined,
         childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
         is,
-        properties: [{}, {}],
+        properties: new WeakMap(),
         store,
         fragments: [],
         __proto__: {
@@ -88,7 +87,7 @@ export const createContext = <T extends Node>(node: T, parent?: Context) => {
             clear: store.clear.bind(store),
             forEach: store.forEach.bind(store),
         },
-    }, parent) as Context<T>;
+    }) as Context<T>;
 };
 
 /**
@@ -97,11 +96,7 @@ export const createContext = <T extends Node>(node: T, parent?: Context) => {
  * @param parent The parent context.
  * @return The context object (if it exists).
  */
-export const getOrCreateContext = <T extends Node>(node: WithContext<T>, parent?: Context): Context<T> => {
-    const map = node[CONTEXT_SYMBOL];
-    if (!map) {
-        return createContext(node, parent);
-    }
-
-    return map.get(parent || node) || createContext(node, parent);
+export const getOrCreateContext = <T extends Node>(node: WithContext<T>): Context<T> => {
+    const context = node[CONTEXT_SYMBOL];
+    return context || createContext(node);
 };
