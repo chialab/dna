@@ -652,8 +652,7 @@ export const internalRender = (
  * @return The resulting child Nodes.
  */
 export const render = (input: Template, root: Node = DOM.createDocumentFragment(), slot: boolean = isComponent(root)): Node | Node[] | void => {
-    const rootContext = getOrCreateContext(root);
-    const childNodes = internalRender(root, input, slot, rootContext, rootContext);
+    const childNodes = internalRender(root, input, slot);
     if (!childNodes) {
         return;
     }
