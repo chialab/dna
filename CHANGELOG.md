@@ -1,3 +1,12 @@
+# [3.13.0](https://github.com/chialab/dna/compare/v3.12.1...v3.13.0) (2021-10-21)
+
+
+### Bug Fixes
+
+* ie11 tests ([c3f436d](https://github.com/chialab/dna/commit/c3f436d211c51f4e59c4af27efcad124bbbf40c9))
+* pass root context to default render fn ([b237b85](https://github.com/chialab/dna/commit/b237b8557be317b59a2e86b5e0d77959f0839f04))
+* root context and multi slots ([14761d0](https://github.com/chialab/dna/commit/14761d0f809f5e53e0e825648ea8489f4c799fb0))
+
 ## [3.12.1](https://github.com/chialab/dna/compare/v3.12.0...v3.12.1) (2021-10-05)
 
 
