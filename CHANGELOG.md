@@ -1,3 +1,11 @@
+## [3.13.1](https://github.com/chialab/dna/compare/v3.13.0...v3.13.1) (2021-10-22)
+
+
+### Bug Fixes
+
+* render root check ([46bbe49](https://github.com/chialab/dna/commit/46bbe493dc138f0c0ad8929cdde5e94621069316))
+* revert render with default context ([4a7436e](https://github.com/chialab/dna/commit/4a7436e9ac5f471e6c16a2405397ecab50837e78))
+
 # [3.13.0](https://github.com/chialab/dna/compare/v3.12.1...v3.13.0) (2021-10-21)
 
 
