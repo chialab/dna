@@ -1,3 +1,10 @@
+## [3.13.2](https://github.com/chialab/dna/compare/v3.13.1...v3.13.2) (2021-10-22)
+
+
+### Bug Fixes
+
+* contains checks ([4fa1d15](https://github.com/chialab/dna/commit/4fa1d1525dcb397d26a3228ff5a6642ad5284803))
+
 ## [3.13.1](https://github.com/chialab/dna/compare/v3.13.0...v3.13.1) (2021-10-22)
 
 
