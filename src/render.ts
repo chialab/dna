@@ -4,7 +4,7 @@ import type { ComponentInstance } from './Component';
 import type { UpdateRequest } from './FunctionComponent';
 import type { Context } from './Context';
 import htm from 'htm';
-import { isNode, isElement, isArray, indexOf, cloneChildNodes, getPropertyDescriptor } from './helpers';
+import { isNode, isElement, isArray, indexOf, contains, cloneChildNodes, getPropertyDescriptor } from './helpers';
 import { h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
 import { isComponent } from './Component';
 import { customElements } from './CustomElementRegistry';
@@ -173,13 +173,6 @@ const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, v
  * @param propertyKey The property to check.
  */
 const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
-
-/**
- * Check if an item is in a list.
- * @param items List of child nodes.
- * @param item The item to check.
- */
-const contains = <T>(items: T[], item: T) => ([] as typeof items).indexOf.call(items, item) !== -1;
 
 /**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
@@ -465,7 +458,7 @@ export const internalRender = (
                         const oldClasses = convertClasses(oldProperties.class);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
                             const className = oldClasses[i];
-                            if (contains(newClasses, className)) {
+                            if (!contains(newClasses, className)) {
                                 classList.remove(className);
                             }
                         }
@@ -499,7 +492,7 @@ export const internalRender = (
                     const Component = template.Component;
                     if (type === 'string') {
                         const observedAttributes = Component.observedAttributes;
-                        if (!observedAttributes || contains(observedAttributes, propertyKey)) {
+                        if (!observedAttributes || !contains(observedAttributes, propertyKey)) {
                             const descriptor = (propertyKey in templateElement) && getPropertyDescriptor(templateElement, propertyKey);
                             if (!descriptor || !descriptor.get || descriptor.set) {
                                 setValue(templateElement, propertyKey, value);

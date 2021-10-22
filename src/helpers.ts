@@ -92,6 +92,13 @@ export const isArray = Array.isArray;
 export const indexOf = Array.prototype.indexOf;
 
 /**
+ * Check if an item is in a list.
+ * @param items List of child nodes.
+ * @param item The item to check.
+ */
+export const contains = <T>(items: T[], item: T) => indexOf.call(items, item) !== -1;
+
+/**
  * Alias to Object.getOwnPropertyDescriptor.
  */
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

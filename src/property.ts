@@ -1,8 +1,7 @@
 import type { ClassElement, Constructor } from './helpers';
 import type { Members, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
-import { isComponent } from './Component';
 import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { isConstructed } from './Component';
+import { isComponent, isConstructed } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
