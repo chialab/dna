@@ -219,23 +219,43 @@ describe('render', function() {
         });
 
         it('should update nodes', () => {
-            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two'), DNA.h('li', null, 'Three'), DNA.h('li', null, 'Four')), wrapper);
+            DNA.render(DNA.h('ul', { class: 'list' },
+                DNA.h('li', null, 'One'),
+                DNA.h('li', null, 'Two'),
+                DNA.h('li', null, 'Three'),
+                DNA.h('li', null, 'Four'),
+                DNA.h('li', null, 5),
+                DNA.h('li', null, '6')
+            ), wrapper);
             const list = wrapper.querySelector('ul.list');
             const children = list.childNodes;
             expect(children[0].textContent).to.be.equal('One');
             expect(children[1].textContent).to.be.equal('Two');
             expect(children[2].textContent).to.be.equal('Three');
             expect(children[3].textContent).to.be.equal('Four');
-            DNA.render(DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'Five'), DNA.h('li', null, 'Six'), DNA.h('li', null, 'Seven'), DNA.h('li', null, 'Height')), wrapper);
+            expect(children[4].textContent).to.be.equal('5');
+            expect(children[5].textContent).to.be.equal('6');
+            DNA.render(DNA.h('ul', { class: 'list' },
+                DNA.h('li', null, 'Seven'),
+                DNA.h('li', null, 'Eight'),
+                DNA.h('li', null, 'Nine'),
+                DNA.h('li', null, 'Ten'),
+                DNA.h('li', null, 11),
+                DNA.h('li', null, 12)
+            ), wrapper);
             const newChildren = list.childNodes;
             expect(children[0]).to.be.equal(newChildren[0]);
             expect(children[1]).to.be.equal(newChildren[1]);
             expect(children[2]).to.be.equal(newChildren[2]);
             expect(children[3]).to.be.equal(newChildren[3]);
-            expect(children[0].textContent).to.be.equal('Five');
-            expect(children[1].textContent).to.be.equal('Six');
-            expect(children[2].textContent).to.be.equal('Seven');
-            expect(children[3].textContent).to.be.equal('Height');
+            expect(children[4]).to.be.equal(newChildren[4]);
+            expect(children[5]).to.be.equal(newChildren[5]);
+            expect(children[0].textContent).to.be.equal('Seven');
+            expect(children[1].textContent).to.be.equal('Eight');
+            expect(children[2].textContent).to.be.equal('Nine');
+            expect(children[3].textContent).to.be.equal('Ten');
+            expect(children[4].textContent).to.be.equal('11');
+            expect(children[5].textContent).to.be.equal('12');
         });
 
         it('should update add and remove attributes', () => {

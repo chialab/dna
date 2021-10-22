@@ -175,6 +175,13 @@ const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, v
 const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
 
 /**
+ * Check if an item is in a list.
+ * @param items List of child nodes.
+ * @param item The item to check.
+ */
+const contains = <T>(items: T[], item: T) => ([] as typeof items).indexOf.call(items, item) !== -1;
+
+/**
  * Render a set of Nodes into another, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
@@ -259,7 +266,7 @@ export const internalRender = (
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
-                const isAttached = () => fragments.indexOf(renderFragmentContext) !== -1;
+                const isAttached = contains.bind(null, fragments, renderFragmentContext);
                 let running = true;
                 const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
                     if (renderFragmentContext.requestUpdate !== requestUpdate) {
@@ -458,7 +465,7 @@ export const internalRender = (
                         const oldClasses = convertClasses(oldProperties.class);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
                             const className = oldClasses[i];
-                            if (newClasses.indexOf(className) === -1) {
+                            if (contains(newClasses, className)) {
                                 classList.remove(className);
                             }
                         }
@@ -492,7 +499,7 @@ export const internalRender = (
                     const Component = template.Component;
                     if (type === 'string') {
                         const observedAttributes = Component.observedAttributes;
-                        if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
+                        if (!observedAttributes || contains(observedAttributes, propertyKey)) {
                             const descriptor = (propertyKey in templateElement) && getPropertyDescriptor(templateElement, propertyKey);
                             if (!descriptor || !descriptor.get || descriptor.set) {
                                 setValue(templateElement, propertyKey, value);
@@ -585,7 +592,7 @@ export const internalRender = (
         // now, we are confident that if the input is a Node or a Component,
         // check if Nodes are the same instance
         // (patch result should return same Node instances for compatible types)
-        if (templateNode.parentNode === root) {
+        if (contains(childNodes, templateNode)) {
             while (templateNode !== currentNode) {
                 DOM.removeChild(root, currentNode, slot);
                 currentNode = childNodes.item(currentIndex) as Node;
