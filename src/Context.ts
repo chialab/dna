@@ -1,7 +1,7 @@
 import type { IterableNodeList } from './helpers';
 import type { CustomElement } from './CustomElementRegistry';
-import type { Members } from './Component';
 import type { UpdateRequest, FunctionComponent } from './FunctionComponent';
+import type { VProperties } from './JSX';
 import { createSymbol, isElement, isText } from './helpers';
 
 /**
@@ -16,13 +16,12 @@ export type WithContext<T extends Node> = T & {
 /**
  * The node context interface.
  */
-export type Context<T extends Node = Node, P = T extends Element ? Members<T> : {}, S = Map<string, unknown>> = {
+export type Context<T extends Node = Node, P = VProperties<T>, S = Map<string, unknown>> = {
     node: T;
     isElement?: boolean;
     isText?: boolean;
     tagName?: string;
     is?: string;
-    key?: unknown;
     properties: WeakMap<Context, [P, P]>;
     store: S;
     childNodes?: IterableNodeList;
@@ -100,3 +99,28 @@ export const getOrCreateContext = <T extends Node>(node: WithContext<T>): Contex
     const context = node[CONTEXT_SYMBOL];
     return context || createContext(node);
 };
+
+/**
+ * Get context properties for a given render context.
+ * @param context The node context.
+ * @param renderContext The render context.
+ * @param slot Should use slotted properties.
+ * @return Cotnext properties.
+ */
+export function getContextProperties<T extends Node>(context: Context<T>, renderContext: Context, slot = false) {
+    const properties = context.properties.get(renderContext);
+    return properties ? properties[slot ? 1 : 0] : {} as VProperties<T>;
+}
+
+/**
+ * Set context properties for a given render context.
+ * @param context The node context.
+ * @param renderContext The render context.
+ * @param slot Should set slotted properties.
+ * @param props Properties to set.
+ */
+export function setContextProperties<T extends Node>(context: Context<T>, renderContext: Context, slot = false, props: VProperties<T>) {
+    const properties = context.properties.get(renderContext) || [{} as VProperties<T>, {} as VProperties<T>];
+    properties[slot ? 1 : 0] = props;
+    context.properties.set(renderContext, properties);
+}

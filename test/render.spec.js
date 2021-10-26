@@ -590,7 +590,7 @@ describe('render', function() {
         const items = ['Alan', 'Brian', 'Carl'];
         const items2 = ['Daniel', 'Eduardo', 'Francesca', 'Gabriella'];
 
-        it('should resuse non keyed elements', () => {
+        it('should reuse non keyed elements', () => {
             DNA.render(DNA.html`
                 <select>
                     ${items.map((item) => DNA.html`

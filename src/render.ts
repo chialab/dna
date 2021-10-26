@@ -13,7 +13,7 @@ import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
 import { getProperty } from './property';
-import { getOrCreateContext } from './Context';
+import { getOrCreateContext, getContextProperties, setContextProperties } from './Context';
 
 const innerHtml = htm.bind(h);
 
@@ -192,7 +192,7 @@ export const internalRender = (
     input: Template,
     slot = isComponent(root),
     context: Context = getOrCreateContext(root),
-    rootContext: Context = isComponent(root) ? getOrCreateContext(root) : context,
+    rootContext: Context = (isComponent(root) ? getOrCreateContext(root) : context) as Context,
     namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
     fragment?: Context
 ) => {
@@ -218,6 +218,7 @@ export const internalRender = (
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+    let currentProperties = currentContext ? getContextProperties(currentContext, context, slot) : null;
 
     const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
@@ -234,6 +235,7 @@ export const internalRender = (
 
         let templateNode;
         let templateContext: Context | undefined;
+        let templateProperties: VProperties<Node> | undefined;
         let templateChildren: Template[] | undefined;
         let templateNamespace = namespace;
 
@@ -252,7 +254,10 @@ export const internalRender = (
                 let placeholder: Node;
                 if (fragment) {
                     placeholder = fragment.start as Node;
-                } else if (currentContext && currentContext.Function === Function && currentContext.key === key) {
+                } else if (currentContext &&
+                    currentProperties &&
+                    currentContext.Function === Function &&
+                    currentProperties.key === key) {
                     placeholder = currentContext.start as Node;
                 } else {
                     placeholder = DOM.createComment(Function.name);
@@ -360,8 +365,8 @@ export const internalRender = (
 
             const { key, children, namespaceURI } = template;
             templateNamespace = namespaceURI || namespace;
-            checkKey: if (currentContext) {
-                let currentKey = currentContext.key;
+            checkKey: if (currentContext && currentProperties) {
+                let currentKey = currentProperties.key;
                 while (currentKey != null && key != null && key !== currentKey) {
                     // if keys conflict, we can safely remove previous keyed element.
                     emptyFragments(currentContext);
@@ -369,9 +374,11 @@ export const internalRender = (
                     currentNode = childNodes.item(currentIndex) as Node;
                     currentContext = currentNode ? getOrCreateContext(currentNode) : null;
                     if (!currentContext) {
+                        currentProperties = null;
                         break checkKey;
                     }
-                    currentKey = currentContext.key;
+                    currentProperties = getContextProperties(currentContext, context, slot);
+                    currentKey = currentProperties.key;
                 }
 
                 if (currentFragment && currentNode) {
@@ -386,13 +393,16 @@ export const internalRender = (
                     if (key === currentKey) {
                         templateNode = currentNode;
                         templateContext = currentContext;
+                        templateProperties = currentProperties;
                     }
                 } else if (isVComponent(template) && currentNode instanceof template.Component) {
                     templateNode = currentNode;
                     templateContext = currentContext;
+                    templateProperties = currentProperties;
                 } else if (isVTag(template) && currentContext.tagName === template.tag) {
                     templateNode = currentNode;
                     templateContext = currentContext;
+                    templateProperties = currentProperties;
                 }
             }
 
@@ -410,14 +420,9 @@ export const internalRender = (
             const templateElement = templateNode as HTMLElement;
 
             templateContext = templateContext || getOrCreateContext(templateNode);
-            const oldPropertiesMap = templateContext.properties.get(context) || [{}, {}];
-            const oldProperties = oldPropertiesMap[slot ? 1 : 0] as VProperties<HTMLElement>;
-            const properties = fillEmptyValues(oldProperties, template.properties);
-            oldPropertiesMap[slot ? 1 : 0] = properties;
-            templateContext.properties.set(context, oldPropertiesMap);
-            if (key != null) {
-                templateContext.key = key;
-            }
+            templateProperties = templateProperties || getContextProperties(templateContext, context, slot);
+            const properties = fillEmptyValues(templateProperties, template.properties);
+            setContextProperties(templateContext, context, slot, properties);
 
             let propertyKey: keyof typeof properties;
             for (propertyKey in properties) {
@@ -430,7 +435,7 @@ export const internalRender = (
                     continue;
                 }
                 const value = properties[propertyKey];
-                const oldValue = oldProperties[propertyKey];
+                const oldValue = templateProperties[propertyKey];
                 if (oldValue === value) {
                     if (isRenderingInput(templateElement, propertyKey)) {
                         setValue(templateElement, propertyKey as unknown as 'value', value);
@@ -440,7 +445,7 @@ export const internalRender = (
 
                 if (propertyKey === 'style') {
                     const style = templateElement.style;
-                    const oldStyles = convertStyles(oldProperties.style);
+                    const oldStyles = convertStyles(templateProperties.style);
                     const newStyles = convertStyles(properties.style);
                     for (const propertyKey in oldStyles) {
                         if (!(propertyKey in newStyles)) {
@@ -455,7 +460,7 @@ export const internalRender = (
                     const classList = templateElement.classList;
                     const newClasses = convertClasses(properties.class);
                     if (oldValue) {
-                        const oldClasses = convertClasses(oldProperties.class);
+                        const oldClasses = convertClasses(templateProperties.class);
                         for (let i = 0, len = oldClasses.length; i < len; i++) {
                             const className = oldClasses[i];
                             if (!contains(newClasses, className)) {
@@ -592,6 +597,7 @@ export const internalRender = (
             }
             currentNode = childNodes.item(++currentIndex) as Node;
             currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+            currentProperties = currentContext ? getContextProperties(currentContext, context, slot) : null;
         } else {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
