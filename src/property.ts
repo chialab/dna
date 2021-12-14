@@ -1,6 +1,6 @@
 import type { ClassElement, Constructor } from './helpers';
 import type { Members, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
-import { createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { isConnected, createSymbol, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { isComponent, isConstructed } from './Component';
 
 /**
@@ -430,7 +430,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                 this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
-            if (this.isConnected) {
+            if (isConnected.call(this)) {
                 this.forceUpdate();
             }
         },

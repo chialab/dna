@@ -1,6 +1,6 @@
 import type { Constructor } from './helpers';
 import { window } from './window';
-import { connect, defineProperty, HTMLElementConstructor, document } from './helpers';
+import { isConnected, connect, defineProperty, HTMLElementConstructor, document } from './helpers';
 import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -256,7 +256,7 @@ export class CustomElementRegistry {
                     element.setAttribute(name, value);
                 }
             }
-            if (element.isConnected) {
+            if (isConnected.call(element)) {
                 connect(element);
             }
             element.forceUpdate();
