@@ -1,3 +1,11 @@
+## [3.13.4](https://github.com/chialab/dna/compare/v3.13.3...v3.13.4) (2021-12-14)
+
+
+### Bug Fixes
+
+* store properties using rootContext ([5c306ad](https://github.com/chialab/dna/commit/5c306adb1572c8f09617128b15cd76c8b8ec38a5))
+* use isCOnnected helper ([b727ec6](https://github.com/chialab/dna/commit/b727ec6a01137db151196b5699ba0afdc0e12445))
+
 ## [3.13.3](https://github.com/chialab/dna/compare/v3.13.2...v3.13.3) (2021-10-26)
 
 
