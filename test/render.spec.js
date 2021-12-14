@@ -754,5 +754,38 @@ describe('render', function() {
 
             expect(spyConnectedCallback.count).to.be.equal(1);
         });
+
+        it('should correctly update nodes after Function render', () => {
+            const Fn = function() {
+                return DNA.html`<div class="test" data-ref=${true}></div>`;
+            };
+
+            const [, div1, div2] = DNA.render(DNA.html`
+                <${Fn} />
+                <div class="test" attr=${true} data-ref=${true}></div>
+            `, wrapper);
+
+            expect(wrapper.childNodes).to.have.lengthOf(3);
+            expect(div1.tagName).to.be.equal('DIV');
+            expect(div2.tagName).to.be.equal('DIV');
+            expect(div1.dataset.ref).to.be.equal('');
+            expect(div2.getAttribute('attr')).to.be.equal('');
+            expect(div2.dataset.ref).to.be.equal('');
+
+            const [, div3, div4] = DNA.render(DNA.html`
+                <${Fn} />
+                <div class="test" attr=${undefined} data-ref=${undefined}></div>
+            `, wrapper);
+
+            expect(wrapper.childNodes).to.have.lengthOf(3);
+            expect(div3.tagName).to.be.equal('DIV');
+            expect(div4.tagName).to.be.equal('DIV');
+            expect(div3.dataset.ref).to.be.equal('');
+            expect(div4.getAttribute('attr')).to.be.null;
+            expect(div4.dataset.ref).to.be.undefined;
+
+            expect(div1).to.be.equal(div3);
+            expect(div2).to.be.equal(div4);
+        });
     });
 });

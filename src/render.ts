@@ -218,7 +218,7 @@ export const internalRender = (
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-    let currentProperties = currentContext ? getContextProperties(currentContext, context, slot) : null;
+    let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
 
     const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
@@ -377,7 +377,7 @@ export const internalRender = (
                         currentProperties = null;
                         break checkKey;
                     }
-                    currentProperties = getContextProperties(currentContext, context, slot);
+                    currentProperties = getContextProperties(currentContext, rootContext, slot);
                     currentKey = currentProperties.key;
                 }
 
@@ -420,9 +420,9 @@ export const internalRender = (
             const templateElement = templateNode as HTMLElement;
 
             templateContext = templateContext || getOrCreateContext(templateNode);
-            templateProperties = templateProperties || getContextProperties(templateContext, context, slot);
+            templateProperties = templateProperties || getContextProperties(templateContext, rootContext, slot);
             const properties = fillEmptyValues(templateProperties, template.properties);
-            setContextProperties(templateContext, context, slot, properties);
+            setContextProperties(templateContext, rootContext, slot, properties);
 
             let propertyKey: keyof typeof properties;
             for (propertyKey in properties) {
@@ -597,7 +597,7 @@ export const internalRender = (
             }
             currentNode = childNodes.item(++currentIndex) as Node;
             currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-            currentProperties = currentContext ? getContextProperties(currentContext, context, slot) : null;
+            currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
         } else {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
