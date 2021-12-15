@@ -1,3 +1,10 @@
+## [3.13.6](https://github.com/chialab/dna/compare/v3.13.5...v3.13.6) (2021-12-15)
+
+
+### Bug Fixes
+
+* ts inference for listener ([b5329c9](https://github.com/chialab/dna/commit/b5329c9294e3bab897fbd9b15afc8ce6182571f4))
+
 ## [3.13.4](https://github.com/chialab/dna/compare/v3.13.3...v3.13.4) (2021-12-14)
 
 
