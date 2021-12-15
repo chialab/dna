@@ -453,7 +453,8 @@ export const createListener = <T extends ComponentInstance, P extends MethodsOf<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
     if (methodKey !== undefined) {
-        defineListener(targetOrClassElement, eventName, target, selector, targetOrClassElement[methodKey], options);
+        const method = targetOrClassElement[methodKey] as unknown as DelegatedEventCallback;
+        defineListener(targetOrClassElement, eventName, target, selector, method, options);
         return;
     }
 
@@ -462,7 +463,8 @@ export const createListener = <T extends ComponentInstance, P extends MethodsOf<
         ...element,
         finisher(constructor: Constructor<T>) {
             const prototype = constructor.prototype as T;
-            defineListener(prototype, eventName, target, selector, prototype[element.key as P], options);
+            const method = prototype[element.key as P] as unknown as DelegatedEventCallback;
+            defineListener(prototype, eventName, target, selector, method, options);
         },
     };
 };
