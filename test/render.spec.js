@@ -689,6 +689,38 @@ describe('render', function() {
             expect(option3).to.be.equal(option4);
         });
 
+        it('should add a row', () => {
+            DNA.render(DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `, wrapper);
+
+            const option1 = wrapper.childNodes[0].childNodes[0];
+            const option2 = wrapper.childNodes[0].childNodes[1];
+            const option3 = wrapper.childNodes[0].childNodes[2];
+
+            items.splice(1, 0, 'Dylan');
+
+            DNA.render(DNA.html`
+                <select>
+                    ${items.map((item) => DNA.html`
+                        <option key=${item} value=${item}>${item}</option>
+                    `)}
+                </select>
+            `, wrapper);
+
+            const option4 = wrapper.childNodes[0].childNodes[0];
+            const option5 = wrapper.childNodes[0].childNodes[2];
+            const option6 = wrapper.childNodes[0].childNodes[3];
+            expect(wrapper.childNodes[0].childNodes[1].textContent).to.be.equal('Dylan');
+            expect(option1).to.be.equal(option4);
+            expect(option2).to.be.equal(option5);
+            expect(option3).to.be.equal(option6);
+        });
+
         it('should delete a row', () => {
             DNA.render(DNA.html`
                 <select>

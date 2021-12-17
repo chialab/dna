@@ -13,6 +13,9 @@ export type WithContext<T extends Node> = T & {
     [CONTEXT_SYMBOL]?: Context<T>;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Keyed = Map<any, Node>;
+
 /**
  * The node context interface.
  */
@@ -31,6 +34,7 @@ export type Context<T extends Node = Node, P = VProperties<T>, S = Map<string, u
     end?: Node;
     fragments: Context[];
     root?: Context;
+    keyed?: Keyed;
     requestUpdate?: UpdateRequest;
     __proto__: {
         readonly size: number;

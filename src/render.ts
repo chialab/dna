@@ -2,7 +2,7 @@ import type { IterableNodeList } from './helpers';
 import type { VProperties, VClasses, VStyle, Template } from './JSX';
 import type { ComponentInstance } from './Component';
 import type { UpdateRequest } from './FunctionComponent';
-import type { Context } from './Context';
+import type { Keyed, Context } from './Context';
 import htm from 'htm';
 import { isNode, isElement, isArray, indexOf, contains, cloneChildNodes, getPropertyDescriptor } from './helpers';
 import { h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
@@ -220,6 +220,9 @@ export const internalRender = (
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
     let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
 
+    const oldKeyed = context.keyed || new Map();
+    const keyed: Keyed = context.keyed = new Map();
+
     const handleItems = (template: Template, filter?: Filter) => {
         if (template == null || template === false) {
             return;
@@ -365,36 +368,14 @@ export const internalRender = (
 
             const { key, children, namespaceURI } = template;
             templateNamespace = namespaceURI || namespace;
-            checkKey: if (currentContext && currentProperties) {
-                let currentKey = currentProperties.key;
-                while (currentKey != null && key != null && key !== currentKey) {
-                    // if keys conflict, we can safely remove previous keyed element.
-                    emptyFragments(currentContext);
-                    DOM.removeChild(root, currentNode, slot);
-                    currentNode = childNodes.item(currentIndex) as Node;
-                    currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-                    if (!currentContext) {
-                        currentProperties = null;
-                        break checkKey;
-                    }
-                    currentProperties = getContextProperties(currentContext, rootContext, slot);
-                    currentKey = currentProperties.key;
-                }
-
-                if (currentFragment && currentNode) {
-                    const io = indexOf.call(childNodes, currentNode);
-                    const lastIo = indexOf.call(childNodes, currentFragment.end);
-                    if (io !== -1 && io > lastIo) {
-                        break checkKey;
-                    }
-                }
-
-                if (key != null || currentKey != null) {
-                    if (key === currentKey) {
-                        templateNode = currentNode;
-                        templateContext = currentContext;
-                        templateProperties = currentProperties;
-                    }
+            if (currentContext && currentProperties) {
+                const currentKey = currentProperties.key;
+                if (oldKeyed.has(key)) {
+                    templateNode = oldKeyed.get(key) as Node;
+                    templateContext = getOrCreateContext(templateNode);
+                    templateProperties = getContextProperties(templateContext, rootContext, slot);
+                } else if (currentKey != null && currentKey !== key) {
+                    //
                 } else if (isVComponent(template) && currentNode instanceof template.Component) {
                     templateNode = currentNode;
                     templateContext = currentContext;
@@ -414,6 +395,10 @@ export const internalRender = (
                 } else {
                     templateNode = DOM.createElementNS(templateNamespace, template.tag);
                 }
+            }
+
+            if (key) {
+                keyed.set(key, templateNode);
             }
 
             // update the Node properties
