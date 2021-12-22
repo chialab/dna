@@ -267,6 +267,9 @@ export const internalRender = (
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
+                setContextProperties(renderFragmentContext, rootContext, slot, {
+                    key,
+                } as VProperties<Node>);
                 const isAttached = contains.bind(null, fragments, renderFragmentContext);
                 let running = true;
                 const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
