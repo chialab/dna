@@ -1,3 +1,10 @@
+## [3.14.1](https://github.com/chialab/dna/compare/v3.14.0...v3.14.1) (2021-12-22)
+
+
+### Bug Fixes
+
+* key function components ([d8f7878](https://github.com/chialab/dna/commit/d8f78783cdb708f2240c8cdd6d92656186019b83))
+
 # [3.14.0](https://github.com/chialab/dna/compare/v3.13.6...v3.14.0) (2021-12-17)
 
 ## [3.13.6](https://github.com/chialab/dna/compare/v3.13.5...v3.13.6) (2021-12-15)
