@@ -443,6 +443,48 @@ describe('render', function() {
             DNA.render(DNA.h('div'), wrapper);
             expect(elem.childNodes).to.have.lengthOf(1);
         });
+
+        it('should not reuse slotted children', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get properties() {
+                    return {
+                        oneMore: {
+                            type: Boolean,
+                        },
+                    };
+                }
+
+                render() {
+                    return [
+                        DNA.h('div', { class: 'child1' }),
+                        DNA.h('div', { class: 'child2' }),
+                        this.oneMore && DNA.h('div', { class: 'child3' }),
+                        DNA.h('slot'),
+                    ];
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            const elem = DNA.render(DNA.h(TestElement, {}, DNA.h('div', {})), wrapper);
+            expect(elem.childNodes).to.be.have.lengthOf(3);
+            const [slotted] = elem.slotChildNodes;
+            const [div1, div2, div3] = elem.childNodes;
+            elem.oneMore = true;
+            DNA.render(DNA.h(TestElement, {}, DNA.h('div', {})), wrapper);
+            expect(elem.childNodes).to.be.have.lengthOf(4);
+            const [slotted2] = elem.slotChildNodes;
+            const [div4, div5, div6, div7] = elem.childNodes;
+            expect(slotted).to.be.equal(slotted2);
+            expect(div1).to.be.equal(div4);
+            expect(div2).to.be.equal(div5);
+            expect(div3).to.be.equal(div7);
+            expect(div4.className).to.be.equal('child1');
+            expect(div5.className).to.be.equal('child2');
+            expect(div6.className).to.be.equal('child3');
+            expect(div7.className).to.be.equal('');
+        });
     });
 
     describe('not keyed', () => {

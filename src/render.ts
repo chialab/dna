@@ -338,17 +338,10 @@ export const internalRender = (
                 if (rootContext.slotChildNodes) {
                     const { properties, children } = template;
                     const slotChildNodes = rootContext.slotChildNodes;
-                    for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-                        const node = slotChildNodes.item(i) as Node;
-                        const context = getOrCreateContext(node);
-                        if (!context.root) {
-                            context.root = rootContext;
-                        }
-                    }
-
                     const name = properties.name;
                     const filter = (item: Node) => {
-                        if (getOrCreateContext(item).root === rootContext) {
+                        const slotContext = getOrCreateContext(item);
+                        if (slotContext.root === rootContext.root) {
                             if (isElement(item)) {
                                 if (!name) {
                                     return !item.getAttribute('slot');
@@ -379,14 +372,16 @@ export const internalRender = (
                     templateProperties = getContextProperties(templateContext, rootContext, slot);
                 } else if (currentKey != null && currentKey !== key) {
                     //
-                } else if (isVComponent(template) && currentNode instanceof template.Component) {
-                    templateNode = currentNode;
-                    templateContext = currentContext;
-                    templateProperties = currentProperties;
-                } else if (isVTag(template) && currentContext.tagName === template.tag) {
-                    templateNode = currentNode;
-                    templateContext = currentContext;
-                    templateProperties = currentProperties;
+                } else if (!currentContext.root || currentContext.root === rootContext) {
+                    if (isVComponent(template) && currentNode instanceof template.Component) {
+                        templateNode = currentNode;
+                        templateContext = currentContext;
+                        templateProperties = currentProperties;
+                    } else if (isVTag(template) && currentContext.tagName === template.tag) {
+                        templateNode = currentNode;
+                        templateContext = currentContext;
+                        templateProperties = currentProperties;
+                    }
                 }
             }
 
@@ -575,14 +570,21 @@ export const internalRender = (
             return;
         }
 
+        templateContext = templateContext || getOrCreateContext(templateNode);
         // now, we are confident that if the input is a Node or a Component,
         // check if Nodes are the same instance
         // (patch result should return same Node instances for compatible types)
         if (contains(childNodes, templateNode)) {
-            while (templateNode !== currentNode) {
+            while (currentNode && currentContext && templateNode !== currentNode) {
+                if (currentContext.root === rootContext) {
+                    delete currentContext.root;
+                }
+
                 DOM.removeChild(root, currentNode, slot);
                 currentNode = childNodes.item(currentIndex) as Node;
+                currentContext = currentNode ? getOrCreateContext(currentNode) : null;
             }
+
             currentNode = childNodes.item(++currentIndex) as Node;
             currentContext = currentNode ? getOrCreateContext(currentNode) : null;
             currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
@@ -590,6 +592,9 @@ export const internalRender = (
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
             // otherwise append the new Node at the end of the parent
+            if (!templateContext.root) {
+                templateContext.root = rootContext;
+            }
             DOM.insertBefore(root, templateNode, currentNode, slot);
             currentIndex++;
         }
@@ -624,10 +629,8 @@ export const internalRender = (
     while (currentIndex < lastIndex) {
         const item = childNodes.item(--lastIndex) as Node;
         const context = getOrCreateContext(item);
-        if (slot) {
-            if (context.root === rootContext) {
-                delete context.root;
-            }
+        if (context.root === rootContext) {
+            delete context.root;
         }
         emptyFragments(context);
         DOM.removeChild(root, item, slot);
