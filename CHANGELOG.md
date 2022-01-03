@@ -1,3 +1,10 @@
+## [3.14.2](https://github.com/chialab/dna/compare/v3.14.1...v3.14.2) (2022-01-03)
+
+
+### Bug Fixes
+
+* do not reuse slotted children in vdom ([b4a4fe5](https://github.com/chialab/dna/commit/b4a4fe569036e9c774e464245f00ec6b122ac026))
+
 ## [3.14.1](https://github.com/chialab/dna/compare/v3.14.0...v3.14.1) (2021-12-22)
 
 
