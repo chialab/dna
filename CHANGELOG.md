@@ -1,3 +1,10 @@
+## [3.14.3](https://github.com/chialab/dna/compare/v3.14.2...v3.14.3) (2022-01-03)
+
+
+### Bug Fixes
+
+* virtual dom for slotted children ([d592401](https://github.com/chialab/dna/commit/d5924011f4181080dfca0cef59415b83fd466639))
+
 ## [3.14.2](https://github.com/chialab/dna/compare/v3.14.1...v3.14.2) (2022-01-03)
 
 
