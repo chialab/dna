@@ -1,7 +1,7 @@
 import type { Constructor } from './helpers';
 import { window } from './window';
 import { isConnected, connect, defineProperty, HTMLElementConstructor, document } from './helpers';
-import { isComponent, isComponentConstructor, isConstructed } from './Component';
+import { isComponent, isComponentConstructor } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
 
@@ -229,9 +229,6 @@ export class CustomElementRegistry {
 
         // check if already instantiated
         if (isComponent(root)) {
-            if (isConstructed(root)) {
-                root.forceUpdate();
-            }
             return;
         }
 
