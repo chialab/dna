@@ -1,3 +1,10 @@
+## [3.14.4](https://github.com/chialab/dna/compare/v3.14.3...v3.14.4) (2022-01-12)
+
+
+### Bug Fixes
+
+* prevent unnecessary update ([9537fa2](https://github.com/chialab/dna/commit/9537fa21c749505e773c5ac61ce2abf6d06b1c83))
+
 ## [3.14.3](https://github.com/chialab/dna/compare/v3.14.2...v3.14.3) (2022-01-03)
 
 
