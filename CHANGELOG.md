@@ -1,3 +1,10 @@
+## [3.14.5](https://github.com/chialab/dna/compare/v3.14.4...v3.14.5) (2022-01-13)
+
+
+### Bug Fixes
+
+* render components document load ([19b57fb](https://github.com/chialab/dna/commit/19b57fb5f3de6f44c6347d87918f169da48d3783))
+
 ## [3.14.4](https://github.com/chialab/dna/compare/v3.14.3...v3.14.4) (2022-01-12)
 
 
