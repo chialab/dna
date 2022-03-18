@@ -1,3 +1,10 @@
+## [3.14.6](https://github.com/chialab/dna/compare/v3.14.5...v3.14.6) (2022-03-18)
+
+
+### Bug Fixes
+
+* do not merge property observers across inheritance ([8a6df78](https://github.com/chialab/dna/commit/8a6df78bc8281377b1785d4b174732306b8c8093))
+
 ## [3.14.5](https://github.com/chialab/dna/compare/v3.14.4...v3.14.5) (2022-01-13)
 
 
