@@ -183,10 +183,6 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
      */
     toAttribute?: (value: T[P]) => string|null|undefined;
     /**
-     * A list of field observables.
-     */
-    observers: PropertyObserver<T[P]>[];
-    /**
      * A custom validation function for the property.
      * Property assignement throws when this function returns falsy values.
      */
@@ -230,7 +226,7 @@ export const getProperties = <T extends ComponentInstance>(prototype: WithProper
     const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (!hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
-        return {
+        return prototype[PROPERTIES_SYMBOL] = {
             __proto__: props,
         } as unknown as PropertiesOf<T>;
     }
@@ -271,19 +267,6 @@ const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<
 };
 
 /**
- * Get observers for the property.
- * @param declaration The property declaration.
- * @return A list of observers.
- */
-const extractObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
-    const observers = declaration.observers || [];
-    if (declaration.observe) {
-        return [declaration.observe, ...observers];
-    }
-    return observers;
-};
-
-/**
  * Define an observed property.
  * @param prototype The component prototype.
  * @param propertyKey The name of the property.
@@ -295,7 +278,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
-    const declarations = prototype[PROPERTIES_SYMBOL] = getProperties(prototype);
+    const declarations = getProperties(prototype);
     const attribute = hasAttribute ?
         (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
         undefined;
@@ -351,7 +334,6 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
         symbol,
         state,
         type,
-        observers: extractObservers(declaration),
         attribute,
         event,
     } as Property<T, P>;
@@ -437,6 +419,14 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     };
 
     _defineProperty(prototype, propertyKey, finalDescriptor);
+
+    const observers = [...(declaration.observers || [])];
+    if (declaration.observe) {
+        observers.unshift(declaration.observe);
+    }
+    observers.forEach((observer) => {
+        addObserver(prototype, propertyKey, observer as PropertyObserver<T[P]>);
+    });
 
     return finalDescriptor;
 };
@@ -588,8 +578,7 @@ export const createProperty = <T extends ComponentInstance, P extends keyof Memb
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>, M extends keyof Members<T>>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
     if (methodKey !== undefined) {
-        const property = getProperty(targetOrClassElement, propertyKey, true);
-        property.observers.push(targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
+        addObserver(targetOrClassElement, propertyKey, targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
         return;
     }
 
@@ -599,8 +588,7 @@ export const createObserver = <T extends ComponentInstance, P extends keyof Prop
     }
     const observer = element.descriptor.value as PropertyObserver<T[P]>;
     element.finisher = (constructor) => {
-        const property = getProperty(constructor.prototype, propertyKey, true);
-        property.observers.push(observer);
+        addObserver(constructor.prototype, propertyKey, observer);
     };
     return element;
 };
@@ -610,7 +598,19 @@ export const createObserver = <T extends ComponentInstance, P extends keyof Prop
  * @param element The node.
  * @return The map of observers.
  */
-export const getObservers = <T extends ComponentInstance>(element: WithObservers<T>) => element[OBSERVERS_SYMBOL] = element[OBSERVERS_SYMBOL] || {} as ObserversOf<T>;
+export const getObservers = <T extends ComponentInstance>(element: WithObservers<T>) => {
+    const observers = (element[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
+
+    if (!hasOwnProperty.call(element, OBSERVERS_SYMBOL)) {
+        return element[OBSERVERS_SYMBOL] = (Object.keys(observers) as (keyof PropertiesOf<T>)[])
+            .reduce((result, key) => {
+                result[key] = [...observers[key]];
+                return result;
+            }, {} as ObserversOf<T>);
+    }
+
+    return observers;
+};
 
 /**
  * Get observers for an element property.

@@ -248,6 +248,52 @@ describe('property', function() {
             expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
         });
 
+        it('should not merge observe decorators', () => {
+            const listener = spyFunction((...args) => args);
+            const listener2 = spyFunction((...args) => args);
+
+            let MyParent = class MyParent extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.testProp = 42;
+                }
+
+                listener(...args) {
+                    listener(...args);
+                }
+            };
+
+            MyParent = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyParent);
+            __decorate([
+                DNA.property(),
+            ], MyParent.prototype, 'testProp', undefined);
+            __decorate([
+                DNA.observe('testProp'),
+            ], MyParent.prototype, 'listener', undefined);
+
+            let MyElement = class MyElement extends MyParent {
+                listener2(...args) {
+                    listener2(...args);
+                }
+            }
+
+            MyElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyElement);
+            __decorate([
+                DNA.observe('testProp'),
+            ], MyElement.prototype, 'listener2', undefined);
+
+            expect(new MyParent({ testProp: 84 })).to.have.property('testProp', 84);
+            expect(listener.invoked).to.be.true;
+            expect(listener2.invoked).to.be.false;
+
+            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            expect(listener2.invoked).to.be.true;
+        });
+
         it('should define a property with observe decorator (babel)', () => {
             const listener = spyFunction((...args) => args);
 
