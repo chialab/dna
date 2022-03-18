@@ -6,10 +6,10 @@ export type GlobalNamespace = Window & typeof globalThis & {
 
 let namespace: GlobalNamespace;
 if (typeof window !== 'undefined') {
-    // browser
+    /* eslint-env browser */
     namespace = window;
 } else if (typeof global !== 'undefined') {
-    // node
+    /* eslint-env node */
     const jsd = new jsdom.JSDOM();
     namespace = jsd.window as unknown as GlobalNamespace;
     namespace._jsdom = jsd;

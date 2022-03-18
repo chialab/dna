@@ -3,14 +3,13 @@ import type { CustomElement, CustomElementConstructor } from './CustomElementReg
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './JSX';
-import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver } from './property';
+import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, getPropertyForAttribute } from './property';
 import { createSymbol, HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
 import { getOrCreateContext } from './Context';
 import { internalRender } from './render';
-import { getProperties, getPropertyForAttribute } from './property';
 
 /**
  * A symbol which identify components.
@@ -404,11 +403,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 } else if (typeof property.defaultValue !== 'undefined') {
                     element[propertyKey] = property.defaultValue;
                 }
-
-                const observers = property.observers;
-                for (let i = 0; i < observers.length; i++) {
-                    element.observe(propertyKey, observers[i]);
-                }
             }
 
             element.initialize(props);
@@ -706,7 +700,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
  * @param base The constructor or the class to shim.
  * @return A newable constructor with the same prototype.
  */
-export const shim = <T extends typeof HTMLElement>(base: T): T => {
+export const shim = <T extends { new(): HTMLElement; prototype: HTMLElement }>(base: T): T => {
     type Component = ComponentInstance<InstanceType<T>>;
     type Constrcutor = ComponentConstructor<Component>;
 
