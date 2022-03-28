@@ -79,6 +79,8 @@ export type {
     SVGTagNameMap,
     Template,
     VObject,
+    VProps,
+    VAttrs,
     VProperties,
     VComponent,
     VFragment,

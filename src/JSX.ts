@@ -1384,7 +1384,7 @@ export type VRenderProperties = {
 /**
  * Get prototype properties that can be assigned to the node.
  */
-type VProps<T> = Omit<
+export type VProps<T> = Omit<
     T extends keyof HTMLTagNameMap ? Props<HTMLTagNameMap[T]> :
     T extends keyof SVGTagNameMap ? Props<SVGTagNameMap[T]> :
     T extends Element ? Props<T> :
@@ -1403,7 +1403,7 @@ type VProps<T> = Omit<
 /**
  * Get a list of html attributes that can be assigned to the node.
  */
-type VAttrs<T, E> = Omit<
+export type VAttrs<T, E> = Omit<
     E extends keyof HTMLTagNameMap ? AttributesMap[E] :
     E extends keyof SVGTagNameMap ? AttributesMap[E] :
     T extends keyof HTMLTagNameMap ? AttributesMap[T] :
