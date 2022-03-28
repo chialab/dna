@@ -1,3 +1,10 @@
+# [3.16.0](https://github.com/chialab/dna/compare/v3.15.0...v3.16.0) (2022-03-28)
+
+
+### Features
+
+* expose VAttrs and VProps ([6ac393f](https://github.com/chialab/dna/commit/6ac393f5151fdc2382d62fd7ccd29d5365c4f40b))
+
 # [3.15.0](https://github.com/chialab/dna/compare/v3.14.6...v3.15.0) (2022-03-28)
 
 ## [3.14.6](https://github.com/chialab/dna/compare/v3.14.5...v3.14.6) (2022-03-18)
