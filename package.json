@@ -48,7 +48,7 @@
     "test:browser": "rna test:browser --coverage",
     "test:saucelabs": "rna test:saucelabs --browsers 'modern' 'legacy'",
     "test:node": "rna test:node",
-    "lint": "eslint src",
+    "lint": "eslint src analyzer test",
     "typecheck": "tsc --noEmit",
     "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
     "prepack": "yarn build",

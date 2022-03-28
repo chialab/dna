@@ -1,6 +1,7 @@
+// eslint-disable-next-line import/no-unresolved
+import * as DNA from '@chialab/dna';
 import { __decorate } from 'tslib';
 import _decorate from '@babel/runtime/helpers/decorate';
-import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
 import { spyFunction, getComponentName } from './helpers.spec.js';
 

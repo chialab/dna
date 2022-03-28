@@ -1,7 +1,8 @@
-import { spyFunction, getComponentName, wait } from './helpers.spec.js';
-import { Observable } from 'rxjs';
+// eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
+import { Observable } from 'rxjs';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
+import { spyFunction, getComponentName, wait } from './helpers.spec.js';
 
 const IMG = 'data:image/png;base64,';
 

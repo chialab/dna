@@ -1,4 +1,5 @@
-import { Component, customElement, extend, property, observe } from '@chialab/dna';
+// eslint-disable-next-line import/no-unresolved
+import { window, Component, customElement, extend, property, observe } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -13,7 +14,7 @@ export class TestElement2 extends Component {
 }
 
 @customElement('x-test3')
-export class TestElement3 extends extend(HTMLDetailsElement) {
+export class TestElement3 extends extend(window.HTMLDetailsElement) {
     // override native prop
     @property() open!: boolean;
 }
@@ -35,8 +36,7 @@ export class TestElement6 extends Component {
         observe(this: TestElement6, oldValue, newValue) {
             this.check(oldValue, newValue);
         },
-    })
-    sample?: string;
+    }) sample?: string;
 
     @observe('sample')
     check(oldValue: String|undefined, newValue: String) {

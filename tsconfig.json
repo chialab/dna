@@ -11,7 +11,6 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "noEmit": false,
     "allowJs": true,
     "checkJs": true,
     "experimentalDecorators": true,
@@ -21,7 +20,6 @@
     "moduleResolution": "node"
   },
   "include": [
-    "./src/**/*.ts",
-    "./analyzer/**/*.js"
+    "./src/**/*.ts"
   ],
 }

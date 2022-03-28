@@ -1,6 +1,7 @@
-import { getComponentName } from './helpers.spec.js';
+// eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
 import { expect } from '@esm-bundle/chai/esm/chai.js';
+import { getComponentName } from './helpers.spec.js';
 
 describe('DOM', function() {
     this.timeout(10 * 1000);
