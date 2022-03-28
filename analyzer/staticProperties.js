@@ -1,56 +1,74 @@
-import { isAlsoAttribute, createAttributeFromField, getAttributeName, hasKeyword, getPropertiesObject } from './utils.js';
+import { hasAttribute, getClassDeclaration, getAttributeName, getPropertiesObject, createAttributeFromField, hasKeyword } from './utils.js';
 
 export function staticProperties() {
-    return {
+    /**
+     * @type {import('@custom-elements-manifest/analyzer').Plugin}
+     */
+    const plugin = {
         name: 'DNA-STATIC-PROPERTIES',
         analyzePhase({ ts, node, moduleDoc }) {
-            switch (node.kind) {
-                case ts.SyntaxKind.ClassDeclaration: {
-                    if (!node.members) {
-                        return;
-                    }
-
-                    const hasDefaultModifier = hasKeyword(node, ts.SyntaxKind.DefaultKeyword);
-                    const className = hasDefaultModifier ? 'default' : node.name?.getText();
-                    const currClass = moduleDoc.declarations?.find(declaration => declaration.name === className);
-                    if (!currClass?.members) {
-                        return;
-                    }
-
-                    node.members.forEach((member) => {
-                        if (!member || !hasKeyword(member, ts.SyntaxKind.StaticKeyword) || member.name.text !== 'properties') {
-                            return;
-                        }
-
-                        const properties = getPropertiesObject(ts, member)?.properties;
-                        if (!properties) {
-                            return;
-                        }
-
-                        properties.forEach((property) => {
-                            const memberName = property.name;
-                            const classMember = {
-                                kind: 'field',
-                                name: property.name.getText(),
-                                privacy: 'public',
-                            };
-
-                            if (isAlsoAttribute(ts, property)) {
-                                const attribute = createAttributeFromField(classMember, getAttributeName(ts, property) || memberName);
-                                currClass.attributes = [...(currClass.attributes || []), attribute];
-                            }
-
-                            const existingField = currClass.members.find((field) => field.name === classMember.name);
-                            if (!existingField) {
-                                currClass.members = [...(currClass.members || []), classMember];
-                            } else {
-                                currClass.members = currClass.members.map((field) => (field.name === classMember.name ? ({ ...field, ...classMember }) : field));
-                            }
-                        });
-                    });
-                    break;
-                }
+            if (!ts.isClassDeclaration(node)) {
+                return;
             }
+
+            if (!node.members || !node.name) {
+                return;
+            }
+
+            const hasDefaultModifier = hasKeyword(node, ts.SyntaxKind.DefaultKeyword);
+            const className = hasDefaultModifier ? 'default' : node.name.getText();
+            const currClass = getClassDeclaration(moduleDoc, className);
+            if (!currClass) {
+                return;
+            }
+
+            node.members.forEach((member) => {
+                if (!member.name ||
+                    !hasKeyword(member, ts.SyntaxKind.StaticKeyword) ||
+                    (!ts.isPropertyDeclaration(member) && !ts.isGetAccessor(member)) ||
+                    member.name.getText() !== 'properties') {
+                    return;
+                }
+
+                const properties = getPropertiesObject(ts, member)?.properties;
+                if (!properties) {
+                    return;
+                }
+
+                properties.forEach((property) => {
+                    if (!ts.isPropertyAssignment(property) || !property.name) {
+                        return;
+                    }
+
+                    const initializer = property.initializer;
+                    if (!initializer || !ts.isObjectLiteralExpression(initializer)) {
+                        return;
+                    }
+
+                    /**
+                     * @type {import('custom-elements-manifest/schema').ClassField}
+                     */
+                    const classMember = {
+                        kind: 'field',
+                        name: property.name.getText(),
+                        privacy: 'public',
+                    };
+
+                    if (hasAttribute(ts, initializer)) {
+                        const attribute = createAttributeFromField(classMember, getAttributeName(ts, initializer) || property.name.getText());
+                        currClass.attributes = [...(currClass.attributes || []), attribute];
+                    }
+
+                    const existingField = currClass.members?.find((field) => field.name === classMember.name);
+                    if (!existingField) {
+                        currClass.members = [...(currClass.members || []), classMember];
+                    } else {
+                        currClass.members = currClass.members?.map((field) => (field.name === classMember.name ? ({ ...field, ...classMember }) : field)) ?? [];
+                    }
+                });
+            });
         },
     };
+
+    return plugin;
 }

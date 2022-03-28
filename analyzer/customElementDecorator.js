@@ -1,31 +1,39 @@
-import { getDecorator, resolveModuleOrPackageSpecifier } from './utils.js';
+import { getDecorator, resolveModuleOrPackageSpecifier, getDecoratorArguments } from './utils.js';
 
 export function customElementDecorator() {
-    return {
+    /**
+     * @type {import('@custom-elements-manifest/analyzer').Plugin}
+     */
+    const plugin = {
         name: 'DNA-CUSTOM-ELEMENT-DECORATOR',
         analyzePhase({ ts, node, moduleDoc, context }) {
+            if (!ts.isClassDeclaration(node)) {
+                return;
+            }
+            if (!node.name) {
+                return;
+            }
+
             const customElementDecorator = getDecorator(node, 'customElement');
             if (!customElementDecorator) {
                 return;
             }
 
-            const className = node.name.text;
-            const argument = customElementDecorator.expression?.arguments[0];
-            if (argument?.kind !== ts.SyntaxKind.StringLiteral) {
+            const argument = getDecoratorArguments(customElementDecorator)[0];
+            if (!ts.isStringLiteral(argument)) {
                 return;
             }
-            const tagName = argument.text;
 
-            const definitionDoc = {
+            moduleDoc.exports = [...(moduleDoc.exports || []), {
                 kind: 'custom-element-definition',
-                name: tagName,
+                name: argument.text,
                 declaration: {
-                    name: className,
-                    ...resolveModuleOrPackageSpecifier(moduleDoc, context, className),
+                    name: node.name.getText(),
+                    ...resolveModuleOrPackageSpecifier(moduleDoc, context, node.getText()),
                 },
-            };
-
-            moduleDoc.exports = [...(moduleDoc.exports || []), definitionDoc];
+            }];
         },
     };
+
+    return plugin;
 }

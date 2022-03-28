@@ -1,20 +1,27 @@
 const MEMBER_DENY_LIST = ['properties', 'listeners'];
 
 export function memberDenyList() {
-    return {
+    /**
+     * @type {import('@custom-elements-manifest/analyzer').Plugin}
+     */
+    const plugin = {
         name: 'DNA-MEMBER-DENYLIST',
         moduleLinkPhase({ moduleDoc }) {
-            const classes = moduleDoc?.declarations?.filter((declaration) => declaration.kind === 'class');
-            if (!classes) {
+            if (!moduleDoc.declarations) {
                 return;
             }
 
+            const classes = /** @type {import('custom-elements-manifest/schema').ClassDeclaration[]} */ (moduleDoc.declarations.filter((declaration) => declaration.kind === 'class'));
             classes.forEach((klass) => {
                 if (!klass?.members) {
                     return;
                 }
-                klass.members = klass.members.filter((member) => !MEMBER_DENY_LIST.includes(member.name));
+                klass.members = klass.members
+                    .filter((member) => !MEMBER_DENY_LIST.includes(member.name))
+                    .filter((member) => member.privacy !== 'private' && member.privacy !== 'protected');
             });
         },
     };
+
+    return plugin;
 }

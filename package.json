@@ -75,6 +75,7 @@
     "@chialab/rna-node-test-runner": "^0.15.0",
     "@chialab/rna-saucelabs-test-runner": "^0.15.0",
     "@chialab/semantic-release-config": "^1.0.0",
+    "@custom-elements-manifest/analyzer": "^0.5.7",
     "@esm-bundle/chai": "^4.3.4",
     "@types/jsdom": "^16.0.0",
     "core-js": "^3.6.4",
