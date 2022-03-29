@@ -1,3 +1,10 @@
+## [3.16.1](https://github.com/chialab/dna/compare/v3.16.0...v3.16.1) (2022-03-29)
+
+
+### Bug Fixes
+
+* analyzer attribute name ([58eb34f](https://github.com/chialab/dna/commit/58eb34f4b047f13b4e08a6ac25054a60db39cbfd))
+
 # [3.16.0](https://github.com/chialab/dna/compare/v3.15.0...v3.16.0) (2022-03-28)
 
 
