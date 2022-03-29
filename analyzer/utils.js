@@ -102,8 +102,8 @@ export function getAttributeName(ts, node) {
             continue;
         }
         if (property.name.getText() === 'attribute') {
-            if (property.initializer.kind === ts.SyntaxKind.StringLiteral) {
-                return property.initializer.getText();
+            if (ts.isStringLiteral(property.initializer)) {
+                return property.initializer.text;
             }
 
             return null;
