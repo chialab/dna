@@ -144,6 +144,22 @@ card.addEventListener('agechange', (event) => {
 }):
 ```
 
+#### update
+
+By default, every property change triggers a re-render of the component. If you want to avoid this behavior, you can set the `update` configuration key to `false`.
+
+```ts
+import { Component, customElement, state } from '@chialab/dna';
+
+@customElement('x-toggle')
+class Toggle extends Component {
+    @state({
+        update: false,
+    })
+    active?: boolean;
+}ì
+```
+
 ## Accessors
 
 ### Decorated accessors

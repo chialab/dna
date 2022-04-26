@@ -27,6 +27,60 @@ describe('property', function() {
             expect(new MyElement()).to.have.property('testProp', undefined);
         });
 
+        it('should update component on a property change', () => {
+            let MyElement = class MyElement extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.testProp = 42;
+                }
+
+                render() {
+                    return this.testProp;
+                }
+            };
+
+            __decorate([
+                DNA.property(),
+            ], MyElement.prototype, 'testProp', undefined);
+            MyElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyElement);
+
+            const elem = new MyElement();
+            DNA.DOM.appendChild(DNA.window.document.body, elem);
+            expect(elem.textContent).to.be.equal('42');
+            elem.testProp = 84;
+            expect(elem.textContent).to.be.equal('84');
+            DNA.DOM.removeChild(DNA.window.document.body, elem);
+        });
+
+        it('should not update component on a property change if not requested', () => {
+            let MyElement = class MyElement extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.testProp = 42;
+                }
+
+                render() {
+                    return this.testProp;
+                }
+            };
+
+            __decorate([
+                DNA.property({ update: false }),
+            ], MyElement.prototype, 'testProp', undefined);
+            MyElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], MyElement);
+
+            const elem = new MyElement();
+            DNA.DOM.appendChild(DNA.window.document.body, elem);
+            expect(elem.textContent).to.be.equal('42');
+            elem.testProp = 84;
+            expect(elem.textContent).to.be.equal('42');
+            DNA.DOM.removeChild(DNA.window.document.body, elem);
+        });
+
         it('should define a property with a defaultValue', () => {
             let MyElement = class MyElement extends DNA.Component {
                 constructor(...args) {

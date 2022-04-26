@@ -71,7 +71,15 @@ export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = C
     /**
      * The property is bound to an attribute. Also specifies the attribute name if different from the property.
      */
-    attribute?: boolean|string;
+    attribute?: boolean | string;
+    /**
+     * The event to fire on property change.
+     */
+    event?: true | string;
+    /**
+     * Property change should trigger component update.
+     */
+    update?: boolean;
     /**
      * Convert attribute to property value.
      *
@@ -127,10 +135,6 @@ export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = C
      */
     setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => ConvertConstructorTypes<TypeConstructorHint>;
     /**
-     * The event to fire on property change.
-     */
-    event?: true | string;
-    /**
      * The initializer function.
      */
     initializer?: Function;
@@ -161,6 +165,14 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
      * The bound attribute name.
      */
     attribute?: string;
+    /**
+     * The event to fire on property change.
+     */
+    event?: string;
+    /**
+     * Property change should trigger component update.
+     */
+    update?: boolean;
     /**
      * The initial value of the property.
      */
@@ -207,10 +219,6 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
      * @param newValue The value to set.
      */
     setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T[P];
-    /**
-     * The event to fire on property change.
-     */
-    event?: string;
     /**
      * The initializer function.
      */
@@ -287,6 +295,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
         undefined;
     const state = !!declaration.state;
     const type = extractTypes(declaration);
+    const update = typeof declaration.update === 'boolean' ? declaration.update : true;
     const property = declarations[propertyKey] = {
         fromAttribute(newValue) {
             if (type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1 && (!newValue || newValue === attribute)) {
@@ -336,6 +345,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
         type,
         attribute,
         event,
+        update,
     } as Property<T, P>;
 
     const { get, set, getter, setter } = property;
@@ -412,7 +422,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                 this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
-            if (isConnected.call(this)) {
+            if (update && isConnected.call(this)) {
                 this.forceUpdate();
             }
         },
