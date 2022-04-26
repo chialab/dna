@@ -261,14 +261,13 @@ describe('template', function() {
 
                 class MyTitle extends DNA.Component {
                     render() {
-                        return DNA.h('span', { class: 'title' }, DNA.h('slot'));
+                        return DNA.h('span', { class: 'title' }, DNA.h('slot', {}, ['Untitled']));
                     }
                 }
 
                 DNA.customElements.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
 
                 const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
-                    DNA.h('h1', { slot: 'title' }, 'Title'),
                     DNA.h('img', { src: IMG }),
                     DNA.h('p', null, 'Body')
                 ), wrapper);
@@ -278,6 +277,15 @@ describe('template', function() {
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
                 expect(element.childNodes[0].childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal(`${titleName}-${type}`.toUpperCase());
+                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Untitled');
+
+                DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
+                    DNA.h('h1', { slot: 'title' }, 'Title'),
+                    DNA.h('img', { src: IMG }),
+                    DNA.h('p', null, 'Body')
+                ), wrapper);
+
                 expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
                 expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
