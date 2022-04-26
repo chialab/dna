@@ -1,3 +1,10 @@
+# [3.17.0](https://github.com/chialab/dna/compare/v3.16.1...v3.17.0) (2022-04-26)
+
+
+### Features
+
+* add update config to properties ([ec0e4fc](https://github.com/chialab/dna/commit/ec0e4fc86544308bb73b223f2a68ca83f4c84c51))
+
 ## [3.16.1](https://github.com/chialab/dna/compare/v3.16.0...v3.16.1) (2022-03-29)
 
 
