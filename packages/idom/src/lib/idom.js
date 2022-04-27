@@ -84,9 +84,10 @@ export function h(element, props, ...children) {
         const node = elementOpenEnd(element);
         const component = Component && (DOM.getNodeComponent(node) || new Component(node));
 
-        if (component && children.length === 0) {
+        if (children.length === 0 && !node.__dnaHadChildren) {
             skip();
         } else {
+            node.__dnaHadChildren = true;
             handleChildren(children, node);
         }
         elementClose(element);
