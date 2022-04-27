@@ -1,6 +1,6 @@
 {
   "name": "@dnajs/react",
-  "version": "2.9.8",
+  "version": "2.9.9",
   "description": "Evolution-based components with React implementation.",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "lib": "index.js",
@@ -19,7 +19,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@dnajs/core": "^2.9.8",
+    "@dnajs/core": "^2.9.9",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
