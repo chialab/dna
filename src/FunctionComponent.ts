@@ -14,9 +14,9 @@ export type UpdateRequest = () => boolean;
  * @return A template.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FunctionComponent<P = any> = (
-    props: P,
-    context: Context<Node, P>,
+export type FunctionComponent<P = any, N extends Node = Node> = (
+    props: P & { key?: unknown; children?: Template[] },
+    context: Context<N, P>,
     /**
      * @deprecated Use context.requestUpdate method.
      */
@@ -28,5 +28,5 @@ export type FunctionComponent<P = any> = (
     /**
      * @deprecated Use context.
      */
-    sameContext: Context<Node, P>
+    sameContext: Context<N, P>
 ) => Template;

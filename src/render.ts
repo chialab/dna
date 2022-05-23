@@ -257,6 +257,8 @@ export const internalRender = (
                 let placeholder: Node;
                 if (fragment) {
                     placeholder = fragment.start as Node;
+                } else if (key && oldKeyed.has(key)) {
+                    placeholder = oldKeyed.get(key) as Node;
                 } else if (currentContext &&
                     currentProperties &&
                     currentContext.Function === Function &&
@@ -264,6 +266,10 @@ export const internalRender = (
                     placeholder = currentContext.start as Node;
                 } else {
                     placeholder = DOM.createComment(Function.name);
+                }
+
+                if (key) {
+                    keyed.set(key, placeholder);
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
