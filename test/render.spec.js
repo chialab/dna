@@ -159,6 +159,21 @@ describe('render', function() {
             expect(wrapper.childNodes).to.have.lengthOf(7);
         });
 
+        it('should render component function with keys', () => {
+            function Test() {
+                return ['hello', 'world'];
+            }
+
+            DNA.render([DNA.h(Test, { key: 1 }), DNA.h(Test, { key: 2 })], wrapper);
+            const [,,, comment, text1, text2] = wrapper.childNodes;
+            expect(wrapper.childNodes).to.have.lengthOf(6);
+            DNA.render([DNA.h(Test, { key: 2 })], wrapper);
+            expect(wrapper.childNodes).to.have.lengthOf(3);
+            expect(wrapper.childNodes[0]).to.be.equal(comment);
+            expect(wrapper.childNodes[1]).to.be.equal(text1);
+            expect(wrapper.childNodes[2]).to.be.equal(text2);
+        });
+
         it('should re-render component function only', async () => {
             const render1 = spyFunction();
             const render2 = spyFunction();

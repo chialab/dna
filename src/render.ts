@@ -223,17 +223,18 @@ export const internalRender = (
     const oldKeyed = context.keyed || new Map();
     const keyed: Keyed = context.keyed = new Map();
 
-    const handleItems = (template: Template, filter?: Filter) => {
+    const handleItems = (template: Template, filter?: Filter): number => {
         if (template == null || template === false) {
-            return;
+            return 0;
         }
 
         if (isArray(template)) {
+            let childCount = 0;
             // call the render function for each child
             for (let i = 0, len = template.length; i < len; i++) {
-                handleItems(template[i], filter);
+                childCount += handleItems(template[i], filter);
             }
-            return;
+            return childCount;
         }
 
         let templateNode;
@@ -244,8 +245,7 @@ export const internalRender = (
 
         if (isVObject(template)) {
             if (isVFragment(template)) {
-                handleItems(template.children, filter);
-                return;
+                return handleItems(template.children, filter);
             }
 
             if (isVFunction(template)) {
@@ -257,6 +257,8 @@ export const internalRender = (
                 let placeholder: Node;
                 if (fragment) {
                     placeholder = fragment.start as Node;
+                } else if (key && oldKeyed.has(key)) {
+                    placeholder = oldKeyed.get(key) as Node;
                 } else if (currentContext &&
                     currentProperties &&
                     currentContext.Function === Function &&
@@ -264,6 +266,10 @@ export const internalRender = (
                     placeholder = currentContext.start as Node;
                 } else {
                     placeholder = DOM.createComment(Function.name);
+                }
+
+                if (key) {
+                    keyed.set(key, placeholder);
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
@@ -300,7 +306,7 @@ export const internalRender = (
                 currentFragment = renderFragmentContext;
                 fragment = undefined;
 
-                handleItems(
+                const childCount = handleItems(
                     [
                         placeholder,
                         Function(
@@ -330,7 +336,7 @@ export const internalRender = (
                 }
 
                 running = false;
-                return;
+                return childCount;
             }
 
             // if the current patch is a slot,
@@ -354,12 +360,12 @@ export const internalRender = (
                         return !name;
                     };
 
-                    handleItems(slotChildNodes || [], filter);
-                    if (!childNodes.length) {
-                        handleItems(children);
+                    const childCount = handleItems(slotChildNodes || [], filter);
+                    if (!childCount) {
+                        return handleItems(children);
                     }
                 }
-                return;
+                return 0;
             }
 
             const { key, children, namespaceURI } = template;
@@ -510,7 +516,7 @@ export const internalRender = (
 
             templateChildren = children;
         } else if (isThenable(template)) {
-            handleItems(h((props, context) => {
+            return handleItems(h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
                     (template as Promise<unknown>)
@@ -521,10 +527,9 @@ export const internalRender = (
                 }
                 return status.result as Template;
             }, null), filter);
-            return;
         } else if (isObservable(template)) {
             const observable = template;
-            handleItems(h((props, context) => {
+            return handleItems(h((props, context) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
                     const subscription = observable.subscribe(
@@ -545,7 +550,6 @@ export const internalRender = (
                 }
                 return status.current as Template;
             }, null), filter);
-            return;
         } else if (isNode(template)) {
             templateNode = template;
         } else  {
@@ -567,7 +571,7 @@ export const internalRender = (
         }
 
         if (filter && !filter(templateNode)) {
-            return;
+            return 0;
         }
 
         templateContext = templateContext || getOrCreateContext(templateNode);
@@ -613,6 +617,8 @@ export const internalRender = (
                 templateNamespace
             );
         }
+
+        return 1;
     };
 
     handleItems(input);
