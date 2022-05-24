@@ -1,3 +1,11 @@
+## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
+
+
+### Bug Fixes
+
+* keyed function components re-render ([d436f6b](https://github.com/chialab/dna/commit/d436f6bcdf9a65e52eabd1261dac0061a5f66199))
+* slot default in older browsers ([9104e3a](https://github.com/chialab/dna/commit/9104e3ae2067314c448fd43b9010ae5c6e0899af))
+
 # [3.17.0](https://github.com/chialab/dna/compare/v3.16.1...v3.17.0) (2022-04-26)
 
 
