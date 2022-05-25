@@ -41,7 +41,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "rimraf dist && yarn types && yarn rna build",
+    "build": "rimraf dist && yarn types && rna build",
     "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types' --incremental false",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
@@ -51,7 +51,6 @@
     "lint": "eslint src analyzer test",
     "typecheck": "tsc --noEmit",
     "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
-    "release": "changeset publish",
     "prepack": "yarn build"
   },
   "peerDependencies": {
