@@ -51,8 +51,8 @@
     "lint": "eslint src analyzer test",
     "typecheck": "tsc --noEmit",
     "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
-    "prepack": "yarn build",
-    "release": "source .env && semantic-release --no-ci"
+    "release": "changeset publish",
+    "prepack": "yarn build"
   },
   "peerDependencies": {
     "jsdom": "^17.0.0"
@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@babel/runtime": "^7.14.0",
+    "@changesets/cli": "^2.22.0",
     "@chialab/eslint-config": "^3.0.0",
     "@chialab/rna": "^0.15.0",
     "@chialab/rna-apidoc": "^0.15.0",
@@ -85,7 +86,6 @@
     "mocha": "^8.4.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
-    "semantic-release": "^17.4.4",
     "typescript": "^4.4.0"
   }
 }
