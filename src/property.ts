@@ -291,7 +291,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
         (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
         undefined;
     const event = declaration.event ?
-        (declaration.event === true ? `${propertyKey}change` : declaration.event) :
+        (declaration.event === true ? `${String(propertyKey)}change` : declaration.event) :
         undefined;
     const state = !!declaration.state;
     const type = extractTypes(declaration);
@@ -397,7 +397,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                     valid = validate.call(this, newValue);
                 }
                 if (!valid) {
-                    throw new TypeError(`Invalid \`${newValue}\` value for \`${String(propertyKey)}\` property`);
+                    throw new TypeError(`Invalid \`${String(newValue)}\` value for \`${String(propertyKey)}\` property`);
                 }
             }
 
@@ -630,7 +630,7 @@ export const getObservers = <T extends ComponentInstance>(element: WithObservers
  */
 export const getPropertyObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P) => {
     if (!getProperty(element, propertyName)) {
-        throw new Error(`Missing property ${propertyName}`);
+        throw new Error(`Missing property ${String(propertyName)}`);
     }
     const observers = getObservers(element);
     return observers[propertyName] = observers[propertyName] || [];
