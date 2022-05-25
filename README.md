@@ -152,22 +152,6 @@ Run the `test` script:
 $ yarn test
 ```
 
-### Release
-
-The `release` script uses [Semantic Release](https://github.com/semantic-release/semantic-release) to update package version, create a Github release and publish to the NPM registry.
-
-An environment variable named `GH_TOKEN` with a [generated Github Access Token](https://github.com/settings/tokens/new?scopes=repo) needs to be defined in a local `.env` file.
-
-```sh
-$ echo 'export GH_TOKEN="abcxyz"' > .env
-```
-
-Now you are ready to run the `release` command:
-
-```sh
-$ yarn release
-```
-
 ---
 
 ## License
