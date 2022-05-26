@@ -42,14 +42,13 @@
   },
   "scripts": {
     "build": "rimraf dist && yarn types && rna build",
-    "types": "rimraf types && tsc --declaration --emitDeclarationOnly --declarationDir 'types' --incremental false",
+    "types": "rimraf types && tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "rna test:browser --coverage",
     "test:saucelabs": "rna test:saucelabs --browsers 'modern' 'legacy'",
     "test:node": "rna test:node",
     "lint": "eslint src analyzer test",
-    "typecheck": "tsc --noEmit",
     "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
     "prepack": "yarn build"
   },

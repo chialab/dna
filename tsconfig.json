@@ -6,6 +6,9 @@
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "types",
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -16,7 +19,6 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": false,
-    "incremental": true,
     "moduleResolution": "node"
   },
   "include": [

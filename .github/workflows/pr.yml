@@ -4,8 +4,8 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  check:
-    name: Check
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -20,16 +20,13 @@ jobs:
       - name: Install project dependencies
         run: yarn install
 
-      - name: Typecheck
-        run: yarn typecheck
-
       - name: Lint
         run: yarn lint
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: check
+    needs: lint
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -46,7 +43,7 @@ jobs:
       - name: Run build script
         run: yarn build
 
-      - name: Upload build
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: DNA
@@ -69,7 +66,7 @@ jobs:
       - name: Install project dependencies
         run: yarn install
 
-      - name: Fetch artifacts
+      - name: Fetch build artifacts
         uses: actions/download-artifact@v2
         with:
           name: DNA
@@ -101,7 +98,7 @@ jobs:
       - name: Install project dependencies
         run: yarn install
 
-      - name: Fetch artifacts
+      - name: Fetch build artifacts
         uses: actions/download-artifact@v2
         with:
           name: DNA
@@ -133,7 +130,7 @@ jobs:
       - name: Install project dependencies
         run: yarn install
 
-      - name: Fetch artifacts
+      - name: Fetch build artifacts
         uses: actions/download-artifact@v2
         with:
           name: DNA
