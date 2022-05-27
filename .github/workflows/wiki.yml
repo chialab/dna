@@ -7,6 +7,9 @@ on:
       - 'docs/**'
     tags-ignore:
       - '*'
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
