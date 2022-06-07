@@ -55,23 +55,6 @@ export type IterableNodeList = Node[] & {
     item(index: number): Node | null;
 };
 
-let symbols = 0;
-
-/**
- * Create a symbolic key.
- * When native Symbol is not defined, compute an unique string key.
- * @return An unique key.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createSymbol = (description?: string | number): any => {
-    /* c8 ignore start */
-    if (typeof Symbol !== 'undefined') {
-        return Symbol(description);
-    }
-    return `__dna${symbols++}`;
-    /* c8 ignore stop */
-};
-
 export const {
     Node: NodeConstructor,
     HTMLElement: HTMLElementConstructor,
@@ -79,6 +62,7 @@ export const {
     CustomEvent: CustomEventConstructor,
     document,
 } = window;
+
 export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = NodeConstructor;
 
 /**
@@ -303,7 +287,7 @@ export const isConnected: (this: Node) => boolean = isConnectedImpl ?
 /**
  * A symbol which identify emulated components.
  */
-const EMULATE_LIFECYCLE_SYMBOL: unique symbol = createSymbol();
+const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
 
 type WithEmulatedLifecycle<T extends Element> = T & {
     [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
@@ -354,9 +338,14 @@ export const disconnect = (node: Node) => {
 };
 
 /**
+ * The native custom elements registry.
+ */
+export const nativeCustomElements = window.customElements;
+
+/**
  * Should emulate life cycle.
  */
-let lifeCycleEmulation = typeof window.customElements === 'undefined';
+let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
 
 /**
  * Flag the element for life cycle emulation.

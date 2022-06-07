@@ -2,12 +2,12 @@ import type { IterableNodeList } from './helpers';
 import type { CustomElement } from './CustomElementRegistry';
 import type { UpdateRequest, FunctionComponent } from './FunctionComponent';
 import type { VProperties } from './JSX';
-import { createSymbol, isElement, isText } from './helpers';
+import { isElement, isText } from './helpers';
 
 /**
  * A symbol for node context.
  */
-const CONTEXT_SYMBOL: unique symbol = createSymbol();
+const CONTEXT_SYMBOL: unique symbol = Symbol();
 
 export type WithContext<T extends Node> = T & {
     [CONTEXT_SYMBOL]?: Context<T>;

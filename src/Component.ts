@@ -4,7 +4,7 @@ import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './JSX';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, getPropertyForAttribute } from './property';
-import { createSymbol, HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
@@ -14,12 +14,12 @@ import { internalRender } from './render';
 /**
  * A symbol which identify components.
  */
-export const COMPONENT_SYMBOL: unique symbol = createSymbol();
+export const COMPONENT_SYMBOL: unique symbol = Symbol();
 
 /**
  * A symbol which identify constructed components (properties can be assigned).
  */
-export const CONSTRUCTED_SYMBOL: unique symbol = createSymbol();
+export const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
 
 type WithComponentFlag<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
