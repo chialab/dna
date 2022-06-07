@@ -1,5 +1,3 @@
-import { createSymbol } from './helpers';
-
 /**
  * Subscription-like minimal interface.
  */
@@ -18,7 +16,7 @@ export type Observable<T> = {
 /**
  * A Symbol which contains Subscription state.
  */
-const SUBSCRIPTION_SYMBOL: unique symbol = createSymbol();
+const SUBSCRIPTION_SYMBOL: unique symbol = Symbol();
 
 type WithObservableState<T> = T & {
     [SUBSCRIPTION_SYMBOL]?: ObservableState;

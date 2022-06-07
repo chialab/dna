@@ -1,14 +1,8 @@
 import type { Constructor } from './helpers';
-import { window } from './window';
-import { isConnected, connect, defineProperty, HTMLElementConstructor, document } from './helpers';
+import { isConnected, connect, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
 import { isComponent, isComponentConstructor, isConstructed } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
-
-/**
- * The native custom elements registry.
- */
-const nativeCustomElements = window.customElements;
 
 /**
  * Check the validity of a Custom Element name.
@@ -96,6 +90,15 @@ export class CustomElementRegistry {
     readonly queue: {
         [key: string]: Array<(value?: unknown) => void>;
     } = {};
+
+    /**
+     * Create registry instance.
+     */
+    constructor() {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.upgrade(document.body);
+        });
+    }
 
     /**
      * Get the Custom Element definition for a tag.
@@ -268,7 +271,3 @@ export class CustomElementRegistry {
  * The global DNA registry instance.
  */
 export const customElements = new CustomElementRegistry();
-
-document.addEventListener('DOMContentLoaded', () => {
-    customElements.upgrade(document.body);
-});

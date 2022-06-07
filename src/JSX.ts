@@ -4,7 +4,7 @@ import type { Observable } from './Observable';
 import type { CustomElementConstructor } from './CustomElementRegistry';
 import type { Props } from './Component';
 import type { FunctionComponent } from './FunctionComponent';
-import { createSymbol, isElement } from './helpers';
+import { isElement } from './helpers';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
 
 // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
@@ -1336,12 +1336,12 @@ export interface SVGTagNameMap {
 /**
  * Identify virtual dom objects.
  */
-export const V_SYM: unique symbol = createSymbol();
+export const V_SYM: unique symbol = Symbol();
 
 /**
  * A constructor alias used for JSX fragments </>.
  */
-export const Fragment: unique symbol = createSymbol();
+export const Fragment: unique symbol = Symbol();
 
 /**
  * Get all the property keys that extends a builtin element.

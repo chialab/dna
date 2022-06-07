@@ -1,11 +1,11 @@
 import type { Constructor, ClassElement } from './helpers';
 import type { ComponentInstance, ComponentConstructor, MethodsOf } from './Component';
-import { createSymbol, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
+import { HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
  */
-const EVENT_CALLBACKS_SYMBOL: unique symbol = createSymbol();
+const EVENT_CALLBACKS_SYMBOL: unique symbol = Symbol();
 
 /**
  * Async event interface.
@@ -333,7 +333,7 @@ export const dispatchAsyncEvent = async (element: Element, event: Event | string
 /**
  * A Symbol which contains all listeners instances of a component constructor.
  */
-const LISTENERS_SYMBOL: unique symbol = createSymbol();
+const LISTENERS_SYMBOL: unique symbol = Symbol();
 
 /**
  * An object with listeners.

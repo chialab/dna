@@ -1,9 +1,7 @@
-import { createSymbol } from './helpers';
-
 /**
  * A Symbol which contains Thenable state.
  */
-const THENABLE_SYMBOL: unique symbol = createSymbol();
+const THENABLE_SYMBOL: unique symbol = Symbol();
 
 type WithThenableState<T> = T & {
     [THENABLE_SYMBOL]?: ThenableState;

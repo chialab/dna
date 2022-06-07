@@ -6,6 +6,7 @@
   "main": "dist/cjs/dna.js",
   "module": "dist/esm/dna.js",
   "types": "types/index.d.ts",
+  "sideEffects": false,
   "browser": {
     "jsdom": false
   },
