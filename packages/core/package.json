@@ -7,6 +7,7 @@
   "main": "dist/cjs/core.js",
   "module": "dist/esm/core.js",
   "browser": "dist/umd/core.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chialab/dna.git"
