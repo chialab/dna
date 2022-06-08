@@ -7,7 +7,6 @@
   "main": "dist/cjs/idom.js",
   "module": "dist/esm/idom.js",
   "browser": "dist/umd/idom.js",
-  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/chialab/dna"
