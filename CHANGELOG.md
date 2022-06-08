@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.18.1
+
+### Patch Changes
+
+- 36c2f17: Revert sideEffects flag
+
 ## 3.18.0
 
 ### Minor Changes
