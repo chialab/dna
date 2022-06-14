@@ -51,7 +51,7 @@ export type Context<T extends Node = Node, P = VProperties<T>, S = Map<string, u
  * Attach a context to an object.
  * @param node The object to context.
  * @param context The context to set.
- * @param parent The parent context.
+ * @returns The context.
  */
 export const setContext = <T extends Node>(node: WithContext<T>, context: Context<T>): Context<T> => {
     node[CONTEXT_SYMBOL] = context;
@@ -61,8 +61,7 @@ export const setContext = <T extends Node>(node: WithContext<T>, context: Contex
 /**
  * Create a node context.
  * @param node The node scope of the context.
- * @param parent The parent context.
- * @return A context object for the node.
+ * @returns A context object for the node.
  */
 export const createContext = <T extends Node>(node: T) => {
     const isElementNode = isElement(node);
@@ -96,8 +95,7 @@ export const createContext = <T extends Node>(node: T) => {
 /**
  * Get the context attached to an object.
  * @param node The scope of the context.
- * @param parent The parent context.
- * @return The context object (if it exists).
+ * @returns The context object (if it exists).
  */
 export const getOrCreateContext = <T extends Node>(node: WithContext<T>): Context<T> => {
     const context = node[CONTEXT_SYMBOL];
@@ -109,7 +107,7 @@ export const getOrCreateContext = <T extends Node>(node: WithContext<T>): Contex
  * @param context The node context.
  * @param renderContext The render context.
  * @param slot Should use slotted properties.
- * @return Cotnext properties.
+ * @returns Cotnext properties.
  */
 export function getContextProperties<T extends Node>(context: Context<T>, renderContext: Context, slot = false) {
     const properties = context.properties.get(renderContext);

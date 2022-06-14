@@ -79,6 +79,7 @@ export const indexOf = Array.prototype.indexOf;
  * Check if an item is in a list.
  * @param items List of child nodes.
  * @param item The item to check.
+ * @returns True if the item is in the list.
  */
 export const contains = <T>(items: T[], item: T) => indexOf.call(items, item) !== -1;
 
@@ -89,12 +90,16 @@ export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 /**
  * Like Object.getOwnPropertyDescriptor, but for all the property chain.
+ * @param object The object to get the descriptor from.
+ * @param propertyKey The property key.
+ * @returns A prototyped property descriptor.
  */
-export const getPropertyDescriptor = (...args: Parameters<typeof getOwnPropertyDescriptor>): ReturnType<typeof getOwnPropertyDescriptor> => {
-    if (!args[0]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getPropertyDescriptor = (object: any, propertyKey: PropertyKey): PropertyDescriptor | undefined => {
+    if (!object) {
         return;
     }
-    return getOwnPropertyDescriptor(...args) || getPropertyDescriptor(getPrototypeOf(args[0]), args[1]);
+    return getOwnPropertyDescriptor(object, propertyKey) || getPropertyDescriptor(getPrototypeOf(object), propertyKey);
 };
 
 /**
@@ -104,8 +109,10 @@ export const getPrototypeOf = Object.getPrototypeOf;
 
 /**
  * Alias to Object.setPrototypeOf.
+ * @param object The object to set the prototype of.
+ * @param prototype The prototype to set.
  */
-export const setPrototypeOf = Object.setPrototypeOf || ((obj, proto) => { obj.__proto__ = proto; });
+export const setPrototypeOf = Object.setPrototypeOf || ((object, prototype) => { object.__proto__ = prototype; });
 
 /**
  * Alias to Object.prototype.toString.
@@ -209,7 +216,7 @@ export const createCommentImpl = document.createComment.bind(document);
  * Create a Custom Event.
  * @param typeArg The name of the event.
  * @param eventInitDict The options of the event.
- * @return The constructed Custom Event.
+ * @returns The constructed Custom Event.
  */
 export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<unknown> = {}): CustomEvent<unknown> => {
     let event;
@@ -225,7 +232,7 @@ export const createEventImpl = (typeArg: string, eventInitDict: CustomEventInit<
 /**
  * Check if the target is a Node instance.
  * @param target The target to check.
- * @return The target is a Node instance.
+ * @returns The target is a Node instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isNode = (target: any): target is Node => target instanceof NodeConstructor;
@@ -233,7 +240,7 @@ export const isNode = (target: any): target is Node => target instanceof NodeCon
 /**
  * Check if a node is a Document instance.
  * @param node The node to check.
- * @return The node is a Document instance.
+ * @returns The node is a Document instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isDocument = (node: any): node is Document => node && node.nodeType === DOCUMENT_NODE;
@@ -241,7 +248,7 @@ export const isDocument = (node: any): node is Document => node && node.nodeType
 /**
  * Check if a node is a Text instance.
  * @param node The node to check.
- * @return The node is a Text instance.
+ * @returns The node is a Text instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isText = (node: any): node is Text => node && node.nodeType === TEXT_NODE;
@@ -249,23 +256,23 @@ export const isText = (node: any): node is Text => node && node.nodeType === TEX
 /**
  * Check if a node is an Element instance.
  * @param node The node to check.
- * @return The node is an Element instance.
+ * @returns The node is an Element instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isElement = <T extends Element>(node: any): node is T => node && node.nodeType === ELEMENT_NODE;
 
 /**
  * Check if an object is an Event instance.
- * @param node The node to check.
- * @return The object is an Event instance.
+ * @param event The target to check.
+ * @returns The object is an Event instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isEvent = (event: any): event is Event => event instanceof EventConstructor;
 
 /**
  * Check if a Node is connected.
- *
- * @return A truthy value for connected targets.
+ * @param this The Node to check.
+ * @returns A truthy value for connected targets.
  */
 export const isConnected: (this: Node) => boolean = isConnectedImpl ?
     (isConnectedImpl.get as (this: Node) => boolean) :
@@ -296,6 +303,7 @@ type WithEmulatedLifecycle<T extends Element> = T & {
 /**
  * Check if a node require emulated life cycle.
  * @param node The node to check.
+ * @returns The node require emulated life cycle.
  */
 export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
@@ -349,6 +357,7 @@ let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
 
 /**
  * Flag the element for life cycle emulation.
+ * @param node The element to flag.
  */
 export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
     lifeCycleEmulation = true;
@@ -357,13 +366,14 @@ export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
 
 /**
  * Life cycle emulation status.
+ * @returns True if life cycle emulation is enabled.
  */
 export const emulatingLifeCycle = () => lifeCycleEmulation;
 
 /**
  * Clone an array like instance.
  * @param arr The array to convert.
- * @return A shallow clone of the array.
+ * @returns A shallow clone of the array.
  */
 export const cloneChildNodes = (arr: NodeList|IterableNodeList) => {
     const result = [] as unknown as IterableNodeList;

@@ -8,9 +8,14 @@ import { getThenableState } from './Thenable';
 
 /**
  * A dom parser function component.
- * @param props The props of the parser,
+ * @param props The props of the parser.
+ * @param context The render context.
+ * @returns A list of nodes to render.
  */
-const DOMParse: FunctionComponent = ({ source }: { source: string }, { store }) => {
+const DOMParse: FunctionComponent<{ source: string }> = (props, context) => {
+    const source = props.source;
+    const store = context.store;
+
     if (store.get('source') === source) {
         return store.get('dom') as Node[];
     }
@@ -27,7 +32,7 @@ const DOMParse: FunctionComponent = ({ source }: { source: string }, { store }) 
 /**
  * Convert an HTML string to DOM nodes.
  * @param string The HTML string to conver.
- * @return The virtual DOM template function.
+ * @returns The virtual DOM template function.
  */
 export const parseDOM = (string: string): Template => h(DOMParse, { source: string });
 
@@ -35,7 +40,7 @@ export const parseDOM = (string: string): Template => h(DOMParse, { source: stri
  * It renders the template when then provided Thenable is in pending status.
  * @param thenable The Promise-like object.
  * @param template The template to render.
- * @return A promise which resolves the template while the Thenable is in pending status.
+ * @returns A promise which resolves the template while the Thenable is in pending status.
  */
 export const until = (thenable: Promise<unknown>, template: Template) => {
     const original = getThenableState(thenable);

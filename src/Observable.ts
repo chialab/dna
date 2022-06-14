@@ -34,6 +34,7 @@ export type ObservableState = {
 /**
  * Check if the target is a Subscribable (has the `subscribe` method).
  * @param target The object to check.
+ * @returns True if the target is a Subscribable.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isObservable = (target: any): target is Observable<unknown> => typeof target['subscribe'] === 'function';
@@ -41,7 +42,7 @@ export const isObservable = (target: any): target is Observable<unknown> => type
 /**
  * Get or inject a state into a Subscribable object.
  * @param target The Subscribable to extend.
- * @return The Subscribable state instance.
+ * @returns The Subscribable state instance.
  */
 export const getObservableState = <T extends Observable<unknown>>(target: WithObservableState<T>): ObservableState => {
     const state = target[SUBSCRIPTION_SYMBOL];

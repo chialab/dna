@@ -25,11 +25,12 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
 /**
  * Scope a CSS string, adding a compnent-specific trailing selector to all rules.
  * It also converts `:host` selectors for cross browser compatibility.
- *
  * @param name The component definition name.
  * @param cssText The CSS string.
  * @param extend The builtin element.
- * @return A scoped CSS string.
+ * @returns A scoped CSS string.
+ * @throws If the scope name is not a string.
+ * @throws If the CSS value is not a string.
  */
 export const css = (name: string, cssText: string, extend?: string): string => {
     if (typeof name !== 'string') {

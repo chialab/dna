@@ -71,7 +71,7 @@ export interface ComponentMixin {
      * Get the inner value of a property.
      * This is an helper method for properties getters and setters.
      * @param propertyName The name of the property to get.
-     * @return The inner value of the property.
+     * @returns The inner value of the property.
      */
     getInnerPropertyValue<P extends keyof Members<this>>(propertyName: P): this[P];
 
@@ -146,7 +146,7 @@ export interface ComponentMixin {
     /**
      * Render method of the Component.
      *
-     * @return The instances of the rendered Components and/or Nodes
+     * @returns The instances of the rendered Components and/or Nodes
      */
     render(): Template | undefined;
 
@@ -227,7 +227,7 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
     /**
      * Upgrade a plain element prototype.
      * @param node The node to upgrade.
-     * @return The new prototyped node.
+     * @returns The new prototyped node.
      */
     upgrade(node: HTMLElement): T;
 
@@ -248,12 +248,14 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
 /**
  * Check if a node is a component.
  * @param node The node to check.
+ * @returns True if element is a custom element.
  */
 export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as WithComponentFlag<T>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a node is a constructed component.
  * @param node The node to check.
+ * @returns True if the element is fully constructed.
  */
 export const isConstructed = <T extends ComponentInstance>(node: T): boolean => !!(node as WithConstructedFlag<T>)[CONSTRUCTED_SYMBOL];
 
@@ -268,13 +270,14 @@ export const flagConstructed = <T extends ComponentInstance>(node: T) => {
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
+ * @returns True if the constructor is a component class.
  */
 export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
  * Extract slotted child nodes for initial child nodes.
- * @param context The compoonent context.
- * @return A list of new slotted children.
+ * @param element The compoonent instance.
+ * @returns A list of new slotted children.
  */
 function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T>>(element: C) {
     const context = getOrCreateContext(element);
@@ -294,12 +297,13 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
 /**
  * Create a base Component class which extends a native constructor.
  * @param ctor The base HTMLElement constructor to extend.
- * @return The extend class.
+ * @returns The extend class.
  */
 const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
     const Component = class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * An array containing the names of the attributes to observe.
+         * @returns The list of attributes to observe.
          */
         static get observedAttributes(): string[] {
             const propertiesDescriptor = getProperties(this.prototype);
@@ -337,7 +341,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * Upgrade a plain element prototype.
          * @param node The node to upgrade.
-         * @return The new prototyped node.
+         * @returns The new prototyped node.
          */
         static upgrade(node: HTMLElement) {
             return new this(node);
@@ -345,6 +349,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * The tag name used for Component definition.
+         * @returns The custom element definition name.
          */
         get is(): string {
             return undefined as unknown as string;
@@ -352,6 +357,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * A flag with the connected value of the node.
+         * @returns True if the node is connected to the document.
          */
         get isConnected(): boolean {
             return isConnected.call(this);
@@ -359,16 +365,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * A list of slot nodes.
+         * @returns The list of slotted nodes.
          */
         get slotChildNodes() {
             return getOrCreateContext(this).slotChildNodes;
         }
 
-        /**
-         * Create a new Component instance.
-         * @param node Instantiate the element using the given node instead of creating a new one.
-         * @param properties A set of initial properties for the element.
-         */
         constructor(...args: any[]) {
             super();
 
@@ -504,7 +506,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Get the inner value of a property.
          * This is an helper method for properties getters and setters.
          * @param propertyName The name of the property to get.
-         * @return The inner value of the property.
+         * @returns The inner value of the property.
          */
         getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P] {
             const property = getProperty(this, propertyName, true);
@@ -576,30 +578,30 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * Delegate an Event listener.
-         *
-         * @param eventName The event name to listen
-         * @param selector The selector to delegate
-         * @param callback The callback to trigger when an Event matches the delegation
+         * @param event The event name to listen.
+         * @param selector The selector to delegate.
+         * @param callback The callback to trigger when an Event matches the delegation.
+         * @param options Add event listener options.
          */
         delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
-            return delegateEventListener(this, event, selector, callback, options);
+            delegateEventListener(this, event, selector, callback, options);
         }
 
         /**
          * Remove an Event delegation.
          *
-         * @param eventName The Event name to undelegate
-         * @param selector The selector to undelegate
-         * @param callback The callback to remove
+         * @param event The Event name to undelegate.
+         * @param selector The selector to undelegate.
+         * @param callback The callback to remove,
          */
         undelegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback) {
-            return undelegateEventListener(this, event, selector, callback);
+            undelegateEventListener(this, event, selector, callback);
         }
 
         /**
          * Render method of the Component.
          *
-         * @return The instances of the rendered Components and/or Nodes
+         * @returns The instances of the rendered Components and/or Nodes
          */
         render(): Template | undefined {
             return this.slotChildNodes;
@@ -619,6 +621,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Append a child to the Component.
          *
          * @param newChild The child to add.
+         * @returns The appended child.
          */
         appendChild<T extends Node>(newChild: T): T {
             return DOM.appendChild(this, newChild);
@@ -627,7 +630,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * Remove a child from the Component.
          *
-         * @param {Node} oldChild The child to remove.
+         * @param oldChild The child to remove.
+         * @returns The removed node.
          */
         removeChild<T extends Node>(oldChild: T): T {
             return DOM.removeChild(this, oldChild);
@@ -637,7 +641,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Insert a child before another in the Component.
          *
          * @param newChild The child to insert.
-         * @param refChild The referred Node.
+         * @param refChild The referred node.
+         * @returns The inserted child.
          */
         insertBefore<T extends Node>(newChild: T, refChild: Node | null): T {
             return DOM.insertBefore(this, newChild, refChild);
@@ -648,6 +653,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          *
          * @param newChild The child to insert.
          * @param oldChild The Node to replace.
+         * @returns The replaced node.
          */
         replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
             return DOM.replaceChild(this, newChild, oldChild);
@@ -655,10 +661,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * Insert a child at the given position.
-         *
-         * @param postion The position of the insertion.
+         * @param position The position of the insertion.
          * @param insertedElement The child to insert.
-         * @param slot Should insert a slot node.
+         * @returns The inserted child.
          */
         insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element | null {
             return DOM.insertAdjacentElement(this, position, insertedElement);
@@ -666,21 +671,19 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         /**
          * Set a Component attribute.
-         *
-         * @param ualifiedName The attribute name.
+         * @param qualifiedName The attribute name.
          * @param value The value to set.
          */
         setAttribute(qualifiedName: string, value: string) {
-            return DOM.setAttribute(this, qualifiedName, value);
+            DOM.setAttribute(this, qualifiedName, value);
         }
 
         /**
          * Remove a Component attribute.
-         *
          * @param qualifiedName The attribute name.
          */
         removeAttribute(qualifiedName: string) {
-            return DOM.removeAttribute(this, qualifiedName);
+            DOM.removeAttribute(this, qualifiedName);
         }
     };
 
@@ -698,7 +701,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
  * because using `new HTMLElement()` in browsers throw `Illegal constructor`.
  *
  * @param base The constructor or the class to shim.
- * @return A newable constructor with the same prototype.
+ * @returns A newable constructor with the same prototype.
  */
 export const shim = <T extends { new(): HTMLElement; prototype: HTMLElement }>(base: T): T => {
     type Component = ComponentInstance<InstanceType<T>>;
@@ -734,8 +737,8 @@ export const shim = <T extends { new(): HTMLElement; prototype: HTMLElement }>(b
 
 /**
  * Get a native HTMLElement constructor to extend by its name.
- * @param name The name of the constructor (eg. "HTMLAnchorElement").
- * @return A proxy that extends the native constructor.
+ * @param constructor The constructor (eg. "HTMLAnchorElement") to extend.
+ * @returns A proxy that extends the native constructor.
  */
 export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(shim(constructor));
 
@@ -751,7 +754,7 @@ export const Component = extend(HTMLElementConstructor);
  * Decorate and define component classes.
  * @param name The name of the custom element.
  * @param options The custom element options.
- * @return The decorated component class.
+ * @returns The decorated component class.
  */
 export const customElement = (name: string, options?: ElementDefinitionOptions) =>
     // TypeScript complains about return type because we handle babel output

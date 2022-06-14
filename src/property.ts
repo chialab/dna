@@ -84,13 +84,13 @@ export type PropertyDeclaration<TypeConstructorHint extends Constructor<any> = C
      * Convert attribute to property value.
      *
      * @param value The attributue value.
-     * @return The property value.
+     * @returns The property value.
      */
     fromAttribute?: (value: string | null) => ConvertConstructorTypes<TypeConstructorHint> | undefined;
     /**
      * Convert property to attribute value.
      * @param value The property value.
-     * @return The attributue value.
+     * @returns The attributue value.
      */
     toAttribute?: (value: ConvertConstructorTypes<TypeConstructorHint>) => string|null|undefined;
     /**
@@ -185,13 +185,13 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
      * Convert attribute to property value.
      *
      * @param value The attributue value.
-     * @return The property value.
+     * @returns The property value.
      */
     fromAttribute?: (value: string|null) => T[P];
     /**
      * Convert property to attribute value.
      * @param value The property value.
-     * @return The attributue value.
+     * @returns The attributue value.
      */
     toAttribute?: (value: T[P]) => string|null|undefined;
     /**
@@ -228,7 +228,7 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
 /**
  * Retrieve all properties descriptors.
  * @param prototype The component prototype.
- * @return A list of property descriptors.
+ * @returns A list of property descriptors.
  */
 export const getProperties = <T extends ComponentInstance>(prototype: WithProperties<T>) => {
     const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
@@ -247,7 +247,8 @@ export const getProperties = <T extends ComponentInstance>(prototype: WithProper
  * @param prototype The component prototype.
  * @param propertyKey The name of the property.
  * @param failIfMissing Should throw an exception if the property is not defined.
- * @return The property declaration.
+ * @returns The property declaration.
+ * @throws If the property is not defined and `failIfMissing` is `true`.
  */
 export const getProperty = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(prototype: T, propertyKey: P, failIfMissing = false) => {
     const property = getProperties(prototype)[propertyKey];
@@ -260,7 +261,7 @@ export const getProperty = <T extends ComponentInstance, P extends keyof Propert
 /**
  * Get valid constructors for the property.
  * @param declaration The property declaration.
- * @return A list of constructors.
+ * @returns A list of constructors.
  */
 const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
     const type = declaration.type;
@@ -279,8 +280,8 @@ const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<
  * @param prototype The component prototype.
  * @param propertyKey The name of the property.
  * @param declaration The property descriptor.
- * @param symbol The symbol to use to store property value.
- * @return The final descriptor.
+ * @param symbolKey The symbol to use to store property value.
+ * @returns The final descriptor.
  */
 export const defineProperty = <T extends ComponentInstance, P extends keyof Members<T>>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -481,7 +482,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
  * Get the property bound to the attribute.
  * @param prototype The prototype of the Component.
  * @param attributeName The name of the bound attribute.
- * @return The property declaration.
+ * @returns The property declaration.
  */
 export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: T, attributeName: string) => {
     const properties = getProperties(prototype);
@@ -518,6 +519,7 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
  * Populate property declaration using its field descriptor.
  * @param declaration The declaration to update.
  * @param descriptor The field descriptor.
+ * @param initializer The property initializer function.
  */
 const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: PropertyDescriptor, initializer?: Function) => {
     declaration.initializer = initializer;
@@ -534,6 +536,7 @@ const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: Prop
  * @param declaration The property declaration.
  * @param propertyKey The property name.
  * @param descriptor The native property descriptor.
+ * @returns The property descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createProperty = <T extends ComponentInstance, P extends keyof Members<T>>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
@@ -585,6 +588,7 @@ export const createProperty = <T extends ComponentInstance, P extends keyof Memb
  * @param targetOrClassElement The component prototype.
  * @param propertyKey The property name to watch.
  * @param methodKey The method name.
+ * @returns The observer descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>, M extends keyof Members<T>>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
@@ -607,7 +611,7 @@ export const createObserver = <T extends ComponentInstance, P extends keyof Prop
 /**
  * Get element properties observers.
  * @param element The node.
- * @return The map of observers.
+ * @returns The map of observers.
  */
 export const getObservers = <T extends ComponentInstance>(element: WithObservers<T>) => {
     const observers = (element[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
@@ -627,7 +631,8 @@ export const getObservers = <T extends ComponentInstance>(element: WithObservers
  * Get observers for an element property.
  * @param element The node.
  * @param propertyName The name of the property.
- * @return A list of observers.
+ * @returns A list of observers.
+ * @throws If the property is not defined.
  */
 export const getPropertyObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P) => {
     if (!getProperty(element, propertyName)) {
@@ -663,9 +668,8 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof Prop
 
 /**
  * A decorator for property definition.
- *
  * @param declaration The property declaration.
- * @return The decorator initializer.
+ * @returns The decorator initializer.
  */
 export function property<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
     return <T extends ComponentInstance, P extends keyof Members<T>>(
@@ -677,9 +681,8 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
 
 /**
  * A decorator for state property definition.
- *
  * @param declaration The state property declaration.
- * @return The decorator initializer.
+ * @returns The decorator initializer.
  */
 export function state<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
     return <T extends ComponentInstance, P extends keyof Members<T>>(
@@ -693,7 +696,7 @@ export function state<TypeConstructorHint extends Constructor<unknown> = Constru
  * A decorator for property observer.
  *
  * @param propertyKey The property key to observe.
- * @return The decorator initializer.
+ * @returns The decorator initializer.
  */
 export function observe(propertyKey: string): Function {
     return <T extends ComponentInstance, P extends MethodsOf<T>>(

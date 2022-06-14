@@ -18,6 +18,7 @@ export type ThenableState = {
 /**
  * Check if the target is a Thenable (has the `then` method).
  * @param target The object to check.
+ * @returns True if the target is a Thenable.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isThenable = (target: any): target is Promise<any> => typeof target.then === 'function';
@@ -25,7 +26,7 @@ export const isThenable = (target: any): target is Promise<any> => typeof target
 /**
  * Get or inject a state into a Thenable object.
  * @param target The Thenable to extend.
- * @return The Thenable state instance.
+ * @returns The Thenable state instance.
  */
 export const getThenableState = (target: WithThenableState<Promise<unknown>>): ThenableState => {
     const state = target[THENABLE_SYMBOL];

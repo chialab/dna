@@ -273,6 +273,7 @@ export const undelegateEventListener = (element: Element, eventName: string, sel
  * @param bubbles Should the event bubble.
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
+ * @returns The custom event.
  */
 function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
     if (typeof event !== 'string') {
@@ -294,13 +295,13 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
 
 /**
  * Dispatch a custom Event.
- *
  * @param element The dispatcher node.
  * @param event The event to dispatch or the name of the synthetic event to create.
  * @param detail Detail object of the event.
  * @param bubbles Should the event bubble.
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
+ * @returns True if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
  */
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
@@ -356,7 +357,7 @@ type Listener = {
 /**
  * Retrieve all listeners descriptors.
  * @param prototype The component prototype.
- * @return A list of listeners.
+ * @returns A list of listeners.
  */
 export const getListeners = <T extends ComponentInstance>(prototype: WithListeners<T>) => {
     const listeners = prototype[LISTENERS_SYMBOL];
@@ -384,6 +385,8 @@ export const setListeners = <T extends ComponentInstance>(prototype: WithListene
  * Add an event listener to the prototype.
  * @param prototype The component prototype.
  * @param eventName The name of the event to listen.
+ * @param target The event target of the listener.
+ * @param selector The selector event target of the listener.
  * @param callback The event callback.
  * @param options The event listener options.
  */
@@ -440,8 +443,12 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
 /**
  * Add a property observer to a component prototype.
  * @param targetOrClassElement The component prototype.
- * @param propertyKey The property name to watch.
+ * @param eventName The name of the event.
+ * @param target The event target for the listener.
+ * @param selector The selector event target for the listener.
+ * @param options Listener options.
  * @param methodKey The method name.
+ * @returns The property descriptor.
  */
 export const createListener = <T extends ComponentInstance, P extends MethodsOf<T>>(
     targetOrClassElement: T,
@@ -472,16 +479,16 @@ export const createListener = <T extends ComponentInstance, P extends MethodsOf<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isEventTarget = (target: any): target is EventTarget => typeof target === 'object' && 'addEventListener' in target;
 
-/**
- * A decorator for listening DOM events.
- *
- * @param eventName The name of the event to listen.
- * @param options Options to pass to addEventListener.
- * @return The decorator initializer.
- */
 function listen(eventName: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): Function;
+/**
+ * A decorator for listening DOM events.
+ * @param eventName The name of the event to listen.
+ * @param target The event target for the listener.
+ * @param options Options to pass to addEventListener.
+ * @returns The decorator initializer.
+ */
 function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
     return <T extends ComponentInstance, P extends MethodsOf<T>>(
         targetOrClassElement: T,

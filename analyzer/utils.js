@@ -2,7 +2,7 @@
  * Check if node has a specific keyword.
  * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node
  * @param {import('typescript').SyntaxKind} keyword
- * @return {boolean}
+ * @returns {boolean}
  */
 export function hasKeyword(node, keyword) {
     return node.modifiers?.some((mod) => mod.kind === keyword) ?? false;
@@ -42,7 +42,7 @@ export function getDecorator(node, name) {
  * Convert field to attribute.
  * @param {import('custom-elements-manifest/schema').ClassField} field
  * @param {string} attrName
- * @return {import('custom-elements-manifest/schema').Attribute}
+ * @returns {import('custom-elements-manifest/schema').Attribute}
  */
 export function createAttributeFromField(field, attrName) {
     return {

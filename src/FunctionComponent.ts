@@ -11,7 +11,7 @@ export type UpdateRequest = () => boolean;
  *
  * @param props A set of properties with children.
  * @param context The current render context.
- * @return A template.
+ * @returns A template.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = any, N extends Node = Node> = (

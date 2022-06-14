@@ -1588,6 +1588,7 @@ export type Template =
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
+ * @returns True if the target is a virtual DOM object.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isVObject = (target: any): target is VObject => typeof target === 'object' && !!target[V_SYM];
@@ -1595,46 +1596,45 @@ export const isVObject = (target: any): target is VObject => typeof target === '
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
+ * @returns True if the target is a fragment.
  */
 export const isVFragment = (target: VObject): target is VFragment => !!target.isFragment;
 
 /**
  * Check if the current virtual node is a functional component.
  * @param target The node to check.
+ * @returns True if the target is a functional component.
  */
 export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => !!target.Function;
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
+ * @returns True if the target is a Component node.
  */
 export const isVComponent = (target: VObject): target is VComponent<CustomElementConstructor> => !!target.Component;
 
 /**
  * Check if the current virtual node is an HTML node instance.
  * @param target The node to check.
+ * @returns True if the target is an HTML node instance.
  */
 export const isVNode = (target: VObject): target is VElement<Element> => !!target.node;
 
 /**
  * Check if the current virtual node is a slot element.
  * @param target The node to check.
+ * @returns True if the target is a slot element.
  */
 export const isVSlot = (target: VObject): target is VSlot => !!target.isSlot;
 
 /**
  * Check if the current virtual node is a generic tag to render.
  * @param target The node to check.
+ * @returns True if the target is a generic tag to render.
  */
 export const isVTag = (target: VObject): target is VTag<string> => !!target.tag;
 
-/**
- * Function factory to use as JSX pragma.
- *
- * @param tagOrComponent The tag name, the constructor or the instance of the node.
- * @param properties The set of properties of the Node.
- * @param children The children of the Node.
- */
 function h(tagOrComponent: typeof Fragment): VFragment;
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): VFragment;
 function h<T extends FunctionComponent>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VFunction<T>;
@@ -1645,6 +1645,14 @@ function h<T extends CustomElementConstructor>(tagOrComponent: T, properties?: V
 function h<T extends Element>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VElement<T>;
 function h(tagOrComponent: 'slot', properties?: VProperties<'slot'> | null, ...children: Template[]): VSlot;
 function h<T extends string>(tagOrComponent: T, properties?: VProperties<T> | null, ...children: Template[]): VTag<T>;
+/**
+ * Function factory to use as JSX pragma.
+ *
+ * @param tagOrComponent The tag name, the constructor or the instance of the node.
+ * @param properties The set of properties of the Node.
+ * @param children The children of the Node.
+ * @returns The virtual DOM object.
+ */
 function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string, properties: VProperties | null = null, ...children: Template[]) {
     const { is, key, xmlns, ref } = (properties || {});
 

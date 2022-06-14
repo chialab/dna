@@ -19,8 +19,8 @@ const innerHtml = htm.bind(h);
 
 /**
  * Compile a string into virtual DOM template.
- *
- * @return The virtual DOM template.
+ * @param string The string to compile.
+ * @returns The virtual DOM template.
  */
 export const compile = (string: string): Template => {
     const array = [string] as string[] & { raw?: string[] };
@@ -28,16 +28,17 @@ export const compile = (string: string): Template => {
     return innerHtml(array as unknown as TemplateStringsArray);
 };
 
-/**
- * Compile a template string into virtual DOM template.
- *
- * @return The virtual DOM template.
- */
 function html(string: TemplateStringsArray, ...values: unknown[]): Template;
 /**
  * @deprecated use compile function instead.
  */
 function html(string: string): Template;
+/**
+ * Compile a template string into virtual DOM template.
+ * @param string The string to compile.
+ * @param values Values to interpolate.
+ * @returns The virtual DOM template.
+ */
 function html(string: string | TemplateStringsArray, ...values: unknown[]): Template {
     if (typeof string === 'string') {
         return compile(string);
@@ -51,13 +52,14 @@ export { html };
 * A filter function signature for template items.
 *
 * @param item The template item to check.
-* @return A truthy value for valid items, a falsy for value for invalid ones.
+* @returns A truthy value for valid items, a falsy for value for invalid ones.
 */
 export type Filter = (item: Node) => boolean;
 
 /**
  * Cleanup child fragments of a context.
  * @param context The fragment to empty.
+ * @returns The cleaned up fragment list.
  */
 export const emptyFragments = <T extends Node>(context: Context<T>) => {
     const fragments = context.fragments;
@@ -76,7 +78,7 @@ const CLASSES_CACHE: { [key: string]: string[] } = {};
 /**
  * Convert strings or classes map to a list of classes.
  * @param value The value to convert.
- * @return A list of classes.
+ * @returns A list of classes.
  */
 const convertClasses = (value: VClasses | null | undefined) => {
     const classes: string[] = [];
@@ -102,7 +104,7 @@ const STYLES_CACHE: { [key: string]: { [key: string]: string } } = {};
 /**
  * Convert strings or styles map to a list of styles.
  * @param value The value to convert.
- * @return A set of styles.
+ * @returns A set of styles.
  */
 const convertStyles = (value: VStyle| null | undefined) => {
     const styles: { [key: string]: string } = {};
@@ -137,6 +139,7 @@ const convertStyles = (value: VStyle| null | undefined) => {
  * Check if the render engine is handling input values.
  * @param element The current node element.
  * @param propertyKey The changed property key.
+ * @returns True if the render engine is handling input elements, false otherwise.
  */
 const isRenderingInput = (element: HTMLElement, propertyKey: string): element is HTMLInputElement =>
     (propertyKey === 'checked' || propertyKey === 'value') &&
@@ -146,6 +149,7 @@ const isRenderingInput = (element: HTMLElement, propertyKey: string): element is
  * Add missing keys to properties object.
  * @param previous The previous object.
  * @param actual The actual one.
+ * @returns The merged object.
  */
 const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unknown }) => {
     for (const key in previous) {
@@ -171,6 +175,7 @@ const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, v
 /**
  * Check if a property key is a listener key and it should be valued as event listener.
  * @param propertyKey The property to check.
+ * @returns True if the property is a listener, false otherwise.
  */
 const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
 
@@ -186,7 +191,7 @@ const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` =
  * @param slotContext The current slot mode of the root render.
  * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
- * @return The resulting child nodes list.
+ * @returns The resulting child nodes list.
  */
 export const internalRender = (
     root: Node,
@@ -656,7 +661,7 @@ export const internalRender = (
  * @param input The child (or the children) to render in Virtual DOM format or already generated.
  * @param root The root Node for the render.
  * @param slot Should render to slot children.
- * @return The resulting child Nodes.
+ * @returns The resulting child Nodes.
  */
 export const render = (input: Template, root: Node = DOM.createDocumentFragment(), slot: boolean = isComponent(root)): Node | Node[] | void => {
     const childNodes = internalRender(root, input, slot);

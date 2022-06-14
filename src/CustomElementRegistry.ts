@@ -7,6 +7,7 @@ import { defineListeners } from './events';
 /**
  * Check the validity of a Custom Element name.
  * @param name The name to validate.
+ * @returns True if the name is valid.
  */
 const assertValidateCustomElementName = (name: string): boolean => (
     !!name                     // missing element name
@@ -60,6 +61,7 @@ export type CustomElementRegistryMap = Record<string, CustomElementConstructor>;
 /**
  * Check if the function is a Custom Element constructor.
  * @param constructor The function to check.
+ * @returns True if the function is a Custom Element constructor.
  */
 export const isCustomElementConstructor = <T extends CustomElementConstructor>(constructor: Function|T): constructor is T => constructor.prototype instanceof HTMLElementConstructor;
 
@@ -104,7 +106,7 @@ export class CustomElementRegistry {
      * Get the Custom Element definition for a tag.
      *
      * @param name The name of the tag.
-     * @return The definition for the given tag.
+     * @returns The definition for the given tag.
      */
     get<K extends keyof CustomElementRegistryMap>(name: K): CustomElementRegistryMap[K] {
         let constructor = this.registry[name];
@@ -122,6 +124,9 @@ export class CustomElementRegistry {
      * @param name The tag name for the element.
      * @param constructor The Custom Element constructor.
      * @param options A set of definition options, like `extends` for native tag extension.
+     * @throws If the name is not valid.
+     * @throws If the constructor is not a function.
+     * @throws If the name has already been registered.
      */
     define<T extends CustomElementConstructor>(name: keyof CustomElementRegistryMap, constructor: T, options: ElementDefinitionOptions = {}) {
         if (!assertValidateCustomElementName(name)) {
@@ -184,7 +189,7 @@ export class CustomElementRegistry {
     /**
      * It returns a Promise that resolves when the named element is defined.
      * @param name The Custom Element name.
-     * @return A Promise that resolves when the named element is defined.
+     * @returns A Promise that resolves when the named element is defined.
      */
     whenDefined<K extends keyof CustomElementRegistryMap>(name: K): Promise<CustomElementRegistryMap[K]> {
         if (nativeCustomElements) {
