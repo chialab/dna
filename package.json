@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "rimraf dist && yarn types && rna build",
-    "types": "rimraf types && tsc",
+    "types": "rimraf types && tsc --emitDeclarationOnly",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "rna test:browser --coverage",

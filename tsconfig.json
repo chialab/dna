@@ -7,7 +7,6 @@
     "inlineSources": true,
     "strict": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
     "declarationDir": "types",
     "noUnusedLocals": true,
     "noImplicitReturns": true,

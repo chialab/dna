@@ -14,7 +14,7 @@
 
 <strong>Types</strong>
 
-<a href="#ariarole">AriaRole</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#attributesmap">AttributesMap</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#globalnamespace">GlobalNamespace</a>, <a href="#htmlattributereferrerpolicy">HTMLAttributeReferrerPolicy</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vslot">VSlot</a>, <a href="#vtag">VTag</a>
+<a href="#ariarole">AriaRole</a>, <a href="#asyncevent">AsyncEvent</a>, <a href="#attributesmap">AttributesMap</a>, <a href="#componentinstance">ComponentInstance</a>, <a href="#context">Context</a>, <a href="#delegatedeventcallback">DelegatedEventCallback</a>, <a href="#delegatedeventdescriptor">DelegatedEventDescriptor</a>, <a href="#functioncomponent">FunctionComponent</a>, <a href="#globalnamespace">GlobalNamespace</a>, <a href="#htmlattributereferrerpolicy">HTMLAttributeReferrerPolicy</a>, <a href="#observable">Observable</a>, <a href="#propertydeclaration">PropertyDeclaration</a>, <a href="#propertyobserver">PropertyObserver</a>, <a href="#template">Template</a>, <a href="#vattrs">VAttrs</a>, <a href="#vcomponent">VComponent</a>, <a href="#velement">VElement</a>, <a href="#vfragment">VFragment</a>, <a href="#vfunction">VFunction</a>, <a href="#vobject">VObject</a>, <a href="#vproperties">VProperties</a>, <a href="#vprops">VProps</a>, <a href="#vslot">VSlot</a>, <a href="#vtag">VTag</a>
 
 <strong>Variables</strong>
 
@@ -75,6 +75,12 @@ The CustomElementRegistry interface provides methods for registering custom elem
 <strong>Methods</strong>
 
 <strong><code>Function</code> constructor</strong>
+
+<p>
+
+Create registry instance.
+
+</p>
 
 <details>
 <summary>
@@ -505,9 +511,9 @@ The node context interface.
   is?: string;
   isElement?: boolean;
   isText?: boolean;
-  key?: unknown;
+  keyed?: <a href="#keyed">Keyed</a>;
   node: <a href="#t">T</a>;
-  properties: [<a href="#p">P</a>, <a href="#p">P</a>];
+  properties: <a href="#weakmap">WeakMap</a>;
   requestUpdate?: <a href="#updaterequest">UpdateRequest</a>;
   root?: <a href="#context">Context</a>;
   slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
@@ -540,10 +546,13 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P&gt;</strong>
+<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P, N extends <a href="#node">Node</a>&gt;</strong>
     
 
-<pre>(props: <a href="#p">P</a>, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
+<pre>(props: <a href="#p">P</a> & {
+  children?: <a href="#template">Template</a>[];
+  key?: unknown
+}, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
 
 <hr />
 
@@ -598,6 +607,7 @@ A state property declaration.
   state?: boolean;
   symbol?: symbol;
   type?: <a href="#typeconstructorhint">TypeConstructorHint</a> | <a href="#typeconstructorhint">TypeConstructorHint</a>[];
+  update?: boolean;
   fromAttribute(value: null | string): undefined | <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
   getter(value?: <a href="#convertconstructortypes">ConvertConstructorTypes</a>): any;
   setter(newValue?: any): <a href="#convertconstructortypes">ConvertConstructorTypes</a>;
@@ -623,6 +633,18 @@ A generic template. Can be a single atomic item or a list of items.
 </p>
 
 <pre><a href="#element">Element</a> | <a href="#text">Text</a> | <a href="#node">Node</a> | <a href="#vfragment">VFragment</a> | <a href="#vfunction">VFunction</a> | <a href="#vcomponent">VComponent</a> | <a href="#velement">VElement</a> | <a href="#vslot">VSlot</a> | <a href="#vtag">VTag</a> | <a href="#promise">Promise</a> | <a href="#observable">Observable</a> | string | number | boolean | undefined | null | <a href="#template">Template</a>[]</pre>
+
+<hr />
+
+<strong id="vattrs"><code>Type</code> VAttrs&lt;T, E&gt;</strong>
+    
+<p>
+
+Get a list of html attributes that can be assigned to the node.
+
+</p>
+
+<pre><a href="#omit">Omit</a></pre>
 
 <hr />
 
@@ -744,6 +766,18 @@ Properties that can be assigned to a node through the render engine.
 </p>
 
 <pre></pre>
+
+<hr />
+
+<strong id="vprops"><code>Type</code> VProps&lt;T&gt;</strong>
+    
+<p>
+
+Get prototype properties that can be assigned to the node.
+
+</p>
+
+<pre><a href="#omit">Omit</a> & </pre>
 
 <hr />
 
@@ -1043,7 +1077,7 @@ The global DNA registry instance.
 
 <details>
 <summary>
-    <code>(name: string, options?: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): &lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#t">T</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code>
+    <code>(name: string, options?: <a href="#elementdefinitionoptions">ElementDefinitionOptions</a>): &lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#classdescriptor">ClassDescriptor</a> | <a href="#t">T</a>) => any</code>
 </summary>
 
 <strong>Params</strong>
@@ -1069,7 +1103,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>&lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#t">T</a> | <a href="#classdescriptor">ClassDescriptor</a>) => any</code> The decorated component class.
+<strong>Returns</strong>: <code>&lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#classdescriptor">ClassDescriptor</a> | <a href="#t">T</a>) => any</code> The decorated component class.
 
 </details>
 
@@ -1386,7 +1420,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>boolean</code> 
+<strong>Returns</strong>: <code>boolean</code> True if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
 
 </details>
 
@@ -1782,7 +1816,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template.
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> 
 
 </details>
 <details>
@@ -1808,7 +1842,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#template">Template</a></code> The virtual DOM template.
+<strong>Returns</strong>: <code><a href="#template">Template</a></code> 
 
 </details>
 
@@ -1844,7 +1878,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>node is <a href="#t">T</a></code> 
+<strong>Returns</strong>: <code>node is <a href="#t">T</a></code> True if element is a custom element.
 
 </details>
 
@@ -1880,7 +1914,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code>constructor is <a href="#c">C</a></code> 
+<strong>Returns</strong>: <code>constructor is <a href="#c">C</a></code> True if the constructor is a component class.
 
 </details>
 
@@ -1916,7 +1950,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#function">Function</a></code> The decorator initializer.
+<strong>Returns</strong>: <code><a href="#function">Function</a></code> 
 
 </details>
 <details>
@@ -1952,7 +1986,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#function">Function</a></code> The decorator initializer.
+<strong>Returns</strong>: <code><a href="#function">Function</a></code> 
 
 </details>
 <details>
@@ -1988,7 +2022,7 @@ The global DNA registry instance.
     </tbody>
 </table>
 
-<strong>Returns</strong>: <code><a href="#function">Function</a></code> The decorator initializer.
+<strong>Returns</strong>: <code><a href="#function">Function</a></code> 
 
 </details>
 
