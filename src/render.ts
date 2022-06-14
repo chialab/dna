@@ -183,6 +183,7 @@ const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` =
  * @param slot Should handle slot children.
  * @param context The render context of the root.
  * @param rootContext The current custom element context of the render.
+ * @param slotContext The current slot mode of the root render.
  * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
  * @return The resulting child nodes list.
@@ -193,6 +194,7 @@ export const internalRender = (
     slot = isComponent(root),
     context: Context = getOrCreateContext(root),
     rootContext: Context = (isComponent(root) ? getOrCreateContext(root) : context) as Context,
+    slotContext: boolean = slot,
     namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
     fragment?: Context
 ) => {
@@ -218,7 +220,7 @@ export const internalRender = (
     }
     let currentNode = childNodes.item(currentIndex) as Node;
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-    let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
+    let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
 
     const oldKeyed = context.keyed || new Map();
     const keyed: Keyed = context.keyed = new Map();
@@ -273,7 +275,7 @@ export const internalRender = (
                 }
 
                 const renderFragmentContext = getOrCreateContext(placeholder);
-                setContextProperties(renderFragmentContext, rootContext, slot, {
+                setContextProperties(renderFragmentContext, rootContext, slotContext, {
                     key,
                 } as VProperties<Node>);
                 const isAttached = contains.bind(null, fragments, renderFragmentContext);
@@ -294,6 +296,7 @@ export const internalRender = (
                         slot,
                         previousContext,
                         rootContext,
+                        slotContext,
                         namespace,
                         renderFragmentContext
                     );
@@ -375,7 +378,7 @@ export const internalRender = (
                 if (oldKeyed.has(key)) {
                     templateNode = oldKeyed.get(key) as Node;
                     templateContext = getOrCreateContext(templateNode);
-                    templateProperties = getContextProperties(templateContext, rootContext, slot);
+                    templateProperties = getContextProperties(templateContext, rootContext, slotContext);
                 } else if (currentKey != null && currentKey !== key) {
                     //
                 } else if (slot ? currentContext.root === context : !currentContext.root) {
@@ -409,9 +412,9 @@ export const internalRender = (
             const templateElement = templateNode as HTMLElement;
 
             templateContext = templateContext || getOrCreateContext(templateNode);
-            templateProperties = templateProperties || getContextProperties(templateContext, rootContext, slot);
+            templateProperties = templateProperties || getContextProperties(templateContext, rootContext, slotContext);
             const properties = fillEmptyValues(templateProperties, template.properties);
-            setContextProperties(templateContext, rootContext, slot, properties);
+            setContextProperties(templateContext, rootContext, slotContext, properties);
 
             let propertyKey: keyof typeof properties;
             for (propertyKey in properties) {
@@ -591,7 +594,7 @@ export const internalRender = (
 
             currentNode = childNodes.item(++currentIndex) as Node;
             currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-            currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slot) : null;
+            currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
         } else {
             // they are different, so we need to insert the new Node into the tree
             // if current iterator is defined, insert the Node before it
@@ -614,6 +617,7 @@ export const internalRender = (
                 isComponent(templateNode),
                 templateContext,
                 rootContext,
+                slotContext,
                 templateNamespace
             );
         }
