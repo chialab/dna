@@ -1,10 +1,11 @@
 import { hasAttribute, getClassDeclaration, getAttributeName, getPropertiesObject, createAttributeFromField, hasKeyword } from './utils.js';
 
+/**
+ * A plugin that collects static properties.
+ * @returns {import('@custom-elements-manifest/analyzer').Plugin} An analyzer plugin.
+ */
 export function staticProperties() {
-    /**
-     * @type {import('@custom-elements-manifest/analyzer').Plugin}
-     */
-    const plugin = {
+    return {
         name: 'DNA-STATIC-PROPERTIES',
         analyzePhase({ ts, node, moduleDoc }) {
             if (!ts.isClassDeclaration(node)) {
@@ -69,6 +70,4 @@ export function staticProperties() {
             });
         },
     };
-
-    return plugin;
 }

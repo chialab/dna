@@ -1,10 +1,11 @@
 import { hasAttribute, getDecorator, getClassDeclaration, getAttributeName, createAttributeFromField, getDecoratorArguments, hasKeyword } from './utils.js';
 
+/**
+ * A plugin that that detects `property` decorator usage.
+ * @returns {import('@custom-elements-manifest/analyzer').Plugin} An analyzer plugin.
+ */
 export function propertyDecorator() {
-    /**
-     * @type {import('@custom-elements-manifest/analyzer').Plugin}
-     */
-    const plugin = {
+    return {
         name: 'DNA-PROPERTY-DECORATOR',
         analyzePhase({ ts, node, moduleDoc }) {
             if (!ts.isClassDeclaration(node)) {
@@ -62,6 +63,4 @@ export function propertyDecorator() {
             });
         },
     };
-
-    return plugin;
 }

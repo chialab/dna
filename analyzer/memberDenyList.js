@@ -1,10 +1,11 @@
 const MEMBER_DENY_LIST = ['properties', 'listeners'];
 
+/**
+ * A plugin that filters out private and protected class members.
+ * @returns {import('@custom-elements-manifest/analyzer').Plugin} An analyzer plugin.
+ */
 export function memberDenyList() {
-    /**
-     * @type {import('@custom-elements-manifest/analyzer').Plugin}
-     */
-    const plugin = {
+    return {
         name: 'DNA-MEMBER-DENYLIST',
         moduleLinkPhase({ moduleDoc }) {
             if (!moduleDoc.declarations) {
@@ -22,6 +23,4 @@ export function memberDenyList() {
             });
         },
     };
-
-    return plugin;
 }

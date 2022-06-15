@@ -1,8 +1,8 @@
 /**
  * Check if node has a specific keyword.
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node
- * @param {import('typescript').SyntaxKind} keyword
- * @returns {boolean}
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node The AST node.
+ * @param {import('typescript').SyntaxKind} keyword The keyword code to check for.
+ * @returns {boolean} True if the node has the keyword.
  */
 export function hasKeyword(node, keyword) {
     return node.modifiers?.some((mod) => mod.kind === keyword) ?? false;
@@ -10,7 +10,8 @@ export function hasKeyword(node, keyword) {
 
 /**
  * Get the proper decorator expression.
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator} decorator
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator} decorator The decorator AST node.
+ * @returns {import('@custom-elements-manifest/analyzer/node_modules/typescript').CallExpression} The decorator expression.
  */
 export function getDecoratorExpression(decorator) {
     return /** @type {import('@custom-elements-manifest/analyzer/node_modules/typescript').CallExpression} */ (decorator.expression);
@@ -18,18 +19,20 @@ export function getDecoratorExpression(decorator) {
 
 /**
  * Get decorator call expression arguments.
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator} decorator
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator} decorator The decorator AST node.
+ * @returns {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node[]} The decorator call expression arguments.
  */
 export function getDecoratorArguments(decorator) {
-    const expression = /** @type {import('@custom-elements-manifest/analyzer/node_modules/typescript').CallExpression} */ (decorator.expression);
+    const expression = getDecoratorExpression(decorator);
 
     return /** @type {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node[]} */ ([...(expression?.arguments ?? [])]);
 }
 
 /**
  * Get class/method/property decorator by name.
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node
- * @param {string} name
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node The AST node.
+ * @param {string} name The decorator name.
+ * @returns {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator|undefined} The decorator AST node.
  */
 export function getDecorator(node, name) {
     return node.decorators?.find((decorator) =>
@@ -40,9 +43,9 @@ export function getDecorator(node, name) {
 
 /**
  * Convert field to attribute.
- * @param {import('custom-elements-manifest/schema').ClassField} field
- * @param {string} attrName
- * @returns {import('custom-elements-manifest/schema').Attribute}
+ * @param {import('custom-elements-manifest/schema').ClassField} field The field name.
+ * @param {string} attrName The attribute name.
+ * @returns {import('custom-elements-manifest/schema').Attribute} The manifest attribute.
  */
 export function createAttributeFromField(field, attrName) {
     return {
@@ -57,8 +60,9 @@ export function createAttributeFromField(field, attrName) {
 
 /**
  * Check if property has an attribute.
- * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').ObjectLiteralExpression} node
+ * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts The typescript instance.
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').ObjectLiteralExpression} node The property descriptor object AST node.
+ * @returns {boolean} True if the property has an attribute field.
  */
 export function hasAttribute(ts, node) {
     const properties = node.properties;
@@ -87,8 +91,9 @@ export function hasAttribute(ts, node) {
 
 /**
  * Get attribute name from property decorator options.
- * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').ObjectLiteralExpression} node
+ * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts The typescript instance.
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').ObjectLiteralExpression} node The property descriptor object AST node.
+ * @returns {string|null} The attribute name.
  */
 export function getAttributeName(ts, node) {
     const properties = node.properties;
@@ -114,8 +119,9 @@ export function getAttributeName(ts, node) {
 
 /**
  * Get property declarations from static properties getter.
- * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts
- * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').GetAccessorDeclaration|import('@custom-elements-manifest/analyzer/node_modules/typescript').PropertyDeclaration} node
+ * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts The typescript instance.
+ * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').GetAccessorDeclaration|import('@custom-elements-manifest/analyzer/node_modules/typescript').PropertyDeclaration} node The property getter AST node.
+ * @returns {import('@custom-elements-manifest/analyzer/node_modules/typescript').ObjectLiteralExpression|null} The property descriptor object AST node.
  */
 export function getPropertiesObject(ts, node) {
     const exp = ts.isGetAccessor(node) ?
@@ -131,9 +137,10 @@ export function getPropertiesObject(ts, node) {
 
 /**
  * Get module by name.
- * @param {Partial<import('custom-elements-manifest/schema').JavaScriptModule>} moduleDoc
- * @param {import('@custom-elements-manifest/analyzer').Context} context
- * @param {string} name
+ * @param {Partial<import('custom-elements-manifest/schema').JavaScriptModule>} moduleDoc The module documentation.
+ * @param {import('@custom-elements-manifest/analyzer').Context} context The analyzer context.
+ * @param {string} name The module name.
+ * @returns {{ package: string }|{ module: string|undefined }} Module info.
  */
 export function resolveModuleOrPackageSpecifier(moduleDoc, context, name) {
     const imports = /** @type {{ name: string; isBareModuleSpecifier: boolean; importPath: string }[]} */ (context?.imports ?? []);
@@ -149,8 +156,9 @@ export function resolveModuleOrPackageSpecifier(moduleDoc, context, name) {
 
 /**
  * Get class declaration by name.
- * @param {Partial<import('custom-elements-manifest/schema').JavaScriptModule>} moduleDoc
- * @param {string} className
+ * @param {Partial<import('custom-elements-manifest/schema').JavaScriptModule>} moduleDoc The module documentation.
+ * @param {string} className The class name.
+ * @returns {import('custom-elements-manifest/schema').CustomElement|undefined} The custom element definition.
  */
 export function getClassDeclaration(moduleDoc, className) {
     return /** @type {import('custom-elements-manifest/schema').CustomElement|undefined} */ (moduleDoc.declarations?.find((declaration) => declaration.name === className));

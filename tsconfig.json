@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "es2015",
+    "target": "ESNext",
+    "module": "ESNext",
     "lib": ["es2017", "dom"],
     "sourceMap": true,
     "inlineSources": true,
     "strict": true,
+    "outDir": "./dist",
     "declaration": true,
     "declarationDir": "types",
     "noUnusedLocals": true,
@@ -18,9 +19,14 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": false,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
   },
   "include": [
-    "./src/**/*.ts"
+    "analyzer",
+    "src",
   ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
 }

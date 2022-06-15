@@ -1654,7 +1654,8 @@ function h<T extends string>(tagOrComponent: T, properties?: VProperties<T> | nu
  * @returns The virtual DOM object.
  */
 function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string, properties: VProperties | null = null, ...children: Template[]) {
-    const { is, key, xmlns, ref } = (properties || {});
+    const { is, key, xmlns, ref, children: propertiesChildren } = (properties || {});
+    children = propertiesChildren as Template[] || children;
 
     if (tagOrComponent === Fragment) {
         return {

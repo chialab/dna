@@ -1,10 +1,13 @@
+// @ts-check
+
 import { getDecorator, resolveModuleOrPackageSpecifier, getDecoratorArguments } from './utils.js';
 
+/**
+ * A plugin that detects `customElement` decorator usage.
+ * @returns {import('@custom-elements-manifest/analyzer').Plugin} An analyzer plugin.
+ */
 export function customElementDecorator() {
-    /**
-     * @type {import('@custom-elements-manifest/analyzer').Plugin}
-     */
-    const plugin = {
+    return {
         name: 'DNA-CUSTOM-ELEMENT-DECORATOR',
         analyzePhase({ ts, node, moduleDoc, context }) {
             if (!ts.isClassDeclaration(node)) {
@@ -34,6 +37,4 @@ export function customElementDecorator() {
             }];
         },
     };
-
-    return plugin;
 }

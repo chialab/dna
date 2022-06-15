@@ -6,11 +6,12 @@ const METHOD_DENY_LIST = [
     'render',
 ];
 
+/**
+ * A plugin that filters out private and protected class methods.
+ * @returns {import('@custom-elements-manifest/analyzer').Plugin} An analyzer plugin.
+ */
 export function methodDenyList() {
-    /**
-     * @type {import('@custom-elements-manifest/analyzer').Plugin}
-     */
-    const plugin = {
+    return {
         name: 'DNA-METHOD-DENYLIST',
         moduleLinkPhase({ moduleDoc }) {
             if (!moduleDoc.declarations) {
@@ -28,6 +29,4 @@ export function methodDenyList() {
             });
         },
     };
-
-    return plugin;
 }

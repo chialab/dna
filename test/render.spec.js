@@ -144,7 +144,7 @@ describe('render', function() {
         });
 
         it('should render component function', () => {
-            function Test() {
+            const Test = function Test() {
                 return [
                     'hello',
                     'world',
@@ -153,16 +153,16 @@ describe('render', function() {
                     DNA.DOM.createTextNode('Hello'),
                     DNA.DOM.createElement('div'),
                 ];
-            }
+            };
 
             DNA.render(DNA.h(Test), wrapper);
             expect(wrapper.childNodes).to.have.lengthOf(7);
         });
 
         it('should render component function with keys', () => {
-            function Test() {
+            const Test = function Test() {
                 return ['hello', 'world'];
-            }
+            };
 
             DNA.render([DNA.h(Test, { key: 1 }), DNA.h(Test, { key: 2 })], wrapper);
             const [,,, comment, text1, text2] = wrapper.childNodes;
@@ -178,12 +178,12 @@ describe('render', function() {
             const render1 = spyFunction();
             const render2 = spyFunction();
 
-            function Test() {
+            const Test = function Test() {
                 render1();
                 return 'hello';
-            }
+            };
 
-            function Clock(props, context) {
+            const Clock = function Clock(props, context) {
                 render2();
                 let count = context.store.get('count') || 0;
                 count++;
@@ -194,7 +194,7 @@ describe('render', function() {
                     }, 200);
                 }
                 return count;
-            }
+            };
 
             DNA.render([
                 DNA.h(Test),

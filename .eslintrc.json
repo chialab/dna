@@ -10,7 +10,6 @@
     "jsdoc/check-param-names": 1,
     "jsdoc/check-property-names": 1,
     "jsdoc/check-values": 1,
-    "jsdoc/no-types": 1,
     "jsdoc/require-jsdoc": 1,
     "jsdoc/require-param": 1,
     "jsdoc/require-param-description": 1,
