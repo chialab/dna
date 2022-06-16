@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
 import { Observable } from 'rxjs';
-import { expect } from '@esm-bundle/chai/esm/chai.js';
-import { spyFunction, getComponentName, wait } from './helpers.spec.js';
+import { expect, wait, spy } from '@chialab/ginsenghino';
+import { getComponentName } from './helpers.spec.js';
 
 const IMG = 'data:image/png;base64,';
 
@@ -446,13 +446,16 @@ describe('template', function() {
 
             for (const type in TEMPLATES) {
                 it(type, () => {
-                    const listener = spyFunction();
+                    const listener = spy();
+
                     DNA.render(TEMPLATES[type]({
                         listener,
                     }), wrapper);
+
                     const button = wrapper.childNodes[0];
                     button.click();
-                    expect(listener.invoked).to.be.true;
+
+                    expect(listener).to.have.been.called();
                 });
             }
         });

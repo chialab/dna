@@ -2,8 +2,8 @@
 import * as DNA from '@chialab/dna';
 import { __decorate } from 'tslib';
 import _decorate from '@babel/runtime/helpers/decorate';
-import { expect } from '@esm-bundle/chai/esm/chai.js';
-import { spyFunction, getComponentName } from './helpers.spec.js';
+import { expect, spy } from '@chialab/ginsenghino';
+import { getComponentName } from './helpers.spec.js';
 
 describe('property', function() {
     this.timeout(10 * 1000);
@@ -247,7 +247,7 @@ describe('property', function() {
         });
 
         it('should define a property with a single observer', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
 
             let MyElement = class MyElement extends DNA.Component {
                 constructor(...args) {
@@ -266,14 +266,14 @@ describe('property', function() {
             ], MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
 
         it('should define a property with observe decorator', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
 
             let MyElement = class MyElement extends DNA.Component {
                 constructor(...args) {
@@ -297,15 +297,15 @@ describe('property', function() {
             ], MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
 
         it('should not merge observe decorators', () => {
-            const listener = spyFunction((...args) => args);
-            const listener2 = spyFunction((...args) => args);
+            const listener = spy();
+            const listener2 = spy();
 
             let MyParent = class MyParent extends DNA.Component {
                 constructor(...args) {
@@ -342,15 +342,15 @@ describe('property', function() {
             ], MyElement.prototype, 'listener2', undefined);
 
             expect(new MyParent({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener.invoked).to.be.true;
-            expect(listener2.invoked).to.be.false;
+            expect(listener).to.have.been.called();
+            expect(listener2).to.not.have.been.called();
 
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener2.invoked).to.be.true;
+            expect(listener2).to.have.been.called();
         });
 
         it('should define a property with observe decorator (babel)', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
 
             const MyElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
                 class MyElement extends _DNA$Component {
@@ -383,15 +383,15 @@ describe('property', function() {
             }, DNA.Component);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
 
         it('should define a property with multiple observers', () => {
-            const listener1 = spyFunction((...args) => args);
-            const listener2 = spyFunction((...args) => args);
+            const listener1 = spy();
+            const listener2 = spy();
 
             let MyElement = class MyElement extends DNA.Component {
                 constructor(...args) {
@@ -410,13 +410,13 @@ describe('property', function() {
             ], MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener1.invoked).to.be.false;
-            expect(listener2.invoked).to.be.false;
+            expect(listener1).to.not.have.been.called();
+            expect(listener2).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([42, 84, 'testProp']);
-            expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener1).to.have.been.called();
+            expect(listener2).to.have.been.called();
+            expect(listener1).to.have.been.called.with(42, 84, 'testProp');
+            expect(listener2).to.have.been.called.with(42, 84, 'testProp');
         });
     });
 
@@ -554,7 +554,8 @@ describe('property', function() {
         });
 
         it('should define a property with a single observer', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
+
             const MyElement = class extends DNA.Component {
                 static get properties() {
                     return {
@@ -565,19 +566,19 @@ describe('property', function() {
                     };
                 }
             };
-
             DNA.customElements.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
 
         it('should define a property with multiple observers', () => {
-            const listener1 = spyFunction((...args) => args);
-            const listener2 = spyFunction((...args) => args);
+            const listener1 = spy();
+            const listener2 = spy();
+
             const MyElement = class extends DNA.Component {
                 static get properties() {
                     return {
@@ -588,17 +589,16 @@ describe('property', function() {
                     };
                 }
             };
-
             DNA.customElements.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', 42);
-            expect(listener1.invoked).to.be.false;
-            expect(listener2.invoked).to.be.false;
+            expect(listener1).to.not.have.been.called();
+            expect(listener2).to.not.have.been.called();
             expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
-            expect(listener1.invoked).to.be.true;
-            expect(listener1.response).to.be.deep.equal([42, 84, 'testProp']);
-            expect(listener2.invoked).to.be.true;
-            expect(listener2.response).to.be.deep.equal([42, 84, 'testProp']);
+            expect(listener1).to.have.been.called();
+            expect(listener2).to.have.been.called();
+            expect(listener1).to.have.been.called.with(42, 84, 'testProp');
+            expect(listener2).to.have.been.called.with(42, 84, 'testProp');
         });
 
         it('should inherit and reduce the prototype chain', () => {
@@ -710,7 +710,8 @@ describe('property', function() {
 
     describe('#observe', () => {
         it('should observe property changes', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
+
             const MyElement = class extends DNA.Component {
                 static get properties() {
                     return {
@@ -720,23 +721,22 @@ describe('property', function() {
                     };
                 }
             };
-
             DNA.customElements.define(getComponentName(), MyElement);
 
             const element = new MyElement();
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             element.testProp = 100;
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             element.observe('testProp', listener);
             element.testProp = 84;
-            expect(listener.invoked).to.be.true;
-            expect(listener.response).to.be.deep.equal([100, 84, 'testProp']);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.with(100, 84, 'testProp');
         });
 
         it('should throw for undeclared properties', () => {
-            const listener = spyFunction((...args) => args);
-            const MyElement = class extends DNA.Component {};
+            const listener = spy();
 
+            const MyElement = class extends DNA.Component {};
             DNA.customElements.define(getComponentName(), MyElement);
 
             const element = new MyElement();
@@ -746,7 +746,8 @@ describe('property', function() {
 
     describe('#unobserve', () => {
         it('should unobserve property changes', () => {
-            const listener = spyFunction((...args) => args);
+            const listener = spy();
+
             const MyElement = class extends DNA.Component {
                 static get properties() {
                     return {
@@ -756,23 +757,22 @@ describe('property', function() {
                     };
                 }
             };
-
             DNA.customElements.define(getComponentName(), MyElement);
 
             const element = new MyElement();
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             element.observe('testProp', listener);
             element.testProp = 84;
-            expect(listener.invoked).to.be.true;
+            expect(listener).to.have.been.called();
             element.unobserve('testProp', listener);
             element.testProp = 150;
-            expect(listener.count).to.be.equal(1);
+            expect(listener).to.have.been.called.once;
         });
 
         it('should throw for undeclared properties', () => {
-            const listener = spyFunction((...args) => args);
-            const MyElement = class extends DNA.Component {};
+            const listener = spy();
 
+            const MyElement = class extends DNA.Component {};
             DNA.customElements.define(getComponentName(), MyElement);
 
             const element = new MyElement();

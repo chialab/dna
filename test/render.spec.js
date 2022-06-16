@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
-import { expect } from '@esm-bundle/chai/esm/chai.js';
-import { getComponentName, wait, spyFunction } from './helpers.spec.js';
+import { expect, wait, spy } from '@chialab/ginsenghino';
+import { getComponentName } from './helpers.spec.js';
 
 describe('render', function() {
     let wrapper;
@@ -175,8 +175,8 @@ describe('render', function() {
         });
 
         it('should re-render component function only', async () => {
-            const render1 = spyFunction();
-            const render2 = spyFunction();
+            const render1 = spy();
+            const render2 = spy();
 
             const Test = function Test() {
                 render1();
@@ -206,8 +206,8 @@ describe('render', function() {
             await wait(500);
             expect(wrapper.childNodes[1].textContent).to.be.equal('hello');
             expect(wrapper.childNodes[3].textContent).to.be.equal('2');
-            expect(render1.count).to.be.equal(1);
-            expect(render2.count).to.be.equal(2);
+            expect(render1).to.have.been.called.once;
+            expect(render2).to.have.been.called.twice;
         });
 
         it('should add nodes', () => {
@@ -286,29 +286,29 @@ describe('render', function() {
         });
 
         it('should add and remove native listeners', () => {
-            const listener = spyFunction();
+            const listener = spy();
             DNA.render(DNA.h('div', { onclick: listener }), wrapper);
             const elem = wrapper.children[0];
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             elem.click();
-            expect(listener.invoked).to.be.true;
-            expect(listener.count).to.be.equal(1);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.once;
             DNA.render(DNA.h('div', { onclick: null }), wrapper);
             elem.click();
-            expect(listener.count).to.be.equal(1);
+            expect(listener).to.have.been.called.once;
         });
 
         it('should add and remove custom listeners', () => {
-            const listener = spyFunction();
+            const listener = spy();
             DNA.render(DNA.h('div', { onCustom: listener }), wrapper);
             const elem = wrapper.children[0];
-            expect(listener.invoked).to.be.false;
+            expect(listener).to.not.have.been.called();
             DNA.dispatchEvent(elem, 'Custom');
-            expect(listener.invoked).to.be.true;
-            expect(listener.count).to.be.equal(1);
+            expect(listener).to.have.been.called();
+            expect(listener).to.have.been.called.once;
             DNA.render(DNA.h('div', { onCustom: null }), wrapper);
             elem.click();
-            expect(listener.count).to.be.equal(1);
+            expect(listener).to.have.been.called.once;
         });
 
         it('should update native properties', () => {
@@ -815,12 +815,13 @@ describe('render', function() {
         });
 
         it('should delete nodes untile the attached one', () => {
-            const spyConnectedCallback = spyFunction();
+            const connectedCallback = spy();
+
             const name = getComponentName();
             class TestElement extends DNA.Component {
                 connectedCallback() {
                     super.connectedCallback();
-                    spyConnectedCallback();
+                    connectedCallback();
                 }
             }
 
@@ -834,15 +835,15 @@ describe('render', function() {
                 <div ref=${ref} />
             `, wrapper);
 
-            expect(spyConnectedCallback.invoked).to.be.true;
-            expect(spyConnectedCallback.count).to.be.equal(1);
+            expect(connectedCallback).to.have.been.called();
+            expect(connectedCallback).to.have.been.called.once;
 
             DNA.render(DNA.html`
                 <h1>Title</h1>
                 <div ref=${ref} />
             `, wrapper);
 
-            expect(spyConnectedCallback.count).to.be.equal(1);
+            expect(connectedCallback).to.have.been.called.once;
         });
 
         it('should correctly update nodes after Function render', () => {

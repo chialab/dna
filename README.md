@@ -156,4 +156,4 @@ $ yarn test
 
 ## License
 
-DNA is released under the [MIT](https://github.com/chialab/dna/blob/main/LICENSE) license.
+**DNA** is released under the [MIT](https://github.com/chialab/dna/blob/main/LICENSE) license.
