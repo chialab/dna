@@ -45,9 +45,10 @@
     "types": "rimraf types && tsc --project tsconfig.build.json",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
-    "test:browser": "rna test:browser --coverage",
-    "test:saucelabs": "rna test:saucelabs --browsers 'modern' 'legacy'",
-    "test:node": "rna test:node",
+    "test:browser": "rna test:browser test/*.spec.js --coverage",
+    "test:saucelabs": "rna test:saucelabs test/*.spec.js --browsers 'modern' 'legacy'",
+    "test:node": "rna test:node test/*.spec.js",
+    "test:integrations": "rna test:browser test/integrations/*.spec.js",
     "lint": "eslint src analyzer test",
     "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
     "prepack": "yarn build"
@@ -87,6 +88,7 @@
     "react-dom": "^18.2.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
-    "typescript": "^4.4.0"
+    "typescript": "^4.4.0",
+    "vue": "^3.2.37"
   }
 }
