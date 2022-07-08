@@ -402,17 +402,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
-         * Handle setting text content to component.]
-         * @returns The element inner text.
-         */
-        get innerText() {
-            return super.innerText;
-        }
-        set innerText(value) {
-            render(value, this);
-        }
-
-        /**
          * Handle setting text content to component.
          * @returns The element inner HTML.
          */
@@ -474,6 +463,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     this[propertyKey] = properties[propertyKey] as this[typeof propertyKey];
                 }
             }
+            initSlotChildNodes(this);
             flagInitialized(this);
         }
 
@@ -664,7 +654,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Force an element to re-render.
          */
         forceUpdate() {
-            const childNodes = this.slotChildNodes || initSlotChildNodes(this);
+            const childNodes = this.slotChildNodes;
             if (childNodes) {
                 internalRender(this, this.render(), false);
             }
@@ -818,7 +808,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private initProperties?: Members<this>;
+                private $initProps?: Members<this>;
 
                 /**
                  * @inheritdoc
@@ -826,7 +816,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 constructor(...args: any[]) {
                     super(...args);
                     flagConstructed(this);
-                    this.initialize(this.initProperties);
+                    this.initialize(this.$initProps);
                 }
 
                 /**
@@ -834,7 +824,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                  */
                 initialize(properties?: Members<this>) {
                     if (!isConstructed(this)) {
-                        this.initProperties = properties;
+                        this.$initProps = properties;
                         return;
                     }
                     return super.initialize(properties);
