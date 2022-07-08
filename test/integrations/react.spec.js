@@ -2,34 +2,13 @@
 import { expect } from '@chialab/ginsenghino';
 /* eslint-disable-next-line import/no-unresolved */
 import * as DNA from '@chialab/dna';
+import './app.js';
 
 describe('React', () => {
-    let React, ReactDOM, TestElement, wrapper;
+    let React, ReactDOM, wrapper;
     before(async () => {
         React = await import('react');
         ReactDOM = await import('react-dom');
-
-        TestElement = class extends DNA.Component {
-            static get properties() {
-                return {
-                    prop: { type: String },
-                };
-            }
-
-            render() {
-                return DNA.html`
-                    <span>
-                        <slot />
-                    </span>
-                    <div>
-                        <slot name="children" />
-                    </div>
-                    ${DNA.html`<p>${this.prop}</p>`}
-                `;
-            }
-        };
-
-        DNA.customElements.define('test-element-integration', TestElement);
     });
 
     beforeEach(() => {
@@ -82,7 +61,7 @@ describe('React', () => {
         expect(element.children[1].children[0].textContent).to.be.equal('Subtitle');
     });
 
-    it('should update a property', () => {
+    it('should update a textual property', () => {
         const element = ReactDOM.render(React.createElement('test-element-integration', { prop: 'value' }), wrapper);
         expect(element.prop).to.be.equal('value');
         expect(element.children[2].tagName).to.be.equal('P');
@@ -92,5 +71,12 @@ describe('React', () => {
         expect(element.prop).to.be.equal('value update');
         expect(element.children[2].tagName).to.be.equal('P');
         expect(element.children[2].textContent).to.be.equal('value update');
+    });
+
+    it('should update a ref property', () => {
+        const element = ReactDOM.render(React.createElement('test-element-integration', { ref: { title: 'Title' } }), wrapper);
+        expect(element.ref).to.be.a('object');
+        expect(element.children[2].tagName).to.be.equal('P');
+        expect(element.children[2].textContent).to.be.equal('Title');
     });
 });

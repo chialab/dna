@@ -4,12 +4,23 @@
 
 DNA uses its own render to handle slotted nodes in the light DOM. So, we run tests for integration with other frontend frameworks like React, Angular, Lit and Vue. Here is a list of passing tests and known issues:
 
-| Framwework | Text | Elements | Named slots |
-|------------|:----:|:--------:|:-----------:|
-| React      | ✅   | ✅        | ✅          |
-| Lit        | ✅   | ✅        | ❌          |
-| Vue        | 🚧   | 🚧        | 🚧          |
-| Angular    | 🚧   | 🚧        | 🚧          |
+| Framwework | Update a property | Slot text     | Slot elements  | Named         |
+|------------|:-----------------:|:-------------:|:--------------:|:-------------:|
+| React      | ⚠️<sup>1</sup>     | ✅             | ✅             | ✅            |
+| Lit        | ✅<sup>2</sup>     | ✅             | ✅             | ⚠️<sup>3</sup> |
+| Vue        | ✅<sup>2</sup>     | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> |
+| Angular    | 🚧                 | 🚧             | 🚧             | 🚧            |
+
+
+<sup>1</sup> partial support in React is granted primitive properties, but not for reference values before React 19.
+
+<sup>2</sup> support in Lit is granted using [property expressions](https://lit.dev/docs/templates/expressions/#property-expressions).
+
+<sup>3</sup> partial support in Lit is granted for first render, but inserting/removing children may lead to render issues.
+
+<sup>4</sup> support in Vue is granted using [property expressions](https://vuejs.org/guide/extras/render-function.html).
+
+<sup>5</sup> partial support in Vue is granted for first render and insterted children, but removing children may lead to render issues.
 
 ## View libraries
 
