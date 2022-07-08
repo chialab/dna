@@ -1086,7 +1086,10 @@ describe('Component', function() {
 
             const element = new TestElement();
             element.innerHTML = '<span>Test</span>';
-            expect(element.innerHTML.replace(/<!--(.*?)-->/g, '')).to.be.equal('<div><span>Test</span> inner text</div>');
+            expect(element.innerHTML).to.be.oneOf([
+                '<div><!--Fn--><span>Test</span> inner text</div>',
+                '<div><!--Gn--><span>Test</span> inner text</div>',
+            ]);
         });
 
         it('should set slot text using innerHTML setter', () => {
