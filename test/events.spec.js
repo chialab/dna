@@ -127,7 +127,9 @@ describe('events', function() {
 
     describe('delegateEventListener', () => {
         it('should delegate a listener', () => {
-            const listener = spy();
+            const listener = spy((event) => {
+                event.preventDefault();
+            });
 
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
@@ -158,12 +160,19 @@ describe('events', function() {
         });
 
         it('should stop propagation', () => {
-            const listener1 = spy();
+            const listener1 = spy((event) => {
+                event.preventDefault();
+            });
             const listener2 = spy((event) => {
                 event.stopPropagation();
+                event.preventDefault();
             });
-            const listener3 = spy();
-            const listener4 = spy();
+            const listener3 = spy((event) => {
+                event.preventDefault();
+            });
+            const listener4 = spy((event) => {
+                event.preventDefault();
+            });
 
             const child = DNA.DOM.createElement('div');
             const button = DNA.DOM.createElement('button');
@@ -182,12 +191,19 @@ describe('events', function() {
         });
 
         it('should immediately stop propagation', () => {
-            const listener1 = spy();
+            const listener1 = spy((event) => {
+                event.preventDefault();
+            });
             const listener2 = spy((event) => {
                 event.stopImmediatePropagation();
+                event.preventDefault();
             });
-            const listener3 = spy();
-            const listener4 = spy();
+            const listener3 = spy((event) => {
+                event.preventDefault();
+            });
+            const listener4 = spy((event) => {
+                event.preventDefault();
+            });
 
             const child = DNA.DOM.createElement('div');
             const button = DNA.DOM.createElement('button');
@@ -208,8 +224,12 @@ describe('events', function() {
 
     describe('undelegateEventListener', () => {
         it('should remove a delegated event listener', () => {
-            const listener = spy();
-            const listener2 = spy();
+            const listener = spy((event) => {
+                event.preventDefault();
+            });
+            const listener2 = spy((event) => {
+                event.preventDefault();
+            });
 
             const button = DNA.DOM.createElement('button');
             wrapper.appendChild(button);
@@ -226,13 +246,17 @@ describe('events', function() {
         it('should do nothing if there are no delegations', () => {
             const button = DNA.DOM.createElement('button');
             expect(() => {
-                DNA.undelegateEventListener(button, 'click', null, () => { });
+                DNA.undelegateEventListener(button, 'click', null, (event) => {
+                    event.preventDefault();
+                });
             }).to.not.throw();
         });
 
         it('should do nothing if there are no delegations for an event', () => {
             const button = DNA.DOM.createElement('button');
-            DNA.delegateEventListener(button, 'click', null, () => {});
+            DNA.delegateEventListener(button, 'click', null, (event) => {
+                event.preventDefault();
+            });
             expect(() => {
                 DNA.undelegateEventListener(button, 'missing', null, () => { });
             }).to.not.throw();
@@ -271,6 +295,7 @@ describe('events', function() {
                 }
 
                 method(event, target) {
+                    event.preventDefault();
                     callback(event.type, target.tagName);
                 }
             }
@@ -298,7 +323,10 @@ describe('events', function() {
             class TestElement extends DNA.Component {
                 static get listeners() {
                     return {
-                        'click button': (event, target) => callback(event.type, target.tagName),
+                        'click button': (event, target) => {
+                            event.preventDefault();
+                            callback(event.type, target.tagName);
+                        },
                     };
                 }
 
@@ -318,9 +346,13 @@ describe('events', function() {
         });
 
         it('should inherit listeners', () => {
-            const callback1 = spy();
+            const callback1 = spy((event) => {
+                event.preventDefault();
+            });
             const callback2 = spy();
-            const callback3 = spy();
+            const callback3 = spy((event) => {
+                event.preventDefault();
+            });
             const callback4 = spy();
 
             class BaseElement extends DNA.Component {
@@ -392,6 +424,7 @@ describe('events', function() {
             const is = getComponentName();
             let TestElement = class TestElement extends DNA.Component {
                 method(event, target) {
+                    event.preventDefault();
                     callback(event.type, target.tagName);
                 }
             };
@@ -416,6 +449,7 @@ describe('events', function() {
 
             let TestElement = class TestElement extends DNA.Component {
                 method(event, target) {
+                    event.preventDefault();
                     callback(event.type, target.tagName);
                 }
 
@@ -447,10 +481,12 @@ describe('events', function() {
 
             let BaseElement = class BaseElement extends DNA.Component {
                 callback1(event, target) {
+                    event.preventDefault();
                     callback1(event, target);
                 }
 
                 callback2(event, target) {
+                    event.preventDefault();
                     callback2(event, target);
                 }
 
@@ -461,10 +497,12 @@ describe('events', function() {
 
             let TestElement1 = class TestElement1 extends BaseElement {
                 callback3(event, target) {
+                    event.preventDefault();
                     callback3(event, target);
                 }
 
                 callback4(event, target) {
+                    event.preventDefault();
                     callback4(event, target);
                 }
             };
@@ -547,6 +585,7 @@ describe('events', function() {
                         decorators: [DNA.listen('click')],
                         key: 'method',
                         value: function method(event, target) {
+                            event.preventDefault();
                             callback(event.type, target.tagName);
                         },
                     }],
@@ -581,6 +620,7 @@ describe('events', function() {
                         decorators: [DNA.listen('click', 'button')],
                         key: 'method',
                         value: function method(event, target) {
+                            event.preventDefault();
                             callback(event.type, target.tagName);
                         },
                     }, {
@@ -602,9 +642,13 @@ describe('events', function() {
         });
 
         it('should inherit listeners', () => {
-            const callback1 = spy();
+            const callback1 = spy((event) => {
+                event.preventDefault();
+            });
             const callback2 = spy();
-            const callback3 = spy();
+            const callback3 = spy((event) => {
+                event.preventDefault();
+            });
             const callback4 = spy();
 
             const BaseElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
@@ -713,7 +757,9 @@ describe('events', function() {
 
     describe('#dispatchEvent', () => {
         it('should dispatch an event', () => {
-            const callback = spy();
+            const callback = spy((event) => {
+                event.preventDefault();
+            });
 
             class TestElement extends DNA.Component {}
             DNA.customElements.define(getComponentName(), TestElement);
@@ -728,7 +774,9 @@ describe('events', function() {
         });
 
         it('should create and dispatch a custom event', () => {
-            const callback = spy();
+            const callback = spy((event) => {
+                event.preventDefault();
+            });
 
             class TestElement extends DNA.Component {}
             DNA.customElements.define(getComponentName(), TestElement);
@@ -754,6 +802,7 @@ describe('events', function() {
                 }
 
                 method(event) {
+                    event.preventDefault();
                     event.respondWith(async () => event.type);
                     event.respondWith(async () => event.target.tagName);
                 }
@@ -768,7 +817,9 @@ describe('events', function() {
 
     describe('#delegateEventListener', () => {
         it('should delegate an event', () => {
-            const callback = spy();
+            const callback = spy((event) => {
+                event.preventDefault();
+            });
 
             class TestElement extends DNA.Component {
                 render() {
@@ -788,7 +839,9 @@ describe('events', function() {
 
     describe('#undelegateEventListener', () => {
         it('should undelegate an event', () => {
-            const callback = spy();
+            const callback = spy((event) => {
+                event.preventDefault();
+            });
 
             class TestElement extends DNA.Component {
                 render() {
@@ -811,7 +864,9 @@ describe('events', function() {
 
     describe('listener target', () => {
         it('should delegate an event to document', () => {
-            const callback = spy();
+            const callback = spy((event) => {
+                event.preventDefault();
+            });
 
             const target = DNA.window.document.body;
             class TestElement extends DNA.Component {

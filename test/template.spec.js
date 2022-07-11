@@ -446,7 +446,9 @@ describe('template', function() {
 
             for (const type in TEMPLATES) {
                 it(type, () => {
-                    const listener = spy();
+                    const listener = spy((event) => {
+                        event.preventDefault();
+                    });
 
                     DNA.render(TEMPLATES[type]({
                         listener,

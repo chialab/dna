@@ -123,7 +123,6 @@ describe('Vue', () => {
         });
         app.mount(wrapper);
         const element = wrapper.children[0];
-        console.log(element);
 
         expect(element.ref).to.be.a('object');
         expect(element.children[2].tagName).to.be.equal('P');
