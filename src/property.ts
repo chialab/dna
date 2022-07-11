@@ -1,7 +1,7 @@
 import type { ClassElement, Constructor } from './helpers';
 import type { Members, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
-import { isConnected, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { isComponent, isConstructed } from './Component';
+import { HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { isComponent, isConstructed, isInitialized } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -423,7 +423,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                 this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
-            if (update && isConnected.call(this)) {
+            if (update && isInitialized(this)) {
                 this.forceUpdate();
             }
         },

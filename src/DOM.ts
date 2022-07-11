@@ -1,6 +1,6 @@
 import type { ComponentConstructor, ComponentInstance } from './Component';
 import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, insertAdjacentElementImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
-import { isComponent, isComponentConstructor } from './Component';
+import { isComponent, isInitialized, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
 
 /**
@@ -86,15 +86,15 @@ export const DOM = {
     appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
-        if (slot && isComponent(parent) && parent.slotChildNodes) {
-            const slotted = parent.slotChildNodes;
+        if (slot && isComponent(parent) && isInitialized(parent)) {
+            const slotted = parent.slotChildNodes as Node[];
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
             } else if (parentNode) {
                 DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
             }
-            parent.slotChildNodes.push(newChild);
+            slotted.push(newChild);
             parent.forceUpdate();
             return newChild;
         }
@@ -117,8 +117,8 @@ export const DOM = {
      * @returns The removed child.
      */
     removeChild<T extends Node>(parent: Node, oldChild: T, slot = true): T {
-        if (slot && isComponent(parent) && parent.slotChildNodes) {
-            const slotted = parent.slotChildNodes;
+        if (slot && isComponent(parent) && isInitialized(parent)) {
+            const slotted = parent.slotChildNodes as Node[];
             const io = slotted.indexOf(oldChild);
             if (io !== -1) {
                 slotted.splice(io, 1);
@@ -146,8 +146,8 @@ export const DOM = {
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
         const parentNode = newChild.parentNode;
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
-        if (slot && isComponent(parent) && parent.slotChildNodes) {
-            const slotted = parent.slotChildNodes;
+        if (slot && isComponent(parent) && isInitialized(parent)) {
+            const slotted = parent.slotChildNodes as Node[];
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
@@ -188,8 +188,8 @@ export const DOM = {
     replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
-        if (slot && isComponent(parent) && parent.slotChildNodes) {
-            const slotted = parent.slotChildNodes;
+        if (slot && isComponent(parent) && isInitialized(parent)) {
+            const slotted = parent.slotChildNodes as Node[];
             const io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);
             parent.forceUpdate();
@@ -221,7 +221,7 @@ export const DOM = {
      */
     insertAdjacentElement(parent: Element, position: InsertPosition, insertedElement: Element, slot = true): Element | null {
         if (position === 'afterbegin') {
-            const refChild = isComponent(parent) && parent.slotChildNodes ? parent.slotChildNodes[0] : parent.firstChild;
+            const refChild = isComponent(parent) && isInitialized(parent) ? (parent.slotChildNodes as Node[])[0] : parent.firstChild;
             return DOM.insertBefore(parent, insertedElement, refChild, slot);
         }
         if (position === 'beforeend') {

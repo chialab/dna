@@ -1039,6 +1039,78 @@ describe('Component', function() {
         });
     });
 
+    describe('#textContent', () => {
+        it('should retrieve whole textContent', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot></slot> inner text
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            element.textContent = 'Test';
+            expect(element.textContent).to.be.equal('Test inner text');
+        });
+
+        it('should set slot text using textContent setter', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot></slot>
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            element.textContent = 'Test';
+            expect(element.childNodes).to.have.lengthOf(1);
+            expect(element.childNodes[0].tagName).to.be.equal('DIV');
+            expect(element.childNodes[0].textContent).to.be.equal('Test');
+        });
+    });
+
+    describe('#innerHTML', () => {
+        it('should retrieve whole innerHTML', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot></slot> inner text
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            element.innerHTML = '<span>Test</span>';
+            expect(element.innerHTML).to.be.oneOf([
+                '<div><!--Fn--><span>Test</span> inner text</div>',
+                '<div><!--Gn--><span>Test</span> inner text</div>',
+            ]);
+        });
+
+        it('should set slot text using innerHTML setter', () => {
+            class TestElement extends DNA.Component {
+                render() {
+                    return DNA.html`<div>
+                        <slot></slot>
+                    </div>`;
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            element.innerHTML = '<span>Test</span>';
+            expect(element.children).to.have.lengthOf(1);
+            expect(element.children[0].tagName).to.be.equal('DIV');
+            expect(element.children[0].children[0].tagName).to.be.equal('SPAN');
+            expect(element.children[0].children[0].textContent).to.be.equal('Test');
+        });
+    });
+
     describe('#appendChild', () => {
         it('should append and connect child', () => {
             const connectedCallback = spy();

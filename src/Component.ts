@@ -9,7 +9,8 @@ import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
 import { getOrCreateContext } from './Context';
-import { internalRender } from './render';
+import { internalRender, render } from './render';
+import { parseDOM } from './directives';
 
 /**
  * A symbol which identify components.
@@ -21,12 +22,15 @@ export const COMPONENT_SYMBOL: unique symbol = Symbol();
  */
 export const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
 
-type WithComponentFlag<T> = T & {
-    [COMPONENT_SYMBOL]?: boolean;
-};
+/**
+ * A symbol which identify initialized components (initial properties are set).
+ */
+export const INITIALIZED_SYMBOL: unique symbol = Symbol();
 
-type WithConstructedFlag<T> = T & {
+type WithComponentFlags<T> = T & {
+    [COMPONENT_SYMBOL]?: boolean;
     [CONSTRUCTED_SYMBOL]?: boolean;
+    [INITIALIZED_SYMBOL]?: boolean;
 };
 
 /**
@@ -250,21 +254,36 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as WithComponentFlag<T>)[COMPONENT_SYMBOL];
+export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as WithComponentFlags<T>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a node is a constructed component.
  * @param node The node to check.
  * @returns True if the element is fully constructed.
  */
-export const isConstructed = <T extends ComponentInstance>(node: T): boolean => !!(node as WithConstructedFlag<T>)[CONSTRUCTED_SYMBOL];
+export const isConstructed = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL];
 
 /**
  * Add the constructed flag to the node.
  * @param node The constructed node.
  */
 export const flagConstructed = <T extends ComponentInstance>(node: T) => {
-    (node as WithConstructedFlag<T>)[CONSTRUCTED_SYMBOL] = true;
+    (node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL] = true;
+};
+
+/**
+ * Check if a custom element has been initialized.
+ * @param node The node to check.
+ * @returns True if the element is fully constructed.
+ */
+export const isInitialized = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[INITIALIZED_SYMBOL];
+
+/**
+ * Add the initialized flag to the node.
+ * @param node The initialized node.
+ */
+export const flagInitialized = <T extends ComponentInstance>(node: T) => {
+    (node as WithComponentFlags<T>)[INITIALIZED_SYMBOL] = true;
 };
 
 /**
@@ -371,6 +390,29 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             return getOrCreateContext(this).slotChildNodes;
         }
 
+        /**
+         * Handle setting text content to component.
+         * @returns The element text content.
+         */
+        get textContent() {
+            return super.textContent;
+        }
+        set textContent(value) {
+            render(value, this);
+        }
+
+        /**
+         * Handle setting text content to component.
+         * @returns The element inner HTML.
+         */
+        get innerHTML() {
+            return super.innerHTML;
+        }
+        set innerHTML(value) {
+            render(parseDOM(value), this);
+            customElements.upgrade(this);
+        }
+
         constructor(...args: any[]) {
             super();
 
@@ -380,7 +422,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
             const context = getOrCreateContext(element);
             context.is = element.is;
-            initSlotChildNodes(element);
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
@@ -422,6 +463,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     this[propertyKey] = properties[propertyKey] as this[typeof propertyKey];
                 }
             }
+            initSlotChildNodes(this);
+            flagInitialized(this);
         }
 
         /**
@@ -611,7 +654,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Force an element to re-render.
          */
         forceUpdate() {
-            const childNodes = this.slotChildNodes || initSlotChildNodes(this);
+            const childNodes = this.slotChildNodes;
             if (childNodes) {
                 internalRender(this, this.render(), false);
             }
@@ -765,7 +808,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private initProperties?: Members<this>;
+                private $initProps?: Members<this>;
 
                 /**
                  * @inheritdoc
@@ -773,7 +816,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 constructor(...args: any[]) {
                     super(...args);
                     flagConstructed(this);
-                    this.initialize(this.initProperties);
+                    this.initialize(this.$initProps);
                 }
 
                 /**
@@ -781,7 +824,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                  */
                 initialize(properties?: Members<this>) {
                     if (!isConstructed(this)) {
-                        this.initProperties = properties;
+                        this.$initProps = properties;
                         return;
                     }
                     return super.initialize(properties);

@@ -117,6 +117,34 @@ jobs:
         with:
           file: coverage/lcov.info
 
+  test-integrations:
+    name: Test Integragtions
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+
+      - name: Fetch build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: DNA
+          path: dist
+
+      - name: Run tests
+        run: yarn test:integrations
+        continue-on-error: true
+
   test-saucelabs:
     name: Test SauceLabs
     runs-on: ubuntu-latest
@@ -154,6 +182,7 @@ jobs:
     needs:
       - test-browser
       - test-node
+      - test-integrations
       - test-saucelabs
     steps:
       - name: Checkout the repository

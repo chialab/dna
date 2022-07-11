@@ -32,12 +32,6 @@ If you are familiar with JSX, you can write your templates using the React synta
 
 DNA comes with a lot of features in a very small package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events. It can also resolve `Promise`s and pipe `Observable`s directly in the template.
 
-## Browsers support
-
-Tests are run against all ever green browsers, Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements), but some Babel helpers if you want to use decorators need support for `Symbol`, `Object.assign` and `Array.prototype.find`. Also, a polyfill for `Promise` is required in IE11 if you are using async methods or the registry's `whenDefined` method.
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://app.saucelabs.com/u/chialab-sl-003)
-
 ## Get the library
 
 Usage via [unpkg.com](https://unpkg.com/) as ES6 module:
@@ -126,6 +120,12 @@ Then use the element in your HTML:
 ```html
 <hello-world></hello-world>
 ```
+
+## Browsers support
+
+Tests are run against all ever green browsers, Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements), but some Babel helpers if you want to use decorators need support for `Symbol`, `Object.assign` and `Array.prototype.find`. Also, a polyfill for `Promise` is required in IE11 if you are using async methods or the registry's `whenDefined` method.
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://app.saucelabs.com/u/chialab-sl-003)
 
 ---
 
