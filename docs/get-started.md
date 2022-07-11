@@ -204,8 +204,6 @@ render(html`<${Card} />`, document.body);
 
 During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template. At the end of the render cycle, DNA will remove any node outside the template, including elements and texts of the original HTML document.
 
-</aside>
-
 This function accepts the template as first argument and an optional render root node as second one. You can also use bound tag name instead of constructor reference:
 
 ```ts

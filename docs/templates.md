@@ -13,7 +13,7 @@ class HelloWorld extends Component {
 }
 ```
 
-### Using JSX
+### JSX
 
 If you familiar with JSX, you can also use it since DNA templates are 100% compatible with JSX transpiled output:
 
@@ -41,7 +41,7 @@ Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to u
 }
 ```
 
-## Interpolation rules
+## Expressions
 
 When interpolating an expression, the following rules (based on the type of the result and context) are applied:
 
@@ -57,7 +57,7 @@ When interpolating an expression, the following rules (based on the type of the 
 | `object` | `.toString()` as Text node | `.toString()` as value, reference as property |
 | `function` | `.toString()` as Text node | `.toString()` as value, reference as property |
 
-### Content interpolation
+### Content expression
 
 ```ts
 html`<span>${this.firstName} ${this.lastName}</span>`
@@ -84,7 +84,7 @@ h('span', null, this.firstName, ' ', this.lastName)
 </div>
 </details>
 
-### Attribute interpolation
+### Attribute expression
 
 ```ts
 html`<input name=${this.name} disabled=${this.disabled} required />`
@@ -114,7 +114,7 @@ h('input', { name: this.name, disabled: this.disabled, required: true })
 
 ### Loops
 
-When using loops it is necessary to keep in mind the [interpolation rules](#interpolation-rules): in order to correctly render a table or a list of data, we need to interpolate an array of templates:
+When using loops it is necessary to keep in mind the [expressions](#expressions): in order to correctly render a table or a list of data, we need to interpolate an array of templates:
 
 ```ts
 html`<ul>
@@ -150,7 +150,7 @@ h('ul', null, this.items.map((item, index) =>
 
 ### Conditionals
 
-You can create conditional interpolations based on a boolean value using ternary operator or logical expression which results in a template or any other value:
+You can create conditional expressions based on a boolean value using ternary operator or logical expression which results in a template or any other value:
 
 ```ts
 html`

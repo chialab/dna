@@ -1,4 +1,4 @@
-# Properties, states and attributes
+# Reactive properties
 
 Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
 
