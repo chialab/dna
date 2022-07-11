@@ -73,7 +73,7 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 
 * Remove all `proxy` occurrences.
 
-* Replace `trust` occurrences with `html`.
+* Replace `trust` occurrences with `html()`.
 
 * Import the `mix` helper from `@chialab/proteins`.
 

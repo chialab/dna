@@ -2,8 +2,8 @@ DNA is a view library with first class support for reactive and functional Web C
 
 **Define the component (TypeScript)**
 
-```ts
-import { Component, customElement, html, property, listen } from '@chialab/dna';
+```tsx
+import { Component, customElement, property, listen } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
@@ -11,10 +11,10 @@ class HelloWorld extends Component {
     @property() name = '';
 
     render() {
-        return html`
-            <input name="firstName" value="${this.name}" />
-            <h1>Hello ${this.name || 'World'}!</h1>
-        `;
+        return <>
+            <input name="firstName" value={this.name} />
+            <h1>Hello {this.name || 'World'}!</h1>
+        </>;
     }
 
     // delegate an event
@@ -28,9 +28,8 @@ class HelloWorld extends Component {
 **Define the component (JavaScript)**
 
 ```ts
-import { Component, customElement, html, property, listen } from '@chialab/dna';
+import { Component, customElements, html, property, listen } from '@chialab/dna';
 
-@customElement('hello-world')
 class HelloWorld extends Component {
     static get properties() {
         return {
@@ -58,6 +57,8 @@ class HelloWorld extends Component {
         `;
     }
 }
+
+customElements.define('hello-world', HelloWorld);
 ```
 
 Then use the element in your HTML:

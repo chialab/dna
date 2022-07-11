@@ -93,20 +93,20 @@ customElements.define('x-tracker', Tracker);
 
 Listeners can be added via a template attribute named as the event with the `on` prefix:
 
-```ts
-import { Component, customElement, html } from '@chialab/dna';
+```tsx
+import { Component, customElement } from '@chialab/dna';
 
 @customElement('x-header', {
     extends: 'header',
 })
 class Header extends Component {
     render() {
-        return html`
-            <h2>${this.title}</h2>
+        return <>
+            <h2>{this.title}</h2>
             <nav>
-                <button onclick=${this.onNavClick}>Close</button>
+                <button onclick={this.onNavClick}>Close</button>
             </nav>
-        `;
+        </>;
     }
 }
 ```

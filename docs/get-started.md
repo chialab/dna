@@ -88,8 +88,8 @@ DNA components are classes which extends the base HTMLElement with helpers for [
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
 
-```ts
-import { Component, customElement, html, property } from '@chialab/dna';
+```tsx
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
@@ -97,7 +97,7 @@ class HelloWorld extends Component {
 
     // define a template
     render() {
-        return html`<h1>Hello ${this.name || 'world'}!</h1>`;
+        return <h1>Hello {this.name || 'world'}!</h1>;
     }
 }
 ```
@@ -138,8 +138,8 @@ customElements.define('hello-world', HelloWorld);
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
-```ts
-import { Component, customElement, html, property } from '@chialab/dna';
+```tsx
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('blog-post', {
     extends: 'article'
@@ -148,7 +148,7 @@ class BlogPost extends Component {
     @property() title = '';
 
     render() {
-        return html`<h1>${this.title}</h1>`;
+        return <h1>{this.title}</h1>;
     }
 }
 ```
@@ -191,36 +191,36 @@ In the example above, a new instance of `BlogPost` inherits all class methods an
 
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
-```ts
-import { Component, customElement, render, html } from '@chialab/dna';
+```tsx
+import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     ...
 }
 
-render(html`<${Card} />`, document.body);
+render(<Card />, document.body);
 ```
 
 During the render cycle, DNA execs an in-place DOM diffing to update already existing nodes and remove the unused ones, so you can safely re-render a template. At the end of the render cycle, DNA will remove any node outside the template, including elements and texts of the original HTML document.
 
 This function accepts the template as first argument and an optional render root node as second one. You can also use bound tag name instead of constructor reference:
 
-```ts
-import { Component, customElement, html, render } from '@chialab/dna';
+```tsx
+import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     ...
 }
 
-render(html`<x-card />`, document.body);
+render(<x-card />, document.body);
 ```
 
 It also work for extended native tags:
 
-```ts
-import { Component, customElement, html, render } from '@chialab/dna';
+```tsx
+import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-article', {
     extends: 'article',
@@ -229,15 +229,15 @@ class Article extends Component {
     ...
 }
 
-render(html`<article is="x-article" />`, document.body);
+render(<article is="x-article" />, document.body);
 ```
 
 You can use the `render` method to inject more complex templates too:
 
-```ts
-import { render, html } from '@chialab/dna';
+```tsx
+import { render } from '@chialab/dna';
 
-render(html`<div class="wrapper">
+render(<div class="wrapper">
     <h1>Title</h1>
-</div>`, document.body);
+</div>, document.body);
 ```

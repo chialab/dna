@@ -10,20 +10,20 @@ Since components can be extended and stylesheets inherited, we need to be able t
 
 Every `<style>` tag rendered to a component is scoped.
 
-```ts
-import { Component, customElement, html, property } from '@chialab/dna';
+```tsx
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     @property() title = '';
 
     render() {
-        return html`
+        return <>
             <style>
                 h1 { color: cadetblue; }
             </style>
-            <h1>${this.title}</h1>
-        `;
+            <h1>{this.title}</h1>
+        </>;
     }
 }
 ```
@@ -153,18 +153,18 @@ If you are using a transpiler, you can also use CSS Modules, which imports CSS c
 }
 ```
 
-```ts
-import { Component, customElement, html, property } from '@chialab/dna';
+```tsx
+import { Component, customElement, property } from '@chialab/dna';
 import { title } from './x-card.css';
 
 @customElement('x-card', {
-     extends: 'div',
+    extends: 'div',
 })
 class Card extends Component {
     @property() title = '';
 
     render() {
-        return html`<h1 class="${title}"></h1>`;
+        return <h1 class={title}></h1>;
     }
 }
 ```
