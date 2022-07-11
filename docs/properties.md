@@ -112,7 +112,8 @@ age = null;
 
 The initial value of the property.
 
-💁 If you are using class fields and decorators, probably you won't use this configuration key.
+> **Note**
+> If you are using class fields and decorators, probably you won't use this configuration key.
 
 #### type
 

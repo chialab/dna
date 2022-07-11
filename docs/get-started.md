@@ -88,7 +88,7 @@ DNA components are classes which extends the base HTMLElement with helpers for [
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
 
-```tsx
+```ts
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('hello-world')
@@ -138,7 +138,7 @@ customElements.define('hello-world', HelloWorld);
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
-```tsx
+```ts
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('blog-post', {
@@ -185,13 +185,14 @@ customElements.define('blog-post', BlogPost, {
 
 In the example above, a new instance of `BlogPost` inherits all class methods and properties, but its `tagName` will be `ARTICLE`.
 
-💁 Extending builtin elements also preserves accessibility and usability features: extending the `BUTTON` element will make the component reachable and clickable via keyboard navigation without setting `role` and `tabindex`.
+> **Note**
+> Extending builtin elements also preserves accessibility and usability features: extending the `BUTTON` element will make the component reachable and clickable via keyboard navigation without setting `role` and `tabindex`.
 
 ## Render a component
 
 The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
-```tsx
+```ts
 import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-card')
@@ -206,7 +207,7 @@ During the render cycle, DNA execs an in-place DOM diffing to update already exi
 
 This function accepts the template as first argument and an optional render root node as second one. You can also use bound tag name instead of constructor reference:
 
-```tsx
+```ts
 import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-card')
@@ -219,7 +220,7 @@ render(<x-card />, document.body);
 
 It also work for extended native tags:
 
-```tsx
+```ts
 import { Component, customElement, render } from '@chialab/dna';
 
 @customElement('x-article', {
@@ -234,7 +235,7 @@ render(<article is="x-article" />, document.body);
 
 You can use the `render` method to inject more complex templates too:
 
-```tsx
+```ts
 import { render } from '@chialab/dna';
 
 render(<div class="wrapper">

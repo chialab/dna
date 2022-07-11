@@ -2,7 +2,7 @@ DNA is a view library with first class support for reactive and functional Web C
 
 **Define the component (TypeScript)**
 
-```tsx
+```ts
 import { Component, customElement, property, listen } from '@chialab/dna';
 
 @customElement('hello-world')

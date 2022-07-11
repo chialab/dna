@@ -67,7 +67,7 @@ html`<span>${this.firstName} ${this.lastName}</span>`
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 <span>{this.firstName} {this.lastName}</span>
 ```
 
@@ -94,7 +94,7 @@ html`<input name=${this.name} disabled=${this.disabled} required />`
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 <input name={this.name} disabled={this.disabled} required />
 ```
 
@@ -126,7 +126,7 @@ html`<ul>
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 <ul>
     {this.items.map((item, index) => <li>{index}. {item}</li>)}
 </ul>
@@ -167,7 +167,7 @@ html`
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 <>
     {this.avatar && <img src={this.avatar} />}
     <h1>{this.title || 'Untitled'}</h1>
@@ -222,7 +222,7 @@ html`
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 import { until } from '@chialab/dna';
 
 <>
@@ -345,7 +345,7 @@ html`<table>
 <summary>JSX</summary>
 <div>
 
-```tsx
+```ts
 function Row({ children, id }, { store, requestUpdate }) {
     const selected = store.get('selcted') ?? false;
     const toggle = () => {

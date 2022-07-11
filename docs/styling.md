@@ -4,13 +4,14 @@ DNA can render plain `<style>` tags in a template, but what about style encapsul
 
 Since components can be extended and stylesheets inherited, we need to be able to scope CSS rules based on the final component definition.
 
-💁 You may don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with lazy loading styles.
+> **Note**
+> You may don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with lazy loading styles.
 
 ## Scoped styles
 
 Every `<style>` tag rendered to a component is scoped.
 
-```tsx
+```ts
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
@@ -81,28 +82,6 @@ You can also define styles for component states with `:host(*selector*)` rule:
 
 The `:host` selector will respect component definition also for inherited styles.
 
-<!-- 
-## Native CSS modules [WIP]
-
-With the [CSS Module Spec](#native-css-modules-spec) you can import CSS files as `StyleSheet` object and link the reference to a component using setting the `adoptedStyleSheets` property:
-
-```ts
-import { Component } from '@chialab/dna';
-import style from './x-card.css';
-
-class Card extends Component {
-    adoptedStyleSheets = [style];
-}
-```
-
-<aside id="native-css-modules-spec" class="note">
-
-\* Please note tha Native CSS modules still are a specification draft, but some bundlers may let you to use them. Follow [this thread](https://github.com/w3c/webcomponents/issues/759) for more informations.
-
-</aside>
--->
-
-
 ## Other styling techniques
 
 Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
@@ -153,7 +132,7 @@ If you are using a transpiler, you can also use CSS Modules, which imports CSS c
 }
 ```
 
-```tsx
+```ts
 import { Component, customElement, property } from '@chialab/dna';
 import { title } from './x-card.css';
 

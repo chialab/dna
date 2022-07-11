@@ -100,7 +100,7 @@ TypeScript supports JSX syntax, and it is able to provide typechecking and hints
 
 **x-card.tsx**
 
-```tsx
+```ts
 import { Component, extend, window, customElement } from '@chialab/dna';
 
 @customElement('x-card')
@@ -128,7 +128,7 @@ declare module '@chialab/dna' {
 ```
 
 **app.tsx**
-```tsx
+```ts
 import { render } from '@chialab/dna';
 import './x-card';
 
