@@ -57,7 +57,7 @@ is transformed into
 [is="x-card"] h1 { color: cadetblue; }
 ```
 
-### The `:host` pesudo selector
+### The `:host` pseudo selector
 
 If you need to style the component root itself, you can use the `:host` selector like in Shadow DOM contexts:
 
