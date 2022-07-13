@@ -9,6 +9,8 @@ import {
     elementOpenStart,
     elementOpenEnd,
     patch as originalPatch,
+    skipNode,
+    currentPointer,
 } from 'incremental-dom/index.js';
 
 function handleChildren(children, parentNode) {
@@ -59,7 +61,6 @@ function interpolate(template, data) {
     }
 }
 
-
 export function h(element, props, ...children) {
     return () => {
         if (!isObject(props)) {
@@ -90,7 +91,13 @@ export function h(element, props, ...children) {
             node.__dnaHadChildren = true;
             handleChildren(children, node);
         }
+        if (!node.__dnaCreated) {
+            while (currentPointer()) {
+                skipNode();
+            }
+        }
         elementClose(element);
+        node.__dnaCreated = true;
 
         if (component && isObject(component.properties)) {
             patch.current.after(() => {
