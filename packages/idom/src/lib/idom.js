@@ -46,7 +46,13 @@ function handleChildren(children, parentNode) {
         return false;
     }
 
-    text(children);
+    if (parentNode.__dnaTextContent !== children) {
+        text(children);
+        parentNode.__dnaTextContent = children;
+    } else {
+        skip();
+    }
+
     return true;
 }
 
