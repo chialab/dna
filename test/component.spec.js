@@ -1089,6 +1089,7 @@ describe('Component', function() {
             expect(element.innerHTML).to.be.oneOf([
                 '<div><!--Fn--><span>Test</span> inner text</div>',
                 '<div><!--Gn--><span>Test</span> inner text</div>',
+                '<div><!--Dn--><span>Test</span> inner text</div>',
             ]);
         });
 

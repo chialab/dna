@@ -3,7 +3,7 @@ import type { CustomElement, CustomElementConstructor } from './CustomElementReg
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 import type { Template } from './JSX';
-import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, getPropertyForAttribute } from './property';
+import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
 import { HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -511,16 +511,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param newValue The new value for the attribute (null if removed).
          */
         attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-            const property = getPropertyForAttribute(this, attributeName);
-            if (!property) {
-                return;
-            }
-
-            // update the Component Property value
-            const { name, attribute, fromAttribute } = property;
-            if (attribute && fromAttribute) {
-                this[name] = fromAttribute.call(this, newValue);
-            }
+            reflectAttributeToProperty(this, attributeName, newValue);
         }
 
         /**
@@ -808,15 +799,17 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                 /**
                  * Store constructor properties.
                  */
-                private $initProps?: Members<this>;
+                private __initProps?: Members<this>;
 
                 /**
                  * @inheritdoc
                  */
                 constructor(...args: any[]) {
                     super(...args);
-                    flagConstructed(this);
-                    this.initialize(this.$initProps);
+                    if (name === this.is) {
+                        flagConstructed(this);
+                        this.initialize(this.__initProps);
+                    }
                 }
 
                 /**
@@ -824,7 +817,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
                  */
                 initialize(properties?: Members<this>) {
                     if (!isConstructed(this)) {
-                        this.$initProps = properties;
+                        this.__initProps = properties;
                         return;
                     }
                     return super.initialize(properties);

@@ -496,7 +496,7 @@ export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: 
 };
 
 /**
- * Reflect property values to attributes.
+ * Reflect property value to attribute.
  *
  * @param element The node to update.
  * @param propertyName The name of the changed property.
@@ -512,6 +512,26 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
         } else if (value !== undefined && value !== element.getAttribute(attribute)) {
             element.setAttribute(attribute, value as string);
         }
+    }
+};
+
+/**
+ * Reflect attribute value to property.
+ *
+ * @param element The node to update.
+ * @param attributeName The name of the changed attribute.
+ * @param newValue The new value of the attribute (null if removed).
+ */
+export const reflectAttributeToProperty = <T extends ComponentInstance>(element: T, attributeName: string, newValue: string | null) => {
+    const property = getPropertyForAttribute(element, attributeName);
+    if (!property) {
+        return;
+    }
+
+    // update the Component Property value
+    const { name, attribute, fromAttribute } = property;
+    if (attribute && fromAttribute) {
+        element[name] = fromAttribute.call(element, newValue);
     }
 };
 
