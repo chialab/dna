@@ -47,6 +47,7 @@ function handleChildren(children, parentNode) {
     }
 
     text(children);
+
     return true;
 }
 
@@ -87,6 +88,14 @@ export function h(element, props, ...children) {
 
         if (children.length === 0 && !node.__dnaHadChildren) {
             skip();
+        } else if (children.length === 1 && typeof children[0] === 'string' && !node.__dnaHadChildren) {
+            const content = children[0];
+            if (node.__dnaTextContent !== content) {
+                text(content);
+                node.__dnaTextContent = content;
+            } else {
+                skip();
+            }
         } else {
             node.__dnaHadChildren = true;
             handleChildren(children, node);
