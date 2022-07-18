@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.19.0
+
+### Minor Changes
+
+- fce7ac5: Integration fixes, tests and docs
+
 ## 3.18.2
 
 ### Patch Changes
