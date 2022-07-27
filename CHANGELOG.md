@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.19.1
+
+### Patch Changes
+
+- 18f4463: Fix render component instance check
+
 ## 3.19.0
 
 ### Minor Changes
