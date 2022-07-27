@@ -387,7 +387,7 @@ export const internalRender = (
                 } else if (currentKey != null && currentKey !== key) {
                     //
                 } else if (slot ? currentContext.root === context : !currentContext.root) {
-                    if (isVComponent(template) && currentNode instanceof template.Component) {
+                    if (isVComponent(template) && currentNode.constructor === template.Component) {
                         templateNode = currentNode;
                         templateContext = currentContext;
                         templateProperties = currentProperties;
