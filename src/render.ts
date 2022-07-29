@@ -1,10 +1,9 @@
-import type { IterableNodeList } from './helpers';
 import type { VProperties, VClasses, VStyle, Template } from './JSX';
 import type { ComponentInstance } from './Component';
 import type { UpdateRequest } from './FunctionComponent';
 import type { Keyed, Context } from './Context';
 import htm from 'htm';
-import { isNode, isElement, isArray, indexOf, contains, cloneChildNodes, getPropertyDescriptor } from './helpers';
+import { isNode, isElement, isArray, indexOf, contains, getPropertyDescriptor } from './helpers';
 import { h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
 import { isComponent } from './Component';
 import { customElements } from './CustomElementRegistry';
@@ -203,14 +202,11 @@ export const internalRender = (
     namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
     fragment?: Context
 ) => {
-    let childNodes: IterableNodeList;
-    if (slot && (root as ComponentInstance).slotChildNodes) {
-        childNodes = (root as ComponentInstance).slotChildNodes as IterableNodeList;
+    let childNodes: Node[];
+    if (slot && context.slotChildNodes) {
+        childNodes = context.slotChildNodes;
     } else {
-        childNodes = context.childNodes || (root.childNodes as unknown as IterableNodeList);
-    }
-    if (!childNodes) {
-        return childNodes;
+        childNodes = context.childNodes;
     }
 
     let currentIndex: number;
@@ -223,7 +219,8 @@ export const internalRender = (
         emptyFragments(context);
         currentIndex = 0;
     }
-    let currentNode = childNodes.item(currentIndex) as Node;
+
+    let currentNode = childNodes[currentIndex];
     let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
     let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
 
@@ -332,7 +329,7 @@ export const internalRender = (
                 );
 
                 fragment = rootFragment;
-                renderFragmentContext.end = childNodes.item(currentIndex - 1) as Node;
+                renderFragmentContext.end = childNodes[currentIndex - 1];
                 context = previousContext;
                 currentFragment = previousFragment;
 
@@ -593,11 +590,11 @@ export const internalRender = (
                 }
 
                 DOM.removeChild(root, currentNode, slot);
-                currentNode = childNodes.item(currentIndex) as Node;
+                currentNode = childNodes[currentIndex];
                 currentContext = currentNode ? getOrCreateContext(currentNode) : null;
             }
 
-            currentNode = childNodes.item(++currentIndex) as Node;
+            currentNode = childNodes[++currentIndex];
             currentContext = currentNode ? getOrCreateContext(currentNode) : null;
             currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
         } else {
@@ -642,7 +639,7 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        const item = childNodes.item(--lastIndex) as Node;
+        const item = childNodes[--lastIndex];
         const context = getOrCreateContext(item);
         if (slot && context.root === context) {
             delete context.root;
@@ -671,5 +668,5 @@ export const render = (input: Template, root: Node = DOM.createDocumentFragment(
     if (childNodes.length < 2) {
         return childNodes[0];
     }
-    return cloneChildNodes(childNodes);
+    return childNodes.slice(0);
 };

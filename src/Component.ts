@@ -1,4 +1,4 @@
-import type { Constructor, ClassDescriptor, IterableNodeList } from './helpers';
+import type { Constructor, ClassDescriptor } from './helpers';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property';
@@ -34,7 +34,7 @@ export interface ComponentMixin {
     /**
      * A list of slot nodes.
      */
-    get slotChildNodes(): IterableNodeList | undefined;
+    get slotChildNodes(): Node[] | undefined;
 
     /**
      * Initialize component properties.

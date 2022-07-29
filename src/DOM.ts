@@ -2,6 +2,7 @@ import type { ComponentConstructor, ComponentInstance } from './Component';
 import { connect, disconnect, isConnected, shouldEmulateLifeCycle, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, insertAdjacentElementImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl, emulatingLifeCycle } from './helpers';
 import { isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
+import { getOrCreateContext } from './Context';
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -85,9 +86,11 @@ export const DOM = {
      */
     appendChild<T extends Node>(parent: Node, newChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
+        const context = getOrCreateContext(parent);
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
+
         if (slot && isComponent(parent)) {
-            const slotted = parent.slotChildNodes;
+            const slotted = context.slotChildNodes;
             if (slotted) {
                 const previousIndex = slotted.indexOf(newChild);
                 if (previousIndex !== -1) {
@@ -103,6 +106,8 @@ export const DOM = {
         if (emulatingLifeCycle() && parentNode) {
             DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
         }
+        const childNodes = context.childNodes;
+        childNodes.push(newChild);
         appendChildImpl.call(parent, newChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
             connect(newChild);
@@ -119,8 +124,9 @@ export const DOM = {
      * @returns The removed child.
      */
     removeChild<T extends Node>(parent: Node, oldChild: T, slot = true): T {
+        const context = getOrCreateContext(parent);
         if (slot && isComponent(parent)) {
-            const slotted = parent.slotChildNodes;
+            const slotted = context.slotChildNodes;
             if (slotted) {
                 const io = slotted.indexOf(oldChild);
                 if (io !== -1) {
@@ -131,6 +137,11 @@ export const DOM = {
             }
         }
         const connected = isConnected.call(oldChild);
+        const childNodes = context.childNodes;
+        const io = childNodes.indexOf(oldChild);
+        if (io !== -1) {
+            childNodes.splice(io, 1);
+        }
         removeChildImpl.call(parent, oldChild);
         if (emulatingLifeCycle() && connected) {
             disconnect(oldChild);
@@ -149,9 +160,11 @@ export const DOM = {
      */
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = true): T {
         const parentNode = newChild.parentNode;
+        const context = getOrCreateContext(parent);
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
+
         if (slot && isComponent(parent)) {
-            const slotted = parent.slotChildNodes;
+            const slotted = context.slotChildNodes;
             if (slotted) {
                 const previousIndex = slotted.indexOf(newChild);
                 if (previousIndex !== -1) {
@@ -175,6 +188,13 @@ export const DOM = {
         if (emulatingLifeCycle() && parentNode) {
             DOM.removeChild(parentNode, newChild, slot && !isShadowParent);
         }
+        const childNodes = context.childNodes;
+        const io = refChild ? childNodes.indexOf(refChild) : -1;
+        if (io !== -1) {
+            childNodes.splice(io, 0, newChild);
+        } else {
+            childNodes.push(newChild);
+        }
         insertBeforeImpl.call(parent, newChild, refChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {
             connect(newChild);
@@ -193,7 +213,9 @@ export const DOM = {
      */
     replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = true): T {
         const parentNode = newChild.parentNode;
+        const context = getOrCreateContext(parent);
         const isShadowParent = slot && parentNode && isComponent(parentNode) && parentNode.contains(parent);
+
         if (slot && isComponent(parent)) {
             const slotted = parent.slotChildNodes;
             if (slotted) {
@@ -210,6 +232,11 @@ export const DOM = {
             if (isConnected.call(oldChild)) {
                 disconnect(oldChild);
             }
+        }
+        const childNodes = context.childNodes;
+        const io = childNodes.indexOf(oldChild);
+        if (io !== -1) {
+            childNodes.splice(io, 1);
         }
         replaceChildImpl.call(parent, newChild, oldChild);
         if (emulatingLifeCycle() && isConnected.call(newChild)) {

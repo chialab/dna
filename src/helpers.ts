@@ -48,13 +48,6 @@ export type Constructor<T> = {
     prototype: T;
 };
 
-/**
- * A Node.prototype.childNodes like interface.
- */
-export type IterableNodeList = Node[] & {
-    item(index: number): Node | null;
-};
-
 export const {
     Node: NodeConstructor,
     HTMLElement: HTMLElementConstructor,
@@ -375,9 +368,8 @@ export const emulatingLifeCycle = () => lifeCycleEmulation;
  * @param arr The array to convert.
  * @returns A shallow clone of the array.
  */
-export const cloneChildNodes = (arr: NodeList|IterableNodeList) => {
-    const result = [] as unknown as IterableNodeList;
-    result.item = (index) => result[index];
+export const cloneChildNodes = (arr: NodeList) => {
+    const result: Node[] = [];
     for (let i = arr.length; i--; result.unshift(arr.item(i) as Node));
     return result;
 };

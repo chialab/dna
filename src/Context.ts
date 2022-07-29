@@ -1,4 +1,3 @@
-import type { IterableNodeList } from './helpers';
 import type { CustomElement } from './CustomElementRegistry';
 import type { UpdateRequest, FunctionComponent } from './FunctionComponent';
 import type { VProperties } from './JSX';
@@ -27,8 +26,8 @@ export type Context<T extends Node = Node, P = VProperties<T>, S = Map<string, u
     is?: string;
     properties: WeakMap<Context, [P, P]>;
     store: S;
-    childNodes?: IterableNodeList;
-    slotChildNodes?: IterableNodeList;
+    childNodes: Node[];
+    slotChildNodes?: Node[];
     Function?: FunctionComponent<P>;
     start?: Node;
     end?: Node;
@@ -73,7 +72,7 @@ export const createContext = <T extends Node>(node: T) => {
         isElement: isElementNode,
         isText: isTextNode,
         tagName: isElementNode ? (node as unknown as HTMLElement).tagName.toLowerCase() : undefined,
-        childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
+        childNodes: [],
         is,
         properties: new WeakMap(),
         store,
