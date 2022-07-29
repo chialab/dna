@@ -1,7 +1,7 @@
 import type { Constructor, ClassDescriptor, IterableNodeList } from './helpers';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
-import type { PropertyConfig, PropertyObserver } from './property';
+import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property';
 import type { Template } from './JSX';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
 import { HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
@@ -18,25 +18,14 @@ import { parseDOM } from './directives';
 export const COMPONENT_SYMBOL: unique symbol = Symbol();
 
 /**
- * A symbol which identify constructed components (properties can be assigned).
- */
-export const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
-
-/**
- * A symbol which identify initialized components (initial properties are set).
- */
-export const INITIALIZED_SYMBOL: unique symbol = Symbol();
-
-type WithComponentFlags<T> = T & {
-    [COMPONENT_SYMBOL]?: boolean;
-    [CONSTRUCTED_SYMBOL]?: boolean;
-    [INITIALIZED_SYMBOL]?: boolean;
-};
-
-/**
  * The component mixin interface.
  */
 export interface ComponentMixin {
+    /**
+     * A set of watched properties.
+     */
+    readonly watchedProperties: Set<PropertyKey>;
+
     /**
      * A flag with the connected value of the node.
      */
@@ -49,9 +38,9 @@ export interface ComponentMixin {
 
     /**
      * Initialize component properties.
-     * @param properties A set of initial properties for the element.
+     * @deprecated
      */
-    initialize(properties?: Members<this>): void;
+    initialize(): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -254,37 +243,7 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as WithComponentFlags<T>)[COMPONENT_SYMBOL];
-
-/**
- * Check if a node is a constructed component.
- * @param node The node to check.
- * @returns True if the element is fully constructed.
- */
-export const isConstructed = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL];
-
-/**
- * Add the constructed flag to the node.
- * @param node The constructed node.
- */
-export const flagConstructed = <T extends ComponentInstance>(node: T) => {
-    (node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL] = true;
-};
-
-/**
- * Check if a custom element has been initialized.
- * @param node The node to check.
- * @returns True if the element is fully constructed.
- */
-export const isInitialized = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[INITIALIZED_SYMBOL];
-
-/**
- * Add the initialized flag to the node.
- * @param node The initialized node.
- */
-export const flagInitialized = <T extends ComponentInstance>(node: T) => {
-    (node as WithComponentFlags<T>)[INITIALIZED_SYMBOL] = true;
-};
+export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as T & { [COMPONENT_SYMBOL]?: boolean })[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
@@ -367,6 +326,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
+         * A set of watched properties.
+         */
+        readonly watchedProperties = new Set<PropertyKey>;
+
+        /**
          * The tag name used for Component definition.
          * @returns The custom element definition name.
          */
@@ -417,8 +381,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const node = isElement(args[0]) && args[0];
-            const props = (node ? args[1] : args[0]) as Members<this>;
-
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
             const context = getOrCreateContext(element);
             context.is = element.is;
@@ -446,26 +408,21 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 } else if (typeof property.defaultValue !== 'undefined') {
                     element[propertyKey] = property.defaultValue;
                 }
+                if (property.static) {
+                    this.watchedProperties.add(propertyKey);
+                }
             }
 
-            element.initialize(props);
+            initSlotChildNodes(this);
+            element.initialize();
             return element;
         }
 
         /**
          * Initialize component properties.
-         * @param properties A set of initial properties for the element.
+         * @deprecated
          */
-        initialize(properties?: Members<this>) {
-            flagConstructed(this);
-            if (properties) {
-                for (const propertyKey in properties) {
-                    this[propertyKey] = properties[propertyKey] as this[typeof propertyKey];
-                }
-            }
-            initSlotChildNodes(this);
-            flagInitialized(this);
-        }
+        initialize() { }
 
         /**
          * Invoked each time the Component is appended into a document-connected element.
@@ -645,7 +602,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Force an element to re-render.
          */
         forceUpdate() {
-            const childNodes = this.slotChildNodes;
+            const childNodes = this.slotChildNodes || initSlotChildNodes(this);
             if (childNodes) {
                 internalRender(this, this.render(), false);
             }
@@ -797,30 +754,15 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
         const upgrade = (constructor: T) => {
             const Component = class Component extends (constructor as ComponentConstructor) {
                 /**
-                 * Store constructor properties.
-                 */
-                private __initProps?: Members<this>;
-
-                /**
                  * @inheritdoc
                  */
                 constructor(...args: any[]) {
                     super(...args);
-                    if (name === this.is) {
-                        flagConstructed(this);
-                        this.initialize(this.__initProps);
-                    }
-                }
 
-                /**
-                 * @inheritdoc
-                 */
-                initialize(properties?: Members<this>) {
-                    if (!isConstructed(this)) {
-                        this.__initProps = properties;
-                        return;
+                    const properties = getProperties(Component.prototype) as PropertiesOf<this>;
+                    for (const propertyKey in properties) {
+                        this.watchedProperties.add(propertyKey);
                     }
-                    return super.initialize(properties);
                 }
             };
 

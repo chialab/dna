@@ -1,7 +1,7 @@
 import type { ClassElement, Constructor } from './helpers';
 import type { Members, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
 import { HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { isComponent, isConstructed, isInitialized } from './Component';
+import { isComponent } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -154,6 +154,10 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
      */
     readonly name: P;
     /**
+     * The property has been defined using static getter.
+     */
+    readonly static: boolean;
+    /**
      * The property private symbol.
      */
     symbol: symbol;
@@ -281,9 +285,10 @@ const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<
  * @param propertyKey The name of the property.
  * @param declaration The property descriptor.
  * @param symbolKey The symbol to use to store property value.
+ * @param isStatic The property definition is static.
  * @returns The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance, P extends keyof Members<T>>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol): PropertyDescriptor => {
+export const defineProperty = <T extends ComponentInstance, P extends keyof Members<T>>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol, isStatic = false): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
@@ -347,6 +352,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
         attribute,
         event,
         update,
+        static: isStatic,
     } as Property<T, P>;
 
     const { get, set, getter, setter } = property;
@@ -368,7 +374,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
             return value;
         },
         set(this: E, newValue) {
-            if (!isConstructed(this) || !isComponent(this)) {
+            if (!isComponent(this) || !this.watchedProperties.has(propertyKey)) {
                 this[symbol] = newValue;
                 return;
             }
@@ -423,7 +429,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                 this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
-            if (update && isInitialized(this)) {
+            if (update) {
                 this.forceUpdate();
             }
         },
@@ -468,7 +474,8 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
                     prototype,
                     propertyKey,
                     declaration,
-                    symbol
+                    symbol,
+                    true
                 );
                 handled[propertyKey] = true;
             }

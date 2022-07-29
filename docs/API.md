@@ -1190,7 +1190,7 @@ The global DNA registry instance.
   attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
   connectedCallback(): void;
   disconnectedCallback(): void
-} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol): <a href="#propertydescriptor">PropertyDescriptor</a></code>
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol, isStatic: boolean): <a href="#propertydescriptor">PropertyDescriptor</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1220,6 +1220,11 @@ The global DNA registry instance.
 <tr>
             <td>symbolKey</td>
             <td><code>symbol</code></td>
+            <td align="center"></td>
+            <td></td></tr>
+<tr>
+            <td>isStatic</td>
+            <td><code>boolean</code></td>
             <td align="center"></td>
             <td></td>
         </tr>
