@@ -303,7 +303,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     const property = declarations[propertyKey] = {
         fromAttribute(newValue) {
             if (acceptsBoolean && (!newValue || newValue === attribute)) {
-                if (newValue !== 'false' || (newValue === '' || newValue === attribute)) {
+                if (newValue !== 'false' && (newValue === '' || newValue === attribute)) {
                     // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
                     return true;
                 }
