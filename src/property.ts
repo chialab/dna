@@ -313,7 +313,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
                 if (acceptsNumber && !isNaN(newValue as unknown as number)) {
                     return parseFloat(newValue);
                 }
-                if (!acceptsString && (newValue[0] === '{' || newValue[0] === '[')) {
+                if (!acceptsString) {
                     try {
                         return JSON.parse(newValue as string);
                     } catch {
