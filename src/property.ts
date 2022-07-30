@@ -298,7 +298,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     const type = extractTypes(declaration);
     const update = typeof declaration.update === 'boolean' ? declaration.update : true;
     const acceptsBoolean = type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1;
-    const acceptsNumber = type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1;
+    const acceptsNumber = type.indexOf(Number as unknown as Constructor<T[P]>) !== -1;
     const acceptsString = type.indexOf(String as unknown as Constructor<T[P]>) !== -1;
     const property = declarations[propertyKey] = {
         fromAttribute(newValue) {
