@@ -297,20 +297,23 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     const state = !!declaration.state;
     const type = extractTypes(declaration);
     const update = typeof declaration.update === 'boolean' ? declaration.update : true;
+    const acceptsBoolean = type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1;
+    const acceptsNumber = type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1;
+    const acceptsString = type.indexOf(String as unknown as Constructor<T[P]>) !== -1;
     const property = declarations[propertyKey] = {
         fromAttribute(newValue) {
-            if (type.indexOf(Boolean as unknown as Constructor<T[P]>) !== -1 && (!newValue || newValue === attribute)) {
-                if (newValue === '' || newValue === attribute) {
+            if (acceptsBoolean && (!newValue || newValue === attribute)) {
+                if (newValue !== 'false' || (newValue === '' || newValue === attribute)) {
                     // if the attribute value is empty or it is equal to the attribute name consider it as a boolean
                     return true;
                 }
                 return false;
             }
             if (newValue) {
-                if (type.indexOf(Number as unknown as Constructor<T[P]>) !== -1 && !isNaN(newValue as unknown as number)) {
+                if (acceptsNumber && !isNaN(newValue as unknown as number)) {
                     return parseFloat(newValue);
                 }
-                if (type.indexOf(String as unknown as Constructor<T[P]>) === -1) {
+                if (!acceptsString && (newValue[0] === '{' || newValue[0] === '[')) {
                     try {
                         return JSON.parse(newValue as string);
                     } catch {
