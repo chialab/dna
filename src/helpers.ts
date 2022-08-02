@@ -64,19 +64,6 @@ export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = NodeCons
 export const isArray = Array.isArray;
 
 /**
- * Alias Array.prototype.indexOf.
- */
-export const indexOf = Array.prototype.indexOf;
-
-/**
- * Check if an item is in a list.
- * @param items List of child nodes.
- * @param item The item to check.
- * @returns True if the item is in the list.
- */
-export const contains = <T>(items: T[], item: T) => indexOf.call(items, item) !== -1;
-
-/**
  * Alias to Object.getOwnPropertyDescriptor.
  */
 export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
@@ -298,7 +285,7 @@ type WithEmulatedLifecycle<T extends Element> = T & {
  * @param node The node to check.
  * @returns The node require emulated life cycle.
  */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => EMULATE_LIFECYCLE_SYMBOL in node;
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).

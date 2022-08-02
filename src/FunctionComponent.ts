@@ -7,6 +7,11 @@ import type { Context } from './Context';
 export type UpdateRequest = () => boolean;
 
 /**
+ * Function component store.
+ */
+export type Store = Map<string, unknown>;
+
+/**
  * A function that returns a template.
  *
  * @param props A set of properties with children.
@@ -16,7 +21,10 @@ export type UpdateRequest = () => boolean;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = any, N extends Node = Node> = (
     props: P & { key?: unknown; children?: Template[] },
-    context: Context<N, P>,
+    context: Context<N, P> & {
+        store: Store;
+        requestUpdate: UpdateRequest;
+    },
     /**
      * @deprecated Use context.requestUpdate method.
      */

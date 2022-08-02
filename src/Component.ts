@@ -3,12 +3,13 @@ import type { CustomElement, CustomElementConstructor } from './CustomElementReg
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property';
 import type { Template } from './JSX';
+import type { Context } from './Context';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
-import { HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { HTMLElementConstructor, isConnected, emulateLifeCycle, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
-import { getOrCreateContext } from './Context';
+import { getHostContext, getOrCreateContext, getOrCreateHostContext } from './Context';
 import { internalRender, render } from './render';
 import { parseDOM } from './directives';
 
@@ -24,7 +25,7 @@ export interface ComponentMixin {
     /**
      * A set of watched properties.
      */
-    readonly watchedProperties: Set<PropertyKey>;
+    readonly watchedProperties: PropertyKey[];
 
     /**
      * A flag with the connected value of the node.
@@ -243,14 +244,14 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as T & { [COMPONENT_SYMBOL]?: boolean })[COMPONENT_SYMBOL];
+export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => COMPONENT_SYMBOL in node;
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => COMPONENT_SYMBOL in constructor.prototype;
 
 /**
  * Extract slotted child nodes for initial child nodes.
@@ -258,17 +259,17 @@ export const isComponentConstructor = <T extends ComponentInstance, C extends Co
  * @returns A list of new slotted children.
  */
 function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T>>(element: C) {
-    const context = getOrCreateContext(element);
-    const doc = element.ownerDocument;
     /* istanbul ignore next */
-    if (!element.childNodes.length && doc.readyState === 'loading') {
+    if (!element.childNodes.length && element.ownerDocument.readyState === 'loading') {
         return;
     }
+
+    const context = getHostContext(element) as Context;
     const slotChildNodes = cloneChildNodes(element.childNodes);
     for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-        element.removeChild(slotChildNodes[i]);
+        DOM.removeChild(element, slotChildNodes[i], false);
     }
-    context.slotChildNodes = slotChildNodes;
+    context.children = slotChildNodes;
     return slotChildNodes;
 }
 
@@ -328,7 +329,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         /**
          * A set of watched properties.
          */
-        readonly watchedProperties = new Set<PropertyKey>;
+        readonly watchedProperties: PropertyKey[] = [];
 
         /**
          * The tag name used for Component definition.
@@ -351,7 +352,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @returns The list of slotted nodes.
          */
         get slotChildNodes() {
-            return getOrCreateContext(this).slotChildNodes;
+            return (getHostContext(this) as Context).children;
         }
 
         /**
@@ -382,8 +383,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             const node = isElement(args[0]) && args[0];
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-            const context = getOrCreateContext(element);
-            context.is = element.is;
+
+            getOrCreateHostContext(this);
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
@@ -391,6 +392,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 callback: listener.callback.bind(element),
             }));
             setListeners(element, computedListeners);
+
             for (let i = 0, len = computedListeners.length; i < len; i++) {
                 const { event, target, selector, callback, options } = computedListeners[i];
                 if (!target) {
@@ -409,7 +411,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     element[propertyKey] = property.defaultValue;
                 }
                 if (property.static) {
-                    this.watchedProperties.add(propertyKey);
+                    this.watchedProperties.push(propertyKey);
                 }
             }
 
@@ -429,11 +431,13 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            if (this.is !== this.localName) {
-                // force the is attribute
-                setAttributeImpl.call(this, 'is', this.is);
+            if (!hasAttributeImpl.call(this, ':defined')) {
+                if (this.is !== this.localName) {
+                    // force the is attribute
+                    setAttributeImpl.call(this, 'is', this.is);
+                }
+                setAttributeImpl.call(this, ':defined', '');
             }
-            setAttributeImpl.call(this, ':defined', '');
 
             const listeners = getListeners(this);
             for (let i = 0, len = listeners.length; i < len; i++) {
@@ -604,7 +608,13 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         forceUpdate() {
             const childNodes = this.slotChildNodes || initSlotChildNodes(this);
             if (childNodes) {
-                internalRender(this, this.render(), false);
+                internalRender(
+                    this,
+                    this.render(),
+                    false,
+                    getOrCreateContext(this),
+                    getHostContext(this) as Context
+                );
             }
         }
 
@@ -761,7 +771,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
 
                     const properties = getProperties(Component.prototype) as PropertiesOf<this>;
                     for (const propertyKey in properties) {
-                        this.watchedProperties.add(propertyKey);
+                        this.watchedProperties.push(propertyKey);
                     }
                 }
             };
