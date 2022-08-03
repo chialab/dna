@@ -5,6 +5,7 @@
     "@chialab/dna": "3.19.1"
   },
   "changesets": [
-    "cyan-panthers-switch"
+    "cyan-panthers-switch",
+    "real-clouds-exercise"
   ]
 }
