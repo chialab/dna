@@ -384,7 +384,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const node = isElement(args[0]) && args[0];
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
 
-            getOrCreateHostContext(this);
+            getOrCreateHostContext(element);
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
