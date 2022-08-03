@@ -415,7 +415,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 }
             }
 
-            initSlotChildNodes(this);
+            initSlotChildNodes(element);
             element.initialize();
             return element;
         }
