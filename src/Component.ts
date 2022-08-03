@@ -5,7 +5,7 @@ import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property'
 import type { Template } from './JSX';
 import type { Context } from './Context';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
-import { HTMLElementConstructor, isConnected, emulateLifeCycle, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
@@ -17,6 +17,19 @@ import { parseDOM } from './directives';
  * A symbol which identify components.
  */
 export const COMPONENT_SYMBOL: unique symbol = Symbol();
+
+/**
+ * A symbol which identify emulated components.
+ */
+export const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
+
+/**
+ * An augmented node with component flags.
+ */
+export type WithComponentFlags<T> = T & {
+    [COMPONENT_SYMBOL]?: boolean;
+    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
+};
 
 /**
  * The component mixin interface.
@@ -244,14 +257,79 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => COMPONENT_SYMBOL in node;
+export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentFlags<typeof node>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => COMPONENT_SYMBOL in constructor.prototype;
+export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
+
+/**
+ * Should emulate life cycle.
+ */
+let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
+
+/**
+ * Flag the element for life cycle emulation.
+ * @param node The element to flag.
+ */
+export const emulateLifeCycle = (node: WithComponentFlags<HTMLElement>) => {
+    lifeCycleEmulation = true;
+    node[EMULATE_LIFECYCLE_SYMBOL] = true;
+};
+
+/**
+ * Life cycle emulation status.
+ * @returns True if life cycle emulation is enabled.
+ */
+export const emulatingLifeCycle = () => lifeCycleEmulation;
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ * @returns The node require emulated life cycle.
+ */
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentFlags<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+
+/**
+ * Invoke `connectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The connected node.
+ */
+export const connect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    if (shouldEmulateLifeCycle(node)) {
+        node.connectedCallback();
+    }
+    const children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        connect(children[i]);
+    }
+};
+
+/**
+ * Invoke `disconnectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The disconnected node.
+ */
+export const disconnect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    if (shouldEmulateLifeCycle(node)) {
+        node.disconnectedCallback();
+    }
+    const children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        disconnect(children[i]);
+    }
+};
 
 /**
  * Extract slotted child nodes for initial child nodes.

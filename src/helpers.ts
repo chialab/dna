@@ -1,4 +1,3 @@
-import type { ComponentInstance } from './Component';
 import { window } from './window';
 
 /**
@@ -272,83 +271,9 @@ export const isConnected: (this: Node) => boolean = isConnectedImpl ?
     };
 
 /**
- * A symbol which identify emulated components.
- */
-const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
-
-type WithEmulatedLifecycle<T extends Element> = T & {
-    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
-};
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- * @returns The node require emulated life cycle.
- */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => EMULATE_LIFECYCLE_SYMBOL in node;
-
-/**
- * Invoke `connectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The connected node.
- */
-export const connect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.connectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        connect(children[i]);
-    }
-};
-
-/**
- * Invoke `disconnectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The disconnected node.
- */
-export const disconnect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.disconnectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        disconnect(children[i]);
-    }
-};
-
-/**
  * The native custom elements registry.
  */
 export const nativeCustomElements = window.customElements;
-
-/**
- * Should emulate life cycle.
- */
-let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
-
-/**
- * Flag the element for life cycle emulation.
- * @param node The element to flag.
- */
-export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
-    lifeCycleEmulation = true;
-    node[EMULATE_LIFECYCLE_SYMBOL] = true;
-};
-
-/**
- * Life cycle emulation status.
- * @returns True if life cycle emulation is enabled.
- */
-export const emulatingLifeCycle = () => lifeCycleEmulation;
 
 /**
  * Clone an array like instance.

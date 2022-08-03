@@ -5,8 +5,6 @@ export {
     EventConstructor as Event,
     CustomEventConstructor as CustomEvent,
     document,
-    connect,
-    disconnect
 } from './helpers';
 export { customElements } from './CustomElementRegistry';
 export { DOM } from './DOM';
@@ -15,7 +13,7 @@ export { compile, html, render } from './render';
 export { css } from './css';
 export { listen, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
 export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { extend, Component, isComponent, isComponentConstructor, customElement } from './Component';
+export { connect, disconnect, extend, Component, isComponent, isComponentConstructor, customElement } from './Component';
 export { parseDOM, until } from './directives';
 
 export type {

@@ -1586,7 +1586,7 @@ export type Template =
  * @returns True if the target is a virtual DOM object.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isVObject = (target: any): target is VObject => V_SYM in target;
+export const isVObject = (target: any): target is VObject => !!target[V_SYM];
 
 /**
  * Check if the current virtual node is a fragment.
