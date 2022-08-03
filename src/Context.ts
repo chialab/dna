@@ -22,12 +22,16 @@ export type Context = {
     properties: WeakMap<Context, VProperties>;
     host?: string;
     keys?: Map<unknown, Node>;
+    fragment?: Context;
+    oldKeys?: Map<unknown, Node>;
+    oldKeyed?: Set<Node>;
     store?: Store;
-    fragments?: Context[];
     Function?: FunctionComponent<VProperties>;
     start?: Node;
     end?: Node;
     root?: Context;
+    currentIndex?: number;
+    namespace?: string;
     requestUpdate?: UpdateRequest;
 };
 
