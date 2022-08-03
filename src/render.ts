@@ -1,4 +1,4 @@
-import type { VProperties, VClasses, VStyle, Template } from './JSX';
+import type { VClasses, VStyle, Template } from './JSX';
 import type { ComponentInstance } from './Component';
 import type { Store, UpdateRequest } from './FunctionComponent';
 import type { Context } from './Context';
@@ -29,7 +29,7 @@ export const compile = (string: string): Template => {
 
 function html(string: TemplateStringsArray, ...values: unknown[]): Template;
 /**
- * @deprecated use compile function instead.
+ * @deprecated use `compile` function instead.
  */
 function html(string: string): Template;
 /**
@@ -121,22 +121,6 @@ const isRenderingInput = (element: Node, propertyKey: string): element is HTMLIn
     (element as HTMLElement).tagName === 'INPUT';
 
 /**
- * Add missing keys to properties object.
- * @param previous The previous object.
- * @param actual The actual one.
- * @returns The merged object.
- */
-const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unknown }) => {
-    for (const key in previous) {
-        if (!(key in actual)) {
-            actual[key] = undefined;
-        }
-    }
-
-    return actual as unknown as T;
-};
-
-/**
  * Set a value to an HTML element.
  * @param element The node to update.
  * @param propertyKey The key to update.
@@ -154,8 +138,18 @@ const setValue = <T extends Node>(element: T, propertyKey: PropertyKey, value: a
  */
 const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
 
+/**
+ * Get the current iterating node in rendering context.
+ * @param context The rendering context.
+ * @returns A node instance or null.
+ */
 const getCurrentNode = (context: Context) => (context.children[context.currentIndex as number] || null);
 
+/**
+ * Get the current iterating context in rendering context.
+ * @param context The rendering context.
+ * @returns A context or null.
+ */
 const getCurrentContext = (context: Context) => {
     const currentNode = getCurrentNode(context);
     if (!currentNode) {
@@ -164,26 +158,54 @@ const getCurrentContext = (context: Context) => {
     return getHostContext(currentNode) || getContext(currentNode) || null;
 };
 
+/**
+ * Get a keyed node in the rendering context.
+ * @param context The rendering context.
+ * @param key The key to find.
+ * @returns A node instance or null.
+ */
 const getKeyedNode = (context: Context, key: unknown) => {
     context = context.fragment || context;
     return context.oldKeys && context.oldKeys.get(key) || null;
 };
 
+/**
+ * Check if a node instance is keyed in the rendering context.
+ * @param context The rendering context.
+ * @param node The node to check.
+ * @returns True if keyed, false otherwise.
+ */
 const hasKeyedNode = (context: Context, node: Node) => {
     context = context.fragment || context;
     return context.oldKeyed ? context.oldKeyed.has(node) : null;
 };
 
+/**
+ * Add keyed node to rendering context.
+ * @param context The rendering context.
+ * @param node The node to add.
+ * @param key The key to add.
+ */
 const addKeyedNode = (context: Context, node: Node, key: unknown) => {
     context = context.fragment || context;
     context.keys = context.keys || new Map();
     context.keys.set(key, node);
 };
 
+/**
+ * Render a a template into the root.
+ * @param root The root Node for the render.
+ * @param slot Should handle slot children.
+ * @param context The render context of the root.
+ * @param rootContext The current custom element context of the render.
+ * @param template The template to render in Virtual DOM format.
+ * @param filter The filter function for slotted nodes.
+ * @returns The count of rendered children.
+ */
 const renderTeamplate = (
     root: Node,
-    context: Context,
     slot: boolean,
+    context: Context,
     rootContext: Context,
     template: Template,
     filter?: Filter
@@ -199,8 +221,8 @@ const renderTeamplate = (
         for (let i = 0, len = template.length; i < len; i++) {
             childCount += renderTeamplate(
                 root,
-                context,
                 slot,
+                context,
                 rootContext,
                 template[i],
                 filter
@@ -218,8 +240,8 @@ const renderTeamplate = (
         if (isVFragment(template)) {
             return renderTeamplate(
                 root,
-                context,
                 slot,
+                context,
                 rootContext,
                 template.children,
                 filter
@@ -282,8 +304,8 @@ const renderTeamplate = (
 
             const childCount = renderTeamplate(
                 root,
-                context,
                 slot,
+                context,
                 rootContext,
                 [
                     placeholder,
@@ -333,8 +355,8 @@ const renderTeamplate = (
 
             const childCount = renderTeamplate(
                 root,
-                context,
                 slot,
+                context,
                 rootContext,
                 slotChildNodes,
                 filter
@@ -342,8 +364,8 @@ const renderTeamplate = (
             if (!childCount) {
                 return renderTeamplate(
                     root,
-                    context,
                     slot,
+                    context,
                     rootContext,
                     children
                 );
@@ -390,8 +412,15 @@ const renderTeamplate = (
 
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
-        const oldProperties = templateContext.properties.get(rootContext) as VProperties<Node> | undefined;
-        const properties = (oldProperties ? fillEmptyValues(oldProperties, template.properties) : template.properties) as VProperties<Node>;
+        const oldProperties = templateContext.properties.get(rootContext);
+        const properties = template.properties;
+        if (oldProperties) {
+            for (const key in oldProperties) {
+                if (!(key in properties)) {
+                    properties[key as keyof typeof properties] = undefined;
+                }
+            }
+        }
         templateContext.properties.set(rootContext, properties);
 
         let propertyKey: keyof typeof properties;
@@ -491,8 +520,8 @@ const renderTeamplate = (
     } else if (isObject && isThenable(template)) {
         return renderTeamplate(
             root,
-            context,
             slot,
+            context,
             rootContext,
             h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
@@ -511,8 +540,8 @@ const renderTeamplate = (
         const observable = template;
         return renderTeamplate(
             root,
-            context,
             slot,
+            context,
             rootContext,
             h((props, context) => {
                 const status = getObservableState(observable);
@@ -611,11 +640,11 @@ const renderTeamplate = (
 };
 
 /**
- * Render a set of Nodes into another, with some checks for Nodes in order to avoid
+ * Render a set of nodes into the render root, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
  * @param root The root Node for the render.
- * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * @param template The child (or the children) to render in Virtual DOM format or already generated.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
  * @param rootContext The current custom element context of the render.
@@ -625,7 +654,7 @@ const renderTeamplate = (
  */
 export const internalRender = (
     root: Node,
-    input: Template,
+    template: Template,
     slot = isComponent(root),
     context: Context,
     rootContext: Context,
@@ -659,10 +688,10 @@ export const internalRender = (
 
     renderTeamplate(
         root,
-        context,
         slot,
+        context,
         rootContext,
-        input
+        template
     );
 
     // all children of the root have been handled,

@@ -19,9 +19,9 @@ export type Store = Map<string, unknown>;
  * @returns A template.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FunctionComponent<P = any, N extends Node = Node> = (
+export type FunctionComponent<P = any> = (
     props: P & { key?: unknown; children?: Template[] },
-    context: Context<N, P> & {
+    context: Context & {
         store: Store;
         requestUpdate: UpdateRequest;
     },
@@ -36,5 +36,5 @@ export type FunctionComponent<P = any, N extends Node = Node> = (
     /**
      * @deprecated Use context.
      */
-    sameContext: Context<N, P>
+    sameContext: Context
 ) => Template;

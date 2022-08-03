@@ -3,12 +3,18 @@ import type { VProperties } from './JSX';
 import type { ComponentInstance } from './Component';
 
 /**
- * A symbol for node context.
+ * A symbol for node render context.
  */
 const CONTEXT_SYMBOL: unique symbol = Symbol();
 
+/**
+ * A symbol for host component render context.
+ */
 const HOST_CONTEXT_SYMBOL: unique symbol = Symbol();
 
+/**
+ * Represent a Node with render context symbols.
+ */
 export type WithContext<T extends Node> = T & {
     [CONTEXT_SYMBOL]?: Context;
     [HOST_CONTEXT_SYMBOL]?: Context;
@@ -51,14 +57,14 @@ export const createContext = (node: Node) => {
 };
 
 /**
- * Get the context attached to an object.
+ * Get the context attached to a node.
  * @param node The scope of the context.
  * @returns The context object (if it exists).
  */
 export const getContext = <T extends Node>(node: WithContext<T>) => node[CONTEXT_SYMBOL];
 
 /**
- * Get (or create) the context attached to an object.
+ * Get (or create) the context attached to a node.
  * @param node The scope of the context.
  * @returns The context object (if it exists).
  */

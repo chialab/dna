@@ -486,7 +486,7 @@ It's a Custom Element, but with some extra useful method.
 
 <hr />
 
-<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, P, S&gt;</strong>
+<strong id="context"><code>Type</code> Context</strong>
     
 <p>
 
@@ -496,30 +496,20 @@ The node context interface.
 
 <pre>{
   Function?: <a href="#functioncomponent">FunctionComponent</a>;
-  __proto__: {
-    clear: ;
-    delete: ;
-    forEach: ;
-    get: ;
-    has: ;
-    set: ;
-    size: number
-  };
-  childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+  children: <a href="#node">Node</a>[];
+  currentIndex?: number;
   end?: <a href="#node">Node</a>;
-  fragments: <a href="#context">Context</a>[];
-  is?: string;
-  isElement?: boolean;
-  isText?: boolean;
-  keyed?: <a href="#keyed">Keyed</a>;
-  node: <a href="#t">T</a>;
+  fragment?: <a href="#context">Context</a>;
+  host?: string;
+  keys?: <a href="#map">Map</a>;
+  namespace?: string;
+  oldKeyed?: <a href="#set">Set</a>;
+  oldKeys?: <a href="#map">Map</a>;
   properties: <a href="#weakmap">WeakMap</a>;
   requestUpdate?: <a href="#updaterequest">UpdateRequest</a>;
   root?: <a href="#context">Context</a>;
-  slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
   start?: <a href="#node">Node</a>;
-  store: <a href="#s">S</a>;
-  tagName?: string
+  store?: <a href="#store">Store</a>
 }</pre>
 
 <hr />
@@ -546,13 +536,16 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P, N extends <a href="#node">Node</a>&gt;</strong>
+<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P&gt;</strong>
     
 
 <pre>(props: <a href="#p">P</a> & {
   children?: <a href="#template">Template</a>[];
   key?: unknown
-}, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
+}, context: <a href="#context">Context</a> & {
+  requestUpdate: <a href="#updaterequest">UpdateRequest</a>;
+  store: <a href="#store">Store</a>
+}, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
 
 <hr />
 
@@ -658,16 +651,16 @@ The interface of a Component constructor used as JSX tag.
 
 <pre>{
   Component: <a href="#t">T</a>;
-  Function?: undefined;
+  Function: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
+  isFragment: false;
   isSlot?: false;
   key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
+  namespace?: string;
+  node: undefined;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  tag: undefined
 }</pre>
 
 <hr />
@@ -681,17 +674,16 @@ The interface of an HTML node used as JSX tag.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
+  Component: undefined;
+  Function: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
+  isFragment: false;
+  key: unknown;
+  namespace: string;
   node: <a href="#t">T</a>;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  tag: undefined
 }</pre>
 
 <hr />
@@ -705,18 +697,17 @@ The interface of a JSX fragment node.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
+  Component: undefined;
+  Function: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
   isFragment: true;
-  isSlot?: false;
-  key?: unknown;
-  node?: undefined;
-  properties?: {
+  key: unknown;
+  node: undefined;
+  properties: {
   
   };
-  tag?: undefined
+  tag: undefined
 }</pre>
 
 <hr />
@@ -730,17 +721,16 @@ The interface of a functional component.
 </p>
 
 <pre>{
-  Component?: undefined;
+  Component: undefined;
   Function: <a href="#t">T</a>;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
+  isFragment: false;
+  key: unknown;
+  namespace: string;
+  node: undefined;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  tag: undefined
 }</pre>
 
 <hr />
@@ -790,14 +780,13 @@ The interface of slot element.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
+  Component: undefined;
+  Function: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot: true;
-  key?: unknown;
-  node?: undefined;
+  isFragment: false;
+  key: unknown;
+  node: undefined;
   properties: <a href="#vproperties">VProperties</a>;
   tag: slot
 }</pre>
@@ -817,10 +806,9 @@ The interface of a generic JSX tag.
   Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
+  isFragment: false;
+  key: unknown;
+  namespace: string;
   node?: undefined;
   properties: <a href="#vproperties">VProperties</a>;
   tag: <a href="#t">T</a>
