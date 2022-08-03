@@ -194,19 +194,19 @@ const addKeyedNode = (context: Context, node: Node, key: unknown) => {
 
 /**
  * Render a a template into the root.
- * @param root The root Node for the render.
+ * @param parent The root Node for the render.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
- * @param rootContext The current custom element context of the render.
+ * @param root The render root.
  * @param template The template to render in Virtual DOM format.
  * @param filter The filter function for slotted nodes.
  * @returns The count of rendered children.
  */
-const renderTeamplate = (
-    root: Node,
+const renderTemplate = (
+    parent: Node,
     slot: boolean,
     context: Context,
-    rootContext: Context,
+    root: Node,
     template: Template,
     filter?: Filter
 ): number => {
@@ -214,16 +214,18 @@ const renderTeamplate = (
         return 0;
     }
 
+    const rootContext = getHostContext(root) || getOrCreateContext(root);
+
     const isObject = typeof template === 'object';
     if (isObject && isArray(template)) {
         let childCount = 0;
         // call the render function for each child
         for (let i = 0, len = template.length; i < len; i++) {
-            childCount += renderTeamplate(
-                root,
+            childCount += renderTemplate(
+                parent,
                 slot,
                 context,
-                rootContext,
+                root,
                 template[i],
                 filter
             );
@@ -238,18 +240,18 @@ const renderTeamplate = (
 
     if (isObject && isVObject(template)) {
         if (isVFragment(template)) {
-            return renderTeamplate(
-                root,
+            return renderTemplate(
+                parent,
                 slot,
                 context,
-                rootContext,
+                root,
                 template.children,
                 filter
             );
         }
 
         if (isVFunction(template)) {
-            const { Function, key, properties, children } = template;
+            const { type: Function, key, properties, children } = template;
             const rootFragment = context.fragment;
 
             let placeholder: Node;
@@ -287,11 +289,11 @@ const renderTeamplate = (
                     return false;
                 }
                 internalRender(
-                    root,
+                    parent,
                     template,
                     slot,
                     context,
-                    rootContext,
+                    root,
                     context.namespace,
                     renderContext
                 );
@@ -302,11 +304,11 @@ const renderTeamplate = (
             renderContext.store = renderContext.store || new Map();
             context.fragment = undefined;
 
-            const childCount = renderTeamplate(
-                root,
+            const childCount = renderTemplate(
+                parent,
                 slot,
                 context,
-                rootContext,
+                root,
                 [
                     placeholder,
                     Function(
@@ -335,12 +337,12 @@ const renderTeamplate = (
 
         // if the current patch is a slot,
         if (isVSlot(template)) {
-            const slotChildNodes = rootContext.children;
+            const slotted = rootContext.children;
             const { properties, children } = template;
             const name = properties.name;
             const filter = (item: Node) => {
                 const slotContext = getHostContext(item) || getContext(item);
-                if (!slotContext || !slotContext.root || slotContext.root === rootContext) {
+                if (!slotContext || !slotContext.root || slotContext.root === root) {
                     if (isElement(item)) {
                         if (!name) {
                             return !(item as HTMLElement).getAttribute('slot');
@@ -353,20 +355,20 @@ const renderTeamplate = (
                 return !name;
             };
 
-            const childCount = renderTeamplate(
-                root,
+            const childCount = renderTemplate(
+                parent,
                 slot,
                 context,
-                rootContext,
-                slotChildNodes,
+                root,
+                slotted,
                 filter
             );
             if (!childCount) {
-                return renderTeamplate(
-                    root,
+                return renderTemplate(
+                    parent,
                     slot,
                     context,
-                    rootContext,
+                    root,
                     children
                 );
             }
@@ -385,11 +387,11 @@ const renderTeamplate = (
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
         ) {
-            if (slot ? currentContext.root === context : !currentContext.root) {
-                if (isVComponent(template) && currentNode.constructor === template.Component) {
+            if (slot ? currentContext.root === parent : !currentContext.root) {
+                if (isVComponent(template) && currentNode.constructor === template.type) {
                     templateNode = currentNode;
                     templateContext = currentContext;
-                } else if (isVTag(template) && currentNode.tagName.toLowerCase() === template.tag.toLowerCase()) {
+                } else if (isVTag(template) && currentNode.tagName.toLowerCase() === template.type.toLowerCase()) {
                     templateNode = currentNode;
                     templateContext = currentContext;
                 }
@@ -398,11 +400,11 @@ const renderTeamplate = (
 
         if (!templateNode) {
             if (isVNode(template)) {
-                templateNode = template.node;
+                templateNode = template.type;
             } else if (isVComponent(template)) {
-                templateNode = new template.Component();
+                templateNode = new template.type();
             } else {
-                templateNode = DOM.createElementNS(templateNamespace, template.tag);
+                templateNode = DOM.createElementNS(templateNamespace, template.type);
             }
         }
 
@@ -485,9 +487,8 @@ const renderTeamplate = (
             if (isReference || wasReference || isRenderingInput(templateNode, propertyKey)) {
                 setValue(templateNode, propertyKey, value);
             } else if (isVComponent(template)) {
-                const Component = template.Component;
                 if (type === 'string') {
-                    const observedAttributes = Component.observedAttributes;
+                    const observedAttributes = template.type.observedAttributes;
                     if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
                         const descriptor = (propertyKey in templateNode) && getPropertyDescriptor(templateNode, propertyKey);
                         if (!descriptor || !descriptor.get || descriptor.set) {
@@ -518,11 +519,11 @@ const renderTeamplate = (
 
         templateChildren = children;
     } else if (isObject && isThenable(template)) {
-        return renderTeamplate(
-            root,
+        return renderTemplate(
+            parent,
             slot,
             context,
-            rootContext,
+            root,
             h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
@@ -538,11 +539,11 @@ const renderTeamplate = (
         );
     } else if (isObject && isObservable(template)) {
         const observable = template;
-        return renderTeamplate(
-            root,
+        return renderTemplate(
+            parent,
             slot,
             context,
-            rootContext,
+            root,
             h((props, context) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
@@ -570,9 +571,9 @@ const renderTeamplate = (
         templateNode = template;
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
     } else {
-        if (typeof template === 'string' && rootContext.host && (root as HTMLElement).tagName === 'STYLE') {
+        if (typeof template === 'string' && rootContext.host && (parent as HTMLElement).tagName === 'STYLE') {
             template = css(rootContext.host, template as string, customElements.tagNames[rootContext.host]);
-            (root as HTMLStyleElement).setAttribute('name', rootContext.host);
+            (parent as HTMLStyleElement).setAttribute('name', rootContext.host);
         }
 
         let currentNode: Node;
@@ -601,22 +602,15 @@ const renderTeamplate = (
     if (context.children.indexOf(templateNode) !== -1) {
         // the node is already in the child list
         // remove nodes until the correct instance
-        let currentContext = getCurrentContext(context);
-        while (currentContext && (templateContext !== currentContext)) {
-            if (slot && currentContext.root === context) {
-                currentContext.root = undefined;
-            }
-            DOM.removeChild(root, getCurrentNode(context), slot);
-            currentContext = getCurrentContext(context);
+        let currentContext: Context | null;
+        while ((currentContext = getCurrentContext(context)) && (templateContext !== currentContext)) {
+            DOM.removeChild(parent, getCurrentNode(context), slot);
         }
 
         (context.currentIndex as number)++;
     } else {
         // we need to insert the new node into the tree
-        if (slot && !templateContext.root) {
-            templateContext.root = context;
-        }
-        DOM.insertBefore(root, templateNode, getCurrentNode(context), slot);
+        DOM.insertBefore(parent, templateNode, getCurrentNode(context), slot);
         (context.currentIndex as number)++;
     }
 
@@ -631,7 +625,7 @@ const renderTeamplate = (
             templateChildren,
             isComponent(templateNode),
             templateContext,
-            rootContext,
+            root,
             templateNamespace
         );
     }
@@ -643,27 +637,28 @@ const renderTeamplate = (
  * Render a set of nodes into the render root, with some checks for Nodes in order to avoid
  * useless changes in the tree and to mantain or update the state of compatible Nodes.
  *
- * @param root The root Node for the render.
+ * @param parent The root Node for the render.
  * @param template The child (or the children) to render in Virtual DOM format or already generated.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
- * @param rootContext The current custom element context of the render.
+ * @param root The current custom element context of the render.
  * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
  * @returns The resulting child nodes list.
  */
 export const internalRender = (
-    root: Node,
+    parent: Node,
     template: Template,
-    slot = isComponent(root),
+    slot = isComponent(parent),
     context: Context,
-    rootContext: Context,
-    namespace: string = (root as HTMLElement).namespaceURI || 'http://www.w3.org/1999/xhtml',
+    root: Node,
+    namespace: string = (parent as HTMLElement).namespaceURI || 'http://www.w3.org/1999/xhtml',
     fragment?: Context
 ) => {
     const childNodes = context.children;
     const previousFragment = context.fragment;
     const previousNamespace = context.namespace;
+    const previousIndex = context.currentIndex;
 
     context.namespace = namespace;
     context.fragment = fragment;
@@ -686,11 +681,11 @@ export const internalRender = (
         delete context.keys;
     }
 
-    renderTeamplate(
-        root,
+    renderTemplate(
+        parent,
         slot,
         context,
-        rootContext,
+        root,
         template
     );
 
@@ -705,23 +700,21 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        const node = childNodes[--lastIndex];
-        const nodeContext = getOrCreateContext(node);
-        if (slot && nodeContext.root === nodeContext) {
-            nodeContext.root = undefined;
-        }
-        DOM.removeChild(root, node, slot);
+        DOM.removeChild(parent, childNodes[--lastIndex], slot);
     }
+
     if (fragment) {
         delete fragment.oldKeys;
         delete fragment.oldKeyed;
+        context.fragment = previousFragment;
+        context.namespace = previousNamespace;
     } else {
         delete context.oldKeys;
         delete context.oldKeyed;
+        context.fragment = previousFragment;
+        context.namespace = previousNamespace;
+        context.currentIndex = previousIndex;
     }
-
-    context.fragment = previousFragment;
-    context.namespace = previousNamespace;
 
     return childNodes;
 };
@@ -742,7 +735,7 @@ export const render = (input: Template, root: Node = DOM.createDocumentFragment(
         input,
         slot && isComponentRoot,
         slot && isComponentRoot ? getHostContext(root) as Context : getOrCreateContext(root),
-        isComponentRoot ? getHostContext(root) as Context : getOrCreateContext(root)
+        root
     );
     if (childNodes.length < 2) {
         return childNodes[0];

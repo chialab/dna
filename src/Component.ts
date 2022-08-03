@@ -691,7 +691,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     this.render(),
                     false,
                     getOrCreateContext(this),
-                    getHostContext(this) as Context
+                    this
                 );
             }
         }
