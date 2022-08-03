@@ -4,5 +4,7 @@
   "initialVersions": {
     "@chialab/dna": "3.19.1"
   },
-  "changesets": []
+  "changesets": [
+    "cyan-panthers-switch"
+  ]
 }

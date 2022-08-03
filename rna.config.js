@@ -7,24 +7,22 @@ const config = {
             input: 'src/index.ts',
             output: 'dist/esm/dna.js',
             format: 'esm',
-            minify: true,
             platform: 'browser',
         },
         {
             input: 'src/index.ts',
             output: 'dist/node/dna.js',
             format: 'esm',
-            minify: true,
             platform: 'node',
         },
         {
             input: 'src/index.ts',
             output: 'dist/cjs/dna.cjs',
             format: 'cjs',
-            minify: true,
             platform: 'node',
         },
     ],
+    minify: true,
 };
 
 export default config;

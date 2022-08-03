@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.0-beta.0
+
+### Minor Changes
+
+- 1b128ec: Render nodes against internal render state instead of actual childNodes
+
 ## 3.19.1
 
 ### Patch Changes
