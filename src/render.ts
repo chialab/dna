@@ -214,8 +214,6 @@ const renderTemplate = (
         return 0;
     }
 
-    const rootContext = getHostContext(root) || getOrCreateContext(root);
-
     const isObject = typeof template === 'object';
     if (isObject && isArray(template)) {
         let childCount = 0;
@@ -337,6 +335,10 @@ const renderTemplate = (
 
         // if the current patch is a slot,
         if (isVSlot(template)) {
+            const rootContext = getHostContext(root);
+            if (!rootContext) {
+                return 0;
+            }
             const slotted = rootContext.children;
             const { properties, children } = template;
             const name = properties.name;
@@ -414,7 +416,7 @@ const renderTemplate = (
 
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
-        const oldProperties = templateContext.properties.get(rootContext);
+        const oldProperties = templateContext.properties.get(context);
         const properties = template.properties;
         if (oldProperties) {
             for (const key in oldProperties) {
@@ -423,7 +425,7 @@ const renderTemplate = (
                 }
             }
         }
-        templateContext.properties.set(rootContext, properties);
+        templateContext.properties.set(context, properties);
 
         let propertyKey: keyof typeof properties;
         for (propertyKey in properties) {
@@ -571,7 +573,8 @@ const renderTemplate = (
         templateNode = template;
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
     } else {
-        if (typeof template === 'string' && rootContext.host && (parent as HTMLElement).tagName === 'STYLE') {
+        const rootContext = getHostContext(root);
+        if (typeof template === 'string' && rootContext && rootContext.host && (parent as HTMLElement).tagName === 'STYLE') {
             template = css(rootContext.host, template as string, customElements.tagNames[rootContext.host]);
             (parent as HTMLStyleElement).setAttribute('name', rootContext.host);
         }
@@ -737,8 +740,8 @@ export const render = (input: Template, root: Node = DOM.createDocumentFragment(
         slot && isComponentRoot ? getHostContext(root) as Context : getOrCreateContext(root),
         root
     );
-    if (childNodes.length < 2) {
+    if (!isArray(input) && !(input != null && isVObject(input) && isVFragment(input)) && childNodes.length < 2) {
         return childNodes[0];
     }
-    return childNodes;
+    return childNodes.slice(0);
 };

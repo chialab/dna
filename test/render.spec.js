@@ -501,6 +501,14 @@ describe('render', function() {
             expect(div6.className).to.be.equal('child3');
             expect(div7.className).to.be.equal('');
         });
+
+        it('should return a shallow clone of child list', () => {
+            const list = DNA.render([DNA.h('div'), DNA.h('div'), DNA.h('div')], wrapper);
+            expect(list).to.have.lengthOf(3);
+            const newList = DNA.render([DNA.h('div')], wrapper);
+            expect(newList).to.have.lengthOf(1);
+            expect(list).to.have.lengthOf(3);
+        });
     });
 
     describe('not keyed', () => {
