@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.0-beta.2
+
+### Patch Changes
+
+- Render should return a shallow clone of the child list
+
 ## 3.20.0-beta.1
 
 ### Patch Changes
