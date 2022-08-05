@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.0-beta.5
+
+### Patch Changes
+
+- Introduce the `customElementPrototype` decorator for base Component classes.
+
 ## 3.20.0-beta.4
 
 ### Patch Changes
