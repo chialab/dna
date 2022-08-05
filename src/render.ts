@@ -349,7 +349,7 @@ const renderTemplate = (
             const { properties, children } = template;
             const name = properties.name;
             const filter = (item: Node) => {
-                const slotContext = getHostContext(item) || getContext(item);
+                const slotContext = getContext(item);
                 if (!slotContext || !slotContext.root || slotContext.root === root) {
                     if (isElement(item)) {
                         if (!name) {
