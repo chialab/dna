@@ -830,7 +830,50 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
 export const Component = extend(HTMLElementConstructor);
 
 /**
- * Decorate and define component classes.
+ * Decorate a component class in order to watch decorated properties.
+ * @param constructor The component class to decorate.
+ * @returns The decorated component class.
+ */
+const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
+    class Component extends (constructor as ComponentConstructor) {
+        /**
+         * @inheritdoc
+         */
+        constructor(...args: any[]) {
+            super(...args);
+
+            const properties = getProperties(Component.prototype) as PropertiesOf<this>;
+            for (const propertyKey in properties) {
+                this.watchedProperties.push(propertyKey);
+            }
+        }
+    };
+
+/**
+ * Decorate a component prototype class.
+ * @param classOrDescriptor The component class to decorate.
+ * @returns The decorated component class.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const customElementPrototype = <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
+    if (typeof classOrDescriptor === 'function') {
+        // typescript
+        return decorateConstructor(classOrDescriptor);
+    }
+
+    // spec 2
+    const { kind, elements } = classOrDescriptor;
+    return {
+        kind,
+        elements,
+        finisher(constructor: Function) {
+            return decorateConstructor(constructor as T);
+        },
+    };
+};
+
+/**
+ * Decorate and define a component class.
  * @param name The name of the custom element.
  * @param options The custom element options.
  * @returns The decorated component class.
@@ -839,28 +882,11 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <T extends ComponentConstructor>(classOrDescriptor: T|ClassDescriptor): any => {
-        const upgrade = (constructor: T) => {
-            const Component = class Component extends (constructor as ComponentConstructor) {
-                /**
-                 * @inheritdoc
-                 */
-                constructor(...args: any[]) {
-                    super(...args);
-
-                    const properties = getProperties(Component.prototype) as PropertiesOf<this>;
-                    for (const propertyKey in properties) {
-                        this.watchedProperties.push(propertyKey);
-                    }
-                }
-            };
-
-            customElements.define(name, Component, options);
-            return Component as typeof classOrDescriptor;
-        };
-
         if (typeof classOrDescriptor === 'function') {
             // typescript
-            return upgrade(classOrDescriptor);
+            const Component = decorateConstructor(classOrDescriptor);
+            customElements.define(name, Component, options);
+            return Component;
         }
 
         // spec 2
@@ -869,7 +895,9 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
             kind,
             elements,
             finisher(constructor: Function) {
-                return upgrade(constructor as T);
+                const Component = decorateConstructor(constructor as T);
+                customElements.define(name, Component, options);
+                return Component;
             },
         };
     };

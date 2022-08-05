@@ -9,6 +9,7 @@ describe('module', function() {
         window: 'object',
         customElements: 'object',
         customElement: 'function',
+        customElementPrototype: 'function',
         Node: 'function',
         HTMLElement: 'function',
         Event: 'function',
