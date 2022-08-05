@@ -198,6 +198,7 @@ const addKeyedNode = (context: Context, node: Node, key: unknown) => {
  * @param slot Should handle slot children.
  * @param context The render context of the root.
  * @param root The render root.
+ * @param rootContext The render root context.
  * @param template The template to render in Virtual DOM format.
  * @param filter The filter function for slotted nodes.
  * @returns The count of rendered children.
@@ -207,6 +208,7 @@ const renderTemplate = (
     slot: boolean,
     context: Context,
     root: Node,
+    rootContext: Context,
     template: Template,
     filter?: Filter
 ): number => {
@@ -224,6 +226,7 @@ const renderTemplate = (
                 slot,
                 context,
                 root,
+                rootContext,
                 template[i],
                 filter
             );
@@ -243,6 +246,7 @@ const renderTemplate = (
                 slot,
                 context,
                 root,
+                rootContext,
                 template.children,
                 filter
             );
@@ -292,6 +296,7 @@ const renderTemplate = (
                     slot,
                     context,
                     root,
+                    rootContext,
                     context.namespace,
                     renderContext
                 );
@@ -307,6 +312,7 @@ const renderTemplate = (
                 slot,
                 context,
                 root,
+                rootContext,
                 [
                     placeholder,
                     Function(
@@ -335,11 +341,11 @@ const renderTemplate = (
 
         // if the current patch is a slot,
         if (isVSlot(template)) {
-            const rootContext = getHostContext(root);
-            if (!rootContext) {
+            const hostContext = getHostContext(root);
+            if (!hostContext) {
                 return 0;
             }
-            const slotted = rootContext.children;
+            const slotted = hostContext.children;
             const { properties, children } = template;
             const name = properties.name;
             const filter = (item: Node) => {
@@ -362,6 +368,7 @@ const renderTemplate = (
                 slot,
                 context,
                 root,
+                rootContext,
                 slotted,
                 filter
             );
@@ -371,6 +378,7 @@ const renderTemplate = (
                     slot,
                     context,
                     root,
+                    rootContext,
                     children
                 );
             }
@@ -416,7 +424,7 @@ const renderTemplate = (
 
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
-        const oldProperties = templateContext.properties.get(context);
+        const oldProperties = templateContext.properties.get(rootContext);
         const properties = template.properties;
         if (oldProperties) {
             for (const key in oldProperties) {
@@ -425,7 +433,7 @@ const renderTemplate = (
                 }
             }
         }
-        templateContext.properties.set(context, properties);
+        templateContext.properties.set(rootContext, properties);
 
         let propertyKey: keyof typeof properties;
         for (propertyKey in properties) {
@@ -526,6 +534,7 @@ const renderTemplate = (
             slot,
             context,
             root,
+            rootContext,
             h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
@@ -546,6 +555,7 @@ const renderTemplate = (
             slot,
             context,
             root,
+            rootContext,
             h((props, context) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
@@ -573,10 +583,10 @@ const renderTemplate = (
         templateNode = template;
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
     } else {
-        const rootContext = getHostContext(root);
-        if (typeof template === 'string' && rootContext && rootContext.host && (parent as HTMLElement).tagName === 'STYLE') {
-            template = css(rootContext.host, template as string, customElements.tagNames[rootContext.host]);
-            (parent as HTMLStyleElement).setAttribute('name', rootContext.host);
+        const hostContext = getHostContext(root);
+        if (typeof template === 'string' && hostContext && hostContext.host && (parent as HTMLElement).tagName === 'STYLE') {
+            template = css(hostContext.host, template as string, customElements.tagNames[hostContext.host]);
+            (parent as HTMLStyleElement).setAttribute('name', hostContext.host);
         }
 
         let currentNode: Node;
@@ -629,6 +639,7 @@ const renderTemplate = (
             isComponent(templateNode),
             templateContext,
             root,
+            rootContext,
             templateNamespace
         );
     }
@@ -644,7 +655,8 @@ const renderTemplate = (
  * @param template The child (or the children) to render in Virtual DOM format or already generated.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
- * @param root The current custom element context of the render.
+ * @param root The current root node of the render.
+ * @param rootContext The current root context of the render.
  * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
  * @returns The resulting child nodes list.
@@ -655,6 +667,7 @@ export const internalRender = (
     slot = isComponent(parent),
     context: Context,
     root: Node,
+    rootContext: Context = context,
     namespace: string = (parent as HTMLElement).namespaceURI || 'http://www.w3.org/1999/xhtml',
     fragment?: Context
 ) => {
@@ -689,6 +702,7 @@ export const internalRender = (
         slot,
         context,
         root,
+        rootContext,
         template
     );
 
