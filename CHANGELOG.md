@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.1
+
+### Patch Changes
+
+- Ensure the JSX runtime transformation uses array
+
 ## 3.20.0
 
 ### Minor Changes
