@@ -3,7 +3,7 @@ import type { Observable } from './Observable';
 import type { CustomElementConstructor } from './CustomElementRegistry';
 import type { Props } from './Component';
 import type { FunctionComponent } from './FunctionComponent';
-import { isNode } from './helpers';
+import { isArray, isNode } from './helpers';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
 
 // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
@@ -1643,7 +1643,8 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
         } else if (k === 'key') {
             key = properties.key;
         } else if (k === 'children') {
-            children = properties.children as Template[];
+            // ensure children is array (jsx automatic runtime flats children)
+            children = isArray(properties.children) ? properties.children : [properties.children] as Template[];
         } else {
             normalizedProperties[k] = properties[k];
         }
