@@ -1,5 +1,41 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.0-beta.5
+
+### Patch Changes
+
+- Introduce the `customElementPrototype` decorator for base Component classes.
+
+## 3.20.0-beta.4
+
+### Patch Changes
+
+- Fix context for slotted items.
+
+## 3.20.0-beta.3
+
+### Patch Changes
+
+- Preserve root render context for properties
+
+## 3.20.0-beta.2
+
+### Patch Changes
+
+- Render should return a shallow clone of the child list
+
+## 3.20.0-beta.1
+
+### Patch Changes
+
+- Refactored root context handling
+
+## 3.20.0-beta.0
+
+### Minor Changes
+
+- 1b128ec: Render nodes against internal render state instead of actual childNodes
+
 ## 3.19.1
 
 ### Patch Changes

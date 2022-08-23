@@ -96,8 +96,8 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
         });
 
         it('should define a property with single type checker', () => {
@@ -117,7 +117,8 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
+            const elem = new MyElement();
+            expect(() => elem.testProp = 42).to.throw(TypeError);
         });
 
         it('should define a property with multiple type checkers', () => {
@@ -137,9 +138,14 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
-            expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
+            const elem = new MyElement;
+            elem.testProp = 'string';
+            expect(elem).to.have.property('testProp', 'string');
+
+            elem.testProp = true;
+            expect(elem).to.have.property('testProp', true);
+
+            expect(() => elem.testProp = 42).to.throw(TypeError);
         });
 
         it('should define a property with custom validation', () => {
@@ -166,10 +172,15 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
-            expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
-            expect(() => new MyElement({ testProp: 'invalid' })).to.throw(TypeError);
+            const elem = new MyElement;
+            elem.testProp = 'string';
+            expect(elem).to.have.property('testProp', 'string');
+
+            elem.testProp = true;
+            expect(elem).to.have.property('testProp', true);
+
+            expect(() => elem.testProp = 42).to.throw(TypeError);
+            expect(() => elem.testProp = 'invalid').to.throw(TypeError);
         });
 
         it('should define a property with custom getter', () => {
@@ -191,8 +202,11 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 84);
-            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 84);
+
+            elem.testProp = 2;
+            expect(elem).to.have.property('testProp', 4);
         });
 
         it('should define a property with custom setter', () => {
@@ -215,8 +229,11 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
-            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
+
+            elem.testProp = 2;
+            expect(elem).to.have.property('testProp', 1);
         });
 
         it('should define a property with decorated accessor', () => {
@@ -242,8 +259,11 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 84);
-            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 84);
+
+            elem.testProp = 2;
+            expect(elem).to.have.property('testProp', 4);
         });
 
         it('should define a property with a single observer', () => {
@@ -265,9 +285,12 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener).to.have.been.called();
             expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
@@ -296,9 +319,12 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener).to.have.been.called();
             expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
@@ -341,11 +367,15 @@ describe('property', function() {
                 DNA.observe('testProp'),
             ], MyElement.prototype, 'listener2', undefined);
 
-            expect(new MyParent({ testProp: 84 })).to.have.property('testProp', 84);
+            const parent = new MyParent();
+            parent.testProp = 84;
+            expect(parent).to.have.property('testProp', 84);
             expect(listener).to.have.been.called();
             expect(listener2).to.not.have.been.called();
 
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            const elem = new MyElement();
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener2).to.have.been.called();
         });
 
@@ -382,9 +412,12 @@ describe('property', function() {
                 };
             }, DNA.Component);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener).to.have.been.called();
             expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
@@ -409,10 +442,13 @@ describe('property', function() {
                 DNA.customElement(getComponentName()),
             ], MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener1).to.not.have.been.called();
             expect(listener2).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener1).to.have.been.called();
             expect(listener2).to.have.been.called();
             expect(listener1).to.have.been.called.with(42, 84, 'testProp');
@@ -448,8 +484,8 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
         });
 
         it('should define a property with single type checker', () => {
@@ -465,7 +501,8 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
+            const elem = new MyElement();
+            expect(() => elem.testProp = 42).to.throw(TypeError);
         });
 
         it('should define a property with multiple type checkers', () => {
@@ -481,9 +518,14 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
-            expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
+            const elem = new MyElement;
+            elem.testProp = 'string';
+            expect(elem).to.have.property('testProp', 'string');
+
+            elem.testProp = true;
+            expect(elem).to.have.property('testProp', true);
+
+            expect(() => elem.testProp = 42).to.throw(TypeError);
         });
 
         it('should define a property with custom validation', () => {
@@ -506,10 +548,15 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement({ testProp: 'string' })).to.have.property('testProp', 'string');
-            expect(new MyElement({ testProp: true })).to.have.property('testProp', true);
-            expect(() => new MyElement({ testProp: 42 })).to.throw(TypeError);
-            expect(() => new MyElement({ testProp: 'invalid' })).to.throw(TypeError);
+            const elem = new MyElement;
+            elem.testProp = 'string';
+            expect(elem).to.have.property('testProp', 'string');
+
+            elem.testProp = true;
+            expect(elem).to.have.property('testProp', true);
+
+            expect(() => elem.testProp = 42).to.throw(TypeError);
+            expect(() => elem.testProp = 'invalid').to.throw(TypeError);
         });
 
         it('should define a property with custom getter', () => {
@@ -528,8 +575,11 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 84);
-            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 4);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 84);
+
+            elem.testProp = 2;
+            expect(elem).to.have.property('testProp', 4);
         });
 
         it('should define a property with custom setter', () => {
@@ -549,8 +599,11 @@ describe('property', function() {
 
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
-            expect(new MyElement({ testProp: 2 })).to.have.property('testProp', 1);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
+
+            elem.testProp = 2;
+            expect(elem).to.have.property('testProp', 1);
         });
 
         it('should define a property with a single observer', () => {
@@ -568,9 +621,12 @@ describe('property', function() {
             };
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener).to.have.been.called();
             expect(listener).to.have.been.called.with(42, 84, 'testProp');
         });
@@ -591,10 +647,13 @@ describe('property', function() {
             };
             DNA.customElements.define(getComponentName(), MyElement);
 
-            expect(new MyElement()).to.have.property('testProp', 42);
+            const elem = new MyElement();
+            expect(elem).to.have.property('testProp', 42);
             expect(listener1).to.not.have.been.called();
             expect(listener2).to.not.have.been.called();
-            expect(new MyElement({ testProp: 84 })).to.have.property('testProp', 84);
+
+            elem.testProp = 84;
+            expect(elem).to.have.property('testProp', 84);
             expect(listener1).to.have.been.called();
             expect(listener2).to.have.been.called();
             expect(listener1).to.have.been.called.with(42, 84, 'testProp');

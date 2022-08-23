@@ -1,6 +1,6 @@
 import type { Constructor } from './helpers';
-import { isConnected, connect, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
-import { isComponent, isComponentConstructor, isConstructed } from './Component';
+import { isConnected, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
+import { connect, isComponent, isComponentConstructor } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
 
@@ -237,9 +237,7 @@ export class CustomElementRegistry {
 
         // check if already instantiated
         if (isComponent(root)) {
-            if (isConstructed(root) && !root.slotChildNodes) {
-                root.forceUpdate();
-            }
+            root.forceUpdate();
             return;
         }
 

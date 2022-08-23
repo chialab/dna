@@ -1,4 +1,3 @@
-import type { ComponentInstance } from './Component';
 import { window } from './window';
 
 /**
@@ -48,13 +47,6 @@ export type Constructor<T> = {
     prototype: T;
 };
 
-/**
- * A Node.prototype.childNodes like interface.
- */
-export type IterableNodeList = Node[] & {
-    item(index: number): Node | null;
-};
-
 export const {
     Node: NodeConstructor,
     HTMLElement: HTMLElementConstructor,
@@ -69,19 +61,6 @@ export const { DOCUMENT_NODE, TEXT_NODE, COMMENT_NODE, ELEMENT_NODE } = NodeCons
  * Alias to Array.isArray.
  */
 export const isArray = Array.isArray;
-
-/**
- * Alias Array.prototype.indexOf.
- */
-export const indexOf = Array.prototype.indexOf;
-
-/**
- * Check if an item is in a list.
- * @param items List of child nodes.
- * @param item The item to check.
- * @returns True if the item is in the list.
- */
-export const contains = <T>(items: T[], item: T) => indexOf.call(items, item) !== -1;
 
 /**
  * Alias to Object.getOwnPropertyDescriptor.
@@ -292,92 +271,17 @@ export const isConnected: (this: Node) => boolean = isConnectedImpl ?
     };
 
 /**
- * A symbol which identify emulated components.
- */
-const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
-
-type WithEmulatedLifecycle<T extends Element> = T & {
-    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
-};
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- * @returns The node require emulated life cycle.
- */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithEmulatedLifecycle<T|Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
-
-/**
- * Invoke `connectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The connected node.
- */
-export const connect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.connectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        connect(children[i]);
-    }
-};
-
-/**
- * Invoke `disconnectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The disconnected node.
- */
-export const disconnect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.disconnectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        disconnect(children[i]);
-    }
-};
-
-/**
  * The native custom elements registry.
  */
 export const nativeCustomElements = window.customElements;
-
-/**
- * Should emulate life cycle.
- */
-let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
-
-/**
- * Flag the element for life cycle emulation.
- * @param node The element to flag.
- */
-export const emulateLifeCycle = (node: WithEmulatedLifecycle<HTMLElement>) => {
-    lifeCycleEmulation = true;
-    node[EMULATE_LIFECYCLE_SYMBOL] = true;
-};
-
-/**
- * Life cycle emulation status.
- * @returns True if life cycle emulation is enabled.
- */
-export const emulatingLifeCycle = () => lifeCycleEmulation;
 
 /**
  * Clone an array like instance.
  * @param arr The array to convert.
  * @returns A shallow clone of the array.
  */
-export const cloneChildNodes = (arr: NodeList|IterableNodeList) => {
-    const result = [] as unknown as IterableNodeList;
-    result.item = (index) => result[index];
+export const cloneChildNodes = (arr: NodeList) => {
+    const result: Node[] = [];
     for (let i = arr.length; i--; result.unshift(arr.item(i) as Node));
     return result;
 };

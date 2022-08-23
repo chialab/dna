@@ -143,6 +143,7 @@ describe('Component', function() {
         });
 
         it('should setup properties for extended elements', () => {
+            const _forceUpdate = spy();
             let TestElement = class TestElement extends DNA.extend(DNA.Component) {
                 static get properties() {
                     return {
@@ -156,6 +157,15 @@ describe('Component', function() {
                     super(...args);
                     this.myCustomProp2 = '';
                     this.myCustomProp3 = '';
+                }
+
+                render() {
+                    return this.myCustomProp1;
+                }
+
+                forceUpdate() {
+                    _forceUpdate();
+                    super.forceUpdate();
                 }
             };
 
@@ -174,6 +184,136 @@ describe('Component', function() {
             expect(element).to.have.property('myCustomProp2');
             expect(element).to.have.property('myCustomProp3');
             expect(element).to.not.have.property('myCustomProp4');
+            expect(_forceUpdate).to.have.not.been.called();
+
+            element.myCustomProp1 = 'Hello';
+            element.forceUpdate();
+            expect(element.textContent).to.be.equal('Hello');
+        });
+
+        it('should setup properties for extended components (ts over ts)', () => {
+            let BaseElement = class BaseElement extends DNA.extend(DNA.Component) {
+                static get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                constructor(...args) {
+                    super(...args);
+                    this.myCustomProp2 = '';
+                    this.myCustomProp3 = '';
+                }
+
+                render() {
+                    return this.myCustomProp1;
+                }
+            };
+
+            __decorate([
+                DNA.property(),
+            ], BaseElement.prototype, 'myCustomProp2', undefined);
+            __decorate([
+                DNA.property(),
+            ], BaseElement.prototype, 'myCustomProp3', undefined);
+            BaseElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], BaseElement);
+
+            const _forceUpdate = spy();
+            let TestElement = class TestElement extends BaseElement {
+                constructor(...args) {
+                    super(...args);
+                    this.myCustomProp4 = '';
+                }
+
+                forceUpdate() {
+                    _forceUpdate();
+                    super.forceUpdate();
+                }
+            };
+            __decorate([
+                DNA.property(),
+            ], TestElement.prototype, 'myCustomProp4', undefined);
+            TestElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], TestElement);
+
+            const element = new TestElement();
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.have.property('myCustomProp4');
+            expect(element).to.not.have.property('myCustomProp5');
+            expect(_forceUpdate).to.have.not.been.called();
+
+            element.myCustomProp1 = 'Hello';
+            element.forceUpdate();
+            expect(element.textContent).to.be.equal('Hello');
+        });
+
+        it('should setup properties for extended components (js over ts)', () => {
+            let BaseElement = class BaseElement extends DNA.extend(DNA.Component) {
+                static get properties() {
+                    return {
+                        myCustomProp1: {
+                            attribute: 'custom-prop',
+                        },
+                    };
+                }
+
+                constructor(...args) {
+                    super(...args);
+                    this.myCustomProp2 = '';
+                    this.myCustomProp3 = '';
+                }
+
+                render() {
+                    return this.myCustomProp1;
+                }
+            };
+
+            __decorate([
+                DNA.property(),
+            ], BaseElement.prototype, 'myCustomProp2', undefined);
+            __decorate([
+                DNA.property(),
+            ], BaseElement.prototype, 'myCustomProp3', undefined);
+            BaseElement = __decorate([
+                DNA.customElement(getComponentName()),
+            ], BaseElement);
+
+            const _forceUpdate = spy();
+            class TestElement extends BaseElement {
+                static get properties() {
+                    return {
+                        myCustomProp4: {
+                            type: String,
+                            defaultValue: '',
+                        },
+                    };
+                }
+
+                forceUpdate() {
+                    _forceUpdate();
+                    super.forceUpdate();
+                }
+            }
+            DNA.customElements.define(getComponentName(), TestElement);
+
+            const element = new TestElement();
+            expect(element).to.have.property('myCustomProp1');
+            expect(element).to.have.property('myCustomProp2');
+            expect(element).to.have.property('myCustomProp3');
+            expect(element).to.have.property('myCustomProp4');
+            expect(element).to.not.have.property('myCustomProp5');
+            expect(_forceUpdate).to.have.not.been.called();
+
+            element.myCustomProp1 = 'Hello';
+            element.forceUpdate();
+            expect(element.textContent).to.be.equal('Hello');
         });
 
         it('should initialize properties', () => {
@@ -947,13 +1087,12 @@ describe('Component', function() {
             ], TestElement);
 
             expect(callback).to.not.have.been.called();
-            const element = new TestElement({
-                title: 'Test',
-                description: 'Test',
-                author: 'Test',
-            });
+            const element = new TestElement();
+            element.title = 'Test';
+            element.description = 'Test';
+            element.author = 'Test';
             DNA.DOM.appendChild(wrapper, element);
-            expect(callback).to.have.been.called.once;
+            expect(callback).to.have.been.called.exactly(4);
             expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');
         });
 
@@ -1086,11 +1225,8 @@ describe('Component', function() {
 
             const element = new TestElement();
             element.innerHTML = '<span>Test</span>';
-            expect(element.innerHTML).to.be.oneOf([
-                '<div><!--Fn--><span>Test</span> inner text</div>',
-                '<div><!--Gn--><span>Test</span> inner text</div>',
-                '<div><!--Dn--><span>Test</span> inner text</div>',
-            ]);
+            expect(element.innerHTML.indexOf('<div>')).to.be.equal(0);
+            expect(element.innerHTML.indexOf('<span>Test</span>')).to.not.be.equal(-1);
         });
 
         it('should set slot text using innerHTML setter', () => {
@@ -1552,10 +1688,9 @@ describe('Component', function() {
         });
 
         beforeEach(() => {
-            element = new TestElement({
-                title: 'DNA',
-                age: 42,
-            });
+            element = new TestElement();
+            element.title = 'DNA';
+            element.age = 42;
         });
 
         describe('#getAttribute', () => {

@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-
 import type { Observable } from './Observable';
 import type { CustomElementConstructor } from './CustomElementRegistry';
 import type { Props } from './Component';
 import type { FunctionComponent } from './FunctionComponent';
-import { isElement } from './helpers';
+import { isNode } from './helpers';
 import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
 
 // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
@@ -1371,6 +1370,7 @@ export type VStyle = string
  * Special virtual properties.
  */
 export type VRenderProperties = {
+    is?: string;
     slot?: string;
     key?: unknown;
     xmlns?: string;
@@ -1457,14 +1457,9 @@ export type VProperties<
  * The interface of a JSX fragment node.
  */
 export type VFragment = {
-    Function?: undefined;
-    Component?: undefined;
-    node?: undefined;
-    tag?: undefined;
-    isFragment: true;
-    isSlot?: false;
-    key?: unknown;
-    properties?: {};
+    type: typeof Fragment;
+    key: unknown;
+    properties: {};
     children: Template[];
     [V_SYM]: true;
 };
@@ -1473,14 +1468,9 @@ export type VFragment = {
  * The interface of a functional component.
  */
 export type VFunction<T extends FunctionComponent> = {
-    Function: T;
-    Component?: undefined;
-    node?: undefined;
-    tag?: undefined;
-    isFragment?: false;
-    isSlot?: false;
-    key?: unknown;
-    namespaceURI?: string;
+    type: T;
+    key: unknown;
+    namespace: string;
     properties: VProperties<T>;
     children: Template[];
     [V_SYM]: true;
@@ -1490,14 +1480,9 @@ export type VFunction<T extends FunctionComponent> = {
  * The interface of an HTML node used as JSX tag.
  */
 export type VElement<T extends Element> = {
-    Function?: undefined;
-    Component?: undefined;
-    node: T;
-    tag?: undefined;
-    isFragment?: false;
-    isSlot?: false;
-    key?: unknown;
-    namespaceURI?: string;
+    type: T;
+    key: unknown;
+    namespace: string;
     properties: VProperties<T>;
     children: Template[];
     [V_SYM]: true;
@@ -1507,14 +1492,9 @@ export type VElement<T extends Element> = {
  * The interface of a Component constructor used as JSX tag.
  */
 export type VComponent<T extends CustomElementConstructor> = {
-    Function?: undefined;
-    Component: T;
-    node?: undefined;
-    tag?: undefined;
-    isFragment?: false;
-    isSlot?: false;
+    type: T;
     key?: unknown;
-    namespaceURI?: string;
+    namespace?: string;
     properties: VProperties<InstanceType<T>>;
     children: Template[];
     [V_SYM]: true;
@@ -1524,13 +1504,8 @@ export type VComponent<T extends CustomElementConstructor> = {
  * The interface of slot element.
  */
 export type VSlot = {
-    Function?: undefined;
-    Component?: undefined;
-    node?: undefined;
-    tag: 'slot';
-    isFragment?: false;
-    isSlot: true;
-    key?: unknown;
+    type: 'slot';
+    key: unknown;
     properties: VProperties<'slot'>;
     children: Template[];
     [V_SYM]: true;
@@ -1540,14 +1515,9 @@ export type VSlot = {
  * The interface of a generic JSX tag.
  */
 export type VTag<T extends string> = {
-    Function?: undefined;
-    Component?: undefined;
-    node?: undefined;
-    tag: T;
-    isFragment?: false;
-    isSlot?: false;
-    key?: unknown;
-    namespaceURI?: string;
+    type: T;
+    key: unknown;
+    namespace: string;
     properties: VProperties<T>;
     children: Template[];
     [V_SYM]: true;
@@ -1591,49 +1561,49 @@ export type Template =
  * @returns True if the target is a virtual DOM object.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isVObject = (target: any): target is VObject => typeof target === 'object' && !!target[V_SYM];
+export const isVObject = (target: any): target is VObject => !!target[V_SYM];
 
 /**
  * Check if the current virtual node is a fragment.
  * @param target The node to check.
  * @returns True if the target is a fragment.
  */
-export const isVFragment = (target: VObject): target is VFragment => !!target.isFragment;
+export const isVFragment = (target: VObject): target is VFragment => target.type === Fragment;
 
 /**
  * Check if the current virtual node is a functional component.
  * @param target The node to check.
  * @returns True if the target is a functional component.
  */
-export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => !!target.Function;
+export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => typeof target.type === 'function' && !isCustomElementConstructor(target.type);
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  * @returns True if the target is a Component node.
  */
-export const isVComponent = (target: VObject): target is VComponent<CustomElementConstructor> => !!target.Component;
+export const isVComponent = (target: VObject): target is VComponent<CustomElementConstructor> => typeof target.type === 'function' && isCustomElementConstructor(target.type);
 
 /**
  * Check if the current virtual node is an HTML node instance.
  * @param target The node to check.
  * @returns True if the target is an HTML node instance.
  */
-export const isVNode = (target: VObject): target is VElement<Element> => !!target.node;
+export const isVNode = (target: VObject): target is VElement<Element> => isNode(target.type);
 
 /**
  * Check if the current virtual node is a slot element.
  * @param target The node to check.
  * @returns True if the target is a slot element.
  */
-export const isVSlot = (target: VObject): target is VSlot => !!target.isSlot;
+export const isVSlot = (target: VObject): target is VSlot => target.type === 'slot';
 
 /**
  * Check if the current virtual node is a generic tag to render.
  * @param target The node to check.
  * @returns True if the target is a generic tag to render.
  */
-export const isVTag = (target: VObject): target is VTag<string> => !!target.tag;
+export const isVTag = (target: VObject): target is VTag<string> => typeof target.type === 'string';
 
 function h(tagOrComponent: typeof Fragment): VFragment;
 function h(tagOrComponent: typeof Fragment, properties: null, ...children: Template[]): VFragment;
@@ -1654,103 +1624,47 @@ function h<T extends string>(tagOrComponent: T, properties?: VProperties<T> | nu
  * @returns The virtual DOM object.
  */
 function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string, properties: VProperties | null = null, ...children: Template[]) {
-    const { is, key, xmlns, ref, children: propertiesChildren } = (properties || {});
+    const { children: propertiesChildren } = (properties || {});
     children = propertiesChildren as Template[] || children;
 
-    if (tagOrComponent === Fragment) {
-        return {
-            isFragment: true,
-            children,
-            [V_SYM]: true,
-        } as VFragment;
-    }
+    const normalizedProperties: { [key: string]: unknown } = {};
 
-    if (isElement(tagOrComponent)) {
-        return {
-            node: tagOrComponent,
-            key,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [V_SYM]: true,
-        } as VElement<typeof tagOrComponent>;
-    }
-
-    if (typeof tagOrComponent === 'function') {
-        if (isCustomElementConstructor(tagOrComponent)) {
-            return {
-                Component: tagOrComponent,
-                key,
-                namespaceURI: xmlns,
-                properties: properties || {},
-                children,
-                [V_SYM]: true,
-            } as VComponent<typeof tagOrComponent>;
+    let key: unknown;
+    let is: string|undefined;
+    let xmlns: string|undefined;
+    let ref: Element|undefined;
+    for (const k in properties) {
+        if (k === 'is') {
+            is = properties.is;
+        } else if (k === 'xmlns') {
+            xmlns = properties.xmlns;
+        } else if (k === 'ref') {
+            ref = properties.ref;
+        } else if (k === 'key') {
+            key = properties.key;
+        } else if (k === 'children') {
+            children = properties.children as Template[];
+        } else {
+            normalizedProperties[k] = properties[k];
         }
-
-        return {
-            Function: tagOrComponent,
-            key,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [V_SYM]: true,
-        } as VFunction<typeof tagOrComponent>;
     }
 
-    if (ref) {
-        return {
-            node: ref,
-            key: ref,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [V_SYM]: true,
-        } as VElement<typeof ref>;
+    if (is) {
+        tagOrComponent = customElements.get(is) || tagOrComponent;
+    } else if (typeof tagOrComponent === 'string') {
+        tagOrComponent = customElements.get(tagOrComponent) || tagOrComponent;
     }
 
-    if (tagOrComponent === 'svg') {
-        return {
-            tag: tagOrComponent,
-            key,
-            namespaceURI: 'http://www.w3.org/2000/svg',
-            properties,
-            children,
-            [V_SYM]: true,
-        } as VTag<'svg'>;
-    }
-
-    if (tagOrComponent === 'slot') {
-        return {
-            tag: tagOrComponent,
-            isSlot: true,
-            key,
-            properties: properties || {},
-            children,
-            [V_SYM]: true,
-        } as VSlot;
-    }
-
-    const Component = customElements.get((is as string) || tagOrComponent);
-    if (Component) {
-        return {
-            Component,
-            key,
-            namespaceURI: xmlns,
-            properties: properties || {},
-            children,
-            [V_SYM]: true,
-        } as VComponent<typeof Component>;
-    }
-
-    return {
-        tag: tagOrComponent,
+    const vnode = {
+        type: ref || tagOrComponent,
         key,
-        namespaceURI: xmlns,
-        properties: properties || {},
         children,
+        properties: normalizedProperties,
+        namespace: (tagOrComponent as unknown as string) === 'svg' ? 'http://www.w3.org/2000/svg' : xmlns,
         [V_SYM]: true,
-    } as VTag<typeof tagOrComponent>;
+    } as (typeof tagOrComponent extends typeof Fragment ? VFragment : VObject);
+
+    return vnode;
 }
 
 export { h };

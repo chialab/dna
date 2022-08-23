@@ -22,7 +22,7 @@
 
 <strong>Functions</strong>
 
-<a href="#compile">compile</a>, <a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#listen">listen</a>, <a href="#observe">observe</a>, <a href="#parsedom">parseDOM</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#state">state</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
+<a href="#compile">compile</a>, <a href="#connect">connect</a>, <a href="#css">css</a>, <a href="#customelement">customElement</a>, <a href="#customelementprototype">customElementPrototype</a>, <a href="#definelisteners">defineListeners</a>, <a href="#defineproperties">defineProperties</a>, <a href="#defineproperty">defineProperty</a>, <a href="#delegateeventlistener">delegateEventListener</a>, <a href="#disconnect">disconnect</a>, <a href="#dispatchasyncevent">dispatchAsyncEvent</a>, <a href="#dispatchevent">dispatchEvent</a>, <a href="#extend">extend</a>, <a href="#getproperties">getProperties</a>, <a href="#getproperty">getProperty</a>, <a href="#h">h</a>, <a href="#html">html</a>, <a href="#iscomponent">isComponent</a>, <a href="#iscomponentconstructor">isComponentConstructor</a>, <a href="#listen">listen</a>, <a href="#observe">observe</a>, <a href="#parsedom">parseDOM</a>, <a href="#property">property</a>, <a href="#render">render</a>, <a href="#state">state</a>, <a href="#undelegateeventlistener">undelegateEventListener</a>, <a href="#until">until</a>
 
 <hr />
 
@@ -486,7 +486,7 @@ It's a Custom Element, but with some extra useful method.
 
 <hr />
 
-<strong id="context"><code>Type</code> Context&lt;T extends <a href="#node">Node</a>, P, S&gt;</strong>
+<strong id="context"><code>Type</code> Context</strong>
     
 <p>
 
@@ -496,30 +496,20 @@ The node context interface.
 
 <pre>{
   Function?: <a href="#functioncomponent">FunctionComponent</a>;
-  __proto__: {
-    clear: ;
-    delete: ;
-    forEach: ;
-    get: ;
-    has: ;
-    set: ;
-    size: number
-  };
-  childNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+  children: <a href="#node">Node</a>[];
+  currentIndex?: number;
   end?: <a href="#node">Node</a>;
-  fragments: <a href="#context">Context</a>[];
-  is?: string;
-  isElement?: boolean;
-  isText?: boolean;
-  keyed?: <a href="#keyed">Keyed</a>;
-  node: <a href="#t">T</a>;
+  fragment?: <a href="#context">Context</a>;
+  host?: string;
+  keys?: <a href="#map">Map</a>;
+  namespace?: string;
+  oldKeyed?: <a href="#set">Set</a>;
+  oldKeys?: <a href="#map">Map</a>;
   properties: <a href="#weakmap">WeakMap</a>;
   requestUpdate?: <a href="#updaterequest">UpdateRequest</a>;
-  root?: <a href="#context">Context</a>;
-  slotChildNodes?: <a href="#iterablenodelist">IterableNodeList</a>;
+  root?: <a href="#node">Node</a>;
   start?: <a href="#node">Node</a>;
-  store: <a href="#s">S</a>;
-  tagName?: string
+  store?: <a href="#store">Store</a>
 }</pre>
 
 <hr />
@@ -546,13 +536,16 @@ A descriptor for an event delegation.
 
 <hr />
 
-<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P, N extends <a href="#node">Node</a>&gt;</strong>
+<strong id="functioncomponent"><code>Type</code> FunctionComponent&lt;P&gt;</strong>
     
 
 <pre>(props: <a href="#p">P</a> & {
   children?: <a href="#template">Template</a>[];
   key?: unknown
-}, context: <a href="#context">Context</a>, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
+}, context: <a href="#context">Context</a> & {
+  requestUpdate: <a href="#updaterequest">UpdateRequest</a>;
+  store: <a href="#store">Store</a>
+}, requestUpdate: <a href="#updaterequest">UpdateRequest</a>, isAttached: () => boolean, sameContext: <a href="#context">Context</a>) => <a href="#template">Template</a></pre>
 
 <hr />
 
@@ -657,17 +650,12 @@ The interface of a Component constructor used as JSX tag.
 </p>
 
 <pre>{
-  Component: <a href="#t">T</a>;
-  Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
   key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
+  namespace?: string;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  type: <a href="#t">T</a>
 }</pre>
 
 <hr />
@@ -681,17 +669,12 @@ The interface of an HTML node used as JSX tag.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node: <a href="#t">T</a>;
+  key: unknown;
+  namespace: string;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  type: <a href="#t">T</a>
 }</pre>
 
 <hr />
@@ -705,18 +688,13 @@ The interface of a JSX fragment node.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment: true;
-  isSlot?: false;
-  key?: unknown;
-  node?: undefined;
-  properties?: {
+  key: unknown;
+  properties: {
   
   };
-  tag?: undefined
+  type: <a href="#fragment">Fragment</a>
 }</pre>
 
 <hr />
@@ -730,17 +708,12 @@ The interface of a functional component.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function: <a href="#t">T</a>;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
+  key: unknown;
+  namespace: string;
   properties: <a href="#vproperties">VProperties</a>;
-  tag?: undefined
+  type: <a href="#t">T</a>
 }</pre>
 
 <hr />
@@ -790,16 +763,11 @@ The interface of slot element.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot: true;
-  key?: unknown;
-  node?: undefined;
+  key: unknown;
   properties: <a href="#vproperties">VProperties</a>;
-  tag: slot
+  type: slot
 }</pre>
 
 <hr />
@@ -813,17 +781,12 @@ The interface of a generic JSX tag.
 </p>
 
 <pre>{
-  Component?: undefined;
-  Function?: undefined;
   [V_SYM]: true;
   children: <a href="#template">Template</a>[];
-  isFragment?: false;
-  isSlot?: false;
-  key?: unknown;
-  namespaceURI?: string;
-  node?: undefined;
+  key: unknown;
+  namespace: string;
   properties: <a href="#vproperties">VProperties</a>;
-  tag: <a href="#t">T</a>
+  type: <a href="#t">T</a>
 }</pre>
 
 <hr />
@@ -1109,6 +1072,37 @@ The global DNA registry instance.
 
 <hr />
 
+<strong id="customelementprototype"><code>Function</code> customElementPrototype</strong>
+
+<details>
+<summary>
+    <code>&lt;T extends <a href="#componentconstructor">ComponentConstructor</a>&gt;(classOrDescriptor: <a href="#classdescriptor">ClassDescriptor</a> | <a href="#t">T</a>): any</code>
+</summary>
+
+<strong>Params</strong>
+<table>
+    <thead>
+        <th align="left">Name</th>
+        <th align="left">Type</th>
+        <th align="center">Optional</th>
+        <th align="left">Description</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>classOrDescriptor</td>
+            <td><code><a href="#classdescriptor">ClassDescriptor</a> | <a href="#t">T</a></code></td>
+            <td align="center"></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<strong>Returns</strong>: <code>any</code> The decorated component class.
+
+</details>
+
+<hr />
+
 <strong id="definelisteners"><code>Function</code> defineListeners</strong>
 
 <details>
@@ -1190,7 +1184,7 @@ The global DNA registry instance.
   attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
   connectedCallback(): void;
   disconnectedCallback(): void
-} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol): <a href="#propertydescriptor">PropertyDescriptor</a></code>
+} & <a href="#componentmixin">ComponentMixin</a>, P extends string | number | symbol&gt;(prototype: <a href="#withproperties">WithProperties</a>, propertyKey: <a href="#p">P</a>, declaration: <a href="#propertydeclaration">PropertyDeclaration</a>, symbolKey: symbol, isStatic: boolean): <a href="#propertydescriptor">PropertyDescriptor</a></code>
 </summary>
 
 <strong>Params</strong>
@@ -1220,6 +1214,11 @@ The global DNA registry instance.
 <tr>
             <td>symbolKey</td>
             <td><code>symbol</code></td>
+            <td align="center"></td>
+            <td></td></tr>
+<tr>
+            <td>isStatic</td>
+            <td><code>boolean</code></td>
             <td align="center"></td>
             <td></td>
         </tr>

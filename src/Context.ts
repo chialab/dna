@@ -1,61 +1,44 @@
-import type { IterableNodeList } from './helpers';
-import type { CustomElement } from './CustomElementRegistry';
-import type { UpdateRequest, FunctionComponent } from './FunctionComponent';
+import type { Store, UpdateRequest, FunctionComponent } from './FunctionComponent';
 import type { VProperties } from './JSX';
-import { isElement, isText } from './helpers';
+import type { ComponentInstance } from './Component';
 
 /**
- * A symbol for node context.
+ * A symbol for node render context.
  */
 const CONTEXT_SYMBOL: unique symbol = Symbol();
 
-export type WithContext<T extends Node> = T & {
-    [CONTEXT_SYMBOL]?: Context<T>;
-};
+/**
+ * A symbol for host component render context.
+ */
+const HOST_CONTEXT_SYMBOL: unique symbol = Symbol();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Keyed = Map<any, Node>;
+/**
+ * Represent a Node with render context symbols.
+ */
+export type WithContext<T extends Node> = T & {
+    [CONTEXT_SYMBOL]?: Context;
+    [HOST_CONTEXT_SYMBOL]?: Context;
+};
 
 /**
  * The node context interface.
  */
-export type Context<T extends Node = Node, P = VProperties<T>, S = Map<string, unknown>> = {
-    node: T;
-    isElement?: boolean;
-    isText?: boolean;
-    tagName?: string;
-    is?: string;
-    properties: WeakMap<Context, [P, P]>;
-    store: S;
-    childNodes?: IterableNodeList;
-    slotChildNodes?: IterableNodeList;
-    Function?: FunctionComponent<P>;
+export type Context = {
+    children: Node[];
+    properties: WeakMap<Context, VProperties>;
+    host?: string;
+    keys?: Map<unknown, Node>;
+    fragment?: Context;
+    oldKeys?: Map<unknown, Node>;
+    oldKeyed?: Set<Node>;
+    store?: Store;
+    Function?: FunctionComponent<VProperties>;
     start?: Node;
     end?: Node;
-    fragments: Context[];
-    root?: Context;
-    keyed?: Keyed;
+    root?: Node;
+    currentIndex?: number;
+    namespace?: string;
     requestUpdate?: UpdateRequest;
-    __proto__: {
-        readonly size: number;
-        has: Map<string, unknown>['has'];
-        get: Map<string, unknown>['get'];
-        set: Map<string, unknown>['set'];
-        delete: Map<string, unknown>['delete'];
-        clear: Map<string, unknown>['clear'];
-        forEach: Map<string, unknown>['forEach'];
-    };
-};
-
-/**
- * Attach a context to an object.
- * @param node The object to context.
- * @param context The context to set.
- * @returns The context.
- */
-export const setContext = <T extends Node>(node: WithContext<T>, context: Context<T>): Context<T> => {
-    node[CONTEXT_SYMBOL] = context;
-    return context;
 };
 
 /**
@@ -63,66 +46,40 @@ export const setContext = <T extends Node>(node: WithContext<T>, context: Contex
  * @param node The node scope of the context.
  * @returns A context object for the node.
  */
-export const createContext = <T extends Node>(node: T) => {
-    const isElementNode = isElement(node);
-    const isTextNode = !isElementNode && isText(node);
-    const is = (node as unknown as CustomElement).is;
-    const store = new Map() as Map<string, unknown>;
-    return setContext(node, {
-        node,
-        isElement: isElementNode,
-        isText: isTextNode,
-        tagName: isElementNode ? (node as unknown as HTMLElement).tagName.toLowerCase() : undefined,
-        childNodes: isElementNode ? node.childNodes as unknown as IterableNodeList : undefined,
-        is,
+export const createContext = (node: Node) => {
+    const context: Context = {
+        children: [],
         properties: new WeakMap(),
-        store,
-        fragments: [],
-        __proto__: {
-            get size() {
-                return store.size;
-            },
-            has: store.has.bind(store),
-            get: store.get.bind(store),
-            set: store.set.bind(store),
-            delete: store.delete.bind(store),
-            clear: store.clear.bind(store),
-            forEach: store.forEach.bind(store),
-        },
-    }) as Context<T>;
+        host: (node as unknown as ComponentInstance).is,
+    };
+
+    return context;
 };
 
 /**
- * Get the context attached to an object.
+ * Get the context attached to a node.
  * @param node The scope of the context.
  * @returns The context object (if it exists).
  */
-export const getOrCreateContext = <T extends Node>(node: WithContext<T>): Context<T> => {
-    const context = node[CONTEXT_SYMBOL];
-    return context || createContext(node);
-};
+export const getContext = <T extends Node>(node: WithContext<T>) => node[CONTEXT_SYMBOL];
 
 /**
- * Get context properties for a given render context.
- * @param context The node context.
- * @param renderContext The render context.
- * @param slot Should use slotted properties.
- * @returns Cotnext properties.
+ * Get (or create) the context attached to a node.
+ * @param node The scope of the context.
+ * @returns The context object (if it exists).
  */
-export function getContextProperties<T extends Node>(context: Context<T>, renderContext: Context, slot = false) {
-    const properties = context.properties.get(renderContext);
-    return properties ? properties[slot ? 1 : 0] : {} as VProperties<T>;
-}
+export const getOrCreateContext = <T extends Node>(node: WithContext<T>) => (node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(node));
 
 /**
- * Set context properties for a given render context.
- * @param context The node context.
- * @param renderContext The render context.
- * @param slot Should set slotted properties.
- * @param props Properties to set.
+ * Get the host context attached to a component.
+ * @param node The scope of the context.
+ * @returns The context object (if it exists).
  */
-export function setContextProperties<T extends Node>(context: Context<T>, renderContext: Context, slot = false, props: VProperties<T>) {
-    const properties = context.properties.get(renderContext) || [{} as VProperties<T>, {} as VProperties<T>];
-    properties[slot ? 1 : 0] = props;
-    context.properties.set(renderContext, properties);
-}
+export const getHostContext = <T extends Node>(node: WithContext<T>) => node[HOST_CONTEXT_SYMBOL];
+
+/**
+ * Get (or create) the host context attached to a component.
+ * @param node The scope of the context.
+ * @returns The context object (if it exists).
+ */
+export const getOrCreateHostContext = <T extends Node>(node: WithContext<T>) => (node[HOST_CONTEXT_SYMBOL] = node[HOST_CONTEXT_SYMBOL] || createContext(node));

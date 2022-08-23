@@ -1,14 +1,15 @@
-import type { Constructor, ClassDescriptor, IterableNodeList } from './helpers';
+import type { Constructor, ClassDescriptor } from './helpers';
 import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
-import type { PropertyConfig, PropertyObserver } from './property';
+import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property';
 import type { Template } from './JSX';
+import type { Context } from './Context';
 import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
-import { HTMLElementConstructor, isConnected, emulateLifeCycle, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
 import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
-import { getOrCreateContext } from './Context';
+import { getHostContext, getOrCreateContext, getOrCreateHostContext } from './Context';
 import { internalRender, render } from './render';
 import { parseDOM } from './directives';
 
@@ -18,25 +19,27 @@ import { parseDOM } from './directives';
 export const COMPONENT_SYMBOL: unique symbol = Symbol();
 
 /**
- * A symbol which identify constructed components (properties can be assigned).
+ * A symbol which identify emulated components.
  */
-export const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
+export const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
 
 /**
- * A symbol which identify initialized components (initial properties are set).
+ * An augmented node with component flags.
  */
-export const INITIALIZED_SYMBOL: unique symbol = Symbol();
-
-type WithComponentFlags<T> = T & {
+export type WithComponentFlags<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
-    [CONSTRUCTED_SYMBOL]?: boolean;
-    [INITIALIZED_SYMBOL]?: boolean;
+    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
 };
 
 /**
  * The component mixin interface.
  */
 export interface ComponentMixin {
+    /**
+     * A set of watched properties.
+     */
+    readonly watchedProperties: PropertyKey[];
+
     /**
      * A flag with the connected value of the node.
      */
@@ -45,13 +48,13 @@ export interface ComponentMixin {
     /**
      * A list of slot nodes.
      */
-    get slotChildNodes(): IterableNodeList | undefined;
+    get slotChildNodes(): Node[] | undefined;
 
     /**
      * Initialize component properties.
-     * @param properties A set of initial properties for the element.
+     * @deprecated
      */
-    initialize(properties?: Members<this>): void;
+    initialize(): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -254,37 +257,7 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T|Node): node is T => !!(node as WithComponentFlags<T>)[COMPONENT_SYMBOL];
-
-/**
- * Check if a node is a constructed component.
- * @param node The node to check.
- * @returns True if the element is fully constructed.
- */
-export const isConstructed = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL];
-
-/**
- * Add the constructed flag to the node.
- * @param node The constructed node.
- */
-export const flagConstructed = <T extends ComponentInstance>(node: T) => {
-    (node as WithComponentFlags<T>)[CONSTRUCTED_SYMBOL] = true;
-};
-
-/**
- * Check if a custom element has been initialized.
- * @param node The node to check.
- * @returns True if the element is fully constructed.
- */
-export const isInitialized = <T extends ComponentInstance>(node: T): boolean => !!(node as WithComponentFlags<T>)[INITIALIZED_SYMBOL];
-
-/**
- * Add the initialized flag to the node.
- * @param node The initialized node.
- */
-export const flagInitialized = <T extends ComponentInstance>(node: T) => {
-    (node as WithComponentFlags<T>)[INITIALIZED_SYMBOL] = true;
-};
+export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentFlags<typeof node>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
@@ -294,22 +267,87 @@ export const flagInitialized = <T extends ComponentInstance>(node: T) => {
 export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
+ * Should emulate life cycle.
+ */
+let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
+
+/**
+ * Flag the element for life cycle emulation.
+ * @param node The element to flag.
+ */
+export const emulateLifeCycle = (node: WithComponentFlags<HTMLElement>) => {
+    lifeCycleEmulation = true;
+    node[EMULATE_LIFECYCLE_SYMBOL] = true;
+};
+
+/**
+ * Life cycle emulation status.
+ * @returns True if life cycle emulation is enabled.
+ */
+export const emulatingLifeCycle = () => lifeCycleEmulation;
+
+/**
+ * Check if a node require emulated life cycle.
+ * @param node The node to check.
+ * @returns The node require emulated life cycle.
+ */
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentFlags<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+
+/**
+ * Invoke `connectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The connected node.
+ */
+export const connect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    if (shouldEmulateLifeCycle(node)) {
+        node.connectedCallback();
+    }
+    const children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        connect(children[i]);
+    }
+};
+
+/**
+ * Invoke `disconnectedCallback` method of a Node (and its descendents).
+ * It does nothing if life cycle is disabled.
+ *
+ * @param node The disconnected node.
+ */
+export const disconnect = (node: Node) => {
+    if (!isElement(node)) {
+        return;
+    }
+    if (shouldEmulateLifeCycle(node)) {
+        node.disconnectedCallback();
+    }
+    const children = cloneChildNodes(node.childNodes);
+    for (let i = 0, len = children.length; i < len; i++) {
+        disconnect(children[i]);
+    }
+};
+
+/**
  * Extract slotted child nodes for initial child nodes.
  * @param element The compoonent instance.
  * @returns A list of new slotted children.
  */
 function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T>>(element: C) {
-    const context = getOrCreateContext(element);
-    const doc = element.ownerDocument;
     /* istanbul ignore next */
-    if (!element.childNodes.length && doc.readyState === 'loading') {
+    if (!element.childNodes.length && element.ownerDocument.readyState === 'loading') {
         return;
     }
+
+    const context = getHostContext(element) as Context;
     const slotChildNodes = cloneChildNodes(element.childNodes);
     for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-        element.removeChild(slotChildNodes[i]);
+        DOM.removeChild(element, slotChildNodes[i], false);
     }
-    context.slotChildNodes = slotChildNodes;
+    context.children = slotChildNodes;
     return slotChildNodes;
 }
 
@@ -367,6 +405,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
+         * A set of watched properties.
+         */
+        readonly watchedProperties: PropertyKey[] = [];
+
+        /**
          * The tag name used for Component definition.
          * @returns The custom element definition name.
          */
@@ -387,7 +430,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @returns The list of slotted nodes.
          */
         get slotChildNodes() {
-            return getOrCreateContext(this).slotChildNodes;
+            return (getHostContext(this) as Context).children;
         }
 
         /**
@@ -417,11 +460,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const node = isElement(args[0]) && args[0];
-            const props = (node ? args[1] : args[0]) as Members<this>;
-
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-            const context = getOrCreateContext(element);
-            context.is = element.is;
+
+            getOrCreateHostContext(element);
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
@@ -429,6 +470,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 callback: listener.callback.bind(element),
             }));
             setListeners(element, computedListeners);
+
             for (let i = 0, len = computedListeners.length; i < len; i++) {
                 const { event, target, selector, callback, options } = computedListeners[i];
                 if (!target) {
@@ -446,37 +488,34 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 } else if (typeof property.defaultValue !== 'undefined') {
                     element[propertyKey] = property.defaultValue;
                 }
+                if (property.static) {
+                    this.watchedProperties.push(propertyKey);
+                }
             }
 
-            element.initialize(props);
+            initSlotChildNodes(element);
+            element.initialize();
             return element;
         }
 
         /**
          * Initialize component properties.
-         * @param properties A set of initial properties for the element.
+         * @deprecated
          */
-        initialize(properties?: Members<this>) {
-            flagConstructed(this);
-            if (properties) {
-                for (const propertyKey in properties) {
-                    this[propertyKey] = properties[propertyKey] as this[typeof propertyKey];
-                }
-            }
-            initSlotChildNodes(this);
-            flagInitialized(this);
-        }
+        initialize() { }
 
         /**
          * Invoked each time the Component is appended into a document-connected element.
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            if (this.is !== this.localName) {
-                // force the is attribute
-                setAttributeImpl.call(this, 'is', this.is);
+            if (!hasAttributeImpl.call(this, ':defined')) {
+                if (this.is !== this.localName) {
+                    // force the is attribute
+                    setAttributeImpl.call(this, 'is', this.is);
+                }
+                setAttributeImpl.call(this, ':defined', '');
             }
-            setAttributeImpl.call(this, ':defined', '');
 
             const listeners = getListeners(this);
             for (let i = 0, len = listeners.length; i < len; i++) {
@@ -645,9 +684,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Force an element to re-render.
          */
         forceUpdate() {
-            const childNodes = this.slotChildNodes;
+            const childNodes = this.slotChildNodes || initSlotChildNodes(this);
             if (childNodes) {
-                internalRender(this, this.render(), false);
+                internalRender(
+                    this,
+                    this.render(),
+                    false,
+                    getOrCreateContext(this),
+                    this
+                );
             }
         }
 
@@ -785,7 +830,50 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
 export const Component = extend(HTMLElementConstructor);
 
 /**
- * Decorate and define component classes.
+ * Decorate a component class in order to watch decorated properties.
+ * @param constructor The component class to decorate.
+ * @returns The decorated component class.
+ */
+const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
+    class Component extends (constructor as ComponentConstructor) {
+        /**
+         * @inheritdoc
+         */
+        constructor(...args: any[]) {
+            super(...args);
+
+            const properties = getProperties(Component.prototype) as PropertiesOf<this>;
+            for (const propertyKey in properties) {
+                this.watchedProperties.push(propertyKey);
+            }
+        }
+    };
+
+/**
+ * Decorate a component prototype class.
+ * @param classOrDescriptor The component class to decorate.
+ * @returns The decorated component class.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const customElementPrototype = <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
+    if (typeof classOrDescriptor === 'function') {
+        // typescript
+        return decorateConstructor(classOrDescriptor);
+    }
+
+    // spec 2
+    const { kind, elements } = classOrDescriptor;
+    return {
+        kind,
+        elements,
+        finisher(constructor: Function) {
+            return decorateConstructor(constructor as T);
+        },
+    };
+};
+
+/**
+ * Decorate and define a component class.
  * @param name The name of the custom element.
  * @param options The custom element options.
  * @returns The decorated component class.
@@ -794,43 +882,11 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <T extends ComponentConstructor>(classOrDescriptor: T|ClassDescriptor): any => {
-        const upgrade = (constructor: T) => {
-            const Component = class Component extends (constructor as ComponentConstructor) {
-                /**
-                 * Store constructor properties.
-                 */
-                private __initProps?: Members<this>;
-
-                /**
-                 * @inheritdoc
-                 */
-                constructor(...args: any[]) {
-                    super(...args);
-                    if (name === this.is) {
-                        flagConstructed(this);
-                        this.initialize(this.__initProps);
-                    }
-                }
-
-                /**
-                 * @inheritdoc
-                 */
-                initialize(properties?: Members<this>) {
-                    if (!isConstructed(this)) {
-                        this.__initProps = properties;
-                        return;
-                    }
-                    return super.initialize(properties);
-                }
-            };
-
-            customElements.define(name, Component, options);
-            return Component as typeof classOrDescriptor;
-        };
-
         if (typeof classOrDescriptor === 'function') {
             // typescript
-            return upgrade(classOrDescriptor);
+            const Component = decorateConstructor(classOrDescriptor);
+            customElements.define(name, Component, options);
+            return Component;
         }
 
         // spec 2
@@ -839,7 +895,9 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
             kind,
             elements,
             finisher(constructor: Function) {
-                return upgrade(constructor as T);
+                const Component = decorateConstructor(constructor as T);
+                customElements.define(name, Component, options);
+                return Component;
             },
         };
     };

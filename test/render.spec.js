@@ -120,6 +120,7 @@ describe('render', function() {
             // force renders in order to check if keyed elements are respected
             root.forceUpdate();
             elem.forceUpdate();
+            expect(elem).to.be.equal(wrapper.querySelector(name));
             expect(elem.children[0]).to.be.equal(divs[0]);
             expect(elem.children[1]).to.be.equal(divs[1]);
 
@@ -487,8 +488,7 @@ describe('render', function() {
             expect(elem.childNodes).to.be.have.lengthOf(3);
             const [slotted] = elem.slotChildNodes;
             const [div1, div2, div3] = elem.childNodes;
-            elem.oneMore = true;
-            DNA.render(DNA.h(TestElement, {}, DNA.h('div', {})), wrapper);
+            DNA.render(DNA.h(TestElement, { oneMore: true }, DNA.h('div', {})), wrapper);
             expect(elem.childNodes).to.be.have.lengthOf(4);
             const [slotted2] = elem.slotChildNodes;
             const [div4, div5, div6, div7] = elem.childNodes;
@@ -500,6 +500,14 @@ describe('render', function() {
             expect(div5.className).to.be.equal('child2');
             expect(div6.className).to.be.equal('child3');
             expect(div7.className).to.be.equal('');
+        });
+
+        it('should return a shallow clone of child list', () => {
+            const list = DNA.render([DNA.h('div'), DNA.h('div'), DNA.h('div')], wrapper);
+            expect(list).to.have.lengthOf(3);
+            const newList = DNA.render([DNA.h('div')], wrapper);
+            expect(newList).to.have.lengthOf(1);
+            expect(list).to.have.lengthOf(3);
         });
     });
 
@@ -657,6 +665,7 @@ describe('render', function() {
                     <option key="last" value="other">Other</option>
                 </select>
             `, wrapper);
+
             expect(wrapper.childNodes[0].tagName).to.be.equal('SELECT');
             expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(4);
 
@@ -742,7 +751,8 @@ describe('render', function() {
             expect(option6.textContent).to.be.equal(items[0]);
 
             expect(option1).to.be.not.equal(option4);
-            expect(option2).to.be.not.equal(option5);
+            expect(option1).to.be.equal(option6);
+            expect(option2).to.be.equal(option5);
             expect(option3).to.be.not.equal(option6);
             expect(option3).to.be.equal(option4);
         });
@@ -814,7 +824,7 @@ describe('render', function() {
             expect(option3).to.be.equal(option5);
         });
 
-        it('should delete nodes untile the attached one', () => {
+        it('should delete nodes until the attached one', () => {
             const connectedCallback = spy();
 
             const name = getComponentName();

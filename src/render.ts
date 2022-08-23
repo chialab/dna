@@ -1,19 +1,18 @@
-import type { IterableNodeList } from './helpers';
-import type { VProperties, VClasses, VStyle, Template } from './JSX';
+import type { VClasses, VStyle, Template } from './JSX';
 import type { ComponentInstance } from './Component';
-import type { UpdateRequest } from './FunctionComponent';
-import type { Keyed, Context } from './Context';
+import type { Store, UpdateRequest } from './FunctionComponent';
+import type { Context } from './Context';
 import htm from 'htm';
-import { isNode, isElement, isArray, indexOf, contains, cloneChildNodes, getPropertyDescriptor } from './helpers';
+import { isNode, isElement, isText, isArray, getPropertyDescriptor } from './helpers';
 import { h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
-import { isComponent } from './Component';
 import { customElements } from './CustomElementRegistry';
+import { isComponent } from './Component';
 import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
 import { getProperty } from './property';
-import { getOrCreateContext, getContextProperties, setContextProperties } from './Context';
+import { getHostContext, getContext, getOrCreateContext } from './Context';
 
 const innerHtml = htm.bind(h);
 
@@ -30,7 +29,7 @@ export const compile = (string: string): Template => {
 
 function html(string: TemplateStringsArray, ...values: unknown[]): Template;
 /**
- * @deprecated use compile function instead.
+ * @deprecated use `compile` function instead.
  */
 function html(string: string): Template;
 /**
@@ -57,25 +56,6 @@ export { html };
 export type Filter = (item: Node) => boolean;
 
 /**
- * Cleanup child fragments of a context.
- * @param context The fragment to empty.
- * @returns The cleaned up fragment list.
- */
-export const emptyFragments = <T extends Node>(context: Context<T>) => {
-    const fragments = context.fragments;
-    let len = fragments.length;
-    while (len--) {
-        emptyFragments(fragments.pop() as Context);
-    }
-    return fragments;
-};
-
-/**
- * A cache for converted class values.
- */
-const CLASSES_CACHE: { [key: string]: string[] } = {};
-
-/**
  * Convert strings or classes map to a list of classes.
  * @param value The value to convert.
  * @returns A list of classes.
@@ -93,13 +73,8 @@ const convertClasses = (value: VClasses | null | undefined) => {
         }
         return classes;
     }
-    return CLASSES_CACHE[value] = CLASSES_CACHE[value] || value.toString().trim().split(' ');
+    return value.toString().trim().split(' ');
 };
-
-/**
- * A cache for converted style values.
- */
-const STYLES_CACHE: { [key: string]: { [key: string]: string } } = {};
 
 /**
  * Convert strings or styles map to a list of styles.
@@ -123,7 +98,7 @@ const convertStyles = (value: VStyle| null | undefined) => {
         }
         return styles;
     }
-    return STYLES_CACHE[value] = STYLES_CACHE[value] || value
+    return value
         .toString()
         .split(';')
         .reduce((ruleMap: { [key: string]: string }, ruleString: string) => {
@@ -141,25 +116,9 @@ const convertStyles = (value: VStyle| null | undefined) => {
  * @param propertyKey The changed property key.
  * @returns True if the render engine is handling input elements, false otherwise.
  */
-const isRenderingInput = (element: HTMLElement, propertyKey: string): element is HTMLInputElement =>
+const isRenderingInput = (element: Node, propertyKey: string): element is HTMLInputElement =>
     (propertyKey === 'checked' || propertyKey === 'value') &&
-    element.tagName === 'INPUT';
-
-/**
- * Add missing keys to properties object.
- * @param previous The previous object.
- * @param actual The actual one.
- * @returns The merged object.
- */
-const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unknown }) => {
-    for (const key in previous) {
-        if (!(key in actual)) {
-            actual[key] = undefined;
-        }
-    }
-
-    return actual as unknown as T;
-};
+    (element as HTMLElement).tagName === 'INPUT';
 
 /**
  * Set a value to an HTML element.
@@ -168,7 +127,7 @@ const fillEmptyValues = <T extends {}>(previous: T, actual: { [key: string]: unk
  * @param value The value to set.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, value: any) => {
+const setValue = <T extends Node>(element: T, propertyKey: PropertyKey, value: any) => {
     element[propertyKey as keyof T] = value;
 };
 
@@ -180,374 +139,434 @@ const setValue = <T extends HTMLElement>(element: T, propertyKey: PropertyKey, v
 const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
 
 /**
- * Render a set of Nodes into another, with some checks for Nodes in order to avoid
- * useless changes in the tree and to mantain or update the state of compatible Nodes.
- *
- * @param root The root Node for the render.
- * @param input The child (or the children) to render in Virtual DOM format or already generated.
+ * Get the current iterating node in rendering context.
+ * @param context The rendering context.
+ * @returns A node instance or null.
+ */
+const getCurrentNode = (context: Context) => (context.children[context.currentIndex as number] || null);
+
+/**
+ * Get the current iterating context in rendering context.
+ * @param context The rendering context.
+ * @returns A context or null.
+ */
+const getCurrentContext = (context: Context) => {
+    const currentNode = getCurrentNode(context);
+    if (!currentNode) {
+        return null;
+    }
+    return getHostContext(currentNode) || getContext(currentNode) || null;
+};
+
+/**
+ * Get a keyed node in the rendering context.
+ * @param context The rendering context.
+ * @param key The key to find.
+ * @returns A node instance or null.
+ */
+const getKeyedNode = (context: Context, key: unknown) => {
+    context = context.fragment || context;
+    return context.oldKeys && context.oldKeys.get(key) || null;
+};
+
+/**
+ * Check if a node instance is keyed in the rendering context.
+ * @param context The rendering context.
+ * @param node The node to check.
+ * @returns True if keyed, false otherwise.
+ */
+const hasKeyedNode = (context: Context, node: Node) => {
+    context = context.fragment || context;
+    return context.oldKeyed ? context.oldKeyed.has(node) : null;
+};
+
+/**
+ * Add keyed node to rendering context.
+ * @param context The rendering context.
+ * @param node The node to add.
+ * @param key The key to add.
+ */
+const addKeyedNode = (context: Context, node: Node, key: unknown) => {
+    context = context.fragment || context;
+    context.keys = context.keys || new Map();
+    context.keys.set(key, node);
+};
+
+/**
+ * Render a a template into the root.
+ * @param parent The root Node for the render.
  * @param slot Should handle slot children.
  * @param context The render context of the root.
- * @param rootContext The current custom element context of the render.
- * @param slotContext The current slot mode of the root render.
- * @param namespace The current namespace uri of the render.
- * @param fragment The fragment context to update.
- * @returns The resulting child nodes list.
+ * @param root The render root.
+ * @param rootContext The render root context.
+ * @param template The template to render in Virtual DOM format.
+ * @param filter The filter function for slotted nodes.
+ * @returns The count of rendered children.
  */
-export const internalRender = (
+const renderTemplate = (
+    parent: Node,
+    slot: boolean,
+    context: Context,
     root: Node,
-    input: Template,
-    slot = isComponent(root),
-    context: Context = getOrCreateContext(root),
-    rootContext: Context = (isComponent(root) ? getOrCreateContext(root) : context) as Context,
-    slotContext: boolean = slot,
-    namespace = (root as Element).namespaceURI || 'http://www.w3.org/1999/xhtml',
-    fragment?: Context
-) => {
-    let childNodes: IterableNodeList;
-    if (slot && (root as ComponentInstance).slotChildNodes) {
-        childNodes = (root as ComponentInstance).slotChildNodes as IterableNodeList;
-    } else {
-        childNodes = context.childNodes || (root.childNodes as unknown as IterableNodeList);
-    }
-    if (!childNodes) {
-        return childNodes;
+    rootContext: Context,
+    template: Template,
+    filter?: Filter
+): number => {
+    if (template == null || template === false) {
+        return 0;
     }
 
-    let currentIndex: number;
-    let currentFragment = fragment;
-    let lastNode: Node|undefined;
-    if (fragment) {
-        currentIndex = indexOf.call(childNodes, fragment.start as Node);
-        lastNode = fragment.end as Node;
-    } else {
-        emptyFragments(context);
-        currentIndex = 0;
+    const isObject = typeof template === 'object';
+    if (isObject && isArray(template)) {
+        let childCount = 0;
+        // call the render function for each child
+        for (let i = 0, len = template.length; i < len; i++) {
+            childCount += renderTemplate(
+                parent,
+                slot,
+                context,
+                root,
+                rootContext,
+                template[i],
+                filter
+            );
+        }
+        return childCount;
     }
-    let currentNode = childNodes.item(currentIndex) as Node;
-    let currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-    let currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
 
-    const oldKeyed = context.keyed || new Map();
-    const keyed: Keyed = context.keyed = new Map();
+    let templateNode: Node | undefined;
+    let templateContext: Context | undefined;
+    let templateChildren: Template[] | undefined;
+    let templateNamespace = context.namespace as string;
 
-    const handleItems = (template: Template, filter?: Filter): number => {
-        if (template == null || template === false) {
-            return 0;
+    if (isObject && isVObject(template)) {
+        if (isVFragment(template)) {
+            return renderTemplate(
+                parent,
+                slot,
+                context,
+                root,
+                rootContext,
+                template.children,
+                filter
+            );
         }
 
-        if (isArray(template)) {
-            let childCount = 0;
-            // call the render function for each child
-            for (let i = 0, len = template.length; i < len; i++) {
-                childCount += handleItems(template[i], filter);
+        if (isVFunction(template)) {
+            const { type: Function, key, properties, children } = template;
+            const rootFragment = context.fragment;
+
+            let placeholder: Node;
+            let renderContext: Context;
+            if (rootFragment) {
+                placeholder = rootFragment.start as Node;
+                renderContext = (getHostContext(placeholder) || getContext(placeholder)) as Context;
+            } else if (key && (placeholder = getKeyedNode(context, key) as Node)) {
+                renderContext = getOrCreateContext(placeholder);
+            } else if (key == null
+                && (renderContext = getCurrentContext(context) as Context)
+                && (placeholder = getCurrentNode(context))
+                && renderContext.Function === Function
+                && !hasKeyedNode(context, placeholder)
+            ) {
+                //
+            } else {
+                placeholder = DOM.createComment(Function.name);
+                renderContext = getOrCreateContext(placeholder);
+                if (key != null) {
+                    addKeyedNode(context, placeholder, key);
+                }
+            }
+
+            const isAttached = () => context.children.indexOf(placeholder) !== -1;
+            let running = true;
+            const requestUpdate: UpdateRequest = renderContext.requestUpdate = () => {
+                if (renderContext.requestUpdate !== requestUpdate) {
+                    return (renderContext.requestUpdate as UpdateRequest)();
+                }
+                if (running) {
+                    throw new Error('An update request is already running');
+                }
+                if (!isAttached()) {
+                    return false;
+                }
+                internalRender(
+                    parent,
+                    template,
+                    slot,
+                    context,
+                    root,
+                    rootContext,
+                    context.namespace,
+                    renderContext
+                );
+                return true;
+            };
+            renderContext.Function = Function;
+            renderContext.start = placeholder;
+            renderContext.store = renderContext.store || new Map();
+            context.fragment = undefined;
+
+            const childCount = renderTemplate(
+                parent,
+                slot,
+                context,
+                root,
+                rootContext,
+                [
+                    placeholder,
+                    Function(
+                        {
+                            children,
+                            ...properties,
+                        },
+                        renderContext as Context & {
+                            store: Store;
+                            requestUpdate: UpdateRequest;
+                        },
+                        requestUpdate,
+                        isAttached,
+                        renderContext
+                    ),
+                ],
+                filter
+            );
+
+            context.fragment = rootFragment;
+            renderContext.end = context.children[context.currentIndex as number - 1];
+
+            running = false;
+            return childCount;
+        }
+
+        // if the current patch is a slot,
+        if (isVSlot(template)) {
+            const hostContext = getHostContext(root);
+            if (!hostContext) {
+                return 0;
+            }
+            const slotted = hostContext.children;
+            const { properties, children } = template;
+            const name = properties.name;
+            const filter = (item: Node) => {
+                const slotContext = getContext(item);
+                if (!slotContext || !slotContext.root || slotContext.root === root) {
+                    if (isElement(item)) {
+                        if (!name) {
+                            return !(item as HTMLElement).getAttribute('slot');
+                        }
+
+                        return (item as HTMLElement).getAttribute('slot') === name;
+                    }
+                }
+
+                return !name;
+            };
+
+            const childCount = renderTemplate(
+                parent,
+                slot,
+                context,
+                root,
+                rootContext,
+                slotted,
+                filter
+            );
+            if (!childCount) {
+                return renderTemplate(
+                    parent,
+                    slot,
+                    context,
+                    root,
+                    rootContext,
+                    children
+                );
             }
             return childCount;
         }
 
-        let templateNode;
-        let templateContext: Context | undefined;
-        let templateProperties: VProperties<Node> | undefined;
-        let templateChildren: Template[] | undefined;
-        let templateNamespace = namespace;
+        const { key, children, namespace: namespaceURI } = template;
+        templateNamespace = namespaceURI || context.namespace as string;
 
-        if (isVObject(template)) {
-            if (isVFragment(template)) {
-                return handleItems(template.children, filter);
-            }
-
-            if (isVFunction(template)) {
-                const { Function, key, properties, children } = template;
-                const rootFragment = fragment;
-                const previousContext = context;
-                const previousFragment = currentFragment;
-                const fragments = context.fragments;
-                let placeholder: Node;
-                if (fragment) {
-                    placeholder = fragment.start as Node;
-                } else if (key && oldKeyed.has(key)) {
-                    placeholder = oldKeyed.get(key) as Node;
-                } else if (currentContext &&
-                    currentProperties &&
-                    currentContext.Function === Function &&
-                    currentProperties.key === key) {
-                    placeholder = currentContext.start as Node;
-                } else {
-                    placeholder = DOM.createComment(Function.name);
-                }
-
-                if (key) {
-                    keyed.set(key, placeholder);
-                }
-
-                const renderFragmentContext = getOrCreateContext(placeholder);
-                setContextProperties(renderFragmentContext, rootContext, slotContext, {
-                    key,
-                } as VProperties<Node>);
-                const isAttached = contains.bind(null, fragments, renderFragmentContext);
-                let running = true;
-                const requestUpdate: UpdateRequest = renderFragmentContext.requestUpdate = () => {
-                    if (renderFragmentContext.requestUpdate !== requestUpdate) {
-                        return (renderFragmentContext.requestUpdate as UpdateRequest)();
-                    }
-                    if (running) {
-                        throw new Error('An update request is already running');
-                    }
-                    if (!isAttached()) {
-                        return false;
-                    }
-                    internalRender(
-                        root,
-                        template,
-                        slot,
-                        previousContext,
-                        rootContext,
-                        slotContext,
-                        namespace,
-                        renderFragmentContext
-                    );
-                    return true;
-                };
-                emptyFragments(renderFragmentContext);
-                renderFragmentContext.Function = Function;
-                renderFragmentContext.start = placeholder;
-                context = renderFragmentContext;
-                currentFragment = renderFragmentContext;
-                fragment = undefined;
-
-                const childCount = handleItems(
-                    [
-                        placeholder,
-                        Function(
-                            {
-                                children,
-                                ...properties,
-                            },
-                            renderFragmentContext,
-                            requestUpdate,
-                            isAttached,
-                            renderFragmentContext
-                        ),
-                    ],
-                    filter
-                );
-
-                fragment = rootFragment;
-                renderFragmentContext.end = childNodes.item(currentIndex - 1) as Node;
-                context = previousContext;
-                currentFragment = previousFragment;
-
-                if (!fragment) {
-                    fragments.push(renderFragmentContext);
-                } else {
-                    fragments.splice(fragments.indexOf(fragment), 1, renderFragmentContext);
-                    fragment = renderFragmentContext;
-                }
-
-                running = false;
-                return childCount;
-            }
-
-            // if the current patch is a slot,
-            if (isVSlot(template)) {
-                if (rootContext.slotChildNodes) {
-                    const { properties, children } = template;
-                    const slotChildNodes = rootContext.slotChildNodes;
-                    const name = properties.name;
-                    const filter = (item: Node) => {
-                        const slotContext = getOrCreateContext(item);
-                        if (!slotContext.root || slotContext.root === rootContext) {
-                            if (isElement(item)) {
-                                if (!name) {
-                                    return !item.getAttribute('slot');
-                                }
-
-                                return item.getAttribute('slot') === name;
-                            }
-                        }
-
-                        return !name;
-                    };
-
-                    const childCount = handleItems(slotChildNodes || [], filter);
-                    if (!childCount) {
-                        return handleItems(children);
-                    }
-                }
-                return 0;
-            }
-
-            const { key, children, namespaceURI } = template;
-            templateNamespace = namespaceURI || namespace;
-            if (currentContext && currentProperties) {
-                const currentKey = currentProperties.key;
-                if (oldKeyed.has(key)) {
-                    templateNode = oldKeyed.get(key) as Node;
-                    templateContext = getOrCreateContext(templateNode);
-                    templateProperties = getContextProperties(templateContext, rootContext, slotContext);
-                } else if (currentKey != null && currentKey !== key) {
-                    //
-                } else if (slot ? currentContext.root === context : !currentContext.root) {
-                    if (isVComponent(template) && currentNode.constructor === template.Component) {
-                        templateNode = currentNode;
-                        templateContext = currentContext;
-                        templateProperties = currentProperties;
-                    } else if (isVTag(template) && currentContext.tagName === template.tag) {
-                        templateNode = currentNode;
-                        templateContext = currentContext;
-                        templateProperties = currentProperties;
-                    }
+        let currentNode: Node | null;
+        let currentContext: Context | null;
+        if (key != null) {
+            templateNode = getKeyedNode(context, key) as Node;
+        } else if ((currentNode = getCurrentNode(context))
+            && (currentContext = getCurrentContext(context))
+            && isElement(currentNode)
+            && !hasKeyedNode(context, currentNode)
+        ) {
+            if (slot ? currentContext.root === parent : !currentContext.root) {
+                if (isVComponent(template) && currentNode.constructor === template.type) {
+                    templateNode = currentNode;
+                    templateContext = currentContext;
+                } else if (isVTag(template) && currentNode.tagName.toLowerCase() === template.type.toLowerCase()) {
+                    templateNode = currentNode;
+                    templateContext = currentContext;
                 }
             }
+        }
 
-            if (!templateNode) {
-                if (isVNode(template)) {
-                    templateNode = template.node;
-                } else if (isVComponent(template)) {
-                    templateNode = new template.Component();
-                } else {
-                    templateNode = DOM.createElementNS(templateNamespace, template.tag);
+        if (!templateNode) {
+            if (isVNode(template)) {
+                templateNode = template.type;
+            } else if (isVComponent(template)) {
+                templateNode = new template.type();
+            } else {
+                templateNode = DOM.createElementNS(templateNamespace, template.type);
+            }
+        }
+
+        if (key != null) {
+            addKeyedNode(context, templateNode, key);
+        }
+
+        // update the Node properties
+        templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
+        const oldProperties = templateContext.properties.get(rootContext);
+        const properties = template.properties;
+        if (oldProperties) {
+            for (const key in oldProperties) {
+                if (!(key in properties)) {
+                    properties[key as keyof typeof properties] = undefined;
                 }
             }
+        }
+        templateContext.properties.set(rootContext, properties);
 
-            if (key) {
-                keyed.set(key, templateNode);
+        let propertyKey: keyof typeof properties;
+        for (propertyKey in properties) {
+            const value = properties[propertyKey];
+            const oldValue = oldProperties && oldProperties[propertyKey];
+            if (oldValue === value) {
+                if (isRenderingInput(templateNode, propertyKey)) {
+                    setValue(templateNode, propertyKey as unknown as 'value', value);
+                }
+                continue;
             }
 
-            // update the Node properties
-            const templateElement = templateNode as HTMLElement;
-
-            templateContext = templateContext || getOrCreateContext(templateNode);
-            templateProperties = templateProperties || getContextProperties(templateContext, rootContext, slotContext);
-            const properties = fillEmptyValues(templateProperties, template.properties);
-            setContextProperties(templateContext, rootContext, slotContext, properties);
-
-            let propertyKey: keyof typeof properties;
-            for (propertyKey in properties) {
-                if (propertyKey === 'is' ||
-                    propertyKey === 'key' ||
-                    propertyKey === 'children' ||
-                    propertyKey === 'xmlns' ||
-                    propertyKey === 'ref'
-                ) {
-                    continue;
-                }
-                const value = properties[propertyKey];
-                const oldValue = templateProperties[propertyKey];
-                if (oldValue === value) {
-                    if (isRenderingInput(templateElement, propertyKey)) {
-                        setValue(templateElement, propertyKey as unknown as 'value', value);
+            if (propertyKey === 'style') {
+                const style = (templateNode as HTMLElement).style;
+                const oldStyles = convertStyles(oldValue as VStyle);
+                const newStyles = convertStyles(value as VStyle);
+                for (const propertyKey in oldStyles) {
+                    if (!(propertyKey in newStyles)) {
+                        style.removeProperty(propertyKey);
                     }
-                    continue;
                 }
-
-                if (propertyKey === 'style') {
-                    const style = templateElement.style;
-                    const oldStyles = convertStyles(templateProperties.style);
-                    const newStyles = convertStyles(properties.style);
-                    for (const propertyKey in oldStyles) {
-                        if (!(propertyKey in newStyles)) {
-                            style.removeProperty(propertyKey);
+                for (const propertyKey in newStyles) {
+                    style.setProperty(propertyKey, newStyles[propertyKey]);
+                }
+                continue;
+            } else if (propertyKey === 'class') {
+                const classList = (templateNode as HTMLElement).classList;
+                const newClasses = convertClasses(value as VClasses);
+                if (oldValue) {
+                    const oldClasses = convertClasses(oldValue as VClasses);
+                    for (let i = 0, len = oldClasses.length; i < len; i++) {
+                        const className = oldClasses[i];
+                        if (newClasses.indexOf(className) === -1) {
+                            classList.remove(className);
                         }
                     }
-                    for (const propertyKey in newStyles) {
-                        style.setProperty(propertyKey, newStyles[propertyKey]);
-                    }
-                    continue;
-                } else if (propertyKey === 'class') {
-                    const classList = templateElement.classList;
-                    const newClasses = convertClasses(properties.class);
-                    if (oldValue) {
-                        const oldClasses = convertClasses(templateProperties.class);
-                        for (let i = 0, len = oldClasses.length; i < len; i++) {
-                            const className = oldClasses[i];
-                            if (!contains(newClasses, className)) {
-                                classList.remove(className);
-                            }
-                        }
-                    }
-                    for (let i = 0, len = newClasses.length; i < len; i++) {
-                        const className = newClasses[i];
-                        if (!classList.contains(className)) {
-                            classList.add(className);
-                        }
-                    }
-                    continue;
-                } else if (isListenerProperty(propertyKey) && !(propertyKey in templateElement.constructor.prototype)) {
-                    const eventName = propertyKey.substr(2);
-                    if (oldValue) {
-                        templateElement.removeEventListener(eventName, oldValue as EventListener);
-                    }
-                    if (value) {
-                        templateElement.addEventListener(eventName, value as EventListener);
-                    }
-                    continue;
                 }
+                for (let i = 0, len = newClasses.length; i < len; i++) {
+                    const className = newClasses[i];
+                    if (!classList.contains(className)) {
+                        classList.add(className);
+                    }
+                }
+                continue;
+            } else if (isListenerProperty(propertyKey) && !(propertyKey in templateNode.constructor.prototype)) {
+                const eventName = propertyKey.substr(2);
+                if (oldValue) {
+                    (templateNode as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
+                }
+                if (value) {
+                    (templateNode as HTMLElement).addEventListener(eventName, value as EventListener);
+                }
+                continue;
+            }
 
-                const type = typeof value;
-                const wasType = typeof oldValue;
-                const isReference = (value && type === 'object') || type === 'function';
-                const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
+            const type = typeof value;
+            const wasType = typeof oldValue;
+            const isReference = (value && type === 'object') || type === 'function';
+            const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
 
-                if (isReference || wasReference || isRenderingInput(templateElement, propertyKey)) {
-                    setValue(templateElement, propertyKey, value);
-                } else if (isVComponent(template)) {
-                    const Component = template.Component;
-                    if (type === 'string') {
-                        const observedAttributes = Component.observedAttributes;
-                        if (!observedAttributes || !contains(observedAttributes, propertyKey)) {
-                            const descriptor = (propertyKey in templateElement) && getPropertyDescriptor(templateElement, propertyKey);
-                            if (!descriptor || !descriptor.get || descriptor.set) {
-                                setValue(templateElement, propertyKey, value);
-                            }
-                        } else {
-                            const property = getProperty(templateElement as ComponentInstance, propertyKey as keyof ComponentInstance);
-                            if (property && property.fromAttribute) {
-                                setValue(templateElement, propertyKey, (property.fromAttribute as Function).call(templateElement, value as string));
-                            }
+            if (isReference || wasReference || isRenderingInput(templateNode, propertyKey)) {
+                setValue(templateNode, propertyKey, value);
+            } else if (isVComponent(template)) {
+                if (type === 'string') {
+                    const observedAttributes = template.type.observedAttributes;
+                    if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
+                        const descriptor = (propertyKey in templateNode) && getPropertyDescriptor(templateNode, propertyKey);
+                        if (!descriptor || !descriptor.get || descriptor.set) {
+                            setValue(templateNode, propertyKey, value);
                         }
                     } else {
-                        setValue(templateElement, propertyKey, value);
+                        const property = getProperty(templateNode as ComponentInstance, propertyKey as keyof ComponentInstance);
+                        if (property && property.fromAttribute) {
+                            setValue(templateNode, propertyKey, (property.fromAttribute as Function).call(templateNode, value as string));
+                        }
                     }
-                }
-
-                if (value == null || value === false) {
-                    if (templateElement.hasAttribute(propertyKey)) {
-                        templateElement.removeAttribute(propertyKey);
-                    }
-                } else if (!isReference) {
-                    const attrValue = value === true ? '' : (value as string).toString();
-                    if (templateElement.getAttribute(propertyKey) !== attrValue) {
-                        templateElement.setAttribute(propertyKey, attrValue);
-                    }
+                } else {
+                    setValue(templateNode, propertyKey, value);
                 }
             }
 
-            templateChildren = children;
-        } else if (isThenable(template)) {
-            return handleItems(h((props, context) => {
+            if (value == null || value === false) {
+                if ((templateNode as HTMLElement).hasAttribute(propertyKey)) {
+                    (templateNode as HTMLElement).removeAttribute(propertyKey);
+                }
+            } else if (!isReference) {
+                const attrValue = value === true ? '' : (value as string).toString();
+                if ((templateNode as HTMLElement).getAttribute(propertyKey) !== attrValue) {
+                    (templateNode as HTMLElement).setAttribute(propertyKey, attrValue);
+                }
+            }
+        }
+
+        templateChildren = children;
+    } else if (isObject && isThenable(template)) {
+        return renderTemplate(
+            parent,
+            slot,
+            context,
+            root,
+            rootContext,
+            h((props, context) => {
                 const status = getThenableState(template as Promise<unknown>);
                 if (status.pending) {
                     (template as Promise<unknown>)
                         .catch(() => 1)
                         .then(() => {
-                            (context.requestUpdate as UpdateRequest)();
+                            context.requestUpdate();
                         });
                 }
                 return status.result as Template;
-            }, null), filter);
-        } else if (isObservable(template)) {
-            const observable = template;
-            return handleItems(h((props, context) => {
+            }, null),
+            filter
+        );
+    } else if (isObject && isObservable(template)) {
+        const observable = template;
+        return renderTemplate(
+            parent,
+            slot,
+            context,
+            root,
+            rootContext,
+            h((props, context) => {
                 const status = getObservableState(observable);
                 if (!status.complete) {
                     const subscription = observable.subscribe(
                         () => {
-                            if (!(context.requestUpdate as UpdateRequest)()) {
+                            if (!context.requestUpdate()) {
                                 subscription.unsubscribe();
                             }
                         },
                         () => {
-                            if (!(context.requestUpdate as UpdateRequest)()) {
+                            if (!context.requestUpdate()) {
                                 subscription.unsubscribe();
                             }
                         },
@@ -557,98 +576,161 @@ export const internalRender = (
                     );
                 }
                 return status.current as Template;
-            }, null), filter);
-        } else if (isNode(template)) {
-            templateNode = template;
-        } else  {
-            if (typeof template === 'string' && rootContext.is && context.tagName === 'style') {
-                const is = rootContext.is as string;
-                template = css(is, template as string, customElements.tagNames[is]);
-                (root as HTMLStyleElement).setAttribute('name', is);
-            }
-
-            if (currentContext && currentContext.isText) {
-                templateNode = currentNode as Text;
-                if (templateNode.textContent != template) {
-                    templateNode.textContent = template as string;
-                }
-            } else {
-                // convert non-Node template into Text
-                templateNode = DOM.createTextNode(template as string);
-            }
+            }, null),
+            filter
+        );
+    } else if (isObject && isNode(template)) {
+        templateNode = template;
+        templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
+    } else {
+        const hostContext = getHostContext(root);
+        if (typeof template === 'string' && hostContext && hostContext.host && (parent as HTMLElement).tagName === 'STYLE') {
+            template = css(hostContext.host, template as string, customElements.tagNames[hostContext.host]);
+            (parent as HTMLStyleElement).setAttribute('name', hostContext.host);
         }
 
-        if (filter && !filter(templateNode)) {
-            return 0;
-        }
-
-        templateContext = templateContext || getOrCreateContext(templateNode);
-        // now, we are confident that if the input is a Node or a Component,
-        // check if Nodes are the same instance
-        // (patch result should return same Node instances for compatible types)
-        if (contains(childNodes, templateNode)) {
-            while (currentNode && currentContext && templateNode !== currentNode) {
-                if (slot && currentContext.root === context) {
-                    delete currentContext.root;
-                }
-
-                DOM.removeChild(root, currentNode, slot);
-                currentNode = childNodes.item(currentIndex) as Node;
-                currentContext = currentNode ? getOrCreateContext(currentNode) : null;
+        let currentNode: Node;
+        let currentContext: Context | null;
+        if ((currentNode = getCurrentNode(context))
+            && (currentContext = getCurrentContext(context))
+            && isText(currentNode)
+        ) {
+            templateNode = currentNode;
+            templateContext = currentContext;
+            if (templateNode.textContent != template) {
+                templateNode.textContent = template as string;
             }
-
-            currentNode = childNodes.item(++currentIndex) as Node;
-            currentContext = currentNode ? getOrCreateContext(currentNode) : null;
-            currentProperties = currentContext ? getContextProperties(currentContext, rootContext, slotContext) : null;
         } else {
-            // they are different, so we need to insert the new Node into the tree
-            // if current iterator is defined, insert the Node before it
-            // otherwise append the new Node at the end of the parent
-            if (slot && !templateContext.root) {
-                templateContext.root = context;
-            }
-            DOM.insertBefore(root, templateNode, currentNode, slot);
-            currentIndex++;
+            // convert non-Node template into Text
+            templateNode = DOM.createTextNode(template as string);
+            templateContext = getOrCreateContext(templateNode);
+        }
+    }
+
+    if (!templateNode || !templateContext || (filter && !filter(templateNode))) {
+        return 0;
+    }
+
+    // now, we are confident that the input is a Node,
+    if (context.children.indexOf(templateNode) !== -1) {
+        // the node is already in the child list
+        // remove nodes until the correct instance
+        let currentContext: Context | null;
+        while ((currentContext = getCurrentContext(context)) && (templateContext !== currentContext)) {
+            DOM.removeChild(parent, getCurrentNode(context), slot);
         }
 
-        if (isElement(templateNode) &&
-            templateChildren &&
-            templateContext &&
-            templateChildren.length) {
-            // the Node has slotted children, trigger a new render context for them
-            internalRender(
-                templateNode as HTMLElement,
-                templateChildren,
-                isComponent(templateNode),
-                templateContext,
-                rootContext,
-                slotContext,
-                templateNamespace
-            );
+        (context.currentIndex as number)++;
+    } else {
+        // we need to insert the new node into the tree
+        DOM.insertBefore(parent, templateNode, getCurrentNode(context), slot);
+        (context.currentIndex as number)++;
+    }
+
+    if (templateNode &&
+        templateContext &&
+        isElement(templateNode) &&
+        templateChildren &&
+        templateChildren.length) {
+        // the Node has slotted children, trigger a new render context for them
+        internalRender(
+            templateNode,
+            templateChildren,
+            isComponent(templateNode),
+            templateContext,
+            root,
+            rootContext,
+            templateNamespace
+        );
+    }
+
+    return 1;
+};
+
+/**
+ * Render a set of nodes into the render root, with some checks for Nodes in order to avoid
+ * useless changes in the tree and to mantain or update the state of compatible Nodes.
+ *
+ * @param parent The root Node for the render.
+ * @param template The child (or the children) to render in Virtual DOM format or already generated.
+ * @param slot Should handle slot children.
+ * @param context The render context of the root.
+ * @param root The current root node of the render.
+ * @param rootContext The current root context of the render.
+ * @param namespace The current namespace uri of the render.
+ * @param fragment The fragment context to update.
+ * @returns The resulting child nodes list.
+ */
+export const internalRender = (
+    parent: Node,
+    template: Template,
+    slot = isComponent(parent),
+    context: Context,
+    root: Node,
+    rootContext: Context = context,
+    namespace: string = (parent as HTMLElement).namespaceURI || 'http://www.w3.org/1999/xhtml',
+    fragment?: Context
+) => {
+    const childNodes = context.children;
+    const previousFragment = context.fragment;
+    const previousNamespace = context.namespace;
+    const previousIndex = context.currentIndex;
+
+    context.namespace = namespace;
+    context.fragment = fragment;
+
+    let lastNode: Node | undefined;
+    if (fragment) {
+        context.currentIndex = context.children.indexOf(fragment.start as Node);
+        lastNode = fragment.end as Node;
+        if (fragment.keys) {
+            fragment.oldKeys = fragment.keys;
+            fragment.oldKeyed = new Set(fragment.keys.values());
         }
+        delete fragment.keys;
+    } else {
+        context.currentIndex = 0;
+        if (context.keys) {
+            context.oldKeys = context.keys;
+            context.oldKeyed = new Set(context.keys.values());
+        }
+        delete context.keys;
+    }
 
-        return 1;
-    };
-
-    handleItems(input);
+    renderTemplate(
+        parent,
+        slot,
+        context,
+        root,
+        rootContext,
+        template
+    );
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
     // remove all Nodes that are outside the result range
+    const currentIndex = context.currentIndex as number;
     let lastIndex: number;
     if (lastNode) {
-        lastIndex = indexOf.call(childNodes, lastNode) + 1;
+        lastIndex = childNodes.indexOf(lastNode) + 1;
     } else {
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        const item = childNodes.item(--lastIndex) as Node;
-        const context = getOrCreateContext(item);
-        if (slot && context.root === context) {
-            delete context.root;
-        }
-        emptyFragments(context);
-        DOM.removeChild(root, item, slot);
+        DOM.removeChild(parent, childNodes[--lastIndex], slot);
+    }
+
+    if (fragment) {
+        delete fragment.oldKeys;
+        delete fragment.oldKeyed;
+        context.fragment = previousFragment;
+        context.namespace = previousNamespace;
+    } else {
+        delete context.oldKeys;
+        delete context.oldKeyed;
+        context.fragment = previousFragment;
+        context.namespace = previousNamespace;
+        context.currentIndex = previousIndex;
     }
 
     return childNodes;
@@ -663,13 +745,17 @@ export const internalRender = (
  * @param slot Should render to slot children.
  * @returns The resulting child Nodes.
  */
-export const render = (input: Template, root: Node = DOM.createDocumentFragment(), slot: boolean = isComponent(root)): Node | Node[] | void => {
-    const childNodes = internalRender(root, input, slot);
-    if (!childNodes) {
-        return;
-    }
-    if (childNodes.length < 2) {
+export const render = (input: Template, root: Node = DOM.createDocumentFragment(), slot: boolean = true): Node | Node[] | void => {
+    const isComponentRoot = isComponent(root);
+    const childNodes = internalRender(
+        root,
+        input,
+        slot && isComponentRoot,
+        slot && isComponentRoot ? getHostContext(root) as Context : getOrCreateContext(root),
+        root
+    );
+    if (!isArray(input) && !(input != null && isVObject(input) && isVFragment(input)) && childNodes.length < 2) {
         return childNodes[0];
     }
-    return cloneChildNodes(childNodes);
+    return childNodes.slice(0);
 };
