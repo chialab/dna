@@ -1623,7 +1623,11 @@ function h<T extends string>(tagOrComponent: T, properties?: VProperties<T> | nu
  * @param children The children of the Node.
  * @returns The virtual DOM object.
  */
-function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string, properties: VProperties | null = null, ...children: Template[]) {
+function h(
+    tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string,
+    properties: VProperties | null = null,
+    ...children: Template[]
+) {
     const { children: propertiesChildren } = (properties || {});
     children = propertiesChildren as Template[] || children;
 
@@ -1668,7 +1672,29 @@ function h(tagOrComponent: typeof Fragment | FunctionComponent | CustomElementCo
     return vnode;
 }
 
-export { h };
+/**
+ * Function factory to use as JSX pragma.
+ *
+ * @param tagOrComponent The tag name, the constructor or the instance of the node.
+ * @param properties The set of properties of the Node.
+ * @param key The Node key reference.
+ * @returns The virtual DOM object.
+ */
+function jsx(
+    tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string,
+    properties: VProperties | null = null,
+    key?: unknown
+) {
+    properties = properties || {};
+    if (key) {
+        properties.key = key;
+    }
+    return h(tagOrComponent as string, properties as VProperties<string>);
+}
+
+const jsxs = jsx;
+
+export { h, jsx, jsxs };
 
 /**
  * The internal JSX namespace.

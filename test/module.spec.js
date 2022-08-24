@@ -22,6 +22,8 @@ describe('module', function() {
         render: 'function',
         Fragment: 'symbol',
         h: 'function',
+        jsx: 'function',
+        jsxs: 'function',
         compile: 'function',
         html: 'function',
         css: 'function',
