@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.3
+
+### Patch Changes
+
+- Fixed render of slotted text with sibling text template
+
 ## 3.20.2
 
 ### Patch Changes
