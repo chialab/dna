@@ -345,7 +345,10 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
     const context = getHostContext(element) as Context;
     const slotChildNodes = cloneChildNodes(element.childNodes);
     for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-        DOM.removeChild(element, slotChildNodes[i], false);
+        const child = slotChildNodes[i];
+        const childContext = getOrCreateContext(child);
+        DOM.removeChild(element, child, false);
+        childContext.root = element;
     }
     context.children = slotChildNodes;
     return slotChildNodes;

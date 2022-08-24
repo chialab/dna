@@ -502,6 +502,43 @@ describe('render', function() {
             expect(div7.className).to.be.equal('');
         });
 
+        it('should not reuse slotted text', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get properties() {
+                    return {
+                        showPrefix: {
+                            type: Boolean,
+                        },
+                    };
+                }
+
+                render() {
+                    return [
+                        this.showPrefix && 'Prefix:',
+                        DNA.h('slot'),
+                    ];
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
+            expect(elem.childNodes).to.be.have.lengthOf(1);
+            const [slotted] = elem.slotChildNodes;
+            const [textNode] = elem.childNodes;
+            DNA.render(DNA.h(TestElement, { showPrefix: true }, 'Text'), wrapper);
+            expect(elem.childNodes).to.be.have.lengthOf(2);
+            const [prefixNode, newTextNode] = elem.childNodes;
+            expect(slotted).to.be.equal(elem.slotChildNodes[0]);
+            expect(textNode).to.be.equal(newTextNode);
+            expect(prefixNode.textContent).to.be.equal('Prefix:');
+            expect(newTextNode.textContent).to.be.equal('Text');
+            DNA.render(DNA.h(TestElement, { showPrefix: false }, 'Text'), wrapper);
+            expect(elem.childNodes).to.be.have.lengthOf(1);
+            console.log(elem.innerHTML)
+        });
+
         it('should return a shallow clone of child list', () => {
             const list = DNA.render([DNA.h('div'), DNA.h('div'), DNA.h('div')], wrapper);
             expect(list).to.have.lengthOf(3);

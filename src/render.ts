@@ -594,6 +594,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
+            && (slot ? currentContext.root === parent : !currentContext.root)
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
