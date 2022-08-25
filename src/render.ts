@@ -193,6 +193,19 @@ const addKeyedNode = (context: Context, node: Node, key: unknown) => {
 };
 
 /**
+ * Check if a node is the main render root of the context.
+ * @param context The context to check.
+ * @param root The root node.
+ * @returns True if main render root.
+ */
+const isMainRoot = (context: Context, root?: Node|false) => {
+    if (root) {
+        return context.root === root;
+    }
+    return !context.root;
+};
+
+/**
  * Render a a template into the root.
  * @param parent The root Node for the render.
  * @param slot Should handle slot children.
@@ -397,7 +410,7 @@ const renderTemplate = (
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
         ) {
-            if (slot ? currentContext.root === parent : !currentContext.root) {
+            if (isMainRoot(currentContext, slot && parent)) {
                 if (isVComponent(template) && currentNode.constructor === template.type) {
                     templateNode = currentNode;
                     templateContext = currentContext;
@@ -594,7 +607,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
-            && (slot ? currentContext.root === parent : !currentContext.root)
+            && isMainRoot(currentContext, slot && parent)
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
@@ -631,7 +644,7 @@ const renderTemplate = (
     if (templateNode &&
         templateContext &&
         isElement(templateNode) &&
-        (templateChildren && templateChildren.length) || templateContext.children.length) {
+        ((templateChildren && templateChildren.length) || (isMainRoot(templateContext, slot && parent) && templateContext.children.length))) {
         // the Node has slotted children, trigger a new render context for them
         internalRender(
             templateNode,

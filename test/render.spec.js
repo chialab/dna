@@ -538,6 +538,37 @@ describe('render', function() {
             expect(elem.childNodes).to.be.have.lengthOf(1);
         });
 
+        it('should handle emptied slot nodes', () => {
+            const name = getComponentName();
+            class TestElement extends DNA.Component {
+                static get properties() {
+                    return {
+                        showSlotted: {
+                            type: Boolean,
+                            defaultValue: true,
+                        },
+                    };
+                }
+
+                render() {
+                    if (this.showSlotted) {
+                        return DNA.h('div', {}, DNA.h('slot'));
+                    }
+                    return DNA.h('div');
+                }
+            }
+
+            DNA.customElements.define(name, TestElement);
+
+            const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
+            const div = elem.childNodes[0];
+            expect(elem.slotChildNodes).to.be.have.lengthOf(1);
+            expect(div.childNodes).to.be.have.lengthOf(1);
+            DNA.render(DNA.h(TestElement, { showSlotted: false }, 'Text'), wrapper);
+            expect(elem.slotChildNodes).to.be.have.lengthOf(1);
+            expect(div.childNodes).to.be.have.lengthOf(0);
+        });
+
         it('should return a shallow clone of child list', () => {
             const list = DNA.render([DNA.h('div'), DNA.h('div'), DNA.h('div')], wrapper);
             expect(list).to.have.lengthOf(3);
