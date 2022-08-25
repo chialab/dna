@@ -536,7 +536,6 @@ describe('render', function() {
             expect(newTextNode.textContent).to.be.equal('Text');
             DNA.render(DNA.h(TestElement, { showPrefix: false }, 'Text'), wrapper);
             expect(elem.childNodes).to.be.have.lengthOf(1);
-            console.log(elem.innerHTML)
         });
 
         it('should return a shallow clone of child list', () => {
