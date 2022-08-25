@@ -631,8 +631,7 @@ const renderTemplate = (
     if (templateNode &&
         templateContext &&
         isElement(templateNode) &&
-        templateChildren &&
-        templateChildren.length) {
+        (templateChildren && templateChildren.length) || templateContext.children.length) {
         // the Node has slotted children, trigger a new render context for them
         internalRender(
             templateNode,
