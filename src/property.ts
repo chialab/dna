@@ -232,12 +232,13 @@ export type Property<T extends ComponentInstance, P extends keyof Members<T>>= P
 /**
  * Retrieve all properties descriptors.
  * @param prototype The component prototype.
+ * @param chain Should create inheritance chain of properties.
  * @returns A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance>(prototype: WithProperties<T>) => {
+export const getProperties = <T extends ComponentInstance>(prototype: WithProperties<T>, chain = false) => {
     const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
-    if (!hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
+    if (chain && !hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
         return prototype[PROPERTIES_SYMBOL] = {
             __proto__: props,
         } as unknown as PropertiesOf<T>;
@@ -292,7 +293,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof Memb
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
-    const declarations = getProperties(prototype);
+    const declarations = getProperties(prototype, true);
     const attribute = hasAttribute ?
         (typeof declaration.attribute === 'string' ? declaration.attribute : propertyKey) :
         undefined;
