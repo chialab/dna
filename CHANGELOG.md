@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.7
+
+### Patch Changes
+
+- Fixed render root for SSR-ed components.
+
 ## 3.20.6
 
 ### Patch Changes
