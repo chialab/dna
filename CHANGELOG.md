@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.8
+
+### Patch Changes
+
+- 93bb3c2: Fix children rendering with context ownership
+- 098d8a4: Handle ts `getDecorators` in analyzer
+
 ## 3.20.7
 
 ### Patch Changes
