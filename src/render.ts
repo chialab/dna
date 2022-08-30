@@ -193,19 +193,6 @@ const addKeyedNode = (context: Context, node: Node, key: unknown) => {
 };
 
 /**
- * Check if a node is the main render root of the context.
- * @param context The context to check.
- * @param root The root node.
- * @returns True if main render root.
- */
-const isMainRoot = (context: Context, root?: Node|false) => {
-    if (root) {
-        return context.root === root;
-    }
-    return !context.root;
-};
-
-/**
  * Render a a template into the root.
  * @param parent The root Node for the render.
  * @param slot Should handle slot children.
@@ -403,21 +390,21 @@ const renderTemplate = (
 
         let currentNode: Node | null;
         let currentContext: Context | null;
+        let isNew = false;
         if (key != null) {
             templateNode = getKeyedNode(context, key) as Node;
         } else if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
+            && currentContext.owner === rootContext
         ) {
-            if (isMainRoot(currentContext, slot && parent)) {
-                if (isVComponent(template) && currentNode.constructor === template.type) {
-                    templateNode = currentNode;
-                    templateContext = currentContext;
-                } else if (isVTag(template) && currentNode.tagName.toLowerCase() === template.type.toLowerCase()) {
-                    templateNode = currentNode;
-                    templateContext = currentContext;
-                }
+            if (isVComponent(template) && currentNode.constructor === template.type) {
+                templateNode = currentNode;
+                templateContext = currentContext;
+            } else if (isVTag(template) && currentNode.tagName.toLowerCase() === template.type.toLowerCase()) {
+                templateNode = currentNode;
+                templateContext = currentContext;
             }
         }
 
@@ -426,8 +413,10 @@ const renderTemplate = (
                 templateNode = template.type;
             } else if (isVComponent(template)) {
                 templateNode = new template.type();
+                isNew = true;
             } else {
                 templateNode = DOM.createElementNS(templateNamespace, template.type);
+                isNew = true;
             }
         }
 
@@ -437,6 +426,9 @@ const renderTemplate = (
 
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
+        if (isNew) {
+            templateContext.owner = rootContext;
+        }
         const oldProperties = templateContext.properties.get(rootContext);
         const properties = template.properties;
         if (oldProperties) {
@@ -607,7 +599,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
-            && isMainRoot(currentContext, slot && parent)
+            && currentContext.owner === rootContext
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
@@ -618,6 +610,7 @@ const renderTemplate = (
             // convert non-Node template into Text
             templateNode = DOM.createTextNode(template as string);
             templateContext = getOrCreateContext(templateNode);
+            templateContext.owner = rootContext;
         }
     }
 
@@ -644,8 +637,11 @@ const renderTemplate = (
     if (templateNode &&
         templateContext &&
         isElement(templateNode) &&
-        ((templateChildren && templateChildren.length) || (isMainRoot(templateContext, slot && parent) && templateContext.children.length))) {
+        ((templateChildren && templateChildren.length) || ((!templateContext.owner || (templateContext.owner === rootContext)) && templateContext.children.length))) {
         // the Node has slotted children, trigger a new render context for them
+        if (!templateContext.owner) {
+            templateContext.owner = rootContext;
+        }
         internalRender(
             templateNode,
             templateChildren,
