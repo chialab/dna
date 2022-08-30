@@ -36,6 +36,7 @@ export type Context = {
     start?: Node;
     end?: Node;
     root?: Node;
+    owner?: Context;
     currentIndex?: number;
     namespace?: string;
     requestUpdate?: UpdateRequest;
