@@ -349,6 +349,7 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
         const childContext = getOrCreateContext(child);
         DOM.removeChild(element, child, false);
         childContext.root = element;
+        childContext.owner = context;
     }
     context.children = slotChildNodes;
     return slotChildNodes;
@@ -468,7 +469,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const context = getOrCreateHostContext(element);
             if (element.isConnected) {
                 // hydrating custom element
-                context.root = element;
+                context.owner = context;
             }
 
             // setup listeners
