@@ -33,7 +33,7 @@ export function propertyDecorator() {
                 const parent = /** @type {import('@custom-elements-manifest/analyzer/node_modules/typescript').ClassDeclaration} */ (/** @type {unknown} */ (member.parent));
                 const memberName = member.name.getText();
                 const accessorMembers = parent.members?.filter((m) => m.name && m.name.getText() === memberName) ?? [];
-                const propertyDecorator = accessorMembers.map((m) => getDecorator(m, 'property')).filter(Boolean)[0];
+                const propertyDecorator = accessorMembers.map((m) => getDecorator(ts, m, 'property')).filter(Boolean)[0];
                 if (!propertyDecorator) {
                     if (currClass.members) {
                         const index = currClass.members.findIndex((attr) => attr.name === memberName);
