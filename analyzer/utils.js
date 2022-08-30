@@ -30,12 +30,17 @@ export function getDecoratorArguments(decorator) {
 
 /**
  * Get class/method/property decorator by name.
+ * @param {typeof import('@custom-elements-manifest/analyzer/node_modules/typescript')} ts The typescript instance.
  * @param {import('@custom-elements-manifest/analyzer/node_modules/typescript').Node} node The AST node.
  * @param {string} name The decorator name.
  * @returns {import('@custom-elements-manifest/analyzer/node_modules/typescript').Decorator|undefined} The decorator AST node.
  */
-export function getDecorator(node, name) {
-    return node.decorators?.find((decorator) =>
+export function getDecorator(ts, node, name) {
+    const decorators = ('getDecorators' in ts) ? (/** @type {{ getDecorators(inputNode: typeof node): typeof node['decorators']  }} */ (/** @type {unknown} */ (ts))).getDecorators(node) : node.decorators;
+    if (!decorators) {
+        return undefined;
+    }
+    return decorators.find((decorator) =>
         getDecoratorExpression(decorator)?.expression?.getText() === name ||
         getDecoratorExpression(decorator)?.getText() === name
     );

@@ -17,7 +17,7 @@ export function customElementDecorator() {
                 return;
             }
 
-            const customElementDecorator = getDecorator(node, 'customElement');
+            const customElementDecorator = getDecorator(ts, node, 'customElement');
             if (!customElementDecorator) {
                 return;
             }
