@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.20.9
+
+### Patch Changes
+
+- f9620f9: Fix SSR-ed components owner
+
 ## 3.20.8
 
 ### Patch Changes
