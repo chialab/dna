@@ -1,5 +1,15 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.0
+
+### Minor Changes
+
+- a8e3caf: Collect slot children updates
+
+### Patch Changes
+
+- 0624242: Fix detection for custom element initialized by the parser
+
 ## 3.20.9
 
 ### Patch Changes
