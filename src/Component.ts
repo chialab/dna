@@ -467,8 +467,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
 
             const context = getOrCreateHostContext(element);
-            if (element.isConnected) {
-                // hydrating custom element
+            if (element.parentNode) {
+                // custom element initialized by the parser
                 context.owner = context;
             }
 
