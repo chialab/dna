@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.1
+
+### Patch Changes
+
+- 883de6c: Fix context owner for temporary elements
+
 ## 3.21.0
 
 ### Minor Changes
