@@ -624,13 +624,13 @@ const renderTemplate = (
         // remove nodes until the correct instance
         let currentContext: Context | null;
         while ((currentContext = getCurrentContext(context)) && (templateContext !== currentContext)) {
-            DOM.removeChild(parent, getCurrentNode(context), slot);
+            DOM.removeChild(parent, getCurrentNode(context), slot, false);
         }
 
         (context.currentIndex as number)++;
     } else {
         // we need to insert the new node into the tree
-        DOM.insertBefore(parent, templateNode, getCurrentNode(context), slot);
+        DOM.insertBefore(parent, templateNode, getCurrentNode(context), slot, false);
         (context.currentIndex as number)++;
     }
 
@@ -726,7 +726,7 @@ export const internalRender = (
         lastIndex = childNodes.length;
     }
     while (currentIndex < lastIndex) {
-        DOM.removeChild(parent, childNodes[--lastIndex], slot);
+        DOM.removeChild(parent, childNodes[--lastIndex], slot, false);
     }
 
     if (fragment) {
@@ -740,6 +740,10 @@ export const internalRender = (
         context.fragment = previousFragment;
         context.namespace = previousNamespace;
         context.currentIndex = previousIndex;
+    }
+
+    if (slot) {
+        (parent as ComponentInstance).forceUpdate();
     }
 
     return childNodes;

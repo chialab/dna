@@ -497,7 +497,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     element[propertyKey] = property.defaultValue;
                 }
                 if (property.static) {
-                    this.watchedProperties.push(propertyKey);
+                    element.watchedProperties.push(propertyKey);
                 }
             }
 
