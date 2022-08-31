@@ -83,9 +83,10 @@ export const DOM = {
      * @param parent The parent element.
      * @param newChild The child to add.
      * @param slot Should add a slot node.
+     * @param update Should invoke component update.
      * @returns The appended child.
      */
-    appendChild<T extends Node>(parent: Node, newChild: T, slot = isComponent(parent)): T {
+    appendChild<T extends Node>(parent: Node, newChild: T, slot = isComponent(parent), update = true): T {
         const oldParent = newChild.parentNode;
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
         if (slot) {
@@ -101,7 +102,9 @@ export const DOM = {
             if (!newChildContext.root) {
                 newChildContext.root = parent;
             }
-            (parent as ComponentInstance).forceUpdate();
+            if (update) {
+                (parent as ComponentInstance).forceUpdate();
+            }
             return newChild;
         }
         if (oldParent) {
@@ -121,9 +124,10 @@ export const DOM = {
      * @param parent The parent element.
      * @param oldChild The child to remove.
      * @param slot Should remove a slot node.
+     * @param update Should invoke component update.
      * @returns The removed child.
      */
-    removeChild<T extends Node>(parent: Node, oldChild: T, slot = isComponent(parent)): T {
+    removeChild<T extends Node>(parent: Node, oldChild: T, slot = isComponent(parent), update = true): T {
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
         if (slot) {
             const oldChildContext = getOrCreateContext(oldChild);
@@ -131,7 +135,9 @@ export const DOM = {
             const io = slotted.indexOf(oldChild);
             if (io !== -1) {
                 slotted.splice(io, 1);
-                (parent as ComponentInstance).forceUpdate();
+                if (update) {
+                    (parent as ComponentInstance).forceUpdate();
+                }
             }
             if (oldChildContext.root === parent) {
                 oldChildContext.root = undefined;
@@ -158,9 +164,10 @@ export const DOM = {
      * @param newChild The child to insert.
      * @param refChild The referred node.
      * @param slot Should insert a slot node.
+     * @param update Should invoke component update.
      * @returns The inserted child.
      */
-    insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = isComponent(parent)): T {
+    insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = isComponent(parent), update = true): T {
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
 
         if (slot) {
@@ -184,7 +191,9 @@ export const DOM = {
             if (!newChildContext.root) {
                 newChildContext.root = parent;
             }
-            (parent as ComponentInstance).forceUpdate();
+            if (update) {
+                (parent as ComponentInstance).forceUpdate();
+            }
             return newChild;
         }
 
@@ -217,9 +226,10 @@ export const DOM = {
      * @param newChild The child to insert.
      * @param oldChild The node to replace.
      * @param slot Should replace a slot node.
+     * @param update Should invoke component update.
      * @returns The replaced child.
      */
-    replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = isComponent(parent)): T {
+    replaceChild<T extends Node>(parent: Node, newChild: Node, oldChild: T, slot = isComponent(parent), update = true): T {
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
         const parentNode = newChild.parentNode;
 
@@ -242,7 +252,9 @@ export const DOM = {
             if (!newChildContext.root) {
                 newChildContext.root = parent;
             }
-            (parent as ComponentInstance).forceUpdate();
+            if (update) {
+                (parent as ComponentInstance).forceUpdate();
+            }
             return oldChild;
         }
         if (parentNode && newChild !== oldChild) {
@@ -270,15 +282,16 @@ export const DOM = {
      * @param position The position of the insertion.
      * @param insertedElement The child to insert.
      * @param slot Should insert a slot node.
+     * @param update Should invoke component update.
      * @returns The inserted child.
      */
-    insertAdjacentElement(parent: Element, position: InsertPosition, insertedElement: Element, slot = isComponent(parent)): Element | null {
+    insertAdjacentElement(parent: Element, position: InsertPosition, insertedElement: Element, slot = isComponent(parent), update = true): Element | null {
         if (position === 'afterbegin') {
             const refChild = isComponent(parent) ? (parent.slotChildNodes as Node[])[0] : parent.firstChild;
-            return DOM.insertBefore(parent, insertedElement, refChild, slot);
+            return DOM.insertBefore(parent, insertedElement, refChild, slot, update);
         }
         if (position === 'beforeend') {
-            return DOM.insertBefore(parent, insertedElement, null, slot);
+            return DOM.insertBefore(parent, insertedElement, null, slot, update);
         }
 
         return insertAdjacentElementImpl.call(parent, position, insertedElement);
