@@ -397,7 +397,7 @@ const renderTemplate = (
             && (currentContext = getCurrentContext(context))
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
-            && currentContext.owner === rootContext
+            && (!currentContext.owner || currentContext.owner === rootContext)
         ) {
             if (isVComponent(template) && currentNode.constructor === template.type) {
                 templateNode = currentNode;
@@ -599,7 +599,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
-            && currentContext.owner === rootContext
+            && (!currentContext.owner || currentContext.owner === rootContext)
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
@@ -685,6 +685,9 @@ export const internalRender = (
     const previousNamespace = context.namespace;
     const previousIndex = context.currentIndex;
 
+    if (!context.owner) {
+        context.owner = context;
+    }
     context.namespace = namespace;
     context.fragment = fragment;
 
