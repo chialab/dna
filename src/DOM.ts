@@ -3,7 +3,37 @@ import type { Context } from './Context';
 import { isConnected, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, insertAdjacentElementImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl } from './helpers';
 import { connect, disconnect, shouldEmulateLifeCycle, emulatingLifeCycle, isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
-import { getOrCreateContext, getHostContext } from './Context';
+import { getContext, getOrCreateContext, getHostContext } from './Context';
+
+/**
+ * Remove a slotted node from the old host positions.
+ * @param newHost The new host parent of the slotted node.
+ * @param node The slotted node.
+ * @returns Updated hosts lists.
+ */
+const removeHosts = (newHost: Node, node: Node) => {
+    const childContext = getOrCreateContext(node);
+    const hosts = childContext.hosts;
+    if (!hosts) {
+        return childContext.hosts = [];
+    }
+
+    const parentContext = getHostContext(newHost);
+    if (!parentContext) {
+        return hosts;
+    }
+
+    const parents = parentContext.parents || [];
+    for (let i = 0, len = hosts.length; i < len; i++) {
+        const hostContext = getContext(hosts[i]);
+        if (!hostContext || parents.indexOf(hostContext) === -1) {
+            DOM.removeChild(hosts[i], node);
+            break;
+        }
+    }
+
+    return childContext.hosts = childContext.hosts || [];
+};
 
 /**
  * DOM is a singleton that components uses to access DOM methods.
@@ -90,18 +120,15 @@ export const DOM = {
         const oldParent = newChild.parentNode;
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
         if (slot) {
-            const newChildContext = getOrCreateContext(newChild);
             const slotted = context.children;
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
-            } else if (newChildContext.root && !newChildContext.root.contains(parent)) {
-                DOM.removeChild(newChildContext.root, newChild);
+            } else {
+                const hosts = removeHosts(parent, newChild);
+                hosts.push(parent as ComponentInstance);
             }
             slotted.push(newChild);
-            if (!newChildContext.root) {
-                newChildContext.root = parent;
-            }
             if (update) {
                 (parent as ComponentInstance).forceUpdate();
             }
@@ -134,13 +161,14 @@ export const DOM = {
             const slotted = context.children;
             const io = slotted.indexOf(oldChild);
             if (io !== -1) {
+                const hosts = oldChildContext.hosts;
+                if (hosts) {
+                    oldChildContext.hosts = hosts.slice(0, hosts.indexOf(parent as ComponentInstance));
+                }
                 slotted.splice(io, 1);
                 if (update) {
                     (parent as ComponentInstance).forceUpdate();
                 }
-            }
-            if (oldChildContext.root === parent) {
-                oldChildContext.root = undefined;
             }
             return oldChild;
         }
@@ -169,15 +197,14 @@ export const DOM = {
      */
     insertBefore<T extends Node>(parent: Node, newChild: T, refChild: Node | null, slot = isComponent(parent), update = true): T {
         const context = slot ? getHostContext(parent) as Context : getOrCreateContext(parent);
-
         if (slot) {
-            const newChildContext = getOrCreateContext(newChild);
             const slotted = context.children;
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
-            } else if (newChildContext.root && !newChildContext.root.contains(parent)) {
-                DOM.removeChild(newChildContext.root, newChild);
+            } else {
+                const hosts = removeHosts(parent, newChild);
+                hosts.push(parent as ComponentInstance);
             }
 
             if (refChild) {
@@ -187,9 +214,6 @@ export const DOM = {
                 }
             } else {
                 slotted.push(newChild);
-            }
-            if (!newChildContext.root) {
-                newChildContext.root = parent;
             }
             if (update) {
                 (parent as ComponentInstance).forceUpdate();
@@ -234,24 +258,18 @@ export const DOM = {
         const parentNode = newChild.parentNode;
 
         if (slot) {
-            const newChildContext = getOrCreateContext(newChild);
-            const oldChildContext = getOrCreateContext(oldChild);
             const slotted = context.children;
             const previousIndex = slotted.indexOf(newChild);
             if (previousIndex !== -1) {
                 slotted.splice(previousIndex, 1);
-            } else if (newChildContext.root && !newChildContext.root.contains(parent)) {
-                DOM.removeChild(newChildContext.root, newChild);
+            } else {
+                const hosts = removeHosts(parent, newChild);
+                hosts.push(parent as ComponentInstance);
             }
 
             const io = slotted.indexOf(oldChild);
             slotted.splice(io, 1, newChild);
-            if (oldChildContext.root === parent) {
-                oldChildContext.root = undefined;
-            }
-            if (!newChildContext.root) {
-                newChildContext.root = parent;
-            }
+            removeHosts(parent, oldChild);
             if (update) {
                 (parent as ComponentInstance).forceUpdate();
             }

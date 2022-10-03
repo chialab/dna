@@ -35,8 +35,8 @@ export type Context = {
     Function?: FunctionComponent<VProperties>;
     start?: Node;
     end?: Node;
-    root?: Node;
-    owner?: Context;
+    parents?: Context[];
+    hosts?: ComponentInstance[];
     currentIndex?: number;
     namespace?: string;
     requestUpdate?: UpdateRequest;
