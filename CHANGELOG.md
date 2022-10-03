@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.2
+
+### Patch Changes
+
+- cf416fb: Correctly move slotted nodes
+
 ## 3.21.1
 
 ### Patch Changes
