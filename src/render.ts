@@ -350,13 +350,13 @@ const renderTemplate = (
             const name = properties.name;
             const filter = (item: Node) => {
                 const slotContext = getContext(item);
-                if (!slotContext || !slotContext.root || slotContext.root === root) {
+                if (!slotContext || !slotContext.hosts || slotContext.hosts[0] === root) {
                     if (isElement(item)) {
                         if (!name) {
-                            return !(item as HTMLElement).getAttribute('slot');
+                            return !item.getAttribute('slot');
                         }
 
-                        return (item as HTMLElement).getAttribute('slot') === name;
+                        return item.getAttribute('slot') === name;
                     }
                 }
 
@@ -397,7 +397,7 @@ const renderTemplate = (
             && (currentContext = getCurrentContext(context))
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
-            && (!currentContext.owner || currentContext.owner === rootContext)
+            && (!currentContext.parents || currentContext.parents[0] === rootContext)
         ) {
             if (isVComponent(template) && currentNode.constructor === template.type) {
                 templateNode = currentNode;
@@ -427,7 +427,7 @@ const renderTemplate = (
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
         if (isNew) {
-            templateContext.owner = rootContext;
+            templateContext.parents = [rootContext];
         }
         const oldProperties = templateContext.properties.get(rootContext);
         const properties = template.properties;
@@ -599,7 +599,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
-            && (!currentContext.owner || currentContext.owner === rootContext)
+            && (!currentContext.parents || currentContext.parents[0] === rootContext)
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
@@ -610,7 +610,7 @@ const renderTemplate = (
             // convert non-Node template into Text
             templateNode = DOM.createTextNode(template as string);
             templateContext = getOrCreateContext(templateNode);
-            templateContext.owner = rootContext;
+            templateContext.parents = [rootContext];
         }
     }
 
@@ -637,10 +637,10 @@ const renderTemplate = (
     if (templateNode &&
         templateContext &&
         isElement(templateNode) &&
-        ((templateChildren && templateChildren.length) || ((!templateContext.owner || (templateContext.owner === rootContext)) && templateContext.children.length))) {
+        ((templateChildren && templateChildren.length) || ((!templateContext.parents || (templateContext.parents[0] === rootContext)) && templateContext.children.length))) {
         // the Node has slotted children, trigger a new render context for them
-        if (!templateContext.owner) {
-            templateContext.owner = rootContext;
+        if (!templateContext.parents) {
+            templateContext.parents = [rootContext];
         }
         internalRender(
             templateNode,
@@ -685,8 +685,8 @@ export const internalRender = (
     const previousNamespace = context.namespace;
     const previousIndex = context.currentIndex;
 
-    if (!context.owner) {
-        context.owner = context;
+    if (!context.parents) {
+        context.parents = [context];
     }
     context.namespace = namespace;
     context.fragment = fragment;
