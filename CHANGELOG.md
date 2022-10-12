@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.3
+
+### Patch Changes
+
+- 496b35a: Preserve fragment keys after multiple renders
+
 ## 3.21.2
 
 ### Patch Changes
