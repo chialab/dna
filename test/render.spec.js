@@ -955,5 +955,52 @@ describe('render', function() {
             expect(div1).to.be.equal(div3);
             expect(div2).to.be.equal(div4);
         });
+
+        it('should correctly update nodes after nested Function renders', () => {
+            const Parent = function() {
+                return DNA.html`<${Child} key="2" />`;
+            };
+
+            const Child = function() {
+                return DNA.html`<div class="test" data-ref=${true}></div>`;
+            };
+
+            const [comment1, comment2, div1, div2] = DNA.render(DNA.html`
+                <${Parent} />
+                <div class="test" attr=${true} data-ref=${true}></div>
+            `, wrapper);
+
+            expect(wrapper.childNodes).to.have.lengthOf(4);
+            expect(div1.tagName).to.be.equal('DIV');
+            expect(div2.tagName).to.be.equal('DIV');
+            expect(div1.dataset.ref).to.be.equal('');
+            expect(div2.getAttribute('attr')).to.be.equal('');
+            expect(div2.dataset.ref).to.be.equal('');
+
+            const [comment3, comment4, div3, div4] = DNA.render(DNA.html`
+                <${Parent} />
+                <div class="test" attr=${undefined} data-ref=${undefined}></div>
+            `, wrapper);
+
+            expect(wrapper.childNodes).to.have.lengthOf(4);
+            expect(div3.tagName).to.be.equal('DIV');
+            expect(div4.tagName).to.be.equal('DIV');
+            expect(div3.dataset.ref).to.be.equal('');
+            expect(div4.getAttribute('attr')).to.be.null;
+            expect(div4.dataset.ref).to.be.undefined;
+
+            expect(comment1).to.be.equal(comment3);
+            expect(comment2).to.be.equal(comment4);
+            expect(div1).to.be.equal(div3);
+            expect(div2).to.be.equal(div4);
+
+            const [comment5, comment6] = DNA.render(DNA.html`
+                <${Parent} />
+                <div class="test" attr=${undefined} data-ref=${undefined}></div>
+            `, wrapper);
+
+            expect(comment1).to.be.equal(comment5);
+            expect(comment2).to.be.equal(comment6);
+        });
     });
 });

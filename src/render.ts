@@ -273,9 +273,9 @@ const renderTemplate = (
             } else {
                 placeholder = DOM.createComment(Function.name);
                 renderContext = getOrCreateContext(placeholder);
-                if (key != null) {
-                    addKeyedNode(context, placeholder, key);
-                }
+            }
+            if (key != null) {
+                addKeyedNode(context, placeholder, key);
             }
 
             const isAttached = () => context.children.indexOf(placeholder) !== -1;
