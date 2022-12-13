@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.4
+
+### Patch Changes
+
+- 422ea43: Fix jsx-runtime main module import.
+
 ## 3.21.3
 
 ### Patch Changes
