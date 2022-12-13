@@ -23,10 +23,6 @@
 
 Please note that VDOM convertion does not handle HTML entities and it can lead to unexpected output, reason why the default behavior changed.
 
-**Removed**
-
-Hooks, React and compatibility modules are now out of the scope of the DNA library and have been removed.
-
 ## From v2 to v3
 
 This is a list of changes requested to completely migrate to the DNA 3.0 version.
