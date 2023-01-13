@@ -1389,6 +1389,7 @@ export type VProps<T> = Omit<
     T extends keyof SVGTagNameMap ? Props<SVGTagNameMap[T]> :
     T extends Element ? Props<T> :
     T extends FunctionComponent ? Parameters<T>[0] :
+    T extends string ? Props<HTMLElement> :
     T,
     keyof VRenderProperties
 > & (
@@ -1410,6 +1411,7 @@ export type VAttrs<T, E> = Omit<
     T extends keyof SVGTagNameMap ? AttributesMap[T] :
     T extends SVGElement ? SVGAttributes :
     T extends Element ? HTMLAttributes :
+    T extends string ? HTMLAttributes :
     {},
     keyof VRenderProperties
 >;
@@ -1441,7 +1443,7 @@ export type VExtends<T> =
 export type VProperties<
     TagOrFunctionOrProps = { [key: string]: unknown },
     Extends extends string | null = null
-> = TagOrFunctionOrProps extends keyof HTMLTagNameMap ?
+> = TagOrFunctionOrProps extends string ?
         (
             (VProps<TagOrFunctionOrProps>
             & VAttrs<TagOrFunctionOrProps, Extends>
