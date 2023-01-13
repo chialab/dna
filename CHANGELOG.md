@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.6
+
+### Patch Changes
+
+- eaf752e: Fixed JSX properties typings.
+
 ## 3.21.5
 
 ### Patch Changes
