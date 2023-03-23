@@ -8,7 +8,7 @@ export {
 } from './helpers';
 export { customElements } from './CustomElementRegistry';
 export { DOM } from './DOM';
-export { h, Fragment, jsx, jsxs } from './JSX';
+export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { compile, html, render } from './render';
 export { css } from './css';
 export { listen, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';

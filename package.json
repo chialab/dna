@@ -11,11 +11,13 @@
   },
   "exports": {
     ".": {
+      "types": "./types/index.d.ts",
       "require": "./dist/cjs/dna.cjs",
       "node": "./dist/node/dna.js",
       "default": "./dist/esm/dna.js"
     },
     "./jsx-runtime": "./jsx-runtime.js",
+    "./jsx-dev-runtime": "./jsx-runtime.js",
     "./analyzer": "./analyzer/index.js"
   },
   "files": [

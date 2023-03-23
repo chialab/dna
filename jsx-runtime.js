@@ -1,1 +1,1 @@
-export { h, Fragment, jsx, jsxs } from '@chialab/dna';
+export { h, Fragment, jsx, jsxDEV, jsxs } from '@chialab/dna';

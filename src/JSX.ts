@@ -1695,8 +1695,9 @@ function jsx(
 }
 
 const jsxs = jsx;
+const jsxDEV = jsx;
 
-export { h, jsx, jsxs };
+export { h, jsx, jsxs, jsxDEV };
 
 /**
  * The internal JSX namespace.
