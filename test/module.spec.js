@@ -23,6 +23,7 @@ describe('module', function() {
         Fragment: 'symbol',
         h: 'function',
         jsx: 'function',
+        jsxDEV: 'function',
         jsxs: 'function',
         compile: 'function',
         html: 'function',
