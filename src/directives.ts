@@ -1,8 +1,7 @@
-import type { Template } from './JSX';
-import type { FunctionComponent } from './FunctionComponent';
 import { cloneChildNodes } from './helpers';
 import { DOM } from './DOM';
-import { h } from './JSX';
+import { type Template, h } from './JSX';
+import { type FunctionComponent } from './FunctionComponent';
 import { customElements } from './CustomElementRegistry';
 import { getThenableState } from './Thenable';
 

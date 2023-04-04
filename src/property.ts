@@ -1,7 +1,5 @@
-import type { ClassElement, Constructor } from './helpers';
-import type { Members, ComponentConstructor, ComponentInstance, MethodsOf } from './Component';
-import { HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { isComponent } from './Component';
+import { type ClassElement, type Constructor, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { type Members, type ComponentConstructor, type ComponentInstance, type MethodsOf, isComponent } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.

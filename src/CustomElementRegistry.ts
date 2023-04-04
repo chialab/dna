@@ -1,5 +1,4 @@
-import type { Constructor } from './helpers';
-import { isConnected, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
+import { type Constructor, isConnected, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
 import { connect, isComponent, isComponentConstructor } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';

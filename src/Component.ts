@@ -1,15 +1,10 @@
-import type { Constructor, ClassDescriptor } from './helpers';
-import type { CustomElement, CustomElementConstructor } from './CustomElementRegistry';
-import type { DelegatedEventCallback, ListenerConfig } from './events';
-import type { PropertyConfig, PropertyObserver, PropertiesOf } from './property';
-import type { Template } from './JSX';
-import type { Context } from './Context';
-import { addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
-import { nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
-import { customElements } from './CustomElementRegistry';
+import { type Template } from './JSX';
+import { type PropertyConfig, type PropertyObserver, type PropertiesOf, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
+import { type Constructor, type ClassDescriptor, nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
+import { type CustomElement, type CustomElementConstructor, customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
-import { delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
-import { getHostContext, getOrCreateContext, getOrCreateHostContext } from './Context';
+import { type DelegatedEventCallback, type ListenerConfig, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
+import { type Context, getHostContext, getOrCreateContext, getOrCreateHostContext } from './Context';
 import { internalRender, render } from './render';
 import { parseDOM } from './directives';
 

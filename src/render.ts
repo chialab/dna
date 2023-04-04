@@ -1,18 +1,15 @@
-import type { VClasses, VStyle, Template } from './JSX';
-import type { ComponentInstance } from './Component';
-import type { Store, UpdateRequest } from './FunctionComponent';
-import type { Context } from './Context';
 import htm from 'htm';
+import { type Context, getHostContext, getContext, getOrCreateContext } from './Context';
 import { isNode, isElement, isText, isArray, getPropertyDescriptor } from './helpers';
-import { h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
+import { type VClasses, type VStyle, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
+import { type Store, type UpdateRequest } from './FunctionComponent';
 import { customElements } from './CustomElementRegistry';
-import { isComponent } from './Component';
+import { type ComponentInstance, isComponent } from './Component';
 import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
 import { getProperty } from './property';
-import { getHostContext, getContext, getOrCreateContext } from './Context';
 
 const innerHtml = htm.bind(h);
 

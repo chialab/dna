@@ -1,9 +1,7 @@
-import type { ComponentConstructor, ComponentInstance } from './Component';
-import type { Context } from './Context';
+import { type Context, getContext, getOrCreateContext, getHostContext } from './Context';
 import { isConnected, appendChildImpl, removeChildImpl, insertBeforeImpl, replaceChildImpl, insertAdjacentElementImpl, getAttributeImpl, hasAttributeImpl, setAttributeImpl, removeAttributeImpl, createDocumentFragmentImpl, createElementImpl, createElementNSImpl, createTextNodeImpl, createCommentImpl, createEventImpl } from './helpers';
-import { connect, disconnect, shouldEmulateLifeCycle, emulatingLifeCycle, isComponent, isComponentConstructor } from './Component';
+import { type ComponentConstructor, type ComponentInstance, connect, disconnect, shouldEmulateLifeCycle, emulatingLifeCycle, isComponent, isComponentConstructor } from './Component';
 import { customElements } from './CustomElementRegistry';
-import { getContext, getOrCreateContext, getHostContext } from './Context';
 
 /**
  * Remove a slotted node from the old host positions.

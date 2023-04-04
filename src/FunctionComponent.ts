@@ -1,5 +1,5 @@
-import type { Template } from './JSX';
-import type { Context } from './Context';
+import { type Template } from './JSX';
+import { type Context } from './Context';
 
 /**
  * A re-render function.

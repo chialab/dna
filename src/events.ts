@@ -1,6 +1,5 @@
-import type { Constructor, ClassElement } from './helpers';
-import type { ComponentInstance, ComponentConstructor, MethodsOf } from './Component';
-import { HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
+import { type ComponentInstance, type ComponentConstructor, type MethodsOf } from './Component';
+import { type Constructor, type ClassElement, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.

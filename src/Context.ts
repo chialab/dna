@@ -1,6 +1,6 @@
-import type { Store, UpdateRequest, FunctionComponent } from './FunctionComponent';
-import type { VProperties } from './JSX';
-import type { ComponentInstance } from './Component';
+import { type Store, type UpdateRequest, type FunctionComponent } from './FunctionComponent';
+import { type VProperties } from './JSX';
+import { type ComponentInstance } from './Component';
 
 /**
  * A symbol for node render context.
