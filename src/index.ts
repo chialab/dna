@@ -17,7 +17,10 @@ export { connect, disconnect, extend, Component, isComponent, isComponentConstru
 export { parseDOM, until } from './directives';
 
 export type {
-    JSXInternal as JSX,
+    HTMLTagNameMap,
+    SVGTagNameMap
+} from './Elements';
+export type {
     AriaAttributes,
     AriaRole,
     HTMLAttributes,
@@ -72,9 +75,12 @@ export type {
     TrackHTMLAttributes,
     VideoHTMLAttributes,
     SVGAttributes,
-    AttributesMap,
-    HTMLTagNameMap,
-    SVGTagNameMap,
+    IntrinsicElementAttributes,
+    /** @deprecated Use `IntrinsicElementAttributes` instead */
+    IntrinsicElementAttributes as AttributesMap,
+} from './Attributes';
+export type {
+    JSXInternal as JSX,
     Template,
     VObject,
     VProps,

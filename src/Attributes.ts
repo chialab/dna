@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 
 // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
-interface AriaAttributes {
+export interface AriaAttributes {
     /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
     'aria-activedescendant'?: string | undefined;
     /** Indicates whether assistive technologies will present all, or only parts of, the changed region based on the change notifications defined by the aria-relevant attribute. */
@@ -376,7 +376,7 @@ export interface HTMLAttributes extends AriaAttributes {
     is?: string | undefined;
 }
 
-type HTMLAttributeReferrerPolicy = ''
+export type HTMLAttributeReferrerPolicy = ''
     | 'no-referrer'
     | 'no-referrer-when-downgrade'
     | 'origin'
