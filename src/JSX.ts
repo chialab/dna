@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import type { Observable } from './Observable';
-import type { CustomElementConstructor } from './CustomElementRegistry';
-import type { Props } from './Component';
-import type { FunctionComponent } from './FunctionComponent';
-import { isArray, isNode } from './helpers';
-import { customElements, isCustomElementConstructor } from './CustomElementRegistry';
+import { type Observable } from './Observable';
+import { type FunctionComponent } from './FunctionComponent';
+import { type CustomElementConstructor, customElements, isCustomElementConstructor } from './CustomElementRegistry';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
-import { type HTMLAttributes, type SVGAttributes, type AttributesMap } from './Attributes';
+import { type HTMLAttributes, type SVGAttributes, type IntrinsicElementAttributes } from './Attributes';
+import { type Props } from './Component';
+import { isArray, isNode } from './helpers';
 
 /**
  * Identify virtual dom objects.
@@ -81,10 +80,10 @@ export type VProps<T> = Omit<
  * Get a list of html attributes that can be assigned to the node.
  */
 export type VAttrs<T, E> = Omit<
-    E extends keyof HTMLTagNameMap ? AttributesMap[E] :
-    E extends keyof SVGTagNameMap ? AttributesMap[E] :
-    T extends keyof HTMLTagNameMap ? AttributesMap[T] :
-    T extends keyof SVGTagNameMap ? AttributesMap[T] :
+    E extends keyof HTMLTagNameMap ? IntrinsicElementAttributes[E] :
+    E extends keyof SVGTagNameMap ? IntrinsicElementAttributes[E] :
+    T extends keyof HTMLTagNameMap ? IntrinsicElementAttributes[T] :
+    T extends keyof SVGTagNameMap ? IntrinsicElementAttributes[T] :
     T extends SVGElement ? SVGAttributes :
     T extends Element ? HTMLAttributes :
     T extends string ? HTMLAttributes :
