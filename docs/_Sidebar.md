@@ -45,4 +45,3 @@
 * [Migrations](./migrations)
   * [v3 -> v4](./migrations#from-v3-to-v4)
   * [v2 -> v3](./migrations#from-v2-to-v3)
-* [API references](./API)

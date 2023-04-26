@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "rimraf dist && yarn types && rna build",
-    "types": "rimraf types && tsc --project tsconfig.build.json",
+    "types": "rimraf types && tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "rna test:browser test/*.spec.js --coverage",
@@ -86,7 +86,6 @@
     "react-dom": "^18.2.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
-    "typedoc": "^0.24.6",
     "typescript": "^4.4.0",
     "vue": "^3.2.37"
   }

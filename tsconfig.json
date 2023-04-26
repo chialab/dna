@@ -9,6 +9,7 @@
     "outDir": "./dist",
     "declaration": true,
     "declarationDir": "types",
+    "emitDeclarationOnly": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
