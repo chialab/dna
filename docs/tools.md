@@ -36,7 +36,7 @@ export class MapboxMap extends Component {
 
 **custom-elements-manifest.config.js**
 ```js
-import dnaPlugins from '@chialab/dna/analyzer';
+import dnaPlugins from '@chialab/manifest-analyzer-dna-plugin';
 
 export default {
     plugins: [

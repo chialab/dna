@@ -22,7 +22,6 @@
     "moduleResolution": "node",
   },
   "include": [
-    "analyzer",
     "src",
   ],
   "exclude": [
