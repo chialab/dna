@@ -50,7 +50,7 @@
     "test:node": "rna test:node test/*.spec.js",
     "test:integrations": "rna test:browser test/integrations/*.spec.js",
     "lint": "eslint src test",
-    "docs": "(echo \"# API Reference\n\"; rna apidoc src/index.ts -F markdown) > docs/API.md",
+    "docs": "node scripts/apidoc.js",
     "prepack": "yarn build"
   },
   "peerDependencies": {
@@ -70,7 +70,6 @@
     "@chialab/eslint-config": "^3.0.0",
     "@chialab/ginsenghino": "^1.0.0",
     "@chialab/rna": "^0.17.0",
-    "@chialab/rna-apidoc": "^0.17.0",
     "@chialab/rna-browser-test-runner": "^0.17.0",
     "@chialab/rna-bundler": "^0.17.0",
     "@chialab/rna-node-test-runner": "^0.17.0",
@@ -87,6 +86,7 @@
     "react-dom": "^18.2.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
+    "typedoc": "^0.24.6",
     "typescript": "^4.4.0",
     "vue": "^3.2.37"
   }
