@@ -50,6 +50,11 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
  */
 export type CustomElementConstructor<T extends CustomElement = CustomElement> = Constructor<T> & {
     /**
+     * Should shim constructor.
+     */
+    shim?: boolean;
+
+    /**
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes?: string[];
@@ -93,12 +98,22 @@ export class CustomElementRegistry {
     } = {};
 
     /**
+     * Document has been already loaded.
+     */
+    protected documentLoaded = false;
+
+    /**
      * Create registry instance.
      */
     constructor() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.upgrade(document.body);
-        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.upgrade(document.body);
+                this.documentLoaded = true;
+            });
+        } else {
+            this.documentLoaded = true;
+        }
     }
 
     /**
@@ -127,7 +142,7 @@ export class CustomElementRegistry {
      * @throws If the constructor is not a function.
      * @throws If the name has already been registered.
      */
-    define<T extends CustomElementConstructor>(name: keyof CustomElementRegistryMap, constructor: T, options: ElementDefinitionOptions = {}) {
+    define<T extends CustomElement>(name: keyof CustomElementRegistryMap, constructor: CustomElementConstructor<T>, options: ElementDefinitionOptions = {}) {
         if (!assertValidateCustomElementName(name)) {
             throw new SyntaxError('The provided name must be a valid Custom Element name');
         }
@@ -160,20 +175,24 @@ export class CustomElementRegistry {
         this.tagNames[name] = tagName;
 
         if (nativeCustomElements) {
-            const shouldShim = (constructor as { shim?: boolean }).shim;
+            const forceShim = constructor.shim || false;
+            let shouldShim = forceShim;
             if (tagName !== name) {
-                (constructor as { shim?: boolean }).shim = true;
+                shouldShim = constructor.shim = true;
                 options = {
                     get extends() {
-                        (constructor as { shim?: boolean }).shim = shouldShim;
+                        shouldShim = constructor.shim = forceShim;
                         return tagName;
                     },
                 };
             }
             nativeCustomElements.define(name, constructor, options);
+            if (shouldShim && this.documentLoaded) {
+                this.upgrade(document.body);
+            }
         } else {
             const queue = this.queue;
-            if (document.body) {
+            if (this.documentLoaded) {
                 this.upgrade(document.body);
             }
             const elementQueue = queue[name];
