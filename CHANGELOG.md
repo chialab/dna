@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.21.8
+
+### Patch Changes
+
+- f3e5cc4: Correctly upgrade builtin elements in safari on document interactive.
+
 ## 3.21.7
 
 ### Patch Changes
