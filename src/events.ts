@@ -1,4 +1,5 @@
-import { type ComponentInstance, type ComponentConstructor, type MethodsOf } from './Component';
+import { type ComponentInstance, type ComponentConstructor } from './Component';
+import { type MethodsOf } from './property';
 import { type Constructor, type ClassElement, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**

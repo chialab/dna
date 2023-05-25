@@ -1130,6 +1130,7 @@ export type IntrinsicElementAttributes = {
     script: ScriptHTMLAttributes;
     section: HTMLAttributes;
     select: SelectHTMLAttributes;
+    slot: SlotHTMLAttributes;
     small: HTMLAttributes;
     source: SourceHTMLAttributes;
     span: HTMLAttributes;

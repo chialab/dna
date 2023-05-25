@@ -77,7 +77,7 @@ export type {
     SVGAttributes,
     IntrinsicElementAttributes,
     /** @deprecated Use `IntrinsicElementAttributes` instead */
-    IntrinsicElementAttributes as AttributesMap,
+    IntrinsicElementAttributes as AttributesMap
 } from './Attributes';
 export type {
     JSXInternal as JSX,
@@ -97,7 +97,7 @@ export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
 export type { Context } from './Context';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-export type { PropertyDeclaration, PropertyObserver } from './property';
+export type { PropertyDeclaration, PropertyObserver, Props, Prop } from './property';
 export type { GlobalNamespace } from './window';
 export type { ComponentInstance, ComponentConstructor } from './Component';
 export type { FunctionComponent } from './FunctionComponent';

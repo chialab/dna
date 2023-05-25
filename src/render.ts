@@ -1,7 +1,7 @@
 import htm from 'htm';
 import { type Context, getHostContext, getContext, getOrCreateContext } from './Context';
 import { isNode, isElement, isText, isArray, getPropertyDescriptor } from './helpers';
-import { type VClasses, type VStyle, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
+import { type VClasses, type VStyle, type VProperties, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
 import { type Store, type UpdateRequest } from './FunctionComponent';
 import { customElements } from './CustomElementRegistry';
 import { type ComponentInstance, isComponent } from './Component';
@@ -9,7 +9,7 @@ import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
-import { getProperty } from './property';
+import { type PropsOf, getProperty } from './property';
 
 const innerHtml = htm.bind(h);
 
@@ -24,10 +24,15 @@ export const compile = (string: string): Template => {
     return innerHtml(array as unknown as TemplateStringsArray);
 };
 
-function html(string: TemplateStringsArray, ...values: unknown[]): Template;
 /**
- * @deprecated use `compile` function instead.
+ * Create a virtual DOM template.
+ * @param string The string array to compile.
+ * @param values Values to interpolate.
+ * @returns The virtual DOM template.
  */
+function html(string: TemplateStringsArray, ...values: unknown[]): Template;
+// eslint-disable-next-line jsdoc/require-param, jsdoc/require-returns
+/** @deprecated use `compile` function instead. */
 function html(string: string): Template;
 /**
  * Compile a template string into virtual DOM template.
@@ -427,7 +432,7 @@ const renderTemplate = (
             templateContext.parents = [rootContext];
         }
         const oldProperties = templateContext.properties.get(rootContext);
-        const properties = template.properties;
+        const properties = template.properties as VProperties;
         if (oldProperties) {
             for (const key in oldProperties) {
                 if (!(key in properties)) {
@@ -481,7 +486,7 @@ const renderTemplate = (
                 }
                 continue;
             } else if (isListenerProperty(propertyKey) && !(propertyKey in templateNode.constructor.prototype)) {
-                const eventName = propertyKey.substr(2);
+                const eventName = propertyKey.substring(2);
                 if (oldValue) {
                     (templateNode as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
                 }
@@ -507,7 +512,7 @@ const renderTemplate = (
                             setValue(templateNode, propertyKey, value);
                         }
                     } else {
-                        const property = getProperty(templateNode as ComponentInstance, propertyKey as keyof ComponentInstance);
+                        const property = getProperty(templateNode as ComponentInstance, propertyKey as PropsOf<ComponentInstance>);
                         if (property && property.fromAttribute) {
                             setValue(templateNode, propertyKey, (property.fromAttribute as Function).call(templateNode, value as string));
                         }

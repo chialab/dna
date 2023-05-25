@@ -1,11 +1,7 @@
 /**
  * A cache for scoped CSS.
  */
-const CACHE: {
-    [key: string]: {
-        [key: string]: string;
-    };
-} = {};
+const CACHE: Record<string, Record<string, string>> = {};
 
 /**
  * Match all `:host` selectors in a CSS string.

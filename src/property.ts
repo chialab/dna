@@ -1,5 +1,5 @@
 import { type ClassElement, type Constructor, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { type Members, type ComponentConstructor, type ComponentInstance, type MethodsOf, isComponent } from './Component';
+import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -12,17 +12,41 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
 
 /**
+ * Type decorator for component properties.
+ */
+export type Prop<T> = T & { dnaType?: boolean };
+
+/**
+ * Get all defined properties of a class.
+ */
+export type PropsOf<T extends HTMLElement> = Exclude<{
+    [P in keyof T]: P extends '__JSX__' | 'dataset' ? never : Exclude<T[P], undefined> extends { dnaType?: boolean } ? P : never;
+}[keyof T], never | undefined>;
+
+/**
+ * Get all methods of a class.
+ */
+export type MethodsOf<T> = Exclude<{
+    [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T], never>;
+
+/**
+ * Get all defined properties of a component.
+ */
+export type Props<T extends HTMLElement> = Pick<T, PropsOf<T>>;
+
+/**
  * Retrieve properties declarations of a Component.
  */
 export type PropertiesOf<T extends ComponentInstance> = {
-    [P in keyof Members<T>]: Property<T, P>;
+    [P in PropsOf<T>]: Property<T, P>;
 };
 
 /**
  * Retrieve properties declarations of a Component.
  */
 export type ObserversOf<T extends ComponentInstance> = {
-    [P in keyof PropertiesOf<T>]: PropertyObserver<T[P]>[];
+    [P in PropsOf<T>]: PropertyObserver<T[P]>[];
 };
 
 /**
@@ -146,7 +170,7 @@ export type PropertyConfig<TypeConstructorHint extends Constructor<unknown> = Co
 /**
  * A property instance.
  */
-export type Property<T extends ComponentInstance, P extends keyof Members<T>>= PropertyDescriptor & {
+export type Property<T extends ComponentInstance, P extends PropsOf<T>> = PropertyDescriptor & {
     /**
      * The property name of the field.
      */
@@ -253,12 +277,12 @@ export const getProperties = <T extends ComponentInstance>(prototype: WithProper
  * @returns The property declaration.
  * @throws If the property is not defined and `failIfMissing` is `true`.
  */
-export const getProperty = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(prototype: T, propertyKey: P, failIfMissing = false) => {
+export const getProperty = <T extends ComponentInstance, P extends PropsOf<T>>(prototype: T, propertyKey: P, failIfMissing = false) => {
     const property = getProperties(prototype)[propertyKey];
     if (failIfMissing && !property) {
         throw new Error(`Missing property ${String(propertyKey)}`);
     }
-    return property;
+    return property as Property<T, P>;
 };
 
 /**
@@ -266,7 +290,7 @@ export const getProperty = <T extends ComponentInstance, P extends keyof Propert
  * @param declaration The property declaration.
  * @returns A list of constructors.
  */
-const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
+const extractTypes = <T extends ComponentInstance, P extends PropsOf<T>>(declaration: PropertyDeclaration<Constructor<T[P]>>) => {
     const type = declaration.type;
     if (!type) {
         return [];
@@ -287,7 +311,7 @@ const extractTypes = <T extends ComponentInstance, P extends keyof PropertiesOf<
  * @param isStatic The property definition is static.
  * @returns The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance, P extends keyof Members<T>>(prototype: WithProperties<T>, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol, isStatic = false): PropertyDescriptor => {
+export const defineProperty = <T extends ComponentInstance, P extends PropsOf<T>>(prototype: T, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol, isStatic = false): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
@@ -462,19 +486,19 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         if (propertiesDescriptor) {
             const descriptorProperties = (propertiesDescriptor.get ? (propertiesDescriptor.get.call(constructor) || {}) : propertiesDescriptor.value) as {
-                [P in keyof Members<T>]: PropertyConfig<Constructor<T[P]>>;
+                [P in PropsOf<T>]: PropertyConfig<Constructor<T[P]>>;
             };
             for (const propertyKey in descriptorProperties) {
                 if (propertyKey in handled) {
                     continue;
                 }
-                const config = descriptorProperties[propertyKey];
-                const declaration = (typeof config === 'function' || isArray(config) ? { type: config } : config) as PropertyDeclaration<Constructor<T[typeof propertyKey]>>;
+                const config = descriptorProperties[propertyKey as PropsOf<T>];
+                const declaration = (typeof config === 'function' || isArray(config) ? { type: config } : config) as PropertyDeclaration<Constructor<T[PropsOf<T>]>>;
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const symbol: unique symbol = (declaration.symbol as any) || Symbol(propertyKey as string);
                 defineProperty(
                     prototype,
-                    propertyKey,
+                    propertyKey as PropsOf<T>,
                     declaration,
                     symbol,
                     true
@@ -496,7 +520,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
 export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: T, attributeName: string) => {
     const properties = getProperties(prototype);
     for (const propertyKey in properties) {
-        const property = properties[propertyKey];
+        const property = properties[propertyKey as PropsOf<T>];
         if (property.attribute === attributeName) {
             return property;
         }
@@ -511,7 +535,7 @@ export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: 
  * @param propertyName The name of the changed property.
  * @param newValue The new value for the property (undefined if removed).
  */
-export const reflectPropertyToAttribute = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P, newValue: T[P]) => {
+export const reflectPropertyToAttribute = <T extends ComponentInstance, P extends PropsOf<T>>(element: T, propertyName: P, newValue: T[P]) => {
     const property = getProperty(element, propertyName, true);
     const { attribute, toAttribute } = property;
     if (attribute && toAttribute) {
@@ -568,7 +592,7 @@ const assignFromDescriptor = (declaration: PropertyDeclaration, descriptor: Prop
  * @returns The property descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createProperty = <T extends ComponentInstance, P extends keyof Members<T>>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
+export const createProperty = <T extends ComponentInstance, P extends PropsOf<T>>(targetOrClassElement: T, declaration: PropertyDeclaration<Constructor<T[P]>>, propertyKey?: P, descriptor?: PropertyDeclaration<Constructor<T[P]>>): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = declaration.symbol || Symbol(propertyKey as string) as any;
     if (propertyKey !== undefined) {
@@ -620,7 +644,7 @@ export const createProperty = <T extends ComponentInstance, P extends keyof Memb
  * @returns The observer descriptor.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>, M extends keyof Members<T>>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
+export const createObserver = <T extends ComponentInstance, P extends PropsOf<T>, M extends MethodsOf<T>>(targetOrClassElement: T, propertyKey: P, methodKey?: M): any => {
     if (methodKey !== undefined) {
         addObserver(targetOrClassElement, propertyKey, targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>);
         return;
@@ -646,7 +670,7 @@ export const getObservers = <T extends ComponentInstance>(element: WithObservers
     const observers = (element[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
 
     if (!hasOwnProperty.call(element, OBSERVERS_SYMBOL)) {
-        return element[OBSERVERS_SYMBOL] = (Object.keys(observers) as (keyof PropertiesOf<T>)[])
+        return element[OBSERVERS_SYMBOL] = (Object.keys(observers) as PropsOf<T>[])
             .reduce((result, key) => {
                 result[key] = [...observers[key]];
                 return result;
@@ -663,7 +687,7 @@ export const getObservers = <T extends ComponentInstance>(element: WithObservers
  * @returns A list of observers.
  * @throws If the property is not defined.
  */
-export const getPropertyObservers = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: T, propertyName: P) => {
+export const getPropertyObservers = <T extends ComponentInstance, P extends PropsOf<T>>(element: T, propertyName: P) => {
     if (!getProperty(element, propertyName)) {
         throw new Error(`Missing property ${String(propertyName)}`);
     }
@@ -677,7 +701,7 @@ export const getPropertyObservers = <T extends ComponentInstance, P extends keyo
  * @param propertyName The name of the property to watch.
  * @param observer The observer function to add.
  */
-export const addObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
+export const addObserver = <T extends ComponentInstance, P extends PropsOf<T>>(element: T, propertyName: P, observer: PropertyObserver<T[P]>) => {
     getPropertyObservers(element, propertyName).push(observer);
 };
 
@@ -687,7 +711,7 @@ export const addObserver = <T extends ComponentInstance, P extends keyof Propert
  * @param propertyName The name of the watched property.
  * @param observer The observer function to remove.
  */
-export const removeObserver = <T extends ComponentInstance, P extends keyof PropertiesOf<T>>(element: WithObservers<T>, propertyName: P, observer: PropertyObserver<T[P]>) => {
+export const removeObserver = <T extends ComponentInstance, P extends PropsOf<T>>(element: T, propertyName: P, observer: PropertyObserver<T[P]>) => {
     const observers = getPropertyObservers(element, propertyName);
     const io = observers.indexOf(observer);
     if (io !== -1) {
@@ -701,7 +725,7 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof Prop
  * @returns The decorator initializer.
  */
 export function property<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
-    return <T extends ComponentInstance, P extends keyof Members<T>>(
+    return <T extends ComponentInstance, P extends PropsOf<T>>(
         targetOrClassElement: T,
         propertyKey?: P,
         descriptor?: PropertyDeclaration<Constructor<T[P]>>
@@ -714,7 +738,7 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
  * @returns The decorator initializer.
  */
 export function state<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(declaration: PropertyDeclaration<TypeConstructorHint> = {}) {
-    return <T extends ComponentInstance, P extends keyof Members<T>>(
+    return <T extends ComponentInstance, P extends PropsOf<T>>(
         targetOrClassElement: T,
         propertyKey?: P,
         descriptor?: PropertyDeclaration<Constructor<T[P]>>
