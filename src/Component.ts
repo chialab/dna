@@ -1,5 +1,5 @@
 import { type Template } from './JSX';
-import { type PropertyConfig, type PropertyObserver, type PropertiesOf, type Property, type PropsOf, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched } from './property';
+import { type PropertyConfig, type PropertyObserver, type Property, type PropsOf, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched } from './property';
 import { type Constructor, type ClassDescriptor, nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { type CustomElement, type CustomElementConstructor, customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
