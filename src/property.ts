@@ -12,6 +12,11 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
 
 /**
+ * A symbol which identify watched properties.
+ */
+const WATCHED_SYMBOL: unique symbol = Symbol();
+
+/**
  * Internal type for decorated properties.
  */
 type DecoratedProperty = { __JSX_PROP__?: 1 };
@@ -59,13 +64,8 @@ export type ObserversOf<T extends ComponentInstance> = {
  */
 export type WithProperties<T extends ComponentInstance> = T & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
-};
-
-/**
- * A prototype with observers.
- */
-export type WithObservers<T extends ComponentInstance> = T & {
     [OBSERVERS_SYMBOL]?: ObserversOf<T>;
+    [WATCHED_SYMBOL]?: PropertyKey[];
 };
 
 /**
@@ -307,6 +307,14 @@ const extractTypes = <T extends ComponentInstance, P extends PropsOf<T>>(declara
     return [type];
 };
 
+
+/**
+ * Get element watched properties.
+ * @param element The node.
+ * @returns A list of properties.
+ */
+export const getWatched = <T extends ComponentInstance>(element: WithProperties<T>) => element[WATCHED_SYMBOL] = element[WATCHED_SYMBOL] || [];
+
 /**
  * Define an observed property.
  * @param prototype The component prototype.
@@ -405,7 +413,7 @@ export const defineProperty = <T extends ComponentInstance, P extends PropsOf<T>
             return value;
         },
         set(this: E, newValue) {
-            if (!isComponent(this) || this.watchedProperties.indexOf(propertyKey) === -1) {
+            if (!isComponent(this) || getWatched(this).indexOf(propertyKey) === -1) {
                 this[symbol] = newValue;
                 return;
             }
@@ -671,7 +679,7 @@ export const createObserver = <T extends ComponentInstance, P extends PropsOf<T>
  * @param element The node.
  * @returns The map of observers.
  */
-export const getObservers = <T extends ComponentInstance>(element: WithObservers<T>) => {
+export const getObservers = <T extends ComponentInstance>(element: WithProperties<T>) => {
     const observers = (element[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
 
     if (!hasOwnProperty.call(element, OBSERVERS_SYMBOL)) {

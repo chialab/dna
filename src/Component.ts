@@ -1,5 +1,5 @@
 import { type Template } from './JSX';
-import { type PropertyConfig, type PropertyObserver, type PropertiesOf, type Property, type PropsOf, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
+import { type PropertyConfig, type PropertyObserver, type PropertiesOf, type Property, type PropsOf, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched } from './property';
 import { type Constructor, type ClassDescriptor, nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { type CustomElement, type CustomElementConstructor, customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -21,7 +21,7 @@ export const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
 /**
  * An augmented node with component flags.
  */
-export type WithComponentFlags<T> = T & {
+export type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
     [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
 };
@@ -34,11 +34,6 @@ export interface ComponentMixin extends HTMLElement {
      * Type getter for JSX properties.
      */
     readonly __JSX__?: Props<Omit<this, '__JSX__'>>;
-
-    /**
-     * A set of watched properties.
-     */
-    readonly watchedProperties: PropertyKey[];
 
     /**
      * A flag with the connected value of the node.
@@ -221,7 +216,7 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentFlags<typeof node>)[COMPONENT_SYMBOL];
+export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentProto<typeof node>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
@@ -239,7 +234,7 @@ let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
  * Flag the element for life cycle emulation.
  * @param node The element to flag.
  */
-export const emulateLifeCycle = (node: WithComponentFlags<HTMLElement>) => {
+export const emulateLifeCycle = (node: WithComponentProto<HTMLElement>) => {
     lifeCycleEmulation = true;
     node[EMULATE_LIFECYCLE_SYMBOL] = true;
 };
@@ -255,7 +250,7 @@ export const emulatingLifeCycle = () => lifeCycleEmulation;
  * @param node The node to check.
  * @returns The node require emulated life cycle.
  */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentFlags<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentProto<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -373,11 +368,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
-         * A set of watched properties.
-         */
-        readonly watchedProperties: PropertyKey[] = [];
-
-        /**
          * The tag name used for Component definition.
          * @returns The custom element definition name.
          */
@@ -461,7 +451,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     element[propertyKey as PropsOf<this>] = property.defaultValue;
                 }
                 if (property.static) {
-                    element.watchedProperties.push(propertyKey);
+                    getWatched(element).push(propertyKey);
                 }
             }
 
@@ -814,9 +804,9 @@ const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
         constructor(...args: any[]) {
             super(...args);
 
-            const properties = getProperties(Component.prototype) as PropertiesOf<this>;
+            const properties = getProperties(Component.prototype as this);
             for (const propertyKey in properties) {
-                this.watchedProperties.push(propertyKey);
+                getWatched(this).push(propertyKey);
             }
         }
     };
