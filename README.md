@@ -58,12 +58,12 @@ This is an example of a Component defined via DNA. Please refer to the [document
 **Define the component (TypeScript)**
 
 ```tsx
-import { Component, customElement, property, listen } from '@chialab/dna';
+import { type Prop, Component, customElement, property, listen } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
     // define an observed property
-    @property() name = '';
+    @property() name: Prop<string> = '';
 
     render() {
         return <>

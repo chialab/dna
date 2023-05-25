@@ -89,11 +89,11 @@ Defining a component means to link a HTML tag with the element's constructor, as
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
 
 ```ts
-import { Component, customElement, property } from '@chialab/dna';
+import { type Prop, Component, customElement, property } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    @property() name = '';
+    @property() name: Prop<string> = '';
 
     // define a template
     render() {
@@ -138,14 +138,14 @@ customElements.define('hello-world', HelloWorld);
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
-```ts
-import { Component, customElement, property } from '@chialab/dna';
+```tsx
+import { type Prop, Component, customElement, property } from '@chialab/dna';
 
 @customElement('blog-post', {
     extends: 'article'
 })
 class BlogPost extends Component {
-    @property() title = '';
+    @property() title: Prop<string> = '';
 
     render() {
         return <h1>{this.title}</h1>;

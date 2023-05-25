@@ -12,15 +12,20 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
 
 /**
+ * Internal type for decorated properties.
+ */
+type DecoratedProperty = { __JSX_PROP__?: 1 };
+
+/**
  * Type decorator for component properties.
  */
-export type Prop<T> = T & { dnaType?: boolean };
+export type Prop<T> = (T | undefined | null) & DecoratedProperty;
 
 /**
  * Get all defined properties of a class.
  */
 export type PropsOf<T extends HTMLElement> = Exclude<{
-    [P in keyof T]: P extends '__JSX__' | 'dataset' ? never : Exclude<T[P], undefined> extends { dnaType?: boolean } ? P : never;
+    [P in keyof T]: P extends '__JSX__' | 'dataset' ? never : Exclude<T[P], undefined> extends DecoratedProperty ? P : never;
 }[keyof T], never | undefined>;
 
 /**

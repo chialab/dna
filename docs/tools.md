@@ -13,7 +13,7 @@ For example:
 
 **src/dna-map.ts**
 ```ts
-import { Component, customElement, property } from '@chialab/dna';
+import { type Prop, Component, customElement, property } from '@chialab/dna';
 
 /**
  * A map component based on mapbox-gl.
@@ -25,12 +25,12 @@ export class MapboxMap extends Component {
     /**
      * The latitude value for the map center.
      */
-    @property() latitude: number;
+    @property() latitude: Prop<number>;
 
     /**
      * The longitude value for the map center.
      */
-    @property() longitude: number;
+    @property() longitude: Prop<number>;
 }
 ```
 
