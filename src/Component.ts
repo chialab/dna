@@ -229,7 +229,7 @@ export const isComponent = <T extends ComponentInstance>(node: T | Node): node i
  * @param constructor The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
  * Should emulate life cycle.
