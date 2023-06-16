@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import { type Observable } from './Observable';
 import { type FunctionComponent } from './FunctionComponent';
-import { type CustomElementConstructor, customElements, isCustomElementConstructor, type CustomElement } from './CustomElementRegistry';
+import { customElements, type CustomElement } from './CustomElementRegistry';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type SVGAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { type Props } from './property';
 import { isArray, isNode } from './helpers';
+import { isComponentConstructor, type ComponentConstructor, type ComponentInstance } from './Component';
 
 /**
  * Identify virtual dom objects.
@@ -43,11 +44,11 @@ export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<{
  * Get prototype properties that can be assigned to the node.
  */
 export type VProps<
-    T extends typeof Fragment | FunctionComponent | CustomElementConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap
+    T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap
 > = T extends keyof JSXInternal.CustomElements ? (JSXInternal.CustomElements[T] extends CustomElement ? Props<JSXInternal.CustomElements[T]> : never) :
     T extends FunctionComponent ? Parameters<T>[0] :
-    T extends CustomElement ? Props<T> :
-    T extends CustomElementConstructor ? Props<InstanceType<T>> :
+    T extends ComponentInstance ? Props<T> :
+    T extends ComponentConstructor ? Props<InstanceType<T>> :
     T extends keyof HTMLTagNameMap ? ({ is?: never } | GetCustomElementsProps<T>) :
     {};
 
@@ -73,13 +74,13 @@ type GetSVGAttrs<
  * Get a list of html attributes that can be assigned to the node.
  */
 export type VAttrs<
-    T extends typeof Fragment | FunctionComponent | CustomElementConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap,
+    T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap,
 > = T extends keyof HTMLTagNameMap ? IntrinsicElementAttributes[T] :
     T extends keyof SVGTagNameMap ? IntrinsicElementAttributes[T] :
     T extends HTMLElement ? GetHTMLAttrs<T> :
     T extends SVGElement ? GetSVGAttrs<T> :
     T extends Element ? HTMLAttributes :
-    T extends CustomElementConstructor ? HTMLAttributes :
+    T extends ComponentConstructor ? HTMLAttributes :
     {};
 
 /**
@@ -100,7 +101,7 @@ export type VRender = {
  * Properties that can be assigned to a node through the render engine.
  */
 export type VProperties<
-    T extends typeof Fragment | FunctionComponent | CustomElementConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap = Element,
+    T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap = Element,
 > = VProps<T> & VAttrs<T> & VRender;
 
 /**
@@ -141,7 +142,7 @@ export type VElement<T extends Element> = {
 /**
  * The interface of a Component constructor used as JSX tag.
  */
-export type VComponent<T extends CustomElementConstructor> = {
+export type VComponent<T extends ComponentConstructor> = {
     type: T;
     key?: unknown;
     namespace?: string;
@@ -177,7 +178,7 @@ export type VTag<T extends keyof HTMLTagNameMap | keyof SVGTagNameMap> = {
  * Generic virtual dom object.
  */
 export type VObject = VFunction<FunctionComponent>
-    | VComponent<CustomElementConstructor>
+    | VComponent<ComponentConstructor>
     | VElement<Element>
     | VSlot
     | VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap>
@@ -192,7 +193,7 @@ export type Template =
     | Node
     | VFragment
     | VFunction<FunctionComponent>
-    | VComponent<CustomElementConstructor>
+    | VComponent<ComponentConstructor>
     | VElement<Element>
     | VSlot
     | VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap>
@@ -225,14 +226,14 @@ export const isVFragment = (target: VObject): target is VFragment => target.type
  * @param target The node to check.
  * @returns True if the target is a functional component.
  */
-export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => typeof target.type === 'function' && !isCustomElementConstructor(target.type);
+export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => typeof target.type === 'function' && !isComponentConstructor(target.type);
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  * @returns True if the target is a Component node.
  */
-export const isVComponent = (target: VObject): target is VComponent<CustomElementConstructor> => typeof target.type === 'function' && isCustomElementConstructor(target.type);
+export const isVComponent = (target: VObject): target is VComponent<ComponentConstructor> => typeof target.type === 'function' && isComponentConstructor(target.type);
 
 /**
  * Check if the current virtual node is an HTML node instance.
@@ -263,7 +264,7 @@ export const isVTag = (target: VObject): target is VTag<keyof HTMLTagNameMap | k
  * @param children The children of the Node.
  * @returns The virtual DOM object.
  */
-function h<T extends typeof Fragment | FunctionComponent | CustomElementConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap>(
+function h<T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap>(
     tagOrComponent: T,
     properties: VProperties<T> | null = null,
     ...children: Template[]
@@ -321,7 +322,7 @@ function h<T extends typeof Fragment | FunctionComponent | CustomElementConstruc
  * @returns The virtual DOM object.
  */
 function jsx(
-    tagOrComponent: typeof Fragment | FunctionComponent | CustomElementConstructor | Element | string,
+    tagOrComponent: typeof Fragment | FunctionComponent | ComponentConstructor | Element | string,
     properties: VProperties | null = null,
     key?: unknown
 ) {
@@ -347,7 +348,7 @@ export namespace JSXInternal {
 
     export interface ElementClass extends HTMLElement { }
 
-    export interface ElementAttributesProperty { __JSX__: {} }
+    export interface ElementAttributesProperty { __jsx_properties__: {} }
 
     export type IntrinsicElements = {
         [K in keyof CustomElements]:

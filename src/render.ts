@@ -9,7 +9,7 @@ import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
-import { type PropsOf, getProperty } from './property';
+import { type Props, getProperty } from './property';
 
 const innerHtml = htm.bind(h);
 
@@ -512,7 +512,7 @@ const renderTemplate = (
                             setValue(templateNode, propertyKey, value);
                         }
                     } else {
-                        const property = getProperty(templateNode as ComponentInstance, propertyKey as PropsOf<ComponentInstance>);
+                        const property = getProperty(templateNode as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
                         if (property && property.fromAttribute) {
                             setValue(templateNode, propertyKey, (property.fromAttribute as Function).call(templateNode, value as string));
                         }

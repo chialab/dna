@@ -1,4 +1,4 @@
-import { type Constructor, isConnected, defineProperty, HTMLElementConstructor, document, nativeCustomElements } from './helpers';
+import { type Constructor, isConnected, defineProperty, document, nativeCustomElements } from './helpers';
 import { connect, isComponent, isComponentConstructor } from './Component';
 import { defineProperties } from './property';
 import { defineListeners } from './events';
@@ -22,7 +22,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
     /**
      * The tag name used for element definition.
      */
-    is: string;
+    readonly is: string;
 
     /**
      * Invoked each time the element is appended into a document-connected element.
@@ -61,13 +61,6 @@ export type CustomElementConstructor<T extends CustomElement = CustomElement> = 
 }
 
 export type CustomElementRegistryMap = Record<string, CustomElementConstructor>;
-
-/**
- * Check if the function is a Custom Element constructor.
- * @param constructor The function to check.
- * @returns True if the function is a Custom Element constructor.
- */
-export const isCustomElementConstructor = <T extends CustomElementConstructor>(constructor: Function|T): constructor is T => constructor.prototype instanceof HTMLElementConstructor;
 
 /**
  * The CustomElementRegistry interface provides methods for registering custom elements and querying registered elements.

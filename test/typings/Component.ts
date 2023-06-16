@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-unresolved
-import { window, Component, customElement, extend, type Prop } from '@chialab/dna';
+import { window, Component, customElement, extend } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
-    active?: Prop<boolean>;
+    active?: boolean;
 }
 new TestElement().focus();
 
@@ -12,7 +12,7 @@ export class TestBuiltinElement extends extend(window.HTMLDetailsElement) {
     /**
      * Active prop.
      */
-    active?: Prop<boolean>;
+    active?: boolean;
 }
 
 if (new TestBuiltinElement().open === true) {
