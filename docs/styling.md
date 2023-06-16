@@ -12,11 +12,11 @@ Since components can be extended and stylesheets inherited, we need to be able t
 Every `<style>` tag rendered to a component is scoped.
 
 ```tsx
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property() title: Prop<string> = '';
+    @property() title: string = '';
 
     render() {
         return <>
@@ -133,14 +133,14 @@ If you are using a transpiler, you can also use CSS Modules, which imports CSS c
 ```
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 import { title } from './x-card.css';
 
 @customElement('x-card', {
     extends: 'div',
 })
 class Card extends Component {
-    @property() title: Prop<string> = '';
+    @property() title: string = '';
 
     render() {
         return <h1 class={title}></h1>;

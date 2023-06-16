@@ -3,12 +3,12 @@ DNA is a view library with first class support for reactive and functional Web C
 **Define the component (TypeScript)**
 
 ```tsx
-import { type Prop, Component, customElement, property, listen } from '@chialab/dna';
+import { Component, customElement, property, listen } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
     // define an observed property
-    @property() name: Prop<string> = '';
+    @property() name: string = '';
 
     render() {
         return <>

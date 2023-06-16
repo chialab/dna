@@ -9,11 +9,11 @@ State properties store component's data that can't be configured from the outsid
 Properties can be defined using the `property` decorator on a class field declaration:
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property() age: Prop<number>;
+    @property() age: number;
 }
 ```
 
@@ -40,11 +40,11 @@ Once defined, the computed `observedAttributes` of the Card component will inclu
 States can be defined using the `state` decorator on a class field declaration:
 
 ```ts
-import { type Prop, Component, customElement, state } from '@chialab/dna';
+import { Component, customElement, state } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @state() collapsed: Prop<boolean>;
+    @state() collapsed: boolean;
 }
 ```
 
@@ -72,7 +72,7 @@ customElements.define('x-card', Card);
 Properties can be configured passing a configuration object to the `property` decorator or as field value in the `properties` dictionary:
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -82,7 +82,7 @@ class Card extends Component {
             return !isNaN(value) && value >= 0;
         },
     })
-    age: Prop<number> = null;
+    age: number = null;
 }
 ```
 
@@ -93,7 +93,7 @@ The name of the attribute bound with the property. Every time the property had b
 You can also customize the default converters between attributes and properties with `fromAttribute` and `toAttribute`.
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 class Card extends Component {
     @property({
@@ -108,7 +108,7 @@ class Card extends Component {
             return value.getTime().toString();
         },
     })
-    age: Prop<number> = null;
+    age: number = null;
 }
 ```
 
@@ -132,7 +132,7 @@ A custom validation function for the property value. If the method returns a fal
 The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -140,7 +140,7 @@ class Card extends Component {
         type: Number,
         event: true,
     })
-    age: Prop<number>;
+    age: number;
 }
 
 const card = new Card();
@@ -154,14 +154,14 @@ card.addEventListener('agechange', (event) => {
 By default, every property change triggers a re-render of the component. If you want to avoid this behavior, you can set the `update` configuration key to `false`.
 
 ```ts
-import { type Prop, Component, customElement, state } from '@chialab/dna';
+import { Component, customElement, state } from '@chialab/dna';
 
 @customElement('x-toggle')
 class Toggle extends Component {
     @state({
         update: false,
     })
-    active: Prop<boolean>;
+    active: boolean;
 }ì
 ```
 
@@ -173,12 +173,12 @@ The `property` decorator can be used also for accessor fields. This is useful wh
 For this scenario you need to use the `getInnerPropertyValue` and `setInnerPropertyValue` in order to execute the correct life-cycle:
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
     @property()
-    get phone(): Prop<string> {
+    get phone(): string {
         return this.getInnerPropertyValue('phone');
     }
     set phone(value) {
@@ -232,11 +232,11 @@ An observer is a function invoked each time the property had been updated. It re
 Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/idom';
+import { Component, customElement, property } from '@chialab/idom';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: Number }) age: Prop<number>;
+    @property({ type: Number }) age: number;
 }
 
 const element = new Card();
@@ -255,11 +255,11 @@ element.unobserve('age');
 Observers can also be defined using the `observe` decorator:
 
 ```ts
-import { type Prop, Component, customElement, property, observe } from '@chialab/dna';
+import { Component, customElement, property, observe } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: Number }) age: Prop<number>;
+    @property({ type: Number }) age: number;
 
     @observe('age')
     private ageChanged(oldValue: number, newValue: number) {
@@ -271,7 +271,7 @@ class Card extends Component {
 or directly using the property definition:
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -281,20 +281,20 @@ class Card extends Component {
             console.log(`Happy birthday! You are now ${newValue}`);
         },
     })
-    age: Prop<number>;
+    age: number;
 }
 ```
 
 You can also observe multiple properties at one time:
 
 ```ts
-import { type Prop, Component, customElement, property, observe } from '@chialab/dna';
+import { Component, customElement, property, observe } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: String }) firstName: Prop<string>;
-    @property({ type: String }) lastName: Prop<string>;
-    @property({ type: Date }) birthdate: Prop<Date>;
+    @property({ type: String }) firstName: string;
+    @property({ type: String }) lastName: string;
+    @property({ type: Date }) birthdate: Date;
 
     @observe('fisrtName')
     @observe('lastName')
@@ -316,7 +316,7 @@ If you are using the `html` helper or JSX templates, the value of an attribute w
 * passing a **string** value via attribute:
 
 ```ts
-@property({ type: String }) firstName: Prop<string>;
+@property({ type: String }) firstName: string;
 ```
 ```html
 <x-card firstName="Alan" />
@@ -328,7 +328,7 @@ card.firstName // "Alan"
 * passing a **number** value:
 
 ```ts
-@property({ type: Number }) age: Prop<Number>;
+@property({ type: Number }) age: number;
 ```
 ```html
 <x-card age="24" />
@@ -340,7 +340,7 @@ card.age // 24
 * passing a **boolean** value:
 
 ```ts
-@property({ type: Boolean }) disabled: Prop<boolean> = false;
+@property({ type: Boolean }) disabled: boolean = false;
 ```
 ```html
 <x-button disabled />
@@ -352,7 +352,7 @@ button.disabled // true
 * passing an **object** or **array** value:
 
 ```ts
-@property({ type: Array }) items: Prop<string[]> = [];
+@property({ type: Array }) items: string[] = [];
 ```
 ```html
 <x-list items="['Alan','Bob','Charlie']" />
@@ -369,13 +369,13 @@ When the property is bound to an attribute, it will reflect the value to the DOM
 Falsy values (`null`, `undefined`, `false`) will completely remove the attribute from the DOM node, while `true` always set the DOM attribute with empty value. For example:
 
 ```ts
-import { type Prop, Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: String, attribute: 'name' }) firstName: Prop<string>;
-    @property({ type: Number }) age: Prop<number>;
-    @property({ type: Boolean }) married: Prop<boolean> = false;
+    @property({ type: String, attribute: 'name' }) firstName: string;
+    @property({ type: Number }) age: number;
+    @property({ type: Boolean }) married: boolean = false;
 }
 
 const card = new Card();
