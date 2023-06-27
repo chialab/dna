@@ -21,10 +21,10 @@ const removeHosts = (newHost: Node, node: Node) => {
         return hosts;
     }
 
-    const parents = parentContext.parents || [];
+    const parent = parentContext.parent;
     for (let i = 0, len = hosts.length; i < len; i++) {
         const hostContext = getContext(hosts[i]);
-        if (!hostContext || parents.indexOf(hostContext) === -1) {
+        if (!hostContext || parent !== hostContext) {
             DOM.removeChild(hosts[i], node);
             break;
         }
