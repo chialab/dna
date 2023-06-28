@@ -1,7 +1,7 @@
 import htm from 'htm';
 import { type Context, getHostContext, getContext, getOrCreateContext } from './Context';
 import { isNode, isElement, isText, isArray, getPropertyDescriptor } from './helpers';
-import { type VClasses, type VStyle, type VProperties, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode } from './JSX';
+import { type TreeProperties, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode, type EventProperties, type ElementProperties, type KeyedProperties } from './JSX';
 import { type Store, type UpdateRequest } from './FunctionComponent';
 import { customElements } from './CustomElementRegistry';
 import { type ComponentInstance, isComponent } from './Component';
@@ -62,7 +62,7 @@ export type Filter = (item: Node) => boolean;
  * @param value The value to convert.
  * @returns A list of classes.
  */
-const convertClasses = (value: VClasses | null | undefined) => {
+const convertClasses = (value: string | Record<string, boolean | undefined> | null | undefined) => {
     const classes: string[] = [];
     if (!value) {
         return classes;
@@ -83,7 +83,7 @@ const convertClasses = (value: VClasses | null | undefined) => {
  * @param value The value to convert.
  * @returns A set of styles.
  */
-const convertStyles = (value: VStyle| null | undefined) => {
+const convertStyles = (value: string | Record<string, string | undefined> | null | undefined) => {
     const styles: { [key: string]: string } = {};
     if (!value) {
         return styles;
@@ -431,8 +431,8 @@ const renderTemplate = (
         if (isNew) {
             templateContext.parent = rootContext;
         }
-        const oldProperties = templateContext.properties.get(rootContext);
-        const properties = template.properties as VProperties;
+        const oldProperties = templateContext.properties.get(rootContext) as KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+        const properties = template.properties as KeyedProperties & TreeProperties & EventProperties & ElementProperties;
         if (oldProperties) {
             for (const key in oldProperties) {
                 if (!(key in properties)) {
@@ -455,8 +455,8 @@ const renderTemplate = (
 
             if (propertyKey === 'style') {
                 const style = (templateNode as HTMLElement).style;
-                const oldStyles = convertStyles(oldValue as VStyle);
-                const newStyles = convertStyles(value as VStyle);
+                const oldStyles = convertStyles(oldValue as string);
+                const newStyles = convertStyles(value as string);
                 for (const propertyKey in oldStyles) {
                     if (!(propertyKey in newStyles)) {
                         style.removeProperty(propertyKey);
@@ -468,9 +468,9 @@ const renderTemplate = (
                 continue;
             } else if (propertyKey === 'class') {
                 const classList = (templateNode as HTMLElement).classList;
-                const newClasses = convertClasses(value as VClasses);
+                const newClasses = convertClasses(value as string);
                 if (oldValue) {
-                    const oldClasses = convertClasses(oldValue as VClasses);
+                    const oldClasses = convertClasses(oldValue as string);
                     for (let i = 0, len = oldClasses.length; i < len; i++) {
                         const className = oldClasses[i];
                         if (newClasses.indexOf(className) === -1) {

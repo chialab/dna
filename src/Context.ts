@@ -1,5 +1,5 @@
 import { type Store, type UpdateRequest, type FunctionComponent } from './FunctionComponent';
-import { type VProperties } from './JSX';
+import { type KeyedProperties, type TreeProperties } from './JSX';
 import { type ComponentInstance } from './Component';
 
 /**
@@ -25,7 +25,7 @@ export type WithContext<T extends Node> = T & {
  */
 export type Context = {
     children: Node[];
-    properties: WeakMap<Context, VProperties>;
+    properties: WeakMap<Context, KeyedProperties & TreeProperties>;
     renderers: Context[];
     host?: string;
     keys?: Map<unknown, Node>;
@@ -33,7 +33,7 @@ export type Context = {
     oldKeys?: Map<unknown, Node>;
     oldKeyed?: Set<Node>;
     store?: Store;
-    Function?: FunctionComponent<VProperties>;
+    Function?: FunctionComponent<KeyedProperties & TreeProperties>;
     start?: Node;
     end?: Node;
     parent?: Context;

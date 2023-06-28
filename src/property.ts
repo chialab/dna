@@ -1,5 +1,5 @@
 import { type ClassElement, type Constructor, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
-import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
+import { type ComponentConstructor, type ComponentInstance, isComponent, type ComponentMixin } from './Component';
 
 /**
  * A Symbol which contains all Property instances of a Component.
@@ -32,34 +32,14 @@ type IfWritable<T, K extends keyof T, A, B> = IfEquals<{ [Q in K]: T[K] }, { -re
 type IfMethod<T, K extends keyof T, A, B> = T[K] extends (...args: never) => unknown ? A : B;
 
 /**
- * Proto keys.
+ * Exclude component mixin properties.
  */
-type ReservedKeys =
-    | '__properties__'
-    | 'is'
-    | 'slotChildNodes'
-    | 'initialize'
-    | 'connectedCallback'
-    | 'disconnectedCallback'
-    | 'attributeChangedCallback'
-    | 'stateChangedCallback'
-    | 'propertyChangedCallback'
-    | 'getInnerPropertyValue'
-    | 'setInnerPropertyValue'
-    | 'observe'
-    | 'unobserve'
-    | 'dispatchAsyncEvent'
-    | 'delegateEventListener'
-    | 'undelegateEventListener'
-    | 'render'
-    | 'forceUpdate';
-
-type NonReservedKeys<T> = Exclude<keyof T, ReservedKeys>;
+type NonReservedKeys<T> = Exclude<keyof T, keyof ComponentMixin | keyof Element | keyof ElementCSSInlineStyle>;
 
 /**
  * Get all defined properties of a component.
  */
-export type Props<T extends HTMLElement> = {
+export type Props<T> = {
     [K in NonReservedKeys<T> as IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
 };
 
