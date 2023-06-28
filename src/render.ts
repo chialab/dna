@@ -399,7 +399,7 @@ const renderTemplate = (
             && (currentContext = getCurrentContext(context))
             && isElement(currentNode)
             && !hasKeyedNode(context, currentNode)
-            && (!currentContext.parents || currentContext.parents[0] === rootContext)
+            && (!currentContext.parent || currentContext.parent === rootContext)
         ) {
             if (isVComponent(template) && currentNode.constructor === template.type) {
                 templateNode = currentNode;
@@ -429,7 +429,7 @@ const renderTemplate = (
         // update the Node properties
         templateContext = templateContext || getHostContext(templateNode) || getOrCreateContext(templateNode);
         if (isNew) {
-            templateContext.parents = [rootContext];
+            templateContext.parent = rootContext;
         }
         const oldProperties = templateContext.properties.get(rootContext);
         const properties = template.properties as VProperties;
@@ -601,7 +601,7 @@ const renderTemplate = (
         if ((currentNode = getCurrentNode(context))
             && (currentContext = getCurrentContext(context))
             && isText(currentNode)
-            && (!currentContext.parents || currentContext.parents[0] === rootContext)
+            && (!currentContext.parent || currentContext.parent === rootContext)
         ) {
             templateNode = currentNode;
             templateContext = currentContext;
@@ -612,7 +612,7 @@ const renderTemplate = (
             // convert non-Node template into Text
             templateNode = DOM.createTextNode(template as string);
             templateContext = getOrCreateContext(templateNode);
-            templateContext.parents = [rootContext];
+            templateContext.parent = rootContext;
         }
     }
 
@@ -636,23 +636,27 @@ const renderTemplate = (
         (context.currentIndex as number)++;
     }
 
-    if (templateNode &&
-        templateContext &&
-        isElement(templateNode) &&
-        ((templateChildren && templateChildren.length) || ((!templateContext.parents || (templateContext.parents[0] === rootContext)) && templateContext.children.length))) {
-        // the Node has slotted children, trigger a new render context for them
-        if (!templateContext.parents) {
-            templateContext.parents = [rootContext];
+    if (templateNode && templateContext && isElement(templateNode)) {
+        if (!templateContext.parent) {
+            templateContext.parent = rootContext;
         }
-        internalRender(
-            templateNode,
-            templateChildren,
-            isComponent(templateNode),
-            templateContext,
-            root,
-            rootContext,
-            templateNamespace
-        );
+
+        const isRenderer = templateContext.renderers.indexOf(rootContext) !== -1;
+        if ((templateChildren && templateChildren.length) || isRenderer) {
+            // the Node has slotted children, trigger a new render context for them
+            if (!isRenderer) {
+                templateContext.renderers.push(rootContext);
+            }
+            internalRender(
+                templateNode,
+                templateChildren,
+                isComponent(templateNode),
+                templateContext,
+                root,
+                rootContext,
+                templateNamespace
+            );
+        }
     }
 
     return 1;
@@ -687,8 +691,8 @@ export const internalRender = (
     const previousNamespace = context.namespace;
     const previousIndex = context.currentIndex;
 
-    if (!context.parents) {
-        context.parents = [context];
+    if (!context.parent) {
+        context.parent = context;
     }
     context.namespace = namespace;
     context.fragment = fragment;

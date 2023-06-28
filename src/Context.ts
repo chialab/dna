@@ -26,6 +26,7 @@ export type WithContext<T extends Node> = T & {
 export type Context = {
     children: Node[];
     properties: WeakMap<Context, VProperties>;
+    renderers: Context[];
     host?: string;
     keys?: Map<unknown, Node>;
     fragment?: Context;
@@ -35,7 +36,7 @@ export type Context = {
     Function?: FunctionComponent<VProperties>;
     start?: Node;
     end?: Node;
-    parents?: Context[];
+    parent?: Context;
     hosts?: ComponentInstance[];
     currentIndex?: number;
     namespace?: string;
@@ -50,6 +51,7 @@ export type Context = {
 export const createContext = (node: Node) => {
     const context: Context = {
         children: [],
+        renderers: [],
         properties: new WeakMap(),
         host: (node as unknown as ComponentInstance).is,
     };

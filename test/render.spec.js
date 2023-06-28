@@ -576,6 +576,35 @@ describe('render', function() {
             expect(newList).to.have.lengthOf(1);
             expect(list).to.have.lengthOf(3);
         });
+
+        it.only('should not replace contents when initializing parent and child components', () => {
+            const name1 = getComponentName();
+            const name2 = getComponentName();
+
+            class Parent extends DNA.Component {
+                render() {
+                    return this.slotChildNodes.filter((elem) => !!elem.tagName).map((elem) => DNA.html`<div test="test" ref=${elem} />`);
+                }
+            }
+
+            class Child extends DNA.Component {
+                render() {
+                    return DNA.html`<slot />`;
+                }
+            }
+
+            DNA.customElements.define(name1, Parent);
+            DNA.customElements.define(name2, Child);
+
+            const parent = DNA.DOM.createElement(name1);
+
+            const child = DNA.DOM.createElement(name2);
+            child.appendChild(DNA.DOM.createTextNode('Hello'));
+            parent.insertBefore(child, null);
+            wrapper.appendChild(parent);
+
+            expect(child.textContent).to.be.equal('Hello');
+        });
     });
 
     describe('not keyed', () => {

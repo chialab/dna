@@ -314,7 +314,7 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
         const childContext = getOrCreateContext(child);
         DOM.removeChild(element, child, false);
         childContext.hosts = [element];
-        childContext.parents = [context];
+        childContext.parent = context;
     }
     context.children = slotChildNodes;
     return slotChildNodes;
@@ -430,11 +430,10 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             const node = isElement(args[0]) && args[0];
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-
             const context = getOrCreateHostContext(element);
             if (element.parentNode) {
                 // custom element initialized by the parser
-                context.parents = [context];
+                context.parent = context;
             }
 
             // setup listeners
