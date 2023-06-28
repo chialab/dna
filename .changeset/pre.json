@@ -4,5 +4,9 @@
   "initialVersions": {
     "@chialab/dna": "3.21.8"
   },
-  "changesets": []
+  "changesets": [
+    "great-plants-cover",
+    "lovely-pumas-pump",
+    "tame-tomatoes-suffer"
+  ]
 }
