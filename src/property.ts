@@ -32,7 +32,7 @@ type IfWritable<T, P extends keyof T, A, B> = IfEquals<{ [Q in P]: T[P] }, { -re
  * Get all defined properties of a component.
  */
 export type Props<T extends ComponentMixin> = {
-    [K in keyof T as T extends { __properties__: object } ? (K extends keyof T['__properties__'] ? K : never) : (K extends keyof ComponentMixin | '__properties__' ? never : (T[K] extends Function ? (T[K] extends undefined ? K : never) : IfWritable<T, K, K, never>))]?: T[K];
+    [K in keyof T as K extends keyof ComponentMixin ? never : (T[K] extends Function ? (T[K] extends undefined ? K : never) : IfWritable<T, K, K, never>)]?: T[K];
 };
 
 /**
