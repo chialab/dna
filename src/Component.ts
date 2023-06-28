@@ -1,5 +1,5 @@
 import { type Template } from './JSX';
-import { type PropertyConfig, type PropertyObserver, type PropertiesOf, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty } from './property';
+import { type PropertyConfig, type PropertyObserver, type Property, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched } from './property';
 import { type Constructor, type ClassDescriptor, nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
 import { type CustomElement, type CustomElementConstructor, customElements } from './CustomElementRegistry';
 import { DOM } from './DOM';
@@ -21,7 +21,7 @@ export const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
 /**
  * An augmented node with component flags.
  */
-export type WithComponentFlags<T> = T & {
+export type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
     [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
 };
@@ -31,9 +31,15 @@ export type WithComponentFlags<T> = T & {
  */
 export interface ComponentMixin {
     /**
-     * A set of watched properties.
+     * Type getter for JSX properties.
      */
-    readonly watchedProperties: PropertyKey[];
+    readonly __jsx_properties__: Props<this>;
+
+    /**
+     * The defined component name.
+     * For autonomous custom elements, this is the tag name.
+     */
+    readonly is: string;
 
     /**
      * A flag with the connected value of the node.
@@ -58,7 +64,7 @@ export interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    stateChangedCallback<P extends keyof Members<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    stateChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -67,7 +73,7 @@ export interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback<P extends keyof Members<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    propertyChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
 
     /**
      * Get the inner value of a property.
@@ -75,7 +81,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @returns The inner value of the property.
      */
-    getInnerPropertyValue<P extends keyof Members<this>>(propertyName: P): this[P];
+    getInnerPropertyValue<P extends keyof Props<this>>(propertyName: P): this[P];
 
     /**
      * Set the inner value of a property.
@@ -83,7 +89,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the property to get.
      * @param value The inner value to set.
      */
-    setInnerPropertyValue<P extends keyof Members<this>>(propertyName: P, value: this[P]): void;
+    setInnerPropertyValue<P extends keyof Props<this>>(propertyName: P, value: this[P]): void;
 
     /**
      * Observe a Component Property.
@@ -91,7 +97,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the Property to observe
      * @param observer The callback function
      */
-    observe<P extends keyof Members<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    observe<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Unobserve a Component Property.
@@ -99,7 +105,7 @@ export interface ComponentMixin {
      * @param propertyName The name of the Property to unobserve
      * @param observer The callback function to remove
      */
-    unobserve<P extends keyof Members<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
+    unobserve<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>): void;
 
     /**
      * Dispatch a custom Event.
@@ -165,42 +171,6 @@ export interface ComponentMixin {
  */
 export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomElement<T> & ComponentMixin;
 
-/**
- * Component prototype keys.
- */
-export type PrototypeKeys = keyof CustomElement | keyof ComponentMixin;
-
-/**
- * Get all methods of a class, excluding inherited methods.
- */
-export type MethodsOf<T> = Exclude<{
-    [K in keyof T]: T[K] extends Function ? K : never;
-}[keyof T], never & PrototypeKeys>;
-
-/**
- * Check if a property is flagged as readonly.
- */
-export type IsReadonly<T, K extends keyof T> =
-    (<C>() => C extends { [Q in K]: T[K] } ? 1 : 2) extends (<C>() => C extends { -readonly [Q in K]: T[K] } ? 1 : 2) ? never : K;
-
-/**
- * Get all members of a class, excluding inherited members.
- */
-export type Members<T> = {
-    [K in keyof T]?: K extends PrototypeKeys ? never : K extends IsReadonly<T, K> ? never : T[K];
-};
-
-/**
- * Get all members names of a class, excluding inherited members.
- */
-export type MemberKeys<T> = Exclude<{
-    [K in keyof T]?: K extends PrototypeKeys ? never : K extends IsReadonly<T, K> ? never : K;
-}[keyof T], never | undefined>;
-
-/**
- * Get a filtered list of available members of a class, excluding inherited members.
- */
-export type Props<T> = Partial<Pick<Members<T>, MemberKeys<T>>>;
 
 /**
  * The basic DNA Component constructor.
@@ -252,14 +222,14 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentFlags<typeof node>)[COMPONENT_SYMBOL];
+export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentProto<typeof node>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
  * Should emulate life cycle.
@@ -270,7 +240,7 @@ let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
  * Flag the element for life cycle emulation.
  * @param node The element to flag.
  */
-export const emulateLifeCycle = (node: WithComponentFlags<HTMLElement>) => {
+export const emulateLifeCycle = (node: WithComponentProto<HTMLElement>) => {
     lifeCycleEmulation = true;
     node[EMULATE_LIFECYCLE_SYMBOL] = true;
 };
@@ -286,7 +256,7 @@ export const emulatingLifeCycle = () => lifeCycleEmulation;
  * @param node The node to check.
  * @returns The node require emulated life cycle.
  */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentFlags<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
+export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentProto<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
 
 /**
  * Invoke `connectedCallback` method of a Node (and its descendents).
@@ -358,6 +328,11 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
 const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
     const Component = class Component extends (ctor as Constructor<HTMLElement>) {
         /**
+         * Type getter for JSX properties.
+         */
+        declare readonly __jsx_properties__: Props<this>;
+
+        /**
          * An array containing the names of the attributes to observe.
          * @returns The list of attributes to observe.
          */
@@ -365,7 +340,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             const propertiesDescriptor = getProperties(this.prototype);
             const attributes = [];
             for (const key in propertiesDescriptor) {
-                const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
+                const prop = propertiesDescriptor[key as keyof Props<ComponentInstance>] as Property<ComponentInstance, keyof Props<ComponentInstance>>;
                 if (prop && prop.attribute && !prop.state) {
                     attributes.push(prop.attribute);
                 }
@@ -402,11 +377,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         static upgrade(node: HTMLElement) {
             return new this(node);
         }
-
-        /**
-         * A set of watched properties.
-         */
-        readonly watchedProperties: PropertyKey[] = [];
 
         /**
          * The tag name used for Component definition.
@@ -484,15 +454,15 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             // setup properties
             const computedProperties = getProperties(element);
             for (const propertyKey in computedProperties) {
-                delete element[propertyKey];
-                const property = computedProperties[propertyKey];
+                delete element[propertyKey as keyof Props<this>];
+                const property = computedProperties[propertyKey as keyof Props<this>];
                 if (typeof property.initializer === 'function') {
-                    element[propertyKey] = property.initializer.call(element);
+                    element[propertyKey as keyof Props<this>] = property.initializer.call(element);
                 } else if (typeof property.defaultValue !== 'undefined') {
-                    element[propertyKey] = property.defaultValue;
+                    element[propertyKey as keyof Props<this>] = property.defaultValue;
                 }
                 if (property.static) {
-                    element.watchedProperties.push(propertyKey);
+                    getWatched(element).push(propertyKey);
                 }
             }
 
@@ -563,7 +533,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+        stateChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
             reflectPropertyToAttribute(this, propertyName, newValue);
         }
 
@@ -574,7 +544,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+        propertyChangedCallback<P extends keyof Props<this>>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
             reflectPropertyToAttribute(this, propertyName, newValue);
         }
 
@@ -584,7 +554,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the property to get.
          * @returns The inner value of the property.
          */
-        getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P] {
+        getInnerPropertyValue<P extends keyof Props<this>>(propertyName: P): this[P] {
             const property = getProperty(this, propertyName, true);
             return this[property.symbol as keyof this] as this[P];
         }
@@ -595,7 +565,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the property to get.
          * @param value The inner value to set.
          */
-        setInnerPropertyValue<P extends keyof this>(propertyName: P, value: this[P]) {
+        setInnerPropertyValue<P extends keyof Props<this>>(propertyName: P, value: this[P]) {
             const property = getProperty(this, propertyName, true);
             this[property.symbol as keyof this] = value;
         }
@@ -606,7 +576,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the Property to observe
          * @param observer The callback function
          */
-        observe<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>) {
+        observe<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>) {
             addObserver(this, propertyName, observer);
         }
 
@@ -616,7 +586,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param propertyName The name of the Property to unobserve
          * @param observer The callback function to remove
          */
-        unobserve<P extends keyof this>(propertyName: P, observer: PropertyObserver<this[P]>) {
+        unobserve<P extends keyof Props<this>>(propertyName: P, observer: PropertyObserver<this[P]>) {
             removeObserver(this, propertyName, observer);
         }
 
@@ -818,7 +788,7 @@ export const shim = <T extends { new(): HTMLElement; prototype: HTMLElement }>(b
 };
 
 /**
- * Get a native HTMLElement constructor to extend by its name.
+ * Get a native HTMLElement constructor to  extend by its name.
  * @param constructor The constructor (eg. "HTMLAnchorElement") to extend.
  * @returns A proxy that extends the native constructor.
  */
@@ -845,9 +815,9 @@ const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
         constructor(...args: any[]) {
             super(...args);
 
-            const properties = getProperties(Component.prototype) as PropertiesOf<this>;
+            const properties = getProperties(Component.prototype as this);
             for (const propertyKey in properties) {
-                this.watchedProperties.push(propertyKey);
+                getWatched(this).push(propertyKey);
             }
         }
     };

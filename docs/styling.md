@@ -11,12 +11,12 @@ Since components can be extended and stylesheets inherited, we need to be able t
 
 Every `<style>` tag rendered to a component is scoped.
 
-```ts
+```tsx
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property() title = '';
+    @property() title: string = '';
 
     render() {
         return <>
@@ -140,7 +140,7 @@ import { title } from './x-card.css';
     extends: 'div',
 })
 class Card extends Component {
-    @property() title = '';
+    @property() title: string = '';
 
     render() {
         return <h1 class={title}></h1>;

@@ -13,7 +13,7 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property() age?: number;
+    @property() age: number;
 }
 ```
 
@@ -44,7 +44,7 @@ import { Component, customElement, state } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @state() collapsed?: boolean;
+    @state() collapsed: boolean;
 }
 ```
 
@@ -82,7 +82,7 @@ class Card extends Component {
             return !isNaN(value) && value >= 0;
         },
     })
-    age = null;
+    age: number = null;
 }
 ```
 
@@ -93,19 +93,23 @@ The name of the attribute bound with the property. Every time the property had b
 You can also customize the default converters between attributes and properties with `fromAttribute` and `toAttribute`.
 
 ```ts
-@property({
-    type: Date,
-    attribute: 'birthdate',
-    fromAttribute(value) {
-        // attribute has been set as timestamp
-        return new Date(parseInt(value));
-    },
-    toAttribute(value) {
-        // set attribute as timestamp
-        return value.getTime().toString();
-    },
-})
-age = null;
+import { Component, customElement, property } from '@chialab/dna';
+
+class Card extends Component {
+    @property({
+        type: Date,
+        attribute: 'birthdate',
+        fromAttribute(value) {
+            // attribute has been set as timestamp
+            return new Date(parseInt(value));
+        },
+        toAttribute(value) {
+            // set attribute as timestamp
+            return value.getTime().toString();
+        },
+    })
+    age: number = null;
+}
 ```
 
 #### defaultValue
@@ -136,7 +140,7 @@ class Card extends Component {
         type: Number,
         event: true,
     })
-    age?: number;
+    age: number;
 }
 
 const card = new Card();
@@ -157,7 +161,7 @@ class Toggle extends Component {
     @state({
         update: false,
     })
-    active?: boolean;
+    active: boolean;
 }ì
 ```
 
@@ -174,7 +178,7 @@ import { Component, customElement, property } from '@chialab/dna';
 @customElement('x-card')
 class Card extends Component {
     @property()
-    get phone() {
+    get phone(): string {
         return this.getInnerPropertyValue('phone');
     }
     set phone(value) {
@@ -232,7 +236,7 @@ import { Component, customElement, property } from '@chialab/idom';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: Number }) age?: number;
+    @property({ type: Number }) age: number;
 }
 
 const element = new Card();
@@ -255,7 +259,7 @@ import { Component, customElement, property, observe } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: Number }) age?: number;
+    @property({ type: Number }) age: number;
 
     @observe('age')
     private ageChanged(oldValue: number, newValue: number) {
@@ -277,7 +281,7 @@ class Card extends Component {
             console.log(`Happy birthday! You are now ${newValue}`);
         },
     })
-    age?: number;
+    age: number;
 }
 ```
 
@@ -288,9 +292,9 @@ import { Component, customElement, property, observe } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: String }) firstName?: string;
-    @property({ type: String }) lastName?: string;
-    @property({ type: Date }) birthdate?: Date;
+    @property({ type: String }) firstName: string;
+    @property({ type: String }) lastName: string;
+    @property({ type: Date }) birthdate: Date;
 
     @observe('fisrtName')
     @observe('lastName')
@@ -312,7 +316,7 @@ If you are using the `html` helper or JSX templates, the value of an attribute w
 * passing a **string** value via attribute:
 
 ```ts
-@property({ type: String }) firstName;
+@property({ type: String }) firstName: string;
 ```
 ```html
 <x-card firstName="Alan" />
@@ -324,7 +328,7 @@ card.firstName // "Alan"
 * passing a **number** value:
 
 ```ts
-@property({ type: Number }) age;
+@property({ type: Number }) age: number;
 ```
 ```html
 <x-card age="24" />
@@ -336,7 +340,7 @@ card.age // 24
 * passing a **boolean** value:
 
 ```ts
-@property({ type: Boolean }) disabled = false;
+@property({ type: Boolean }) disabled: boolean = false;
 ```
 ```html
 <x-button disabled />
@@ -348,7 +352,7 @@ button.disabled // true
 * passing an **object** or **array** value:
 
 ```ts
-@property({ type: Array }) items = [];
+@property({ type: Array }) items: string[] = [];
 ```
 ```html
 <x-list items="['Alan','Bob','Charlie']" />
@@ -369,9 +373,9 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
-    @property({ type: String, attribute: 'name' }) firstName;
-    @property({ type: Number }) age;
-    @property({ type: Boolean }) married = false;
+    @property({ type: String, attribute: 'name' }) firstName: string;
+    @property({ type: Number }) age: number;
+    @property({ type: Boolean }) married: boolean = false;
 }
 
 const card = new Card();

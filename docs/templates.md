@@ -422,17 +422,17 @@ will render:
 
 If you want to add some properties to the instance, you can pass it as an hyper node using the `ref` property. This is useful if you want to reference some nodes in your component:
 
-```ts
-import { DOM, Component, html, customElement, listen } from '@chialab/dna';
+```tsx
+import { DOM, Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-form')
 class Form extends Component {
     input = DOM.createElement('input');
 
     render() {
-        return html`<form>
-            <input ref=${this.input} name="firstName" placeholder="Alan" />
-        </form>`;
+        return <form>
+            <input ref={this.input} name="firstName" placeholder="Alan" />
+        </form>;
     }
 
     @listen('change', this.input)
@@ -448,27 +448,25 @@ Slotted children are nodes that semantically are children of the component, but 
 
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
-```ts
-import { window, extend, customElement, html, property } from '@chialab/dna';
+```tsx
+import { window, extend, customElement, property } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
 class Dialog extends extend(window.HTMLDialogElement) {
-    @property() title = '';
-    @property() content = '';
+    @property() title: string = '';
+    @property() content: string = '';
 
     render() {
-        return html`
-            <div class="layout-container">
-                <div class="layout-header">
-                    <h1>${this.title}</h1>
-                </div>
-                <div class="layout-content">
-                    ${this.content}
-                </div>
+        return <div class="layout-container">
+            <div class="layout-header">
+                <h1>{this.title}</h1>
             </div>
-        `;
+            <div class="layout-content">
+                {this.content}
+            </div>
+        </div>;
     }
 }
 ```
@@ -482,21 +480,19 @@ DNA solves those two issues, rendering "soft" children of an element into the `<
 
 ```diff
 class Dialog extends extend(window.HTMLDialogElement) {
--    @property() title = '';
--    @property() content = '';
+-    @property() title: string = '';
+-    @property() content: string = '';
 
     render() {
-        return html`
-            <div class="layout-container">
--                <div class="layout-header">
--                    <h1>${this.title}</h1>
--                </div>
-                <div class="layout-content">
--                   ${this.content}
-+                   <slot />
-                </div>
+        return <div class="layout-container">
+-            <div class="layout-header">
+-                <h1>${this.title}</h1>
+-            </div>
+            <div class="layout-content">
+-               {this.content}
++               <slot />
             </div>
-        `;
+        </div>;
     }
 }
 ```

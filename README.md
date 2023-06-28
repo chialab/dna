@@ -63,7 +63,7 @@ import { Component, customElement, property, listen } from '@chialab/dna';
 @customElement('hello-world')
 class HelloWorld extends Component {
     // define an observed property
-    @property() name = '';
+    @property() name: string = '';
 
     render() {
         return <>

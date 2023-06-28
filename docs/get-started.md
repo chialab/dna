@@ -93,7 +93,7 @@ import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('hello-world')
 class HelloWorld extends Component {
-    @property() name = '';
+    @property() name: string = '';
 
     // define a template
     render() {
@@ -138,14 +138,14 @@ customElements.define('hello-world', HelloWorld);
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
-```ts
+```tsx
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('blog-post', {
     extends: 'article'
 })
 class BlogPost extends Component {
-    @property() title = '';
+    @property() title: string = '';
 
     render() {
         return <h1>{this.title}</h1>;
