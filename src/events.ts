@@ -1,5 +1,5 @@
 import { type ComponentInstance, type ComponentConstructor } from './Component';
-import { type MethodsOf } from './property';
+import { type Methods } from './property';
 import { type Constructor, type ClassElement, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
@@ -452,7 +452,7 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
  * @param methodKey The method name.
  * @returns The property descriptor.
  */
-export const createListener = <T extends ComponentInstance, P extends MethodsOf<T>>(
+export const createListener = <T extends ComponentInstance, P extends keyof Methods<T>>(
     targetOrClassElement: T,
     eventName: string,
     target: EventTarget | null,
@@ -492,7 +492,7 @@ function listen(eventName: string, target: EventTarget, options?: AddEventListen
  * @returns The decorator initializer.
  */
 function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
-    return <T extends ComponentInstance, P extends MethodsOf<T>>(
+    return <T extends ComponentInstance, P extends keyof Methods<T>>(
         targetOrClassElement: T,
         methodKey: P
     ) => createListener(

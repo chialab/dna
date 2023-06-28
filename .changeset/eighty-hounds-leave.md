@@ -2,4 +2,4 @@
 "@chialab/dna": patch
 ---
 
-cleanup component class typings
+Cleanup component class typings

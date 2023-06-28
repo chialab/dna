@@ -1,9 +1,13 @@
 // eslint-disable-next-line import/no-unresolved
-import { window, Component, customElement, extend } from '@chialab/dna';
+import { window, Component, customElement, extend, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
-    readonly active?: boolean;
+    active?: boolean;
+
+    @property({
+        type: Number,
+    }) width: number = 2;
 
     get computed(): string {
         return this.getInnerPropertyValue('computed');
