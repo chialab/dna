@@ -577,7 +577,7 @@ describe('render', function() {
             expect(list).to.have.lengthOf(3);
         });
 
-        it.only('should not replace contents when initializing parent and child components', () => {
+        it('should not replace contents when initializing parent and child components', () => {
             const name1 = getComponentName();
             const name2 = getComponentName();
 
@@ -601,7 +601,7 @@ describe('render', function() {
             const child = DNA.DOM.createElement(name2);
             child.appendChild(DNA.DOM.createTextNode('Hello'));
             parent.insertBefore(child, null);
-            wrapper.appendChild(parent);
+            DNA.DOM.appendChild(wrapper, parent);
 
             expect(child.textContent).to.be.equal('Hello');
         });

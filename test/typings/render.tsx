@@ -9,6 +9,7 @@ render(<TestElement active={true} />);
 render(<details is="x-test-builtin" active={true} />);
 render(<TestBuiltinElement active={true} />);
 render(<div key={{}}></div>);
+render(<unknown key={{}} slot="2"></unknown>);
 
 render(h('details', { open: true }));
 render(h(DOM.createElement('details'), { open: true }));
