@@ -6,7 +6,7 @@ import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type SVGAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { type Props } from './property';
 import { isArray, isNode } from './helpers';
-import { type ComponentMixin, isComponentConstructor, type ComponentConstructor, type ComponentInstance } from './Component';
+import { isComponentConstructor, type ComponentConstructor, type ComponentInstance } from './Component';
 
 /**
  * Identify virtual dom objects.
@@ -45,7 +45,7 @@ export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<{
  */
 export type VProps<
     T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap
-> = T extends keyof JSXInternal.CustomElements ? (JSXInternal.CustomElements[T] extends ComponentMixin ? Props<JSXInternal.CustomElements[T]> : never) :
+> = T extends keyof JSXInternal.CustomElements ? Props<JSXInternal.CustomElements[T]> :
     T extends FunctionComponent ? Parameters<T>[0] :
     T extends ComponentInstance ? Props<T> :
     T extends ComponentConstructor ? Props<InstanceType<T>> :
@@ -348,7 +348,7 @@ export namespace JSXInternal {
 
     export interface ElementClass extends HTMLElement { }
 
-    export interface ElementAttributesProperty { __jsx_properties__: {} }
+    export interface ElementAttributesProperty { __properties__: {} }
 
     export type IntrinsicElements = {
         [K in keyof CustomElements]:

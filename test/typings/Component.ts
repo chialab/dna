@@ -3,8 +3,16 @@ import { window, Component, customElement, extend } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
-    active?: boolean;
+    readonly active?: boolean;
+
+    get computed(): string {
+        return this.getInnerPropertyValue('computed');
+    }
+    set computed(value) {
+        this.setInnerPropertyValue('computed', value);
+    }
 }
+
 new TestElement().focus();
 
 @customElement('x-test-builtin', { extends: 'details' })
