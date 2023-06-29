@@ -1,5 +1,17 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.0
+
+### Minor Changes
+
+- 98dc11d: Refactored component properties typings for better typecheck perfomances and JSX support.
+
+### Patch Changes
+
+- c5c7e44: Cleanup component class typings
+- 98dc11d: Do not expose internal `watchedProperties` field for components.
+- 764669e: Fix parent children renderers
+
 ## 3.22.0-beta.0
 
 ### Minor Changes
