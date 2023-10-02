@@ -1,13 +1,35 @@
-import { type Realm, attachRealm } from '@chialab/quantum';
-import { type Template, type KeyedProperties } from './JSX';
+import { attachRealm, type Realm } from '@chialab/quantum';
 import { type ClassDescriptor } from './ClassDescriptor';
-import { type PropertyConfig, type PropertyObserver, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched, defineProperties } from './property';
-import { type Constructor, setPrototypeOf, isElement, defineProperty } from './helpers';
-import { type CustomElementConstructor, type CustomElement } from './CustomElement';
-import { type DelegatedEventCallback, type ListenerConfig, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners, defineListeners } from './events';
-import { internalRender, render } from './render';
-import { parseDOM } from './directives';
 import { getRootContext } from './Context';
+import { type CustomElement, type CustomElementConstructor } from './CustomElement';
+import { parseDOM } from './directives';
+import {
+    defineListeners,
+    delegateEventListener,
+    dispatchAsyncEvent,
+    dispatchEvent,
+    getListeners,
+    setListeners,
+    undelegateEventListener,
+    type DelegatedEventCallback,
+    type ListenerConfig,
+} from './events';
+import { defineProperty, isElement, setPrototypeOf, type Constructor } from './helpers';
+import { type KeyedProperties, type Template } from './JSX';
+import {
+    addObserver,
+    defineProperties,
+    getProperties,
+    getProperty,
+    getWatched,
+    reflectAttributeToProperty,
+    reflectPropertyToAttribute,
+    removeObserver,
+    type PropertyConfig,
+    type PropertyObserver,
+    type Props,
+} from './property';
+import { internalRender, render } from './render';
 
 /**
  * A symbol which identify components.
@@ -66,7 +88,11 @@ export interface ComponentMixin {
      * @param oldValue The previous value of the property.
      * @param newValue The new value for the property (undefined if removed).
      */
-    propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): void;
+    propertyChangedCallback<P extends keyof this>(
+        propertyName: P,
+        oldValue: this[P] | undefined,
+        newValue: this[P]
+    ): void;
 
     /**
      * Get the inner value of a property.
@@ -110,7 +136,13 @@ export interface ComponentMixin {
      * @param composed Is the event composed.
      */
     dispatchEvent(event: Event): boolean;
-    dispatchEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
+    dispatchEvent(
+        event: string,
+        detail?: CustomEventInit['detail'],
+        bubbles?: boolean,
+        cancelable?: boolean,
+        composed?: boolean
+    ): boolean;
 
     /**
      * Dispatch an async custom Event.
@@ -124,7 +156,13 @@ export interface ComponentMixin {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatchAsyncEvent(event: Event): Promise<any[]>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatchAsyncEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
+    dispatchAsyncEvent(
+        event: string,
+        detail?: CustomEventInit['detail'],
+        bubbles?: boolean,
+        cancelable?: boolean,
+        composed?: boolean
+    ): Promise<any[]>;
 
     /**
      * Delegate an Event listener.
@@ -133,7 +171,12 @@ export interface ComponentMixin {
      * @param selector The selector to delegate
      * @param callback The callback to trigger when an Event matches the delegation
      */
-    delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback, options ?: AddEventListenerOptions): void;
+    delegateEventListener(
+        event: string,
+        selector: string | null,
+        callback: DelegatedEventCallback,
+        options?: AddEventListenerOptions
+    ): void;
 
     /**
      * Remove an Event delegation.
@@ -167,7 +210,8 @@ export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomEleme
 /**
  * The basic DNA Component constructor.
  */
-export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance> extends CustomElementConstructor<T> {
+export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance>
+    extends CustomElementConstructor<T> {
     /**
      * Define component properties.
      */
@@ -189,9 +233,9 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
      */
     // We cannot infer component properties from the base class
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new(node?: HTMLElement, properties?: { [key: string]: any }): T;
+    new (node?: HTMLElement, properties?: { [key: string]: any }): T;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new(properties?: { [key: string]: any }): T;
+    new (properties?: { [key: string]: any }): T;
 
     prototype: T;
 }
@@ -201,14 +245,17 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param node The node to check.
  * @returns True if element is a custom element.
  */
-export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T => !!(node as WithComponentProto<typeof node>)[COMPONENT_SYMBOL];
+export const isComponent = <T extends ComponentInstance>(node: T | Node): node is T =>
+    !!(node as WithComponentProto<typeof node>)[COMPONENT_SYMBOL];
 
 /**
  * Check if a constructor is a component constructor.
  * @param constructor The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    constructor: Function | C
+): constructor is C => !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
  * Create a base Component class which extends a native constructor.
@@ -411,7 +458,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param oldValue The previous value of the property.
          * @param newValue The new value for the property (undefined if removed).
          */
-        propertyChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+        propertyChangedCallback<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ) {
             reflectPropertyToAttribute(this, propertyName, newValue);
         }
 
@@ -467,8 +518,20 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param composed Is the event composed.
          */
         dispatchEvent(event: Event): boolean;
-        dispatchEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): boolean;
-        dispatchEvent(event: Event | string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+        dispatchEvent(
+            event: string,
+            detail?: CustomEventInit['detail'],
+            bubbles?: boolean,
+            cancelable?: boolean,
+            composed?: boolean
+        ): boolean;
+        dispatchEvent(
+            event: Event | string,
+            detail?: CustomEventInit['detail'],
+            bubbles?: boolean,
+            cancelable?: boolean,
+            composed?: boolean
+        ) {
             return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
@@ -484,8 +547,20 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dispatchAsyncEvent(event: string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean): Promise<any[]>;
-        dispatchAsyncEvent(event: Event | string, detail?: CustomEventInit['detail'], bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+        dispatchAsyncEvent(
+            event: string,
+            detail?: CustomEventInit['detail'],
+            bubbles?: boolean,
+            cancelable?: boolean,
+            composed?: boolean
+        ): Promise<any[]>;
+        dispatchAsyncEvent(
+            event: Event | string,
+            detail?: CustomEventInit['detail'],
+            bubbles?: boolean,
+            cancelable?: boolean,
+            composed?: boolean
+        ) {
             return dispatchAsyncEvent(this, event as string, detail, bubbles, cancelable, composed);
         }
 
@@ -496,7 +571,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param callback The callback to trigger when an Event matches the delegation.
          * @param options Add event listener options.
          */
-        delegateEventListener(event: string, selector: string | null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) {
+        delegateEventListener(
+            event: string,
+            selector: string | null,
+            callback: DelegatedEventCallback,
+            options?: AddEventListenerOptions
+        ) {
             delegateEventListener(this, event, selector, callback, options);
         }
 
@@ -619,7 +699,9 @@ export function define(name: string, constructor: ComponentConstructor, options?
             value: name,
         });
     } catch {
-        throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
+        throw new Error(
+            'The registry already contains an entry with the constructor (or is otherwise already defined)'
+        );
     }
     customElements.define(name, constructor, options);
 
@@ -632,10 +714,11 @@ export function define(name: string, constructor: ComponentConstructor, options?
  * @param options The custom element options.
  * @returns The decorated component class.
  */
-export const customElement = (name: string, options?: ElementDefinitionOptions) =>
+export const customElement =
+    (name: string, options?: ElementDefinitionOptions) =>
     // TypeScript complains about return type because we handle babel output
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <T extends ComponentConstructor>(classOrDescriptor: T|ClassDescriptor): any => {
+    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
         if (typeof classOrDescriptor === 'function') {
             // typescript
             return define(name, decorateConstructor(classOrDescriptor), options);

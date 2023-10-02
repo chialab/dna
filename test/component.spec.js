@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
-import * as DNA from '@chialab/dna';
-import { __decorate } from 'tslib';
 import _decorate from '@babel/runtime/helpers/decorate';
+import * as DNA from '@chialab/dna';
 import { expect, spy } from '@chialab/ginsenghino';
+import { __decorate } from 'tslib';
 import { getComponentName } from './helpers.spec.js';
 
-describe('Component', function() {
+describe('Component', function () {
     this.timeout(10 * 1000);
 
     let wrapper;
@@ -23,7 +23,7 @@ describe('Component', function() {
     describe('#new', () => {
         it('should create a node', () => {
             const is = getComponentName();
-            class TestElement extends DNA.Component { }
+            class TestElement extends DNA.Component {}
             DNA.define(is, TestElement);
 
             const element = new TestElement();
@@ -34,7 +34,7 @@ describe('Component', function() {
 
         it('should extend a native node', () => {
             const is = getComponentName();
-            class TestElement extends DNA.Component { }
+            class TestElement extends DNA.Component {}
             DNA.define(is, TestElement, {
                 extends: 'article',
             });
@@ -47,7 +47,7 @@ describe('Component', function() {
 
         it('should create a base class starting from the anchor base class', () => {
             const HTMLAnchorElement = DNA.extend(window.HTMLAnchorElement);
-            class TestElement extends HTMLAnchorElement { }
+            class TestElement extends HTMLAnchorElement {}
             DNA.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
             element.href = 'https://www.webcomponents.org/introduction';
@@ -57,7 +57,7 @@ describe('Component', function() {
         });
 
         it('should throw if element is not defined', () => {
-            class TestElement extends DNA.Component { }
+            class TestElement extends DNA.Component {}
             expect(() => new TestElement()).to.throw(TypeError);
         });
 
@@ -78,15 +78,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp2', undefined);
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp3', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
@@ -96,44 +90,52 @@ describe('Component', function() {
         });
 
         it('should setup properties with babel decorator', () => {
-            const TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
-                class TestElement extends _DNA$Component {
-                    constructor(...args) {
-                        super(...args);
-                        _initialize(this);
+            const TestElement = _decorate(
+                [DNA.customElement(getComponentName())],
+                (_initialize, _DNA$Component) => {
+                    class TestElement extends _DNA$Component {
+                        constructor(...args) {
+                            super(...args);
+                            _initialize(this);
+                        }
                     }
-                }
 
-                return {
-                    F: TestElement,
-                    d: [{
-                        kind: 'get',
-                        static: true,
-                        key: 'properties',
-                        value: function properties() {
-                            return {
-                                myCustomProp1: {
-                                    attribute: 'custom-prop',
+                    return {
+                        F: TestElement,
+                        d: [
+                            {
+                                kind: 'get',
+                                static: true,
+                                key: 'properties',
+                                value: function properties() {
+                                    return {
+                                        myCustomProp1: {
+                                            attribute: 'custom-prop',
+                                        },
+                                    };
                                 },
-                            };
-                        },
-                    }, {
-                        kind: 'field',
-                        decorators: [DNA.property()],
-                        key: 'myCustomProp2',
-                        value() {
-                            return '';
-                        },
-                    }, {
-                        kind: 'field',
-                        decorators: [DNA.property()],
-                        key: 'myCustomProp3',
-                        value() {
-                            return '';
-                        },
-                    }],
-                };
-            }, DNA.Component);
+                            },
+                            {
+                                kind: 'field',
+                                decorators: [DNA.property()],
+                                key: 'myCustomProp2',
+                                value() {
+                                    return '';
+                                },
+                            },
+                            {
+                                kind: 'field',
+                                decorators: [DNA.property()],
+                                key: 'myCustomProp3',
+                                value() {
+                                    return '';
+                                },
+                            },
+                        ],
+                    };
+                },
+                DNA.Component
+            );
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
@@ -169,15 +171,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp2', undefined);
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp3', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName(), { extends: 'article' }),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName(), { extends: 'article' })], TestElement);
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
@@ -212,15 +208,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], BaseElement.prototype, 'myCustomProp2', undefined);
-            __decorate([
-                DNA.property(),
-            ], BaseElement.prototype, 'myCustomProp3', undefined);
-            BaseElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], BaseElement);
+            __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp2', undefined);
+            __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp3', undefined);
+            BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
 
             const _forceUpdate = spy();
             let TestElement = class TestElement extends BaseElement {
@@ -234,12 +224,8 @@ describe('Component', function() {
                     super.forceUpdate();
                 }
             };
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp4', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp4', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
@@ -275,15 +261,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], BaseElement.prototype, 'myCustomProp2', undefined);
-            __decorate([
-                DNA.property(),
-            ], BaseElement.prototype, 'myCustomProp3', undefined);
-            BaseElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], BaseElement);
+            __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp2', undefined);
+            __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp3', undefined);
+            BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
 
             const _forceUpdate = spy();
             class TestElement extends BaseElement {
@@ -333,15 +313,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp2', undefined);
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'myCustomProp3', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
+            __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement({
                 myCustomProp1: 42,
@@ -396,10 +370,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
                 wrapper.appendChild(element);
@@ -437,10 +408,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 const child = document.createElement('div');
                 wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
@@ -483,10 +451,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 const child = document.createElement('div');
                 wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
@@ -527,10 +492,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
                 wrapper.appendChild(element);
@@ -557,10 +519,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.innerHTML).to.be.equal('');
                 wrapper.appendChild(element);
                 expect(element.innerHTML).to.be.equal('<h1>test</h1>');
@@ -571,7 +530,7 @@ describe('Component', function() {
     describe('~isConnected', () => {
         it('return `true` if element is connected', () => {
             const is = getComponentName();
-            class TestElement extends DNA.Component { }
+            class TestElement extends DNA.Component {}
             DNA.define(is, TestElement);
 
             const element = document.createElement(is);
@@ -581,7 +540,7 @@ describe('Component', function() {
 
         it('return `false` if element is disconnected', () => {
             const is = getComponentName();
-            class TestElement extends DNA.Component { }
+            class TestElement extends DNA.Component {}
             DNA.define(is, TestElement);
 
             const element = document.createElement(is);
@@ -615,10 +574,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.spyAttributeChangedCallback).to.not.have.been.called();
                 element.setAttribute('title', 'test');
                 expect(element.spyAttributeChangedCallback).to.have.been.called();
@@ -653,10 +609,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.spyAttributeChangedCallback).to.not.have.been.called();
                 element.setAttribute('title', 'test');
                 expect(element.spyAttributeChangedCallback).to.have.been.called();
@@ -691,10 +644,7 @@ describe('Component', function() {
                 extends: 'article',
             });
 
-            [
-                new TestElement1(),
-                new TestElement2(),
-            ].forEach((element) => {
+            [new TestElement1(), new TestElement2()].forEach((element) => {
                 expect(element.spyAttributeChangedCallback).to.not.have.been.called();
                 element.setAttribute('title', 'test');
                 expect(element.spyAttributeChangedCallback).to.have.been.called();
@@ -722,40 +672,34 @@ describe('Component', function() {
                     }
                 };
 
-                __decorate([
-                    DNA.property(),
-                ], TestElement.prototype, 'any', undefined);
-                __decorate([
-                    DNA.property({ type: Boolean }),
-                ], TestElement.prototype, 'boolean', undefined);
-                __decorate([
-                    DNA.property({ type: String }),
-                ], TestElement.prototype, 'string', undefined);
-                __decorate([
-                    DNA.property({ type: Number }),
-                ], TestElement.prototype, 'number', undefined);
-                __decorate([
-                    DNA.property({ type: [String, Number], attribute: 'string-number' }),
-                ], TestElement.prototype, 'stringNumber', undefined);
-                __decorate([
-                    DNA.property({ type: [Object] }),
-                ], TestElement.prototype, 'object', undefined);
-                __decorate([
-                    DNA.property({ type: [Array] }),
-                ], TestElement.prototype, 'array', undefined);
-                __decorate([
-                    DNA.property({
-                        fromAttribute(value) {
-                            return parseInt(value) * 2;
-                        },
-                        toAttribute(value) {
-                            return `${value / 2}`;
-                        },
-                    }),
-                ], TestElement.prototype, 'convertion', undefined);
-                TestElement = __decorate([
-                    DNA.customElement(getComponentName()),
-                ], TestElement);
+                __decorate([DNA.property()], TestElement.prototype, 'any', undefined);
+                __decorate([DNA.property({ type: Boolean })], TestElement.prototype, 'boolean', undefined);
+                __decorate([DNA.property({ type: String })], TestElement.prototype, 'string', undefined);
+                __decorate([DNA.property({ type: Number })], TestElement.prototype, 'number', undefined);
+                __decorate(
+                    [DNA.property({ type: [String, Number], attribute: 'string-number' })],
+                    TestElement.prototype,
+                    'stringNumber',
+                    undefined
+                );
+                __decorate([DNA.property({ type: [Object] })], TestElement.prototype, 'object', undefined);
+                __decorate([DNA.property({ type: [Array] })], TestElement.prototype, 'array', undefined);
+                __decorate(
+                    [
+                        DNA.property({
+                            fromAttribute(value) {
+                                return parseInt(value) * 2;
+                            },
+                            toAttribute(value) {
+                                return `${value / 2}`;
+                            },
+                        }),
+                    ],
+                    TestElement.prototype,
+                    'convertion',
+                    undefined
+                );
+                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
                 element = new TestElement();
             });
@@ -875,12 +819,8 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property({ type: [String], attribute: false }),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property({ type: [String], attribute: false })], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback).to.not.have.been.called();
@@ -919,12 +859,8 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.state({ type: [String] }),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.state({ type: [String] })], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(stateChangedCallback).to.not.have.been.called();
@@ -998,12 +934,8 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback).to.not.have.been.called();
@@ -1026,12 +958,8 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property({ type: [String] }),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             wrapper.appendChild(element);
@@ -1073,18 +1001,10 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'title', undefined);
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'description', undefined);
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'body', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
+            __decorate([DNA.property()], TestElement.prototype, 'description', undefined);
+            __decorate([DNA.property()], TestElement.prototype, 'body', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             expect(callback).to.not.have.been.called();
             const element = new TestElement();
@@ -1093,7 +1013,9 @@ describe('Component', function() {
             element.author = 'Test';
             wrapper.appendChild(element);
             expect(callback).to.have.been.called.exactly(4);
-            expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');
+            expect(element.innerHTML).to.be.equal(
+                '<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>'
+            );
         });
 
         it('should NOT handle property if nothing changed on assignment', () => {
@@ -1119,12 +1041,8 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property({ type: [String] }),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             expect(propertyChangedCallback).to.not.have.been.called();
@@ -1156,16 +1074,16 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property({ event: 'titleupdate' }),
-            ], TestElement.prototype, 'title', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property({ event: 'titleupdate' })], TestElement.prototype, 'title', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
-            element.addEventListener('agechange', (event) => callback1(event.type, event.detail.oldValue, event.detail.newValue));
-            element.addEventListener('titleupdate', (event) => callback2(event.type, event.detail.oldValue, event.detail.newValue));
+            element.addEventListener('agechange', (event) =>
+                callback1(event.type, event.detail.oldValue, event.detail.newValue)
+            );
+            element.addEventListener('titleupdate', (event) =>
+                callback2(event.type, event.detail.oldValue, event.detail.newValue)
+            );
             expect(callback1).to.not.have.been.called();
             expect(callback2).to.not.have.been.called();
             element.age = 25;
@@ -1713,15 +1631,9 @@ describe('Component', function() {
                 }
             };
 
-            __decorate([
-                DNA.property(),
-            ], TestElement.prototype, 'title', undefined);
-            __decorate([
-                DNA.property({ attribute: 'alias' }),
-            ], TestElement.prototype, 'test', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
+            __decorate([DNA.property({ attribute: 'alias' })], TestElement.prototype, 'test', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
         });
 
         beforeEach(() => {

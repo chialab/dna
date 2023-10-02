@@ -2,7 +2,7 @@
 import * as DNA from '@chialab/dna';
 import { expect } from '@chialab/ginsenghino';
 
-describe('module', function() {
+describe('module', function () {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {

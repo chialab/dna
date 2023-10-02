@@ -58,7 +58,7 @@ class Card extends Component {
         return {
             collapsed: {
                 type: Boolean,
-                state: true
+                state: true,
             },
         };
     }
@@ -162,7 +162,8 @@ class Toggle extends Component {
         update: false,
     })
     active: boolean;
-}ì
+}
+ì;
 ```
 
 ## Accessors
@@ -198,7 +199,7 @@ You can also configure a getter and a setter method along with the property decl
 The **getter** function receives the actual property value as argument and it can return the same reference or any new value.  
 The returned value of the getter does not represent the actual property value, but it is used for bound attribute update and property access. In order to actually trigger a property change, the new value should be different from the real property value and not from the one returned by the getter. The `propertyChangedCallback` will receive the inner property value too.
 
-The **setter** function is invoked *before* property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the inner property value.
+The **setter** function is invoked _before_ property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the inner property value.
 
 ```ts
 import { Component, customElements } from '@chialab/dna';
@@ -255,7 +256,7 @@ element.unobserve('age');
 Observers can also be defined using the `observe` decorator:
 
 ```ts
-import { Component, customElement, property, observe } from '@chialab/dna';
+import { Component, customElement, observe, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -288,7 +289,7 @@ class Card extends Component {
 You can also observe multiple properties at one time:
 
 ```ts
-import { Component, customElement, property, observe } from '@chialab/dna';
+import { Component, customElement, observe, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -313,55 +314,63 @@ Attributes can be used to update the component properties and viceversa. Every t
 
 If you are using the `html` helper or JSX templates, the value of an attribute will be reflected to the property using the following logic:
 
-* passing a **string** value via attribute:
+-   passing a **string** value via attribute:
 
 ```ts
 @property({ type: String }) firstName: string;
 ```
+
 ```html
 <x-card firstName="Alan" />
 ```
+
 ```js
-card.firstName // "Alan"
+card.firstName; // "Alan"
 ```
 
-* passing a **number** value:
+-   passing a **number** value:
 
 ```ts
 @property({ type: Number }) age: number;
 ```
+
 ```html
 <x-card age="24" />
 ```
+
 ```js
-card.age // 24
+card.age; // 24
 ```
 
-* passing a **boolean** value:
+-   passing a **boolean** value:
 
 ```ts
 @property({ type: Boolean }) disabled: boolean = false;
 ```
+
 ```html
 <x-button disabled />
 ```
+
 ```js
-button.disabled // true
+button.disabled; // true
 ```
 
-* passing an **object** or **array** value:
+-   passing an **object** or **array** value:
 
 ```ts
 @property({ type: Array }) items: string[] = [];
 ```
+
 ```html
 <x-list items="['Alan','Bob','Charlie']" />
 ```
+
 ```js
-list.items // ["Alan", "Bob", "Charlie"]
+list.items; // ["Alan", "Bob", "Charlie"]
 ```
 
-* removing the attribute from the template will set the property value as `undefined`.
+-   removing the attribute from the template will set the property value as `undefined`.
 
 ### Attribute updates
 
@@ -387,5 +396,8 @@ card.married = true;
 will result in the DOM like:
 
 ```html
-<x-card name="Alan" age="24" married />
+<x-card
+    name="Alan"
+    age="24"
+    married />
 ```

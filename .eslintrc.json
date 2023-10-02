@@ -1,14 +1,12 @@
 {
-  "extends": "@chialab/eslint-config/typescript",
+  "extends": "@chialab/eslint-config",
   "env": {
     "browser": true
   },
   "parserOptions": {
     "project": false
   },
-  "plugins": [
-    "jsdoc"
-  ],
+  "plugins": ["jsdoc"],
   "rules": {
     "jsdoc/check-param-names": 1,
     "jsdoc/check-property-names": 1,

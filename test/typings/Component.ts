@@ -7,7 +7,8 @@ export class TestElement extends Component {
 
     @property({
         type: Number,
-    }) width: number = 2;
+    })
+    width: number = 2;
 
     get computed(): string {
         return this.getInnerPropertyValue('computed');

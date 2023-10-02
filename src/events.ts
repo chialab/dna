@@ -1,7 +1,14 @@
-import { type ComponentInstance, type ComponentConstructor } from './Component';
 import { type ClassElement } from './ClassDescriptor';
+import { type ComponentConstructor, type ComponentInstance } from './Component';
+import {
+    getOwnPropertyDescriptor,
+    getPrototypeOf,
+    hasOwnProperty,
+    isElement,
+    isEvent,
+    type Constructor,
+} from './helpers';
 import { type Methods } from './property';
-import { type Constructor, isElement, isEvent, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -65,7 +72,7 @@ type DelegationList = {
      * The real event listener.
      */
     listener: EventListenerOrEventListenerObject;
-}
+};
 
 /**
  * An object with event delegations.
@@ -74,7 +81,7 @@ type WithEventDelegations = {
     [EVENT_CALLBACKS_SYMBOL]?: {
         [key: string]: DelegationList;
     };
-}
+};
 
 const assertNode = (element: unknown) => {
     if (!isElement(element)) {
@@ -133,7 +140,13 @@ const assertEventComposed = (composed: unknown) => {
  * @param callback The callback to trigger when an Event matches the delegation
  * @param options An options object that specifies characteristics about the event listener. @see [MDN]{@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener}
  */
-export const delegateEventListener = (element: Element, eventName: string, selector: string|null, callback: DelegatedEventCallback, options?: AddEventListenerOptions) => {
+export const delegateEventListener = (
+    element: Element,
+    eventName: string,
+    selector: string | null,
+    callback: DelegatedEventCallback,
+    options?: AddEventListenerOptions
+) => {
     const delegatedElement: Node & WithEventDelegations = element;
 
     assertNode(element);
@@ -142,11 +155,11 @@ export const delegateEventListener = (element: Element, eventName: string, selec
     assertEventCallback(callback);
 
     // get all delegations
-    const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
+    const delegations = (delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {});
     // initialize the delegation list
-    const callbacks: DelegationList = delegations[eventName] = delegations[eventName] || {
+    const callbacks: DelegationList = (delegations[eventName] = delegations[eventName] || {
         descriptors: [],
-    };
+    });
     const descriptors = callbacks.descriptors;
     // check if the event has already been delegated
     if (!callbacks.listener) {
@@ -237,7 +250,12 @@ export const delegateEventListener = (element: Element, eventName: string, selec
  * @param selector The selector to undelegate
  * @param callback The callback to remove
  */
-export const undelegateEventListener = (element: Element, eventName: string, selector: string | null, callback: DelegatedEventCallback) => {
+export const undelegateEventListener = (
+    element: Element,
+    eventName: string,
+    selector: string | null,
+    callback: DelegatedEventCallback
+) => {
     assertNode(element);
     assertEventName(eventName);
     assertEventSelector(selector);
@@ -276,7 +294,13 @@ export const undelegateEventListener = (element: Element, eventName: string, sel
  * @param composed Is the event composed.
  * @returns The custom event.
  */
-function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: boolean, cancelable?: boolean, composed?: boolean) {
+function initEvent(
+    event: Event | string,
+    detail?: CustomEventInit,
+    bubbles?: boolean,
+    cancelable?: boolean,
+    composed?: boolean
+) {
     if (typeof event !== 'string') {
         assertEvent(event);
         return event;
@@ -304,7 +328,14 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
  * @param composed Is the event composed.
  * @returns True if either event's cancelable attribute value is false or its preventDefault() method was not invoked, and false otherwise.
  */
-export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
+export const dispatchEvent = (
+    element: Element,
+    event: Event | string,
+    detail?: CustomEventInit['detail'],
+    bubbles: boolean = true,
+    cancelable: boolean = true,
+    composed: boolean = false
+): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
     return HTMLElement.prototype.dispatchEvent.call(element, event);
@@ -320,10 +351,17 @@ export const dispatchEvent = (element: Element, event: Event | string, detail?: 
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
  */
-export const dispatchAsyncEvent = async (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): Promise<unknown[]> => {
+export const dispatchAsyncEvent = async (
+    element: Element,
+    event: Event | string,
+    detail?: CustomEventInit['detail'],
+    bubbles: boolean = true,
+    cancelable: boolean = true,
+    composed: boolean = false
+): Promise<unknown[]> => {
     const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
     const promises: unknown[] = [];
-    asyncEvent.respondWith = function(callback) {
+    asyncEvent.respondWith = function (callback) {
         promises.push(callback());
     };
     if (!dispatchEvent(element, asyncEvent)) {
@@ -435,7 +473,11 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
                 const eventName = paths.shift() as string;
                 const selector = paths.length ? paths.join(' ') : null;
                 const descriptor = listenerDescriptors[eventPath];
-                const { callback, target = null, ...options } = typeof descriptor === 'object' ? descriptor : { callback: descriptor };
+                const {
+                    callback,
+                    target = null,
+                    ...options
+                } = typeof descriptor === 'object' ? descriptor : { callback: descriptor };
                 defineListener(prototype, eventName, target, selector, callback, options);
             }
         }
@@ -460,7 +502,7 @@ export const createListener = <T extends ComponentInstance, P extends keyof Meth
     selector: string | null,
     options: AddEventListenerOptions,
     methodKey?: P
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
     if (methodKey !== undefined) {
         const method = targetOrClassElement[methodKey] as unknown as DelegatedEventCallback;
@@ -480,7 +522,8 @@ export const createListener = <T extends ComponentInstance, P extends keyof Meth
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isEventTarget = (target: any): target is EventTarget => typeof target === 'object' && 'addEventListener' in target;
+const isEventTarget = (target: any): target is EventTarget =>
+    typeof target === 'object' && 'addEventListener' in target;
 
 function listen(eventName: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
@@ -492,18 +535,20 @@ function listen(eventName: string, target: EventTarget, options?: AddEventListen
  * @param options Options to pass to addEventListener.
  * @returns The decorator initializer.
  */
-function listen(eventName: string, target?: string | EventTarget | AddEventListenerOptions, options?: AddEventListenerOptions) {
-    return <T extends ComponentInstance, P extends keyof Methods<T>>(
-        targetOrClassElement: T,
-        methodKey: P
-    ) => createListener(
-        targetOrClassElement,
-        eventName,
-        isEventTarget(target) ? target : null,
-        typeof target === 'string' ? target : null,
-        (!isEventTarget(target) && typeof target !== 'string' ? target : options) || {},
-        methodKey
-    );
+function listen(
+    eventName: string,
+    target?: string | EventTarget | AddEventListenerOptions,
+    options?: AddEventListenerOptions
+) {
+    return <T extends ComponentInstance, P extends keyof Methods<T>>(targetOrClassElement: T, methodKey: P) =>
+        createListener(
+            targetOrClassElement,
+            eventName,
+            isEventTarget(target) ? target : null,
+            typeof target === 'string' ? target : null,
+            (!isEventTarget(target) && typeof target !== 'string' ? target : options) || {},
+            methodKey
+        );
 }
 
 export { listen };

@@ -28,7 +28,7 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param newValue The new value for the attribute (null if removed).
      */
     attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
-}
+};
 
 /**
  * The plain Custom Element constructor.
@@ -38,6 +38,6 @@ export type CustomElementConstructor<T extends CustomElement = CustomElement> = 
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes?: string[];
-}
+};
 
 export type CustomElementRegistryMap = Record<string, CustomElementConstructor>;

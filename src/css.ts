@@ -35,14 +35,17 @@ export const css = (name: string, cssText: string): string => {
         throw new TypeError('The provided CSS text must be a string');
     }
 
-    const cached = CACHE[name] = CACHE[name] || {};
+    const cached = (CACHE[name] = CACHE[name] || {});
     const scope = `[:scope="${name}"]`;
     if (cssText in cached) {
         return cached[cssText];
     }
-    return cached[cssText] = cssText
+    return (cached[cssText] = cssText
         .replace(CSS_COMMENTS_REGEX, '\n')
-        .replace(HOST_REGEX, (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1).replace(':defined', '[:defined]') : ''}`)
+        .replace(
+            HOST_REGEX,
+            (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1).replace(':defined', '[:defined]') : ''}`
+        )
         .replace(CSS_SELECTORS_REGEX, (match) => {
             match = match.trim();
             if (match[0] === '@') {
@@ -58,5 +61,5 @@ export const css = (name: string, cssText: string): string => {
                     return `${scope} ${selector}`;
                 })
                 .join(',');
-        });
+        }));
 };

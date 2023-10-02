@@ -1,12 +1,9 @@
 name: Wiki
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'docs/**'
-    tags-ignore:
-      - '*'
+    branches: [main]
+    paths: ['docs/**']
+    tags-ignore: ['*']
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -16,7 +13,7 @@ jobs:
     name: Deploy Wiki
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Push documentation to wiki
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_WIKI_TOKEN }}

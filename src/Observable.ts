@@ -10,7 +10,11 @@ export type Subscription = {
  */
 export type Observable<T> = {
     pipe(operator: (value: T) => unknown): Observable<T>;
-    subscribe(nextCallback: (value: T) => unknown, errorCallback: (error: Error) => unknown, completeCallback: () => unknown): Subscription;
+    subscribe(
+        nextCallback: (value: T) => unknown,
+        errorCallback: (error: Error) => unknown,
+        completeCallback: () => unknown
+    ): Subscription;
 };
 
 /**
@@ -49,20 +53,23 @@ export const getObservableState = <T extends Observable<unknown>>(target: WithOb
     if (state) {
         return state;
     }
-    const newState = target[SUBSCRIPTION_SYMBOL] = {
+    const newState = (target[SUBSCRIPTION_SYMBOL] = {
         complete: false,
         errored: false,
-    } as ObservableState;
-    target
-        .subscribe((value) => {
+    } as ObservableState);
+    target.subscribe(
+        (value) => {
             newState.current = value;
             newState.errored = false;
-        }, (error) => {
+        },
+        (error) => {
             newState.current = error;
             newState.errored = true;
-        }, () => {
+        },
+        () => {
             newState.complete = true;
-        });
+        }
+    );
 
     return newState;
 };

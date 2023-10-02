@@ -8,7 +8,7 @@ DNA add some extra features like declarative event listeners and delegations.
 You can declare event listeners on a component using the `listen` decorator:
 
 ```ts
-import { window, extend, customElement, listen } from '@chialab/dna';
+import { customElement, extend, listen, window } from '@chialab/dna';
 
 @customElement('x-button', {
     extends: 'button',
@@ -29,15 +29,15 @@ class Button extends extend(window.HTMLButtonElement) {
 Or the `listeners` static accessor:
 
 ```ts
-import { window, extend, customElements } from '@chialab/dna';
+import { customElements, extend, window } from '@chialab/dna';
 
 class Button extends extend(window.HTMLButtonElement) {
     static get listeners() {
         return {
-            'click': function(event) {
+            'click': function (event) {
                 event.preventDefault();
             },
-            'input [name="age"]': function(event, target) {
+            'input [name="age"]': function (event, target) {
                 console.log(target.value);
             },
         };
@@ -49,7 +49,7 @@ customElements.define('x-button', Button, {
 });
 ```
 
-Declarations can be configured with [event listener options]((https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener)):
+Declarations can be configured with [event listener options](<(https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener)>):
 
 ```ts
 import { Component, customElement, listen } from '@chialab/dna';
@@ -71,7 +71,7 @@ class Tracker extends Component {
 import { Component, customElements } from '@chialab/dna';
 
 class Tracker extends Component {
-    static get listeners(){
+    static get listeners() {
         return {
             touchmove: {
                 callback(event) {
@@ -116,7 +116,7 @@ class Header extends Component {
 Event listeners are automatically bound with the component. If you need a different target, such as the document or the window, you can pass the target to the declaration. In this case, event listeners are added once the element has been added to the DOM tree and removed once disconnected.
 
 ```ts
-import { window, Component, customElement, listen } from '@chialab/dna';
+import { Component, customElement, listen, window } from '@chialab/dna';
 
 @customElement('x-tracker')
 class Tracker extends Component {
@@ -132,10 +132,10 @@ class Tracker extends Component {
 <div>
 
 ```ts
-import { window, Component, customElements } from '@chialab/dna';
+import { Component, customElements, window } from '@chialab/dna';
 
 class Tracker extends Component {
-    static get listeners(){
+    static get listeners() {
         return {
             touchmove: {
                 callback(event) {
@@ -161,7 +161,7 @@ DNA supports event delegation for both imperatively and declaratively declaratio
 Using the `listen` decorator or the `listeners` static getter, you can specify the delegated child selector after the event name in the declaration key:
 
 ```ts
-import { window, extend, customElement, listen } from '@chialab/dna';
+import { customElement, extend, listen, window } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
@@ -179,7 +179,7 @@ class Dialog extends extend(window.HTMLDialogElement) {
 <div>
 
 ```ts
-import { window, extend, customElements } from '@chialab/dna';
+import { customElements, extend, window } from '@chialab/dna';
 
 class Dialog extends extend(window.HTMLDialogElement) {
     static get listeners() {
@@ -191,12 +191,12 @@ class Dialog extends extend(window.HTMLDialogElement) {
                 passive: false,
             },
         };
-    };
+    }
 }
 
 customElements.define('x-dialog', Dialog, {
     extends: 'dialog',
-})
+});
 ```
 
 </div>
@@ -262,7 +262,7 @@ button.dispatchEvent('sendEmail',
 With DNA, you can also dispatch events and await a `Promise` which resolves when all async listeners are completed. This is useful for events based communication with other components:
 
 ```ts
-import { Component, customElement, listen, DOM } from '@chialab/dna';
+import { Component, customElement, DOM, listen } from '@chialab/dna';
 
 @customElement('x-paginator')
 class Paginator extends Component {

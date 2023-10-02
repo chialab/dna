@@ -17,7 +17,9 @@ The DNA environment is pretty common (if you are familiar with other libraries l
 1. Make sure you have a recent [Node.js](https://nodejs.org/en/) version installed
 2. Setup a bundler ([Rollup](https://rollupjs.org) is recommended, but [Webpack](https://webpack.js.org/) and [Parcel](https://parceljs.org/) are equally good choices)
 3. Setup Babel ([Rollup](https://github.com/rollup/rollup-plugin-babel), [Webpack](https://github.com/babel/babel-loader), [Parcel](https://parceljs.org/transforms.html#babel)) or TypeScript ([Rollup](https://github.com/rollup/rollup-plugin-typescript), [Webpack](https://webpack.js.org/guides/typescript/), [Parcel](https://parceljs.org/transforms.html#typescript)):
-    * if your choice is Babel, please make sure all this plugins are loaded in order to use all DNA features:
+
+    - if your choice is Babel, please make sure all this plugins are loaded in order to use all DNA features:
+
         ```sh
         $ npm i -D \
             @babel/plugin-proposal-decorators \
@@ -28,10 +30,7 @@ The DNA environment is pretty common (if you are familiar with other libraries l
 
         ```json
         {
-            "plugins": [
-                "@babel/plugin-proposal-decorators",
-                "@babel/plugin-proposal-class-properties"
-            ]
+            "plugins": ["@babel/plugin-proposal-decorators", "@babel/plugin-proposal-class-properties"]
         }
         ```
 
@@ -42,9 +41,12 @@ The DNA environment is pretty common (if you are familiar with other libraries l
         ```json
         {
             "plugins": [
-                ["@babel/plugin-transform-react-jsx", {
-                    "pragma": "h"
-                }]
+                [
+                    "@babel/plugin-transform-react-jsx",
+                    {
+                        "pragma": "h"
+                    }
+                ]
             ]
         }
         ```
@@ -54,28 +56,35 @@ The DNA environment is pretty common (if you are familiar with other libraries l
         ```json
         {
             "plugins": [
-                ["@babel/plugin-transform-react-jsx", {
-                    "runtime": "automatic",
-                    "importSource": "@chialab/dna"
-                }]
+                [
+                    "@babel/plugin-transform-react-jsx",
+                    {
+                        "runtime": "automatic",
+                        "importSource": "@chialab/dna"
+                    }
+                ]
             ]
         }
         ```
-        
-        Since the DNA `html` method is provided by the [`htm`](https://github.com/developit/htm) module by [Jason Miller](https://github.com/developit), you can also use the [`babel-plugin-htm`](https://www.npmjs.com/package/babel-plugin-htm) to preprocess templates. 
+
+        Since the DNA `html` method is provided by the [`htm`](https://github.com/developit/htm) module by [Jason Miller](https://github.com/developit), you can also use the [`babel-plugin-htm`](https://www.npmjs.com/package/babel-plugin-htm) to preprocess templates.
 
         ```json
         {
             "plugins": [
-                ["babel-plugin-htm", {
-                    "pragma": "h",
-                    "import": {
-                        "module": "@chialab/dna"
+                [
+                    "babel-plugin-htm",
+                    {
+                        "pragma": "h",
+                        "import": {
+                            "module": "@chialab/dna"
+                        }
                     }
-                }]
+                ]
             ]
         }
         ```
+
 4. Install DNA
     ```sh
     $ npm i @chialab/dna
@@ -142,7 +151,7 @@ This is very useful when you want to extend a HTML tag, preserving its semanthic
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('blog-post', {
-    extends: 'article'
+    extends: 'article',
 })
 class BlogPost extends Component {
     @property() title: string = '';
@@ -176,7 +185,7 @@ class BlogPost extends Component {
 }
 
 customElements.define('blog-post', BlogPost, {
-    extends: 'article'
+    extends: 'article',
 });
 ```
 

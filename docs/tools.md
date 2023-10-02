@@ -12,6 +12,7 @@ The [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-
 For example:
 
 **src/dna-map.ts**
+
 ```ts
 import { Component, customElement, property } from '@chialab/dna';
 
@@ -35,14 +36,13 @@ export class MapboxMap extends Component {
 ```
 
 **custom-elements-manifest.config.js**
+
 ```js
 import dnaPlugins from '@chialab/manifest-analyzer-dna-plugin';
 
 export default {
-    plugins: [
-        ...dnaPlugins(),
-    ],
-}
+    plugins: [...dnaPlugins()],
+};
 ```
 
 Run:
@@ -59,14 +59,14 @@ A map component based on mapbox-gl.
 ## Properties
 
 | Property    | Attribute   | Type     | Description                             |
-|-------------|-------------|----------|-----------------------------------------|
+| ----------- | ----------- | -------- | --------------------------------------- |
 | `latitude`  | `latitude`  | `number` | The latitude value for the map center.  |
 | `longitude` | `longitude` | `number` | The longitude value for the map center. |
 
 ## Events
 
 | Event  | Description                   |
-|--------|-------------------------------|
+| ------ | ----------------------------- |
 | `move` | The map center point changed. |
 | `zoom` | The map zoom level changed.   |
 ```
@@ -86,11 +86,7 @@ And load it in the **main.js** config file:
 
 ```js
 module.exports = {
-    addons: [
-        '@storybook/addon-a11y',
-        '@storybook/addon-essentials',
-        '@chialab/storybook-addon-dna',
-    ],
+    addons: ['@storybook/addon-a11y', '@storybook/addon-essentials', '@chialab/storybook-addon-dna'],
 };
 ```
 
@@ -128,6 +124,7 @@ declare module '@chialab/dna' {
 ```
 
 **app.tsx**
+
 ```ts
 import { render } from '@chialab/dna';
 import './x-card';

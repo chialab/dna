@@ -34,5 +34,5 @@ export interface ClassElement {
 export type ClassDescriptor = {
     kind: 'class';
     elements: ClassElement[];
-    finisher?: <T>(constructor: { new(): T }) => void | { new(): T };
+    finisher?: <T>(constructor: { new (): T }) => void | { new (): T };
 };

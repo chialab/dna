@@ -2,7 +2,7 @@
  * Constructor type helper.
  */
 export type Constructor<T> = {
-    new(...args: any[]): T;
+    new (...args: any[]): T;
     prototype: T;
 };
 
@@ -40,7 +40,11 @@ export const getPrototypeOf = Object.getPrototypeOf;
  * @param object The object to set the prototype of.
  * @param prototype The prototype to set.
  */
-export const setPrototypeOf = Object.setPrototypeOf || ((object, prototype) => { object.__proto__ = prototype; });
+export const setPrototypeOf =
+    Object.setPrototypeOf ||
+    ((object, prototype) => {
+        object.__proto__ = prototype;
+    });
 
 /**
  * Alias to Object.prototype.toString.

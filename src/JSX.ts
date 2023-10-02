@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { type Observable } from './Observable';
-import { type FunctionComponent } from './FunctionComponent';
-import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
-import { type Props } from './property';
-import { isArray, isNode } from './helpers';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
+import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
+import { type FunctionComponent } from './FunctionComponent';
+import { isArray, isNode } from './helpers';
+import { type Observable } from './Observable';
+import { type Props } from './property';
 
 /**
  * Identify virtual dom objects.
@@ -20,14 +20,16 @@ export const Fragment: unique symbol = Symbol();
 /**
  * Get all the property keys that extends a builtin element.
  */
-export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<{
-    [K in keyof JSXInternal.CustomElements]:
-        'extends' extends keyof JSXInternal.CustomElements[K] ?
-            JSXInternal.CustomElements[K]['extends'] extends T ?
-                { is: K } & (Props<JSXInternal.CustomElements[K]>) :
-                never :
-            never;
-}[keyof JSXInternal.CustomElements], never>;
+export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
+    {
+        [K in keyof JSXInternal.CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
+            ? JSXInternal.CustomElements[K]['extends'] extends T
+                ? { is: K } & Props<JSXInternal.CustomElements[K]>
+                : never
+            : never;
+    }[keyof JSXInternal.CustomElements],
+    never
+>;
 
 /**
  * Get HTML attributes by prototype.
@@ -46,21 +48,21 @@ export type AttributeProperties<T, A> = T & Omit<A, 'style' | 'class' | keyof T>
  */
 export type KeyedProperties = {
     key?: unknown;
-}
+};
 
 /**
  * Get render properties for tree nodes.
  */
 export type TreeProperties = {
     children?: Template | Template[];
-}
+};
 
 /**
  * Get render properties for event listeners.
  */
 export type EventProperties = {
     [listener: `on${string}`]: EventListener | undefined;
-}
+};
 
 /**
  * Get render properties for dom nodes.
@@ -103,7 +105,11 @@ export type VElement<T extends Element> = {
     type: T;
     key: unknown;
     namespace: string;
-    properties: AttributeProperties<Props<T>, ElementAttributes<T>> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+    properties: AttributeProperties<Props<T>, ElementAttributes<T>> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties;
     children: Template[];
     [V_SYM]: true;
 };
@@ -115,7 +121,11 @@ export type VComponent<T extends ComponentConstructor> = {
     type: T;
     key?: unknown;
     namespace?: string;
-    properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+    properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties;
     children: Template[];
     [V_SYM]: true;
 };
@@ -126,7 +136,10 @@ export type VComponent<T extends ComponentConstructor> = {
 export type VSlot = {
     type: 'slot';
     key: unknown;
-    properties: AttributeProperties<Props<HTMLSlotElement>, IntrinsicElementAttributes['slot']> & KeyedProperties & TreeProperties & EventProperties;
+    properties: AttributeProperties<Props<HTMLSlotElement>, IntrinsicElementAttributes['slot']> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties;
     children: Template[];
     [V_SYM]: true;
 };
@@ -138,7 +151,18 @@ export type VTag<T extends keyof HTMLTagNameMap | keyof SVGTagNameMap> = {
     type: T;
     key: unknown;
     namespace: string;
-    properties: AttributeProperties<T extends keyof HTMLTagNameMap ? Props<HTMLTagNameMap[T]> : T extends keyof SVGTagNameMap ? Props<SVGTagNameMap[T]> : Props<HTMLElement>, IntrinsicElementAttributes[T]> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+    properties: AttributeProperties<
+        T extends keyof HTMLTagNameMap
+            ? Props<HTMLTagNameMap[T]>
+            : T extends keyof SVGTagNameMap
+            ? Props<SVGTagNameMap[T]>
+            : Props<HTMLElement>,
+        IntrinsicElementAttributes[T]
+    > &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties;
     children: Template[];
     [V_SYM]: true;
 };
@@ -146,7 +170,8 @@ export type VTag<T extends keyof HTMLTagNameMap | keyof SVGTagNameMap> = {
 /**
  * Generic virtual dom object.
  */
-export type VObject = VFunction<FunctionComponent>
+export type VObject =
+    | VFunction<FunctionComponent>
     | VComponent<ComponentConstructor>
     | VElement<Element>
     | VSlot
@@ -157,7 +182,7 @@ export type VObject = VFunction<FunctionComponent>
  * A generic template. Can be a single atomic item or a list of items.
  */
 export type Template =
-    Element
+    | Element
     | Text
     | Node
     | VFragment
@@ -195,14 +220,16 @@ export const isVFragment = (target: VObject): target is VFragment => target.type
  * @param target The node to check.
  * @returns True if the target is a functional component.
  */
-export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> => typeof target.type === 'function' && !isComponentConstructor(target.type);
+export const isVFunction = (target: VObject): target is VFunction<FunctionComponent> =>
+    typeof target.type === 'function' && !isComponentConstructor(target.type);
 
 /**
  * Check if the current virtual node is a Component.
  * @param target The node to check.
  * @returns True if the target is a Component node.
  */
-export const isVComponent = (target: VObject): target is VComponent<ComponentConstructor> => typeof target.type === 'function' && isComponentConstructor(target.type);
+export const isVComponent = (target: VObject): target is VComponent<ComponentConstructor> =>
+    typeof target.type === 'function' && isComponentConstructor(target.type);
 
 /**
  * Check if the current virtual node is an HTML node instance.
@@ -223,14 +250,51 @@ export const isVSlot = (target: VObject): target is VSlot => target.type === 'sl
  * @param target The node to check.
  * @returns True if the target is a generic tag to render.
  */
-export const isVTag = (target: VObject): target is VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap> => typeof target.type === 'string';
+export const isVTag = (target: VObject): target is VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap> =>
+    typeof target.type === 'string';
 
 function h(tagOrComponent: typeof Fragment, properties?: null, ...children: Template[]): VFragment;
-function h<T extends FunctionComponent>(tagOrComponent: T, properties: Parameters<T>[0] & KeyedProperties & TreeProperties, ...children: Template[]): VFunction<T>;
-function h<T extends ComponentConstructor>(tagOrComponent: T, properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> & KeyedProperties & TreeProperties & EventProperties & ElementProperties, ...children: Template[]): VComponent<T>;
-function h<T extends Element>(tagOrComponent: T, properties: AttributeProperties<Props<T>, ElementAttributes<T>> & KeyedProperties & TreeProperties & EventProperties & ElementProperties, ...children: Template[]): VElement<T>;
-function h<T extends keyof SVGTagNameMap>(tagOrComponent: T, properties: AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> & KeyedProperties & TreeProperties & EventProperties & ElementProperties, ...children: Template[]): VTag<T>;
-function h<T extends keyof HTMLTagNameMap>(tagOrComponent: T, properties: AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> & KeyedProperties & TreeProperties & EventProperties & ElementProperties, ...children: Template[]): VTag<T>;
+function h<T extends FunctionComponent>(
+    tagOrComponent: T,
+    properties: Parameters<T>[0] & KeyedProperties & TreeProperties,
+    ...children: Template[]
+): VFunction<T>;
+function h<T extends ComponentConstructor>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    ...children: Template[]
+): VComponent<T>;
+function h<T extends Element>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<T>, ElementAttributes<T>> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    ...children: Template[]
+): VElement<T>;
+function h<T extends keyof SVGTagNameMap>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    ...children: Template[]
+): VTag<T>;
+function h<T extends keyof HTMLTagNameMap>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+        KeyedProperties &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    ...children: Template[]
+): VTag<T>;
 /**
  * Function factory to use as JSX pragma.
  *
@@ -239,20 +303,33 @@ function h<T extends keyof HTMLTagNameMap>(tagOrComponent: T, properties: Attrib
  * @param children The children of the Node.
  * @returns The virtual DOM object.
  */
-function h<T extends typeof Fragment | FunctionComponent | ComponentConstructor | Element | keyof HTMLTagNameMap | keyof SVGTagNameMap>(
+function h<
+    T extends
+        | typeof Fragment
+        | FunctionComponent
+        | ComponentConstructor
+        | Element
+        | keyof HTMLTagNameMap
+        | keyof SVGTagNameMap,
+>(
     tagOrComponent: T,
-    properties: AttributeProperties<Props<HTMLElement>, HTMLAttributes> & KeyedProperties & TreeProperties & ElementProperties | null = null,
+    properties:
+        | (AttributeProperties<Props<HTMLElement>, HTMLAttributes> &
+              KeyedProperties &
+              TreeProperties &
+              ElementProperties)
+        | null = null,
     ...children: Template[]
 ) {
     const { children: propertiesChildren } = (properties || {}) as TreeProperties;
-    children = propertiesChildren as Template[] || children;
+    children = (propertiesChildren as Template[]) || children;
 
     const normalizedProperties: Record<string, unknown> = {};
 
     let key: unknown;
-    let is: string|undefined;
-    let xmlns: string|undefined;
-    let ref: Element|undefined;
+    let is: string | undefined;
+    let xmlns: string | undefined;
+    let ref: Element | undefined;
     for (const k in properties) {
         if (k === 'is') {
             is = properties.is;
@@ -264,16 +341,16 @@ function h<T extends typeof Fragment | FunctionComponent | ComponentConstructor 
             key = properties.key;
         } else if (k === 'children') {
             // ensure children is array (jsx automatic runtime flats children)
-            children = isArray(properties.children) ? properties.children : [properties.children] as Template[];
+            children = isArray(properties.children) ? properties.children : ([properties.children] as Template[]);
         } else {
             normalizedProperties[k] = properties[k as keyof typeof properties];
         }
     }
 
     if (is) {
-        tagOrComponent = customElements.get(is) as T || tagOrComponent;
+        tagOrComponent = (customElements.get(is) as T) || tagOrComponent;
     } else if (typeof tagOrComponent === 'string') {
-        tagOrComponent = customElements.get(tagOrComponent) as T || tagOrComponent;
+        tagOrComponent = (customElements.get(tagOrComponent) as T) || tagOrComponent;
     }
 
     const vnode = {
@@ -283,16 +360,48 @@ function h<T extends typeof Fragment | FunctionComponent | ComponentConstructor 
         properties: normalizedProperties,
         namespace: (tagOrComponent as unknown as string) === 'svg' ? 'http://www.w3.org/2000/svg' : xmlns,
         [V_SYM]: true,
-    } as (typeof tagOrComponent extends typeof Fragment ? VFragment : VObject);
+    } as typeof tagOrComponent extends typeof Fragment ? VFragment : VObject;
 
     return vnode;
 }
 
-function jsx<T extends FunctionComponent>(tagOrComponent: T, properties: Parameters<T>[0] & TreeProperties, key?: unknown): VFunction<T>;
-function jsx<T extends ComponentConstructor>(tagOrComponent: T, properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> & TreeProperties & EventProperties & ElementProperties, key?: unknown): VComponent<T>;
-function jsx<T extends Element>(tagOrComponent: T, properties: AttributeProperties<Props<T>, ElementAttributes<T>> & TreeProperties & EventProperties & ElementProperties, key?: unknown): VElement<T>;
-function jsx<T extends keyof SVGTagNameMap>(tagOrComponent: T, properties: AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> & TreeProperties & EventProperties & ElementProperties, key?: unknown): VTag<T>;
-function jsx<T extends keyof HTMLTagNameMap>(tagOrComponent: T, properties: AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> & TreeProperties & EventProperties & ElementProperties, key?: unknown): VTag<T>;
+function jsx<T extends FunctionComponent>(
+    tagOrComponent: T,
+    properties: Parameters<T>[0] & TreeProperties,
+    key?: unknown
+): VFunction<T>;
+function jsx<T extends ComponentConstructor>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    key?: unknown
+): VComponent<T>;
+function jsx<T extends Element>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<T>, ElementAttributes<T>> &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    key?: unknown
+): VElement<T>;
+function jsx<T extends keyof SVGTagNameMap>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    key?: unknown
+): VTag<T>;
+function jsx<T extends keyof HTMLTagNameMap>(
+    tagOrComponent: T,
+    properties: AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+        TreeProperties &
+        EventProperties &
+        ElementProperties,
+    key?: unknown
+): VTag<T>;
 /**
  * Function factory to use as JSX pragma.
  *
@@ -303,7 +412,7 @@ function jsx<T extends keyof HTMLTagNameMap>(tagOrComponent: T, properties: Attr
  */
 function jsx(
     tagOrComponent: typeof Fragment | FunctionComponent | ComponentConstructor | Element | string,
-    properties: KeyedProperties & TreeProperties | null = null,
+    properties: (KeyedProperties & TreeProperties) | null = null,
     key?: unknown
 ) {
     properties = properties || {};
@@ -326,22 +435,38 @@ export namespace JSXInternal {
 
     export type Element = Template;
 
-    export interface ElementClass extends HTMLElement { }
+    export interface ElementClass extends HTMLElement {}
 
     // @ts-expect-error Member '__jsxProperties__' implicitly has an 'any' type.
-    export interface ElementAttributesProperty { __jsxProperties__ }
+    export interface ElementAttributesProperty {
+        __jsxProperties__;
+    }
 
     export type IntrinsicElements = {
         [key: string]: HTMLAttributes & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
     } & {
-        [K in keyof CustomElements]:
-            'extends' extends keyof JSXInternal.CustomElements[K] ?
-                never :
-                AttributeProperties<Props<CustomElements[K]>, HTMLAttributes> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+        [K in keyof CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
+            ? never
+            : AttributeProperties<Props<CustomElements[K]>, HTMLAttributes> &
+                  KeyedProperties &
+                  TreeProperties &
+                  EventProperties &
+                  ElementProperties;
     } & {
-        [K in keyof HTMLTagNameMap]: AttributeProperties<(({ is?: never } & Props<HTMLTagNameMap[K]>) | GetCustomElementsProps<K>), IntrinsicElementAttributes[K]> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+        [K in keyof HTMLTagNameMap]: AttributeProperties<
+            ({ is?: never } & Props<HTMLTagNameMap[K]>) | GetCustomElementsProps<K>,
+            IntrinsicElementAttributes[K]
+        > &
+            KeyedProperties &
+            TreeProperties &
+            EventProperties &
+            ElementProperties;
     } & {
-        [K in keyof SVGTagNameMap]: AttributeProperties<Props<SVGTagNameMap[K]>, IntrinsicElementAttributes[K]> & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+        [K in keyof SVGTagNameMap]: AttributeProperties<Props<SVGTagNameMap[K]>, IntrinsicElementAttributes[K]> &
+            KeyedProperties &
+            TreeProperties &
+            EventProperties &
+            ElementProperties;
     };
 }
 
@@ -356,5 +481,5 @@ declare global {
         interface ElementAttributesProperty extends JSXInternal.ElementAttributesProperty {}
     }
 
-    interface HTMLElementTagNameMap extends JSXInternal.CustomElements { }
+    interface HTMLElementTagNameMap extends JSXInternal.CustomElements {}
 }

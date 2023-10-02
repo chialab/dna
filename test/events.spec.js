@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
-import * as DNA from '@chialab/dna';
-import { __decorate } from 'tslib';
 import _decorate from '@babel/runtime/helpers/decorate';
+import * as DNA from '@chialab/dna';
 import { expect, spy } from '@chialab/ginsenghino';
+import { __decorate } from 'tslib';
 import { getComponentName } from './helpers.spec.js';
 
-describe('events', function() {
+describe('events', function () {
     this.timeout(10 * 1000);
 
     let wrapper;
@@ -258,7 +258,7 @@ describe('events', function() {
                 event.preventDefault();
             });
             expect(() => {
-                DNA.undelegateEventListener(button, 'missing', null, () => { });
+                DNA.undelegateEventListener(button, 'missing', null, () => {});
             }).to.not.throw();
         });
 
@@ -308,11 +308,13 @@ describe('events', function() {
             element.click();
             expect(callback).to.have.been.called();
             expect(callback).to.have.been.called.with('click', is.toUpperCase());
-            element.dispatchEvent(new window.CustomEvent('change', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element.dispatchEvent(
+                new window.CustomEvent('change', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback).to.have.been.called.with('change', is.toUpperCase());
             expect(callback).to.be.have.been.called.twice;
         });
@@ -393,11 +395,13 @@ describe('events', function() {
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(new window.CustomEvent('change', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element1.dispatchEvent(
+                new window.CustomEvent('change', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called();
             expect(callback2).to.have.been.called();
             expect(callback3).to.have.been.called();
@@ -405,11 +409,13 @@ describe('events', function() {
             const element2 = new TestElement2();
             wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(new window.CustomEvent('drop', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element2.dispatchEvent(
+                new window.CustomEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called.twice;
             expect(callback2).to.have.been.called.once;
             expect(callback3).to.have.been.called.once;
@@ -429,12 +435,8 @@ describe('events', function() {
                 }
             };
 
-            __decorate([
-                DNA.listen('click'),
-            ], TestElement.prototype, 'method', undefined);
-            TestElement = __decorate([
-                DNA.customElement(is),
-            ], TestElement);
+            __decorate([DNA.listen('click')], TestElement.prototype, 'method', undefined);
+            TestElement = __decorate([DNA.customElement(is)], TestElement);
 
             const element = new TestElement();
             wrapper.appendChild(element);
@@ -458,12 +460,8 @@ describe('events', function() {
                 }
             };
 
-            __decorate([
-                DNA.listen('click', 'button'),
-            ], TestElement.prototype, 'method', undefined);
-            TestElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement);
+            __decorate([DNA.listen('click', 'button')], TestElement.prototype, 'method', undefined);
+            TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
             const element = new TestElement();
             wrapper.appendChild(element);
@@ -507,31 +505,17 @@ describe('events', function() {
                 }
             };
 
-            let TestElement2 = class TestElement2 extends BaseElement { };
+            let TestElement2 = class TestElement2 extends BaseElement {};
 
-            __decorate([
-                DNA.listen('click', 'button'),
-            ], BaseElement.prototype, 'callback1', undefined);
-            __decorate([
-                DNA.listen('change'),
-            ], BaseElement.prototype, 'callback2', undefined);
-            BaseElement = __decorate([
-                DNA.customElement(getComponentName()),
-            ], BaseElement);
+            __decorate([DNA.listen('click', 'button')], BaseElement.prototype, 'callback1', undefined);
+            __decorate([DNA.listen('change')], BaseElement.prototype, 'callback2', undefined);
+            BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
 
-            __decorate([
-                DNA.listen('click', 'button'),
-            ], TestElement1.prototype, 'callback3', undefined);
-            __decorate([
-                DNA.listen('drop'),
-            ], TestElement1.prototype, 'callback4', undefined);
-            TestElement1 = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement1);
+            __decorate([DNA.listen('click', 'button')], TestElement1.prototype, 'callback3', undefined);
+            __decorate([DNA.listen('drop')], TestElement1.prototype, 'callback4', undefined);
+            TestElement1 = __decorate([DNA.customElement(getComponentName())], TestElement1);
 
-            TestElement2 = __decorate([
-                DNA.customElement(getComponentName()),
-            ], TestElement2);
+            TestElement2 = __decorate([DNA.customElement(getComponentName())], TestElement2);
 
             const element1 = new TestElement1();
             wrapper.appendChild(element1);
@@ -539,11 +523,13 @@ describe('events', function() {
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(new window.CustomEvent('change', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element1.dispatchEvent(
+                new window.CustomEvent('change', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called();
             expect(callback2).to.have.been.called();
             expect(callback3).to.have.been.called();
@@ -551,11 +537,13 @@ describe('events', function() {
             const element2 = new TestElement2();
             wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(new window.CustomEvent('drop', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element2.dispatchEvent(
+                new window.CustomEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called.twice;
             expect(callback2).to.have.been.called.once;
             expect(callback3).to.have.been.called.once;
@@ -568,29 +556,34 @@ describe('events', function() {
             const callback = spy();
 
             const is = getComponentName();
-            const TestElement = _decorate([DNA.customElement(is)], (_initialize, _DNA$Component) => {
-                class TestElement extends _DNA$Component {
-                    constructor(...args) {
-                        super(...args);
+            const TestElement = _decorate(
+                [DNA.customElement(is)],
+                (_initialize, _DNA$Component) => {
+                    class TestElement extends _DNA$Component {
+                        constructor(...args) {
+                            super(...args);
 
-                        _initialize(this);
+                            _initialize(this);
+                        }
                     }
 
-                }
-
-                return {
-                    F: TestElement,
-                    d: [{
-                        kind: 'method',
-                        decorators: [DNA.listen('click')],
-                        key: 'method',
-                        value: function method(event, target) {
-                            event.preventDefault();
-                            callback(event.type, target.tagName);
-                        },
-                    }],
-                };
-            }, DNA.Component);
+                    return {
+                        F: TestElement,
+                        d: [
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('click')],
+                                key: 'method',
+                                value: function method(event, target) {
+                                    event.preventDefault();
+                                    callback(event.type, target.tagName);
+                                },
+                            },
+                        ],
+                    };
+                },
+                DNA.Component
+            );
 
             const element = new TestElement();
             wrapper.appendChild(element);
@@ -603,35 +596,41 @@ describe('events', function() {
         it('should add a delegated listener', () => {
             const callback = spy();
 
-            const TestElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
-                class TestElement extends _DNA$Component {
-                    constructor(...args) {
-                        super(...args);
+            const TestElement = _decorate(
+                [DNA.customElement(getComponentName())],
+                (_initialize, _DNA$Component) => {
+                    class TestElement extends _DNA$Component {
+                        constructor(...args) {
+                            super(...args);
 
-                        _initialize(this);
+                            _initialize(this);
+                        }
                     }
 
-                }
-
-                return {
-                    F: TestElement,
-                    d: [{
-                        kind: 'method',
-                        decorators: [DNA.listen('click', 'button')],
-                        key: 'method',
-                        value: function method(event, target) {
-                            event.preventDefault();
-                            callback(event.type, target.tagName);
-                        },
-                    }, {
-                        kind: 'method',
-                        key: 'render',
-                        value: function render() {
-                            return DNA.compile('<button></button>');
-                        },
-                    }],
-                };
-            }, DNA.Component);
+                    return {
+                        F: TestElement,
+                        d: [
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('click', 'button')],
+                                key: 'method',
+                                value: function method(event, target) {
+                                    event.preventDefault();
+                                    callback(event.type, target.tagName);
+                                },
+                            },
+                            {
+                                kind: 'method',
+                                key: 'render',
+                                value: function render() {
+                                    return DNA.compile('<button></button>');
+                                },
+                            },
+                        ],
+                    };
+                },
+                DNA.Component
+            );
 
             const element = new TestElement();
             wrapper.appendChild(element);
@@ -651,79 +650,95 @@ describe('events', function() {
             });
             const callback4 = spy();
 
-            const BaseElement = _decorate([DNA.customElement(getComponentName())], (_initialize, _DNA$Component) => {
-                class BaseElement extends _DNA$Component {
-                    constructor(...args) {
-                        super(...args);
+            const BaseElement = _decorate(
+                [DNA.customElement(getComponentName())],
+                (_initialize, _DNA$Component) => {
+                    class BaseElement extends _DNA$Component {
+                        constructor(...args) {
+                            super(...args);
 
-                        _initialize(this);
+                            _initialize(this);
+                        }
                     }
 
-                }
+                    return {
+                        F: BaseElement,
+                        d: [
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('click', 'button')],
+                                key: 'callback1',
+                                value: callback1,
+                            },
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('change')],
+                                key: 'callback2',
+                                value: callback2,
+                            },
+                            {
+                                kind: 'method',
+                                key: 'render',
+                                value: function render() {
+                                    return DNA.compile('<button></button>');
+                                },
+                            },
+                        ],
+                    };
+                },
+                DNA.Component
+            );
 
-                return {
-                    F: BaseElement,
-                    d: [{
-                        kind: 'method',
-                        decorators: [DNA.listen('click', 'button')],
-                        key: 'callback1',
-                        value: callback1,
-                    }, {
-                        kind: 'method',
-                        decorators: [DNA.listen('change')],
-                        key: 'callback2',
-                        value: callback2,
-                    }, {
-                        kind: 'method',
-                        key: 'render',
-                        value: function render() {
-                            return DNA.compile('<button></button>');
-                        },
-                    }],
-                };
-            }, DNA.Component);
+            const TestElement1 = _decorate(
+                [DNA.customElement(getComponentName())],
+                (_initialize, _BaseElement) => {
+                    class TestElement1 extends _BaseElement {
+                        constructor(...args) {
+                            super(...args);
 
-            const TestElement1 = _decorate([DNA.customElement(getComponentName())], (_initialize, _BaseElement) => {
-                class TestElement1 extends _BaseElement {
-                    constructor(...args) {
-                        super(...args);
-
-                        _initialize(this);
+                            _initialize(this);
+                        }
                     }
 
-                }
+                    return {
+                        F: TestElement1,
+                        d: [
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('click', 'button')],
+                                key: 'callback3',
+                                value: callback3,
+                            },
+                            {
+                                kind: 'method',
+                                decorators: [DNA.listen('drop')],
+                                key: 'callback4',
+                                value: callback4,
+                            },
+                        ],
+                    };
+                },
+                BaseElement
+            );
 
-                return {
-                    F: TestElement1,
-                    d: [{
-                        kind: 'method',
-                        decorators: [DNA.listen('click', 'button')],
-                        key: 'callback3',
-                        value: callback3,
-                    }, {
-                        kind: 'method',
-                        decorators: [DNA.listen('drop')],
-                        key: 'callback4',
-                        value: callback4,
-                    }],
-                };
-            }, BaseElement);
+            const TestElement2 = _decorate(
+                [DNA.customElement(getComponentName())],
+                (_initialize, _BaseElement) => {
+                    class TestElement2 extends _BaseElement {
+                        constructor(...args) {
+                            super(...args);
 
-            const TestElement2 = _decorate([DNA.customElement(getComponentName())], (_initialize, _BaseElement) => {
-                class TestElement2 extends _BaseElement {
-                    constructor(...args) {
-                        super(...args);
-
-                        _initialize(this);
+                            _initialize(this);
+                        }
                     }
 
-                }
-
-                return {
-                    F: TestElement2,
-                    d: [],
-                };
-            }, BaseElement);
+                    return {
+                        F: TestElement2,
+                        d: [],
+                    };
+                },
+                BaseElement
+            );
 
             const element1 = new TestElement1();
             wrapper.appendChild(element1);
@@ -731,11 +746,13 @@ describe('events', function() {
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(new window.CustomEvent('change', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element1.dispatchEvent(
+                new window.CustomEvent('change', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called();
             expect(callback2).to.have.been.called();
             expect(callback3).to.have.been.called();
@@ -743,11 +760,13 @@ describe('events', function() {
             const element2 = new TestElement2();
             wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(new window.CustomEvent('drop', {
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-            }));
+            element2.dispatchEvent(
+                new window.CustomEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                })
+            );
             expect(callback1).to.have.been.called.twice;
             expect(callback2).to.have.been.called.once;
             expect(callback3).to.have.been.called.once;

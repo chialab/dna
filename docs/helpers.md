@@ -29,10 +29,9 @@ console.log(a.href); // -> https://my.domain/demo
 The `css` helper is a method internally used by DNA convert a CSS string into its scoped version. This can be used to add extra manipulation to the CSS string:
 
 ```ts
-import { DOM, css } from '@chialab/dna';
+import { css, DOM } from '@chialab/dna';
 
-const cssText = css('x-article', 'h1 { color: red; }')
-        .replace(/red/g, 'blue');
+const cssText = css('x-article', 'h1 { color: red; }').replace(/red/g, 'blue');
 
 const style = DOM.document.createElement('style');
 style.textContent = cssText;

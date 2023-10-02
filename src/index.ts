@@ -1,15 +1,27 @@
 export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { compile, html, render } from './render';
 export { css } from './css';
-export { listen, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
+export {
+    listen,
+    delegateEventListener,
+    undelegateEventListener,
+    dispatchEvent,
+    dispatchAsyncEvent,
+    defineListeners,
+} from './events';
 export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { define, extend, Component, isComponent, isComponentConstructor, customElement, customElementPrototype } from './Component';
+export {
+    define,
+    extend,
+    Component,
+    isComponent,
+    isComponentConstructor,
+    customElement,
+    customElementPrototype,
+} from './Component';
 export { parseDOM, until } from './directives';
 
-export type {
-    HTMLTagNameMap,
-    SVGTagNameMap
-} from './Elements';
+export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
     AriaAttributes,
     AriaRole,
@@ -67,7 +79,7 @@ export type {
     SVGAttributes,
     IntrinsicElementAttributes,
     /** @deprecated Use `IntrinsicElementAttributes` instead */
-    IntrinsicElementAttributes as AttributesMap
+    IntrinsicElementAttributes as AttributesMap,
 } from './Attributes';
 export type {
     JSXInternal as JSX,
@@ -78,7 +90,7 @@ export type {
     VFunction,
     VElement,
     VSlot,
-    VTag
+    VTag,
 } from './JSX';
 export type { Observable } from './Observable';
 export type { Context } from './Context';

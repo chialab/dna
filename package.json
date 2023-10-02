@@ -3,9 +3,8 @@
   "version": "3.22.0",
   "description": "Progressive Web Components",
   "type": "module",
-  "main": "dist/cjs/dna.js",
+  "main": "dist/cjs/dna.cjs",
   "module": "dist/esm/dna.js",
-  "browser": "dist/browser/dna.js",
   "types": "types/index.d.ts",
   "exports": {
     ".": {
@@ -47,15 +46,16 @@
     "test:browser": "rna test:browser test/*.spec.js --coverage",
     "test:saucelabs": "rna test:saucelabs test/*.spec.js --browsers 'modern' 'legacy'",
     "test:node": "rna test:node test/*.spec.js",
-    "lint": "eslint src test",
+    "lint": "publint && prettier --check . && eslint src test",
     "docs": "node scripts/apidoc.js",
     "prepack": "yarn build"
   },
   "devDependencies": {
     "@babel/runtime": "^7.14.0",
     "@changesets/cli": "^2.22.0",
-    "@chialab/eslint-config": "^3.0.0",
+    "@chialab/eslint-config": "^4.0.0",
     "@chialab/ginsenghino": "^1.0.0",
+    "@chialab/prettier-config": "^1.2.2",
     "@chialab/rna": "^0.17.0",
     "@chialab/rna-browser-test-runner": "^0.17.0",
     "@chialab/rna-bundler": "^0.17.0",
@@ -66,6 +66,8 @@
     "eslint-plugin-jsdoc": "^39.3.2",
     "htm": "^3.0.3",
     "mocha": "^8.4.0",
+    "prettier": "^3.0.3",
+    "publint": "^0.2.3",
     "rimraf": "^3.0.2",
     "rxjs": "^7.8.1",
     "typescript": "^5.0.0"

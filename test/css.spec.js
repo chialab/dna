@@ -2,7 +2,7 @@
 import * as DNA from '@chialab/dna';
 import { expect } from '@chialab/ginsenghino';
 
-describe('css', function() {
+describe('css', function () {
     this.timeout(10 * 1000);
 
     it('should convert :host selector', () => {
@@ -26,7 +26,9 @@ describe('css', function() {
     });
 
     it('should convert a more complex CSS #1', () => {
-        const style = DNA.css('test-style', `@charset "UTF-8";
+        const style = DNA.css(
+            'test-style',
+            `@charset "UTF-8";
 
 /**
  * This is a comment
@@ -78,7 +80,8 @@ h3 {
 @keyframes anim {
     0% { top: 0; }
     100% { top: 10px; }
-}`);
+}`
+        );
         expect(style).to.be.equal(`@charset "UTF-8";
 [:scope="test-style"] {
     color: #5F9EA0;
@@ -151,4 +154,3 @@ h3 {
     //     });
     // });
 });
-

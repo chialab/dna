@@ -33,12 +33,17 @@ The previous component will br rendered as follow:
 
 ```html
 <h1>Unaffected heading</h1>
-<div is="x-card" title="Alan Turing">
+<div
+    is="x-card"
+    title="Alan Turing">
     <style>
-        [is='x-card'] h1 { color: cadetblue; }
+        [is='x-card'] h1 {
+            color: cadetblue;
+        }
     </style>
     <h1>Alan Turing</h1>
-<div>
+    <div></div
+></div>
 ```
 
 In the resulting HTML of the example above, the first `H1` color will not be affected by the scoped style declaration.
@@ -48,13 +53,17 @@ In the resulting HTML of the example above, the first `H1` color will not be aff
 DNA uses the component definition name to prefix all CSS rules with an unique selector for the element. For example, the rule
 
 ```css
-h1 { color: cadetblue; }
+h1 {
+    color: cadetblue;
+}
 ```
 
 is transformed into
 
 ```css
-[is="x-card"] h1 { color: cadetblue; }
+[is='x-card'] h1 {
+    color: cadetblue;
+}
 ```
 
 ### The `:host` pseudo selector
@@ -119,7 +128,9 @@ x-card .title {
 ```
 
 ```html
-<link href="x-card.css" rel="stylesheet" />
+<link
+    href="x-card.css"
+    rel="stylesheet" />
 ```
 
 ### CSS Modules

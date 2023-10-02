@@ -1,14 +1,28 @@
-import htm from 'htm';
 import type { Realm } from '@chialab/quantum';
-import { type Context, getRootContext, createContext, getChildNodeContext } from './Context';
-import { isNode, isElement, isText, isArray, getPropertyDescriptor } from './helpers';
-import { type TreeProperties, type Template, h, isVFragment, isVObject, isVTag, isVComponent, isVSlot, isVFunction, isVNode, type EventProperties, type ElementProperties, type KeyedProperties } from './JSX';
-import { type Store, type UpdateRequest } from './FunctionComponent';
+import htm from 'htm';
 import { isComponent, type ComponentInstance } from './Component';
-import { isThenable, getThenableState } from './Thenable';
-import { isObservable, getObservableState } from './Observable';
+import { createContext, getChildNodeContext, getRootContext, type Context } from './Context';
 import { css } from './css';
-import { type Props, getProperty } from './property';
+import { type Store, type UpdateRequest } from './FunctionComponent';
+import { getPropertyDescriptor, isArray, isElement, isNode, isText } from './helpers';
+import {
+    h,
+    isVComponent,
+    isVFragment,
+    isVFunction,
+    isVNode,
+    isVObject,
+    isVSlot,
+    isVTag,
+    type ElementProperties,
+    type EventProperties,
+    type KeyedProperties,
+    type Template,
+    type TreeProperties,
+} from './JSX';
+import { getObservableState, isObservable } from './Observable';
+import { getProperty, type Props } from './property';
+import { getThenableState, isThenable } from './Thenable';
 
 /**
  * Compile a template string into virtual DOM template.
@@ -41,11 +55,17 @@ const convertClasses = (value: string | Record<string, boolean | undefined> | nu
     if (typeof value === 'object') {
         return value;
     }
-    return value.toString().trim().split(' ')
-        .reduce((acc, key) => {
-            acc[key] = true;
-            return acc;
-        }, {} as Record<string, boolean>);
+    return value
+        .toString()
+        .trim()
+        .split(' ')
+        .reduce(
+            (acc, key) => {
+                acc[key] = true;
+                return acc;
+            },
+            {} as Record<string, boolean>
+        );
 };
 
 /**
@@ -60,9 +80,7 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
     }
     if (typeof value === 'object') {
         for (const propertyKey in value) {
-            const camelName = propertyKey.replace(/[A-Z]/g, (match: string) =>
-                `-${match.toLowerCase()}`
-            );
+            const camelName = propertyKey.replace(/[A-Z]/g, (match: string) => `-${match.toLowerCase()}`);
             const propValue = value[propertyKey];
             if (propValue != null) {
                 styles[camelName] = propValue;
@@ -89,8 +107,7 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
  * @returns True if the render engine is handling input elements, false otherwise.
  */
 const isRenderingInput = (element: Node, propertyKey: string): element is HTMLInputElement =>
-    (propertyKey === 'checked' || propertyKey === 'value') &&
-    (element as HTMLElement).tagName === 'INPUT';
+    (propertyKey === 'checked' || propertyKey === 'value') && (element as HTMLElement).tagName === 'INPUT';
 
 /**
  * Set a value to an HTML element.
@@ -108,21 +125,22 @@ const setValue = <T extends Node>(element: T, propertyKey: PropertyKey, value: a
  * @param propertyKey The property to check.
  * @returns True if the property is a listener, false otherwise.
  */
-const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` => propertyKey[0] === 'o' && propertyKey[1] === 'n';
+const isListenerProperty = (propertyKey: string): propertyKey is `on${string}` =>
+    propertyKey[0] === 'o' && propertyKey[1] === 'n';
 
 /**
  * Get the current iterating node in rendering context.
  * @param context The child context.
  * @returns A context or null.
  */
-const getCurrentContext = (context: Context) => (context.children[context._pos] || null);
+const getCurrentContext = (context: Context) => context.children[context._pos] || null;
 
 /**
  * Get the latest iterating node in rendering context.
  * @param context The latest child context.
  * @returns A context or null.
  */
-const getLatestContext = (context: Context) => (context.children[context._pos - 1] || null);
+const getLatestContext = (context: Context) => context.children[context._pos - 1] || null;
 
 /**
  * Get a keyed child context in the rendering context.
@@ -132,7 +150,7 @@ const getLatestContext = (context: Context) => (context.children[context._pos - 
  */
 const getKeyedContext = (context: Context, key: unknown) => {
     context = context.fragment || context;
-    return context._keys && context._keys.get(key) || null;
+    return (context._keys && context._keys.get(key)) || null;
 };
 
 /**
@@ -166,12 +184,7 @@ const addKeyedContext = (context: Context, child: Context, key: unknown) => {
  * @param realm The realm to use for the render.
  * @returns The count of rendered children.
  */
-const renderTemplate = (
-    context: Context,
-    rootContext: Context,
-    template: Template,
-    realm?: Realm
-): number => {
+const renderTemplate = (context: Context, rootContext: Context, template: Template, realm?: Realm): number => {
     if (template == null || template === false) {
         return 0;
     }
@@ -181,12 +194,7 @@ const renderTemplate = (
         let childCount = 0;
         // call the render function for each child
         for (let i = 0, len = template.length; i < len; i++) {
-            childCount += renderTemplate(
-                context,
-                rootContext,
-                template[i],
-                realm
-            );
+            childCount += renderTemplate(context, rootContext, template[i], realm);
         }
         return childCount;
     }
@@ -197,12 +205,7 @@ const renderTemplate = (
 
     if (isObject && isVObject(template)) {
         if (isVFragment(template)) {
-            return renderTemplate(
-                context,
-                rootContext,
-                template.children,
-                realm
-            );
+            return renderTemplate(context, rootContext, template.children, realm);
         }
 
         if (isVFunction(template)) {
@@ -214,18 +217,14 @@ const renderTemplate = (
                 rootNode = rootFragment.node;
             } else if (key) {
                 rootNode = getKeyedContext(context, key)?.node;
-            } else if (getCurrentContext(context)?.Function === Function
-                && !hasKeyedContext(context, getCurrentContext(context))
+            } else if (
+                getCurrentContext(context)?.Function === Function &&
+                !hasKeyedContext(context, getCurrentContext(context))
             ) {
                 rootNode = getCurrentContext(context)?.node;
             }
 
-            renderTemplate(
-                context,
-                rootContext,
-                rootNode || document.createComment(Function.name),
-                realm
-            );
+            renderTemplate(context, rootContext, rootNode || document.createComment(Function.name), realm);
 
             const renderContext = getLatestContext(context) as Context;
             if (key != null) {
@@ -234,7 +233,7 @@ const renderTemplate = (
 
             const isAttached = () => context.children.indexOf(renderContext) !== -1;
             let running = true;
-            const requestUpdate: UpdateRequest = renderContext.requestUpdate = () => {
+            const requestUpdate: UpdateRequest = (renderContext.requestUpdate = () => {
                 if (renderContext.requestUpdate !== requestUpdate) {
                     return (renderContext.requestUpdate as UpdateRequest)();
                 }
@@ -247,27 +246,13 @@ const renderTemplate = (
 
                 if (isComponent(rootContext.node) && realm) {
                     realm.requestUpdate(() => {
-                        internalRender(
-                            context,
-                            template,
-                            realm,
-                            rootContext,
-                            context.namespace,
-                            renderContext
-                        );
+                        internalRender(context, template, realm, rootContext, context.namespace, renderContext);
                     });
                 } else {
-                    internalRender(
-                        context,
-                        template,
-                        realm,
-                        rootContext,
-                        context.namespace,
-                        renderContext
-                    );
+                    internalRender(context, template, realm, rootContext, context.namespace, renderContext);
                 }
                 return true;
-            };
+            });
             renderContext.Function = Function;
             renderContext.store = renderContext.store || new Map();
             context.fragment = undefined;
@@ -306,33 +291,24 @@ const renderTemplate = (
             const { properties, children } = template;
             const name = properties.name;
             const slotted = realm.childNodesBySlot(name);
-            const childCount = renderTemplate(
-                context,
-                rootContext,
-                slotted,
-                realm
-            );
+            const childCount = renderTemplate(context, rootContext, slotted, realm);
             if (!childCount) {
-                return renderTemplate(
-                    context,
-                    rootContext,
-                    children,
-                    realm
-                );
+                return renderTemplate(context, rootContext, children, realm);
             }
             return childCount;
         }
 
         const { key, children, namespace: namespaceURI } = template;
-        templateNamespace = namespaceURI || context.namespace as string;
+        templateNamespace = namespaceURI || (context.namespace as string);
 
         let currentContext: Context | null;
         if (key != null) {
             templateContext = getKeyedContext(context, key) as Context;
-        } else if ((currentContext = getCurrentContext(context))
-            && isElement(currentContext.node)
-            && !hasKeyedContext(context, currentContext)
-            && (currentContext.owner === rootContext)
+        } else if (
+            (currentContext = getCurrentContext(context)) &&
+            isElement(currentContext.node) &&
+            !hasKeyedContext(context, currentContext) &&
+            currentContext.owner === rootContext
         ) {
             if (isVComponent(template) && currentContext.node.constructor === template.type) {
                 templateContext = currentContext;
@@ -343,11 +319,16 @@ const renderTemplate = (
 
         if (!templateContext) {
             if (isVNode(template)) {
-                templateContext = getChildNodeContext(context, template.type) || createContext(template.type, rootContext);
+                templateContext =
+                    getChildNodeContext(context, template.type) || createContext(template.type, rootContext);
             } else if (isVComponent(template)) {
                 templateContext = createContext(new template.type(), rootContext, rootContext);
             } else {
-                templateContext = createContext(document.createElementNS(templateNamespace, template.type), rootContext, rootContext);
+                templateContext = createContext(
+                    document.createElementNS(templateNamespace, template.type),
+                    rootContext,
+                    rootContext
+                );
             }
         }
 
@@ -358,8 +339,14 @@ const renderTemplate = (
             }
 
             // update the Node properties
-            const oldProperties = (templateContext.properties || {}) as KeyedProperties & TreeProperties & EventProperties & ElementProperties;
-            const properties = { ...template.properties } as KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+            const oldProperties = (templateContext.properties || {}) as KeyedProperties &
+                TreeProperties &
+                EventProperties &
+                ElementProperties;
+            const properties = { ...template.properties } as KeyedProperties &
+                TreeProperties &
+                EventProperties &
+                ElementProperties;
             if (oldProperties) {
                 for (const key in oldProperties) {
                     if (!(key in properties)) {
@@ -382,8 +369,8 @@ const renderTemplate = (
 
                 if (propertyKey === 'style') {
                     const style = (templateNode as HTMLElement).style;
-                    const newStyles = properties.style = convertStyles(value as string);
-                    for (const propertyKey in (oldValue as Record<string, string>)) {
+                    const newStyles = (properties.style = convertStyles(value as string));
+                    for (const propertyKey in oldValue as Record<string, string>) {
                         if (!(propertyKey in newStyles)) {
                             style.removeProperty(propertyKey);
                         }
@@ -394,7 +381,7 @@ const renderTemplate = (
                     continue;
                 } else if (propertyKey === 'class') {
                     const classList = (templateNode as HTMLElement).classList;
-                    const newClasses = properties.class = convertClasses(value as string);
+                    const newClasses = (properties.class = convertClasses(value as string));
                     if (oldValue) {
                         for (const className in oldValue) {
                             if (!newClasses[className]) {
@@ -430,14 +417,22 @@ const renderTemplate = (
                     if (type === 'string') {
                         const observedAttributes = template.type.observedAttributes;
                         if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                            const descriptor = (propertyKey in templateNode) && getPropertyDescriptor(templateNode, propertyKey);
+                            const descriptor =
+                                propertyKey in templateNode && getPropertyDescriptor(templateNode, propertyKey);
                             if (!descriptor || !descriptor.get || descriptor.set) {
                                 setValue(templateNode, propertyKey, value);
                             }
                         } else {
-                            const property = getProperty(templateNode as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
+                            const property = getProperty(
+                                templateNode as ComponentInstance,
+                                propertyKey as keyof Props<ComponentInstance>
+                            );
                             if (property && property.fromAttribute) {
-                                setValue(templateNode, propertyKey, (property.fromAttribute as Function).call(templateNode, value as string));
+                                setValue(
+                                    templateNode,
+                                    propertyKey,
+                                    (property.fromAttribute as Function).call(templateNode, value as string)
+                                );
                             }
                         }
                     } else {
@@ -505,16 +500,22 @@ const renderTemplate = (
             realm
         );
     } else if (isObject && isNode(template)) {
-        templateContext = templateContext || getChildNodeContext(context, template) || createContext(template, rootContext);
+        templateContext =
+            templateContext || getChildNodeContext(context, template) || createContext(template, rootContext);
     } else {
-        if (typeof template === 'string' && isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE') {
+        if (
+            typeof template === 'string' &&
+            isComponent(rootContext.node) &&
+            (context.node as HTMLElement).tagName === 'STYLE'
+        ) {
             template = css(rootContext.node.is, template as string);
         }
 
         let currentContext: Context | null;
-        if ((currentContext = getCurrentContext(context))
-            && isText(currentContext.node)
-            && (currentContext.owner === rootContext)
+        if (
+            (currentContext = getCurrentContext(context)) &&
+            isText(currentContext.node) &&
+            currentContext.owner === rootContext
         ) {
             templateContext = currentContext;
             if (templateContext.node.textContent != template) {
@@ -535,7 +536,7 @@ const renderTemplate = (
         // the node is already in the child list
         // remove nodes until the correct instance
         let currentContext: Context | null;
-        while ((currentContext = getCurrentContext(context)) && (templateContext !== currentContext)) {
+        while ((currentContext = getCurrentContext(context)) && templateContext !== currentContext) {
             context.node.removeChild(currentContext.node);
             context.children.splice(context._pos, 1);
         }
@@ -548,13 +549,7 @@ const renderTemplate = (
 
     if (templateContext && isElement(templateContext.node)) {
         if ((templateChildren && templateChildren.length) || templateContext.root === rootContext) {
-            internalRender(
-                templateContext,
-                templateChildren,
-                realm,
-                rootContext,
-                templateNamespace
-            );
+            internalRender(templateContext, templateChildren, realm, rootContext, templateNamespace);
         }
     }
 
@@ -607,12 +602,7 @@ export const internalRender = (
         delete context.keys;
     }
 
-    renderTemplate(
-        context,
-        rootContext,
-        template,
-        realm
-    );
+    renderTemplate(context, rootContext, template, realm);
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
@@ -627,7 +617,10 @@ export const internalRender = (
 
     while (currentIndex <= --end) {
         const [child] = contextChildren.splice(end, 1);
-        if (child.node.parentNode === context.node || (realm?.open && child.node.parentNode === realm.node && realm.root === context.node)) {
+        if (
+            child.node.parentNode === context.node ||
+            (realm?.open && child.node.parentNode === realm.node && realm.root === context.node)
+        ) {
             context.node.removeChild(child.node);
         }
     }

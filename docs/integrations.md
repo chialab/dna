@@ -4,13 +4,12 @@
 
 DNA uses its own render to handle slotted nodes in the light DOM. So, we run tests for integration with other frontend frameworks like React, Angular, Lit and Vue. Here is a list of passing tests and known issues:
 
-| Framwework | Update a property | Slot text     | Slot elements  | Named         |
-|------------|:-----------------:|:-------------:|:--------------:|:-------------:|
-| React      | ⚠️<sup>1</sup>     | ✅             | ✅             | ✅            |
-| Lit        | ✅<sup>2</sup>     | ✅             | ✅             | ⚠️<sup>3</sup> |
-| Vue        | ✅<sup>2</sup>     | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> |
-| Angular    | 🚧                 | 🚧             | 🚧             | 🚧            |
-
+| Framwework | Update a property |   Slot text    | Slot elements  |     Named      |
+| ---------- | :---------------: | :------------: | :------------: | :------------: |
+| React      |  ⚠️<sup>1</sup>   |       ✅       |       ✅       |       ✅       |
+| Lit        |  ✅<sup>2</sup>   |       ✅       |       ✅       | ⚠️<sup>3</sup> |
+| Vue        |  ✅<sup>2</sup>   | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> | ⚠️<sup>5</sup> |
+| Angular    |        🚧         |       🚧       |       🚧       |       🚧       |
 
 <sup>1</sup> partial support in React is granted primitive properties, but not for reference values before React 19.
 
@@ -66,18 +65,18 @@ DOM.appendChild(document.body, child);
 
 All methods inherit the prototype signature with the context node as first argument:
 
-| `HTMLElement.prototype` | `DOM` helper |
-| :------------------- | :------------ |
-| `appendChild(newChild)` | `appendChild(parent, newChild)` |
-| `removeChild(oldChild)` | `removeChild(parent, oldChild)` |
-| `insertBefore(newChild, refChild)` | `insertBefore(parent, newChild, refChild)` |
-| `replaceChild(newChild, oldChild)` | `replaceChild(parent, newChild, oldChild)` |
+| `HTMLElement.prototype`                             | `DOM` helper                                                |
+| :-------------------------------------------------- | :---------------------------------------------------------- |
+| `appendChild(newChild)`                             | `appendChild(parent, newChild)`                             |
+| `removeChild(oldChild)`                             | `removeChild(parent, oldChild)`                             |
+| `insertBefore(newChild, refChild)`                  | `insertBefore(parent, newChild, refChild)`                  |
+| `replaceChild(newChild, oldChild)`                  | `replaceChild(parent, newChild, oldChild)`                  |
 | `insertAdjacentElement(position, instertedElement)` | `insertAdjacentElement(parent, position, instertedElement)` |
-| `getAttribute(qualifiedName)` | `getAttribute(element, qualifiedName)` |
-| `hasAttribute(qualifiedName)` | `hasAttribute(element, qualifiedName)` |
-| `setAttribute(qualifiedName, value)` | `setAttribute(element, qualifiedName, value)` |
-| `removeAttribute(qualifiedName)` | `removeAttribute(element, qualifiedName)` |
-| `dispatchEvent(event)` | `dispatchEvent(element, event)` |
-| `matches(selector)` | `matches(element, selector)` |
+| `getAttribute(qualifiedName)`                       | `getAttribute(element, qualifiedName)`                      |
+| `hasAttribute(qualifiedName)`                       | `hasAttribute(element, qualifiedName)`                      |
+| `setAttribute(qualifiedName, value)`                | `setAttribute(element, qualifiedName, value)`               |
+| `removeAttribute(qualifiedName)`                    | `removeAttribute(element, qualifiedName)`                   |
+| `dispatchEvent(event)`                              | `dispatchEvent(element, event)`                             |
+| `matches(selector)`                                 | `matches(element, selector)`                                |
 
 </aside>

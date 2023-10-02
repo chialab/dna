@@ -1,3 +1,3 @@
-import { h, Fragment, jsx, jsxs } from './types/JSX';
+import { Fragment, h, jsx, jsxs } from './types/JSX';
 
 export { h, Fragment, jsx, jsxs };

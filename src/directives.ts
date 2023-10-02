@@ -1,6 +1,6 @@
-import { cloneChildNodes } from './helpers';
-import { type Template, h } from './JSX';
 import { type FunctionComponent } from './FunctionComponent';
+import { cloneChildNodes } from './helpers';
+import { h, type Template } from './JSX';
 import { getThenableState } from './Thenable';
 
 /**

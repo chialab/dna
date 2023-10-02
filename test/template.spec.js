@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
+import { expect, spy, wait } from '@chialab/ginsenghino';
 import { Observable } from 'rxjs';
-import { expect, wait, spy } from '@chialab/ginsenghino';
 import { getComponentName } from './helpers.spec.js';
 
 const IMG = 'data:image/png;base64,';
 
-describe('template', function() {
+describe('template', function () {
     let wrapper;
     this.timeout(10 * 1000);
 
@@ -70,7 +70,14 @@ describe('template', function() {
         /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
-                return DNA.h('h1', null, 'Hello! My name is ', context.name, ' and my favorite number is ', context.num);
+                return DNA.h(
+                    'h1',
+                    null,
+                    'Hello! My name is ',
+                    context.name,
+                    ' and my favorite number is ',
+                    context.num
+                );
             },
             HTML(context) {
                 return DNA.html`<h1>Hello! My name is ${context.name} and my favorite number is ${context.num}</h1>`;
@@ -80,13 +87,18 @@ describe('template', function() {
 
         for (const type in TEMPLATES) {
             it(type, () => {
-                DNA.render(TEMPLATES[type]({
-                    name: 'Alan',
-                    num: 42,
-                }), wrapper);
+                DNA.render(
+                    TEMPLATES[type]({
+                        name: 'Alan',
+                        num: 42,
+                    }),
+                    wrapper
+                );
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('H1');
-                expect(wrapper.childNodes[0].textContent).to.be.equal('Hello! My name is Alan and my favorite number is 42');
+                expect(wrapper.childNodes[0].textContent).to.be.equal(
+                    'Hello! My name is Alan and my favorite number is 42'
+                );
             });
         }
     });
@@ -109,10 +121,13 @@ describe('template', function() {
 
         for (const type in TEMPLATES) {
             it(type, () => {
-                DNA.render(TEMPLATES[type]({
-                    name: 'filter',
-                    disabled: true,
-                }), wrapper);
+                DNA.render(
+                    TEMPLATES[type]({
+                        name: 'filter',
+                        disabled: true,
+                    }),
+                    wrapper
+                );
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('INPUT');
                 expect(wrapper.childNodes[0].outerHTML).to.be.equal('<input name="filter" disabled="" required="">');
@@ -124,9 +139,11 @@ describe('template', function() {
         /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
-                return DNA.h('ul', null, context.items.map((item, index) =>
-                    DNA.h('li', null, index, '. ', item)
-                ));
+                return DNA.h(
+                    'ul',
+                    null,
+                    context.items.map((item, index) => DNA.h('li', null, index, '. ', item))
+                );
             },
             HTML(context) {
                 return DNA.html`<ul>
@@ -138,9 +155,12 @@ describe('template', function() {
 
         for (const type in TEMPLATES) {
             it(type, () => {
-                DNA.render(TEMPLATES[type]({
-                    items: ['Alan', 'Brian', 'Carl'],
-                }), wrapper);
+                DNA.render(
+                    TEMPLATES[type]({
+                        items: ['Alan', 'Brian', 'Carl'],
+                    }),
+                    wrapper
+                );
                 expect(wrapper.childNodes).to.have.lengthOf(1);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('UL');
                 expect(wrapper.childNodes[0].childNodes).to.have.lengthOf(3);
@@ -158,12 +178,12 @@ describe('template', function() {
         /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(context) {
-                return DNA.h(DNA.Fragment, null,
+                return DNA.h(
+                    DNA.Fragment,
+                    null,
                     context.avatar && DNA.h('img', { src: context.avatar }),
                     DNA.h('h1', null, context.title || 'Untitled'),
-                    context.members.length ?
-                        `${context.members.length} members` :
-                        'No members'
+                    context.members.length ? `${context.members.length} members` : 'No members'
                 );
             },
             HTML(context) {
@@ -177,11 +197,14 @@ describe('template', function() {
 
         for (const type in TEMPLATES) {
             it(type, () => {
-                DNA.render(TEMPLATES[type]({
-                    avatar: IMG,
-                    title: 'Romeo',
-                    members: [],
-                }), wrapper);
+                DNA.render(
+                    TEMPLATES[type]({
+                        avatar: IMG,
+                        title: 'Romeo',
+                        members: [],
+                    }),
+                    wrapper
+                );
                 expect(wrapper.childNodes).to.have.lengthOf(3);
                 expect(wrapper.childNodes[0].tagName).to.be.equal('IMG');
                 expect(wrapper.childNodes[0].getAttribute('src')).to.be.equal(IMG);
@@ -221,7 +244,9 @@ describe('template', function() {
                 realm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].tagName).to.be.equal('STYLE');
-                expect(element.childNodes[0].textContent).to.be.equal(`[:scope="${rootName}-${type.toLowerCase()}"] .test {}`);
+                expect(element.childNodes[0].textContent).to.be.equal(
+                    `[:scope="${rootName}-${type.toLowerCase()}"] .test {}`
+                );
                 realm.dangerouslyClose();
             });
         }
@@ -231,8 +256,14 @@ describe('template', function() {
         /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX(titleName) {
-                return DNA.h(DNA.Fragment, null,
-                    DNA.h('div', { class: 'layout-header' }, DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))),
+                return DNA.h(
+                    DNA.Fragment,
+                    null,
+                    DNA.h(
+                        'div',
+                        { class: 'layout-header' },
+                        DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))
+                    ),
                     DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
                 );
             },
@@ -271,10 +302,15 @@ describe('template', function() {
 
                 DNA.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
 
-                const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
-                    DNA.h('img', { src: IMG }),
-                    DNA.h('p', null, 'Body')
-                ), wrapper);
+                const element = DNA.render(
+                    DNA.h(
+                        `${rootName}-${type.toLowerCase()}`,
+                        null,
+                        DNA.h('img', { src: IMG }),
+                        DNA.h('p', null, 'Body')
+                    ),
+                    wrapper
+                );
                 const realm = element.realm;
 
                 realm.dangerouslyOpen();
@@ -290,11 +326,16 @@ describe('template', function() {
                 innerRealm.dangerouslyClose();
                 realm.dangerouslyClose();
 
-                DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
-                    DNA.h('h1', { slot: 'title' }, 'Title'),
-                    DNA.h('img', { src: IMG }),
-                    DNA.h('p', null, 'Body')
-                ), wrapper);
+                DNA.render(
+                    DNA.h(
+                        `${rootName}-${type.toLowerCase()}`,
+                        null,
+                        DNA.h('h1', { slot: 'title' }, 'Title'),
+                        DNA.h('img', { src: IMG }),
+                        DNA.h('p', null, 'Body')
+                    ),
+                    wrapper
+                );
 
                 realm.dangerouslyOpen();
                 innerRealm.dangerouslyOpen();
@@ -316,7 +357,9 @@ describe('template', function() {
         /* eslint-disable mocha/no-setup-in-describe */
         const TEMPLATES = {
             JSX() {
-                return DNA.h(DNA.Fragment, null,
+                return DNA.h(
+                    DNA.Fragment,
+                    null,
                     DNA.h('div', { class: 'layout-header' }, DNA.h('slot', { name: 'title' })),
                     DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
                 );
@@ -343,11 +386,16 @@ describe('template', function() {
                     }
                 }
 
-                const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
-                    DNA.h('h1', { slot: 'title' }, 'Title'),
-                    DNA.h('img', { src: IMG }),
-                    DNA.h('p', null, 'Body')
-                ), wrapper);
+                const element = DNA.render(
+                    DNA.h(
+                        `${name}-${type.toLowerCase()}`,
+                        null,
+                        DNA.h('h1', { slot: 'title' }, 'Title'),
+                        DNA.h('img', { src: IMG }),
+                        DNA.h('p', null, 'Body')
+                    ),
+                    wrapper
+                );
 
                 DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
                 customElements.upgrade(element);
@@ -413,11 +461,16 @@ describe('template', function() {
 
                 DNA.define(`${cardName}-${type.toLowerCase()}`, MyCard);
 
-                const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
-                    DNA.h('h1', {}, 'Title'),
-                    DNA.h('img', { src: IMG }),
-                    DNA.h('p', null, 'Body')
-                ), wrapper);
+                const element = DNA.render(
+                    DNA.h(
+                        `${name}-${type.toLowerCase()}`,
+                        null,
+                        DNA.h('h1', {}, 'Title'),
+                        DNA.h('img', { src: IMG }),
+                        DNA.h('p', null, 'Body')
+                    ),
+                    wrapper
+                );
 
                 DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
                 customElements.upgrade(element);
@@ -479,9 +532,12 @@ describe('template', function() {
                         event.preventDefault();
                     });
 
-                    DNA.render(TEMPLATES[type]({
-                        listener,
-                    }), wrapper);
+                    DNA.render(
+                        TEMPLATES[type]({
+                            listener,
+                        }),
+                        wrapper
+                    );
 
                     const button = wrapper.childNodes[0];
                     button.click();
@@ -498,9 +554,15 @@ describe('template', function() {
             const TEMPLATES = {
                 JSX(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
-                    return DNA.h('div', null,
+                    return DNA.h(
+                        'div',
+                        null,
                         DNA.until(context.promise, 'Loading...'),
-                        DNA.h('div', null, context.promise.then((res) => ['Hello ', res]))
+                        DNA.h(
+                            'div',
+                            null,
+                            context.promise.then((res) => ['Hello ', res])
+                        )
                     );
                 },
                 HTML(context) {
@@ -519,14 +581,20 @@ describe('template', function() {
                         setTimeout(() => resolve('World!'), 1000);
                     });
 
-                    DNA.render(TEMPLATES[type]( {
-                        promise,
-                    }), wrapper);
+                    DNA.render(
+                        TEMPLATES[type]({
+                            promise,
+                        }),
+                        wrapper
+                    );
 
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<div><!----></div></div>');
-                    DNA.render(TEMPLATES[type]( {
-                        promise,
-                    }), wrapper);
+                    DNA.render(
+                        TEMPLATES[type]({
+                            promise,
+                        }),
+                        wrapper
+                    );
                     await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div><!----><div><!---->Hello World!</div></div>');
                 });
@@ -537,7 +605,9 @@ describe('template', function() {
             /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
-                    return DNA.h('div', null,
+                    return DNA.h(
+                        'div',
+                        null,
                         DNA.until(context.promise, 'Loading...'),
                         context.promise.catch((error) => ['Error ', error])
                     );
@@ -557,14 +627,20 @@ describe('template', function() {
                         setTimeout(() => reject('timeout'), 1000);
                     });
 
-                    DNA.render(TEMPLATES[type]({
-                        promise,
-                    }), wrapper);
+                    DNA.render(
+                        TEMPLATES[type]({
+                            promise,
+                        }),
+                        wrapper
+                    );
 
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->Loading...<!----></div>');
-                    DNA.render(TEMPLATES[type]({
-                        promise,
-                    }), wrapper);
+                    DNA.render(
+                        TEMPLATES[type]({
+                            promise,
+                        }),
+                        wrapper
+                    );
                     await wait(1500);
                     expect(wrapper.innerHTML).to.be.equal('<div><!----><!---->Error timeout</div>');
                 });
@@ -599,9 +675,12 @@ describe('template', function() {
             const promise2 = new Promise((resolve) => {
                 setTimeout(() => resolve('World!'), 500);
             });
-            DNA.render(DNA.html`<div>
+            DNA.render(
+                DNA.html`<div>
                 ${DNA.until(promise2, DNA.html`${promise.then((res) => DNA.html`Hello ${res}`)}`)}
-            </div>`, wrapper);
+            </div>`,
+                wrapper
+            );
             await wait(1500);
             expect(wrapper.innerHTML).to.be.equal('<div><!----></div>');
         });
@@ -659,7 +738,11 @@ describe('template', function() {
             const TEMPLATES = {
                 JSX(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
-                    return DNA.h('div', null, context.observable$.pipe((num) => DNA.h('span', null, num)));
+                    return DNA.h(
+                        'div',
+                        null,
+                        context.observable$.pipe((num) => DNA.h('span', null, num))
+                    );
                 },
                 HTML(context) {
                     /* eslint-disable mocha/no-setup-in-describe */

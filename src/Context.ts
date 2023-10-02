@@ -1,4 +1,4 @@
-import { type Store, type UpdateRequest, type FunctionComponent } from './FunctionComponent';
+import { type FunctionComponent, type Store, type UpdateRequest } from './FunctionComponent';
 import { type KeyedProperties, type TreeProperties } from './JSX';
 
 /**
@@ -49,11 +49,13 @@ export const createContext = (node: Node, root?: Context, owner?: Context): Cont
     _pos: 0,
 });
 
-export const getChildNodeContext = (parent: Context, node: Node) => parent.children.find((child) => child.node === node);
+export const getChildNodeContext = (parent: Context, node: Node) =>
+    parent.children.find((child) => child.node === node);
 
 /**
  * Get (or create) the root context attached to a node.
  * @param node The scope of the context.
  * @returns The context object (if it exists).
  */
-export const getRootContext = <T extends Node>(node: WithContext<T>) => node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(node);
+export const getRootContext = <T extends Node>(node: WithContext<T>) =>
+    (node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(node));
