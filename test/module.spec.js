@@ -6,18 +6,9 @@ describe('module', function() {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {
-        window: 'object',
-        customElements: 'object',
         customElement: 'function',
         customElementPrototype: 'function',
-        Node: 'function',
-        HTMLElement: 'function',
-        Event: 'function',
-        CustomEvent: 'function',
-        document: 'object',
-        DOM: 'object',
-        connect: 'function',
-        disconnect: 'function',
+        define: 'function',
         extend: 'function',
         render: 'function',
         Fragment: 'symbol',
@@ -50,18 +41,7 @@ describe('module', function() {
 
     for (const ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
-            if ([
-                'window',
-                'document',
-                'Node',
-                'HTMLElement',
-                'Event',
-                'CustomEvent',
-            ].indexOf(ref) !== -1) {
-                expect(DNA).to.have.property(ref);
-            } else {
-                expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
-            }
+            expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
         });
     }
 

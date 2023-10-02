@@ -7,6 +7,7 @@
     "inlineSources": false,
     "strict": true,
     "noImplicitAny": true,
+    "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,

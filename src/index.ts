@@ -1,19 +1,9 @@
-export { window } from './window';
-export {
-    NodeConstructor as Node,
-    HTMLElementConstructor as HTMLElement,
-    EventConstructor as Event,
-    CustomEventConstructor as CustomEvent,
-    document
-} from './helpers';
-export { customElements } from './CustomElementRegistry';
-export { DOM } from './DOM';
 export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { compile, html, render } from './render';
 export { css } from './css';
 export { listen, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
 export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { connect, disconnect, extend, Component, isComponent, isComponentConstructor, customElement, customElementPrototype } from './Component';
+export { define, extend, Component, isComponent, isComponentConstructor, customElement, customElementPrototype } from './Component';
 export { parseDOM, until } from './directives';
 
 export type {
@@ -90,11 +80,9 @@ export type {
     VSlot,
     VTag
 } from './JSX';
-export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
 export type { Context } from './Context';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { PropertyDeclaration, PropertyObserver, Props } from './property';
-export type { GlobalNamespace } from './window';
 export type { ComponentInstance, ComponentConstructor } from './Component';
 export type { FunctionComponent } from './FunctionComponent';

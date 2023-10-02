@@ -47,11 +47,11 @@ describe('property', function() {
             ], MyElement);
 
             const elem = new MyElement();
-            DNA.DOM.appendChild(DNA.window.document.body, elem);
+            document.body.appendChild(elem);
             expect(elem.textContent).to.be.equal('42');
             elem.testProp = 84;
             expect(elem.textContent).to.be.equal('84');
-            DNA.DOM.removeChild(DNA.window.document.body, elem);
+            document.body.removeChild(elem);
         });
 
         it('should not update component on a property change if not requested', () => {
@@ -74,11 +74,11 @@ describe('property', function() {
             ], MyElement);
 
             const elem = new MyElement();
-            DNA.DOM.appendChild(DNA.window.document.body, elem);
+            document.body.appendChild(elem);
             expect(elem.textContent).to.be.equal('42');
             elem.testProp = 84;
             expect(elem.textContent).to.be.equal('42');
-            DNA.DOM.removeChild(DNA.window.document.body, elem);
+            document.body.removeChild(elem);
         });
 
         it('should define a property with a defaultValue', () => {
@@ -466,7 +466,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             expect(new MyElement()).to.have.property('testProp', undefined);
         });
@@ -482,7 +482,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(elem).to.have.property('testProp', 42);
@@ -499,7 +499,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(() => elem.testProp = 42).to.throw(TypeError);
@@ -516,7 +516,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement;
             elem.testProp = 'string';
@@ -546,7 +546,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement;
             elem.testProp = 'string';
@@ -573,7 +573,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(elem).to.have.property('testProp', 84);
@@ -597,7 +597,7 @@ describe('property', function() {
                 }
             };
 
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(elem).to.have.property('testProp', 42);
@@ -619,7 +619,7 @@ describe('property', function() {
                     };
                 }
             };
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(elem).to.have.property('testProp', 42);
@@ -645,7 +645,7 @@ describe('property', function() {
                     };
                 }
             };
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const elem = new MyElement();
             expect(elem).to.have.property('testProp', 42);
@@ -684,7 +684,7 @@ describe('property', function() {
                     };
                 }
             }
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             class MyElement2 extends BaseElement {
                 static get properties() {
@@ -695,7 +695,7 @@ describe('property', function() {
                     };
                 }
             }
-            DNA.customElements.define(getComponentName(), MyElement2);
+            DNA.define(getComponentName(), MyElement2);
 
             const element = new MyElement();
             expect(element).to.have.property('inherit');
@@ -780,7 +780,7 @@ describe('property', function() {
                     };
                 }
             };
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
             expect(listener).to.not.have.been.called();
@@ -796,7 +796,7 @@ describe('property', function() {
             const listener = spy();
 
             const MyElement = class extends DNA.Component {};
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
             expect(() => element.observe('testProp', listener)).to.throw(Error, 'Missing property testProp');
@@ -816,7 +816,7 @@ describe('property', function() {
                     };
                 }
             };
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
             expect(listener).to.not.have.been.called();
@@ -832,7 +832,7 @@ describe('property', function() {
             const listener = spy();
 
             const MyElement = class extends DNA.Component {};
-            DNA.customElements.define(getComponentName(), MyElement);
+            DNA.define(getComponentName(), MyElement);
 
             const element = new MyElement();
             expect(() => element.unobserve('testProp', listener)).to.throw(Error, 'Missing property testProp');

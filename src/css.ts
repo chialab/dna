@@ -23,12 +23,11 @@ const CSS_SELECTORS_REGEX = /(#|\*|\.|@|\[|[a-zA-Z])([^{;}]*){/g;
  * It also converts `:host` selectors for cross browser compatibility.
  * @param name The component definition name.
  * @param cssText The CSS string.
- * @param extend The builtin element.
  * @returns A scoped CSS string.
  * @throws If the scope name is not a string.
  * @throws If the CSS value is not a string.
  */
-export const css = (name: string, cssText: string, extend?: string): string => {
+export const css = (name: string, cssText: string): string => {
     if (typeof name !== 'string') {
         throw new TypeError('The provided name must be a string');
     }
@@ -37,7 +36,7 @@ export const css = (name: string, cssText: string, extend?: string): string => {
     }
 
     const cached = CACHE[name] = CACHE[name] || {};
-    const scope = extend && extend !== name ? `${extend}[is="${name}"]` : name;
+    const scope = `[:scope="${name}"]`;
     if (cssText in cached) {
         return cached[cssText];
     }

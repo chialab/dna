@@ -10,13 +10,13 @@ describe('Component', function() {
 
     let wrapper;
     beforeEach(() => {
-        wrapper = DNA.DOM.createElement('div');
-        wrapper.ownerDocument.body.appendChild(wrapper);
+        wrapper = document.createElement('div');
+        document.body.appendChild(wrapper);
     });
 
     afterEach(() => {
         if (wrapper.parentNode) {
-            wrapper.ownerDocument.body.removeChild(wrapper);
+            document.body.removeChild(wrapper);
         }
     });
 
@@ -24,10 +24,10 @@ describe('Component', function() {
         it('should create a node', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.customElements.define(is, TestElement);
+            DNA.define(is, TestElement);
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(DNA.window.HTMLElement);
+            expect(element).to.be.an.instanceof(HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal(is.toUpperCase());
         });
@@ -35,24 +35,24 @@ describe('Component', function() {
         it('should extend a native node', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.customElements.define(is, TestElement, {
+            DNA.define(is, TestElement, {
                 extends: 'article',
             });
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(DNA.window.HTMLElement);
+            expect(element).to.be.an.instanceof(HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
         });
 
         it('should create a base class starting from the anchor base class', () => {
-            const HTMLAnchorElement = DNA.extend(DNA.window.HTMLAnchorElement);
+            const HTMLAnchorElement = DNA.extend(window.HTMLAnchorElement);
             class TestElement extends HTMLAnchorElement { }
-            DNA.customElements.define(getComponentName(), TestElement, { extends: 'a' });
+            DNA.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
             element.href = 'https://www.webcomponents.org/introduction';
-            expect(TestElement).to.not.equal(DNA.window.HTMLAnchorElement);
-            expect(element).to.be.an.instanceof(DNA.window.HTMLAnchorElement);
+            expect(TestElement).to.not.equal(HTMLAnchorElement);
+            expect(element).to.be.an.instanceof(HTMLAnchorElement);
             expect('href' in element).to.be.true;
         });
 
@@ -144,7 +144,7 @@ describe('Component', function() {
 
         it('should setup properties for extended elements', () => {
             const _forceUpdate = spy();
-            let TestElement = class TestElement extends DNA.extend(DNA.Component) {
+            let TestElement = class TestElement extends DNA.extend(HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -192,7 +192,7 @@ describe('Component', function() {
         });
 
         it('should setup properties for extended components (ts over ts)', () => {
-            let BaseElement = class BaseElement extends DNA.extend(DNA.Component) {
+            let BaseElement = class BaseElement extends DNA.extend(HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -255,7 +255,7 @@ describe('Component', function() {
         });
 
         it('should setup properties for extended components (js over ts)', () => {
-            let BaseElement = class BaseElement extends DNA.extend(DNA.Component) {
+            let BaseElement = class BaseElement extends DNA.extend(HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -301,7 +301,7 @@ describe('Component', function() {
                     super.forceUpdate();
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             expect(element).to.have.property('myCustomProp1');
@@ -364,8 +364,8 @@ describe('Component', function() {
 
             wrapper.innerHTML = `<${is}></${is}>`;
             expect(connected).to.be.false;
-            DNA.customElements.define(is, TestElement);
-            DNA.customElements.upgrade(wrapper);
+            DNA.define(is, TestElement);
+            customElements.upgrade(wrapper);
             expect(connected).to.be.true;
         });
     });
@@ -391,8 +391,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -402,10 +402,10 @@ describe('Component', function() {
             ].forEach((element) => {
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.appendChild(wrapper, element);
+                wrapper.appendChild(element);
                 expect(element.spyConnectedCallback).to.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.removeChild(wrapper, element);
+                wrapper.removeChild(element);
                 expect(element.spyDisconnectedCallback).to.have.been.called();
             });
         });
@@ -432,8 +432,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -441,14 +441,14 @@ describe('Component', function() {
                 new TestElement1(),
                 new TestElement2(),
             ].forEach((element) => {
-                const child = DNA.DOM.createElement('div');
-                DNA.DOM.appendChild(wrapper, child);
+                const child = document.createElement('div');
+                wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.replaceChild(wrapper, element, child);
+                wrapper.replaceChild(element, child);
                 expect(element.spyConnectedCallback).to.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.replaceChild(wrapper, child, element);
+                wrapper.replaceChild(child, element);
                 expect(element.spyConnectedCallback).to.have.been.called();
                 expect(element.spyDisconnectedCallback).to.have.been.called();
                 expect(element.spyConnectedCallback).to.have.been.called.once;
@@ -478,8 +478,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -487,14 +487,14 @@ describe('Component', function() {
                 new TestElement1(),
                 new TestElement2(),
             ].forEach((element) => {
-                const child = DNA.DOM.createElement('div');
-                DNA.DOM.appendChild(wrapper, child);
+                const child = document.createElement('div');
+                wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.insertBefore(wrapper, element, child);
+                wrapper.insertBefore(element, child);
                 expect(element.spyConnectedCallback).to.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.insertBefore(wrapper, child, element);
+                wrapper.insertBefore(child, element);
                 expect(element.spyConnectedCallback).to.have.been.called.once;
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
             });
@@ -522,8 +522,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -533,10 +533,10 @@ describe('Component', function() {
             ].forEach((element) => {
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.appendChild(wrapper, element);
+                wrapper.appendChild(element);
                 expect(element.spyConnectedCallback).to.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                DNA.DOM.appendChild(wrapper, element);
+                wrapper.appendChild(element);
                 expect(element.spyConnectedCallback).to.have.been.called.twice;
                 expect(element.spyDisconnectedCallback).to.have.been.called.once;
             });
@@ -552,8 +552,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -562,7 +562,7 @@ describe('Component', function() {
                 new TestElement2(),
             ].forEach((element) => {
                 expect(element.innerHTML).to.be.equal('');
-                DNA.DOM.appendChild(wrapper, element);
+                wrapper.appendChild(element);
                 expect(element.innerHTML).to.be.equal('<h1>test</h1>');
             });
         });
@@ -572,19 +572,19 @@ describe('Component', function() {
         it('return `true` if element is connected', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.customElements.define(is, TestElement);
+            DNA.define(is, TestElement);
 
-            const element = DNA.DOM.createElement(is);
-            DNA.DOM.appendChild(wrapper, element);
+            const element = document.createElement(is);
+            wrapper.appendChild(element);
             expect(element.isConnected).to.be.true;
         });
 
         it('return `false` if element is disconnected', () => {
             const is = getComponentName();
             class TestElement extends DNA.Component { }
-            DNA.customElements.define(is, TestElement);
+            DNA.define(is, TestElement);
 
-            const element = DNA.DOM.createElement(is);
+            const element = document.createElement(is);
             expect(element.isConnected).to.be.false;
         });
     });
@@ -610,8 +610,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -648,8 +648,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -686,8 +686,8 @@ describe('Component', function() {
             class TestElement1 extends TestElement {}
             class TestElement2 extends TestElement {}
 
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2, {
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
                 extends: 'article',
             });
 
@@ -965,10 +965,10 @@ describe('Component', function() {
             const name = getComponentName();
             wrapper.innerHTML = `<section is="${name}" page="1"></section>`;
             const element = wrapper.children[0];
-            DNA.customElements.define(name, TestElement, {
+            DNA.define(name, TestElement, {
                 extends: 'section',
             });
-            DNA.customElements.upgrade(element);
+            customElements.upgrade(element);
 
             expect(propertyChangedCallback).to.have.been.called();
             expect(propertyChangedCallback).to.have.been.called.with('page', 1, 2);
@@ -1034,7 +1034,7 @@ describe('Component', function() {
             ], TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(element.innerHTML).to.be.equal('<h1></h1>');
             element.title = 'test';
             expect(element.innerHTML).to.be.equal('<h1>test</h1>');
@@ -1091,7 +1091,7 @@ describe('Component', function() {
             element.title = 'Test';
             element.description = 'Test';
             element.author = 'Test';
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.have.been.called.exactly(4);
             expect(element.innerHTML).to.be.equal('<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>');
         });
@@ -1187,7 +1187,7 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             element.textContent = 'Test';
@@ -1202,13 +1202,17 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
+            const realm = element.realm;
             element.textContent = 'Test';
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].textContent).to.be.equal('Test');
+            realm.dangerouslyClose();
         });
     });
 
@@ -1221,10 +1225,11 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
             element.innerHTML = '<span>Test</span>';
+
             expect(element.innerHTML.indexOf('<div>')).to.be.equal(0);
             expect(element.innerHTML.indexOf('<span>Test</span>')).to.not.be.equal(-1);
         });
@@ -1237,14 +1242,18 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
+            const realm = element.realm;
             element.innerHTML = '<span>Test</span>';
+
+            realm.dangerouslyOpen();
             expect(element.children).to.have.lengthOf(1);
             expect(element.children[0].tagName).to.be.equal('DIV');
             expect(element.children[0].children[0].tagName).to.be.equal('SPAN');
             expect(element.children[0].children[0].textContent).to.be.equal('Test');
+            realm.dangerouslyClose();
         });
     });
 
@@ -1260,14 +1269,14 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
 
             expect(connectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.appendChild(child);
             expect(connectedCallback).to.have.been.called();
             element.appendChild(child);
@@ -1290,16 +1299,16 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
 
             expect(connectedCallback).to.not.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
-            DNA.DOM.appendChild(wrapper, child);
+            wrapper.appendChild(element);
+            wrapper.appendChild(child);
             expect(connectedCallback).to.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
             element.appendChild(child);
@@ -1317,14 +1326,18 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            wrapper.appendChild(element);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
             expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Test');
+            realm.dangerouslyClose();
         });
 
         it('should append slot item', () => {
@@ -1337,15 +1350,19 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            const span = DNA.DOM.createElement('span');
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            const span = document.createElement('span');
+            wrapper.appendChild(element);
             element.appendChild(span);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+            realm.dangerouslyClose();
         });
     });
 
@@ -1361,14 +1378,14 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child = new TestChild();
 
             expect(disconnectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.appendChild(child);
             expect(disconnectedCallback).to.not.have.been.called();
             element.removeChild(child);
@@ -1383,19 +1400,27 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            const span = DNA.DOM.createElement('span');
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            const span = document.createElement('span');
+            wrapper.appendChild(element);
             element.appendChild(span);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
+            realm.dangerouslyClose();
+
             element.removeChild(span);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes).to.have.lengthOf(0);
+            realm.dangerouslyClose();
         });
     });
 
@@ -1411,15 +1436,15 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
             const child2 = new TestChild();
 
             expect(connectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.appendChild(child1);
             element.insertBefore(child2, child1);
             expect(connectedCallback).to.have.been.called.twice;
@@ -1443,8 +1468,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1452,8 +1477,8 @@ describe('Component', function() {
 
             expect(connectedCallback).to.not.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
-            DNA.DOM.appendChild(wrapper, child2);
+            wrapper.appendChild(element);
+            wrapper.appendChild(child2);
             element.appendChild(child1);
             element.insertBefore(child2, child1);
             expect(connectedCallback).to.have.been.called.exactly(3);
@@ -1468,18 +1493,22 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            const span = DNA.DOM.createElement('span');
-            const input = DNA.DOM.createElement('input');
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            const span = document.createElement('span');
+            const input = document.createElement('input');
+            wrapper.appendChild(element);
             element.appendChild(span);
             element.insertBefore(input, span);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
             expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('SPAN');
+            realm.dangerouslyClose();
         });
     });
 
@@ -1500,8 +1529,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1509,7 +1538,7 @@ describe('Component', function() {
 
             expect(connectedCallback).to.not.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.appendChild(child1);
             element.replaceChild(child2, child1);
             expect(connectedCallback).to.have.been.called.twice;
@@ -1532,8 +1561,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1542,8 +1571,8 @@ describe('Component', function() {
             expect(connectedCallback).to.not.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
 
-            DNA.DOM.appendChild(wrapper, element);
-            DNA.DOM.appendChild(wrapper, child2);
+            wrapper.appendChild(element);
+            wrapper.appendChild(child2);
             element.appendChild(child1);
             element.replaceChild(child2, child1);
             expect(connectedCallback).to.have.been.called.exactly(3);
@@ -1558,17 +1587,21 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            const span = DNA.DOM.createElement('span');
-            const input = DNA.DOM.createElement('input');
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            const span = document.createElement('span');
+            const input = document.createElement('input');
+            wrapper.appendChild(element);
             element.appendChild(span);
             element.replaceChild(input, span);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
+            realm.dangerouslyClose();
         });
     });
 
@@ -1584,15 +1617,15 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
             const child2 = new TestChild();
 
             expect(connectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.appendChild(child1);
             element.insertAdjacentElement('afterbegin', child2);
             expect(connectedCallback).to.have.been.called.twice;
@@ -1616,8 +1649,8 @@ describe('Component', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
-            DNA.customElements.define(getComponentName(), TestChild);
+            DNA.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestChild);
 
             const element = new TestElement();
             const child1 = new TestChild();
@@ -1625,8 +1658,8 @@ describe('Component', function() {
 
             expect(connectedCallback).to.not.have.been.called();
             expect(disconnectedCallback).to.not.have.been.called();
-            DNA.DOM.appendChild(wrapper, element);
-            DNA.DOM.appendChild(wrapper, child2);
+            wrapper.appendChild(element);
+            wrapper.appendChild(child2);
             element.appendChild(child1);
             element.insertAdjacentElement('beforeend', child2);
             expect(connectedCallback).to.have.been.called.exactly(3);
@@ -1641,18 +1674,22 @@ describe('Component', function() {
                     </div>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            const span = DNA.DOM.createElement('span');
-            const input = DNA.DOM.createElement('input');
-            DNA.DOM.appendChild(wrapper, element);
+            const realm = element.realm;
+            const span = document.createElement('span');
+            const input = document.createElement('input');
+            wrapper.appendChild(element);
             element.appendChild(span);
             element.insertAdjacentElement('afterbegin', input);
+
+            realm.dangerouslyOpen();
             expect(element.childNodes).to.have.lengthOf(1);
             expect(element.childNodes[0].tagName).to.be.equal('DIV');
             expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('INPUT');
             expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('SPAN');
+            realm.dangerouslyClose();
         });
     });
 

@@ -136,10 +136,6 @@ jobs:
           name: DNA
           path: dist
 
-      - name: Run tests
-        run: yarn test:integrations
-        continue-on-error: true
-
   test-saucelabs:
     name: Test SauceLabs
     runs-on: ubuntu-latest

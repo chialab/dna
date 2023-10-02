@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { window, Component, customElement, extend, property } from '@chialab/dna';
+import { Component, customElement, extend, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -20,7 +20,7 @@ export class TestElement extends Component {
 new TestElement().focus();
 
 @customElement('x-test-builtin', { extends: 'details' })
-export class TestBuiltinElement extends extend(window.HTMLDetailsElement) {
+export class TestBuiltinElement extends extend(HTMLDetailsElement) {
     /**
      * Active prop.
      */

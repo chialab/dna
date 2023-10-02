@@ -1,6 +1,7 @@
 import { type ComponentInstance, type ComponentConstructor } from './Component';
+import { type ClassElement } from './ClassDescriptor';
 import { type Methods } from './property';
-import { type Constructor, type ClassElement, HTMLElementConstructor, isElement, isEvent, matchesImpl, createEventImpl, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
+import { type Constructor, isElement, isEvent, hasOwnProperty, getOwnPropertyDescriptor, getPrototypeOf } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -180,7 +181,7 @@ export const delegateEventListener = (element: Element, eventName: string, selec
                 if (selector) {
                     let target = eventTarget;
                     while (target && target !== element) {
-                        if (isElement(target) && matchesImpl.call(target, selector)) {
+                        if (isElement(target) && target.matches(selector)) {
                             selectorTarget = target;
                             break;
                         }
@@ -285,7 +286,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
     assertEventCancelable(cancelable);
     assertEventComposed(composed);
 
-    return createEventImpl(event, {
+    return new window.CustomEvent(event, {
         detail,
         bubbles,
         cancelable,
@@ -306,7 +307,7 @@ function initEvent(event: Event | string, detail?: CustomEventInit, bubbles?: bo
 export const dispatchEvent = (element: Element, event: Event | string, detail?: CustomEventInit['detail'], bubbles: boolean = true, cancelable: boolean = true, composed: boolean = false): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
-    return HTMLElementConstructor.prototype.dispatchEvent.call(element, event);
+    return HTMLElement.prototype.dispatchEvent.call(element, event);
 };
 
 /**
@@ -418,7 +419,7 @@ export function defineListener<T extends ComponentInstance>(
 export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
-    while (ctr && ctr.prototype && ctr !== HTMLElementConstructor) {
+    while (ctr && ctr.prototype && ctr !== HTMLElement) {
         if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
             break;
         }

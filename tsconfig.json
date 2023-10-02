@@ -12,6 +12,7 @@
     "emitDeclarationOnly": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
@@ -19,8 +20,8 @@
     "checkJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": false,
-    "moduleResolution": "node",
+    "isolatedModules": true,
+    "moduleResolution": "node"
   },
   "include": [
     "src",

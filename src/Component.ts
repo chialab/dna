@@ -1,12 +1,13 @@
+import { type Realm, attachRealm } from '@chialab/quantum';
 import { type Template, type KeyedProperties } from './JSX';
-import { type PropertyConfig, type PropertyObserver, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched } from './property';
-import { type Constructor, type ClassDescriptor, nativeCustomElements, HTMLElementConstructor, isConnected, hasAttributeImpl, setAttributeImpl, createElementImpl, setPrototypeOf, isElement, defineProperty, cloneChildNodes } from './helpers';
-import { type CustomElementConstructor, customElements, type CustomElement } from './CustomElementRegistry';
-import { DOM } from './DOM';
-import { type DelegatedEventCallback, type ListenerConfig, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners } from './events';
-import { type Context, getHostContext, getOrCreateContext, getOrCreateHostContext } from './Context';
+import { type ClassDescriptor } from './ClassDescriptor';
+import { type PropertyConfig, type PropertyObserver, type Props, addObserver, getProperty, reflectPropertyToAttribute, removeObserver, getProperties, reflectAttributeToProperty, getWatched, defineProperties } from './property';
+import { type Constructor, setPrototypeOf, isElement, defineProperty } from './helpers';
+import { type CustomElementConstructor, type CustomElement } from './CustomElement';
+import { type DelegatedEventCallback, type ListenerConfig, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, getListeners, setListeners, defineListeners } from './events';
 import { internalRender, render } from './render';
 import { parseDOM } from './directives';
+import { getRootContext } from './Context';
 
 /**
  * A symbol which identify components.
@@ -14,16 +15,10 @@ import { parseDOM } from './directives';
 export const COMPONENT_SYMBOL: unique symbol = Symbol();
 
 /**
- * A symbol which identify emulated components.
- */
-export const EMULATE_LIFECYCLE_SYMBOL: unique symbol = Symbol();
-
-/**
  * An augmented node with component flags.
  */
 export type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
-    [EMULATE_LIFECYCLE_SYMBOL]?: boolean;
 };
 
 /**
@@ -39,26 +34,21 @@ export interface ComponentMixin {
     readonly __jsxProperties__: Props<this> & KeyedProperties;
 
     /**
+     * The realm of the component.
+     */
+    readonly realm: Realm;
+
+    /**
      * The defined component name.
      * For autonomous custom elements, this is the tag name.
      */
     readonly is: string;
 
     /**
-     * A flag with the connected value of the node.
-     */
-    get isConnected(): boolean;
-
-    /**
      * A list of slot nodes.
+     * @deprecated Use `realm.childNodes` instead.
      */
     get slotChildNodes(): Node[] | undefined;
-
-    /**
-     * Initialize component properties.
-     * @deprecated
-     */
-    initialize(): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -193,19 +183,6 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
     };
 
     /**
-     * Identify shimmed constructors.
-     * Constructor will skip native constructing when true.
-     */
-    shim?: boolean;
-
-    /**
-     * Upgrade a plain element prototype.
-     * @param node The node to upgrade.
-     * @returns The new prototyped node.
-     */
-    upgrade(node: HTMLElement): T;
-
-    /**
      * Create a new Component instance.
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
@@ -234,95 +211,6 @@ export const isComponent = <T extends ComponentInstance>(node: T | Node): node i
 export const isComponentConstructor = <T extends ComponentInstance, C extends ComponentConstructor<T>>(constructor: Function | C): constructor is C => !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
 
 /**
- * Should emulate life cycle.
- */
-let lifeCycleEmulation = typeof nativeCustomElements === 'undefined';
-
-/**
- * Flag the element for life cycle emulation.
- * @param node The element to flag.
- */
-export const emulateLifeCycle = (node: WithComponentProto<HTMLElement>) => {
-    lifeCycleEmulation = true;
-    node[EMULATE_LIFECYCLE_SYMBOL] = true;
-};
-
-/**
- * Life cycle emulation status.
- * @returns True if life cycle emulation is enabled.
- */
-export const emulatingLifeCycle = () => lifeCycleEmulation;
-
-/**
- * Check if a node require emulated life cycle.
- * @param node The node to check.
- * @returns The node require emulated life cycle.
- */
-export const shouldEmulateLifeCycle = <T extends HTMLElement>(node: WithComponentProto<T | Element>): node is ComponentInstance<T> => !!node[EMULATE_LIFECYCLE_SYMBOL];
-
-/**
- * Invoke `connectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The connected node.
- */
-export const connect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.connectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        connect(children[i]);
-    }
-};
-
-/**
- * Invoke `disconnectedCallback` method of a Node (and its descendents).
- * It does nothing if life cycle is disabled.
- *
- * @param node The disconnected node.
- */
-export const disconnect = (node: Node) => {
-    if (!isElement(node)) {
-        return;
-    }
-    if (shouldEmulateLifeCycle(node)) {
-        node.disconnectedCallback();
-    }
-    const children = cloneChildNodes(node.childNodes);
-    for (let i = 0, len = children.length; i < len; i++) {
-        disconnect(children[i]);
-    }
-};
-
-/**
- * Extract slotted child nodes for initial child nodes.
- * @param element The compoonent instance.
- * @returns A list of new slotted children.
- */
-function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T>>(element: C) {
-    /* istanbul ignore next */
-    if (!element.childNodes.length && element.ownerDocument.readyState === 'loading') {
-        return;
-    }
-
-    const context = getHostContext(element) as Context;
-    const slotChildNodes = cloneChildNodes(element.childNodes);
-    for (let i = 0, len = slotChildNodes.length; i < len; i++) {
-        const child = slotChildNodes[i];
-        const childContext = getOrCreateContext(child);
-        DOM.removeChild(element, child, false);
-        childContext.hosts = [element];
-        childContext.parent = context;
-    }
-    context.children = slotChildNodes;
-    return slotChildNodes;
-}
-
-/**
  * Create a base Component class which extends a native constructor.
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
@@ -339,7 +227,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @returns The list of attributes to observe.
          */
         static get observedAttributes(): string[] {
-            const propertiesDescriptor = getProperties(this.prototype as ComponentInstance<T>);
+            const propertiesDescriptor = getProperties(this.prototype as unknown as ComponentInstance<T>);
             const attributes = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
@@ -366,19 +254,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         };
 
         /**
-         * Identify shimmed constructors.
-         * Constructor will skip native constructing when true.
+         * The realm of the component.
          */
-        static shim?: boolean;
-
-        /**
-         * Upgrade a plain element prototype.
-         * @param node The node to upgrade.
-         * @returns The new prototyped node.
-         */
-        static upgrade(node: HTMLElement) {
-            return new this(node);
-        }
+        readonly realm: Realm;
 
         /**
          * The tag name used for Component definition.
@@ -389,19 +267,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         }
 
         /**
-         * A flag with the connected value of the node.
-         * @returns True if the node is connected to the document.
-         */
-        get isConnected(): boolean {
-            return isConnected.call(this);
-        }
-
-        /**
          * A list of slot nodes.
+         * @deprecated Use `realm.childNodes` instead.
          * @returns The list of slotted nodes.
          */
         get slotChildNodes() {
-            return (getHostContext(this) as Context).children;
+            return this.realm.childNodes;
         }
 
         /**
@@ -432,11 +303,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             const node = isElement(args[0]) && args[0];
             const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-            const context = getOrCreateHostContext(element);
-            if (element.parentNode) {
-                // custom element initialized by the parser
-                context.parent = context;
-            }
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
@@ -467,28 +333,28 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                 }
             }
 
-            initSlotChildNodes(element);
-            element.initialize();
+            const realm = attachRealm(element);
+            defineProperty(element, 'realm', {
+                value: realm,
+                configurable: true,
+            });
+            realm.observe(() => element.forceUpdate());
+
             return element;
         }
-
-        /**
-         * Initialize component properties.
-         * @deprecated
-         */
-        initialize() { }
 
         /**
          * Invoked each time the Component is appended into a document-connected element.
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            if (!hasAttributeImpl.call(this, ':defined')) {
+            if (!this.hasAttribute(':defined')) {
                 if (this.is !== this.localName) {
                     // force the is attribute
-                    setAttributeImpl.call(this, 'is', this.is);
+                    this.setAttribute('is', this.is);
                 }
-                setAttributeImpl.call(this, ':defined', '');
+                this.setAttribute(':scope', this.is);
+                this.setAttribute(':defined', '');
             }
 
             const listeners = getListeners(this);
@@ -651,92 +517,19 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @returns The instances of the rendered Components and/or Nodes
          */
         render(): Template | undefined {
-            return this.slotChildNodes;
+            return this.realm?.childNodes;
         }
 
         /**
          * Force an element to re-render.
          */
         forceUpdate() {
-            const childNodes = this.slotChildNodes || initSlotChildNodes(this);
-            if (childNodes) {
-                internalRender(
-                    this,
-                    this.render(),
-                    false,
-                    getOrCreateContext(this),
-                    this
-                );
+            const realm = this.realm;
+            if (realm) {
+                realm.requestUpdate(() => {
+                    internalRender(getRootContext(realm.root), this.render(), realm);
+                });
             }
-        }
-
-        /**
-         * Append a child to the Component.
-         *
-         * @param newChild The child to add.
-         * @returns The appended child.
-         */
-        appendChild<T extends Node>(newChild: T): T {
-            return DOM.appendChild(this, newChild);
-        }
-
-        /**
-         * Remove a child from the Component.
-         *
-         * @param oldChild The child to remove.
-         * @returns The removed node.
-         */
-        removeChild<T extends Node>(oldChild: T): T {
-            return DOM.removeChild(this, oldChild);
-        }
-
-        /**
-         * Insert a child before another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param refChild The referred node.
-         * @returns The inserted child.
-         */
-        insertBefore<T extends Node>(newChild: T, refChild: Node | null): T {
-            return DOM.insertBefore(this, newChild, refChild);
-        }
-
-        /**
-         * Replace a child with another in the Component.
-         *
-         * @param newChild The child to insert.
-         * @param oldChild The Node to replace.
-         * @returns The replaced node.
-         */
-        replaceChild<T extends Node>(newChild: Node, oldChild: T): T {
-            return DOM.replaceChild(this, newChild, oldChild);
-        }
-
-        /**
-         * Insert a child at the given position.
-         * @param position The position of the insertion.
-         * @param insertedElement The child to insert.
-         * @returns The inserted child.
-         */
-        insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element | null {
-            return DOM.insertAdjacentElement(this, position, insertedElement);
-        }
-
-        /**
-         * Set a Component attribute.
-         * @param qualifiedName The attribute name.
-         * @param value The value to set.
-         */
-        setAttribute(qualifiedName: string, value: string) {
-            DOM.setAttribute(this, qualifiedName, value);
-        }
-
-        /**
-         * Remove a Component attribute.
-         * @param qualifiedName The attribute name.
-         */
-        removeAttribute(qualifiedName: string) {
-            DOM.removeAttribute(this, qualifiedName);
         }
     };
 
@@ -750,50 +543,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 };
 
 /**
- * Create a shim Constructor for Element constructors, in order to extend and instantiate them programmatically,
- * because using `new HTMLElement()` in browsers throw `Illegal constructor`.
- *
- * @param base The constructor or the class to shim.
- * @returns A newable constructor with the same prototype.
- */
-export const shim = <T extends { new(): HTMLElement; prototype: HTMLElement }>(base: T): T => {
-    type Component = ComponentInstance<InstanceType<T>>;
-    type Constrcutor = ComponentConstructor<Component>;
-
-    const shim = function ShimComponent(this: Component, ...args: any[]) {
-        const constructor = this.constructor as Constrcutor;
-        const is = this.is;
-        if (!is) {
-            throw new TypeError('Illegal constructor');
-        }
-
-        const tag = customElements.tagNames[is];
-        let element: Component;
-        if (customElements.native && !constructor.shim) {
-            element = Reflect.construct(base, args, constructor);
-            if (tag === element.localName) {
-                return element;
-            }
-        }
-
-        element = createElementImpl(tag) as Component;
-        setPrototypeOf(element, constructor.prototype);
-        emulateLifeCycle(element);
-        return element;
-    } as unknown as T;
-    setPrototypeOf(shim, base);
-    (shim as Function).apply = Function.apply;
-    (shim as Function).call = Function.call;
-    shim.prototype = base.prototype;
-    return shim;
-};
-
-/**
  * Get a native HTMLElement constructor to  extend by its name.
  * @param constructor The constructor (eg. "HTMLAnchorElement") to extend.
  * @returns A proxy that extends the native constructor.
  */
-export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(shim(constructor));
+export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(constructor);
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with
@@ -801,7 +555,7 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(HTMLElementConstructor);
+export const Component = extend(HTMLElement);
 
 /**
  * Decorate a component class in order to watch decorated properties.
@@ -847,6 +601,32 @@ export const customElementPrototype = <T extends ComponentConstructor>(classOrDe
 };
 
 /**
+ * Define a component class.
+ * @param name The name of the custom element.
+ * @param constructor The component class to define.
+ * @param options The custom element options.
+ * @returns The decorated component class.
+ * @throws If the name has already been registered.
+ * @throws An error if the component is already defined.
+ */
+export function define(name: string, constructor: ComponentConstructor, options?: ElementDefinitionOptions) {
+    defineProperties(constructor.prototype);
+    defineListeners(constructor.prototype);
+    try {
+        defineProperty(constructor.prototype, 'is', {
+            writable: false,
+            configurable: false,
+            value: name,
+        });
+    } catch {
+        throw new Error('The registry already contains an entry with the constructor (or is otherwise already defined)');
+    }
+    customElements.define(name, constructor, options);
+
+    return constructor;
+}
+
+/**
  * Decorate and define a component class.
  * @param name The name of the custom element.
  * @param options The custom element options.
@@ -858,9 +638,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
     <T extends ComponentConstructor>(classOrDescriptor: T|ClassDescriptor): any => {
         if (typeof classOrDescriptor === 'function') {
             // typescript
-            const Component = decorateConstructor(classOrDescriptor);
-            customElements.define(name, Component, options);
-            return Component;
+            return define(name, decorateConstructor(classOrDescriptor), options);
         }
 
         // spec 2
@@ -869,9 +647,7 @@ export const customElement = (name: string, options?: ElementDefinitionOptions) 
             kind,
             elements,
             finisher(constructor: Function) {
-                const Component = decorateConstructor(constructor as T);
-                customElements.define(name, Component, options);
-                return Component;
+                return define(name, decorateConstructor(constructor as T), options);
             },
         };
     };

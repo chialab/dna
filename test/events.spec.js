@@ -10,7 +10,7 @@ describe('events', function() {
 
     let wrapper;
     beforeEach(() => {
-        wrapper = DNA.DOM.createElement('div');
+        wrapper = document.createElement('div');
         wrapper.ownerDocument.body.appendChild(wrapper);
     });
 
@@ -40,8 +40,8 @@ describe('events', function() {
         it('should dispatch custom events that does bubble', () => {
             const listener = spy();
             const details = {};
-            const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(wrapper, child);
+            const child = document.createElement('button');
+            wrapper.appendChild(child);
             wrapper.addEventListener('click', (event) => listener(event.bubbles));
             DNA.dispatchEvent(child, 'click', details, true);
             expect(listener).to.have.been.called();
@@ -52,8 +52,8 @@ describe('events', function() {
             const listener = spy();
 
             const details = {};
-            const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(wrapper, child);
+            const child = document.createElement('button');
+            wrapper.appendChild(child);
             wrapper.addEventListener('click', (event) => listener(event.cancelable));
             DNA.dispatchEvent(child, 'click', details, true, true);
             expect(listener).to.have.been.called();
@@ -64,7 +64,7 @@ describe('events', function() {
             const listener1 = spy();
             const listener2 = spy();
 
-            const button = DNA.DOM.createElement('button');
+            const button = document.createElement('button');
             wrapper.appendChild(button);
 
             wrapper.addEventListener('click', (event) => listener1(event.bubbles));
@@ -80,8 +80,8 @@ describe('events', function() {
             const listener = spy();
 
             const details = {};
-            const child = DNA.DOM.createElement('button');
-            DNA.DOM.appendChild(wrapper, child);
+            const child = document.createElement('button');
+            wrapper.appendChild(child);
             wrapper.addEventListener('click', (event) => listener(event.cancelable));
             DNA.dispatchEvent(child, 'click', details, true, false);
 
@@ -131,7 +131,7 @@ describe('events', function() {
                 event.preventDefault();
             });
 
-            const button = DNA.DOM.createElement('button');
+            const button = document.createElement('button');
             wrapper.appendChild(button);
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'mouseenter', 'button', listener);
@@ -174,8 +174,8 @@ describe('events', function() {
                 event.preventDefault();
             });
 
-            const child = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
+            const child = document.createElement('div');
+            const button = document.createElement('button');
             wrapper.appendChild(child);
             child.appendChild(button);
             DNA.delegateEventListener(child, 'click', 'div', listener1);
@@ -205,8 +205,8 @@ describe('events', function() {
                 event.preventDefault();
             });
 
-            const child = DNA.DOM.createElement('div');
-            const button = DNA.DOM.createElement('button');
+            const child = document.createElement('div');
+            const button = document.createElement('button');
             wrapper.appendChild(child);
             child.appendChild(button);
             DNA.delegateEventListener(child, 'click', 'div', listener1);
@@ -231,7 +231,7 @@ describe('events', function() {
                 event.preventDefault();
             });
 
-            const button = DNA.DOM.createElement('button');
+            const button = document.createElement('button');
             wrapper.appendChild(button);
             DNA.delegateEventListener(wrapper, 'click', 'button', listener);
             DNA.delegateEventListener(wrapper, 'click', 'button', listener2);
@@ -244,7 +244,7 @@ describe('events', function() {
         });
 
         it('should do nothing if there are no delegations', () => {
-            const button = DNA.DOM.createElement('button');
+            const button = document.createElement('button');
             expect(() => {
                 DNA.undelegateEventListener(button, 'click', null, (event) => {
                     event.preventDefault();
@@ -253,7 +253,7 @@ describe('events', function() {
         });
 
         it('should do nothing if there are no delegations for an event', () => {
-            const button = DNA.DOM.createElement('button');
+            const button = document.createElement('button');
             DNA.delegateEventListener(button, 'click', null, (event) => {
                 event.preventDefault();
             });
@@ -300,15 +300,15 @@ describe('events', function() {
                 }
             }
 
-            DNA.customElements.define(is, TestElement);
+            DNA.define(is, TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.click();
             expect(callback).to.have.been.called();
             expect(callback).to.have.been.called.with('click', is.toUpperCase());
-            element.dispatchEvent(DNA.DOM.createEvent('change', {
+            element.dispatchEvent(new window.CustomEvent('change', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -335,10 +335,10 @@ describe('events', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.querySelector('button').click();
             expect(callback).to.have.been.called();
@@ -383,17 +383,17 @@ describe('events', function() {
                 }
             }
 
-            DNA.customElements.define(getComponentName(), BaseElement);
-            DNA.customElements.define(getComponentName(), TestElement1);
-            DNA.customElements.define(getComponentName(), TestElement2);
+            DNA.define(getComponentName(), BaseElement);
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2);
 
             const element1 = new TestElement1();
-            DNA.DOM.appendChild(wrapper, element1);
+            wrapper.appendChild(element1);
             expect(callback1).to.not.have.been.called();
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(DNA.DOM.createEvent('change', {
+            element1.dispatchEvent(new window.CustomEvent('change', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -403,9 +403,9 @@ describe('events', function() {
             expect(callback3).to.have.been.called();
 
             const element2 = new TestElement2();
-            DNA.DOM.appendChild(wrapper, element2);
+            wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+            element2.dispatchEvent(new window.CustomEvent('drop', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -437,7 +437,7 @@ describe('events', function() {
             ], TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.click();
             expect(callback).to.have.been.called();
@@ -466,7 +466,7 @@ describe('events', function() {
             ], TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.querySelector('button').click();
             expect(callback).to.have.been.called.with('click', 'BUTTON');
@@ -534,12 +534,12 @@ describe('events', function() {
             ], TestElement2);
 
             const element1 = new TestElement1();
-            DNA.DOM.appendChild(wrapper, element1);
+            wrapper.appendChild(element1);
             expect(callback1).to.not.have.been.called();
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(DNA.DOM.createEvent('change', {
+            element1.dispatchEvent(new window.CustomEvent('change', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -549,9 +549,9 @@ describe('events', function() {
             expect(callback3).to.have.been.called();
 
             const element2 = new TestElement2();
-            DNA.DOM.appendChild(wrapper, element2);
+            wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+            element2.dispatchEvent(new window.CustomEvent('drop', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -593,7 +593,7 @@ describe('events', function() {
             }, DNA.Component);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.click();
             expect(callback).to.have.been.called();
@@ -634,7 +634,7 @@ describe('events', function() {
             }, DNA.Component);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             element.querySelector('button').click();
             expect(callback).to.have.been.called();
@@ -726,12 +726,12 @@ describe('events', function() {
             }, BaseElement);
 
             const element1 = new TestElement1();
-            DNA.DOM.appendChild(wrapper, element1);
+            wrapper.appendChild(element1);
             expect(callback1).to.not.have.been.called();
             expect(callback2).to.not.have.been.called();
             expect(callback3).to.not.have.been.called();
             element1.querySelector('button').click();
-            element1.dispatchEvent(DNA.DOM.createEvent('change', {
+            element1.dispatchEvent(new window.CustomEvent('change', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -741,9 +741,9 @@ describe('events', function() {
             expect(callback3).to.have.been.called();
 
             const element2 = new TestElement2();
-            DNA.DOM.appendChild(wrapper, element2);
+            wrapper.appendChild(element2);
             element2.querySelector('button').click();
-            element2.dispatchEvent(DNA.DOM.createEvent('drop', {
+            element2.dispatchEvent(new window.CustomEvent('drop', {
                 bubbles: true,
                 cancelable: true,
                 composed: false,
@@ -762,10 +762,10 @@ describe('events', function() {
             });
 
             class TestElement extends DNA.Component {}
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             wrapper.addEventListener('click', callback);
             expect(callback).to.not.have.been.called();
             element.click();
@@ -779,10 +779,10 @@ describe('events', function() {
             });
 
             class TestElement extends DNA.Component {}
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             wrapper.addEventListener('click', callback);
             expect(callback).to.not.have.been.called();
             element.dispatchEvent('click');
@@ -807,7 +807,7 @@ describe('events', function() {
                     event.respondWith(async () => event.target.tagName);
                 }
             }
-            DNA.customElements.define(is, TestElement);
+            DNA.define(is, TestElement);
 
             const element = new TestElement();
             const response = await element.dispatchAsyncEvent('click');
@@ -826,10 +826,10 @@ describe('events', function() {
                     return DNA.html`<button></button>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback).to.not.have.been.called();
             element.querySelector('button').click();
@@ -848,10 +848,10 @@ describe('events', function() {
                     return DNA.html`<button></button>`;
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             element.delegateEventListener('click', 'button', callback);
             expect(callback).to.not.have.been.called();
             element.querySelector('button').click();
@@ -868,7 +868,7 @@ describe('events', function() {
                 event.preventDefault();
             });
 
-            const target = DNA.window.document.body;
+            const target = document.body;
             class TestElement extends DNA.Component {
                 static get listeners() {
                     return {
@@ -879,14 +879,14 @@ describe('events', function() {
                     };
                 }
             }
-            DNA.customElements.define(getComponentName(), TestElement);
+            DNA.define(getComponentName(), TestElement);
 
             const element = new TestElement();
-            DNA.DOM.appendChild(wrapper, element);
+            wrapper.appendChild(element);
             expect(callback).to.not.have.been.called();
             target.click();
             expect(callback).to.have.been.called();
-            DNA.DOM.removeChild(wrapper, element);
+            wrapper.removeChild(element);
             target.click();
             expect(callback).to.have.been.called.once;
         });

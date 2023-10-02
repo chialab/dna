@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-unresolved
-import { DOM, Fragment, h, render } from '@chialab/dna';
+import { Fragment, h, render } from '@chialab/dna';
 import { TestElement, TestBuiltinElement } from './Component';
 
 render(<details open />);
-render(<details ref={DOM.createElement('details')} />);
+render(<details ref={document.createElement('details')} />);
 render(<x-test active={true} />);
 render(<TestElement active={true} />);
 render(<details is="x-test-builtin" active={true} />);
@@ -12,8 +12,8 @@ render(<div key={{}}></div>);
 render(<unknown key={{}} slot="2"></unknown>);
 
 render(h('details', { open: true }));
-render(h(DOM.createElement('details'), { open: true }));
-render(h('details', { ref: DOM.createElement('details') }));
+render(h(document.createElement('details'), { open: true }));
+render(h('details', { ref: document.createElement('details') }));
 render(h('div', { key: {} }));
 render(h(Fragment));
 

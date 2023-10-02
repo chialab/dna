@@ -1,4 +1,5 @@
-import { type ClassElement, type Constructor, HTMLElementConstructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
+import { type ClassElement } from './ClassDescriptor';
+import { type Constructor, isArray, defineProperty as _defineProperty, getOwnPropertyDescriptor, hasOwnProperty, getPrototypeOf } from './helpers';
 import { type ComponentConstructor, type ComponentInstance, isComponent, type ComponentMixin } from './Component';
 
 /**
@@ -331,7 +332,7 @@ export const getWatched = <T extends ComponentInstance>(element: WithProperties<
  * @param isStatic The property definition is static.
  * @returns The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance, P extends keyof T>(prototype: T, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol, isStatic = false): PropertyDescriptor => {
+export const defineProperty = <B extends HTMLElement, T extends ComponentInstance<B>, P extends keyof T>(prototype: T, propertyKey: P, declaration: PropertyDeclaration<Constructor<T[P]>>, symbolKey: symbol, isStatic = false): PropertyDescriptor => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = symbolKey as any;
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
@@ -502,7 +503,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
-    while (ctr && ctr !== HTMLElementConstructor) {
+    while (ctr && ctr !== HTMLElement) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         if (propertiesDescriptor) {
             const descriptorProperties = (propertiesDescriptor.get ? (propertiesDescriptor.get.call(constructor) || {}) : propertiesDescriptor.value) as {

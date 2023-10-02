@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import { type Observable } from './Observable';
 import { type FunctionComponent } from './FunctionComponent';
-import { customElements } from './CustomElementRegistry';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { type Props } from './property';
@@ -329,7 +328,8 @@ export namespace JSXInternal {
 
     export interface ElementClass extends HTMLElement { }
 
-    export interface ElementAttributesProperty { __jsxProperties__: {} }
+    // @ts-expect-error Member '__jsxProperties__' implicitly has an 'any' type.
+    export interface ElementAttributesProperty { __jsxProperties__ }
 
     export type IntrinsicElements = {
         [key: string]: HTMLAttributes & KeyedProperties & TreeProperties & EventProperties & ElementProperties;

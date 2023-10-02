@@ -11,12 +11,12 @@ describe('template', function() {
     this.timeout(10 * 1000);
 
     beforeEach(() => {
-        wrapper = DNA.DOM.createElement('div');
-        DNA.DOM.appendChild(DNA.window.document.body, wrapper);
+        wrapper = document.createElement('div');
+        document.body.appendChild(wrapper);
     });
 
     afterEach(() => {
-        DNA.DOM.removeChild(DNA.window.document.body, wrapper);
+        document.body.removeChild(wrapper);
     });
 
     describe('simple', () => {
@@ -207,18 +207,22 @@ describe('template', function() {
         for (const type in TEMPLATES) {
             it(type, () => {
                 const rootName = getComponentName();
-                class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
+                class MyElement extends DNA.extend(HTMLDivElement) {
                     render() {
                         return TEMPLATES[type]();
                     }
                 }
 
-                DNA.customElements.define(`${rootName}-${type.toLowerCase()}`, MyElement, { extends: 'div' });
+                DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement, { extends: 'div' });
 
                 const element = DNA.render(DNA.h(MyElement), wrapper);
+                const realm = element.realm;
+
+                realm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].tagName).to.be.equal('STYLE');
-                expect(element.childNodes[0].textContent).to.be.equal(`div[is="${rootName}-${type.toLowerCase()}"] .test {}`);
+                expect(element.childNodes[0].textContent).to.be.equal(`[:scope="${rootName}-${type.toLowerCase()}"] .test {}`);
+                realm.dangerouslyClose();
             });
         }
     });
@@ -257,7 +261,7 @@ describe('template', function() {
                     }
                 }
 
-                DNA.customElements.define(`${rootName}-${type.toLowerCase()}`, MyElement);
+                DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement);
 
                 class MyTitle extends DNA.Component {
                     render() {
@@ -265,13 +269,17 @@ describe('template', function() {
                     }
                 }
 
-                DNA.customElements.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
+                DNA.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
 
                 const element = DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('img', { src: IMG }),
                     DNA.h('p', null, 'Body')
                 ), wrapper);
+                const realm = element.realm;
 
+                realm.dangerouslyOpen();
+                const innerRealm = element.childNodes[0].childNodes[0].realm;
+                innerRealm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(2);
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
@@ -279,6 +287,8 @@ describe('template', function() {
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal(`${titleName}-${type}`.toUpperCase());
                 expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
                 expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Untitled');
+                innerRealm.dangerouslyClose();
+                realm.dangerouslyClose();
 
                 DNA.render(DNA.h(`${rootName}-${type.toLowerCase()}`, null,
                     DNA.h('h1', { slot: 'title' }, 'Title'),
@@ -286,6 +296,8 @@ describe('template', function() {
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
+                realm.dangerouslyOpen();
+                innerRealm.dangerouslyOpen();
                 expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).to.be.equal('SPAN');
                 expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('DIV');
@@ -294,6 +306,8 @@ describe('template', function() {
                 expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
                 expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
+                innerRealm.dangerouslyClose();
+                realm.dangerouslyClose();
             });
         }
     });
@@ -335,9 +349,12 @@ describe('template', function() {
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
-                DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
-                DNA.customElements.upgrade(element);
+                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                customElements.upgrade(element);
 
+                const realm = element.realm;
+
+                realm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(2);
                 expect(element.childNodes[0].tagName).to.be.equal('DIV');
                 expect(element.childNodes[0].className).to.be.equal('layout-header');
@@ -350,6 +367,7 @@ describe('template', function() {
                 expect(element.childNodes[1].childNodes[0].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[1].childNodes[1].tagName).to.be.equal('P');
                 expect(element.childNodes[1].childNodes[1].textContent).to.be.equal('Body');
+                realm.dangerouslyClose();
             });
         }
     });
@@ -393,7 +411,7 @@ describe('template', function() {
                     }
                 }
 
-                DNA.customElements.define(`${cardName}-${type.toLowerCase()}`, MyCard);
+                DNA.define(`${cardName}-${type.toLowerCase()}`, MyCard);
 
                 const element = DNA.render(DNA.h(`${name}-${type.toLowerCase()}`, null,
                     DNA.h('h1', {}, 'Title'),
@@ -401,9 +419,11 @@ describe('template', function() {
                     DNA.h('p', null, 'Body')
                 ), wrapper);
 
-                DNA.customElements.define(`${name}-${type.toLowerCase()}`, MyElement);
-                DNA.customElements.upgrade(element);
+                DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                customElements.upgrade(element);
+                const realm = element.realm;
 
+                realm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
@@ -411,22 +431,31 @@ describe('template', function() {
                 expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
+                realm.dangerouslyClose();
+
                 element.collapsed = true;
                 element.forceUpdate();
+
+                realm.dangerouslyOpen();
                 expect(element.childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[1].tagName).to.be.equal('IMG');
                 expect(element.childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[2].textContent).to.be.equal('Body');
+                realm.dangerouslyClose();
+
                 element.collapsed = false;
                 element.forceUpdate();
+
+                realm.dangerouslyOpen();
                 expect(element.childNodes[0].childNodes[0].tagName).to.be.equal('H1');
                 expect(element.childNodes[0].childNodes[0].textContent).to.be.equal('Title');
                 expect(element.childNodes[0].childNodes[1].tagName).to.be.equal('IMG');
                 expect(element.childNodes[0].childNodes[1].getAttribute('src')).to.be.equal(IMG);
                 expect(element.childNodes[0].childNodes[2].tagName).to.be.equal('P');
                 expect(element.childNodes[0].childNodes[2].textContent).to.be.equal('Body');
+                realm.dangerouslyClose();
             });
         }
     });
@@ -597,21 +626,23 @@ describe('template', function() {
 
             for (const type in TEMPLATES) {
                 it(type, async () => {
-                    const observable$ = new Observable(async (subscriber) => {
-                        await wait(100);
-                        subscriber.next(1);
-                        await wait(100);
-                        subscriber.next(2);
-                        await wait(100);
-                        subscriber.next(3);
-                        await wait(100);
-                        subscriber.next(4);
-                        subscriber.complete();
+                    const observable$ = new Observable((subscriber) => {
+                        Promise.resolve().then(async () => {
+                            await wait(100);
+                            subscriber.next(1);
+                            await wait(100);
+                            subscriber.next(2);
+                            await wait(100);
+                            subscriber.next(3);
+                            await wait(100);
+                            subscriber.next(4);
+                            subscriber.complete();
+                        });
                     });
 
                     DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
 
-                    await wait(100);
+                    await wait(150);
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->1</div>');
                     await wait(100);
                     expect(wrapper.innerHTML).to.be.equal('<div><!---->2</div>');
@@ -641,21 +672,23 @@ describe('template', function() {
 
             for (const type in TEMPLATES) {
                 it(type, async () => {
-                    const observable$ = new Observable(async (subscriber) => {
-                        await wait(100);
-                        subscriber.next(1);
-                        await wait(100);
-                        subscriber.next(2);
-                        await wait(100);
-                        subscriber.next(3);
-                        await wait(100);
-                        subscriber.next(4);
-                        subscriber.complete();
+                    const observable$ = new Observable((subscriber) => {
+                        Promise.resolve().then(async () => {
+                            await wait(100);
+                            subscriber.next(1);
+                            await wait(100);
+                            subscriber.next(2);
+                            await wait(100);
+                            subscriber.next(3);
+                            await wait(100);
+                            subscriber.next(4);
+                            subscriber.complete();
+                        });
                     });
 
                     DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
 
-                    await wait(100);
+                    await wait(150);
                     expect(wrapper.innerHTML).to.be.equal('<div><span><!---->1</span></div>');
                     await wait(100);
                     expect(wrapper.innerHTML).to.be.equal('<div><span><!---->2</span></div>');

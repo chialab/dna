@@ -7,22 +7,22 @@ describe('css', function() {
 
     it('should convert :host selector', () => {
         const style = DNA.css('test-style', ':host { color: red; }');
-        expect(style).to.be.equal('test-style { color: red; }');
+        expect(style).to.be.equal('[:scope="test-style"] { color: red; }');
     });
 
     it('should convert :host selector with modifiers', () => {
         const style = DNA.css('test-style', ':host(.test) { color: red; }');
-        expect(style).to.be.equal('test-style.test { color: red; }');
+        expect(style).to.be.equal('[:scope="test-style"].test { color: red; }');
     });
 
     it('should scope a selector', () => {
         const style = DNA.css('test-style', '.test { color: red; }');
-        expect(style).to.be.equal('test-style .test { color: red; }');
+        expect(style).to.be.equal('[:scope="test-style"] .test { color: red; }');
     });
 
     it('should scope a selector inside a media query', () => {
         const style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
-        expect(style).to.be.equal('@media (min-width: 640px) { test-style .test { color: red; } }');
+        expect(style).to.be.equal('@media (min-width: 640px) { [:scope="test-style"] .test { color: red; } }');
     });
 
     it('should convert a more complex CSS #1', () => {
@@ -80,41 +80,41 @@ h3 {
     100% { top: 10px; }
 }`);
         expect(style).to.be.equal(`@charset "UTF-8";
-test-style {
+[:scope="test-style"] {
     color: #5F9EA0;
 }
-test-style > * {
+[:scope="test-style"] > * {
     background-color: #5F9EA0;
 }
-test-style.test {
+[:scope="test-style"].test {
     color: #5F9EA0;
 }
-test-style.test > * {
+[:scope="test-style"].test > * {
     background-color: #5F9EA0;
 }
-test-style h3 {
+[:scope="test-style"] h3 {
     color: blue;
 }
-test-style #before1:before {
+[:scope="test-style"] #before1:before {
     content: "Hello";
 }
-test-style #before2:before {
+[:scope="test-style"] #before2:before {
     content: attr(id);
 }
-test-style #before3:before {
+[:scope="test-style"] #before3:before {
     content: "Hello world";
 }
-test-style #before4:before {
+[:scope="test-style"] #before4:before {
     content: "attr(id)";
 }
-test-style #before5:before {
+[:scope="test-style"] #before5:before {
     content: "♜";
 }
-test-style #before6:before {
+[:scope="test-style"] #before6:before {
     content: "hello-world";
 }
 @media (min-width: 0) {
-    test-style h1,test-style h2 {
+    [:scope="test-style"] h1,[:scope="test-style"] h2 {
         color: inherit;
     }
 }

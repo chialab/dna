@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { window, Component, customElement, extend, property, observe } from '@chialab/dna';
+import { Component, customElement, extend, property, observe } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -14,7 +14,7 @@ export class TestElement2 extends Component {
 }
 
 @customElement('x-test3')
-export class TestElement3 extends extend(window.HTMLDetailsElement) {
+export class TestElement3 extends extend(HTMLDetailsElement) {
     // override native prop
     @property() open!: boolean;
 }
@@ -41,6 +41,15 @@ export class TestElement6 extends Component {
     @observe('sample')
     check(oldValue: String|undefined, newValue: String) {
         return `${oldValue}/${newValue}`;
+    }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+
+        this.observe('sample', () => { });
+
+        // @ts-expect-error Missing property does not exists
+        this.observe('missing', () => { });
     }
 }
 

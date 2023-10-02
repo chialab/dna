@@ -1,8 +1,6 @@
 import { cloneChildNodes } from './helpers';
-import { DOM } from './DOM';
 import { type Template, h } from './JSX';
 import { type FunctionComponent } from './FunctionComponent';
-import { customElements } from './CustomElementRegistry';
 import { getThenableState } from './Thenable';
 
 /**
@@ -19,7 +17,7 @@ const DOMParse: FunctionComponent<{ source: string }> = (props, context) => {
         return store.get('dom') as Node[];
     }
 
-    const wrapper = DOM.createElement('div');
+    const wrapper = document.createElement('div');
     wrapper.innerHTML = source;
     customElements.upgrade(wrapper);
     const dom = cloneChildNodes(wrapper.childNodes);
