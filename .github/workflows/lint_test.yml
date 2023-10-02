@@ -54,9 +54,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: DNA
-          path: |
-            dist
-            types
 
       - name: Lint
         run: yarn lint
@@ -81,9 +78,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: DNA
-          path: |
-            dist
-            types
 
       - name: Run tests
         run: yarn test:browser
@@ -116,9 +110,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: DNA
-          path: |
-            dist
-            types
 
       - name: Run tests
         run: yarn test:node
@@ -151,9 +142,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: DNA
-          path: |
-            dist
-            types
 
       - name: Run tests
         run: yarn test:saucelabs
