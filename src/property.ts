@@ -1,3 +1,4 @@
+import { HTMLElement } from '$env';
 import { type ClassElement } from './ClassDescriptor';
 import { isComponent, type ComponentConstructor, type ComponentInstance, type ComponentMixin } from './Component';
 import {

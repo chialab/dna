@@ -6,6 +6,15 @@ describe('module', function () {
     this.timeout(10 * 1000);
 
     const EXPECTED_EXPORT_MAP = {
+        window: 'object',
+        document: 'object',
+        customElements: 'object',
+        Event: 'function',
+        CustomEvent: 'function',
+        Node: 'function',
+        Element: 'function',
+        HTMLElement: 'function',
+
         customElement: 'function',
         customElementPrototype: 'function',
         define: 'function',
@@ -41,7 +50,22 @@ describe('module', function () {
 
     for (const ref in EXPECTED_EXPORT_MAP) {
         it(`should export "${ref}"`, () => {
-            expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            if (
+                [
+                    'window',
+                    'document',
+                    'customElements',
+                    'Event',
+                    'CustomEvent',
+                    'Node',
+                    'Element',
+                    'HTMLElement',
+                ].indexOf(ref) !== -1
+            ) {
+                expect(DNA).to.have.property(ref);
+            } else {
+                expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+            }
         });
     }
 

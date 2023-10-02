@@ -10,13 +10,13 @@ describe('Component', function () {
 
     let wrapper;
     beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
+        wrapper = DNA.document.createElement('div');
+        DNA.document.body.appendChild(wrapper);
     });
 
     afterEach(() => {
         if (wrapper.parentNode) {
-            document.body.removeChild(wrapper);
+            DNA.document.body.removeChild(wrapper);
         }
     });
 
@@ -27,7 +27,7 @@ describe('Component', function () {
             DNA.define(is, TestElement);
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(HTMLElement);
+            expect(element).to.be.an.instanceof(DNA.HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal(is.toUpperCase());
         });
@@ -40,13 +40,13 @@ describe('Component', function () {
             });
 
             const element = new TestElement();
-            expect(element).to.be.an.instanceof(HTMLElement);
+            expect(element).to.be.an.instanceof(DNA.HTMLElement);
             expect(element.is).to.be.equal(is);
             expect(element.tagName).to.be.equal('ARTICLE');
         });
 
         it('should create a base class starting from the anchor base class', () => {
-            const HTMLAnchorElement = DNA.extend(window.HTMLAnchorElement);
+            const HTMLAnchorElement = DNA.extend(DNA.window.HTMLAnchorElement);
             class TestElement extends HTMLAnchorElement {}
             DNA.define(getComponentName(), TestElement, { extends: 'a' });
             const element = new TestElement();
@@ -146,7 +146,7 @@ describe('Component', function () {
 
         it('should setup properties for extended elements', () => {
             const _forceUpdate = spy();
-            let TestElement = class TestElement extends DNA.extend(HTMLElement) {
+            let TestElement = class TestElement extends DNA.extend(DNA.HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -188,7 +188,7 @@ describe('Component', function () {
         });
 
         it('should setup properties for extended components (ts over ts)', () => {
-            let BaseElement = class BaseElement extends DNA.extend(HTMLElement) {
+            let BaseElement = class BaseElement extends DNA.extend(DNA.HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -241,7 +241,7 @@ describe('Component', function () {
         });
 
         it('should setup properties for extended components (js over ts)', () => {
-            let BaseElement = class BaseElement extends DNA.extend(HTMLElement) {
+            let BaseElement = class BaseElement extends DNA.extend(DNA.HTMLElement) {
                 static get properties() {
                     return {
                         myCustomProp1: {
@@ -339,7 +339,7 @@ describe('Component', function () {
             wrapper.innerHTML = `<${is}></${is}>`;
             expect(connected).to.be.false;
             DNA.define(is, TestElement);
-            customElements.upgrade(wrapper);
+            DNA.customElements.upgrade(wrapper);
             expect(connected).to.be.true;
         });
     });
@@ -409,7 +409,7 @@ describe('Component', function () {
             });
 
             [new TestElement1(), new TestElement2()].forEach((element) => {
-                const child = document.createElement('div');
+                const child = DNA.document.createElement('div');
                 wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
@@ -452,7 +452,7 @@ describe('Component', function () {
             });
 
             [new TestElement1(), new TestElement2()].forEach((element) => {
-                const child = document.createElement('div');
+                const child = DNA.document.createElement('div');
                 wrapper.appendChild(child);
                 expect(element.spyConnectedCallback).to.not.have.been.called();
                 expect(element.spyDisconnectedCallback).to.not.have.been.called();
@@ -533,7 +533,7 @@ describe('Component', function () {
             class TestElement extends DNA.Component {}
             DNA.define(is, TestElement);
 
-            const element = document.createElement(is);
+            const element = DNA.document.createElement(is);
             wrapper.appendChild(element);
             expect(element.isConnected).to.be.true;
         });
@@ -543,7 +543,7 @@ describe('Component', function () {
             class TestElement extends DNA.Component {}
             DNA.define(is, TestElement);
 
-            const element = document.createElement(is);
+            const element = DNA.document.createElement(is);
             expect(element.isConnected).to.be.false;
         });
     });
@@ -904,7 +904,7 @@ describe('Component', function () {
             DNA.define(name, TestElement, {
                 extends: 'section',
             });
-            customElements.upgrade(element);
+            DNA.customElements.upgrade(element);
 
             expect(propertyChangedCallback).to.have.been.called();
             expect(propertyChangedCallback).to.have.been.called.with('page', 1, 2);
@@ -1272,7 +1272,7 @@ describe('Component', function () {
 
             const element = new TestElement();
             const realm = element.realm;
-            const span = document.createElement('span');
+            const span = DNA.document.createElement('span');
             wrapper.appendChild(element);
             element.appendChild(span);
 
@@ -1322,7 +1322,7 @@ describe('Component', function () {
 
             const element = new TestElement();
             const realm = element.realm;
-            const span = document.createElement('span');
+            const span = DNA.document.createElement('span');
             wrapper.appendChild(element);
             element.appendChild(span);
 
@@ -1415,8 +1415,8 @@ describe('Component', function () {
 
             const element = new TestElement();
             const realm = element.realm;
-            const span = document.createElement('span');
-            const input = document.createElement('input');
+            const span = DNA.document.createElement('span');
+            const input = DNA.document.createElement('input');
             wrapper.appendChild(element);
             element.appendChild(span);
             element.insertBefore(input, span);
@@ -1509,8 +1509,8 @@ describe('Component', function () {
 
             const element = new TestElement();
             const realm = element.realm;
-            const span = document.createElement('span');
-            const input = document.createElement('input');
+            const span = DNA.document.createElement('span');
+            const input = DNA.document.createElement('input');
             wrapper.appendChild(element);
             element.appendChild(span);
             element.replaceChild(input, span);
@@ -1596,8 +1596,8 @@ describe('Component', function () {
 
             const element = new TestElement();
             const realm = element.realm;
-            const span = document.createElement('span');
-            const input = document.createElement('input');
+            const span = DNA.document.createElement('span');
+            const input = DNA.document.createElement('input');
             wrapper.appendChild(element);
             element.appendChild(span);
             element.insertAdjacentElement('afterbegin', input);

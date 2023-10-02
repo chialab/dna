@@ -39,11 +39,11 @@ describe('property', function () {
             MyElement = __decorate([DNA.customElement(getComponentName())], MyElement);
 
             const elem = new MyElement();
-            document.body.appendChild(elem);
+            DNA.document.body.appendChild(elem);
             expect(elem.textContent).to.be.equal('42');
             elem.testProp = 84;
             expect(elem.textContent).to.be.equal('84');
-            document.body.removeChild(elem);
+            DNA.document.body.removeChild(elem);
         });
 
         it('should not update component on a property change if not requested', () => {
@@ -62,11 +62,11 @@ describe('property', function () {
             MyElement = __decorate([DNA.customElement(getComponentName())], MyElement);
 
             const elem = new MyElement();
-            document.body.appendChild(elem);
+            DNA.document.body.appendChild(elem);
             expect(elem.textContent).to.be.equal('42');
             elem.testProp = 84;
             expect(elem.textContent).to.be.equal('42');
-            document.body.removeChild(elem);
+            DNA.document.body.removeChild(elem);
         });
 
         it('should define a property with a defaultValue', () => {

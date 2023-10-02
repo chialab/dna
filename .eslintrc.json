@@ -1,11 +1,5 @@
 {
   "extends": "@chialab/eslint-config",
-  "env": {
-    "browser": true
-  },
-  "parserOptions": {
-    "project": false
-  },
   "plugins": ["jsdoc"],
   "rules": {
     "jsdoc/check-param-names": 1,

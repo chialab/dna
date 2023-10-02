@@ -1,3 +1,5 @@
+import { Event, Node } from '$env';
+
 /**
  * Constructor type helper.
  */
@@ -99,7 +101,7 @@ export const isElement = <T extends Element>(node: any): node is T => node && no
  * @returns The object is an Event instance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isEvent = (event: any): event is Event => event instanceof window.Event;
+export const isEvent = (event: any): event is Event => event instanceof Event;
 
 /**
  * Clone an array like instance.

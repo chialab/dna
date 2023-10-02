@@ -11,12 +11,12 @@ describe('template', function () {
     this.timeout(10 * 1000);
 
     beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
+        wrapper = DNA.document.createElement('div');
+        DNA.document.body.appendChild(wrapper);
     });
 
     afterEach(() => {
-        document.body.removeChild(wrapper);
+        DNA.document.body.removeChild(wrapper);
     });
 
     describe('simple', () => {
@@ -230,7 +230,7 @@ describe('template', function () {
         for (const type in TEMPLATES) {
             it(type, () => {
                 const rootName = getComponentName();
-                class MyElement extends DNA.extend(HTMLDivElement) {
+                class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
                     render() {
                         return TEMPLATES[type]();
                     }
@@ -398,7 +398,7 @@ describe('template', function () {
                 );
 
                 DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
-                customElements.upgrade(element);
+                DNA.customElements.upgrade(element);
 
                 const realm = element.realm;
 
@@ -473,7 +473,7 @@ describe('template', function () {
                 );
 
                 DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
-                customElements.upgrade(element);
+                DNA.customElements.upgrade(element);
                 const realm = element.realm;
 
                 realm.dangerouslyOpen();

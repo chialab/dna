@@ -1,4 +1,5 @@
 import type { Realm } from '@chialab/quantum';
+import { document } from '$env';
 import htm from 'htm';
 import { isComponent, type ComponentInstance } from './Component';
 import { createContext, getChildNodeContext, getRootContext, type Context } from './Context';

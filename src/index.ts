@@ -1,3 +1,4 @@
+export * from '$env';
 export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { compile, html, render } from './render';
 export { css } from './css';

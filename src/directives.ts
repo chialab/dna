@@ -1,3 +1,4 @@
+import { customElements, document } from '$env';
 import { type FunctionComponent } from './FunctionComponent';
 import { cloneChildNodes } from './helpers';
 import { h, type Template } from './JSX';

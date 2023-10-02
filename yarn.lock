@@ -1318,9 +1318,9 @@
     "@ianvs/prettier-plugin-sort-imports" "^4.1.0"
 
 "@chialab/quantum@^1.0.0-alpha.0":
-  version "1.0.0-alpha.1"
-  resolved "https://registry.npmjs.org/@chialab/quantum/-/quantum-1.0.0-alpha.1.tgz#ffd03300523ca338270560089e90c156e11b89e1"
-  integrity sha512-fJy1qMiway1LMkj1Rz9s0a97nr4BagRzVpvZX9lCn1hY2nC01w1D6ltI2q7WtyyncFyOzxc3ETD8hAsoUu7xUg==
+  version "1.0.0-alpha.3"
+  resolved "https://registry.npmjs.org/@chialab/quantum/-/quantum-1.0.0-alpha.3.tgz#4cdfda4f5982e6ea263aa2a2f59c0fcc5652decb"
+  integrity sha512-FsMI9IK2h04/mTAwAYMO6AmVYPtigsa5vSeHAOztItK3VsoMEwXpP3kFgvnVyI69fqfU2b8BeEixsmIniGyPJQ==
 
 "@chialab/rna-browser-test-runner@^0.17.0", "@chialab/rna-browser-test-runner@^0.17.1":
   version "0.17.4"

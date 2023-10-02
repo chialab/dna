@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
+import { customElements } from '$env';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';

@@ -1,3 +1,4 @@
+import { CustomEvent, HTMLElement } from '$env';
 import { type ClassElement } from './ClassDescriptor';
 import { type ComponentConstructor, type ComponentInstance } from './Component';
 import {
@@ -310,7 +311,7 @@ function initEvent(
     assertEventCancelable(cancelable);
     assertEventComposed(composed);
 
-    return new window.CustomEvent(event, {
+    return new CustomEvent(event, {
         detail,
         bubbles,
         cancelable,

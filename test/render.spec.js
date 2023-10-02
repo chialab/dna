@@ -8,12 +8,12 @@ describe('render', function () {
     this.timeout(10 * 1000);
 
     beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
+        wrapper = DNA.document.createElement('div');
+        DNA.document.body.appendChild(wrapper);
     });
 
     afterEach(() => {
-        document.body.removeChild(wrapper);
+        DNA.document.body.removeChild(wrapper);
     });
 
     describe('render', () => {
@@ -58,15 +58,15 @@ describe('render', function () {
         });
 
         it('should render a text node', () => {
-            expect(DNA.render(document.createTextNode('Hello')).textContent).to.be.equal('Hello');
+            expect(DNA.render(DNA.document.createTextNode('Hello')).textContent).to.be.equal('Hello');
         });
 
         it('should render an element node', () => {
-            expect(DNA.render(document.createElement('div')).tagName).to.be.equal('DIV');
+            expect(DNA.render(DNA.document.createElement('div')).tagName).to.be.equal('DIV');
         });
 
         it('should render an element node using the `ref` property', () => {
-            const div = document.createElement('div');
+            const div = DNA.document.createElement('div');
             div.setAttribute('class', 'test');
             div.innerHTML = '<span>test</span>';
             DNA.render(DNA.html`<div><div ref=${div} id="test" /></div>`);
@@ -78,7 +78,7 @@ describe('render', function () {
         });
 
         it('should render an element node using the `h` helper', () => {
-            const div = document.createElement('div');
+            const div = DNA.document.createElement('div');
             div.setAttribute('class', 'test');
             div.innerHTML = '<span>test</span>';
             DNA.render(DNA.html`<div><${div} id="test" /></div>`);
@@ -138,8 +138,8 @@ describe('render', function () {
                     'world',
                     true,
                     DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
-                    document.createTextNode('Hello'),
-                    document.createElement('div'),
+                    DNA.document.createTextNode('Hello'),
+                    DNA.document.createElement('div'),
                 ],
                 wrapper
             );
@@ -153,8 +153,8 @@ describe('render', function () {
                     'world',
                     true,
                     DNA.h('ul', { class: 'list' }, DNA.h('li', null, 'One'), DNA.h('li', null, 'Two')),
-                    document.createTextNode('Hello'),
-                    document.createElement('div'),
+                    DNA.document.createTextNode('Hello'),
+                    DNA.document.createElement('div'),
                 ];
             };
 
@@ -433,17 +433,21 @@ describe('render', function () {
             DNA.render(DNA.h('div', { style: 'color: red;' }), wrapper);
             const elem = wrapper.children[0];
             elem.style.fontFamily = 'sans-serif';
-            expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
-            expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
             DNA.render(DNA.h('div', { style: { backgroundColor: 'blue' } }), wrapper);
-            expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
-            expect(window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
-            expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
+            expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
             DNA.render(DNA.h('div', { style: 'font-weight: bold;' }), wrapper);
-            expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
-            expect(window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgba(0, 0, 0, 0)', '', 'transparent']);
-            expect(window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
-            expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+            expect(DNA.window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
+            expect(DNA.window.getComputedStyle(elem).backgroundColor).to.be.oneOf([
+                'rgba(0, 0, 0, 0)',
+                '',
+                'transparent',
+            ]);
+            expect(DNA.window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
+            expect(DNA.window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
         });
 
         it('should render svgs', () => {
@@ -510,7 +514,7 @@ describe('render', function () {
             DNA.render(DNA.h('div'), wrapper);
             const elem = wrapper.children[0];
             expect(elem.childNodes).to.have.lengthOf(0);
-            elem.appendChild(document.createElement('span'));
+            elem.appendChild(DNA.document.createElement('span'));
             expect(elem.childNodes).to.have.lengthOf(1);
             DNA.render(DNA.h('div'), wrapper);
             expect(elem.childNodes).to.have.lengthOf(1);
@@ -678,10 +682,10 @@ describe('render', function () {
             DNA.define(name1, Parent);
             DNA.define(name2, Child);
 
-            const parent = document.createElement(name1);
+            const parent = DNA.document.createElement(name1);
 
-            const child = document.createElement(name2);
-            child.appendChild(document.createTextNode('Hello'));
+            const child = DNA.document.createElement(name2);
+            child.appendChild(DNA.document.createTextNode('Hello'));
             parent.insertBefore(child, null);
             wrapper.appendChild(parent);
 

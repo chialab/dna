@@ -1,4 +1,5 @@
 import { attachRealm, type Realm } from '@chialab/quantum';
+import { customElements, HTMLElement } from '$env';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { getRootContext } from './Context';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
