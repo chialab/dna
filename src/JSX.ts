@@ -437,9 +437,8 @@ export namespace JSXInternal {
 
     export interface ElementClass extends HTMLElement {}
 
-    // @ts-expect-error Member '__jsxProperties__' implicitly has an 'any' type.
     export interface ElementAttributesProperty {
-        __jsxProperties__;
+        __jsxProperties__: {};
     }
 
     export type IntrinsicElements = {
