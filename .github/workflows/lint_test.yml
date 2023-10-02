@@ -3,27 +3,6 @@ on:
   workflow_call:
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          cache: yarn
-
-      - name: Install project dependencies
-        run: yarn install
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
-
-      - name: Lint
-        run: yarn lint
-
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -48,7 +27,31 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: DNA
-          path: dist
+          path: |
+            dist
+            types
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: build
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Lint
+        run: yarn lint
 
   test-browser:
     name: Test Browsers
@@ -96,6 +99,8 @@ jobs:
 
       - name: Install project dependencies
         run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Fetch build artifacts
         uses: actions/download-artifact@v3
@@ -127,6 +132,8 @@ jobs:
 
       - name: Install project dependencies
         run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Fetch build artifacts
         uses: actions/download-artifact@v3
