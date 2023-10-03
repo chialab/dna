@@ -9,3 +9,4 @@ concurrency:
 jobs:
   lint-test:
     uses: ./.github/workflows/lint_test.yml
+    secrets: inherit
