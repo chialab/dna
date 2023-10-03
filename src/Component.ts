@@ -552,9 +552,8 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean
-        ) // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        : Promise<any[]>;
+            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ): Promise<any[]>;
         dispatchAsyncEvent(
             event: Event | string,
             detail?: CustomEventInit['detail'],
