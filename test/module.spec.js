@@ -45,7 +45,9 @@ describe('module', function () {
         isComponentConstructor: 'function',
         Component: 'function',
         parseDOM: 'function',
+        then: 'function',
         until: 'function',
+        pipe: 'function',
     };
 
     for (const ref in EXPECTED_EXPORT_MAP) {

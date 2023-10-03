@@ -2,6 +2,7 @@ import { customElements, document } from '$env';
 import { type FunctionComponent } from './FunctionComponent';
 import { cloneChildNodes } from './helpers';
 import { h, type Template } from './JSX';
+import { getObservableState, type Observable } from './Observable';
 import { getThenableState } from './Thenable';
 
 /**
@@ -35,6 +36,27 @@ const DOMParse: FunctionComponent<{ source: string }> = (props, context) => {
 export const parseDOM = (string: string): Template => h(DOMParse, { source: string });
 
 /**
+ * Render a promise when it is resolved.
+ * @param thenable The Promise-like object.
+ * @returns The virtual DOM template function.
+ */
+export const then = (thenable: Promise<unknown>) =>
+    h(
+        ((props, context) => {
+            const state = getThenableState(thenable);
+            if (state.pending) {
+                thenable
+                    .catch(() => 1)
+                    .then(() => {
+                        context.requestUpdate();
+                    });
+            }
+            return state.result as Template;
+        }) as FunctionComponent,
+        null
+    );
+
+/**
  * It renders the template when then provided Thenable is in pending status.
  * @param thenable The Promise-like object.
  * @param template The template to render.
@@ -45,5 +67,33 @@ export const until = (thenable: Promise<unknown>, template: Template) => {
     const wrapper = thenable.then(() => false).catch(() => false);
     const state = getThenableState(wrapper);
     state.result = original.pending && template;
-    return wrapper;
+    return then(wrapper);
 };
+
+/**
+ * Pipe observable value to the template.
+ * @param observable The observable to pipe.
+ * @returns The virtual DOM template function.
+ */
+export const pipe = (observable: Observable<unknown>) =>
+    h((props, context) => {
+        const status = getObservableState(observable);
+        if (!status.complete) {
+            const subscription = observable.subscribe(
+                () => {
+                    if (!context.requestUpdate()) {
+                        subscription.unsubscribe();
+                    }
+                },
+                () => {
+                    if (!context.requestUpdate()) {
+                        subscription.unsubscribe();
+                    }
+                },
+                () => {
+                    subscription.unsubscribe();
+                }
+            );
+        }
+        return status.current as Template;
+    }, null);

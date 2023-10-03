@@ -21,9 +21,7 @@ import {
     type Template,
     type TreeProperties,
 } from './JSX';
-import { getObservableState, isObservable } from './Observable';
 import { getProperty, type Props } from './property';
-import { getThenableState, isThenable } from './Thenable';
 
 /**
  * Compile a template string into virtual DOM template.
@@ -455,51 +453,6 @@ const renderTemplate = (context: Context, rootContext: Context, template: Templa
         }
 
         templateChildren = children;
-    } else if (isObject && isThenable(template)) {
-        return renderTemplate(
-            context,
-            rootContext,
-            h((props, context) => {
-                const status = getThenableState(template as Promise<unknown>);
-                if (status.pending) {
-                    (template as Promise<unknown>)
-                        .catch(() => 1)
-                        .then(() => {
-                            context.requestUpdate();
-                        });
-                }
-                return status.result as Template;
-            }, null),
-            realm
-        );
-    } else if (isObject && isObservable(template)) {
-        const observable = template;
-        return renderTemplate(
-            context,
-            rootContext,
-            h((props, context) => {
-                const status = getObservableState(observable);
-                if (!status.complete) {
-                    const subscription = observable.subscribe(
-                        () => {
-                            if (!context.requestUpdate()) {
-                                subscription.unsubscribe();
-                            }
-                        },
-                        () => {
-                            if (!context.requestUpdate()) {
-                                subscription.unsubscribe();
-                            }
-                        },
-                        () => {
-                            subscription.unsubscribe();
-                        }
-                    );
-                }
-                return status.current as Template;
-            }, null),
-            realm
-        );
     } else if (isObject && isNode(template)) {
         templateContext =
             templateContext || getChildNodeContext(context, template) || createContext(template, rootContext);

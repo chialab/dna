@@ -88,13 +88,13 @@ In order to be fast, predictive and easier to install, DNA uses a custom templat
 
 If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use [template strings](./templates) to avoid the build step in your workflow.
 
-### Properties, slots, Promises and Observables!
+### Properties, slots, Promises, Observables and Signals!
 
-DNA comes with a lot of features in a very small package. You can use `<slot>` elements, observe properties changes and delegate events. It can also resolve `Promise`s and pipe `Observable`s directly in the template.
+DNA comes with a lot of features in a very small package. You can use `<slot>` elements, observe properties changes and delegate events. It can also resolve `Promise`s, pipe `Observable`s and subscribe `Signal`s directly in the template.
 
 ## Browsers support
 
-Tests are run against all ever green browsers, Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements), but some Babel helpers if you want to use decorators need support for `Symbol`, `Object.assign` and `Array.prototype.find`. Also, a polyfill for `Promise`s is required in IE11 if you are using async methods.
+Tests are run against all supported browsers, including old Safari 12 and Edge 17 versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements).
 
 ![Browser compaitibility table](https://app.saucelabs.com/browser-matrix/chialab-sl-003.svg)
 

@@ -206,24 +206,26 @@ h(
 
 ### Promises
 
-The DNA's render algorithm has builtin support for `Promise`s in template: it interpolates the result of a `Promise` as if you were using the `await` statement and provides the helper `until` for status handling:
+DNA exposes two directives to handle promises: the `then` directive can be used to render a `Promise` result in the template as if you were using the `await` statement, while the `until` directive is useful for status handling.
 
 ```ts
-import { until } from '@chialab/dna';
+import { html, then, until } from '@chialab/dna';
 
 const json = fetch('/data.json')
     .then(() => response.json())
     .then((data) => data.map(({ name }) => html`<li>${name}</li>`));
 
 html`
-    ${until(json, 'Loading...')} ${json
-        .then(
-            (data) =>
-                html`<ul
-                    >${data}</ul
-                >`
-        )
-        .catch((error) => html`<div>Error: ${error}</div>`)}
+    ${until(json, 'Loading...')} ${then(
+        json
+            .then(
+                (data) =>
+                    html`<ul
+                        >${data}</ul
+                    >`
+            )
+            .catch((error) => html`<div>Error: ${error}</div>`)
+    )}
 `;
 ```
 
@@ -232,13 +234,13 @@ html`
 <div>
 
 ```ts
-import { until } from '@chialab/dna';
+import { until, then } from '@chialab/dna';
 
 <>
     {until(json, 'Loading...')}
-    {json
+    {then(json
         .then((data) => <ul>{data}</ul>)
-        .catch((error) => <div>Error: {error}</div>)}
+        .catch((error) => <div>Error: {error}</div>))}
 </>
 ```
 
@@ -254,7 +256,7 @@ h(
     Fragment,
     null,
     until(json, 'Loading...'),
-    json.then((data) => h('ul', null, data)).catch((error) => h('div', null, 'Error ', error))
+    then(json.then((data) => h('ul', null, data)).catch((error) => h('div', null, 'Error ', error)))
 );
 ```
 
@@ -263,26 +265,30 @@ h(
 
 ### Observables
 
-As well as `Promise`s, DNA treats [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
+DNA has also a directive to `pipe` [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
 
 ```ts
+import { html, pipe } from '@chialab/dna';
 import { interval, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 const clock$ = timer(Date.now());
 const numbers$ = interval(1000).pipe(take(4));
 
-html` Timer: ${timer$}, Numbers: ${numbers$.pipe((val) => (val % 2 ? html`<strong>${val}</strong>` : val))} `;
+html`
+    Timer: ${pipe(timer$)}, Numbers: ${numbers$.pipe((val) =>
+        val % 2 ? html`<strong>${pipe(val)}</strong>` : pipe(val)
+    )}
+`;
 ```
 
 <details>
 <summary>JSX</summary>
 <div>
 
-```ts
+```tsx
 <>
-    Timer: {timer$},
-    Numbers: {numbers$.pipe((val) => val % 2 ? <strong>{val}</strong> : val)}
+    Timer: {pipe(timer$)}, Numbers: {numbers$.pipe((val) => (val % 2 ? <strong>{pipe(val)}</strong> : pipe(val)))}
 </>
 ```
 
@@ -298,9 +304,9 @@ h(
     Fragment,
     null,
     'Timer: ',
-    timer$,
+    pipe(timer$),
     ', Numbers',
-    numbers$.pipe((val) => (val % 2 ? h('strong', null, val) : val))
+    numbers$.pipe((val) => (val % 2 ? h('strong', null, pipe(val)) : pipe(val)))
 );
 ```
 

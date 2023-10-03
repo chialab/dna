@@ -20,7 +20,7 @@ export {
     customElement,
     customElementPrototype,
 } from './Component';
-export { parseDOM, until } from './directives';
+export { parseDOM, then, until, pipe } from './directives';
 
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {

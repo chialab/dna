@@ -30,40 +30,40 @@ render(h(Fragment));
 render(h('div', { key: {}, unknown: 2 }));
 // @ts-expect-error Missing is not a known property of a div
 render(h(TestBuiltinElement, { active: true, missing: false }));
-// @ts-expect-error Missing is not a known property of x-test
 render(
     <TestElement
         active={true}
+        // @ts-expect-error Missing is not a known property of x-test
         missing={true}
     />
 );
-// @ts-expect-error Missing is not a known property of x-test
 render(
     <TestBuiltinElement
         active={true}
+        // @ts-expect-error Missing is not a known property of x-test
         missing={true}
     />
 );
-// @ts-expect-error nodeType is a read-only property
 render(
     <TestBuiltinElement
         active={true}
+        // @ts-expect-error nodeType is a read-only property
         nodeType={true}
     />
 );
-// @ts-expect-error nodeType is a read-only property
 render(
     <details
         is="x-test-builtin"
         active={true}
+        // @ts-expect-error nodeType is a read-only property
         nodeType={true}
     />
 );
-// @ts-expect-error connectedCallback is a method
 render(
     <details
         is="x-test-builtin"
         active={true}
+        // @ts-expect-error connectedCallback is a method
         connectedCallback={() => {}}
     />
 );

@@ -558,18 +558,14 @@ describe('template', function () {
                         'div',
                         null,
                         DNA.until(context.promise, 'Loading...'),
-                        DNA.h(
-                            'div',
-                            null,
-                            context.promise.then((res) => ['Hello ', res])
-                        )
+                        DNA.h('div', null, DNA.then(context.promise.then((res) => ['Hello ', res])))
                     );
                 },
                 HTML(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
                         ${DNA.until(context.promise, 'Loading...')}
-                        <div>${context.promise.then((res) => DNA.html`Hello ${res}`)}</div>
+                        <div>${DNA.then(context.promise.then((res) => DNA.html`Hello ${res}`))}</div>
                     </div>`;
                 },
             };
@@ -609,13 +605,13 @@ describe('template', function () {
                         'div',
                         null,
                         DNA.until(context.promise, 'Loading...'),
-                        context.promise.catch((error) => ['Error ', error])
+                        DNA.then(context.promise.catch((error) => ['Error ', error]))
                     );
                 },
                 HTML(context) {
                     return DNA.html`<div>
                         ${DNA.until(context.promise, 'Loading...')}
-                        ${context.promise.catch((error) => DNA.html`Error ${error}`)}
+                        ${DNA.then(context.promise.catch((error) => DNA.html`Error ${error}`))}
                     </div>`;
                 },
             };
@@ -692,12 +688,12 @@ describe('template', function () {
             const TEMPLATES = {
                 JSX(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
-                    return DNA.h('div', null, context.observable$);
+                    return DNA.h('div', null, DNA.pipe(context.observable$));
                 },
                 HTML(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
-                        ${context.observable$}
+                        ${DNA.pipe(context.observable$)}
                     </div>`;
                 },
             };
@@ -741,13 +737,13 @@ describe('template', function () {
                     return DNA.h(
                         'div',
                         null,
-                        context.observable$.pipe((num) => DNA.h('span', null, num))
+                        context.observable$.pipe((num) => DNA.h('span', null, DNA.pipe(num)))
                     );
                 },
                 HTML(context) {
                     /* eslint-disable mocha/no-setup-in-describe */
                     return DNA.html`<div>
-                        ${context.observable$.pipe((num) => DNA.html`<span>${num}</span>`)}
+                        ${context.observable$.pipe((num) => DNA.html`<span>${DNA.pipe(num)}</span>`)}
                     </div>`;
                 },
             };
