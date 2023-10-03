@@ -156,13 +156,13 @@ export interface ComponentMixin {
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatchAsyncEvent(event: Event): Promise<any[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatchAsyncEvent(
         event: string,
         detail?: CustomEventInit['detail'],
         bubbles?: boolean,
         cancelable?: boolean,
         composed?: boolean
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Promise<any[]>;
 
     /**
@@ -547,14 +547,14 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          */
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         dispatchAsyncEvent(event: Event): Promise<any[]>;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
             composed?: boolean
-        ): Promise<any[]>;
+        ) // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        : Promise<any[]>;
         dispatchAsyncEvent(
             event: Event | string,
             detail?: CustomEventInit['detail'],

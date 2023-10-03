@@ -1,5 +1,5 @@
-import { extend } from '@chialab/quantum';
 import '@ungap/custom-elements';
+import '@chialab/quantum';
 
 const global = window;
 
@@ -11,4 +11,3 @@ export const CustomEvent = window.CustomEvent;
 export const Node = window.Node;
 export const Element = window.Element;
 export const HTMLElement = window.HTMLElement;
-extend(window);

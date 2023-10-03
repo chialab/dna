@@ -100,7 +100,6 @@ export type PropertyObserver<TypeHint = unknown> = (
 /**
  * Convert constructor types to their normalised instance types.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ConvertConstructorTypes<C extends Constructor<unknown>, T = InstanceType<C>> = T extends Number
     ? number
     : T extends String
@@ -108,9 +107,11 @@ type ConvertConstructorTypes<C extends Constructor<unknown>, T = InstanceType<C>
     : T extends Boolean
     ? boolean
     : T extends unknown[]
-    ? any[]
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any[]
     : T extends Object
-    ? any
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
     : T;
 
 /**
@@ -669,12 +670,12 @@ const assignFromDescriptor = (
  * @param descriptor The native property descriptor.
  * @returns The property descriptor.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createProperty = <T extends ComponentInstance, P extends keyof T>(
     targetOrClassElement: T,
     declaration: PropertyDeclaration<Constructor<T[P]>>,
     propertyKey?: P,
     descriptor?: PropertyDeclaration<Constructor<T[P]>>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const symbol: unique symbol = declaration.symbol || (Symbol(propertyKey as string) as any);
@@ -726,11 +727,11 @@ export const createProperty = <T extends ComponentInstance, P extends keyof T>(
  * @param methodKey The method name.
  * @returns The observer descriptor.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createObserver = <T extends ComponentInstance, P extends keyof T, M extends keyof Methods<T>>(
     targetOrClassElement: T,
     propertyKey: P,
     methodKey?: M
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
     if (methodKey !== undefined) {
         addObserver(

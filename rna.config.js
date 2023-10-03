@@ -45,7 +45,7 @@ const config = {
             },
         },
     ],
-    // minify: true,
+    minify: true,
 };
 
 export default config;
