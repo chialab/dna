@@ -39,5 +39,3 @@ export type CustomElementConstructor<T extends CustomElement = CustomElement> = 
      */
     readonly observedAttributes?: string[];
 };
-
-export type CustomElementRegistryMap = Record<string, CustomElementConstructor>;

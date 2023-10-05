@@ -1,4 +1,4 @@
-import '@ungap/custom-elements';
+import './polyfill';
 import '@chialab/quantum';
 
 const global = window;

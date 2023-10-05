@@ -228,7 +228,7 @@ describe('template', function () {
         /* eslint-enable mocha/no-setup-in-describe */
 
         for (const type in TEMPLATES) {
-            it(type, () => {
+            it(type, async () => {
                 const rootName = getComponentName();
                 class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
                     render() {
@@ -239,8 +239,9 @@ describe('template', function () {
                 DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement, { extends: 'div' });
 
                 const element = DNA.render(DNA.h(MyElement), wrapper);
-                const realm = element.realm;
+                await wait(0);
 
+                const realm = element.realm;
                 realm.dangerouslyOpen();
                 expect(element.childNodes).to.have.lengthOf(1);
                 expect(element.childNodes[0].tagName).to.be.equal('STYLE');

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { expect, spy } from '@chialab/ginsenghino';
+import { expect, spy, wait } from '@chialab/ginsenghino';
 import { __decorate } from 'tslib';
 import { getComponentName } from './helpers.spec.js';
 
@@ -345,7 +345,7 @@ describe('Component', function () {
     });
 
     describe('#connectedCallback|disconnectedCallback', () => {
-        it('should connect on appendChild and disconnect on removeChild', () => {
+        it('should connect on appendChild and disconnect on removeChild', async () => {
             class TestElement extends DNA.Component {
                 constructor(...args) {
                     super(...args);
@@ -370,61 +370,30 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.spyConnectedCallback).to.not.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.appendChild(element);
-                expect(element.spyConnectedCallback).to.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.removeChild(element);
-                expect(element.spyDisconnectedCallback).to.have.been.called();
-            });
+            const custom = new TestElement1();
+            expect(custom.spyConnectedCallback).to.not.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(custom);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.removeChild(custom);
+            await wait(0);
+            expect(custom.spyDisconnectedCallback).to.have.been.called();
+
+            const builtin = new TestElement2();
+            expect(builtin.spyConnectedCallback).to.not.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(builtin);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.removeChild(builtin);
+            await wait(0);
+            expect(builtin.spyDisconnectedCallback).to.have.been.called();
         });
 
-        it('should connect on replaceChild', () => {
-            class TestElement extends DNA.Component {
-                constructor(...args) {
-                    super(...args);
-                    this.spyConnectedCallback = spy();
-                    this.spyDisconnectedCallback = spy();
-                }
-
-                connectedCallback() {
-                    super.connectedCallback();
-                    this.spyConnectedCallback();
-                }
-
-                disconnectedCallback() {
-                    super.disconnectedCallback();
-                    this.spyDisconnectedCallback();
-                }
-            }
-
-            class TestElement1 extends TestElement {}
-            class TestElement2 extends TestElement {}
-
-            DNA.define(getComponentName(), TestElement1);
-            DNA.define(getComponentName(), TestElement2, {
-                extends: 'article',
-            });
-
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                const child = DNA.document.createElement('div');
-                wrapper.appendChild(child);
-                expect(element.spyConnectedCallback).to.not.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.replaceChild(element, child);
-                expect(element.spyConnectedCallback).to.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.replaceChild(child, element);
-                expect(element.spyConnectedCallback).to.have.been.called();
-                expect(element.spyDisconnectedCallback).to.have.been.called();
-                expect(element.spyConnectedCallback).to.have.been.called.once;
-                expect(element.spyDisconnectedCallback).to.have.been.called.once;
-            });
-        });
-
-        it('should connect on insertBefore', () => {
+        it('should connect on replaceChild', async () => {
             class TestElement extends DNA.Component {
                 constructor(...args) {
                     super(...args);
@@ -451,21 +420,42 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                const child = DNA.document.createElement('div');
-                wrapper.appendChild(child);
-                expect(element.spyConnectedCallback).to.not.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.insertBefore(element, child);
-                expect(element.spyConnectedCallback).to.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.insertBefore(child, element);
-                expect(element.spyConnectedCallback).to.have.been.called.once;
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-            });
+            const custom = new TestElement1();
+            const child = DNA.document.createElement('div');
+            wrapper.appendChild(child);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.not.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.replaceChild(custom, child);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.replaceChild(child, custom);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.have.been.called();
+            expect(custom.spyConnectedCallback).to.have.been.called.once;
+            expect(custom.spyDisconnectedCallback).to.have.been.called.once;
+
+            const builtin = new TestElement2();
+            const child2 = DNA.document.createElement('div');
+            wrapper.appendChild(child2);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.not.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.replaceChild(builtin, child2);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.replaceChild(child2, builtin);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.have.been.called();
+            expect(builtin.spyConnectedCallback).to.have.been.called.once;
+            expect(builtin.spyDisconnectedCallback).to.have.been.called.once;
         });
 
-        it('should connect if not moved', () => {
+        it('should connect on insertBefore', async () => {
             class TestElement extends DNA.Component {
                 constructor(...args) {
                     super(...args);
@@ -492,19 +482,90 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.spyConnectedCallback).to.not.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.appendChild(element);
-                expect(element.spyConnectedCallback).to.have.been.called();
-                expect(element.spyDisconnectedCallback).to.not.have.been.called();
-                wrapper.appendChild(element);
-                expect(element.spyConnectedCallback).to.have.been.called.twice;
-                expect(element.spyDisconnectedCallback).to.have.been.called.once;
-            });
+            const custom = new TestElement1();
+            const child = DNA.document.createElement('div');
+            wrapper.appendChild(child);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.not.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.insertBefore(custom, child);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.insertBefore(child, custom);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called.once;
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+
+            const builtin = new TestElement2();
+            const child2 = DNA.document.createElement('div');
+            wrapper.appendChild(child2);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.not.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.insertBefore(builtin, child2);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.insertBefore(child2, builtin);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called.once;
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
         });
 
-        it('should render when connected', () => {
+        it('should connect if not moved', async () => {
+            class TestElement extends DNA.Component {
+                constructor(...args) {
+                    super(...args);
+                    this.spyConnectedCallback = spy();
+                    this.spyDisconnectedCallback = spy();
+                }
+
+                connectedCallback() {
+                    super.connectedCallback();
+                    this.spyConnectedCallback();
+                }
+
+                disconnectedCallback() {
+                    super.disconnectedCallback();
+                    this.spyDisconnectedCallback();
+                }
+            }
+
+            class TestElement1 extends TestElement {}
+            class TestElement2 extends TestElement {}
+
+            DNA.define(getComponentName(), TestElement1);
+            DNA.define(getComponentName(), TestElement2, {
+                extends: 'article',
+            });
+
+            const custom = new TestElement1();
+            expect(custom.spyConnectedCallback).to.not.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(custom);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called();
+            expect(custom.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(custom);
+            await wait(0);
+            expect(custom.spyConnectedCallback).to.have.been.called.twice;
+            expect(custom.spyDisconnectedCallback).to.have.been.called.once;
+
+            const builtin = new TestElement2();
+            expect(builtin.spyConnectedCallback).to.not.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(builtin);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called();
+            expect(builtin.spyDisconnectedCallback).to.not.have.been.called();
+            wrapper.appendChild(builtin);
+            await wait(0);
+            expect(builtin.spyConnectedCallback).to.have.been.called.twice;
+            expect(builtin.spyDisconnectedCallback).to.have.been.called.once;
+        });
+
+        it('should render when connected', async () => {
             class TestElement extends DNA.Component {
                 render() {
                     return DNA.html`<h1>test</h1>`;
@@ -519,11 +580,17 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.innerHTML).to.be.equal('');
-                wrapper.appendChild(element);
-                expect(element.innerHTML).to.be.equal('<h1>test</h1>');
-            });
+            const custom = new TestElement1();
+            expect(custom.innerHTML).to.be.equal('');
+            wrapper.appendChild(custom);
+            await wait(0);
+            expect(custom.innerHTML).to.be.equal('<h1>test</h1>');
+
+            const builtin = new TestElement2();
+            expect(builtin.innerHTML).to.be.equal('');
+            wrapper.appendChild(builtin);
+            await wait(0);
+            expect(builtin.innerHTML).to.be.equal('<h1>test</h1>');
         });
     });
 
@@ -549,7 +616,7 @@ describe('Component', function () {
     });
 
     describe('#attributeChangedCallback', () => {
-        it('should handle attribute changes on setAttribute', () => {
+        it('should handle attribute changes on setAttribute', async () => {
             class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
@@ -574,17 +641,28 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.spyAttributeChangedCallback).to.not.have.been.called();
-                element.setAttribute('title', 'test');
-                expect(element.spyAttributeChangedCallback).to.have.been.called();
-                expect(element.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
-                element.setAttribute('title', 'test2');
-                expect(element.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', 'test2');
-            });
+            const custom = new TestElement1();
+            expect(custom.spyAttributeChangedCallback).to.not.have.been.called();
+            custom.setAttribute('title', 'test');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called();
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            custom.setAttribute('title', 'test2');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', 'test2');
+
+            const builtin = new TestElement2();
+            expect(builtin.spyAttributeChangedCallback).to.not.have.been.called();
+            builtin.setAttribute('title', 'test');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called();
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            builtin.setAttribute('title', 'test2');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', 'test2');
         });
 
-        it('should handle attribute changes on removeAttribute', () => {
+        it('should handle attribute changes on removeAttribute', async () => {
             class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
@@ -609,17 +687,28 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.spyAttributeChangedCallback).to.not.have.been.called();
-                element.setAttribute('title', 'test');
-                expect(element.spyAttributeChangedCallback).to.have.been.called();
-                expect(element.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
-                element.removeAttribute('title');
-                expect(element.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', null);
-            });
+            const custom = new TestElement1();
+            expect(custom.spyAttributeChangedCallback).to.not.have.been.called();
+            custom.setAttribute('title', 'test');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called();
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            custom.removeAttribute('title');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', null);
+
+            const builtin = new TestElement2();
+            expect(builtin.spyAttributeChangedCallback).to.not.have.been.called();
+            builtin.setAttribute('title', 'test');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called();
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            builtin.removeAttribute('title');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.with('title', 'test', null);
         });
 
-        it('should handle attribute if nothing changed on setAttribute', () => {
+        it('should handle attribute if nothing changed on setAttribute', async () => {
             class TestElement extends DNA.Component {
                 static get observedAttributes() {
                     return ['title'];
@@ -644,14 +733,25 @@ describe('Component', function () {
                 extends: 'article',
             });
 
-            [new TestElement1(), new TestElement2()].forEach((element) => {
-                expect(element.spyAttributeChangedCallback).to.not.have.been.called();
-                element.setAttribute('title', 'test');
-                expect(element.spyAttributeChangedCallback).to.have.been.called();
-                expect(element.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
-                element.setAttribute('title', 'test');
-                expect(element.spyAttributeChangedCallback).to.have.been.called.twice;
-            });
+            const custom = new TestElement1();
+            expect(custom.spyAttributeChangedCallback).to.not.have.been.called();
+            custom.setAttribute('title', 'test');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called();
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            custom.setAttribute('title', 'test');
+            await wait(0);
+            expect(custom.spyAttributeChangedCallback).to.have.been.called.twice;
+
+            const builtin = new TestElement2();
+            expect(builtin.spyAttributeChangedCallback).to.not.have.been.called();
+            builtin.setAttribute('title', 'test');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called();
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.with('title', null, 'test');
+            builtin.setAttribute('title', 'test');
+            await wait(0);
+            expect(builtin.spyAttributeChangedCallback).to.have.been.called.twice;
         });
 
         describe('attribute and properties sync', () => {
@@ -905,6 +1005,7 @@ describe('Component', function () {
                 extends: 'section',
             });
             DNA.customElements.upgrade(element);
+            await wait(0);
 
             expect(propertyChangedCallback).to.have.been.called();
             expect(propertyChangedCallback).to.have.been.called.with('page', 1, 2);
