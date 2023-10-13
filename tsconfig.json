@@ -16,6 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "skipLibCheck": true,
     "allowJs": true,
     "checkJs": true,
     "experimentalDecorators": true,

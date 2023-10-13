@@ -1,34 +1,33 @@
-// eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
-import { expect } from '@chialab/ginsenghino';
+import { describe, expect, it } from 'vitest';
 
-describe('css', function () {
-    this.timeout(10 * 1000);
+describe(
+    'css',
+    () => {
+        it('should convert :host selector', () => {
+            const style = DNA.css('test-style', ':host { color: red; }');
+            expect(style).toBe('[:scope="test-style"] { color: red; }');
+        });
 
-    it('should convert :host selector', () => {
-        const style = DNA.css('test-style', ':host { color: red; }');
-        expect(style).to.be.equal('[:scope="test-style"] { color: red; }');
-    });
+        it('should convert :host selector with modifiers', () => {
+            const style = DNA.css('test-style', ':host(.test) { color: red; }');
+            expect(style).toBe('[:scope="test-style"].test { color: red; }');
+        });
 
-    it('should convert :host selector with modifiers', () => {
-        const style = DNA.css('test-style', ':host(.test) { color: red; }');
-        expect(style).to.be.equal('[:scope="test-style"].test { color: red; }');
-    });
+        it('should scope a selector', () => {
+            const style = DNA.css('test-style', '.test { color: red; }');
+            expect(style).toBe('[:scope="test-style"] .test { color: red; }');
+        });
 
-    it('should scope a selector', () => {
-        const style = DNA.css('test-style', '.test { color: red; }');
-        expect(style).to.be.equal('[:scope="test-style"] .test { color: red; }');
-    });
+        it('should scope a selector inside a media query', () => {
+            const style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
+            expect(style).toBe('@media (min-width: 640px) { [:scope="test-style"] .test { color: red; } }');
+        });
 
-    it('should scope a selector inside a media query', () => {
-        const style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
-        expect(style).to.be.equal('@media (min-width: 640px) { [:scope="test-style"] .test { color: red; } }');
-    });
-
-    it('should convert a more complex CSS #1', () => {
-        const style = DNA.css(
-            'test-style',
-            `@charset "UTF-8";
+        it('should convert a more complex CSS #1', () => {
+            const style = DNA.css(
+                'test-style',
+                `@charset "UTF-8";
 
 /**
  * This is a comment
@@ -81,8 +80,8 @@ h3 {
     0% { top: 0; }
     100% { top: 10px; }
 }`
-        );
-        expect(style).to.be.equal(`@charset "UTF-8";
+            );
+            expect(style).toBe(`@charset "UTF-8";
 [:scope="test-style"] {
     color: #5F9EA0;
 }
@@ -126,31 +125,33 @@ h3 {
     0% { top: 0; }
     100% { top: 10px; }
 }`);
-    });
+        });
 
-    it('should cache the result', () => {
-        DNA.css('test-style', ':host { color: red; }');
-        DNA.css('test-style', ':host { color: red; }');
-        // checkout the code coverage
-    });
+        it('should cache the result', () => {
+            DNA.css('test-style', ':host { color: red; }');
+            DNA.css('test-style', ':host { color: red; }');
+            // checkout the code coverage
+        });
 
-    it('should validate css input', () => {
-        expect(() => {
-            DNA.css(null, null);
-        }).to.throw(TypeError, 'The provided name must be a string');
+        it('should validate css input', () => {
+            expect(() => {
+                DNA.css(null, null);
+            }).toThrow(TypeError, 'The provided name must be a string');
 
-        expect(() => {
-            DNA.css('test-style', null);
-        }).to.throw(TypeError, 'The provided CSS text must be a string');
-    });
+            expect(() => {
+                DNA.css('test-style', null);
+            }).toThrow(TypeError, 'The provided CSS text must be a string');
+        });
 
-    // describe.skip('adoptedStyleSheets', () => {
-    //     it('should handle style in adoptedStyleSheets', () => {
-    //         //
-    //     });
+        // describe.skip('adoptedStyleSheets', () => {
+        //     it('should handle style in adoptedStyleSheets', () => {
+        //         //
+        //     });
 
-    //     it('should handle multiple styles in adoptedStyleSheets', () => {
-    //         //
-    //     });
-    // });
-});
+        //     it('should handle multiple styles in adoptedStyleSheets', () => {
+        //         //
+        //     });
+        // });
+    },
+    10 * 1000
+);

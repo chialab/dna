@@ -3,16 +3,16 @@
   "version": "3.22.0",
   "description": "Progressive Web Components",
   "type": "module",
-  "main": "dist/cjs/dna.cjs",
-  "module": "dist/esm/dna.js",
+  "main": "dist/node/dna.cjs",
+  "module": "dist/browser/dna.js",
   "types": "types/index.d.ts",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
       "browser": "./dist/browser/dna.js",
+      "require": "./dist/node/dna.cjs",
       "node": "./dist/node/dna.js",
-      "require": "./dist/cjs/dna.cjs",
-      "default": "./dist/esm/dna.js"
+      "default": "./dist/browser/dna.js"
     },
     "./jsx-runtime": "./jsx-runtime.js",
     "./jsx-dev-runtime": "./jsx-runtime.js"
@@ -36,17 +36,20 @@
   "homepage": "https://www.chialab.io/p/dna",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
-    "build": "rimraf dist && yarn types && rna build",
-    "types": "rimraf types && tsc",
+    "build": "rimraf 'dist' 'types' && yarn types && yarn build:browser && yarn build:node:esm && yarn build:node:cjs",
+    "build:browser": "esbuild src/index.ts --outfile=dist/browser/dna.js --platform=browser --format=esm --bundle --packages=external --sourcemap",
+    "build:node:esm": "esbuild src/index.ts --outfile=dist/node/dna.js --platform=node --alias:\\$env=./src/env.node.ts --format=esm --bundle --packages=external --sourcemap",
+    "build:node:cjs": "esbuild src/index.ts --outfile=dist/node/dna.cjs --platform=node --alias:\\$env=./src/env.node.ts --format=cjs --bundle --packages=external --sourcemap",
+    "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
-    "test:browser": "rna test:browser test/*.spec.js --coverage",
+    "test:browser": "vitest --config vitest.browser.ts",
     "test:saucelabs": "rna test:saucelabs test/*.spec.js --browsers 'android 6.0' 'android 13.0' 'ios 12.0' 'ios 16.0' 'safari 12' 'safari 15' 'safari 16' 'firefox 78' 'firefox latest-1' 'firefox latest' 'chrome 45' 'chrome latest-1' 'chrome latest' 'edge 17.17134' 'edge latest'",
-    "test:node": "rna test:node test/*.spec.js",
-    "lint": "publint && prettier --check . && eslint src test",
+    "test:node": "vitest --config vitest.node.ts",
+    "lint": "prettier --check . && eslint src test",
     "docs": "node scripts/apidoc.js",
     "prepack": "yarn build"
   },
@@ -54,23 +57,25 @@
     "@babel/runtime": "^7.14.0",
     "@changesets/cli": "^2.22.0",
     "@chialab/eslint-config": "^4.0.0",
-    "@chialab/ginsenghino": "^1.0.0",
     "@chialab/prettier-config": "^1.2.2",
-    "@chialab/rna": "^0.17.0",
-    "@chialab/rna-browser-test-runner": "^0.17.0",
-    "@chialab/rna-bundler": "^0.17.0",
-    "@chialab/rna-node-test-runner": "^0.17.0",
-    "@chialab/rna-saucelabs-test-runner": "^0.17.0",
-    "core-js": "^3.6.4",
+    "@vitest/browser": "^0.34.6",
+    "@vitest/coverage-istanbul": "^0.34.6",
+    "@vitest/coverage-v8": "^0.34.6",
+    "esbuild": "^0.19.4",
     "eslint": "^8.0.0",
     "eslint-plugin-jsdoc": "^39.3.2",
     "htm": "^3.0.3",
+    "ip": "^1.1.8",
     "mocha": "^8.4.0",
+    "playwright": "^1.38.1",
     "prettier": "^3.0.3",
     "publint": "^0.2.3",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.2",
     "rxjs": "^7.8.1",
-    "typescript": "^5.0.0"
+    "saucelabs": "7.2.2",
+    "typescript": "^5.0.0",
+    "vitest": "^0.34.6",
+    "webdriverio": "^8.17.0"
   },
   "dependencies": {
     "@chialab/quantum": "^1.0.0-alpha.0",

@@ -3,7 +3,7 @@ import { customElements, HTMLElement } from '$env';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { getRootContext } from './Context';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
-import { parseDOM } from './directives';
+import { $parse } from './directives';
 import {
     defineListeners,
     delegateEventListener,
@@ -342,7 +342,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             return super.innerHTML;
         }
         set innerHTML(value) {
-            render(parseDOM(value), this);
+            render($parse(value), this);
             customElements.upgrade(this);
         }
 

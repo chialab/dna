@@ -1,13 +1,11 @@
 import type { Realm } from '@chialab/quantum';
 import { document } from '$env';
-import htm from 'htm';
 import { isComponent, type ComponentInstance } from './Component';
 import { createContext, getChildNodeContext, getRootContext, type Context } from './Context';
 import { css } from './css';
 import { type Store, type UpdateRequest } from './FunctionComponent';
 import { getPropertyDescriptor, isArray, isElement, isNode, isText } from './helpers';
 import {
-    h,
     isVComponent,
     isVFragment,
     isVFunction,
@@ -22,25 +20,6 @@ import {
     type TreeProperties,
 } from './JSX';
 import { getProperty, type Props } from './property';
-
-/**
- * Compile a template string into virtual DOM template.
- * @param string The string to compile.
- * @param values Values to interpolate.
- * @returns The virtual DOM template.
- */
-export const html = htm.bind(h);
-
-/**
- * Compile a string into virtual DOM template.
- * @param string The string to compile.
- * @returns The virtual DOM template.
- */
-export const compile = (string: string): Template => {
-    const array = [string] as string[] & { raw?: string[] };
-    array.raw = [string];
-    return html(array as unknown as TemplateStringsArray);
-};
 
 /**
  * Convert strings or classes map to a list of classes.

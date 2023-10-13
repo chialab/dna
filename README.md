@@ -30,7 +30,7 @@ If you are familiar with JSX, you can write your templates using the React synta
 
 ### Properties, slots, Promises and Observables!
 
-DNA comes with a lot of features in a very small package. You can use `<slot>` elements like in Shadow DOM contexts, observe properties changes and delegate events. It can also resolve `Promise`s and pipe `Observable`s directly in the template.
+DNA comes with a lot of features in a very small package. You can use `<slot>` elements, observe properties changes and delegate events. It can also resolve `Promise`s, pipe `Observable`s and subscribe `Signal`s directly in the template.
 
 ## Get the library
 

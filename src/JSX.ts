@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import { customElements } from '$env';
+import htm from 'htm';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
@@ -427,6 +428,25 @@ const jsxs = jsx;
 const jsxDEV = jsx;
 
 export { h, jsx, jsxs, jsxDEV };
+
+/**
+ * Compile a template string into virtual DOM template.
+ * @param string The string to compile.
+ * @param values Values to interpolate.
+ * @returns The virtual DOM template.
+ */
+export const html = htm.bind(h);
+
+/**
+ * Compile a string into virtual DOM template.
+ * @param string The string to compile.
+ * @returns The virtual DOM template.
+ */
+export const compile = (string: string): Template => {
+    const array = [string] as string[] & { raw?: string[] };
+    array.raw = [string];
+    return html(array as unknown as TemplateStringsArray);
+};
 
 /**
  * The internal JSX namespace.

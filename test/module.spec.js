@@ -1,83 +1,84 @@
-// eslint-disable-next-line import/no-unresolved
 import * as DNA from '@chialab/dna';
-import { expect } from '@chialab/ginsenghino';
+import { describe, expect, it } from 'vitest';
 
-describe('module', function () {
-    this.timeout(10 * 1000);
+describe(
+    'module',
+    () => {
+        const EXPECTED_EXPORT_MAP = {
+            window: 'object',
+            document: 'object',
+            customElements: 'object',
+            Event: 'function',
+            CustomEvent: 'function',
+            Node: 'function',
+            Element: 'function',
+            HTMLElement: 'function',
 
-    const EXPECTED_EXPORT_MAP = {
-        window: 'object',
-        document: 'object',
-        customElements: 'object',
-        Event: 'function',
-        CustomEvent: 'function',
-        Node: 'function',
-        Element: 'function',
-        HTMLElement: 'function',
+            customElement: 'function',
+            customElementPrototype: 'function',
+            define: 'function',
+            extend: 'function',
+            render: 'function',
+            Fragment: 'symbol',
+            h: 'function',
+            jsx: 'function',
+            jsxDEV: 'function',
+            jsxs: 'function',
+            compile: 'function',
+            html: 'function',
+            css: 'function',
+            defineListeners: 'function',
+            delegateEventListener: 'function',
+            undelegateEventListener: 'function',
+            dispatchEvent: 'function',
+            dispatchAsyncEvent: 'function',
+            defineProperty: 'function',
+            defineProperties: 'function',
+            getProperty: 'function',
+            getProperties: 'function',
+            property: 'function',
+            state: 'function',
+            observe: 'function',
+            listen: 'function',
+            isComponent: 'function',
+            isComponentConstructor: 'function',
+            Component: 'function',
+            $parse: 'function',
+            $await: 'function',
+            $until: 'function',
+            $pipe: 'function',
+        };
 
-        customElement: 'function',
-        customElementPrototype: 'function',
-        define: 'function',
-        extend: 'function',
-        render: 'function',
-        Fragment: 'symbol',
-        h: 'function',
-        jsx: 'function',
-        jsxDEV: 'function',
-        jsxs: 'function',
-        compile: 'function',
-        html: 'function',
-        css: 'function',
-        defineListeners: 'function',
-        delegateEventListener: 'function',
-        undelegateEventListener: 'function',
-        dispatchEvent: 'function',
-        dispatchAsyncEvent: 'function',
-        defineProperty: 'function',
-        defineProperties: 'function',
-        getProperty: 'function',
-        getProperties: 'function',
-        property: 'function',
-        state: 'function',
-        observe: 'function',
-        listen: 'function',
-        isComponent: 'function',
-        isComponentConstructor: 'function',
-        Component: 'function',
-        parseDOM: 'function',
-        then: 'function',
-        until: 'function',
-        pipe: 'function',
-    };
-
-    for (const ref in EXPECTED_EXPORT_MAP) {
-        it(`should export "${ref}"`, () => {
-            if (
-                [
-                    'window',
-                    'document',
-                    'customElements',
-                    'Event',
-                    'CustomEvent',
-                    'Node',
-                    'Element',
-                    'HTMLElement',
-                ].indexOf(ref) !== -1
-            ) {
-                expect(DNA).to.have.property(ref);
-            } else {
-                expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
-            }
-        });
-    }
-
-    it('should not export other references', () => {
-        const actual = Object.keys(DNA).sort();
-        // default export may be added by the bundler, ignore it.
-        if (actual.indexOf('default') !== -1) {
-            actual.splice(actual.indexOf('default'), 1);
+        for (const ref in EXPECTED_EXPORT_MAP) {
+            it(`should export "${ref}"`, () => {
+                if (
+                    [
+                        'window',
+                        'document',
+                        'customElements',
+                        'Event',
+                        'CustomEvent',
+                        'Node',
+                        'Element',
+                        'HTMLElement',
+                    ].indexOf(ref) !== -1
+                ) {
+                    expect(DNA).to.have.property(ref);
+                } else {
+                    expect(DNA[ref]).to.be.a(EXPECTED_EXPORT_MAP[ref]);
+                }
+            });
         }
-        const expected = Object.keys(EXPECTED_EXPORT_MAP).sort();
-        expect(actual).to.deep.equal(expected);
-    });
-});
+
+        it('should not export other references', () => {
+            const actual = Object.keys(DNA).sort();
+            // default export may be added by the bundler, ignore it.
+            if (actual.indexOf('default') !== -1) {
+                actual.splice(actual.indexOf('default'), 1);
+            }
+            const expected = Object.keys(EXPECTED_EXPORT_MAP).sort();
+            expect(actual).toStrictEqual(expected);
+        });
+    },
+    10 * 1000
+);

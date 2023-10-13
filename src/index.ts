@@ -1,6 +1,6 @@
 export * from '$env';
-export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
-export { compile, html, render } from './render';
+export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
+export { render } from './render';
 export { css } from './css';
 export {
     listen,
@@ -20,7 +20,7 @@ export {
     customElement,
     customElementPrototype,
 } from './Component';
-export { parseDOM, then, until, pipe } from './directives';
+export { $parse, $await, $until, $pipe } from './directives';
 
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {

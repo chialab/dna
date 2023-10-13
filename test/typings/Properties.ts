@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { Component, customElement, extend, observe, property } from '@chialab/dna';
 
 @customElement('x-test')

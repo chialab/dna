@@ -206,17 +206,17 @@ h(
 
 ### Promises
 
-DNA exposes two directives to handle promises: the `then` directive can be used to render a `Promise` result in the template as if you were using the `await` statement, while the `until` directive is useful for status handling.
+DNA exposes two directives to handle promises: the `$await` directive can be used to render a `Promise` result in the template as if you were using the `await` statement, while the `$until` directive is useful for status handling.
 
 ```ts
-import { html, then, until } from '@chialab/dna';
+import { $await, $until, html } from '@chialab/dna';
 
 const json = fetch('/data.json')
     .then(() => response.json())
     .then((data) => data.map(({ name }) => html`<li>${name}</li>`));
 
 html`
-    ${until(json, 'Loading...')} ${then(
+    ${$until(json, 'Loading...')} ${$await(
         json
             .then(
                 (data) =>
@@ -233,14 +233,10 @@ html`
 <summary>JSX</summary>
 <div>
 
-```ts
-import { until, then } from '@chialab/dna';
-
+```tsx
 <>
-    {until(json, 'Loading...')}
-    {then(json
-        .then((data) => <ul>{data}</ul>)
-        .catch((error) => <div>Error: {error}</div>))}
+    {$until(json, 'Loading...')}
+    {$await(json.then((data) => <ul>{data}</ul>).catch((error) => <div>Error: {error}</div>))}
 </>
 ```
 
@@ -255,8 +251,8 @@ import { until, then } from '@chialab/dna';
 h(
     Fragment,
     null,
-    until(json, 'Loading...'),
-    then(json.then((data) => h('ul', null, data)).catch((error) => h('div', null, 'Error ', error)))
+    $until(json, 'Loading...'),
+    $await(json.then((data) => h('ul', null, data)).catch((error) => h('div', null, 'Error ', error)))
 );
 ```
 
@@ -265,10 +261,10 @@ h(
 
 ### Observables
 
-DNA has also a directive to `pipe` [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
+DNA has also a directive to `$pipe` [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
 
 ```ts
-import { html, pipe } from '@chialab/dna';
+import { $pipe, html } from '@chialab/dna';
 import { interval, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -276,8 +272,8 @@ const clock$ = timer(Date.now());
 const numbers$ = interval(1000).pipe(take(4));
 
 html`
-    Timer: ${pipe(timer$)}, Numbers: ${numbers$.pipe((val) =>
-        val % 2 ? html`<strong>${pipe(val)}</strong>` : pipe(val)
+    Timer: ${$pipe(timer$)}, Numbers: ${numbers$.pipe((val) =>
+        val % 2 ? html`<strong>${$pipe(val)}</strong>` : $pipe(val)
     )}
 `;
 ```
@@ -288,7 +284,7 @@ html`
 
 ```tsx
 <>
-    Timer: {pipe(timer$)}, Numbers: {numbers$.pipe((val) => (val % 2 ? <strong>{pipe(val)}</strong> : pipe(val)))}
+    Timer: {$pipe(timer$)}, Numbers: {numbers$.pipe((val) => (val % 2 ? <strong>{$pipe(val)}</strong> : $pipe(val)))}
 </>
 ```
 
@@ -304,9 +300,9 @@ h(
     Fragment,
     null,
     'Timer: ',
-    pipe(timer$),
+    $pipe(timer$),
     ', Numbers',
-    numbers$.pipe((val) => (val % 2 ? h('strong', null, pipe(val)) : pipe(val)))
+    numbers$.pipe((val) => (val % 2 ? h('strong', null, $pipe(val)) : $pipe(val)))
 );
 ```
 
@@ -315,15 +311,15 @@ h(
 
 ## HTML content
 
-By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you can use the `parseDOM` directive:
+By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you can use the `$parse` directive:
 
 ```diff
-import { html, parseDOM } from '@chialab/dna';
+import { html, $parse } from '@chialab/dna';
 
 const content = '<h1>Hello</h1>';
 
 -html`<x-label>${content}</x-label>`;
-+html`<x-label>${parseDOM(content)}</x-label>`;
++html`<x-label>${$parse(content)}</x-label>`;
 ```
 
 ⚠️ Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!

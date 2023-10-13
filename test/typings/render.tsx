@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { Fragment, h, render } from '@chialab/dna';
 import { TestBuiltinElement, TestElement } from './Component';
 
