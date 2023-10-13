@@ -47,7 +47,7 @@
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "vitest --config vitest.browser.ts",
-    "test:saucelabs": "rna test:saucelabs test/*.spec.js --browsers 'android 6.0' 'android 13.0' 'ios 12.0' 'ios 16.0' 'safari 12' 'safari 15' 'safari 16' 'firefox 78' 'firefox latest-1' 'firefox latest' 'chrome 45' 'chrome latest-1' 'chrome latest' 'edge 17.17134' 'edge latest'",
+    "test:saucelabs": "vitest --config vitest.saucelabs.ts",
     "test:node": "vitest --config vitest.node.ts",
     "lint": "prettier --check . && eslint src test",
     "docs": "node scripts/apidoc.js",
