@@ -69,6 +69,11 @@ jobs:
 
       - name: Install project dependencies
         run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Install chromium
+        run: yarn playwright install --with-deps chromium
 
       - name: Run tests
         run: yarn test:browser --coverage
@@ -111,9 +116,9 @@ jobs:
       max-parallel: 2
       matrix:
         browser:
-          - 'sauce:chrome-latest'
-          - 'sauce:chrome-latest-1'
-          - 'sauce:chrome-latest-2'
+          - 'chrome-latest'
+          - 'chrome-latest-1'
+          - 'chrome-latest-2'
           - 'chrome-69'
     steps:
       - name: Checkout the repository
@@ -130,7 +135,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        run: yarn test:saucelabs --browser.name ${{ matrix.browser }} --coverage
+        run: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
