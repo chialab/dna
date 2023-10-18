@@ -1,5 +1,5 @@
 import * as DNA from '@chialab/dna';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/internal/Observable';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getComponentName } from './helpers.js';
 

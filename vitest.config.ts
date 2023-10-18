@@ -2,13 +2,13 @@ import { defineConfig } from 'vitest/config';
 
 const job = (() => {
     if (process.env.TRAVIS) {
-        return `TRAVIS # ${process.env.TRAVIS_BUILD_NUMBER} (${process.env.TRAVIS_BUILD_ID})`;
+        return `TRAVIS ${process.env.TRAVIS_BUILD_ID}#${process.env.TRAVIS_BUILD_NUMBER}`;
     }
     if (process.env.GITLAB_CI) {
-        return `GITLAB # ${process.env.CI_JOB_NAME} (${process.env.CI_JOB_ID})`;
+        return `GITLAB ${process.env.CI_JOB_ID}#${process.env.CI_JOB_NAME}`;
     }
     if (process.env.GITHUB_ACTIONS) {
-        return `GITHUB # ${process.env.GITHUB_RUN_NUMBER} (${process.env.GITHUB_JOB})`;
+        return `GITHUB ${process.env.GITHUB_JOB}#${process.env.GITHUB_RUN_NUMBER}`;
     }
 
     return null;
