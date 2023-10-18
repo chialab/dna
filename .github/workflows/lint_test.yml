@@ -109,7 +109,7 @@ jobs:
           file: coverage/clover.xml
 
   test-saucelabs:
-    name: Test SauceLabs
+    name: Test Saucelabs
     runs-on: ubuntu-latest
     concurrency: saucelabs
     strategy:
@@ -119,7 +119,15 @@ jobs:
           - 'chrome-latest'
           - 'chrome-latest-1'
           - 'chrome-latest-2'
-          - 'chrome-69'
+          - 'chrome-80'
+          - 'firefox-latest'
+          - 'firefox-latest-1'
+          - 'firefox-latest-2'
+          - 'firefox-90'
+          # - 'safari-latest'
+          # - 'safari-latest-1'
+          - 'safari-14'
+          - 'edge-latest'
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
@@ -135,7 +143,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        run: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
+        run: yarn test:saucelabs --browser.name remote:${{ matrix.browser }} --coverage
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

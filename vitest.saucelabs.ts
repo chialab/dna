@@ -1,5 +1,6 @@
 import { defineConfig, mergeConfig } from 'vitest/config';
 import vitestConfig from './vitest.config';
+import './test/providers/vitest-saucelabs-provider.d';
 
 export default mergeConfig(
     vitestConfig,
@@ -13,9 +14,9 @@ export default mergeConfig(
             },
             browser: {
                 enabled: true,
-                headless: true,
                 provider: './test/providers/vitest-saucelabs-provider.ts',
-                name: 'sauce:chrome-latest',
+                name: 'remote:chrome-latest',
+                slowHijackESM: false,
                 api: {
                     host: '0.0.0.0',
                     port: 5176,
@@ -36,11 +37,11 @@ export default mergeConfig(
                     browserName: 'Chrome',
                     browserVersion: 'latest-2',
                 },
-                'chrome-69': {
+                // oldest chrome supported by vitest
+                'chrome-80': {
                     browserName: 'Chrome',
-                    browserVersion: '69',
+                    browserVersion: '80',
                 },
-
                 'firefox-latest': {
                     browserName: 'Firefox',
                     browserVersion: 'latest',
@@ -53,35 +54,27 @@ export default mergeConfig(
                     browserName: 'Firefox',
                     browserVersion: 'latest-2',
                 },
-                'firefox-78': {
+                // oldest firefox supported by vitest
+                'firefox-90': {
                     browserName: 'Firefox',
-                    browserVersion: '78',
+                    browserVersion: '90',
                 },
-
                 'safari-latest': {
+                    browserName: 'Safari',
+                    browserVersion: 'latest',
+                },
+                'safari-15': {
+                    browserName: 'Safari',
+                    browserVersion: '15',
+                },
+                // oldest safari supported by vitest
+                'safari-14': {
                     browserName: 'Safari',
                     browserVersion: '14',
                 },
-                'safari-latest-1': {
-                    browserName: 'Safari',
-                    browserVersion: '13',
-                },
-                'safari-12': {
-                    browserName: 'Safari',
-                    browserVersion: '12',
-                },
-
                 'edge-latest': {
-                    browserName: 'Edge',
+                    browserName: 'MicrosoftEdge',
                     browserVersion: 'latest',
-                },
-                'edge-17': {
-                    browserName: 'Edge',
-                    browserVersion: '17.17134',
-                },
-                'edge-18': {
-                    browserName: 'Edge',
-                    browserVersion: '18.17763',
                 },
             },
         },

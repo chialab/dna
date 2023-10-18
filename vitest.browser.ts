@@ -4,10 +4,6 @@ import vitestConfig from './vitest.config';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
-        server: {
-            host: true,
-            port: 8080,
-        },
         test: {
             alias: {
                 $env: './src/env.browser.ts',

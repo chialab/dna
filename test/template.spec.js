@@ -19,7 +19,6 @@ describe(
         });
 
         describe('simple', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX() {
                     return DNA.h('h1', null, 'Hello world!');
@@ -31,7 +30,6 @@ describe(
                     return DNA.compile('<h1>Hello world!</h1>');
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -44,7 +42,6 @@ describe(
         });
 
         describe('simple with uppercase', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX() {
                     return DNA.h('H1', null, 'Hello world!');
@@ -53,7 +50,6 @@ describe(
                     return DNA.html`<H1>Hello world!</H1>`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -66,7 +62,6 @@ describe(
         });
 
         describe('content interpolation', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h(
@@ -82,7 +77,6 @@ describe(
                     return DNA.html`<h1>Hello! My name is ${context.name} and my favorite number is ${context.num}</h1>`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -103,7 +97,6 @@ describe(
         });
 
         describe('attribute interpolation', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h('input', {
@@ -116,7 +109,6 @@ describe(
                     return DNA.html`<input name=${context.name} disabled=${context.disabled} required />`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -135,7 +127,6 @@ describe(
         });
 
         describe('loops', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h(
@@ -150,7 +141,6 @@ describe(
                 </ul>`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -174,7 +164,6 @@ describe(
         });
 
         describe('conditionals', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(context) {
                     return DNA.h(
@@ -192,7 +181,6 @@ describe(
                     ${context.members.length ? DNA.html`${context.members.length} members` : 'No members'}`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -215,7 +203,6 @@ describe(
         });
 
         describe('style', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX() {
                     return DNA.h('style', {}, '.test {}');
@@ -224,7 +211,6 @@ describe(
                     return DNA.html`<style>.test {}</style>`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, async () => {
@@ -253,7 +239,6 @@ describe(
         });
 
         describe('slot', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(titleName) {
                     return DNA.h(
@@ -280,7 +265,6 @@ describe(
                 `;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -354,7 +338,6 @@ describe(
         });
 
         describe('slot with upgraded elements', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX() {
                     return DNA.h(
@@ -375,7 +358,6 @@ describe(
                 `;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -421,7 +403,6 @@ describe(
         });
 
         describe('slot moved across elements', () => {
-            /* eslint-disable mocha/no-setup-in-describe */
             const TEMPLATES = {
                 JSX(cardName, collapsed) {
                     if (collapsed) {
@@ -440,7 +421,6 @@ describe(
                 </div>`;
                 },
             };
-            /* eslint-enable mocha/no-setup-in-describe */
 
             for (const type in TEMPLATES) {
                 it(type, () => {
@@ -515,7 +495,6 @@ describe(
 
         describe('events', () => {
             describe('should add an event listener', () => {
-                /* eslint-disable mocha/no-setup-in-describe */
                 const TEMPLATES = {
                     JSX(context) {
                         return DNA.h('button', { onclick: context.listener });
@@ -524,7 +503,6 @@ describe(
                         return DNA.html`<button onclick=${context.listener}></button>`;
                     },
                 };
-                /* eslint-enable mocha/no-setup-in-describe */
 
                 for (const type in TEMPLATES) {
                     it(type, () => {
@@ -550,10 +528,8 @@ describe(
 
         describe('promises', () => {
             describe('should handle successfull promises', () => {
-                /* eslint-disable mocha/no-setup-in-describe */
                 const TEMPLATES = {
                     JSX(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.h(
                             'div',
                             null,
@@ -562,14 +538,12 @@ describe(
                         );
                     },
                     HTML(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.html`<div>
                         ${DNA.$until(context.promise, 'Loading...')}
                         <div>${DNA.$await(context.promise.then((res) => DNA.html`Hello ${res}`))}</div>
                     </div>`;
                     },
                 };
-                /* eslint-enable mocha/no-setup-in-describe */
 
                 for (const type in TEMPLATES) {
                     it(type, async () => {
@@ -598,7 +572,6 @@ describe(
             });
 
             describe('should handle failed promises', () => {
-                /* eslint-disable mocha/no-setup-in-describe */
                 const TEMPLATES = {
                     JSX(context) {
                         return DNA.h(
@@ -615,7 +588,6 @@ describe(
                     </div>`;
                     },
                 };
-                /* eslint-enable mocha/no-setup-in-describe */
 
                 for (const type in TEMPLATES) {
                     it(type, async () => {
@@ -684,20 +656,16 @@ describe(
 
         describe('observables', () => {
             describe('should subscribe', () => {
-                /* eslint-disable mocha/no-setup-in-describe */
                 const TEMPLATES = {
                     JSX(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.h('div', null, DNA.$pipe(context.observable$));
                     },
                     HTML(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.html`<div>
                         ${DNA.$pipe(context.observable$)}
                     </div>`;
                     },
                 };
-                /* eslint-enable mocha/no-setup-in-describe */
 
                 for (const type in TEMPLATES) {
                     it(type, async () => {
@@ -730,10 +698,8 @@ describe(
             });
 
             describe('should subscribe and pipe', () => {
-                /* eslint-disable mocha/no-setup-in-describe */
                 const TEMPLATES = {
                     JSX(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.h(
                             'div',
                             null,
@@ -741,13 +707,11 @@ describe(
                         );
                     },
                     HTML(context) {
-                        /* eslint-disable mocha/no-setup-in-describe */
                         return DNA.html`<div>
                         ${context.observable$.pipe((num) => DNA.html`<span>${DNA.$pipe(num)}</span>`)}
                     </div>`;
                     },
                 };
-                /* eslint-enable mocha/no-setup-in-describe */
 
                 for (const type in TEMPLATES) {
                     it(type, async () => {

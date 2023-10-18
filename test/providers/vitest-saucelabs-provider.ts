@@ -1,7 +1,17 @@
-import type { Awaitable } from '@vitest/utils';
 import ip from 'ip';
-import Saucelabs, { type SauceConnectInstance, type SauceLabsOptions } from 'saucelabs';
+import Saucelabs, { type SauceConnectInstance, type SauceConnectOptions, type SauceLabsOptions } from 'saucelabs';
+import type { Task } from 'vitest';
 import { remote, type Browser, type RemoteOptions } from 'webdriverio';
+
+/**
+ * Check if a test of the suite has failed.
+ * @param suite List of tasks.
+ * @returns Whetever the suite failed or not.
+ * @see https://github.com/vitest-dev/vitest/blob/main/packages/runner/src/utils/tasks.ts
+ */
+function hasFailed(suite: Task[]): boolean {
+    return suite.some((s) => !s.result || s.result.state === 'fail' || (s.type === 'suite' && hasFailed(s.tasks)));
+}
 
 /**
  * A Saucelabs provider for vitest.
@@ -9,36 +19,46 @@ import { remote, type Browser, type RemoteOptions } from 'webdriverio';
 export default class SaucelabsProvider {
     name = 'saucelabs';
 
+    /**
+     * Vitest does not exposes WorkspaceProject
+     * @see https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/workspace.ts
+     */
+    protected ctx: any;
     protected testName: string;
     protected saucelabs: Saucelabs;
     protected sauceOptions: Partial<SauceLabsOptions>;
+    protected connectOptions: Partial<SauceConnectOptions>;
     protected capabilities: RemoteOptions['capabilities'];
-    protected tunnelIdentifier: string;
 
     private _browserPromise: Promise<Browser> | null = null;
     private _tunnelPromise: Promise<SauceConnectInstance> | null = null;
+    private _heartbeat: ReturnType<typeof setInterval>;
 
     getSupportedBrowsers() {
         return Object.assign([], {
-            includes: (value: string) => value.startsWith('sauce:'),
+            includes: (value: string) => value.startsWith('remote:'),
         });
     }
 
-    initialize(ctx, { browser }) {
-        const saucelabsConfig = ctx.browser.config.saucelabs || {};
+    initialize({ ctx, config, browser }, { browser: browserName }) {
+        this.ctx = ctx;
+        this.testName = config.name;
 
-        this.testName = ctx.config.name;
+        const saucelabsConfig = browser.config.saucelabs || {};
         const sauceOptions = (this.sauceOptions = {
             user: process.env.SAUCE_USERNAME as string,
             key: process.env.SAUCE_ACCESS_KEY as string,
             ...saucelabsConfig.options,
         });
-        this.capabilities = saucelabsConfig.capabilities[browser.replace('sauce:', '')];
+        this.connectOptions = {
+            tunnelIdentifier: `vitest-${Date.now()}`,
+            noSslBumpDomains: 'all',
+            ...saucelabsConfig.connect,
+        };
+        this.capabilities = saucelabsConfig.capabilities[browserName.replace('remote:', '')];
         if (!this.capabilities) {
-            throw new Error(`Missing capabilities for browser name ${browser}`);
+            throw new Error(`Missing capabilities for browser name ${browserName}`);
         }
-
-        this.tunnelIdentifier = `vitest-${Date.now()}`;
         this.saucelabs = new Saucelabs(sauceOptions);
     }
 
@@ -47,10 +67,19 @@ export default class SaucelabsProvider {
             return this._tunnelPromise;
         }
 
-        return (this._tunnelPromise = this.saucelabs.startSauceConnect({
-            tunnelIdentifier: this.tunnelIdentifier,
-            noSslBumpDomains: 'all',
-        }));
+        return (this._tunnelPromise = this.saucelabs.startSauceConnect(this.connectOptions));
+    }
+
+    protected setupHeartbeat(browser: Browser) {
+        this._heartbeat = setInterval(async () => {
+            try {
+                await browser.getTitle();
+            } catch (e) {
+                if (this._heartbeat != null) {
+                    clearInterval(this._heartbeat);
+                }
+            }
+        }, 60 * 1000);
     }
 
     async openBrowser() {
@@ -60,19 +89,34 @@ export default class SaucelabsProvider {
 
         return (this._browserPromise = Promise.resolve().then(async () => {
             await this.startTunnel();
-            return remote({
+
+            const capabilities =
+                'version' in this.capabilities
+                    ? {
+                          ...this.capabilities,
+                          name: this.testName,
+                          build: this.testName,
+                          tunnelIdentifier: this.connectOptions.tunnelIdentifier,
+                      }
+                    : {
+                          ...this.capabilities,
+                          'sauce:options': {
+                              name: this.testName,
+                              build: this.testName,
+                              tunnelIdentifier: this.connectOptions.tunnelIdentifier,
+                          },
+                      };
+
+            const browser = await remote({
                 logLevel: 'error',
-                capabilities: {
-                    ...this.capabilities,
-                    'sauce:options': {
-                        name: this.testName,
-                        build: this.testName,
-                        tunnelIdentifier: this.tunnelIdentifier,
-                    },
-                },
+                capabilities,
                 user: this.sauceOptions.user,
                 key: this.sauceOptions.key,
             });
+
+            this.setupHeartbeat(browser);
+
+            return browser;
         }));
     }
 
@@ -84,16 +128,26 @@ export default class SaucelabsProvider {
         }
 
         await browser.navigateTo(url);
+        const title = await browser.getTitle();
+        if (title !== 'Vitest Browser Runner') {
+            throw new Error('Failed to open url');
+        }
     }
 
-    // TODO
-    // @see https://github.com/vitest-dev/vitest/blob/eac7776521bcf4e335771b1ab4f823f40ad9c4ff/packages/vitest/src/node/browser/webdriver.ts#L74
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    catchError(_cb: (error: Error) => Awaitable<void>) {
+    /**
+     * TODO
+     * @returns A callback.
+     * @see https://github.com/vitest-dev/vitest/blob/eac7776521bcf4e335771b1ab4f823f40ad9c4ff/packages/vitest/src/node/browser/webdriver.ts#L74
+     */
+    catchError() {
         return () => {};
     }
 
     async close() {
+        if (this._heartbeat != null) {
+            clearInterval(this._heartbeat);
+        }
+
         try {
             if (this._tunnelPromise) {
                 const tunnel = await this._tunnelPromise;
@@ -102,16 +156,36 @@ export default class SaucelabsProvider {
         } catch {
             //
         }
+
         try {
             if (this._browserPromise) {
                 const browser = await this._browserPromise;
                 await browser.deleteSession();
+
+                const { user, key } = this.sauceOptions;
+                if (user && key) {
+                    const files = this.ctx.state.getFiles();
+                    const passed = !!files.length && !hasFailed(Array.from(files));
+                    await fetch(`https://saucelabs.com/rest/v1/${user}/jobs/${browser.sessionId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Basic ${Buffer.from(`${user}:${key}`).toString('base64')}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            passed,
+                        }),
+                    });
+                }
             }
         } catch {
             //
         }
-        // TODO
-        // @see https://github.com/vitest-dev/vitest/blob/eac7776521bcf4e335771b1ab4f823f40ad9c4ff/packages/vitest/src/node/browser/webdriver.ts#L83
+
+        /**
+         * TODO
+         * @see https://github.com/vitest-dev/vitest/blob/eac7776521bcf4e335771b1ab4f823f40ad9c4ff/packages/vitest/src/node/browser/webdriver.ts#L83
+         */
         process.exit();
     }
 }

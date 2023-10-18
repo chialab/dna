@@ -26,8 +26,14 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
      * @param attributeName The name of the updated attribute.
      * @param oldValue The previous value of the attribute.
      * @param newValue The new value for the attribute (null if removed).
+     * @param namespace Attribute namespace.
      */
-    attributeChangedCallback(attrName: string, oldValue: null | string, newValue: null | string): void;
+    attributeChangedCallback(
+        attrName: string,
+        oldValue: null | string,
+        newValue: null | string,
+        namespace?: null | string
+    ): void;
 };
 
 /**

@@ -163,7 +163,12 @@ function shimConstructor(constructor: CustomElementConstructor & { __shim?: bool
                     return;
                 }
 
-                element.attributeChangedCallback(attributeName, mutation.oldValue, element.getAttribute(attributeName));
+                element.attributeChangedCallback(
+                    attributeName,
+                    mutation.oldValue,
+                    element.getAttribute(attributeName),
+                    mutation.attributeNamespace
+                );
             });
         });
         observer.observe(element, {
