@@ -147,3 +147,8 @@ jobs:
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: coverage/clover.xml
