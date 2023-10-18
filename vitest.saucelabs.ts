@@ -5,6 +5,10 @@ import './test/providers/vitest-saucelabs-provider.d';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
+        esbuild: {
+            include: /\.(m?(t|j)s|[jt]sx)$/,
+            target: ['es2020'],
+        },
         test: {
             alias: {
                 $env: './src/env.browser.ts',
