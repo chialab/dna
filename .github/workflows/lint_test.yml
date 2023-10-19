@@ -143,7 +143,14 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        run: yarn test:saucelabs --browser.name remote:${{ matrix.browser }} --coverage
+        run: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+      - name: Retry tests
+        if: failure()
+        run: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

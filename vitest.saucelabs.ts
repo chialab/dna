@@ -5,10 +5,6 @@ import './test/providers/vitest-saucelabs-provider.d';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
-        esbuild: {
-            include: /\.(m?(t|j)s|[jt]sx)$/,
-            target: ['es2020'],
-        },
         test: {
             alias: {
                 $env: './src/env.browser.ts',
@@ -19,7 +15,7 @@ export default mergeConfig(
             browser: {
                 enabled: true,
                 provider: './test/providers/vitest-saucelabs-provider.ts',
-                name: 'remote:chrome-latest',
+                name: 'sauce:chrome-latest',
                 slowHijackESM: false,
                 api: {
                     host: '0.0.0.0',

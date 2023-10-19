@@ -36,7 +36,7 @@ export default class SaucelabsProvider {
 
     getSupportedBrowsers() {
         return Object.assign([], {
-            includes: (value: string) => value.startsWith('remote:'),
+            includes: (value: string) => value.startsWith('sauce:'),
         });
     }
 
@@ -55,7 +55,7 @@ export default class SaucelabsProvider {
             noSslBumpDomains: 'all',
             ...saucelabsConfig.connect,
         };
-        this.capabilities = saucelabsConfig.capabilities[browserName.replace('remote:', '')];
+        this.capabilities = saucelabsConfig.capabilities[browserName.replace('sauce:', '')];
         if (!this.capabilities) {
             throw new Error(`Missing capabilities for browser name ${browserName}`);
         }

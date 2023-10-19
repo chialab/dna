@@ -15,12 +15,18 @@ const job = (() => {
 })();
 
 export default defineConfig({
+    esbuild: {
+        include: /\.(m?(t|j)s|[jt]sx)$/,
+        target: ['es2020'],
+    },
+    resolve: {
+        alias: {
+            '@chialab/dna': './src/index.ts',
+        },
+    },
     test: {
         name: `DNA${job ? ` (${job})` : ''}`,
         dir: './test',
         include: ['./*.spec.js'],
-        alias: {
-            '@chialab/dna': './src/index.ts',
-        },
     },
 });
