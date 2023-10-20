@@ -5,10 +5,12 @@ import './test/providers/vitest-saucelabs-provider.d';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
-        test: {
+        resolve: {
             alias: {
                 $env: './src/env.browser.ts',
             },
+        },
+        test: {
             coverage: {
                 provider: 'istanbul',
             },

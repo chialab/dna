@@ -4,11 +4,13 @@ import vitestConfig from './vitest.config';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
-        test: {
-            environment: 'node',
+        resolve: {
             alias: {
                 $env: './src/env.node.ts',
             },
+        },
+        test: {
+            environment: 'node',
         },
     })
 );
