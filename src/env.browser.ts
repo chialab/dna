@@ -11,3 +11,4 @@ export const CustomEvent = window.CustomEvent;
 export const Node = window.Node;
 export const Element = window.Element;
 export const HTMLElement = window.HTMLElement;
+export const DOMParser = window.DOMParser;

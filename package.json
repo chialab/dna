@@ -46,10 +46,9 @@
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test/typings --noEmit",
-    "test:browser": "vitest --config vitest.browser.ts",
-    "test:browserstack": "vitest --config vitest.browserstack.ts",
-    "test:saucelabs": "vitest --config vitest.saucelabs.ts",
-    "test:node": "vitest --config vitest.node.ts",
+    "test:browser": "vitest run --config vitest.browser.ts",
+    "test:saucelabs": "vitest run --config vitest.saucelabs.ts",
+    "test:node": "vitest run --config vitest.node.ts",
     "lint": "prettier --check . && eslint src test",
     "docs": "node scripts/apidoc.js",
     "prepack": "yarn build"

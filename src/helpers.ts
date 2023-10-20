@@ -102,14 +102,3 @@ export const isElement = <T extends Element>(node: any): node is T => node && no
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isEvent = (event: any): event is Event => event instanceof Event;
-
-/**
- * Clone an array like instance.
- * @param arr The array to convert.
- * @returns A shallow clone of the array.
- */
-export const cloneChildNodes = (arr: NodeList) => {
-    const result: Node[] = [];
-    for (let i = arr.length; i--; result.unshift(arr.item(i) as Node));
-    return result;
-};

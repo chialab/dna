@@ -1,6 +1,5 @@
-import { customElements, document } from '$env';
+import { customElements, DOMParser } from '$env';
 import { type FunctionComponent } from './FunctionComponent';
-import { cloneChildNodes } from './helpers';
 import { h, type Template } from './JSX';
 import { getObservableState, type Observable } from './Observable';
 import { getThenableState } from './Thenable';
@@ -20,10 +19,10 @@ export const $parse = (string: string): Template =>
                 return store.get('dom') as Node[];
             }
 
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = source;
-            customElements.upgrade(wrapper);
-            const dom = cloneChildNodes(wrapper.childNodes);
+            const parser = new DOMParser();
+            const fragment = parser.parseFromString(source, 'text/html').body;
+            customElements.upgrade(fragment);
+            const dom = Array.from(fragment.childNodes);
             store.set('source', source);
             store.set('dom', dom);
             return dom;

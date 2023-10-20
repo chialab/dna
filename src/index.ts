@@ -1,4 +1,4 @@
-export * from '$env';
+export { window, document, customElements, Event, CustomEvent, Node, Element, HTMLElement } from '$env';
 export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { render } from './render';
 export { css } from './css';
