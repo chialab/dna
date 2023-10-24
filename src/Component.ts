@@ -1,7 +1,6 @@
 import { attachRealm, type Realm } from '@chialab/quantum';
 import { customElements, HTMLElement } from '$env';
 import { type ClassDescriptor } from './ClassDescriptor';
-import { getRootContext } from './Context';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
 import { $parse } from './directives';
 import {
@@ -15,7 +14,7 @@ import {
     type DelegatedEventCallback,
     type ListenerConfig,
 } from './events';
-import { defineProperty, isElement, setPrototypeOf, type Constructor } from './helpers';
+import { defineProperty, setPrototypeOf, type Constructor } from './helpers';
 import { type KeyedProperties, type Template } from './JSX';
 import {
     addObserver,
@@ -30,7 +29,7 @@ import {
     type PropertyObserver,
     type Props,
 } from './property';
-import { internalRender, render } from './render';
+import { getRootContext, internalRender, render } from './render';
 
 /**
  * A symbol which identify components.
@@ -349,9 +348,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
         constructor(...args: any[]) {
             super();
 
-            const node = isElement(args[0]) && args[0];
-            const element = (node ? (setPrototypeOf(node, this), node) : this) as this;
-
+            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
                 ...listener,

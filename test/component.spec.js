@@ -52,7 +52,7 @@ describe(
                 element.href = 'https://www.webcomponents.org/introduction';
                 expect(TestElement).to.not.equal(HTMLAnchorElement);
                 expect(element).to.be.an.instanceof(HTMLAnchorElement);
-                expect('href' in element).to.be.true;
+                expect('href' in element).toBe(true);
             });
 
             it('should throw if element is not defined', () => {
@@ -295,36 +295,6 @@ describe(
                 expect(element.textContent).toBe('Hello');
             });
 
-            it('should initialize properties', () => {
-                let TestElement = class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            myCustomProp1: {
-                                attribute: 'custom-prop',
-                            },
-                        };
-                    }
-
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp2 = 'test';
-                        this.myCustomProp3 = '';
-                    }
-                };
-
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
-
-                const element = new TestElement({
-                    myCustomProp1: 42,
-                    myCustomProp2: 'toast',
-                });
-
-                expect(element.myCustomProp1, 42);
-                expect(element.myCustomProp2, 'toast');
-            });
-
             it('should connect already connected nodes', () => {
                 const is = getComponentName();
                 let connected = false;
@@ -339,7 +309,7 @@ describe(
                 expect(connected).to.be.false;
                 DNA.define(is, TestElement);
                 DNA.customElements.upgrade(wrapper);
-                expect(connected).to.be.true;
+                expect(connected).toBe(true);
             });
         });
 
@@ -601,7 +571,7 @@ describe(
 
                 const element = DNA.document.createElement(is);
                 wrapper.appendChild(element);
-                expect(element.isConnected).to.be.true;
+                expect(element.isConnected).toBe(true);
             });
 
             it('return `false` if element is disconnected', () => {
@@ -815,7 +785,7 @@ describe(
 
                     it('should handle boolean type', () => {
                         element.setAttribute('boolean', '');
-                        expect(element.boolean).to.be.true;
+                        expect(element.boolean).toBe(true);
                         element.removeAttribute('boolean');
                         expect(element.boolean).to.be.false;
                     });
@@ -1780,7 +1750,7 @@ describe(
 
             describe('#hasAttribute', () => {
                 it('should return `true` if element has an attribute', () => {
-                    expect(element.hasAttribute('title')).to.be.true;
+                    expect(element.hasAttribute('title')).toBe(true);
                 });
 
                 it('should return `false` if element has an attribute', () => {

@@ -84,6 +84,7 @@ export type {
 } from './Attributes';
 export type {
     JSXInternal as JSX,
+    FunctionComponent,
     Template,
     VObject,
     VComponent,
@@ -94,8 +95,7 @@ export type {
     VTag,
 } from './JSX';
 export type { Observable } from './Observable';
-export type { Context } from './Context';
+export type { Context } from './render';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { PropertyDeclaration, PropertyObserver, Props } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';
-export type { FunctionComponent } from './FunctionComponent';
