@@ -3,6 +3,7 @@ import { type ClassElement } from './ClassDescriptor';
 import { isComponent, type ComponentConstructor, type ComponentInstance, type ComponentMixin } from './Component';
 import {
     defineProperty as _defineProperty,
+    createObject,
     getOwnPropertyDescriptor,
     getPrototypeOf,
     hasOwnProperty,
@@ -306,9 +307,7 @@ export const getProperties = <T extends ComponentInstance>(prototype: WithProper
     const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (chain && !hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
-        return (prototype[PROPERTIES_SYMBOL] = {
-            __proto__: props,
-        } as unknown as PropertiesOf<T>);
+        return (prototype[PROPERTIES_SYMBOL] = createObject(props) as PropertiesOf<T>);
     }
 
     return props;

@@ -39,14 +39,8 @@ export const getPrototypeOf = Object.getPrototypeOf;
 
 /**
  * Alias to Object.setPrototypeOf.
- * @param object The object to set the prototype of.
- * @param prototype The prototype to set.
  */
-export const setPrototypeOf =
-    Object.setPrototypeOf ||
-    ((object, prototype) => {
-        object.__proto__ = prototype;
-    });
+export const setPrototypeOf = Object.setPrototypeOf;
 
 /**
  * Alias to Object.prototype.toString.
@@ -62,6 +56,11 @@ export const hasOwnProperty = Object.prototype.hasOwnProperty;
  * Alias to Object.defineProperty.
  */
 export const defineProperty = Object.defineProperty;
+
+/**
+ * Alias to Object.create.
+ */
+export const createObject = Object.create;
 
 /**
  * Check if the target is a Node instance.

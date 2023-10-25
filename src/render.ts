@@ -2,7 +2,6 @@ import type { Realm } from '@chialab/quantum';
 import { document } from '$env';
 import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
 import { css } from './css';
-import { type CustomElementConstructor } from './CustomElement';
 import { getPropertyDescriptor, isArray, isNode } from './helpers';
 import {
     isVComponent,
@@ -152,12 +151,14 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
  * @param propertyKey The property key to update.
  * @param value The new value.
  * @param oldValue The old value.
+ * @param constructor The constructor of the node.
  */
 const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     node: T,
     propertyKey: P,
     value: T[P] | undefined,
-    oldValue?: T[P]
+    oldValue?: T[P],
+    constructor?: ComponentConstructor
 ) => {
     const isInputValue =
         (propertyKey === 'checked' || propertyKey === 'value') && (node as HTMLElement).tagName === 'INPUT';
@@ -228,26 +229,23 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     const isReference = (value && type === 'object') || type === 'function';
     const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
 
-    if (isReference || wasReference || isInputValue) {
+    if (isReference || wasReference || isInputValue || (constructor && type !== 'string')) {
         (node as unknown as Record<string, unknown>)[propertyKey] = value;
-    } else if (isComponent(node)) {
-        if (type === 'string') {
-            const observedAttributes = (node.constructor as CustomElementConstructor).observedAttributes;
-            if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                const descriptor = propertyKey in node && getPropertyDescriptor(node, propertyKey);
-                if (!descriptor || !descriptor.get || descriptor.set) {
-                    (node as unknown as Record<string, unknown>)[propertyKey] = value;
-                }
-            } else {
-                const property = getProperty(node as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
-                if (property && property.fromAttribute) {
-                    (node as unknown as Record<string, unknown>)[propertyKey] = (
-                        property.fromAttribute as Function
-                    ).call(node, value as string);
-                }
+    } else if (constructor) {
+        const observedAttributes = constructor.observedAttributes;
+        if (!observedAttributes?.includes(propertyKey)) {
+            const descriptor = propertyKey in node && getPropertyDescriptor(node, propertyKey);
+            if (!descriptor || !descriptor.get || descriptor.set) {
+                (node as unknown as Record<string, unknown>)[propertyKey] = value;
             }
         } else {
-            (node as unknown as Record<string, unknown>)[propertyKey] = value;
+            const property = getProperty(node as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
+            if (property?.fromAttribute) {
+                (node as unknown as Record<string, unknown>)[propertyKey] = (property.fromAttribute as Function).call(
+                    node,
+                    value as string
+                );
+            }
         }
     }
 
@@ -269,21 +267,22 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
  * @param childContext The child context.
  */
 const insertNode = (parentContext: Context, childContext: Context) => {
+    const { node: parentNode, _pos: pos } = parentContext;
     const currentChildren = parentContext.children;
-    if (currentChildren.indexOf(childContext) !== -1) {
+    if (currentChildren.includes(childContext)) {
         // the node is already in the child list
         // remove nodes until the correct instance
         let currentContext: Context | null;
-        while ((currentContext = currentChildren[parentContext._pos]) && childContext !== currentContext) {
-            parentContext.node.removeChild(currentContext.node);
-            currentChildren.splice(parentContext._pos, 1);
+        while ((currentContext = currentChildren[pos]) && childContext !== currentContext) {
+            parentNode.removeChild(currentContext.node);
+            currentChildren.splice(pos, 1);
         }
-        parentContext._pos++;
     } else {
         // we need to insert the new node into the tree
-        parentContext.node.insertBefore(childContext.node, currentChildren[parentContext._pos]?.node);
-        currentChildren.splice(parentContext._pos++, 0, childContext);
+        parentNode.insertBefore(childContext.node, currentChildren[pos]?.node);
+        currentChildren.splice(pos, 0, childContext);
     }
+    parentContext._pos++;
 };
 
 /**
@@ -375,7 +374,7 @@ const renderTemplate = (
                 if (running) {
                     throw new Error('An update request is already running');
                 }
-                if (currentChildren.indexOf(renderContext) === -1) {
+                if (!currentChildren.includes(renderContext)) {
                     return false;
                 }
 
@@ -492,9 +491,9 @@ const renderTemplate = (
 
         templateContext.properties = properties;
 
-        let collectingUpdates = false;
+        let constructor: ComponentConstructor | undefined;
         if (isComponent(node)) {
-            collectingUpdates = true;
+            constructor = (node as ComponentInstance).constructor as ComponentConstructor;
             node.collectUpdatesStart();
         }
 
@@ -505,7 +504,8 @@ const renderTemplate = (
                         node,
                         propertyKey as keyof Node,
                         undefined,
-                        oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node]
+                        oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
+                        constructor
                     );
                 }
             }
@@ -523,7 +523,8 @@ const renderTemplate = (
                         node,
                         propertyKey as keyof Node,
                         properties[propertyKey as keyof typeof properties] as Node[keyof Node],
-                        oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node]
+                        oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
+                        constructor
                     );
             }
         }
@@ -534,7 +535,7 @@ const renderTemplate = (
             internalRender(templateContext, children, realm, rootContext, namespaceURI);
         }
 
-        if (collectingUpdates) {
+        if (constructor) {
             (node as ComponentInstance).collectUpdatesEnd();
         }
         return;
@@ -630,10 +631,8 @@ export const internalRender = (
 
     while (currentIndex <= --end) {
         const [child] = contextChildren.splice(end, 1);
-        if (
-            child.node.parentNode === context.node ||
-            (realm?.open && child.node.parentNode === realm.node && realm.root === context.node)
-        ) {
+        const parentNode = child.node.parentNode;
+        if (parentNode === context.node || (realm?.open && parentNode === realm.node && realm.root === context.node)) {
             context.node.removeChild(child.node);
         }
     }

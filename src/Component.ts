@@ -388,6 +388,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
+
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
                 ...listener,
@@ -404,6 +405,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             // setup properties
             const computedProperties = getProperties(element);
+            let watched: PropertyKey[] | undefined;
             for (const propertyKey in computedProperties) {
                 delete element[propertyKey];
                 const property = computedProperties[propertyKey];
@@ -413,7 +415,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     element[propertyKey] = property.defaultValue;
                 }
                 if (property.static) {
-                    getWatched(element).push(propertyKey);
+                    (watched = watched || getWatched(element)).push(propertyKey);
                 }
             }
 
@@ -733,8 +735,9 @@ const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
             super(...args);
 
             const properties = getProperties(Component.prototype as this);
+            let watched: PropertyKey[] | undefined;
             for (const propertyKey in properties) {
-                getWatched(this).push(propertyKey);
+                (watched = watched || getWatched(this)).push(propertyKey);
             }
         }
     };
