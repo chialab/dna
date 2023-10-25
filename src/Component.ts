@@ -61,6 +61,16 @@ export interface ComponentMixin {
     readonly realm: Realm;
 
     /**
+     * A flag to indicate if the component is collecting updates.
+     */
+    collectingUpdates: boolean;
+
+    /**
+     * A flag to indicate if the component has a scheduled update.
+     */
+    updateScheduled: boolean;
+
+    /**
      * The defined component name.
      * For autonomous custom elements, this is the tag name.
      */
@@ -198,6 +208,25 @@ export interface ComponentMixin {
      * Force an element to re-render.
      */
     forceUpdate(): void;
+
+    /**
+     * Start collecting updates.
+     */
+    collectUpdatesStart(): void;
+
+    /**
+     * Stop collecting updates and run a single re-render, if needed.
+     * @returns True if a re-render has been triggered.
+     */
+    collectUpdatesEnd(): boolean;
+
+    /**
+     * Assign properties to the component.
+     * It runs a single re-render after the assignment.
+     * @param props The properties to assign.
+     * @returns The component instance.
+     */
+    assign(props: Props<this>): this;
 }
 
 /**
@@ -304,6 +333,16 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * The realm of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * A flag to indicate if the component is collecting updates.
+         */
+        collectingUpdates = false;
+
+        /**
+         * A flag to indicate if the component has a scheduled update.
+         */
+        updateScheduled = false;
 
         /**
          * The tag name used for Component definition.
@@ -601,12 +640,58 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * Force an element to re-render.
          */
         forceUpdate() {
+            if (this.collectingUpdates) {
+                this.updateScheduled = true;
+                return;
+            }
+
             const realm = this.realm;
             if (realm) {
                 realm.requestUpdate(() => {
                     internalRender(getRootContext(realm.root), this.render(), realm);
                 });
             }
+        }
+
+        /**
+         * Start collecting updates.
+         */
+        collectUpdatesStart() {
+            this.collectingUpdates = true;
+        }
+
+        /**
+         * Stop collecting updates and run a single re-render, if needed.
+         * @returns True if a re-render has been triggered.
+         */
+        collectUpdatesEnd() {
+            this.collectingUpdates = false;
+
+            if (this.updateScheduled) {
+                this.updateScheduled = false;
+                this.forceUpdate();
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Assign properties to the component.
+         * It runs a single re-render after the assignment.
+         * @param props The properties to assign.
+         * @returns The component instance.
+         */
+        assign(props: Props<this>) {
+            this.collectUpdatesStart();
+            try {
+                for (const key in props) {
+                    this[key as keyof this] = props[key as keyof typeof props] as this[keyof typeof props];
+                }
+            } finally {
+                this.collectUpdatesEnd();
+            }
+
+            return this;
         }
     };
 

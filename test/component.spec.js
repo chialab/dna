@@ -1043,6 +1043,36 @@ describe(
                 expect(element.innerHTML).toBe('<h1>test</h1>');
             });
 
+            it('should should re-render once using assign', () => {
+                const spy = vi.fn();
+                let TestElement = class TestElement extends DNA.Component {
+                    constructor(...args) {
+                        super(...args);
+                        this.title = '';
+                        this.description = '';
+                    }
+
+                    render() {
+                        spy();
+                        return DNA.html`<h1>${this.title}</h1><h2>${this.description}</h2>`;
+                    }
+                };
+
+                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
+                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'description', undefined);
+                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                expect(element.innerHTML).toBe('<h1></h1><h2></h2>');
+                element.assign({
+                    title: 'test',
+                    description: 'test',
+                });
+                expect(element.innerHTML).toBe('<h1>test</h1><h2>test</h2>');
+                expect(spy).toHaveBeenCalledTimes(2);
+            });
+
             it('should render only once after construction', () => {
                 const callback = vi.fn();
 
