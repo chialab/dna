@@ -1,14 +1,7 @@
-import { CustomEvent, HTMLElement } from '$env';
 import { type ClassElement } from './ClassDescriptor';
 import { type ComponentConstructor, type ComponentInstance } from './Component';
-import {
-    getOwnPropertyDescriptor,
-    getPrototypeOf,
-    hasOwnProperty,
-    isElement,
-    isEvent,
-    type Constructor,
-} from './helpers';
+import { HTMLElement } from './Elements';
+import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
 import { type Methods } from './property';
 
 /**
@@ -84,6 +77,9 @@ type WithEventDelegations = {
     };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isElement = (node: any): node is Element => node && node.nodeType === Node.ELEMENT_NODE;
+
 const assertNode = (element: unknown) => {
     if (!isElement(element)) {
         throw new TypeError('The provided element must be a Node');
@@ -91,7 +87,7 @@ const assertNode = (element: unknown) => {
 };
 
 const assertEvent = (event: unknown) => {
-    if (!isEvent(event)) {
+    if (!(event instanceof Event)) {
         throw new TypeError('The provided object must be an Event');
     }
 };

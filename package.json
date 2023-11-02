@@ -40,12 +40,12 @@
   },
   "scripts": {
     "build": "rimraf 'dist' 'types' && yarn types && yarn build:browser && yarn build:node:esm && yarn build:node:cjs",
-    "build:browser": "esbuild src/index.ts --outfile=dist/browser/dna.js --platform=browser --format=esm --bundle --packages=external --sourcemap",
-    "build:node:esm": "esbuild src/index.ts --outfile=dist/node/dna.js --platform=node --alias:\\$env=./src/env.node.ts --format=esm --bundle --packages=external --sourcemap",
-    "build:node:cjs": "esbuild src/index.ts --outfile=dist/node/dna.cjs --platform=node --alias:\\$env=./src/env.node.ts --format=cjs --bundle --packages=external --sourcemap",
+    "build:browser": "esbuild src/index.ts --outfile=dist/browser/dna.js --platform=browser --format=esm --bundle --packages=external --minify --sourcemap",
+    "build:node:esm": "esbuild src/index.ts --outfile=dist/node/dna.js --platform=node --format=esm --bundle --packages=external --minify --sourcemap",
+    "build:node:cjs": "esbuild src/index.ts --outfile=dist/node/dna.cjs --platform=node --format=cjs --bundle --packages=external --minify --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "tsc -p test/typings --noEmit",
+    "test:typings": "tsc -p test-typings --noEmit",
     "test:browser": "vitest run --config vitest.browser.ts",
     "test:saucelabs": "vitest run --config vitest.saucelabs.ts",
     "test:node": "vitest run --config vitest.node.ts",
@@ -77,8 +77,6 @@
     "webdriverio": "^8.17.0"
   },
   "dependencies": {
-    "@chialab/quantum": "^1.0.0-alpha.0",
-    "@types/jsdom": "^21.1.3",
-    "jsdom": "^22.1.0"
+    "@chialab/quantum": "^1.0.0-alpha.0"
   }
 }

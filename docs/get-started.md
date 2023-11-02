@@ -7,7 +7,7 @@ The recommended way to use DNA is to setup a project with Babel or TypeScript wh
 You can use DNA via CDN thanks to the [Unpkg](https://unpkg.com/):
 
 ```ts
-import { Component, customElements } from 'https://unpkg.com/@chialab/dna?module';
+import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
 ```
 
 ### Setup a bundler
@@ -118,7 +118,7 @@ class HelloWorld extends Component {
 You can use the class decorator if you are using TypeScript or this Babel plugin, otherwise you have to fallback directly using `customElements.define`:
 
 ```ts
-import { Component, customElements, html } from '@chialab/dna';
+import { Component, define, html } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get properties() {
@@ -136,7 +136,7 @@ class HelloWorld extends Component {
     }
 }
 
-customElements.define('hello-world', HelloWorld);
+define('hello-world', HelloWorld);
 ```
 
 </div>
@@ -148,12 +148,12 @@ Custom Element specification allows to define an element using the `is` attribut
 This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
 
 ```tsx
-import { Component, customElement, property } from '@chialab/dna';
+import { builtin, customElement, property } from '@chialab/dna';
 
-@customElement('blog-post', {
-    extends: 'article',
+@customElement('alert-dialog', {
+    extends: 'dialog',
 })
-class BlogPost extends Component {
+class AlertDialog extends builtin.HTMLDialogElement {
     @property() title: string = '';
 
     render() {
@@ -167,9 +167,9 @@ class BlogPost extends Component {
 <div>
 
 ```ts
-import { Component, customElements, html } from '@chialab/dna';
+import { builtin, define, html } from '@chialab/dna';
 
-class BlogPost extends Component {
+class AlertDialog extends builtin.HTMLDialogElement {
     static get properties() {
         return {
             title: {
@@ -184,15 +184,15 @@ class BlogPost extends Component {
     }
 }
 
-customElements.define('blog-post', BlogPost, {
-    extends: 'article',
+define('alert-dialog', AlertDialog, {
+    extends: 'dialog',
 });
 ```
 
 </div>
 </details>
 
-In the example above, a new instance of `BlogPost` inherits all class methods and properties, but its `tagName` will be `ARTICLE`.
+In the example above, a new instance of `AlertDialog` inherits all class methods and properties, but its `tagName` will be `DIALOG`.
 
 > **Note**
 > Extending builtin elements also preserves accessibility and usability features: extending the `BUTTON` element will make the component reachable and clickable via keyboard navigation without setting `role` and `tabindex`.

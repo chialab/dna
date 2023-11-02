@@ -4,11 +4,6 @@ import vitestConfig from './vitest.config';
 export default mergeConfig(
     vitestConfig,
     defineConfig({
-        resolve: {
-            alias: {
-                $env: './src/env.browser.ts',
-            },
-        },
         test: {
             coverage: {
                 provider: 'istanbul',

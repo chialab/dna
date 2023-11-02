@@ -418,9 +418,9 @@ h('table', null,
 DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
 
 ```ts
-import { DOM, render } from '@chialab/dna';
+import { render } from '@chialab/dna';
 
-let paragraph = DOM.createElement('p');
+let paragraph = document.createElement('p');
 paragraph.textContent = 'Lorem Ipsum';
 
 render(html`<div>${paragraph}</div>`, document.body);
@@ -439,11 +439,11 @@ will render:
 If you want to add some properties to the instance, you can pass it as an hyper node using the `ref` property. This is useful if you want to reference some nodes in your component:
 
 ```tsx
-import { Component, customElement, DOM, listen } from '@chialab/dna';
+import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-form')
 class Form extends Component {
-    input = DOM.createElement('input');
+    input = this.onwenrDocument.createElement('input');
 
     render() {
         return (
@@ -471,12 +471,12 @@ Slotted children are nodes that semantically are children of the component, but 
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
 ```tsx
-import { customElement, extend, property, window } from '@chialab/dna';
+import { builtin, customElement, property } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
-class Dialog extends extend(window.HTMLDialogElement) {
+class Dialog extends builtin.HTMLDialogElement {
     @property() title: string = '';
     @property() content: string = '';
 

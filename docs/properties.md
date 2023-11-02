@@ -20,7 +20,7 @@ class Card extends Component {
 Or using the static `properties` getter:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, define } from '@chialab/dna';
 
 class Card extends Component {
     static get properties() {
@@ -30,7 +30,7 @@ class Card extends Component {
     }
 }
 
-customElements.define('x-card', Card);
+define('x-card', Card);
 ```
 
 Once defined, the computed `observedAttributes` of the Card component will include the `age` attribute.
@@ -51,7 +51,7 @@ class Card extends Component {
 Or using the static `properties` getter and configuring the field:
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, define } from '@chialab/dna';
 
 class Card extends Component {
     static get properties() {
@@ -64,7 +64,7 @@ class Card extends Component {
     }
 }
 
-customElements.define('x-card', Card);
+define('x-card', Card);
 ```
 
 ## Configuration
@@ -202,7 +202,7 @@ The returned value of the getter does not represent the actual property value, b
 The **setter** function is invoked _before_ property validation and observers and it receives the assigned value as first argument. Any returned value will be use to update the inner property value.
 
 ```ts
-import { Component, customElements } from '@chialab/dna';
+import { Component, define } from '@chialab/dna';
 
 class Card extends Component {
     static get properties() {
@@ -223,7 +223,7 @@ class Card extends Component {
     }
 }
 
-customElements.define('x-card', Card);
+define('x-card', Card);
 ```
 
 ## Observers

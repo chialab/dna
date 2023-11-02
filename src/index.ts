@@ -1,4 +1,5 @@
-export { window, document, customElements, Event, CustomEvent, Node, Element, HTMLElement } from '$env';
+import './polyfill';
+
 export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { render } from './render';
 export { css } from './css';
@@ -14,6 +15,7 @@ export { property, state, observe, getProperty, getProperties, defineProperties,
 export {
     define,
     extend,
+    builtin,
     Component,
     isComponent,
     isComponentConstructor,

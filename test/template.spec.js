@@ -10,12 +10,12 @@ describe(
     () => {
         let wrapper;
         beforeEach(() => {
-            wrapper = DNA.document.createElement('div');
-            DNA.document.body.appendChild(wrapper);
+            wrapper = document.createElement('div');
+            document.body.appendChild(wrapper);
         });
 
         afterEach(() => {
-            DNA.document.body.removeChild(wrapper);
+            document.body.removeChild(wrapper);
         });
 
         describe('simple', () => {
@@ -215,7 +215,7 @@ describe(
             for (const type in TEMPLATES) {
                 it(type, async () => {
                     const rootName = getComponentName();
-                    class MyElement extends DNA.extend(DNA.window.HTMLDivElement) {
+                    class MyElement extends DNA.builtin.HTMLDivElement {
                         render() {
                             return TEMPLATES[type]();
                         }
@@ -380,7 +380,7 @@ describe(
                     );
 
                     DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
-                    DNA.customElements.upgrade(element);
+                    window.customElements.upgrade(element);
 
                     const realm = element.realm;
 
@@ -453,7 +453,7 @@ describe(
                     );
 
                     DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
-                    DNA.customElements.upgrade(element);
+                    window.customElements.upgrade(element);
                     const realm = element.realm;
 
                     realm.dangerouslyOpen();

@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { customElements } from '$env';
 import htm from 'htm';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
-import { isNode } from './helpers';
 import { type Observable } from './Observable';
 import { type Props } from './property';
 import { type Context } from './render';
@@ -261,7 +259,7 @@ export const isVComponent = (target: VObject): target is VComponent<ComponentCon
  * @param target The node to check.
  * @returns True if the target is an HTML node instance.
  */
-export const isVNode = (target: VObject): target is VElement<Node> => isNode(target.type);
+export const isVNode = (target: VObject): target is VElement<Node> => target.type instanceof Node;
 
 /**
  * Check if the current virtual node is a slot element.

@@ -158,3 +158,18 @@ class Card extends Component {
     }
 }
 ```
+
+## The `css` helper
+
+The `css` helper is a method internally used by DNA convert a CSS string into its scoped version. This can be used to add extra manipulation to the CSS string:
+
+```ts
+import { css } from '@chialab/dna';
+
+const cssText = css('x-article', 'h1 { color: red; }').replace(/red/g, 'blue');
+
+const style = document.createElement('style');
+style.textContent = cssText;
+
+DOM.appendChild(document.head, style);
+```

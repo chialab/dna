@@ -33,7 +33,7 @@ class HelloWorld extends Component {
 **Define the component (JavaScript)**
 
 ```ts
-import { Component, customElements, html, listen, property } from '@chialab/dna';
+import { Component, define, html, listen, property } from '@chialab/dna';
 
 class HelloWorld extends Component {
     static get properties() {
@@ -65,7 +65,7 @@ class HelloWorld extends Component {
     }
 }
 
-customElements.define('hello-world', HelloWorld);
+define('hello-world', HelloWorld);
 ```
 
 Then use the element in your HTML:

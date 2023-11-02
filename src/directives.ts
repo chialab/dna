@@ -1,4 +1,3 @@
-import { customElements, DOMParser } from '$env';
 import { h, type FunctionComponent, type Template } from './JSX';
 import { getObservableState, type Observable } from './Observable';
 import { getThenableState } from './Thenable';

@@ -1,8 +1,7 @@
 import type { Realm } from '@chialab/quantum';
-import { document } from '$env';
 import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
 import { css } from './css';
-import { getPropertyDescriptor, isArray, isNode } from './helpers';
+import { getPropertyDescriptor, isArray } from './helpers';
 import {
     isVComponent,
     isVFragment,
@@ -325,6 +324,7 @@ const renderTemplate = (
         return;
     }
 
+    const document = context.node.ownerDocument as Document;
     const currentChildren = context.children;
 
     if (isVObject(template)) {
@@ -540,7 +540,7 @@ const renderTemplate = (
         }
         return;
     }
-    if (isNode(template)) {
+    if (template instanceof Node) {
         insertNode(
             context,
             currentChildren.find((child) => child.node === template) ||

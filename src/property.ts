@@ -1,6 +1,11 @@
-import { HTMLElement } from '$env';
 import { type ClassElement } from './ClassDescriptor';
-import { isComponent, type ComponentConstructor, type ComponentInstance, type ComponentMixin } from './Component';
+import {
+    isComponent,
+    isComponentConstructor,
+    type ComponentConstructor,
+    type ComponentInstance,
+    type ComponentMixin,
+} from './Component';
 import {
     defineProperty as _defineProperty,
     createObject,
@@ -550,7 +555,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
-    while (ctr && ctr !== HTMLElement) {
+    while (isComponentConstructor(ctr)) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
         if (propertiesDescriptor) {
             const descriptorProperties = (

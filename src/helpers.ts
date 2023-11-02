@@ -1,5 +1,3 @@
-import { Event, Node } from '$env';
-
 /**
  * Constructor type helper.
  */
@@ -63,41 +61,6 @@ export const defineProperty = Object.defineProperty;
 export const createObject = Object.create;
 
 /**
- * Check if the target is a Node instance.
- * @param target The target to check.
- * @returns The target is a Node instance.
+ * Check if runtime has DOM specs.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isNode = (target: any): target is Node => target instanceof Node;
-
-/**
- * Check if a node is a Document instance.
- * @param node The node to check.
- * @returns The node is a Document instance.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isDocument = (node: any): node is Document => node && node.nodeType === Node.DOCUMENT_NODE;
-
-/**
- * Check if a node is a Text instance.
- * @param node The node to check.
- * @returns The node is a Text instance.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isText = (node: any): node is Text => node && node.nodeType === Node.TEXT_NODE;
-
-/**
- * Check if a node is an Element instance.
- * @param node The node to check.
- * @returns The node is an Element instance.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isElement = <T extends Element>(node: any): node is T => node && node.nodeType === Node.ELEMENT_NODE;
-
-/**
- * Check if an object is an Event instance.
- * @param event The target to check.
- * @returns The object is an Event instance.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isEvent = (event: any): event is Event => event instanceof Event;
+export const isBrowser = typeof HTMLElement !== 'undefined';

@@ -97,7 +97,7 @@ TypeScript supports JSX syntax, and it is able to provide typechecking and hints
 **x-card.tsx**
 
 ```ts
-import { Component, extend, window, customElement } from '@chialab/dna';
+import { Component, builtin, customElement } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -107,7 +107,7 @@ class Card extends Component {
 @customElement('x-card', {
     extends: 'a',
 })
-class Link extends extend(window.HTMLAnchorElement) {
+class Link extends builtin.HTMLAnchorElement {
     ...
 }
 

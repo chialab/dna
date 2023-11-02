@@ -1,8 +1,8 @@
 import { attachRealm, type Realm } from '@chialab/quantum';
-import { customElements, HTMLElement } from '$env';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
 import { $parse } from './directives';
+import * as HtmlElements from './Elements';
 import {
     defineListeners,
     delegateEventListener,
@@ -14,7 +14,7 @@ import {
     type DelegatedEventCallback,
     type ListenerConfig,
 } from './events';
-import { defineProperty, setPrototypeOf, type Constructor } from './helpers';
+import { defineProperty, isBrowser, setPrototypeOf, type Constructor } from './helpers';
 import { type KeyedProperties, type Template } from './JSX';
 import {
     addObserver,
@@ -388,6 +388,9 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
             super();
 
             const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
+            if (!isBrowser) {
+                return element;
+            }
 
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
@@ -714,12 +717,34 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(constructor);
 
 /**
+ * A collection of extended builtin HTML constructors.
+ */
+export const builtin = new Proxy({} as Record<keyof typeof HtmlElements, ComponentConstructor>, {
+    get(target, name: keyof typeof HtmlElements) {
+        const constructor = Reflect.get(target, name);
+        if (constructor) {
+            return constructor;
+        }
+
+        if (name in HtmlElements) {
+            const constructor = extend(HtmlElements[name] as Constructor<HTMLElement>);
+            return (target[name] = constructor);
+        }
+
+        return null;
+    },
+    set(target, name: keyof typeof HtmlElements, value: ComponentConstructor) {
+        return Reflect.set(target, name, value);
+    },
+});
+
+/**
  * The DNA base Component constructor, a Custom Element constructor with
  * declarative properties and event delegations, custom template and
  * a complete life cycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = extend(HTMLElement);
+export const Component = builtin.HTMLElement;
 
 /**
  * Decorate a component class in order to watch decorated properties.
@@ -788,7 +813,10 @@ export function define(name: string, constructor: ComponentConstructor, options?
             'The registry already contains an entry with the constructor (or is otherwise already defined)'
         );
     }
-    customElements.define(name, constructor, options);
+
+    if (typeof customElements !== 'undefined') {
+        customElements.define(name, constructor, options);
+    }
 
     return constructor;
 }

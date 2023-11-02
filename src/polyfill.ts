@@ -1,4 +1,6 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
+import * as HtmlElements from './Elements';
+import { isBrowser } from './helpers';
 
 /**
  * Register a polyfill for Customized built-in elements.
@@ -9,76 +11,6 @@ function polyfillBuiltin() {
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
     const nativeCreateElement = document.createElement.bind(document);
-    const BUILTIN_HTML_CONSTRUCTORS = [
-        win.HTMLElement,
-        win.HTMLAnchorElement,
-        win.HTMLAreaElement,
-        win.HTMLAudioElement,
-        win.HTMLBaseElement,
-        win.HTMLQuoteElement,
-        win.HTMLBodyElement,
-        win.HTMLBRElement,
-        win.HTMLButtonElement,
-        win.HTMLCanvasElement,
-        win.HTMLTableCaptionElement,
-        win.HTMLTableColElement,
-        win.HTMLDataElement,
-        win.HTMLDataListElement,
-        win.HTMLModElement,
-        win.HTMLDetailsElement,
-        win.HTMLDialogElement,
-        win.HTMLDirectoryElement,
-        win.HTMLDivElement,
-        win.HTMLDListElement,
-        win.HTMLEmbedElement,
-        win.HTMLFieldSetElement,
-        win.HTMLFontElement,
-        win.HTMLFormElement,
-        win.HTMLFrameElement,
-        win.HTMLFrameSetElement,
-        win.HTMLHeadingElement,
-        win.HTMLHeadElement,
-        win.HTMLHRElement,
-        win.HTMLIFrameElement,
-        win.HTMLImageElement,
-        win.HTMLInputElement,
-        win.HTMLLabelElement,
-        win.HTMLLegendElement,
-        win.HTMLLIElement,
-        win.HTMLLinkElement,
-        win.HTMLMapElement,
-        win.HTMLMarqueeElement,
-        win.HTMLMenuElement,
-        win.HTMLMetaElement,
-        win.HTMLMeterElement,
-        win.HTMLObjectElement,
-        win.HTMLOListElement,
-        win.HTMLOptGroupElement,
-        win.HTMLOptionElement,
-        win.HTMLOutputElement,
-        win.HTMLParagraphElement,
-        win.HTMLParamElement,
-        win.HTMLPictureElement,
-        win.HTMLPreElement,
-        win.HTMLProgressElement,
-        win.HTMLScriptElement,
-        win.HTMLSelectElement,
-        win.HTMLSlotElement,
-        win.HTMLSourceElement,
-        win.HTMLSpanElement,
-        win.HTMLStyleElement,
-        win.HTMLTableElement,
-        win.HTMLTableSectionElement,
-        win.HTMLTableCellElement,
-        win.HTMLTemplateElement,
-        win.HTMLTextAreaElement,
-        win.HTMLTimeElement,
-        win.HTMLTitleElement,
-        win.HTMLTableRowElement,
-        win.HTMLTrackElement,
-        win.HTMLUListElement,
-        win.HTMLVideoElement,
-    ];
     const customElements = win.customElements;
     const define = customElements.define.bind(customElements);
     const upgrade = customElements.upgrade.bind(customElements);
@@ -129,7 +61,7 @@ function polyfillBuiltin() {
 
         let CurrentConstructor = constructor;
         let ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
-        while (BUILTIN_HTML_CONSTRUCTORS.indexOf(ParentCostructor) === -1) {
+        while (ParentCostructor.name in HtmlElements) {
             CurrentConstructor = ParentCostructor;
             if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
                 return;
@@ -268,6 +200,6 @@ function checkBuiltin() {
     return document.createElement('br', { is: name }) instanceof Constructor;
 }
 
-if (!checkBuiltin()) {
+if (isBrowser && !checkBuiltin()) {
     polyfillBuiltin();
 }

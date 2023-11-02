@@ -9,13 +9,13 @@ describe(
     () => {
         let wrapper;
         beforeEach(() => {
-            wrapper = DNA.document.createElement('div');
-            DNA.document.body.appendChild(wrapper);
+            wrapper = document.createElement('div');
+            document.body.appendChild(wrapper);
         });
 
         afterEach(() => {
             if (wrapper.parentNode) {
-                DNA.document.body.removeChild(wrapper);
+                document.body.removeChild(wrapper);
             }
         });
 
@@ -26,7 +26,7 @@ describe(
                 DNA.define(is, TestElement);
 
                 const element = new TestElement();
-                expect(element).to.be.an.instanceof(DNA.HTMLElement);
+                expect(element).toBeInstanceOf(window.HTMLElement);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe(is.toUpperCase());
             });
@@ -39,19 +39,18 @@ describe(
                 });
 
                 const element = new TestElement();
-                expect(element).to.be.an.instanceof(DNA.HTMLElement);
+                expect(element).toBeInstanceOf(window.HTMLElement);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe('ARTICLE');
             });
 
             it('should create a base class starting from the anchor base class', () => {
-                const HTMLAnchorElement = DNA.extend(DNA.window.HTMLAnchorElement);
-                class TestElement extends HTMLAnchorElement {}
+                class TestElement extends DNA.builtin.HTMLAnchorElement {}
                 DNA.define(getComponentName(), TestElement, { extends: 'a' });
                 const element = new TestElement();
                 element.href = 'https://www.webcomponents.org/introduction';
-                expect(TestElement).to.not.equal(HTMLAnchorElement);
-                expect(element).to.be.an.instanceof(HTMLAnchorElement);
+                expect(TestElement).not.toBe(HTMLAnchorElement);
+                expect(element).toBeInstanceOf(HTMLAnchorElement);
                 expect('href' in element).toBe(true);
             });
 
@@ -82,10 +81,10 @@ describe(
                 TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
                 const element = new TestElement();
-                expect(element).to.have.property('myCustomProp1');
-                expect(element).to.have.property('myCustomProp2');
-                expect(element).to.have.property('myCustomProp3');
-                expect(element).to.not.have.property('myCustomProp4');
+                expect(element).toHaveProperty('myCustomProp1');
+                expect(element).toHaveProperty('myCustomProp2');
+                expect(element).toHaveProperty('myCustomProp3');
+                expect(element).not.toHaveProperty('myCustomProp4');
             });
 
             it('should setup properties with babel decorator', () => {
@@ -137,15 +136,15 @@ describe(
                 );
 
                 const element = new TestElement();
-                expect(element).to.have.property('myCustomProp1');
-                expect(element).to.have.property('myCustomProp2');
-                expect(element).to.have.property('myCustomProp3');
-                expect(element).to.not.have.property('myCustomProp4');
+                expect(element).toHaveProperty('myCustomProp1');
+                expect(element).toHaveProperty('myCustomProp2');
+                expect(element).toHaveProperty('myCustomProp3');
+                expect(element).not.toHaveProperty('myCustomProp4');
             });
 
             it('should setup properties for extended elements', () => {
                 const _forceUpdate = vi.fn();
-                let TestElement = class TestElement extends DNA.extend(DNA.HTMLElement) {
+                let TestElement = class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -175,10 +174,10 @@ describe(
                 TestElement = __decorate([DNA.customElement(getComponentName(), { extends: 'article' })], TestElement);
 
                 const element = new TestElement();
-                expect(element).to.have.property('myCustomProp1');
-                expect(element).to.have.property('myCustomProp2');
-                expect(element).to.have.property('myCustomProp3');
-                expect(element).to.not.have.property('myCustomProp4');
+                expect(element).toHaveProperty('myCustomProp1');
+                expect(element).toHaveProperty('myCustomProp2');
+                expect(element).toHaveProperty('myCustomProp3');
+                expect(element).not.toHaveProperty('myCustomProp4');
                 expect(_forceUpdate).not.toHaveBeenCalled();
 
                 element.myCustomProp1 = 'Hello';
@@ -187,7 +186,7 @@ describe(
             });
 
             it('should setup properties for extended components (ts over ts)', () => {
-                let BaseElement = class BaseElement extends DNA.extend(DNA.HTMLElement) {
+                let BaseElement = class BaseElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -227,11 +226,11 @@ describe(
                 TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
                 const element = new TestElement();
-                expect(element).to.have.property('myCustomProp1');
-                expect(element).to.have.property('myCustomProp2');
-                expect(element).to.have.property('myCustomProp3');
-                expect(element).to.have.property('myCustomProp4');
-                expect(element).to.not.have.property('myCustomProp5');
+                expect(element).toHaveProperty('myCustomProp1');
+                expect(element).toHaveProperty('myCustomProp2');
+                expect(element).toHaveProperty('myCustomProp3');
+                expect(element).toHaveProperty('myCustomProp4');
+                expect(element).not.toHaveProperty('myCustomProp5');
                 expect(_forceUpdate).not.toHaveBeenCalled();
 
                 element.myCustomProp1 = 'Hello';
@@ -240,7 +239,7 @@ describe(
             });
 
             it('should setup properties for extended components (js over ts)', () => {
-                let BaseElement = class BaseElement extends DNA.extend(DNA.HTMLElement) {
+                let BaseElement = class BaseElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -283,11 +282,11 @@ describe(
                 DNA.define(getComponentName(), TestElement);
 
                 const element = new TestElement();
-                expect(element).to.have.property('myCustomProp1');
-                expect(element).to.have.property('myCustomProp2');
-                expect(element).to.have.property('myCustomProp3');
-                expect(element).to.have.property('myCustomProp4');
-                expect(element).to.not.have.property('myCustomProp5');
+                expect(element).toHaveProperty('myCustomProp1');
+                expect(element).toHaveProperty('myCustomProp2');
+                expect(element).toHaveProperty('myCustomProp3');
+                expect(element).toHaveProperty('myCustomProp4');
+                expect(element).not.toHaveProperty('myCustomProp5');
                 expect(_forceUpdate).not.toHaveBeenCalled();
 
                 element.myCustomProp1 = 'Hello';
@@ -308,7 +307,7 @@ describe(
                 wrapper.innerHTML = `<${is}></${is}>`;
                 expect(connected).to.be.false;
                 DNA.define(is, TestElement);
-                DNA.customElements.upgrade(wrapper);
+                window.customElements.upgrade(wrapper);
                 expect(connected).toBe(true);
             });
         });
@@ -390,7 +389,7 @@ describe(
                 });
 
                 const custom = new TestElement1();
-                const child = DNA.document.createElement('div');
+                const child = document.createElement('div');
                 wrapper.appendChild(child);
                 await new Promise((r) => setTimeout(r, 0));
                 expect(custom.spyConnectedCallback).not.toHaveBeenCalled();
@@ -407,7 +406,7 @@ describe(
                 expect(custom.spyDisconnectedCallback).toHaveBeenCalledOnce();
 
                 const builtin = new TestElement2();
-                const child2 = DNA.document.createElement('div');
+                const child2 = document.createElement('div');
                 wrapper.appendChild(child2);
                 await new Promise((r) => setTimeout(r, 0));
                 expect(builtin.spyConnectedCallback).not.toHaveBeenCalled();
@@ -452,7 +451,7 @@ describe(
                 });
 
                 const custom = new TestElement1();
-                const child = DNA.document.createElement('div');
+                const child = document.createElement('div');
                 wrapper.appendChild(child);
                 await new Promise((r) => setTimeout(r, 0));
                 expect(custom.spyConnectedCallback).not.toHaveBeenCalled();
@@ -467,7 +466,7 @@ describe(
                 expect(custom.spyDisconnectedCallback).not.toHaveBeenCalled();
 
                 const builtin = new TestElement2();
-                const child2 = DNA.document.createElement('div');
+                const child2 = document.createElement('div');
                 wrapper.appendChild(child2);
                 await new Promise((r) => setTimeout(r, 0));
                 expect(builtin.spyConnectedCallback).not.toHaveBeenCalled();
@@ -569,7 +568,7 @@ describe(
                 class TestElement extends DNA.Component {}
                 DNA.define(is, TestElement);
 
-                const element = DNA.document.createElement(is);
+                const element = document.createElement(is);
                 wrapper.appendChild(element);
                 expect(element.isConnected).toBe(true);
             });
@@ -579,7 +578,7 @@ describe(
                 class TestElement extends DNA.Component {}
                 DNA.define(is, TestElement);
 
-                const element = DNA.document.createElement(is);
+                const element = document.createElement(is);
                 expect(element.isConnected).to.be.false;
             });
         });
@@ -978,7 +977,7 @@ describe(
                 DNA.define(name, TestElement, {
                     extends: 'section',
                 });
-                DNA.customElements.upgrade(element);
+                window.customElements.upgrade(element);
                 await new Promise((r) => setTimeout(r, 0));
 
                 expect(propertyChangedCallback).toHaveBeenCalled();
@@ -1377,7 +1376,7 @@ describe(
 
                 const element = new TestElement();
                 const realm = element.realm;
-                const span = DNA.document.createElement('span');
+                const span = document.createElement('span');
                 wrapper.appendChild(element);
                 element.appendChild(span);
 
@@ -1427,7 +1426,7 @@ describe(
 
                 const element = new TestElement();
                 const realm = element.realm;
-                const span = DNA.document.createElement('span');
+                const span = document.createElement('span');
                 wrapper.appendChild(element);
                 element.appendChild(span);
 
@@ -1520,8 +1519,8 @@ describe(
 
                 const element = new TestElement();
                 const realm = element.realm;
-                const span = DNA.document.createElement('span');
-                const input = DNA.document.createElement('input');
+                const span = document.createElement('span');
+                const input = document.createElement('input');
                 wrapper.appendChild(element);
                 element.appendChild(span);
                 element.insertBefore(input, span);
@@ -1614,8 +1613,8 @@ describe(
 
                 const element = new TestElement();
                 const realm = element.realm;
-                const span = DNA.document.createElement('span');
-                const input = DNA.document.createElement('input');
+                const span = document.createElement('span');
+                const input = document.createElement('input');
                 wrapper.appendChild(element);
                 element.appendChild(span);
                 element.replaceChild(input, span);
@@ -1701,8 +1700,8 @@ describe(
 
                 const element = new TestElement();
                 const realm = element.realm;
-                const span = DNA.document.createElement('span');
-                const input = DNA.document.createElement('input');
+                const span = document.createElement('span');
+                const input = document.createElement('input');
                 wrapper.appendChild(element);
                 element.appendChild(span);
                 element.insertAdjacentElement('afterbegin', input);
