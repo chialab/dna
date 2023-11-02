@@ -2,7 +2,7 @@ import { attachRealm, type Realm } from '@chialab/quantum';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
 import { $parse } from './directives';
-import * as HtmlElements from './Elements';
+import { elements, type Elements } from './Elements';
 import {
     defineListeners,
     delegateEventListener,
@@ -719,24 +719,28 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
 /**
  * A collection of extended builtin HTML constructors.
  */
-export const builtin = new Proxy({} as Record<keyof typeof HtmlElements, ComponentConstructor>, {
-    get(target, name: keyof typeof HtmlElements) {
-        const constructor = Reflect.get(target, name);
-        if (constructor) {
-            return constructor;
-        }
-
-        if (name in HtmlElements) {
-            const constructor = extend(HtmlElements[name] as Constructor<HTMLElement>);
-            return (target[name] = constructor);
-        }
-
-        return null;
+export const builtin = new Proxy(
+    {} as {
+        [K in keyof Elements]: ComponentConstructor<ComponentInstance<InstanceType<Elements[K]>>>;
     },
-    set(target, name: keyof typeof HtmlElements, value: ComponentConstructor) {
-        return Reflect.set(target, name, value);
-    },
-});
+    {
+        get(target: any, name: keyof Elements) {
+            const constructor = Reflect.get(target, name);
+            if (constructor) {
+                return constructor;
+            }
+
+            if (elements[name]) {
+                return (target[name] = extend(elements[name]));
+            }
+
+            return null;
+        },
+        set(target, name: keyof Elements, value: ComponentConstructor) {
+            return Reflect.set(target, name, value);
+        },
+    }
+);
 
 /**
  * The DNA base Component constructor, a Custom Element constructor with

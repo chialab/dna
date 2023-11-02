@@ -1,5 +1,4 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
-import * as HtmlElements from './Elements';
 import { isBrowser } from './helpers';
 
 /**
@@ -61,7 +60,7 @@ function polyfillBuiltin() {
 
         let CurrentConstructor = constructor;
         let ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
-        while (ParentCostructor.name in HtmlElements) {
+        while (ParentCostructor.name in window) {
             CurrentConstructor = ParentCostructor;
             if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
                 return;
@@ -95,7 +94,7 @@ function polyfillBuiltin() {
                     if (!attributeName) {
                         return;
                     }
-                    if (observedAttributes.indexOf(attributeName) === -1) {
+                    if (!observedAttributes.includes(attributeName)) {
                         return;
                     }
 
@@ -150,7 +149,7 @@ function polyfillBuiltin() {
         const observed = (constructor as CustomElementConstructor).observedAttributes || [];
         for (let i = 0, len = root.attributes.length; i < len; i++) {
             const attr = root.attributes[i];
-            if (observed.indexOf(attr.name) !== -1) {
+            if (observed.includes(attr.name)) {
                 attributes.push({
                     name: attr.name,
                     value: attr.value,
