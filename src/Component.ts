@@ -2,7 +2,7 @@ import { attachRealm, type Realm } from '@chialab/quantum';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { type CustomElement, type CustomElementConstructor } from './CustomElement';
 import { $parse } from './directives';
-import { elements, type Elements } from './Elements';
+import * as Elements from './Elements';
 import {
     defineListeners,
     delegateEventListener,
@@ -721,22 +721,22 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
  */
 export const builtin = new Proxy(
     {} as {
-        [K in keyof Elements]: ComponentConstructor<ComponentInstance<InstanceType<Elements[K]>>>;
+        [K in keyof typeof Elements]: ComponentConstructor<ComponentInstance<InstanceType<(typeof Elements)[K]>>>;
     },
     {
-        get(target: any, name: keyof Elements) {
+        get(target: any, name: keyof typeof Elements) {
             const constructor = Reflect.get(target, name);
             if (constructor) {
                 return constructor;
             }
 
-            if (elements[name]) {
-                return (target[name] = extend(elements[name]));
+            if (Elements[name]) {
+                return (target[name] = extend(Elements[name]));
             }
 
             return null;
         },
-        set(target, name: keyof Elements, value: ComponentConstructor) {
+        set(target, name: keyof typeof Elements, value: ComponentConstructor) {
             return Reflect.set(target, name, value);
         },
     }

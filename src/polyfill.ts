@@ -1,4 +1,5 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
+import * as Elements from './Elements';
 import { isBrowser } from './helpers';
 
 /**
@@ -60,7 +61,7 @@ function polyfillBuiltin() {
 
         let CurrentConstructor = constructor;
         let ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
-        while (ParentCostructor.name in window) {
+        while (Object.values(Elements).includes(ParentCostructor)) {
             CurrentConstructor = ParentCostructor;
             if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
                 return;

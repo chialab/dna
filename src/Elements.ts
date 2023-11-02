@@ -186,85 +186,74 @@ export interface SVGTagNameMap {
 }
 
 const FallbackElement = class FallbackElement {};
-export interface Elements {
-    HTMLElement: typeof HTMLElement;
-    HTMLAnchorElement: typeof HTMLAnchorElement;
-    HTMLAreaElement: typeof HTMLAreaElement;
-    HTMLAudioElement: typeof HTMLAudioElement;
-    HTMLBaseElement: typeof HTMLBaseElement;
-    HTMLQuoteElement: typeof HTMLQuoteElement;
-    HTMLBodyElement: typeof HTMLBodyElement;
-    HTMLBRElement: typeof HTMLBRElement;
-    HTMLButtonElement: typeof HTMLButtonElement;
-    HTMLCanvasElement: typeof HTMLCanvasElement;
-    HTMLTableCaptionElement: typeof HTMLTableCaptionElement;
-    HTMLTableColElement: typeof HTMLTableColElement;
-    HTMLDataElement: typeof HTMLDataElement;
-    HTMLDataListElement: typeof HTMLDataListElement;
-    HTMLModElement: typeof HTMLModElement;
-    HTMLDetailsElement: typeof HTMLDetailsElement;
-    HTMLDialogElement: typeof HTMLDialogElement;
-    HTMLDirectoryElement: typeof HTMLDirectoryElement;
-    HTMLDivElement: typeof HTMLDivElement;
-    HTMLDListElement: typeof HTMLDListElement;
-    HTMLEmbedElement: typeof HTMLEmbedElement;
-    HTMLFieldSetElement: typeof HTMLFieldSetElement;
-    HTMLFontElement: typeof HTMLFontElement;
-    HTMLFormElement: typeof HTMLFormElement;
-    HTMLFrameElement: typeof HTMLFrameElement;
-    HTMLFrameSetElement: typeof HTMLFrameSetElement;
-    HTMLHeadingElement: typeof HTMLHeadingElement;
-    HTMLHeadElement: typeof HTMLHeadElement;
-    HTMLHRElement: typeof HTMLHRElement;
-    HTMLIFrameElement: typeof HTMLIFrameElement;
-    HTMLImageElement: typeof HTMLImageElement;
-    HTMLInputElement: typeof HTMLInputElement;
-    HTMLLabelElement: typeof HTMLLabelElement;
-    HTMLLegendElement: typeof HTMLLegendElement;
-    HTMLLIElement: typeof HTMLLIElement;
-    HTMLLinkElement: typeof HTMLLinkElement;
-    HTMLMapElement: typeof HTMLMapElement;
-    HTMLMarqueeElement: typeof HTMLMarqueeElement;
-    HTMLMenuElement: typeof HTMLMenuElement;
-    HTMLMetaElement: typeof HTMLMetaElement;
-    HTMLMeterElement: typeof HTMLMeterElement;
-    HTMLObjectElement: typeof HTMLObjectElement;
-    HTMLOListElement: typeof HTMLOListElement;
-    HTMLOptGroupElement: typeof HTMLOptGroupElement;
-    HTMLOptionElement: typeof HTMLOptionElement;
-    HTMLOutputElement: typeof HTMLOutputElement;
-    HTMLParagraphElement: typeof HTMLParagraphElement;
-    HTMLParamElement: typeof HTMLParamElement;
-    HTMLPictureElement: typeof HTMLPictureElement;
-    HTMLPreElement: typeof HTMLPreElement;
-    HTMLProgressElement: typeof HTMLProgressElement;
-    HTMLScriptElement: typeof HTMLScriptElement;
-    HTMLSelectElement: typeof HTMLSelectElement;
-    HTMLSlotElement: typeof HTMLSlotElement;
-    HTMLSourceElement: typeof HTMLSourceElement;
-    HTMLSpanElement: typeof HTMLSpanElement;
-    HTMLStyleElement: typeof HTMLStyleElement;
-    HTMLTableElement: typeof HTMLTableElement;
-    HTMLTableSectionElement: typeof HTMLTableSectionElement;
-    HTMLTableCellElement: typeof HTMLTableCellElement;
-    HTMLTemplateElement: typeof HTMLTemplateElement;
-    HTMLTextAreaElement: typeof HTMLTextAreaElement;
-    HTMLTimeElement: typeof HTMLTimeElement;
-    HTMLTitleElement: typeof HTMLTitleElement;
-    HTMLTableRowElement: typeof HTMLTableRowElement;
-    HTMLTrackElement: typeof HTMLTrackElement;
-    HTMLUListElement: typeof HTMLUListElement;
-    HTMLVideoElement: typeof HTMLVideoElement;
-}
 
-/**
- * Builtin constructors for DOM elements.
- */
-export const elements: Elements = new Proxy({} as unknown as Elements, {
-    get(target, name: keyof Elements) {
-        if (!isBrowser) {
-            return class extends FallbackElement {};
-        }
-        return window[name];
-    },
-});
+export const {
+    HTMLElement = FallbackElement as (typeof globalThis)['HTMLElement'],
+    HTMLAnchorElement = HTMLElement as (typeof globalThis)['HTMLAnchorElement'],
+    HTMLAreaElement = HTMLElement as (typeof globalThis)['HTMLAreaElement'],
+    HTMLAudioElement = HTMLElement as (typeof globalThis)['HTMLAudioElement'],
+    HTMLBaseElement = HTMLElement as (typeof globalThis)['HTMLBaseElement'],
+    HTMLQuoteElement = HTMLElement as (typeof globalThis)['HTMLQuoteElement'],
+    HTMLBodyElement = HTMLElement as (typeof globalThis)['HTMLBodyElement'],
+    HTMLBRElement = HTMLElement as (typeof globalThis)['HTMLBRElement'],
+    HTMLButtonElement = HTMLElement as (typeof globalThis)['HTMLButtonElement'],
+    HTMLCanvasElement = HTMLElement as (typeof globalThis)['HTMLCanvasElement'],
+    HTMLTableCaptionElement = HTMLElement as (typeof globalThis)['HTMLTableCaptionElement'],
+    HTMLTableColElement = HTMLElement as (typeof globalThis)['HTMLTableColElement'],
+    HTMLDataElement = HTMLElement as (typeof globalThis)['HTMLDataElement'],
+    HTMLDataListElement = HTMLElement as (typeof globalThis)['HTMLDataListElement'],
+    HTMLModElement = HTMLElement as (typeof globalThis)['HTMLModElement'],
+    HTMLDetailsElement = HTMLElement as (typeof globalThis)['HTMLDetailsElement'],
+    HTMLDialogElement = HTMLElement as (typeof globalThis)['HTMLDialogElement'],
+    HTMLDirectoryElement = HTMLElement as (typeof globalThis)['HTMLDirectoryElement'],
+    HTMLDivElement = HTMLElement as (typeof globalThis)['HTMLDivElement'],
+    HTMLDListElement = HTMLElement as (typeof globalThis)['HTMLDListElement'],
+    HTMLEmbedElement = HTMLElement as (typeof globalThis)['HTMLEmbedElement'],
+    HTMLFieldSetElement = HTMLElement as (typeof globalThis)['HTMLFieldSetElement'],
+    HTMLFontElement = HTMLElement as (typeof globalThis)['HTMLFontElement'],
+    HTMLFormElement = HTMLElement as (typeof globalThis)['HTMLFormElement'],
+    HTMLFrameElement = HTMLElement as (typeof globalThis)['HTMLFrameElement'],
+    HTMLFrameSetElement = HTMLElement as (typeof globalThis)['HTMLFrameSetElement'],
+    HTMLHeadingElement = HTMLElement as (typeof globalThis)['HTMLHeadingElement'],
+    HTMLHeadElement = HTMLElement as (typeof globalThis)['HTMLHeadElement'],
+    HTMLHRElement = HTMLElement as (typeof globalThis)['HTMLHRElement'],
+    HTMLIFrameElement = HTMLElement as (typeof globalThis)['HTMLIFrameElement'],
+    HTMLImageElement = HTMLElement as (typeof globalThis)['HTMLImageElement'],
+    HTMLInputElement = HTMLElement as (typeof globalThis)['HTMLInputElement'],
+    HTMLLabelElement = HTMLElement as (typeof globalThis)['HTMLLabelElement'],
+    HTMLLegendElement = HTMLElement as (typeof globalThis)['HTMLLegendElement'],
+    HTMLLIElement = HTMLElement as (typeof globalThis)['HTMLLIElement'],
+    HTMLLinkElement = HTMLElement as (typeof globalThis)['HTMLLinkElement'],
+    HTMLMapElement = HTMLElement as (typeof globalThis)['HTMLMapElement'],
+    HTMLMarqueeElement = HTMLElement as (typeof globalThis)['HTMLMarqueeElement'],
+    HTMLMenuElement = HTMLElement as (typeof globalThis)['HTMLMenuElement'],
+    HTMLMetaElement = HTMLElement as (typeof globalThis)['HTMLMetaElement'],
+    HTMLMeterElement = HTMLElement as (typeof globalThis)['HTMLMeterElement'],
+    HTMLObjectElement = HTMLElement as (typeof globalThis)['HTMLObjectElement'],
+    HTMLOListElement = HTMLElement as (typeof globalThis)['HTMLOListElement'],
+    HTMLOptGroupElement = HTMLElement as (typeof globalThis)['HTMLOptGroupElement'],
+    HTMLOptionElement = HTMLElement as (typeof globalThis)['HTMLOptionElement'],
+    HTMLOutputElement = HTMLElement as (typeof globalThis)['HTMLOutputElement'],
+    HTMLParagraphElement = HTMLElement as (typeof globalThis)['HTMLParagraphElement'],
+    HTMLParamElement = HTMLElement as (typeof globalThis)['HTMLParamElement'],
+    HTMLPictureElement = HTMLElement as (typeof globalThis)['HTMLPictureElement'],
+    HTMLPreElement = HTMLElement as (typeof globalThis)['HTMLPreElement'],
+    HTMLProgressElement = HTMLElement as (typeof globalThis)['HTMLProgressElement'],
+    HTMLScriptElement = HTMLElement as (typeof globalThis)['HTMLScriptElement'],
+    HTMLSelectElement = HTMLElement as (typeof globalThis)['HTMLSelectElement'],
+    HTMLSlotElement = HTMLElement as (typeof globalThis)['HTMLSlotElement'],
+    HTMLSourceElement = HTMLElement as (typeof globalThis)['HTMLSourceElement'],
+    HTMLSpanElement = HTMLElement as (typeof globalThis)['HTMLSpanElement'],
+    HTMLStyleElement = HTMLElement as (typeof globalThis)['HTMLStyleElement'],
+    HTMLTableElement = HTMLElement as (typeof globalThis)['HTMLTableElement'],
+    HTMLTableSectionElement = HTMLElement as (typeof globalThis)['HTMLTableSectionElement'],
+    HTMLTableCellElement = HTMLElement as (typeof globalThis)['HTMLTableCellElement'],
+    HTMLTemplateElement = HTMLElement as (typeof globalThis)['HTMLTemplateElement'],
+    HTMLTextAreaElement = HTMLElement as (typeof globalThis)['HTMLTextAreaElement'],
+    HTMLTimeElement = HTMLElement as (typeof globalThis)['HTMLTimeElement'],
+    HTMLTitleElement = HTMLElement as (typeof globalThis)['HTMLTitleElement'],
+    HTMLTableRowElement = HTMLElement as (typeof globalThis)['HTMLTableRowElement'],
+    HTMLTrackElement = HTMLElement as (typeof globalThis)['HTMLTrackElement'],
+    HTMLUListElement = HTMLElement as (typeof globalThis)['HTMLUListElement'],
+    HTMLVideoElement = HTMLElement as (typeof globalThis)['HTMLVideoElement'],
+} = (isBrowser ? window : {}) as unknown as typeof window;

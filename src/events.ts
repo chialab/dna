@@ -1,6 +1,6 @@
 import { type ClassElement } from './ClassDescriptor';
 import { type ComponentConstructor, type ComponentInstance } from './Component';
-import { elements } from './Elements';
+import { HTMLElement } from './Elements';
 import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
 import { type Methods } from './property';
 
@@ -335,7 +335,7 @@ export const dispatchEvent = (
 ): boolean => {
     assertNode(element);
     event = initEvent(event, detail, bubbles, cancelable, composed);
-    return elements.HTMLElement.prototype.dispatchEvent.call(element, event);
+    return HTMLElement.prototype.dispatchEvent.call(element, event);
 };
 
 /**
@@ -454,7 +454,7 @@ export function defineListener<T extends ComponentInstance>(
 export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
-    while (ctr && ctr.prototype && ctr !== elements.HTMLElement) {
+    while (ctr && ctr.prototype && ctr !== HTMLElement) {
         if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
             break;
         }
