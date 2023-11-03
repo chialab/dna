@@ -11,6 +11,7 @@ function polyfillBuiltin() {
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
     const nativeCreateElement = document.createElement.bind(document);
+    const builtin = Object.values(Elements);
     const customElements = win.customElements;
     const define = customElements.define.bind(customElements);
     const upgrade = customElements.upgrade.bind(customElements);
@@ -61,7 +62,7 @@ function polyfillBuiltin() {
 
         let CurrentConstructor = constructor;
         let ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
-        while (Object.values(Elements).includes(ParentCostructor)) {
+        while (!builtin.includes(ParentCostructor)) {
             CurrentConstructor = ParentCostructor;
             if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
                 return;

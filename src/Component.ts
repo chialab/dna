@@ -386,12 +386,11 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
         constructor(...args: any[]) {
             super();
-
-            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
             if (!isBrowser) {
-                return element;
+                throw new Error('Components can be used only in browser environment');
             }
 
+            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
             // setup listeners
             const computedListeners = getListeners(element).map((listener) => ({
                 ...listener,
@@ -721,23 +720,24 @@ export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mi
  */
 export const builtin = new Proxy(
     {} as {
-        [K in keyof typeof Elements]: ComponentConstructor<ComponentInstance<InstanceType<(typeof Elements)[K]>>>;
+        readonly [K in keyof typeof Elements]: ComponentConstructor<
+            ComponentInstance<InstanceType<(typeof Elements)[K]>>
+        >;
     },
     {
-        get(target: any, name: keyof typeof Elements) {
+        get(target, name) {
             const constructor = Reflect.get(target, name);
             if (constructor) {
                 return constructor;
             }
 
-            if (Elements[name]) {
-                return (target[name] = extend(Elements[name]));
+            if (name in Elements) {
+                const constructor = extend(Elements[name as keyof typeof Elements]);
+                Reflect.set(target, name, constructor);
+                return constructor;
             }
 
             return null;
-        },
-        set(target, name: keyof typeof Elements, value: ComponentConstructor) {
-            return Reflect.set(target, name, value);
         },
     }
 );
@@ -818,7 +818,7 @@ export function define(name: string, constructor: ComponentConstructor, options?
         );
     }
 
-    if (typeof customElements !== 'undefined') {
+    if (isBrowser) {
         customElements.define(name, constructor, options);
     }
 
