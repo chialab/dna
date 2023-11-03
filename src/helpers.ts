@@ -41,11 +41,6 @@ export const getPrototypeOf = Object.getPrototypeOf;
 export const setPrototypeOf = Object.setPrototypeOf;
 
 /**
- * Alias to Object.prototype.toString.
- */
-export const toString = Object.prototype.toString;
-
-/**
  * Alias to Object.prototype.hasOwnProperty.
  */
 export const hasOwnProperty = Object.prototype.hasOwnProperty;

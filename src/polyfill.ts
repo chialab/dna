@@ -1,18 +1,16 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
 import * as Elements from './Elements';
-import { isBrowser } from './helpers';
+import { getPrototypeOf, hasOwnProperty, isBrowser, setPrototypeOf } from './helpers';
 
 /**
  * Register a polyfill for Customized built-in elements.
  */
 function polyfillBuiltin() {
-    const win = window;
-    const setPrototypeOf = Object.setPrototypeOf;
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
     const nativeCreateElement = document.createElement.bind(document);
     const builtin = Object.values(Elements);
-    const customElements = win.customElements;
+    const customElements = window.customElements;
     const define = customElements.define.bind(customElements);
     const upgrade = customElements.upgrade.bind(customElements);
     let childListObserver: MutationObserver;
@@ -61,16 +59,16 @@ function polyfillBuiltin() {
         }
 
         let CurrentConstructor = constructor;
-        let ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
+        let ParentCostructor = getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
         while (!builtin.includes(ParentCostructor)) {
             CurrentConstructor = ParentCostructor;
-            if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
+            if (hasOwnProperty.call(CurrentConstructor, '__shim')) {
                 return;
             }
-            ParentCostructor = Object.getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
+            ParentCostructor = getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
         }
 
-        if (Object.hasOwnProperty.call(CurrentConstructor, '__shim')) {
+        if (hasOwnProperty.call(CurrentConstructor, '__shim')) {
             return;
         }
 
