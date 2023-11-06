@@ -12,50 +12,45 @@
     <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
 </p>
 
----
+## Features
 
-DNA is a view library with first class support for reactive and functional Web Components. No polyfills are required: DNA uses its template engine to handle Custom Elements life cycle, resulting more efficient, reliable and light.
+DNA aims to unleash the true power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through a declarative definition API, with builtin elements extension support and a simpler composition mechanism (yes, it does not use ShadowDOM).
 
-### Design Web Components
+### Customized built-in elements
 
-DNA does not introduce any custom pattern for Component definitions, since it is based on the standard Custom Elements specifications, so the life cycle is almost the same, with some helper methods.
+DNA simplifies and promotes the usage of customized built-in elements. Customized built-in elements inherit methods and properties from standard HTML, preserving usability and accessibility features / [more ➪](./docs/get-started.md#Extending-native-elements)
 
-### Fast and reliable
+### Properties, states and attributes
 
-In order to be fast, predictive and easier to install, DNA uses a custom template engine. Components automatically re-render when the state change and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
+DNA provides `@property` and `@state` decorators to add reactivity to component's class fields. Every change is reflected to the component's template. Properties and states can be watched, synced with attributes and dispatch changes as events / [more ➪](./docs/properties.md)
 
-### Tagged templates and JSX
+### Listeners and async events
 
-If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use template strings to avoid the build step in your workflow.
+DNA uses event delegation to listen events from component's elements or slotted contents. It also provides a `@listen` decorator to simplify the event delegation process. Events can be async and can be dispatched from the component's class / [more ➪](./docs/events.md)
 
-### Properties, slots, Promises and Observables!
+### Slots
 
-DNA comes with a lot of features in a very small package. You can use `<slot>` elements, observe properties changes and delegate events. It can also resolve `Promise`s, pipe `Observable`s and subscribe `Signal`s directly in the template.
+DNA does not use ShadowDOM to render slotted children, but a custom implementation named **Quantum**. This simplifies the usage of custom elements inside forms and provides a more flexible management of slotted contents. In fact, you can iterate, wrap, map or alter slotted elements. And differently from ShadowDOM, it also works for builtin elements, so you can use `<slot>` even inside buttons / [more ➪](./docs/templates.md#slotted-children)
 
 ## Get the library
 
 Usage via [unpkg.com](https://unpkg.com/) as ES6 module:
 
 ```js
-import { Component, customElements, html, ... } from 'https://unpkg.com/@chialab/dna?module';
+import { Component, define, html, ... } from 'https://unpkg.com/@chialab/dna?module';
 ```
 
-Install via NPM:
+Or install via NPM:
 
-```sh
-$ npm i @chialab/dna
-$ yarn add @chialab/dna
+```
+npm i @chialab/dna
 ```
 
-```ts
-import { Component, customElements, html, ... } from '@chialab/dna';
+```
+yarn add @chialab/dna
 ```
 
 ## Define a Component
-
-This is an example of a Component defined via DNA. Please refer to the [documentation](https://www.chialab.io/p/dna) for more examples and cases of use.
-
-**Define the component (TypeScript)**
 
 ```tsx
 import { Component, customElement, listen, property } from '@chialab/dna';
@@ -85,57 +80,11 @@ class HelloWorld extends Component {
 }
 ```
 
-**Define the component (JavaScript)**
-
-```ts
-import { Component, customElements, html, listen, property } from '@chialab/dna';
-
-class HelloWorld extends Component {
-    static get properties() {
-        return {
-            // define an observed property
-            name: {
-                type: String,
-                defaultValue: '',
-            },
-        };
-    }
-
-    static get listeners() {
-        return {
-            // delegate an event
-            'change input[name="firstName"]': function (event, target) {
-                this.name = target.value;
-            },
-        };
-    }
-
-    render() {
-        return html`
-            <input
-                name="firstName"
-                value="${this.name}" />
-            <h1>Hello ${this.name || 'World'}!</h1>
-        `;
-    }
-}
-
-customElements.define('hello-world', HelloWorld);
-```
-
 Then use the element in your HTML:
 
 ```html
 <hello-world></hello-world>
 ```
-
-## Browsers support
-
-Tests are run against all ever green browsers, Internet Explorer and old Safari versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements), but some Babel helpers if you want to use decorators need support for `Symbol`, `Object.assign` and `Array.prototype.find`. Also, a polyfill for `Promise` is required in IE11 if you are using async methods or the registry's `whenDefined` method.
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/chialab-sl-003.svg)](https://app.saucelabs.com/u/chialab-sl-003)
-
----
 
 ## Development
 
@@ -147,18 +96,21 @@ Tests are run against all ever green browsers, Internet Explorer and old Safari 
 Install the dependencies and run the `build` script:
 
 ```
-$ yarn install
-$ yarn build
+yarn install
 ```
 
-This will generate the the ESM bundles in the `dist` folder, as well as the declaration files.
+```
+yarn build
+```
+
+This will generate the bundles in the `dist` folder, as well as the declaration files.
 
 ### Test the project
 
 Run the `test` script:
 
 ```
-$ yarn test
+yarn test
 ```
 
 ---

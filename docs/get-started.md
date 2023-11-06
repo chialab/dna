@@ -12,7 +12,7 @@ import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
 
 ### Setup a bundler
 
-The DNA environment is pretty common (if you are familiar with other libraries like React, Angular, LitElement etc.):
+The DNA environment is pretty common (if you are familiar with other libraries like React, Angular, Lit etc.):
 
 1. Make sure you have a recent [Node.js](https://nodejs.org/en/) version installed
 2. Setup a bundler ([Rollup](https://rollupjs.org) is recommended, but [Webpack](https://webpack.js.org/) and [Parcel](https://parceljs.org/) are equally good choices)
@@ -97,7 +97,7 @@ DNA components are classes which extends the base HTMLElement with helpers for [
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
 
-```ts
+```tsx
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('hello-world')

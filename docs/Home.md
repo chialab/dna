@@ -1,6 +1,4 @@
-DNA is a view library with first class support for reactive and functional Web Components. No polyfills are required: DNA uses its template engine to handle Custom Elements life cycle, resulting more efficient, reliable and light.
-
-**Define the component (TypeScript)**
+DNA aims to unleash the true power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through a declarative definition API, with builtin elements extension support and a simpler composition mechanism (yes, it does not use ShadowDOM).
 
 ```tsx
 import { Component, customElement, listen, property } from '@chialab/dna';
@@ -30,44 +28,6 @@ class HelloWorld extends Component {
 }
 ```
 
-**Define the component (JavaScript)**
-
-```ts
-import { Component, define, html, listen, property } from '@chialab/dna';
-
-class HelloWorld extends Component {
-    static get properties() {
-        return {
-            // define an observed property
-            name: {
-                type: String,
-                defaultValue: '',
-            },
-        };
-    }
-
-    static get listeners() {
-        return {
-            // delegate an event
-            'change input[name="firstName"]': function (event, target) {
-                this.name = target.value;
-            },
-        };
-    }
-
-    render() {
-        return html`
-            <input
-                name="firstName"
-                value="${this.name}" />
-            <h1>Hello ${this.name || 'World'}!</h1>
-        `;
-    }
-}
-
-define('hello-world', HelloWorld);
-```
-
 Then use the element in your HTML:
 
 ```html
@@ -76,27 +36,21 @@ Then use the element in your HTML:
 
 ## Features
 
-### Web Components Design
+### Customized built-in elements
 
-DNA does not introduce any custom pattern for component definitions, since it is based on the standard Custom Elements specifications, so the life cycle is almost the same, with some helper methods.
+DNA simplifies and promotes the usage of customized built-in elements. Customized built-in elements inherit methods and properties from standard HTML, preserving usability and accessibility features / [more ➪](./get-started#extending-native-elements)
 
-### Fast and reliable
+### Properties, states and attributes
 
-In order to be fast, predictive and easier to install, DNA uses a custom template engine. Components automatically re-render when the state change and only the necessary patches are applied to the DOM tree thanks to an in-place diffing algorithm.
+DNA provides `@property` and `@state` decorators to add reactivity to component's class fields. Every change is reflected to the component's template. Properties and states can be watched, synced with attributes and dispatch changes as events / [more ➪](./properties)
 
-### Tagged templates and JSX
+### Listeners and async events
 
-If you are familiar with JSX, you can write your templates using the React syntax, but if you prefer to use standard JavaScript you can also use [template strings](./templates) to avoid the build step in your workflow.
+DNA uses event delegation to listen events from component's elements or slotted contents. It also provides a `@listen` decorator to simplify the event delegation process. Events can be async and can be dispatched from the component's class / [more ➪](./events)
 
-### Properties, slots, Promises, Observables and Signals!
+### Slots
 
-DNA comes with a lot of features in a very small package. You can use `<slot>` elements, observe properties changes and delegate events. It can also resolve `Promise`s, pipe `Observable`s and subscribe `Signal`s directly in the template.
-
-## Browsers support
-
-Tests are run against all supported browsers, including old Safari 12 and Edge 17 versions. DNA itself does not require any polyfill and it is distribute as ES6 module (with untranspiled classes and `async`/`await` statements).
-
-![Browser compaitibility table](https://app.saucelabs.com/browser-matrix/chialab-sl-003.svg)
+DNA does not use ShadowDOM to render slotted children, but a custom implementation named **Quantum**. This simplifies the usage of custom elements inside forms and provides a more flexible management of slotted contents. In fact, you can iterate, wrap, map or alter slotted elements. And differently from ShadowDOM, it also works for builtin elements, so you can use `<slot>` even inside buttons / [more ➪](./templates#slotted-children)
 
 ## Ok, I'm in!
 
