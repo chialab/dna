@@ -8,9 +8,10 @@
                         <span class="minimise"></span>
                         <span class="maximise"></span>
                     </div>
-                    <span class="window-filename">HelloWorld.tsx</span>
+                    <span class="window-filename">BestCodingAppEver</span>
                 </div>
-                <iframe src="https://stackblitz.com/edit/dna-sandbox?embed=1&file=HelloWorld.tsx&hideExplorer=1&hideNavigation=1"></iframe>
+                <iframe
+                    src="https://stackblitz.com/edit/dna-sandbox?embed=1&file=HelloWorld.tsx&hideExplorer=1&hideNavigation=1"></iframe>
             </div>
         </div>
     </div>
@@ -60,15 +61,15 @@
     }
 
     .window-buttons span.close {
-        background: #FF8585;
+        background: #ff8585;
     }
 
     .window-buttons span.minimise {
-        background: #FFD071;
+        background: #ffd071;
     }
 
     .window-buttons span.maximise {
-        background: #74ED94;
+        background: #74ed94;
     }
 
     .window-filename {
