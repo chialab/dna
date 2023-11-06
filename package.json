@@ -50,7 +50,9 @@
     "test:saucelabs": "vitest run --config vitest.saucelabs.ts",
     "test:node": "vitest run --config vitest.node.ts",
     "lint": "prettier --check . && eslint src test",
-    "docs": "node scripts/apidoc.js",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "prepack": "yarn build"
   },
   "devDependencies": {
@@ -74,6 +76,7 @@
     "rxjs": "^7.8.1",
     "saucelabs": "^7.4.0",
     "typescript": "^5.0.0",
+    "vitepress": "^1.0.0-rc.25",
     "vitest": "^0.34.6",
     "webdriverio": "^8.17.0"
   }

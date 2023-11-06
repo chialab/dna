@@ -4,12 +4,12 @@
 
 DNA uses its own render to handle slotted nodes in the light DOM. So, we run tests for integration with other frontend frameworks like React, Angular, Lit and Vue. Here is a list of passing tests and known issues:
 
-| Framwework | Update a property | Slot text | Slot elements | Named |
-| ---------- | :---------------: | :-------: | :-----------: | :---: |
-| React      |        🚧         |    🚧     |      🚧       |  🚧   |
-| Lit        |        🚧         |    🚧     |      🚧       |  🚧   |
-| Vue        |        🚧         |    🚧     |      🚧       |  🚧   |
-| Angular    |        🚧         |    🚧     |      🚧       |  🚧   |
+| Framwework | Update a property | Slot text | Slot elements | Named slots |
+| ---------- | :---------------: | :-------: | :-----------: | :---------: |
+| React      |        🚧         |    🚧     |      🚧       |     🚧      |
+| Lit        |        🚧         |    🚧     |      🚧       |     🚧      |
+| Vue        |        🚧         |    🚧     |      🚧       |     🚧      |
+| Angular    |        🚧         |    🚧     |      🚧       |     🚧      |
 
 ## View libraries
 

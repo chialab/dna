@@ -5,9 +5,11 @@ DNA add some extra features like declarative event listeners and delegations.
 
 ## Declarative listeners
 
-You can declare event listeners on a component using the `listen` decorator:
+You can declare event listeners on a component using the `listen` decorator or the `listeners` static accessor:
 
-```ts
+::: code-group
+
+```ts [@listen]
 import { builtin, customElement, listen } from '@chialab/dna';
 
 @customElement('x-button', {
@@ -26,9 +28,7 @@ class Button extends builtin.HTMLButtonElement {
 }
 ```
 
-Or the `listeners` static accessor:
-
-```ts
+```ts [get listeners]
 import { builtin, define } from '@chialab/dna';
 
 class Button extends builtin.HTMLButtonElement {
@@ -49,9 +49,13 @@ define('x-button', Button, {
 });
 ```
 
+:::
+
 Declarations can be configured with [event listener options](<(https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener)>):
 
-```ts
+::: code-group
+
+```ts [@listen]
 import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-tracker')
@@ -63,11 +67,7 @@ class Tracker extends Component {
 }
 ```
 
-<details>
-<summary>JavaScript</summary>
-<div>
-
-```ts
+```ts [get listeners]
 import { Component, define } from '@chialab/dna';
 
 class Tracker extends Component {
@@ -86,14 +86,13 @@ class Tracker extends Component {
 define('x-tracker', Tracker);
 ```
 
-</div>
-</details>
+:::
 
 ## Template listeners
 
 Listeners can be added via a template attribute named as the event with the `on` prefix:
 
-```ts
+```tsx
 import { Component, customElement } from '@chialab/dna';
 
 @customElement('x-header', {
@@ -101,12 +100,14 @@ import { Component, customElement } from '@chialab/dna';
 })
 class Header extends Component {
     render() {
-        return <>
-            <h2>{this.title}</h2>
-            <nav>
-                <button onclick={this.onNavClick}>Close</button>
-            </nav>
-        </>;
+        return (
+            <>
+                <h2>{this.title}</h2>
+                <nav>
+                    <button onclick={this.onNavClick}>Close</button>
+                </nav>
+            </>
+        );
     }
 }
 ```
@@ -115,7 +116,9 @@ class Header extends Component {
 
 Event listeners are automatically bound with the component. If you need a different target, such as the document or the window, you can pass the target to the declaration. In this case, event listeners are added once the element has been added to the DOM tree and removed once disconnected.
 
-```ts
+::: code-group
+
+```ts [@listen]
 import { Component, customElement, listen } from '@chialab/dna';
 
 @customElement('x-tracker')
@@ -127,11 +130,7 @@ class Tracker extends Component {
 }
 ```
 
-<details>
-<summary>JavaScript</summary>
-<div>
-
-```ts
+```ts [get listeners]
 import { Component, define } from '@chialab/dna';
 
 class Tracker extends Component {
@@ -151,8 +150,7 @@ class Tracker extends Component {
 define('x-tracker', Tracker);
 ```
 
-</div>
-</details>
+:::
 
 ## Delegation
 
@@ -160,7 +158,9 @@ DNA supports event delegation for both imperatively and declaratively declaratio
 
 Using the `listen` decorator or the `listeners` static getter, you can specify the delegated child selector after the event name in the declaration key:
 
-```ts
+::: code-group
+
+```ts [@listen]
 import { builtin, customElement, listen } from '@chialab/dna';
 
 @customElement('x-dialog', {
@@ -174,11 +174,7 @@ class Dialog extends builtin.HTMLDialogElement {
 }
 ```
 
-<details>
-<summary>JavaScript</summary>
-<div>
-
-```ts
+```ts [get listeners]
 import { builtin, define } from '@chialab/dna';
 
 class Dialog extends builtin.HTMLDialogElement {
@@ -199,8 +195,7 @@ define('x-dialog', Dialog, {
 });
 ```
 
-</div>
-</details>
+:::
 
 You can also use `delegateEventListener` and `undelegateEventListener` methods:
 

@@ -1,23 +1,10 @@
-# Templates
+# Rendering
 
-Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings. Use the `render` method and the `html` helper to return the template for the element:
+Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings and must be espressed using jsx or tagged template literals.
 
-```ts
-import { Component, customElement, html } from '@chialab/dna';
+::: code-group
 
-@customElement('hello-world')
-class HelloWorld extends Component {
-    render() {
-        return html`<h1>Hello world!</h1>`;
-    }
-}
-```
-
-### JSX
-
-If you familiar with JSX, you can also use it since DNA templates are 100% compatible with JSX transpiled output:
-
-```ts
+```tsx [jsx]
 import { Component, customElement, h } from '@chialab/dna';
 
 @customElement('hello-world')
@@ -28,21 +15,18 @@ class HelloWorld extends Component {
 }
 ```
 
-Please rember to configure the `@babel/plugin-transform-react-jsx` in roder to use the DNA's `h` and `Fragment` helpers:
+```ts [html]
+import { Component, customElement, html } from '@chialab/dna';
 
-```json
-{
-    "plugins": [
-        [
-            "@babel/plugin-transform-react-jsx",
-            {
-                "pragma": "h",
-                "pragmaFrag": "Fragment"
-            }
-        ]
-    ]
+@customElement('hello-world')
+class HelloWorld extends Component {
+    render() {
+        return html`<h1>Hello world!</h1>`;
+    }
 }
 ```
+
+:::
 
 ## Expressions
 
@@ -62,91 +46,72 @@ When interpolating an expression, the following rules (based on the type of the 
 
 ### Content expression
 
-```ts
+::: code-group
+
+```tsx [jsx]
+<span>
+    {this.firstName} {this.lastName}
+</span>
+```
+
+```ts [html]
 html`<span>${this.firstName} ${this.lastName}</span>`;
 ```
 
-<details>
-<summary>JSX</summary>
-<div>
-
-```ts
-<span>{this.firstName} {this.lastName}</span>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
+```ts [vdom]
 h('span', null, this.firstName, ' ', this.lastName);
 ```
 
-</div>
-</details>
+:::
 
 ### Attribute expression
 
-```ts
+::: code-group
+
+```tsx [jsx]
+<input
+    name={this.name}
+    disabled={this.disabled}
+    required
+/>
+```
+
+```ts [html]
 html`<input
     name=${this.name}
     disabled=${this.disabled}
     required />`;
 ```
 
-<details>
-<summary>JSX</summary>
-<div>
-
-```ts
-<input name={this.name} disabled={this.disabled} required />
-```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
+```ts [vdom]
 h('input', { name: this.name, disabled: this.disabled, required: true });
 ```
 
-</div>
-</details>
+:::
 
 ### Loops
 
 When using loops it is necessary to keep in mind the [expressions](#expressions): in order to correctly render a table or a list of data, we need to interpolate an array of templates:
 
-```ts
+::: code-group
+
+```tsx [jsx]
+<ul>
+    {this.items.map((item, index) => (
+        <li>
+            {index}. {item}
+        </li>
+    ))}
+</ul>
+```
+
+```ts [html]
 html`<ul>
     ${this.items.map((item, index) => html`<li>${index}. ${item}</li>`)}
 </ul>`;
 ```
 
-<details>
-<summary>JSX</summary>
-<div>
-
-```ts
-<ul>
-    {this.items.map((item, index) => <li>{index}. {item}</li>)}
-</ul>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
+```ts [vdom]
 h(
     'ul',
     null,
@@ -154,14 +119,23 @@ h(
 );
 ```
 
-</div>
-</details>
+:::
 
 ### Conditionals
 
 You can create conditional expressions based on a boolean value using ternary operator or logical expression which results in a template or any other value:
 
-```ts
+::: code-group
+
+```tsx [jsx]
+<>
+    {this.avatar && <img src={this.avatar} />}
+    <h1>{this.title || 'Untitled'}</h1>
+    {this.members.length ? `${this.members.length} members` : 'No members'}
+</>
+```
+
+```ts [html]
 html`
     ${this.avatar && html`<img src=${this.avatar} />`}
     <h1>${this.title || 'Untitled'}</h1>
@@ -169,29 +143,7 @@ html`
 `;
 ```
 
-<details>
-<summary>JSX</summary>
-<div>
-
-```ts
-<>
-    {this.avatar && <img src={this.avatar} />}
-    <h1>{this.title || 'Untitled'}</h1>
-    {this.members.length ?
-        `${this.members.length} members` :
-        'No members'
-    }
-</>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
+```ts [vdom]
 h(
     Fragment,
     null,
@@ -201,113 +153,41 @@ h(
 );
 ```
 
-</div>
-</details>
+:::
 
 ### Promises
 
 DNA exposes two directives to handle promises: the `$await` directive can be used to render a `Promise` result in the template as if you were using the `await` statement, while the `$until` directive is useful for status handling.
 
-```ts
-import { $await, $until, html } from '@chialab/dna';
+```tsx
+import { $await, $until } from '@chialab/dna';
 
 const json = fetch('/data.json')
     .then(() => response.json())
     .then((data) => data.map(({ name }) => html`<li>${name}</li>`));
 
-html`
-    ${$until(json, 'Loading...')} ${$await(
-        json
-            .then(
-                (data) =>
-                    html`<ul
-                        >${data}</ul
-                    >`
-            )
-            .catch((error) => html`<div>Error: ${error}</div>`)
-    )}
-`;
-```
-
-<details>
-<summary>JSX</summary>
-<div>
-
-```tsx
 <>
     {$until(json, 'Loading...')}
     {$await(json.then((data) => <ul>{data}</ul>).catch((error) => <div>Error: {error}</div>))}
-</>
+</>;
 ```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
-h(
-    Fragment,
-    null,
-    $until(json, 'Loading...'),
-    $await(json.then((data) => h('ul', null, data)).catch((error) => h('div', null, 'Error ', error)))
-);
-```
-
-</div>
-</details>
 
 ### Observables
 
 DNA has also a directive to `$pipe` [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
 
-```ts
-import { $pipe, html } from '@chialab/dna';
+```tsx
+import { $pipe } from '@chialab/dna';
 import { interval, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 const clock$ = timer(Date.now());
 const numbers$ = interval(1000).pipe(take(4));
 
-html`
-    Timer: ${$pipe(timer$)}, Numbers: ${numbers$.pipe((val) =>
-        val % 2 ? html`<strong>${$pipe(val)}</strong>` : $pipe(val)
-    )}
-`;
-```
-
-<details>
-<summary>JSX</summary>
-<div>
-
-```tsx
 <>
     Timer: {$pipe(timer$)}, Numbers: {numbers$.pipe((val) => (val % 2 ? <strong>{$pipe(val)}</strong> : $pipe(val)))}
-</>
+</>;
 ```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
-h(
-    Fragment,
-    null,
-    'Timer: ',
-    $pipe(timer$),
-    ', Numbers',
-    numbers$.pipe((val) => (val % 2 ? h('strong', null, $pipe(val)) : $pipe(val)))
-);
-```
-
-</div>
-</details>
 
 ## HTML content
 
@@ -322,13 +202,49 @@ const content = '<h1>Hello</h1>';
 +html`<x-label>${$parse(content)}</x-label>`;
 ```
 
-⚠️ Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
+::: warning
+
+Injecting uncontrolled HTML content may exposes your application to XSS vulnerabilities. Always make sure you are rendering secure code!
+
+:::
 
 ## Function components
 
 Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use functional components. Function components have first class support in many frameworks like React and Vue, but they require hooks in order to update DOM changes. Since DNA's state is reflected to the DOM and a "current context" is missing, the implemention is slightly different and does not require extra abstraction.
 
-```ts
+::: code-group
+
+```tsx [jsx]
+function Row({ children, id }, { store, requestUpdate }) {
+    const selected = store.get('selcted') ?? false;
+    const toggle = () => {
+        store.set('selected', !selected);
+        requestUpdate();
+    };
+
+    return (
+        <tr
+            id={id}
+            class={selected}
+            onclick={toggle}>
+            {...children}
+        </tr>
+    );
+}
+
+<table>
+    <tbody>
+        {items.map((item) => (
+            <Row {...item}>
+                <td>{item.id}</td>
+                <td>{item.label}</td>
+            </Row>
+        ))}
+    </tbody>
+</table>;
+```
+
+```ts [html]
 function Row({ children, id }, { store, requestUpdate }) {
     const selected = store.get('selcted') ?? false;
     const toggle = () => {
@@ -357,39 +273,7 @@ html`<table>
 </table>`;
 ```
 
-<details>
-<summary>JSX</summary>
-<div>
-
-```ts
-function Row({ children, id }, { store, requestUpdate }) {
-    const selected = store.get('selcted') ?? false;
-    const toggle = () => {
-        store.set('selected', !selected);
-        requestUpdate();
-    };
-
-    return <tr id=${id} class={ selected } onclick={toggle}>{...children}</tr>;
-}
-
-<table>
-    <tbody>
-        {items.map((item) => <Row {...item}>
-            <td>{item.id}</td>
-            <td>{item.label}</td>
-        </Row>)}
-    </tbody>
-</table>
-```
-
-</div>
-</details>
-
-<details>
-<summary>Raw</summary>
-<div>
-
-```ts
+```ts [vdom]
 function Row({ children, id }, { store, requestUpdate }) {
     const selected = store.get('selcted') ?? false;
     const toggle = () => {
@@ -410,20 +294,19 @@ h('table', null,
 )
 ```
 
-</div>
-</details>
+:::
 
 ## Nodes and references
 
 DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
 
-```ts
+```tsx
 import { render } from '@chialab/dna';
 
-let paragraph = document.createElement('p');
+const paragraph = document.createElement('p');
 paragraph.textContent = 'Lorem Ipsum';
 
-render(html`<div>${paragraph}</div>`, document.body);
+render(<div>{paragraph}</div>, document.body);
 ```
 
 will render:
@@ -593,17 +476,21 @@ Now the resulting DOM would be:
 
 DNA optimizes rendering re-using elements when possible, comparing the tag name for elements, content for text nodes and constructor for components. Sometimes, you may prefer re-create a node instead of reusing the previous one. In this cases, you can use the `key` attribute to define an unique slug for the component that will be used for comparisons.
 
-```ts
-html`
-    <select>
-        ${this.items.map((item) => html` <option value=${item}>${item}</option> `)}
+```tsx
+<select>
+    {this.items.map((item) => (
         <option
-            key="last"
-            value="other"
-            >Other</option
-        >
-    </select>
-`;
+            key={item}
+            value={item}>
+            {item}
+        </option>
+    ))}
+    <option
+        key="last"
+        value="other">
+        Other
+    </option>
+</select>
 ```
 
 In this example, once the last `<option>` element has been created, it never changes its DOM reference, since previous `<option>` generations always re-create the element instead of re-using the keyed one.

@@ -1,14 +1,16 @@
 # Reactive properties
 
-Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it trigger the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
+Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it triggers the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
 
 State properties store component's data that can't be configured from the outside using attributes. Like properties, states changes trigger a new render cycle and they have the dedicated [`stateChangedCallback`](./life-cycle#statechangedcallback) method callback
 
 ## Declare a property
 
-Properties can be defined using the `property` decorator on a class field declaration:
+Properties can be defined using the `property` decorator on a class field declaration or using the static `properties` getter:
 
-```ts
+::: code-group
+
+```ts [@property]
 import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
@@ -17,9 +19,7 @@ class Card extends Component {
 }
 ```
 
-Or using the static `properties` getter:
-
-```ts
+```ts [get properties]
 import { Component, define } from '@chialab/dna';
 
 class Card extends Component {
@@ -33,13 +33,21 @@ class Card extends Component {
 define('x-card', Card);
 ```
 
-Once defined, the computed `observedAttributes` of the Card component will include the `age` attribute.
+:::
+
+::: info
+
+Once defined, the computed `observedAttributes` of the `Card` component will include the `age` attribute.
+
+:::
 
 ## Declare a state
 
-States can be defined using the `state` decorator on a class field declaration:
+States can be defined using the `state` decorator on a class field declaration or using the static `properties` getter and configuring the field:
 
-```ts
+::: code-group
+
+```ts [@state]
 import { Component, customElement, state } from '@chialab/dna';
 
 @customElement('x-card')
@@ -48,9 +56,7 @@ class Card extends Component {
 }
 ```
 
-Or using the static `properties` getter and configuring the field:
-
-```ts
+```ts [get properties]
 import { Component, define } from '@chialab/dna';
 
 class Card extends Component {
@@ -66,6 +72,8 @@ class Card extends Component {
 
 define('x-card', Card);
 ```
+
+:::
 
 ## Configuration
 
@@ -116,8 +124,11 @@ class Card extends Component {
 
 The initial value of the property.
 
-> **Note**
-> If you are using class fields and decorators, probably you won't use this configuration key.
+::: info
+
+If you are using class fields and decorators, probably you won't use this configuration key.
+
+:::
 
 #### type
 
@@ -163,7 +174,6 @@ class Toggle extends Component {
     })
     active: boolean;
 }
-ì;
 ```
 
 ## Accessors
@@ -308,7 +318,7 @@ class Card extends Component {
 
 ## Attributes
 
-Attributes can be used to update the component properties and viceversa. Every time an attribute is added, removed or changed in a render cycle or using the [`DOM`](./render-a-component#manipulating-the-dom) helper.
+Attributes can be used to update the component properties and viceversa. Every time an attribute is added, removed or changed in a render cycle or using the `.setAttribute` method.
 
 ### Template and JSX attributes
 
@@ -387,10 +397,11 @@ class Card extends Component {
     @property({ type: Boolean }) married: boolean = false;
 }
 
-const card = new Card();
-card.firstName = 'Alan';
-card.age = 24;
-card.married = true;
+const card = new Card().assign({
+    firstName: 'Alan',
+    age: 24,
+    married: true,
+});
 ```
 
 will result in the DOM like:
