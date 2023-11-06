@@ -51,7 +51,7 @@ define('x-button', Button, {
 
 :::
 
-Declarations can be configured with [event listener options](<(https://developer.mozilla.org/it/docs/Web/API/Element/addEventListener)>):
+Declarations can be configured with [event listener options](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener):
 
 ::: code-group
 

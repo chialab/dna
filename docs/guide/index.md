@@ -70,7 +70,7 @@ import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
 
 ## Define a component
 
-DNA components are classes which extends the base HTMLElement with helpers for [templating](./templates), [styling](./styles), [events delegation](./events) and [life cycle](./life-cycle).
+DNA components are classes which extends the base `HTMLElement``.
 
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
