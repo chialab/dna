@@ -16,8 +16,8 @@ export default defineConfig({
             provider: 'algolia',
             options: {
                 appId: 'WBLIAQCHBK',
-                apiKey: '8e04392c95664ae9b73cc7a46c659ea9',
-                indexName: 'vitejs',
+                apiKey: 'a2567fb662c4f0da10b5385512d00995',
+                indexName: 'dna-guide',
             },
         },
 
