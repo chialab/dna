@@ -12,6 +12,15 @@ export default defineConfig({
     themeConfig: {
         logo: 'https://raw.githubusercontent.com/chialab/dna/main/logo.svg',
 
+        search: {
+            provider: 'algolia',
+            options: {
+                appId: 'WBLIAQCHBK',
+                apiKey: '8e04392c95664ae9b73cc7a46c659ea9',
+                indexName: 'vitejs',
+            },
+        },
+
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             {

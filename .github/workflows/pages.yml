@@ -24,6 +24,8 @@ jobs:
 
       - name: Install project dependencies
         run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Build Documentation
         run: yarn docs:build
