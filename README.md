@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.chialab.io/p/dna">
+    <a href="https://chialab.github.io/dna/">
         <img alt="DNA logo" width="144" height="144" src="https://raw.githack.com/chialab/dna/main/logo.svg" />
     </a>
 </p>

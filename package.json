@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/chialab/dna/issues"
   },
-  "homepage": "https://www.chialab.io/p/dna",
+  "homepage": "https://chialab.github.io/dna/",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "engines": {
     "node": ">=16"
