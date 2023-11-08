@@ -18,19 +18,19 @@ DNA aims to unleash the true power of [Custom Elements](https://developer.mozill
 
 ### Customized built-in elements
 
-DNA simplifies and promotes the usage of customized built-in elements. Customized built-in elements inherit methods and properties from standard HTML, preserving usability and accessibility features.
+DNA simplifies and encourages the use of customized built-in elements, which inherit methods and properties from standard HTML, preserving usability and accessibility features.
 
 ### Properties, states and attributes
 
-DNA provides `@property` and `@state` decorators to add reactivity to component's class fields. Every change is reflected to the component's template. Properties and states can be watched, synced with attributes and dispatch changes as events.
+DNA offers `@property` and `@state` decorators for adding reactivity to a component's class fields, ensuring that any changes are reflected in the component's template. These properties and states can be monitored, synchronized with attributes, and trigger change events.
 
 ### Listeners and async events
 
-DNA uses event delegation to listen events from component's elements or slotted contents. It also provides a `@listen` decorator to simplify the event delegation process. Events can be async and can be dispatched from the component's class.
+DNA uses event delegation for listening to events from a component's elements or slotted contents, offering the `@listen` decorator to streamline the process. Events can be asynchronous and dispatched from the component's class.
 
 ### Slots
 
-DNA does not use ShadowDOM to render slotted children, but a custom implementation named [**Quantum**](https://chialab.github.io/quantum/). This simplifies the usage of custom elements inside forms and provides a more flexible management of slotted contents. In fact, you can iterate, wrap, map or alter slotted elements. And differently from ShadowDOM, it also works for builtin elements, so you can use `<slot>` even inside buttons.
+DNA uses [**Quantum**](https://chialab.github.io/quantum/) instead of ShadowDOM to render slotted children, simplifying the usage of custom elements inside forms and providing a more flexible management of slotted contents. Unlike ShadowDOM, Quantum also works for built-in elements, allowing you to use <slot> even inside buttons.
 
 ## Get the library
 
