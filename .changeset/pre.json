@@ -4,5 +4,9 @@
   "initialVersions": {
     "@chialab/dna": "3.22.0"
   },
-  "changesets": []
+  "changesets": [
+    "clean-ears-press",
+    "hip-worms-switch",
+    "poor-carpets-smoke"
+  ]
 }
