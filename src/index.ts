@@ -1,25 +1,30 @@
-export { window } from './window';
-export {
-    NodeConstructor as Node,
-    HTMLElementConstructor as HTMLElement,
-    EventConstructor as Event,
-    CustomEventConstructor as CustomEvent,
-    document
-} from './helpers';
-export { customElements } from './CustomElementRegistry';
-export { DOM } from './DOM';
-export { h, Fragment, jsx, jsxs, jsxDEV } from './JSX';
-export { compile, html, render } from './render';
-export { css } from './css';
-export { listen, delegateEventListener, undelegateEventListener, dispatchEvent, dispatchAsyncEvent, defineListeners } from './events';
-export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { connect, disconnect, extend, Component, isComponent, isComponentConstructor, customElement, customElementPrototype } from './Component';
-export { parseDOM, until } from './directives';
+import './polyfill';
 
-export type {
-    HTMLTagNameMap,
-    SVGTagNameMap
-} from './Elements';
+export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
+export { render } from './render';
+export { css } from './css';
+export {
+    listen,
+    delegateEventListener,
+    undelegateEventListener,
+    dispatchEvent,
+    dispatchAsyncEvent,
+    defineListeners,
+} from './events';
+export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
+export {
+    define,
+    extend,
+    builtin,
+    Component,
+    isComponent,
+    isComponentConstructor,
+    customElement,
+    customElementPrototype,
+} from './Component';
+export { $parse, $await, $until, $pipe } from './directives';
+
+export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
     AriaAttributes,
     AriaRole,
@@ -77,10 +82,11 @@ export type {
     SVGAttributes,
     IntrinsicElementAttributes,
     /** @deprecated Use `IntrinsicElementAttributes` instead */
-    IntrinsicElementAttributes as AttributesMap
+    IntrinsicElementAttributes as AttributesMap,
 } from './Attributes';
 export type {
     JSXInternal as JSX,
+    FunctionComponent,
     Template,
     VObject,
     VComponent,
@@ -88,13 +94,10 @@ export type {
     VFunction,
     VElement,
     VSlot,
-    VTag
+    VTag,
 } from './JSX';
-export type { CustomElementRegistry } from './CustomElementRegistry';
 export type { Observable } from './Observable';
-export type { Context } from './Context';
+export type { Context } from './render';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
 export type { PropertyDeclaration, PropertyObserver, Props } from './property';
-export type { GlobalNamespace } from './window';
 export type { ComponentInstance, ComponentConstructor } from './Component';
-export type { FunctionComponent } from './FunctionComponent';

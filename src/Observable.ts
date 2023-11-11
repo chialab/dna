@@ -10,7 +10,11 @@ export type Subscription = {
  */
 export type Observable<T> = {
     pipe(operator: (value: T) => unknown): Observable<T>;
-    subscribe(nextCallback: (value: T) => unknown, errorCallback: (error: Error) => unknown, completeCallback: () => unknown): Subscription;
+    subscribe(
+        nextCallback: (value: T) => unknown,
+        errorCallback: (error: Error) => unknown,
+        completeCallback: () => unknown
+    ): Subscription;
 };
 
 /**
@@ -32,14 +36,6 @@ export type ObservableState = {
 };
 
 /**
- * Check if the target is a Subscribable (has the `subscribe` method).
- * @param target The object to check.
- * @returns True if the target is a Subscribable.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isObservable = (target: any): target is Observable<unknown> => typeof target['subscribe'] === 'function';
-
-/**
  * Get or inject a state into a Subscribable object.
  * @param target The Subscribable to extend.
  * @returns The Subscribable state instance.
@@ -49,20 +45,23 @@ export const getObservableState = <T extends Observable<unknown>>(target: WithOb
     if (state) {
         return state;
     }
-    const newState = target[SUBSCRIPTION_SYMBOL] = {
+    const newState = (target[SUBSCRIPTION_SYMBOL] = {
         complete: false,
         errored: false,
-    } as ObservableState;
-    target
-        .subscribe((value) => {
+    } as ObservableState);
+    target.subscribe(
+        (value) => {
             newState.current = value;
             newState.errored = false;
-        }, (error) => {
+        },
+        (error) => {
             newState.current = error;
             newState.errored = true;
-        }, () => {
+        },
+        () => {
             newState.complete = true;
-        });
+        }
+    );
 
     return newState;
 };

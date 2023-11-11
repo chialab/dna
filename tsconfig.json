@@ -12,21 +12,20 @@
     "emitDeclarationOnly": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "skipLibCheck": true,
     "allowJs": true,
     "checkJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": false,
+    "isolatedModules": true,
     "moduleResolution": "node",
+    "paths": {
+      "@chialab/dna": ["./src/index.ts"]
+    }
   },
-  "include": [
-    "src",
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-  ]
+  "include": ["src"]
 }

@@ -2,16 +2,16 @@
 
 **Changes**
 
-* Function Component signature has changed:
+-   Function Component signature has changed:
 
 ```diff
 - function Card(properties, store, requestUpdate) {
 + function Card(properties, { store, requestUpdate }) {
 ```
 
-* Typings improvements
+-   Typings improvements
 
-* Using the `compile` function is now the preferred way to compile on the fly an HTML string into a virtual DOM template: 
+-   Using the `compile` function is now the preferred way to compile on the fly an HTML string into a virtual DOM template:
 
 ```diff
 -import { html } from '@chialab/dna';
@@ -27,9 +27,9 @@ Please note that VDOM convertion does not handle HTML entities and it can lead t
 
 This is a list of changes requested to completely migrate to the DNA 3.0 version.
 
-* Install and use the new `@chialab/dna` instead of the `@dnajs/idom` module
+-   Install and use the new `@chialab/dna` instead of the `@dnajs/idom` module
 
-* Extends the `Component` constructor instead of the `BaseComponent` class
+-   Extends the `Component` constructor instead of the `BaseComponent` class
 
 ```diff
 - import { BaseComponent } from '@dnajs/idom';
@@ -39,42 +39,42 @@ This is a list of changes requested to completely migrate to the DNA 3.0 version
 + class Card extends Component {
 ```
 
-* Convert `template` getter to `render` method.
+-   Convert `template` getter to `render` method.
 
-* Convert `css` getter to `<style>` elements in `render` method.
+-   Convert `css` getter to `<style>` elements in `render` method.
 
-* Replace the `prop` helper with a property descriptor.
+-   Replace the `prop` helper with a property descriptor.
 
-* Replace `events` getters with the new `listeners` getter.
+-   Replace `events` getters with the new `listeners` getter.
 
-* Replace stringed prototype references with real references in event listeners.
+-   Replace stringed prototype references with real references in event listeners.
 
-* Replace `trigger` references with `dispatchEvent`.
+-   Replace `trigger` references with `dispatchEvent`.
 
-* Replace `delegate` calls with `delegateEventListener`.
+-   Replace `delegate` calls with `delegateEventListener`.
 
-* Replace `undelegate` calls with `undelegateEventListener`.
+-   Replace `undelegate` calls with `undelegateEventListener`.
 
-* Replace `observeProperty` calls with `observe`.
+-   Replace `observeProperty` calls with `observe`.
 
-* Replace `unobserveProperty` calls with `unobserve`.
+-   Replace `unobserveProperty` calls with `unobserve`.
 
-* Update `render` invokations.
+-   Update `render` invokations.
 
-* Remove template functions.
+-   Remove template functions.
 
-* Check that your templates does not rely on the falsity of zero and empty string values.
+-   Check that your templates does not rely on the falsity of zero and empty string values.
 
-* Replace all core mixins with the `Component` class.
+-   Replace all core mixins with the `Component` class.
 
-* Remove all `proxy` occurrences.
+-   Remove all `proxy` occurrences.
 
-* Replace `trust` occurrences with `html()`.
+-   Replace `trust` occurrences with `html()`.
 
-* Import the `mix` helper from `@chialab/proteins`.
+-   Import the `mix` helper from `@chialab/proteins`.
 
-* Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references.
+-   Remove all `DOM.getNodeComponent`, `DOM.getComponentNode` and `.node` references.
 
-* Correctly extend builtin elements using the `extend` helper.
+-   Correctly extend builtin elements using the `extend` helper.
 
-* Replace `define` invokations with `customElements.define`.
+-   Replace `define` invokations with `customElements.define`.

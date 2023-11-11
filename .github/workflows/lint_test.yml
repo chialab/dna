@@ -1,0 +1,165 @@
+name: Lint and Test
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Run build script
+        run: yarn build
+
+      - name: Check package
+        run: yarn publint
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: DNA
+          path: |
+            dist
+            types
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Lint
+        run: yarn lint
+
+  test-browser:
+    name: Test Browsers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Install chromium
+        run: yarn playwright install --with-deps chromium
+
+      - name: Run tests
+        run: yarn test:browser --coverage
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage/clover.xml
+
+  test-node:
+    name: Test Node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Run tests
+        run: yarn test:node --coverage
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage/clover.xml
+
+  test-saucelabs:
+    name: Test Saucelabs
+    runs-on: ubuntu-latest
+    concurrency: saucelabs
+    strategy:
+      max-parallel: 2
+      matrix:
+        browser:
+          - 'chrome-latest'
+          - 'chrome-latest-1'
+          - 'chrome-latest-2'
+          - 'chrome-80'
+          - 'firefox-latest'
+          - 'firefox-latest-1'
+          - 'firefox-latest-2'
+          - 'firefox-90'
+          # - 'safari-latest'
+          # - 'safari-latest-1'
+          - 'safari-14'
+          - 'edge-latest'
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: yarn
+
+      - name: Install project dependencies
+        run: yarn install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Run tests
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 2
+          retry_on: error
+          command: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
+        env:
+          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage/clover.xml

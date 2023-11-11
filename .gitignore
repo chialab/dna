@@ -5,4 +5,7 @@ npm-debug.log
 coverage
 types
 dist
+public
 tsconfig.tsbuildinfo
+docs/.vitepress/dist
+docs/.vitepress/cache

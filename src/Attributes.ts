@@ -143,7 +143,18 @@ export interface AriaAttributes {
      * Indicates what notifications the user agent will trigger when the accessibility tree within a live region is modified.
      * @see aria-atomic.
      */
-    'aria-relevant'?: 'additions' | 'additions removals' | 'additions text' | 'all' | 'removals' | 'removals additions' | 'removals text' | 'text' | 'text additions' | 'text removals' | undefined;
+    'aria-relevant'?:
+        | 'additions'
+        | 'additions removals'
+        | 'additions text'
+        | 'all'
+        | 'removals'
+        | 'removals additions'
+        | 'removals text'
+        | 'text'
+        | 'text additions'
+        | 'text removals'
+        | undefined;
     /** Indicates that user input is required on the element before a form may be submitted. */
     'aria-required'?: boolean | 'false' | 'true' | undefined;
     /** Defines a human-readable, author-localized description for the role of an element. */
@@ -322,7 +333,8 @@ export interface HTMLAttributes extends AriaAttributes {
     is?: string | undefined;
 }
 
-export type HTMLAttributeReferrerPolicy = ''
+export type HTMLAttributeReferrerPolicy =
+    | ''
     | 'no-referrer'
     | 'no-referrer-when-downgrade'
     | 'origin'
@@ -357,7 +369,7 @@ export interface AreaHTMLAttributes extends HTMLAttributes {
     target?: string | undefined;
 }
 
-export interface AudioHTMLAttributes extends MediaHTMLAttributes { }
+export interface AudioHTMLAttributes extends MediaHTMLAttributes {}
 
 export interface BaseHTMLAttributes extends HTMLAttributes {
     href?: string | undefined;
@@ -800,8 +812,21 @@ export interface SVGAttributes extends AriaAttributes {
     accentHeight?: number | string | undefined;
     accumulate?: 'none' | 'sum' | undefined;
     additive?: 'replace' | 'sum' | undefined;
-    alignmentBaseline?: 'auto' | 'baseline' | 'before-edge' | 'text-before-edge' | 'middle' | 'central' | 'after-edge' |
-    'text-after-edge' | 'ideographic' | 'alphabetic' | 'hanging' | 'mathematical' | 'inherit' | undefined;
+    alignmentBaseline?:
+        | 'auto'
+        | 'baseline'
+        | 'before-edge'
+        | 'text-before-edge'
+        | 'middle'
+        | 'central'
+        | 'after-edge'
+        | 'text-after-edge'
+        | 'ideographic'
+        | 'alphabetic'
+        | 'hanging'
+        | 'mathematical'
+        | 'inherit'
+        | undefined;
     allowReorder?: 'no' | 'yes' | undefined;
     alphabetic?: number | string | undefined;
     amplitude?: number | string | undefined;
@@ -1219,4 +1244,4 @@ export type IntrinsicElementAttributes = {
     view: SVGAttributes;
 
     [k: string]: HTMLAttributes;
-}
+};

@@ -1,0 +1,5 @@
+dist
+coverage
+public
+docs/.vitepress/dist
+docs/.vitepress/cache
