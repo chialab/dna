@@ -1,5 +1,13 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.0
+
+### Major Changes
+
+-   9bac484: Remove support for node environment.
+-   02d314e: Use quantum to handle component slotted children in light DOM.
+-   02d314e: Expose `$await` and `$pipe` directives to treat promises and observables.
+
 ## 3.22.0
 
 ### Minor Changes
