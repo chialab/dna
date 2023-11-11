@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@chialab/dna": "3.22.0"
+  },
+  "changesets": []
+}
