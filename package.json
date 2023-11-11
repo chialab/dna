@@ -3,16 +3,14 @@
   "version": "3.22.0",
   "description": "Progressive Web Components",
   "type": "module",
-  "main": "dist/node/dna.cjs",
-  "module": "dist/browser/dna.js",
+  "main": "dist/dna.cjs",
+  "module": "dist/dna.js",
   "types": "types/index.d.ts",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "browser": "./dist/browser/dna.js",
-      "require": "./dist/node/dna.cjs",
-      "node": "./dist/node/dna.js",
-      "default": "./dist/browser/dna.js"
+      "require": "./dist/dna.cjs",
+      "default": "./dist/dna.js"
     },
     "./jsx-runtime": "./jsx-runtime.js",
     "./jsx-dev-runtime": "./jsx-runtime.js"
@@ -35,14 +33,10 @@
   },
   "homepage": "https://chialab.github.io/dna/",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
-  "engines": {
-    "node": ">=16"
-  },
   "scripts": {
-    "build": "rimraf 'dist' 'types' && yarn types && yarn build:browser && yarn build:node:esm && yarn build:node:cjs",
-    "build:browser": "esbuild src/index.ts --outfile=dist/browser/dna.js --platform=browser --format=esm --bundle --minify --sourcemap",
-    "build:node:esm": "esbuild src/index.ts --outfile=dist/node/dna.js --platform=node --format=esm --bundle --minify --sourcemap",
-    "build:node:cjs": "esbuild src/index.ts --outfile=dist/node/dna.cjs --platform=node --format=cjs --bundle --minify --sourcemap",
+    "build": "rimraf 'dist' 'types' && yarn types && yarn build:esm && yarn build:cjs",
+    "build:esm": "esbuild src/index.ts --outfile=dist/dna.js --format=esm --bundle --sourcemap",
+    "build:cjs": "esbuild src/index.ts --outfile=dist/dna.cjs --format=cjs --bundle --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test-typings --noEmit",
