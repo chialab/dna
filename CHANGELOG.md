@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.1
+
+### Minor Changes
+
+-   0bb72a6: The `define` method now returns the decorated constructor.
+-   0bb72a6: Remove `customElementPrototype` decorator.
+
 ## 4.0.0-alpha.0
 
 ### Major Changes
