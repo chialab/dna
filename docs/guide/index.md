@@ -93,22 +93,23 @@ class HelloWorld extends Component {
 ```ts [JavaScript]
 import { Component, define, html } from '@chialab/dna';
 
-class HelloWorld extends Component {
-    static get properties() {
-        return {
-            name: {
-                type: String,
-                defaultValue: '',
-            },
-        };
-    }
+const HelloWorld = define(
+    'hello-world',
+    class extends Component {
+        static get properties() {
+            return {
+                name: {
+                    type: String,
+                    defaultValue: '',
+                },
+            };
+        }
 
-    render() {
-        return html`<h1>Hello ${this.name || 'world'}!</h1>`;
+        render() {
+            return html`<h1>Hello ${this.name || 'world'}!</h1>`;
+        }
     }
-}
-
-define('hello-world', HelloWorld);
+);
 ```
 
 :::
@@ -138,24 +139,26 @@ class AlertDialog extends builtin.HTMLDialogElement {
 ```ts [JavaScript]
 import { builtin, define, html } from '@chialab/dna';
 
-class AlertDialog extends builtin.HTMLDialogElement {
-    static get properties() {
-        return {
-            title: {
-                type: String,
-                defaultValue: '',
-            },
-        };
-    }
+const AlertDialog = define(
+    'alert-dialog',
+    class extends builtin.HTMLDialogElement {
+        static get properties() {
+            return {
+                title: {
+                    type: String,
+                    defaultValue: '',
+                },
+            };
+        }
 
-    render() {
-        return html`<h1>${this.title}</h1>`;
+        render() {
+            return html`<h1>${this.title}</h1>`;
+        }
+    },
+    {
+        extends: 'dialog',
     }
-}
-
-define('alert-dialog', AlertDialog, {
-    extends: 'dialog',
-});
+);
 ```
 
 :::

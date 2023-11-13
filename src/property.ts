@@ -2,6 +2,7 @@ import { type ClassElement } from './ClassDescriptor';
 import {
     isComponent,
     isComponentConstructor,
+    isConstructed,
     type ComponentConstructor,
     type ComponentInstance,
     type ComponentMixin,
@@ -25,11 +26,6 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
  * A Symbol which contains all Property observers of a Component.
  */
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
-
-/**
- * A symbol which identify watched properties.
- */
-const WATCHED_SYMBOL: unique symbol = Symbol();
 
 /**
  * Checks types equality.
@@ -88,7 +84,6 @@ export type ObserversOf<T extends ComponentInstance> = {
 export type WithProperties<T extends ComponentInstance> = T & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
     [OBSERVERS_SYMBOL]?: ObserversOf<T>;
-    [WATCHED_SYMBOL]?: PropertyKey[];
 };
 
 /**
@@ -358,14 +353,6 @@ const extractTypes = <T extends ComponentInstance, P extends keyof T>(
 };
 
 /**
- * Get element watched properties.
- * @param element The node.
- * @returns A list of properties.
- */
-export const getWatched = <T extends ComponentInstance>(element: WithProperties<T>) =>
-    (element[WATCHED_SYMBOL] = element[WATCHED_SYMBOL] || []);
-
-/**
  * Define an observed property.
  * @param prototype The component prototype.
  * @param propertyKey The name of the property.
@@ -471,7 +458,7 @@ export const defineProperty = <B extends HTMLElement, T extends ComponentInstanc
             return value;
         },
         set(this: E, newValue) {
-            if (!isComponent(this) || getWatched(this).indexOf(propertyKey) === -1) {
+            if (!isComponent(this) || !isConstructed(this)) {
                 this[symbol] = newValue;
                 return;
             }

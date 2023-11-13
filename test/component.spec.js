@@ -22,10 +22,9 @@ describe(
         describe('#new', () => {
             it('should create a node', () => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement);
-
+                const TestElement = DNA.define(is, class extends DNA.Component {});
                 const element = new TestElement();
+
                 expect(element).toBeInstanceOf(window.HTMLElement);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe(is.toUpperCase());
@@ -33,22 +32,23 @@ describe(
 
             it('should extend a native node', () => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement, {
+                const TestElement = DNA.define(is, class extends DNA.Component {}, {
                     extends: 'article',
                 });
-
                 const element = new TestElement();
+
                 expect(element).toBeInstanceOf(window.HTMLElement);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe('ARTICLE');
             });
 
             it('should create a base class starting from the anchor base class', () => {
-                class TestElement extends DNA.builtin.HTMLAnchorElement {}
-                DNA.define(getComponentName(), TestElement, { extends: 'a' });
+                const TestElement = DNA.define(getComponentName(), class extends DNA.builtin.HTMLAnchorElement {}, {
+                    extends: 'a',
+                });
                 const element = new TestElement();
                 element.href = 'https://www.webcomponents.org/introduction';
+
                 expect(TestElement).not.toBe(HTMLAnchorElement);
                 expect(element).toBeInstanceOf(HTMLAnchorElement);
                 expect('href' in element).toBe(true);
@@ -60,7 +60,7 @@ describe(
             });
 
             it('should setup properties', () => {
-                let TestElement = class TestElement extends DNA.Component {
+                let TestElement = class extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -239,7 +239,7 @@ describe(
             });
 
             it('should setup properties for extended components (js over ts)', () => {
-                let BaseElement = class BaseElement extends DNA.Component {
+                let BaseElement = class extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -264,22 +264,24 @@ describe(
                 BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
 
                 const _forceUpdate = vi.fn();
-                class TestElement extends BaseElement {
-                    static get properties() {
-                        return {
-                            myCustomProp4: {
-                                type: String,
-                                defaultValue: '',
-                            },
-                        };
-                    }
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends BaseElement {
+                        static get properties() {
+                            return {
+                                myCustomProp4: {
+                                    type: String,
+                                    defaultValue: '',
+                                },
+                            };
+                        }
 
-                    forceUpdate() {
-                        _forceUpdate();
-                        super.forceUpdate();
+                        forceUpdate() {
+                            _forceUpdate();
+                            super.forceUpdate();
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
+                );
 
                 const element = new TestElement();
                 expect(element).toHaveProperty('myCustomProp1');
@@ -297,16 +299,18 @@ describe(
             it('should connect already connected nodes', () => {
                 const is = getComponentName();
                 let connected = false;
-                class TestElement extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connected = true;
-                    }
-                }
 
                 wrapper.innerHTML = `<${is}></${is}>`;
                 expect(connected).to.be.false;
-                DNA.define(is, TestElement);
+                DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connected = true;
+                        }
+                    }
+                );
                 window.customElements.upgrade(wrapper);
                 expect(connected).toBe(true);
             });
@@ -330,11 +334,9 @@ describe(
                         this.spyDisconnectedCallback();
                     }
                 }
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
 
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -380,11 +382,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -442,11 +441,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -500,11 +496,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -540,11 +533,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -565,18 +555,16 @@ describe(
         describe('~isConnected', () => {
             it('return `true` if element is connected', () => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement);
-
+                DNA.define(is, class extends DNA.Component {});
                 const element = document.createElement(is);
+
                 wrapper.appendChild(element);
                 expect(element.isConnected).toBe(true);
             });
 
             it('return `false` if element is disconnected', () => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement);
+                DNA.define(is, class extends DNA.Component {});
 
                 const element = document.createElement(is);
                 expect(element.isConnected).to.be.false;
@@ -601,11 +589,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -647,11 +632,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -693,11 +675,8 @@ describe(
                     }
                 }
 
-                class TestElement1 extends TestElement {}
-                class TestElement2 extends TestElement {}
-
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2, {
+                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
+                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -950,33 +929,34 @@ describe(
 
             it('should not loop on connection assignement', async () => {
                 const propertyChangedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            page: {
-                                type: Number,
-                            },
-                        };
-                    }
-
-                    connectedCallback() {
-                        super.connectedCallback();
-                        this.page = 2;
-                    }
-
-                    propertyChangedCallback(...args) {
-                        super.propertyChangedCallback(...args);
-                        propertyChangedCallback(...args);
-                    }
-                }
-
                 const name = getComponentName();
                 wrapper.innerHTML = `<section is="${name}" page="1"></section>`;
                 const element = wrapper.children[0];
-                DNA.define(name, TestElement, {
-                    extends: 'section',
-                });
+                DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                page: {
+                                    type: Number,
+                                },
+                            };
+                        }
+
+                        connectedCallback() {
+                            super.connectedCallback();
+                            this.page = 2;
+                        }
+
+                        propertyChangedCallback(...args) {
+                            super.propertyChangedCallback(...args);
+                            propertyChangedCallback(...args);
+                        }
+                    },
+                    {
+                        extends: 'section',
+                    }
+                );
                 window.customElements.upgrade(element);
                 await new Promise((r) => setTimeout(r, 0));
 
@@ -1202,30 +1182,33 @@ describe(
 
         describe('#textContent', () => {
             it('should retrieve whole textContent', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot></slot> inner text
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
+
                 element.textContent = 'Test';
                 expect(element.textContent).toBe('Test inner text');
             });
 
             it('should set slot text using textContent setter', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot></slot>
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 element.textContent = 'Test';
@@ -1240,15 +1223,16 @@ describe(
 
         describe('#innerHTML', () => {
             it('should retrieve whole innerHTML', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot></slot> inner text
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 element.innerHTML = '<span>Test</span>';
 
@@ -1257,15 +1241,16 @@ describe(
             });
 
             it('should set slot text using innerHTML setter', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot></slot>
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 element.innerHTML = '<span>Test</span>';
@@ -1282,18 +1267,16 @@ describe(
         describe('#appendChild', () => {
             it('should append and connect child', () => {
                 const connectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
                     }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child = new TestChild();
 
@@ -1308,22 +1291,20 @@ describe(
             it('should move and connect a child from a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child = new TestChild();
 
@@ -1339,17 +1320,18 @@ describe(
             });
 
             it('should render default slot', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot>
                             <span>Test</span>
                         </slot>
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 wrapper.appendChild(element);
@@ -1363,17 +1345,18 @@ describe(
             });
 
             it('should append slot item', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot>
                             <span>Test</span>
                         </slot>
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 const span = document.createElement('span');
@@ -1391,18 +1374,16 @@ describe(
         describe('#removeChild', () => {
             it('should remove and disconnect a child', () => {
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child = new TestChild();
 
@@ -1415,15 +1396,16 @@ describe(
             });
 
             it('should remove slot item', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot />
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 const span = document.createElement('span');
@@ -1449,18 +1431,16 @@ describe(
         describe('#insertBefore', () => {
             it('should insert and connect a child before another', () => {
                 const connectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
                     }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1477,22 +1457,20 @@ describe(
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1508,15 +1486,16 @@ describe(
             });
 
             it('should insert slot item', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot />
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 const span = document.createElement('span');
@@ -1538,22 +1517,20 @@ describe(
             it('should reaplce and connect child in a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1570,22 +1547,20 @@ describe(
             it('should reaplce and connect a child (and remove it from the previous parent) in a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1602,15 +1577,16 @@ describe(
             });
 
             it('should replace slot item', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot />
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 const span = document.createElement('span');
@@ -1630,18 +1606,16 @@ describe(
         describe('#insertAdjacentElement', () => {
             it('should insert and connect a child at first position', () => {
                 const connectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
                     }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1658,22 +1632,20 @@ describe(
             it('should insert and connect a child (and remove it from the previous parent) at last position', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-
-                class TestElement extends DNA.Component {}
-                class TestChild extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestChild = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
+                        disconnectedCallback() {
+                            super.disconnectedCallback();
+                            disconnectedCallback();
+                        }
                     }
-                    disconnectedCallback() {
-                        super.disconnectedCallback();
-                        disconnectedCallback();
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
-                DNA.define(getComponentName(), TestChild);
-
+                );
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
@@ -1689,15 +1661,16 @@ describe(
             });
 
             it('should insert slot item', () => {
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<div>
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div>
                         <slot />
                     </div>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 const realm = element.realm;
                 const span = document.createElement('span');

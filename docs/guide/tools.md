@@ -30,7 +30,7 @@ import { Component, customElement, property } from '@chialab/dna';
  * @fires move - The map center point changed.
  */
 @customElement('x-map')
-export class MapboxMap extends Component {
+class MapboxMap extends Component {
     /**
      * The latitude value for the map center.
      */

@@ -22,15 +22,16 @@ class Card extends Component {
 ```ts [get properties]
 import { Component, define } from '@chialab/dna';
 
-class Card extends Component {
-    static get properties() {
-        return {
-            age: Number,
-        };
+const Card = define(
+    'x-card',
+    class extends Component {
+        static get properties() {
+            return {
+                age: Number,
+            };
+        }
     }
-}
-
-define('x-card', Card);
+);
 ```
 
 :::
@@ -59,18 +60,19 @@ class Card extends Component {
 ```ts [get properties]
 import { Component, define } from '@chialab/dna';
 
-class Card extends Component {
-    static get properties() {
-        return {
-            collapsed: {
-                type: Boolean,
-                state: true,
-            },
-        };
+const Card = define(
+    'x-card',
+    class extends Component {
+        static get properties() {
+            return {
+                collapsed: {
+                    type: Boolean,
+                    state: true,
+                },
+            };
+        }
     }
-}
-
-define('x-card', Card);
+);
 ```
 
 :::
@@ -214,26 +216,27 @@ The **setter** function is invoked _before_ property validation and observers an
 ```ts
 import { Component, define } from '@chialab/dna';
 
-class Card extends Component {
-    static get properties() {
-        return {
-            phone: {
-                type: String,
-                getter(innerValue) {
-                    return innerValue;
+const Card = define(
+    'x-card',
+    class extends Component {
+        static get properties() {
+            return {
+                phone: {
+                    type: String,
+                    getter(innerValue) {
+                        return innerValue;
+                    },
+                    setter(value) {
+                        if (!value.startsWith('+') && !value.startsWith('00')) {
+                            value = `+44 ${value}`;
+                        }
+                        return value;
+                    },
                 },
-                setter(value) {
-                    if (!value.startsWith('+') && !value.startsWith('00')) {
-                        value = `+44 ${value}`;
-                    }
-                    return value;
-                },
-            },
-        };
+            };
+        }
     }
-}
-
-define('x-card', Card);
+);
 ```
 
 ## Observers

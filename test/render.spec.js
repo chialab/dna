@@ -52,8 +52,7 @@ describe(
 
             it('should render component constructor', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(name, TestElement);
+                const TestElement = DNA.define(name, class TestElement extends DNA.Component {});
 
                 expect(DNA.render(DNA.h(TestElement))).to.be.instanceof(TestElement);
             });
@@ -93,26 +92,27 @@ describe(
             it('should render an element node using the `h` helper inside a component', () => {
                 const name = getComponentName();
                 const name2 = getComponentName();
-                class TestElement extends DNA.Component {
-                    render() {
-                        return this.realm.childNodes.map((node) => DNA.html`<${node} id="test" />`);
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        render() {
+                            return this.realm.childNodes.map((node) => DNA.html`<${node} id="test" />`);
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
-
-                class TestElement2 extends DNA.Component {
-                    render() {
-                        return DNA.h(
-                            TestElement,
-                            {},
-                            DNA.h('div', { class: 'test', key: 0 }, 'test'),
-                            DNA.h('div', { class: 'test', key: 1 }, 'test')
-                        );
+                );
+                const TestElement2 = DNA.define(
+                    name2,
+                    class TestElement2 extends DNA.Component {
+                        render() {
+                            return DNA.h(
+                                TestElement,
+                                {},
+                                DNA.h('div', { class: 'test', key: 0 }, 'test'),
+                                DNA.h('div', { class: 'test', key: 1 }, 'test')
+                            );
+                        }
                     }
-                }
-
-                DNA.define(name2, TestElement2);
+                );
 
                 const root = DNA.render(DNA.h(TestElement2), wrapper);
                 const elem = wrapper.querySelector(name);
@@ -368,17 +368,18 @@ describe(
 
             it('should convert observed attributes', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            number: {
-                                type: Number,
-                            },
-                        };
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                number: {
+                                    type: Number,
+                                },
+                            };
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
+                );
 
                 DNA.render(DNA.h(TestElement, { number: '2' }), wrapper);
                 expect(wrapper.querySelector(name).number).toBe(2);
@@ -386,17 +387,18 @@ describe(
 
             it('should assign not observed attributes', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            number: {
-                                type: Number,
-                            },
-                        };
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                number: {
+                                    type: Number,
+                                },
+                            };
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
+                );
 
                 DNA.render(DNA.h(TestElement, { string: '2' }), wrapper);
                 expect(wrapper.querySelector(name).string).toBe('2');
@@ -404,17 +406,18 @@ describe(
 
             it('should assign not string attribute', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            number: {
-                                type: Number,
-                            },
-                        };
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                number: {
+                                    type: Number,
+                                },
+                            };
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
+                );
 
                 DNA.render(DNA.h(TestElement, { number: 2 }), wrapper);
                 expect(wrapper.querySelector(name).number).toBe(2);
@@ -523,26 +526,27 @@ describe(
 
             it('should not reuse slotted children', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            oneMore: {
-                                type: Boolean,
-                            },
-                        };
-                    }
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                oneMore: {
+                                    type: Boolean,
+                                },
+                            };
+                        }
 
-                    render() {
-                        return [
-                            DNA.h('div', { class: 'child1' }),
-                            DNA.h('div', { class: 'child2' }),
-                            this.oneMore && DNA.h('div', { class: 'child3' }),
-                            DNA.h('slot'),
-                        ];
+                        render() {
+                            return [
+                                DNA.h('div', { class: 'child1' }),
+                                DNA.h('div', { class: 'child2' }),
+                                this.oneMore && DNA.h('div', { class: 'child3' }),
+                                DNA.h('slot'),
+                            ];
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
+                );
 
                 const elem = DNA.render(DNA.h(TestElement, {}, DNA.h('div', {})), wrapper);
                 const realm = elem.realm;
@@ -572,21 +576,22 @@ describe(
 
             it('should not reuse slotted text', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            showPrefix: {
-                                type: Boolean,
-                            },
-                        };
-                    }
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                showPrefix: {
+                                    type: Boolean,
+                                },
+                            };
+                        }
 
-                    render() {
-                        return [this.showPrefix && 'Prefix:', DNA.h('slot')];
+                        render() {
+                            return [this.showPrefix && 'Prefix:', DNA.h('slot')];
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
+                );
 
                 const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
                 const realm = elem.realm;
@@ -617,25 +622,26 @@ describe(
 
             it('should handle emptied slot nodes', () => {
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            showSlotted: {
-                                type: Boolean,
-                                defaultValue: true,
-                            },
-                        };
-                    }
-
-                    render() {
-                        if (this.showSlotted) {
-                            return DNA.h('div', {}, DNA.h('slot'));
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                showSlotted: {
+                                    type: Boolean,
+                                    defaultValue: true,
+                                },
+                            };
                         }
-                        return DNA.h('div');
-                    }
-                }
 
-                DNA.define(name, TestElement);
+                        render() {
+                            if (this.showSlotted) {
+                                return DNA.h('div', {}, DNA.h('slot'));
+                            }
+                            return DNA.h('div');
+                        }
+                    }
+                );
 
                 const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
                 const realm = elem.realm;
@@ -665,26 +671,26 @@ describe(
             it('should not replace contents when initializing parent and child components', () => {
                 const name1 = getComponentName();
                 const name2 = getComponentName();
-
-                class Parent extends DNA.Component {
-                    render() {
-                        return this.realm.childNodes
-                            .filter((elem) => !!elem.tagName)
-                            .map((elem) => DNA.html`<div test="test" ref=${elem} />`);
+                DNA.define(
+                    name1,
+                    class Parent extends DNA.Component {
+                        render() {
+                            return this.realm.childNodes
+                                .filter((elem) => !!elem.tagName)
+                                .map((elem) => DNA.html`<div test="test" ref=${elem} />`);
+                        }
                     }
-                }
-
-                class Child extends DNA.Component {
-                    render() {
-                        return DNA.html`<slot />`;
+                );
+                DNA.define(
+                    name2,
+                    class Child extends DNA.Component {
+                        render() {
+                            return DNA.html`<slot />`;
+                        }
                     }
-                }
-
-                DNA.define(name1, Parent);
-                DNA.define(name2, Child);
+                );
 
                 const parent = document.createElement(name1);
-
                 const child = document.createElement(name2);
                 child.appendChild(document.createTextNode('Hello'));
                 parent.insertBefore(child, null);
@@ -1085,17 +1091,16 @@ describe(
 
             it('should delete nodes until the attached one', () => {
                 const connectedCallback = vi.fn();
-
                 const name = getComponentName();
-                class TestElement extends DNA.Component {
-                    connectedCallback() {
-                        super.connectedCallback();
-                        connectedCallback();
+                const TestElement = DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        connectedCallback() {
+                            super.connectedCallback();
+                            connectedCallback();
+                        }
                     }
-                }
-
-                DNA.define(name, TestElement);
-
+                );
                 const ref = new TestElement();
 
                 DNA.render(

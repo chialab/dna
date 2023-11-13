@@ -6,7 +6,6 @@ describe(
     () => {
         const EXPECTED_EXPORT_MAP = {
             customElement: 'function',
-            customElementPrototype: 'function',
             define: 'function',
             builtin: 'object',
             extend: 'function',

@@ -20,7 +20,7 @@ import { Component, customElement } from '@chialab/dna';
 import Pickr from '@simonwep/pickr';
 
 @customElement('color-picker')
-export class ColorPicker extends Component {
+class ColorPicker extends Component {
     private pickr: Pickr;
 
     connectedCallback() {

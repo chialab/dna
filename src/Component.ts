@@ -21,7 +21,6 @@ import {
     defineProperties,
     getProperties,
     getProperty,
-    getWatched,
     reflectAttributeToProperty,
     reflectPropertyToAttribute,
     removeObserver,
@@ -81,6 +80,12 @@ export interface ComponentMixin {
      * @deprecated Use `realm.childNodes` instead.
      */
     get slotChildNodes(): Node[] | undefined;
+
+    /**
+     * The callback for initialized components.
+     * It runs once when the component is created, at the end of the constructor.
+     */
+    initialize(): void;
 
     /**
      * Invoked each time one of a Component's state property is setted, removed, or changed.
@@ -407,7 +412,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             // setup properties
             const computedProperties = getProperties(element);
-            let watched: PropertyKey[] | undefined;
             for (const propertyKey in computedProperties) {
                 delete element[propertyKey];
                 const property = computedProperties[propertyKey];
@@ -415,9 +419,6 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
                     element[propertyKey] = property.initializer.call(element);
                 } else if (typeof property.defaultValue !== 'undefined') {
                     element[propertyKey] = property.defaultValue;
-                }
-                if (property.static) {
-                    (watched = watched || getWatched(element)).push(propertyKey);
                 }
             }
 
@@ -430,6 +431,12 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             return element;
         }
+
+        /**
+         * The callback for initialized components.
+         * It runs once when the component is created, at the end of the constructor.
+         */
+        initialize() {}
 
         /**
          * Invoked each time the Component is appended into a document-connected element.
@@ -751,48 +758,16 @@ export const builtin = new Proxy(
 export const Component = builtin.HTMLElement;
 
 /**
- * Decorate a component class in order to watch decorated properties.
- * @param constructor The component class to decorate.
- * @returns The decorated component class.
+ * A symbol which identify constructed elements.
  */
-const decorateConstructor = <T extends ComponentConstructor>(constructor: T) =>
-    class Component extends (constructor as ComponentConstructor) {
-        /**
-         * @inheritdoc
-         */
-        constructor(...args: any[]) {
-            super(...args);
-
-            const properties = getProperties(Component.prototype as this);
-            let watched: PropertyKey[] | undefined;
-            for (const propertyKey in properties) {
-                (watched = watched || getWatched(this)).push(propertyKey);
-            }
-        }
-    };
+const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
 
 /**
- * Decorate a component prototype class.
- * @param classOrDescriptor The component class to decorate.
- * @returns The decorated component class.
+ * Check if a component has been constructed.
+ * @param element The element to check.
+ * @returns True if the element has been constructed.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const customElementPrototype = <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
-    if (typeof classOrDescriptor === 'function') {
-        // typescript
-        return decorateConstructor(classOrDescriptor);
-    }
-
-    // spec 2
-    const { kind, elements } = classOrDescriptor;
-    return {
-        kind,
-        elements,
-        finisher(constructor: Function) {
-            return decorateConstructor(constructor as T);
-        },
-    };
-};
+export const isConstructed = (element: ComponentInstance) => CONSTRUCTED_SYMBOL in element;
 
 /**
  * Define a component class.
@@ -804,10 +779,28 @@ export const customElementPrototype = <T extends ComponentConstructor>(classOrDe
  * @throws An error if the component is already defined.
  */
 export function define(name: string, constructor: ComponentConstructor, options?: ElementDefinitionOptions) {
-    defineProperties(constructor.prototype);
-    defineListeners(constructor.prototype);
+    class Component extends constructor {
+        constructor(...args: any[]) {
+            super(...args);
+            if (new.target === Component) {
+                (this as ComponentInstance & { [CONSTRUCTED_SYMBOL]?: true })[CONSTRUCTED_SYMBOL] = true;
+                this.initialize();
+            }
+        }
+    }
+
+    if (constructor.name) {
+        defineProperty(Component, 'name', {
+            writable: false,
+            configurable: false,
+            value: constructor.name,
+        });
+    }
+
+    defineProperties(Component.prototype);
+    defineListeners(Component.prototype);
     try {
-        defineProperty(constructor.prototype, 'is', {
+        defineProperty(Component.prototype, 'is', {
             writable: false,
             configurable: false,
             value: name,
@@ -819,10 +812,10 @@ export function define(name: string, constructor: ComponentConstructor, options?
     }
 
     if (isBrowser) {
-        customElements.define(name, constructor, options);
+        customElements.define(name, Component, options);
     }
 
-    return constructor;
+    return Component;
 }
 
 /**
@@ -838,7 +831,7 @@ export const customElement =
     <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
         if (typeof classOrDescriptor === 'function') {
             // typescript
-            return define(name, decorateConstructor(classOrDescriptor), options);
+            return define(name, classOrDescriptor, options);
         }
 
         // spec 2
@@ -847,7 +840,7 @@ export const customElement =
             kind,
             elements,
             finisher(constructor: Function) {
-                return define(name, decorateConstructor(constructor as T), options);
+                return define(name, constructor as T, options);
             },
         };
     };

@@ -17,16 +17,14 @@ describe(
         it('should define a component', () => {
             expect(() => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement);
+                DNA.define(is, class TestElement extends DNA.Component {});
             }).not.toThrow();
         });
 
         it('should define a builtin component', () => {
             expect(() => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement, {
+                DNA.define(is, class TestElement extends DNA.Component {}, {
                     extends: 'article',
                 });
             }).not.toThrow();
@@ -35,8 +33,7 @@ describe(
         it('should throw on construct', () => {
             expect(() => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {}
-                DNA.define(is, TestElement);
+                const TestElement = DNA.define(is, class TestElement extends DNA.Component {});
 
                 new TestElement();
             }).toThrow();

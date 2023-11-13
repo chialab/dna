@@ -283,26 +283,26 @@ describe(
         describe('listeners getter', () => {
             it('should add a listener', () => {
                 const callback = vi.fn();
-
                 const is = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get listeners() {
-                        return {
-                            click: TestElement.prototype.method,
-                            change: (event, target) => callback(event.type, target.tagName),
-                        };
+                const TestElement = DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                click: this.prototype.method,
+                                change: (event, target) => callback(event.type, target.tagName),
+                            };
+                        }
+
+                        method(event, target) {
+                            event.preventDefault();
+                            callback(event.type, target.tagName);
+                        }
                     }
-
-                    method(event, target) {
-                        event.preventDefault();
-                        callback(event.type, target.tagName);
-                    }
-                }
-
-                DNA.define(is, TestElement);
-
+                );
                 const element = new TestElement();
                 wrapper.appendChild(element);
+
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
@@ -318,23 +318,23 @@ describe(
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                'click button': (event, target) => {
+                                    event.preventDefault();
+                                    callback(event.type, target.tagName);
+                                },
+                            };
+                        }
 
-                class TestElement extends DNA.Component {
-                    static get listeners() {
-                        return {
-                            'click button': (event, target) => {
-                                event.preventDefault();
-                                callback(event.type, target.tagName);
-                            },
-                        };
+                        render() {
+                            return DNA.compile('<button></button>');
+                        }
                     }
-
-                    render() {
-                        return DNA.compile('<button></button>');
-                    }
-                }
-
-                DNA.define(getComponentName(), TestElement);
+                );
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -353,38 +353,40 @@ describe(
                     event.preventDefault();
                 });
                 const callback4 = vi.fn();
+                const BaseElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                'click button': callback1,
+                                'change': callback2,
+                            };
+                        }
 
-                class BaseElement extends DNA.Component {
-                    static get listeners() {
-                        return {
-                            'click button': callback1,
-                            'change': callback2,
-                        };
+                        render() {
+                            return DNA.compile('<button></button>');
+                        }
                     }
-
-                    render() {
-                        return DNA.compile('<button></button>');
+                );
+                const TestElement1 = DNA.define(
+                    getComponentName(),
+                    class extends BaseElement {
+                        static get listeners() {
+                            return {
+                                'click button': callback3,
+                                'drop': callback4,
+                            };
+                        }
                     }
-                }
-
-                class TestElement1 extends BaseElement {
-                    static get listeners() {
-                        return {
-                            'click button': callback3,
-                            'drop': callback4,
-                        };
+                );
+                const TestElement2 = DNA.define(
+                    getComponentName(),
+                    class extends BaseElement {
+                        static get listeners() {
+                            return {};
+                        }
                     }
-                }
-
-                class TestElement2 extends BaseElement {
-                    static get listeners() {
-                        return {};
-                    }
-                }
-
-                DNA.define(getComponentName(), BaseElement);
-                DNA.define(getComponentName(), TestElement1);
-                DNA.define(getComponentName(), TestElement2);
+                );
 
                 const element1 = new TestElement1();
                 wrapper.appendChild(element1);
@@ -764,13 +766,11 @@ describe(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-
-                class TestElement extends DNA.Component {}
-                DNA.define(getComponentName(), TestElement);
-
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
+
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
@@ -781,13 +781,11 @@ describe(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-
-                class TestElement extends DNA.Component {}
-                DNA.define(getComponentName(), TestElement);
-
+                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
+
                 expect(callback).not.toHaveBeenCalled();
                 element.dispatchEvent('click');
                 expect(callback).toHaveBeenCalled();
@@ -798,23 +796,25 @@ describe(
         describe('#dispatchAyncEvent', () => {
             it('should trigger an event and return a Promise', async () => {
                 const is = getComponentName();
-                class TestElement extends DNA.Component {
-                    static get listeners() {
-                        return {
-                            click: TestElement.prototype.method,
-                        };
-                    }
+                const TestElement = DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                click: this.prototype.method,
+                            };
+                        }
 
-                    method(event) {
-                        event.preventDefault();
-                        event.respondWith(async () => event.type);
-                        event.respondWith(async () => event.target.tagName);
+                        method(event) {
+                            event.preventDefault();
+                            event.respondWith(async () => event.type);
+                            event.respondWith(async () => event.target.tagName);
+                        }
                     }
-                }
-                DNA.define(is, TestElement);
-
+                );
                 const element = new TestElement();
                 const response = await element.dispatchAsyncEvent('click');
+
                 expect(response).toStrictEqual(['click', is.toUpperCase()]);
             });
         });
@@ -824,15 +824,16 @@ describe(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<button></button>`;
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<button></button>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
+
                 wrapper.appendChild(element);
                 element.delegateEventListener('click', 'button', callback);
                 expect(callback).not.toHaveBeenCalled();
@@ -846,17 +847,18 @@ describe(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-
-                class TestElement extends DNA.Component {
-                    render() {
-                        return DNA.html`<button></button>`;
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<button></button>`;
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 element.delegateEventListener('click', 'button', callback);
+
                 expect(callback).not.toHaveBeenCalled();
                 element.querySelector('button').click();
                 expect(callback).toHaveBeenCalled();
@@ -871,22 +873,23 @@ describe(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-
                 const target = document.body;
-                class TestElement extends DNA.Component {
-                    static get listeners() {
-                        return {
-                            click: {
-                                callback,
-                                target,
-                            },
-                        };
+                const TestElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                click: {
+                                    callback,
+                                    target,
+                                },
+                            };
+                        }
                     }
-                }
-                DNA.define(getComponentName(), TestElement);
-
+                );
                 const element = new TestElement();
                 wrapper.appendChild(element);
+
                 expect(callback).not.toHaveBeenCalled();
                 target.click();
                 expect(callback).toHaveBeenCalled();

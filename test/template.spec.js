@@ -215,13 +215,15 @@ describe(
             for (const type in TEMPLATES) {
                 it(type, async () => {
                     const rootName = getComponentName();
-                    class MyElement extends DNA.builtin.HTMLDivElement {
-                        render() {
-                            return TEMPLATES[type]();
-                        }
-                    }
-
-                    DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement, { extends: 'div' });
+                    const MyElement = DNA.define(
+                        `${rootName}-${type.toLowerCase()}`,
+                        class MyElement extends DNA.builtin.HTMLDivElement {
+                            render() {
+                                return TEMPLATES[type]();
+                            }
+                        },
+                        { extends: 'div' }
+                    );
 
                     const element = DNA.render(DNA.h(MyElement), wrapper);
                     await new Promise((r) => setTimeout(r, 0));
@@ -270,21 +272,22 @@ describe(
                 it(type, () => {
                     const rootName = getComponentName();
                     const titleName = getComponentName();
-                    class MyElement extends DNA.Component {
-                        render() {
-                            return TEMPLATES[type](titleName);
+                    DNA.define(
+                        `${rootName}-${type.toLowerCase()}`,
+                        class MyElement extends DNA.Component {
+                            render() {
+                                return TEMPLATES[type](titleName);
+                            }
                         }
-                    }
-
-                    DNA.define(`${rootName}-${type.toLowerCase()}`, MyElement);
-
-                    class MyTitle extends DNA.Component {
-                        render() {
-                            return DNA.h('span', { class: 'title' }, DNA.h('slot', {}, ['Untitled']));
+                    );
+                    DNA.define(
+                        `${titleName}-${type.toLowerCase()}`,
+                        class MyTitle extends DNA.Component {
+                            render() {
+                                return DNA.h('span', { class: 'title' }, DNA.h('slot', {}, ['Untitled']));
+                            }
                         }
-                    }
-
-                    DNA.define(`${titleName}-${type.toLowerCase()}`, MyTitle);
+                    );
 
                     const element = DNA.render(
                         DNA.h(
@@ -362,12 +365,6 @@ describe(
             for (const type in TEMPLATES) {
                 it(type, () => {
                     const name = getComponentName();
-                    class MyElement extends DNA.Component {
-                        render() {
-                            return TEMPLATES[type]();
-                        }
-                    }
-
                     const element = DNA.render(
                         DNA.h(
                             `${name}-${type.toLowerCase()}`,
@@ -379,7 +376,14 @@ describe(
                         wrapper
                     );
 
-                    DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                    DNA.define(
+                        `${name}-${type.toLowerCase()}`,
+                        class MyElement extends DNA.Component {
+                            render() {
+                                return TEMPLATES[type]();
+                            }
+                        }
+                    );
                     window.customElements.upgrade(element);
 
                     const realm = element.realm;
@@ -426,20 +430,14 @@ describe(
                 it(type, () => {
                     const name = getComponentName();
                     const cardName = getComponentName();
-
-                    class MyElement extends DNA.Component {
-                        render() {
-                            return TEMPLATES[type](`${cardName}-${type.toLowerCase()}`, this.collapsed);
+                    DNA.define(
+                        `${cardName}-${type.toLowerCase()}`,
+                        class MyCard extends DNA.Component {
+                            render() {
+                                return DNA.h('slot');
+                            }
                         }
-                    }
-
-                    class MyCard extends DNA.Component {
-                        render() {
-                            return DNA.h('slot');
-                        }
-                    }
-
-                    DNA.define(`${cardName}-${type.toLowerCase()}`, MyCard);
+                    );
 
                     const element = DNA.render(
                         DNA.h(
@@ -452,7 +450,14 @@ describe(
                         wrapper
                     );
 
-                    DNA.define(`${name}-${type.toLowerCase()}`, MyElement);
+                    DNA.define(
+                        `${name}-${type.toLowerCase()}`,
+                        class MyElement extends DNA.Component {
+                            render() {
+                                return TEMPLATES[type](`${cardName}-${type.toLowerCase()}`, this.collapsed);
+                            }
+                        }
+                    );
                     window.customElements.upgrade(element);
                     const realm = element.realm;
 

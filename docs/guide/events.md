@@ -31,22 +31,24 @@ class Button extends builtin.HTMLButtonElement {
 ```ts [get listeners]
 import { builtin, define } from '@chialab/dna';
 
-class Button extends builtin.HTMLButtonElement {
-    static get listeners() {
-        return {
-            'click': function (event) {
-                event.preventDefault();
-            },
-            'input [name="age"]': function (event, target) {
-                console.log(target.value);
-            },
-        };
+const Button = define(
+    'x-button',
+    class extends builtin.HTMLButtonElement {
+        static get listeners() {
+            return {
+                'click': function (event) {
+                    event.preventDefault();
+                },
+                'input [name="age"]': function (event, target) {
+                    console.log(target.value);
+                },
+            };
+        }
+    },
+    {
+        extends: 'button',
     }
-}
-
-define('x-button', Button, {
-    extends: 'button',
-});
+);
 ```
 
 :::
@@ -70,20 +72,21 @@ class Tracker extends Component {
 ```ts [get listeners]
 import { Component, define } from '@chialab/dna';
 
-class Tracker extends Component {
-    static get listeners() {
-        return {
-            touchmove: {
-                callback(event) {
-                    // ...
+const Tracker = define(
+    'x-tracker',
+    class extends Component {
+        static get listeners() {
+            return {
+                touchmove: {
+                    callback(event) {
+                        // ...
+                    },
+                    passive: true,
                 },
-                passive: true,
-            },
-        };
+            };
+        }
     }
-}
-
-define('x-tracker', Tracker);
+);
 ```
 
 :::
@@ -133,21 +136,22 @@ class Tracker extends Component {
 ```ts [get listeners]
 import { Component, define } from '@chialab/dna';
 
-class Tracker extends Component {
-    static get listeners() {
-        return {
-            touchmove: {
-                callback(event) {
-                    // ...
+const Tracker = define(
+    'x-tracker',
+    class extends Component {
+        static get listeners() {
+            return {
+                touchmove: {
+                    callback(event) {
+                        // ...
+                    },
+                    target: window,
+                    passive: true,
                 },
-                target: window,
-                passive: true,
-            },
-        };
+            };
+        }
     }
-}
-
-define('x-tracker', Tracker);
+);
 ```
 
 :::
@@ -177,22 +181,24 @@ class Dialog extends builtin.HTMLDialogElement {
 ```ts [get listeners]
 import { builtin, define } from '@chialab/dna';
 
-class Dialog extends builtin.HTMLDialogElement {
-    static get listeners() {
-        return {
-            'click nav button': {
-                callback(event, target) {
-                    // ...
+const Dialog = define(
+    'x-dialog',
+    class extends builtin.HTMLDialogElement {
+        static get listeners() {
+            return {
+                'click nav button': {
+                    callback(event, target) {
+                        // ...
+                    },
+                    passive: false,
                 },
-                passive: false,
-            },
-        };
+            };
+        }
+    },
+    {
+        extends: 'dialog',
     }
-}
-
-define('x-dialog', Dialog, {
-    extends: 'dialog',
-});
+);
 ```
 
 :::

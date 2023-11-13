@@ -447,124 +447,126 @@ describe(
 
         describe('properties getter', () => {
             it('should define a property', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: String,
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: String,
+                            };
+                        }
                     }
-                };
-
-                DNA.define(getComponentName(), MyElement);
+                );
 
                 expect(new MyElement()).toHaveProperty('testProp', undefined);
             });
 
             it('should define a property with a defaultValue', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                },
+                            };
+                        }
                     }
-                };
+                );
 
-                DNA.define(getComponentName(), MyElement);
-
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                expect(new MyElement()).toHaveProperty('testProp', 42);
             });
 
             it('should define a property with single type checker', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                type: String,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    type: String,
+                                },
+                            };
+                        }
                     }
-                };
+                );
 
-                DNA.define(getComponentName(), MyElement);
-
-                const elem = new MyElement();
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
+                expect(() => (new MyElement().testProp = 42)).toThrow(TypeError);
             });
 
             it('should define a property with multiple type checkers', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                type: [String, Boolean],
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    type: [String, Boolean],
+                                },
+                            };
+                        }
                     }
-                };
-
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const elem = new MyElement();
+
                 elem.testProp = 'string';
                 expect(elem).toHaveProperty('testProp', 'string');
 
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
-
                 expect(() => (elem.testProp = 42)).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                type: [String, Boolean],
-                                validate(value) {
-                                    if (typeof value === 'string') {
-                                        return value !== 'invalid';
-                                    }
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    type: [String, Boolean],
+                                    validate(value) {
+                                        if (typeof value === 'string') {
+                                            return value !== 'invalid';
+                                        }
 
-                                    return true;
+                                        return true;
+                                    },
                                 },
-                            },
-                        };
+                            };
+                        }
                     }
-                };
-
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const elem = new MyElement();
                 elem.testProp = 'string';
+
                 expect(elem).toHaveProperty('testProp', 'string');
 
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
-
                 expect(() => (elem.testProp = 42)).toThrow(TypeError);
                 expect(() => (elem.testProp = 'invalid')).toThrow(TypeError);
             });
 
             it('should define a property with custom getter', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                                getter(value) {
-                                    return value * 2;
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                    getter(value) {
+                                        return value * 2;
+                                    },
                                 },
-                            },
-                        };
+                            };
+                        }
                     }
-                };
-
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const elem = new MyElement();
+
                 expect(elem).toHaveProperty('testProp', 84);
 
                 elem.testProp = 2;
@@ -572,23 +574,24 @@ describe(
             });
 
             it('should define a property with custom setter', () => {
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                attribute: false,
-                                defaultValue: 42,
-                                setter(value) {
-                                    return value / 2;
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    attribute: false,
+                                    defaultValue: 42,
+                                    setter(value) {
+                                        return value / 2;
+                                    },
                                 },
-                            },
-                        };
+                            };
+                        }
                     }
-                };
-
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const elem = new MyElement();
+
                 expect(elem).toHaveProperty('testProp', 42);
 
                 elem.testProp = 2;
@@ -597,20 +600,21 @@ describe(
 
             it('should define a property with a single observer', () => {
                 const listener = vi.fn();
-
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                                observe: listener,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                    observe: listener,
+                                },
+                            };
+                        }
                     }
-                };
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const elem = new MyElement();
+
                 expect(elem).toHaveProperty('testProp', 42);
                 expect(listener).not.toHaveBeenCalled();
 
@@ -623,20 +627,22 @@ describe(
             it('should define a property with multiple observers', () => {
                 const listener1 = vi.fn();
                 const listener2 = vi.fn();
-
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                                observers: [listener1, listener2],
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                    observers: [listener1, listener2],
+                                },
+                            };
+                        }
                     }
-                };
-                DNA.define(getComponentName(), MyElement);
+                );
 
                 const elem = new MyElement();
+
                 expect(elem).toHaveProperty('testProp', 42);
                 expect(listener1).not.toHaveBeenCalled();
                 expect(listener2).not.toHaveBeenCalled();
@@ -661,30 +667,33 @@ describe(
                     }
                 }
 
-                class MyElement extends BaseElement {
-                    static get properties() {
-                        return {
-                            override: {
-                                defaultValue: 84,
-                            },
-                            newProp: {
-                                defaultValue: true,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends BaseElement {
+                        static get properties() {
+                            return {
+                                override: {
+                                    defaultValue: 84,
+                                },
+                                newProp: {
+                                    defaultValue: true,
+                                },
+                            };
+                        }
                     }
-                }
-                DNA.define(getComponentName(), MyElement);
-
-                class MyElement2 extends BaseElement {
-                    static get properties() {
-                        return {
-                            newProp: {
-                                defaultValue: false,
-                            },
-                        };
+                );
+                const MyElement2 = DNA.define(
+                    getComponentName(),
+                    class extends BaseElement {
+                        static get properties() {
+                            return {
+                                newProp: {
+                                    defaultValue: false,
+                                },
+                            };
+                        }
                     }
-                }
-                DNA.define(getComponentName(), MyElement2);
+                );
 
                 const element = new MyElement();
                 expect(element).toHaveProperty('inherit');
@@ -697,12 +706,12 @@ describe(
             });
 
             it('should inherit and reduce the prototype chain with decorator', () => {
-                const BaseElement = class BaseElement extends DNA.Component {
+                class BaseElement extends DNA.Component {
                     constructor(...args) {
                         super(...args);
                         this.override = 42;
                     }
-                };
+                }
 
                 __decorate(
                     [
@@ -716,7 +725,7 @@ describe(
                 );
                 __decorate([DNA.property()], BaseElement.prototype, 'override', undefined);
 
-                let MyElement = class MyElement extends BaseElement {
+                let MyElement = class extends BaseElement {
                     constructor(...args) {
                         super(...args);
                         this.override = 84;
@@ -728,7 +737,7 @@ describe(
                 __decorate([DNA.property()], MyElement.prototype, 'newProp', undefined);
                 MyElement = __decorate([DNA.customElement(getComponentName())], MyElement);
 
-                let MyElement2 = class MyElement2 extends BaseElement {
+                let MyElement2 = class extends BaseElement {
                     constructor(...args) {
                         super(...args);
                         this.newProp = false;
@@ -752,19 +761,20 @@ describe(
         describe('#observe', () => {
             it('should observe property changes', () => {
                 const listener = vi.fn();
-
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                },
+                            };
+                        }
                     }
-                };
-                DNA.define(getComponentName(), MyElement);
-
+                );
                 const element = new MyElement();
+
                 expect(listener).not.toHaveBeenCalled();
                 element.testProp = 100;
                 expect(listener).not.toHaveBeenCalled();
@@ -776,11 +786,9 @@ describe(
 
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
-
-                const MyElement = class extends DNA.Component {};
-                DNA.define(getComponentName(), MyElement);
-
+                const MyElement = DNA.define(getComponentName(), class extends DNA.Component {});
                 const element = new MyElement();
+
                 expect(() => element.observe('testProp', listener)).toThrow(Error, 'Missing property testProp');
             });
         });
@@ -788,17 +796,18 @@ describe(
         describe('#unobserve', () => {
             it('should unobserve property changes', () => {
                 const listener = vi.fn();
-
-                const MyElement = class extends DNA.Component {
-                    static get properties() {
-                        return {
-                            testProp: {
-                                defaultValue: 42,
-                            },
-                        };
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                testProp: {
+                                    defaultValue: 42,
+                                },
+                            };
+                        }
                     }
-                };
-                DNA.define(getComponentName(), MyElement);
+                );
 
                 const element = new MyElement();
                 expect(listener).not.toHaveBeenCalled();
@@ -812,9 +821,7 @@ describe(
 
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
-
-                const MyElement = class extends DNA.Component {};
-                DNA.define(getComponentName(), MyElement);
+                const MyElement = DNA.define(getComponentName(), class extends DNA.Component {});
 
                 const element = new MyElement();
                 expect(() => element.unobserve('testProp', listener)).toThrow(Error, 'Missing property testProp');
