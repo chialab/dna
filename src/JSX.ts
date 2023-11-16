@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import htm from 'htm';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
-import { isComponentConstructor, type ComponentConstructor, type ComponentMixin } from './Component';
+import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type Observable } from './Observable';
 import { type Context } from './render';
@@ -29,23 +29,47 @@ type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
 /**
  * Exclude component mixin properties.
  */
-type NonReservedKeys<T> = Exclude<
-    keyof T,
-    keyof ComponentMixin | Exclude<keyof Element, 'id' | 'className'> | keyof ElementCSSInlineStyle
->;
+type ReservedKeys =
+    | '__jsxProperties__'
+    | 'realm'
+    | 'collectingUpdates'
+    | 'updateScheduled'
+    | 'is'
+    | 'slotChildNodes'
+    | 'initialize'
+    | 'connectedCallback'
+    | 'disconnectedCallback'
+    | 'attributeChangedCallback'
+    | 'stateChangedCallback'
+    | 'propertyChangedCallback'
+    | 'getInnerPropertyValue'
+    | 'setInnerPropertyValue'
+    | 'observe'
+    | 'unobserve'
+    | 'dispatchEvent'
+    | 'dispatchAsyncEvent'
+    | 'delegateEventListener'
+    | 'undelegateEventListener'
+    | 'render'
+    | 'forceUpdate'
+    | 'collectUpdatesStart'
+    | 'collectUpdatesEnd'
+    | 'assign'
+    | Exclude<keyof Element, 'id' | 'className'>
+    | keyof ElementCSSInlineStyle;
 
 /**
  * Pick defined properties of a component.
  */
 export type Props<T> = {
-    [K in NonReservedKeys<T> as IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
+    [K in keyof T as K extends ReservedKeys ? never : IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
 };
 
 /**
  * Pick methods of a class.
  */
 export type Methods<T> = {
-    [K in NonReservedKeys<T> as IfMethod<T, K, K, never>]: T[K];
+    [K in keyof T as K extends ReservedKeys ? never : IfMethod<T, K, K, never>]: T[K];
 };
 
 /**

@@ -265,11 +265,11 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
  * @param chain Should create inheritance chain of properties.
  * @returns A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance>(prototype: WithProperties<T>, chain = false) => {
-    const props = (prototype[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
+export const getProperties = <T extends ComponentInstance>(prototype: T, chain = false) => {
+    const props = ((prototype as WithProperties<T>)[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (chain && !hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
-        return (prototype[PROPERTIES_SYMBOL] = createObject(props) as PropertiesOf<T>);
+        return ((prototype as WithProperties<T>)[PROPERTIES_SYMBOL] = createObject(props) as PropertiesOf<T>);
     }
 
     return props;
@@ -323,7 +323,7 @@ const extractTypes = <T extends ComponentInstance, P extends keyof T>(
  * @param isStatic The property definition is static.
  * @returns The final descriptor.
  */
-export const defineProperty = <B extends HTMLElement, T extends ComponentInstance<B>, P extends keyof T>(
+export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
     prototype: T,
     propertyKey: P,
     declaration: PropertyDeclaration<Constructor<T[P]>>,
@@ -502,7 +502,7 @@ export const defineProperty = <B extends HTMLElement, T extends ComponentInstanc
  */
 export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
     const handled: { [key: string]: boolean } = {};
-    const constructor = prototype.constructor as ComponentConstructor<T>;
+    const constructor = prototype.constructor as ComponentConstructor;
     let ctr = constructor;
     while (isComponentConstructor(ctr)) {
         const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
@@ -711,15 +711,15 @@ export const createObserver = <T extends ComponentInstance, P extends keyof T, M
  * @param element The node.
  * @returns The map of observers.
  */
-export const getObservers = <T extends ComponentInstance>(element: WithProperties<T>) => {
-    const observers = (element[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
+export const getObservers = <T extends ComponentInstance>(element: T) => {
+    const observers = ((element as WithProperties<T>)[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
 
     if (!hasOwnProperty.call(element, OBSERVERS_SYMBOL)) {
         const result = {} as ObserversOf<T>;
         for (const key in observers) {
             result[key] = observers[key].slice();
         }
-        return (element[OBSERVERS_SYMBOL] = result);
+        return ((element as WithProperties<T>)[OBSERVERS_SYMBOL] = result);
     }
 
     return observers;

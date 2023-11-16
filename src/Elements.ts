@@ -185,10 +185,8 @@ export interface SVGTagNameMap {
     view: SVGViewElement;
 }
 
-const FallbackElement = class FallbackElement {};
-
 export const {
-    HTMLElement = FallbackElement as (typeof globalThis)['HTMLElement'],
+    HTMLElement = class {} as (typeof globalThis)['HTMLElement'],
     HTMLAnchorElement = HTMLElement as (typeof globalThis)['HTMLAnchorElement'],
     HTMLAreaElement = HTMLElement as (typeof globalThis)['HTMLAreaElement'],
     HTMLAudioElement = HTMLElement as (typeof globalThis)['HTMLAudioElement'],
