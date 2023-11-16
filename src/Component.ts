@@ -32,12 +32,12 @@ import { getRootContext, internalRender, render } from './render';
 /**
  * A symbol which identify components.
  */
-const COMPONENT_SYMBOL: unique symbol = Symbol();
+const COMPONENT_SYMBOL: unique symbol = Symbol('component');
 
 /**
  * A symbol which identify constructed elements.
  */
-const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
+const CONSTRUCTED_SYMBOL: unique symbol = Symbol('constructed');
 
 /**
  * An augmented node with component flags.
@@ -174,48 +174,54 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
                 throw new Error('Components can be used only in browser environment');
             }
 
-            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
-            // setup listeners
-            const computedListeners = getListeners(element).map((listener) => ({
-                ...listener,
-                callback: listener.callback.bind(element),
-            }));
-            setListeners(element, computedListeners);
-
-            for (let i = 0, len = computedListeners.length; i < len; i++) {
-                const { event, target, selector, callback, options } = computedListeners[i];
-                if (!target) {
-                    element.delegateEventListener(event, selector, callback, options);
-                }
-            }
-
-            // setup properties
-            const computedProperties = getProperties(element);
-            for (const propertyKey in computedProperties) {
-                delete element[propertyKey];
-                const property = computedProperties[propertyKey];
-                if (typeof property.initializer === 'function') {
-                    element[propertyKey] = property.initializer.call(element);
-                } else if (typeof property.defaultValue !== 'undefined') {
-                    element[propertyKey] = property.defaultValue;
-                }
-            }
-
-            const realm = attachRealm(element);
-            defineProperty(element, 'realm', {
-                value: realm,
-                configurable: true,
-            });
-            realm.observe(() => element.forceUpdate());
-
-            return element;
+            return (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
         }
 
         /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
+         * @throws An error if the component has already been initialized.
          */
-        initialize() {}
+        initialize() {
+            if (isConstructed(this)) {
+                throw new Error('The component has already been initialized');
+            }
+
+            // setup listeners
+            const computedListeners = getListeners(this).map((listener) => ({
+                ...listener,
+                callback: listener.callback.bind(this),
+            }));
+            setListeners(this, computedListeners);
+
+            for (let i = 0, len = computedListeners.length; i < len; i++) {
+                const { event, target, selector, callback, options } = computedListeners[i];
+                if (!target) {
+                    this.delegateEventListener(event, selector, callback, options);
+                }
+            }
+
+            // setup properties
+            const computedProperties = getProperties(this);
+            for (const propertyKey in computedProperties) {
+                delete this[propertyKey];
+                const property = computedProperties[propertyKey];
+                if (typeof property.initializer === 'function') {
+                    this[propertyKey] = property.initializer.call(this);
+                } else if (typeof property.defaultValue !== 'undefined') {
+                    this[propertyKey] = property.defaultValue;
+                }
+            }
+
+            const realm = attachRealm(this);
+            defineProperty(this, 'realm', {
+                value: realm,
+                configurable: true,
+            });
+            realm.observe(() => this.forceUpdate());
+
+            (this as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL] = true;
+        }
 
         /**
          * Invoked each time the Component is appended into a document-connected element.
@@ -579,7 +585,6 @@ export function define(name: string, constructor: ComponentConstructor, options?
         constructor(...args: any[]) {
             super(...args);
             if (new.target === Component) {
-                (this as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL] = true;
                 this.initialize();
             }
         }
