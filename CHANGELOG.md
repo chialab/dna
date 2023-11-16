@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.2
+
+### Patch Changes
+
+-   cfb6f5f: Improve and fixing typings.
+
 ## 4.0.0-alpha.1
 
 ### Minor Changes
