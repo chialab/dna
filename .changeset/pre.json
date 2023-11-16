@@ -5,10 +5,12 @@
     "@chialab/dna": "3.22.0"
   },
   "changesets": [
+    "calm-phones-agree",
     "clean-ears-press",
     "four-comics-laugh",
     "hip-worms-switch",
     "mean-candles-train",
+    "nasty-rockets-return",
     "poor-carpets-smoke",
     "stale-dryers-turn",
     "thirty-pigs-confess"
