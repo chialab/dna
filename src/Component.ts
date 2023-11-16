@@ -1,6 +1,6 @@
 import { attachRealm, type Realm } from '@chialab/quantum';
 import { type ClassDescriptor } from './ClassDescriptor';
-import { type CustomElement, type CustomElementConstructor } from './CustomElement';
+import { type CustomElementMixin } from './CustomElement';
 import { $parse } from './directives';
 import * as Elements from './Elements';
 import {
@@ -15,7 +15,7 @@ import {
     type ListenerConfig,
 } from './events';
 import { defineProperty, isBrowser, setPrototypeOf, type Constructor } from './helpers';
-import { type KeyedProperties, type Template } from './JSX';
+import { type KeyedProperties, type Props, type Template } from './JSX';
 import {
     addObserver,
     defineProperties,
@@ -26,20 +26,25 @@ import {
     removeObserver,
     type PropertyConfig,
     type PropertyObserver,
-    type Props,
 } from './property';
 import { getRootContext, internalRender, render } from './render';
 
 /**
  * A symbol which identify components.
  */
-export const COMPONENT_SYMBOL: unique symbol = Symbol();
+const COMPONENT_SYMBOL: unique symbol = Symbol();
+
+/**
+ * A symbol which identify constructed elements.
+ */
+const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
 
 /**
  * An augmented node with component flags.
  */
-export type WithComponentProto<T> = T & {
+type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
+    [CONSTRUCTED_SYMBOL]?: boolean;
 };
 
 /**
@@ -231,7 +236,7 @@ export interface ComponentMixin {
      * @param props The properties to assign.
      * @returns The component instance.
      */
-    assign(props: Props<this>): this;
+    assign(props: object): this;
 }
 
 /**
@@ -239,13 +244,17 @@ export interface ComponentMixin {
  * It's a Custom Element, but with some extra useful method.
  * @see [W3C specification]{@link https://w3c.github.io/webcomponents/spec/custom/}.
  */
-export type ComponentInstance<T extends HTMLElement = HTMLElement> = CustomElement<T> & ComponentMixin;
+export type ComponentInstance<T extends HTMLElement = HTMLElement> = T & CustomElementMixin & ComponentMixin;
 
 /**
  * The basic DNA Component constructor.
  */
-export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance>
-    extends CustomElementConstructor<T> {
+export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance> {
+    /**
+     * An array containing the names of the attributes to observe.
+     */
+    readonly observedAttributes?: string[];
+
     /**
      * Define component properties.
      */
@@ -296,19 +305,18 @@ export const isComponentConstructor = <T extends ComponentInstance, C extends Co
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
  */
-const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
-    const Component = class Component extends (ctor as Constructor<HTMLElement>) {
+export const extend = <T extends HTMLElement>(ctor: Constructor<T>) =>
+    class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * Type getter for JSX properties.
          */
         declare readonly __jsxProperties__: Props<this> & KeyedProperties;
-
         /**
          * An array containing the names of the attributes to observe.
          * @returns The list of attributes to observe.
          */
         static get observedAttributes(): string[] {
-            const propertiesDescriptor = getProperties(this.prototype as unknown as ComponentInstance<T>);
+            const propertiesDescriptor = getProperties(this.prototype);
             const attributes = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
@@ -348,6 +356,14 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * A flag to indicate if the component has a scheduled update.
          */
         updateScheduled = false;
+
+        /**
+         * A flag to indicate component instances.
+         * @returns True if the element is a component.
+         */
+        get [COMPONENT_SYMBOL]() {
+            return true;
+        }
 
         /**
          * The tag name used for Component definition.
@@ -692,7 +708,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
          * @param props The properties to assign.
          * @returns The component instance.
          */
-        assign(props: Props<this>) {
+        assign(props: object) {
             this.collectUpdatesStart();
             try {
                 for (const key in props) {
@@ -704,23 +720,7 @@ const mixin = <T extends HTMLElement>(ctor: Constructor<T>) => {
 
             return this;
         }
-    };
-
-    defineProperty(Component.prototype, COMPONENT_SYMBOL, {
-        get() {
-            return true;
-        },
-    });
-
-    return Component as unknown as ComponentConstructor<ComponentInstance<T>>;
-};
-
-/**
- * Get a native HTMLElement constructor to  extend by its name.
- * @param constructor The constructor (eg. "HTMLAnchorElement") to extend.
- * @returns A proxy that extends the native constructor.
- */
-export const extend = <T extends HTMLElement>(constructor: Constructor<T>) => mixin(constructor);
+    } as unknown as ComponentConstructor<ComponentInstance<T>>;
 
 /**
  * A collection of extended builtin HTML constructors.
@@ -758,16 +758,12 @@ export const builtin = new Proxy(
 export const Component = builtin.HTMLElement;
 
 /**
- * A symbol which identify constructed elements.
- */
-const CONSTRUCTED_SYMBOL: unique symbol = Symbol();
-
-/**
  * Check if a component has been constructed.
  * @param element The element to check.
  * @returns True if the element has been constructed.
  */
-export const isConstructed = (element: ComponentInstance) => CONSTRUCTED_SYMBOL in element;
+export const isConstructed = (element: ComponentInstance) =>
+    !!(element as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL];
 
 /**
  * Define a component class.
@@ -783,7 +779,7 @@ export function define(name: string, constructor: ComponentConstructor, options?
         constructor(...args: any[]) {
             super(...args);
             if (new.target === Component) {
-                (this as ComponentInstance & { [CONSTRUCTED_SYMBOL]?: true })[CONSTRUCTED_SYMBOL] = true;
+                (this as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL] = true;
                 this.initialize();
             }
         }

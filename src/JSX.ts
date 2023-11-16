@@ -1,16 +1,52 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import htm from 'htm';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
-import { isComponentConstructor, type ComponentConstructor } from './Component';
+import { isComponentConstructor, type ComponentConstructor, type ComponentMixin } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type Observable } from './Observable';
-import { type Props } from './property';
 import { type Context } from './render';
 
 /**
  * Identify virtual dom objects.
  */
 const V_SYM: unique symbol = Symbol();
+
+/**
+ * Checks types equality.
+ */
+type IfEquals<X, Y, A, B> = (<G>() => G extends X ? 1 : 2) extends <G>() => G extends Y ? 1 : 2 ? A : B;
+
+/**
+ * Check if a property is writable.
+ */
+type IfWritable<T, K extends keyof T, A, B> = IfEquals<{ [Q in K]: T[K] }, { -readonly [Q in K]: T[K] }, A, B>;
+
+/**
+ * Check if a property is a method.
+ */
+type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
+
+/**
+ * Exclude component mixin properties.
+ */
+type NonReservedKeys<T> = Exclude<
+    keyof T,
+    keyof ComponentMixin | Exclude<keyof Element, 'id' | 'className'> | keyof ElementCSSInlineStyle
+>;
+
+/**
+ * Pick defined properties of a component.
+ */
+export type Props<T> = {
+    [K in NonReservedKeys<T> as IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
+};
+
+/**
+ * Pick methods of a class.
+ */
+export type Methods<T> = {
+    [K in NonReservedKeys<T> as IfMethod<T, K, K, never>]: T[K];
+};
 
 /**
  * A constructor alias used for JSX fragments </>.

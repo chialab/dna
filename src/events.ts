@@ -2,7 +2,6 @@ import { type ClassElement } from './ClassDescriptor';
 import { type ComponentConstructor, type ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
 import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
-import { type Methods } from './property';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -492,7 +491,7 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
  * @param methodKey The method name.
  * @returns The property descriptor.
  */
-export const createListener = <T extends ComponentInstance, P extends keyof Methods<T>>(
+export const createListener = <T extends ComponentInstance, P extends keyof T>(
     targetOrClassElement: T,
     eventName: string,
     target: EventTarget | null,
@@ -537,7 +536,7 @@ function listen(
     target?: string | EventTarget | AddEventListenerOptions,
     options?: AddEventListenerOptions
 ) {
-    return <T extends ComponentInstance, P extends keyof Methods<T>>(targetOrClassElement: T, methodKey: P) =>
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
         createListener(
             targetOrClassElement,
             eventName,

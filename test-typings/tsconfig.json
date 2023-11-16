@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "jsx": "react",
     "jsxFactory": "h",

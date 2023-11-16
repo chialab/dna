@@ -76,6 +76,7 @@ export type {
     IntrinsicElementAttributes as AttributesMap,
 } from './Attributes';
 export type {
+    Props,
     JSXInternal as JSX,
     FunctionComponent,
     Template,
@@ -90,5 +91,5 @@ export type {
 export type { Observable } from './Observable';
 export type { Context } from './render';
 export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
-export type { PropertyDeclaration, PropertyObserver, Props } from './property';
+export type { PropertyDeclaration, PropertyObserver } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';

@@ -19,7 +19,7 @@ import {
     type TreeProperties,
     type UpdateRequest,
 } from './JSX';
-import { getProperty, type Props } from './property';
+import { getProperty } from './property';
 
 /**
  * A symbol for node render context.
@@ -238,7 +238,7 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
                 (node as unknown as Record<string, unknown>)[propertyKey] = value;
             }
         } else {
-            const property = getProperty(node as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
+            const property = getProperty(node as ComponentInstance, propertyKey as keyof ComponentInstance);
             if (property?.fromAttribute) {
                 (node as unknown as Record<string, unknown>)[propertyKey] = (property.fromAttribute as Function).call(
                     node,

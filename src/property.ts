@@ -5,7 +5,6 @@ import {
     isConstructed,
     type ComponentConstructor,
     type ComponentInstance,
-    type ComponentMixin,
 } from './Component';
 import {
     defineProperty as _defineProperty,
@@ -28,60 +27,23 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
 
 /**
- * Checks types equality.
- */
-type IfEquals<X, Y, A, B> = (<G>() => G extends X ? 1 : 2) extends <G>() => G extends Y ? 1 : 2 ? A : B;
-
-/**
- * Check if a property is writable.
- */
-type IfWritable<T, K extends keyof T, A, B> = IfEquals<{ [Q in K]: T[K] }, { -readonly [Q in K]: T[K] }, A, B>;
-
-/**
- * Check if a property is a method.
- */
-type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
-
-/**
- * Exclude component mixin properties.
- */
-type NonReservedKeys<T> = Exclude<
-    keyof T,
-    keyof ComponentMixin | Exclude<keyof Element, 'id' | 'className'> | keyof ElementCSSInlineStyle
->;
-
-/**
- * Pick defined properties of a component.
- */
-export type Props<T> = {
-    [K in NonReservedKeys<T> as IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
-};
-
-/**
- * Pick methods of a class.
- */
-export type Methods<T> = {
-    [K in NonReservedKeys<T> as IfMethod<T, K, K, never>]: T[K];
-};
-
-/**
  * Retrieve properties declarations of a Component.
  */
-export type PropertiesOf<T extends ComponentInstance> = {
+type PropertiesOf<T extends ComponentInstance> = {
     [P in keyof T]: Property<T, P>;
 };
 
 /**
  * Retrieve properties declarations of a Component.
  */
-export type ObserversOf<T extends ComponentInstance> = {
+type ObserversOf<T extends ComponentInstance> = {
     [P in keyof T]: PropertyObserver<T[P]>[];
 };
 
 /**
  * A prototype with properties.
  */
-export type WithProperties<T extends ComponentInstance> = T & {
+type WithProperties<T extends ComponentInstance> = T & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
     [OBSERVERS_SYMBOL]?: ObserversOf<T>;
 };
@@ -718,7 +680,7 @@ export const createProperty = <T extends ComponentInstance, P extends keyof T>(
  * @param methodKey The method name.
  * @returns The observer descriptor.
  */
-export const createObserver = <T extends ComponentInstance, P extends keyof T, M extends keyof Methods<T>>(
+export const createObserver = <T extends ComponentInstance, P extends keyof T, M extends keyof T>(
     targetOrClassElement: T,
     propertyKey: P,
     methodKey?: M
@@ -859,6 +821,6 @@ export function state<TypeConstructorHint extends Constructor<unknown> = Constru
  * @returns The decorator initializer.
  */
 export function observe(propertyKey: string): Function {
-    return <T extends ComponentInstance, P extends keyof Methods<T>>(targetOrClassElement: T, methodKey?: P) =>
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey?: P) =>
         createObserver(targetOrClassElement, propertyKey as keyof PropertiesOf<T>, methodKey);
 }

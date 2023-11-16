@@ -1,9 +1,7 @@
-import { type Constructor } from './helpers';
-
 /**
- * The plain Custom Element interface.
+ * The plain Custom Element mixin.
  */
-export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
+export interface CustomElementMixin {
     /**
      * The tag name used for element definition.
      */
@@ -34,14 +32,22 @@ export type CustomElement<T extends HTMLElement = HTMLElement> = T & {
         newValue: null | string,
         namespace?: null | string
     ): void;
-};
+}
+
+/**
+ * The plain Custom Element interface.
+ */
+export type CustomElement<T extends HTMLElement = HTMLElement> = T & CustomElementMixin;
 
 /**
  * The plain Custom Element constructor.
  */
-export type CustomElementConstructor<T extends CustomElement = CustomElement> = Constructor<T> & {
+export interface CustomElementConstructor<T extends HTMLElement = HTMLElement> {
     /**
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes?: string[];
-};
+
+    new (): T & CustomElementMixin;
+    prototype: T & CustomElementMixin;
+}

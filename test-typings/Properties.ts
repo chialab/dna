@@ -1,4 +1,4 @@
-import { Component, customElement, extend, observe, property } from '@chialab/dna';
+import { builtin, Component, customElement, observe, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -13,7 +13,7 @@ export class TestElement2 extends Component {
 }
 
 @customElement('x-test3')
-export class TestElement3 extends extend(HTMLDetailsElement) {
+export class TestElement3 extends builtin.HTMLDetailsElement {
     // override native prop
     @property() open!: boolean;
 }
@@ -39,7 +39,7 @@ export class TestElement6 extends Component {
     sample?: string;
 
     @observe('sample')
-    check(oldValue: String | undefined, newValue: String) {
+    check(oldValue: string | undefined, newValue: String) {
         return `${oldValue}/${newValue}`;
     }
 
