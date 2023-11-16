@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.4
+
+### Patch Changes
+
+-   be5a445: Update Quantum
+-   1224baf: Move element initialization to `inizitialize` method.
+
 ## 4.0.0-alpha.3
 
 ### Patch Changes
