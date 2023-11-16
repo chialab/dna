@@ -1316,10 +1316,10 @@
   dependencies:
     "@ianvs/prettier-plugin-sort-imports" "^4.1.0"
 
-"@chialab/quantum@^1.0.0-alpha.0":
-  version "1.0.0-alpha.3"
-  resolved "https://registry.npmjs.org/@chialab/quantum/-/quantum-1.0.0-alpha.3.tgz#4cdfda4f5982e6ea263aa2a2f59c0fcc5652decb"
-  integrity sha512-FsMI9IK2h04/mTAwAYMO6AmVYPtigsa5vSeHAOztItK3VsoMEwXpP3kFgvnVyI69fqfU2b8BeEixsmIniGyPJQ==
+"@chialab/quantum@^1.0.0-alpha.5":
+  version "1.0.0-alpha.5"
+  resolved "https://registry.npmjs.org/@chialab/quantum/-/quantum-1.0.0-alpha.5.tgz#1409a0b0fec4ae6f4bbf453fb44033659f7ad687"
+  integrity sha512-f7IS3csE63cv4u8Rr0w3HwMi+wK+Idu8Q0QpHh2MUqOe78k9a5G2DGdYDpnZoierVbp/JjFngNsRLJwLf/4Y6Q==
 
 "@docsearch/css@3.5.2", "@docsearch/css@^3.5.2":
   version "3.5.2"

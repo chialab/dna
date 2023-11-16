@@ -54,7 +54,7 @@
     "@changesets/cli": "^2.22.0",
     "@chialab/eslint-config": "^4.0.0",
     "@chialab/prettier-config": "^1.2.2",
-    "@chialab/quantum": "^1.0.0-alpha.0",
+    "@chialab/quantum": "^1.0.0-alpha.5",
     "@vitest/browser": "^0.34.6",
     "@vitest/coverage-istanbul": "^0.34.6",
     "@vitest/coverage-v8": "^0.34.6",
