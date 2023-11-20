@@ -2,7 +2,7 @@ import { type ClassElement } from './ClassDescriptor';
 import {
     isComponent,
     isComponentConstructor,
-    isConstructed,
+    isInitialized,
     type ComponentConstructor,
     type ComponentInstance,
 } from './Component';
@@ -66,16 +66,16 @@ export type PropertyObserver<TypeHint = unknown> = (
 type ConvertConstructorTypes<C extends Constructor<unknown>, T = InstanceType<C>> = T extends Number
     ? number
     : T extends String
-    ? string
-    : T extends Boolean
-    ? boolean
-    : T extends unknown[]
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any[]
-    : T extends Object
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
-    : T;
+      ? string
+      : T extends Boolean
+        ? boolean
+        : T extends unknown[]
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            any[]
+          : T extends Object
+            ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              any
+            : T;
 
 /**
  * A state property declaration.
@@ -420,7 +420,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
             return value;
         },
         set(this: E, newValue) {
-            if (!isComponent(this) || !isConstructed(this)) {
+            if (!isComponent(this) || !isInitialized(this)) {
                 this[symbol] = newValue;
                 return;
             }

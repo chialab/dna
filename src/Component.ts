@@ -32,19 +32,19 @@ import { getRootContext, internalRender, render } from './render';
 /**
  * A symbol which identify components.
  */
-const COMPONENT_SYMBOL: unique symbol = Symbol('component');
+const COMPONENT_SYMBOL: unique symbol = Symbol();
 
 /**
  * A symbol which identify constructed elements.
  */
-const CONSTRUCTED_SYMBOL: unique symbol = Symbol('constructed');
+const INITIALIZED_SYMBOL: unique symbol = Symbol();
 
 /**
  * An augmented node with component flags.
  */
 type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
-    [CONSTRUCTED_SYMBOL]?: boolean;
+    [INITIALIZED_SYMBOL]?: boolean;
 };
 
 /**
@@ -174,7 +174,14 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
                 throw new Error('Components can be used only in browser environment');
             }
 
-            return (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
+            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
+            const realm = attachRealm(element);
+            defineProperty(element, 'realm', {
+                value: realm,
+                configurable: true,
+            });
+
+            return element;
         }
 
         /**
@@ -183,7 +190,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * @throws An error if the component has already been initialized.
          */
         initialize() {
-            if (isConstructed(this)) {
+            if (isInitialized(this)) {
                 throw new Error('The component has already been initialized');
             }
 
@@ -213,14 +220,8 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
                 }
             }
 
-            const realm = attachRealm(this);
-            defineProperty(this, 'realm', {
-                value: realm,
-                configurable: true,
-            });
-            realm.observe(() => this.forceUpdate());
-
-            (this as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL] = true;
+            this.realm.observe(() => this.forceUpdate());
+            (this as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
         }
 
         /**
@@ -443,9 +444,11 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
 
             const realm = this.realm;
             if (realm) {
+                this.collectUpdatesStart();
                 realm.requestUpdate(() => {
                     internalRender(getRootContext(realm.root), this.render(), realm);
                 });
+                this.collectUpdatesEnd();
             }
         }
 
@@ -556,9 +559,7 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
      */
     // We cannot infer component properties from the base class
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (node?: HTMLElement, properties?: { [key: string]: any }): T;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (properties?: { [key: string]: any }): T;
+    new (...args: any[]): T;
 
     prototype: T;
 }
@@ -568,8 +569,8 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
  * @param element The element to check.
  * @returns True if the element has been constructed.
  */
-export const isConstructed = (element: ComponentInstance) =>
-    !!(element as WithComponentProto<ComponentInstance>)[CONSTRUCTED_SYMBOL];
+export const isInitialized = (element: ComponentInstance) =>
+    !!(element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL];
 
 /**
  * Define a component class.
@@ -584,7 +585,7 @@ export function define(name: string, constructor: ComponentConstructor, options?
     class Component extends constructor {
         constructor(...args: any[]) {
             super(...args);
-            if (new.target === Component) {
+            if (new.target === Component && !isInitialized(this)) {
                 this.initialize();
             }
         }

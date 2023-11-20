@@ -56,6 +56,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -286,6 +294,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLAnchorElement);
 
         /**
          * The callback for initialized components.
@@ -520,6 +536,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLAreaElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -750,6 +774,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLAudioElement);
 
         /**
          * The callback for initialized components.
@@ -984,6 +1016,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLBaseElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -1214,6 +1254,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLQuoteElement);
 
         /**
          * The callback for initialized components.
@@ -1448,6 +1496,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLBodyElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -1678,6 +1734,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLBRElement);
 
         /**
          * The callback for initialized components.
@@ -1912,6 +1976,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLButtonElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -2142,6 +2214,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLCanvasElement);
 
         /**
          * The callback for initialized components.
@@ -2376,6 +2456,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableCaptionElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -2606,6 +2694,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableColElement);
 
         /**
          * The callback for initialized components.
@@ -2840,6 +2936,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDataElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -3070,6 +3174,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDataListElement);
 
         /**
          * The callback for initialized components.
@@ -3304,6 +3416,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLModElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -3534,6 +3654,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDetailsElement);
 
         /**
          * The callback for initialized components.
@@ -3768,6 +3896,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDialogElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -3998,6 +4134,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDirectoryElement);
 
         /**
          * The callback for initialized components.
@@ -4232,6 +4376,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDivElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -4462,6 +4614,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLDListElement);
 
         /**
          * The callback for initialized components.
@@ -4696,6 +4856,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLEmbedElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -4926,6 +5094,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLFieldSetElement);
 
         /**
          * The callback for initialized components.
@@ -5160,6 +5336,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLFontElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -5390,6 +5574,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLFormElement);
 
         /**
          * The callback for initialized components.
@@ -5624,6 +5816,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLFrameElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -5854,6 +6054,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLFrameSetElement);
 
         /**
          * The callback for initialized components.
@@ -6088,6 +6296,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLHeadingElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -6318,6 +6534,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLHeadElement);
 
         /**
          * The callback for initialized components.
@@ -6552,6 +6776,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLHRElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -6782,6 +7014,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLIFrameElement);
 
         /**
          * The callback for initialized components.
@@ -7016,6 +7256,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLImageElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -7246,6 +7494,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLInputElement);
 
         /**
          * The callback for initialized components.
@@ -7480,6 +7736,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLLabelElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -7710,6 +7974,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLLegendElement);
 
         /**
          * The callback for initialized components.
@@ -7944,6 +8216,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLLIElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -8174,6 +8454,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLLinkElement);
 
         /**
          * The callback for initialized components.
@@ -8408,6 +8696,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLMapElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -8638,6 +8934,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLMarqueeElement);
 
         /**
          * The callback for initialized components.
@@ -8872,6 +9176,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLMenuElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -9102,6 +9414,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLMetaElement);
 
         /**
          * The callback for initialized components.
@@ -9336,6 +9656,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLMeterElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -9566,6 +9894,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLObjectElement);
 
         /**
          * The callback for initialized components.
@@ -9800,6 +10136,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLOListElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -10030,6 +10374,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLOptGroupElement);
 
         /**
          * The callback for initialized components.
@@ -10264,6 +10616,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLOptionElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -10494,6 +10854,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLOutputElement);
 
         /**
          * The callback for initialized components.
@@ -10728,6 +11096,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLParagraphElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -10958,6 +11334,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLParamElement);
 
         /**
          * The callback for initialized components.
@@ -11192,6 +11576,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLPictureElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -11422,6 +11814,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLPreElement);
 
         /**
          * The callback for initialized components.
@@ -11656,6 +12056,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLProgressElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -11886,6 +12294,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLScriptElement);
 
         /**
          * The callback for initialized components.
@@ -12120,6 +12536,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLSelectElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -12350,6 +12774,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLSlotElement);
 
         /**
          * The callback for initialized components.
@@ -12584,6 +13016,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLSourceElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -12814,6 +13254,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLSpanElement);
 
         /**
          * The callback for initialized components.
@@ -13048,6 +13496,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLStyleElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -13278,6 +13734,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableElement);
 
         /**
          * The callback for initialized components.
@@ -13512,6 +13976,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableSectionElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -13742,6 +14214,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableCellElement);
 
         /**
          * The callback for initialized components.
@@ -13976,6 +14456,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTemplateElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -14206,6 +14694,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTextAreaElement);
 
         /**
          * The callback for initialized components.
@@ -14440,6 +14936,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTimeElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -14670,6 +15174,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTitleElement);
 
         /**
          * The callback for initialized components.
@@ -14904,6 +15416,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTableRowElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -15134,6 +15654,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLTrackElement);
 
         /**
          * The callback for initialized components.
@@ -15368,6 +15896,14 @@ export declare namespace Builtins {
         get slotChildNodes(): Node[] | undefined;
 
         /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLUListElement);
+
+        /**
          * The callback for initialized components.
          * It runs once when the component is created, at the end of the constructor.
          */
@@ -15598,6 +16134,14 @@ export declare namespace Builtins {
          * @deprecated Use `realm.childNodes` instead.
          */
         get slotChildNodes(): Node[] | undefined;
+
+        /**
+         * Create a new Component instance.
+         * @param node Instantiate the element using the given node instead of creating a new one.
+         * @param properties A set of initial properties for the element.
+         */
+        // We cannot infer component properties from the base class
+        constructor(node?: HTMLVideoElement);
 
         /**
          * The callback for initialized components.

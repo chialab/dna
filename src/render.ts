@@ -529,14 +529,14 @@ const renderTemplate = (
             }
         }
 
+        if (constructor) {
+            (node as ComponentInstance).collectUpdatesEnd();
+        }
+
         insertNode(context, templateContext);
 
         if ((templateContext && children && children.length) || templateContext.root === rootContext) {
-            internalRender(templateContext, children, realm, rootContext, namespaceURI);
-        }
-
-        if (constructor) {
-            (node as ComponentInstance).collectUpdatesEnd();
+            internalRender(templateContext, children, realm, rootContext, namespaceURI, undefined);
         }
         return;
     }
