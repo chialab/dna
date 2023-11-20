@@ -35,8 +35,8 @@
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
     "build": "rimraf 'dist' 'types' && yarn types && yarn build:esm && yarn build:cjs",
-    "build:esm": "esbuild src/index.ts --outfile=dist/dna.js --format=esm --bundle --sourcemap",
-    "build:cjs": "esbuild src/index.ts --outfile=dist/dna.cjs --format=cjs --bundle --sourcemap",
+    "build:esm": "esbuild src/index.ts --outfile=dist/dna.js --format=esm --bundle --packages=external --sourcemap",
+    "build:cjs": "esbuild src/index.ts --outfile=dist/dna.cjs --format=cjs --bundle --packages=external --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc -p test-typings --noEmit",
@@ -50,20 +50,20 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@chialab/quantum": "^1.0.0-alpha.5"
+    "@chialab/quantum": "^1.0.0-alpha.6",
+    "htm": "^3.0.3"
   },
   "devDependencies": {
     "@babel/runtime": "^7.14.0",
     "@changesets/cli": "^2.22.0",
     "@chialab/eslint-config": "^4.0.0",
     "@chialab/prettier-config": "^1.2.2",
-    "@vitest/browser": "^0.34.6",
-    "@vitest/coverage-istanbul": "^0.34.6",
-    "@vitest/coverage-v8": "^0.34.6",
+    "@vitest/browser": "^1.0.0-beta.5",
+    "@vitest/coverage-istanbul": "^1.0.0-beta.5",
+    "@vitest/coverage-v8": "^1.0.0-beta.5",
     "esbuild": "^0.19.4",
     "eslint": "^8.0.0",
     "eslint-plugin-jsdoc": "^39.3.2",
-    "htm": "^3.0.3",
     "ip": "^1.1.8",
     "playwright": "^1.38.1",
     "prettier": "^3.0.3",
@@ -73,7 +73,7 @@
     "saucelabs": "^7.4.0",
     "typescript": "^5.0.0",
     "vitepress": "^1.0.0-rc.25",
-    "vitest": "^0.34.6",
+    "vitest": "^1.0.0-beta.5",
     "webdriverio": "^8.17.0"
   }
 }

@@ -66,16 +66,16 @@ export type PropertyObserver<TypeHint = unknown> = (
 type ConvertConstructorTypes<C extends Constructor<unknown>, T = InstanceType<C>> = T extends Number
     ? number
     : T extends String
-      ? string
-      : T extends Boolean
-        ? boolean
-        : T extends unknown[]
-          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            any[]
-          : T extends Object
-            ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              any
-            : T;
+    ? string
+    : T extends Boolean
+    ? boolean
+    : T extends unknown[]
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any[]
+    : T extends Object
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
+    : T;
 
 /**
  * A state property declaration.

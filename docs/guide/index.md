@@ -22,14 +22,6 @@ pnpm add @chialab/dna
 
 :::
 
-### or use a CDN
-
-You can use DNA via CDN thanks to [unpkg](https://unpkg.com/):
-
-```ts
-import { Component, define } from 'https://unpkg.com/@chialab/dna?module';
-```
-
 ## Configure JSX
 
 ### Typescript
