@@ -241,8 +241,8 @@ export type VTag<T extends keyof HTMLTagNameMap | keyof SVGTagNameMap> = {
         T extends keyof HTMLTagNameMap
             ? Props<HTMLTagNameMap[T]>
             : T extends keyof SVGTagNameMap
-            ? Props<SVGTagNameMap[T]>
-            : Props<HTMLElement>,
+              ? Props<SVGTagNameMap[T]>
+              : Props<HTMLElement>,
         IntrinsicElementAttributes[T]
     > &
         KeyedProperties &
