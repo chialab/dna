@@ -1,5 +1,16 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.5
+
+### Minor Changes
+
+-   93a980a: Externalize htm and quantum packages.
+
+### Patch Changes
+
+-   c9d3e40: Fix components render cycle.
+-   8c0b0a3: Treat Quantum as dependency.
+
 ## 4.0.0-alpha.4
 
 ### Patch Changes
