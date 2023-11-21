@@ -113,12 +113,12 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
         /**
          * A flag to indicate if the component is collecting updates.
          */
-        #collectingUpdates = false;
+        _collectingUpdates = false;
 
         /**
          * A flag to indicate if the component has a scheduled update.
          */
-        #updateScheduled = false;
+        _updateScheduled = false;
 
         /**
          * A flag to indicate component instances.
@@ -448,12 +448,12 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * @returns True if a re-render has been triggered.
          */
         requestUpdate() {
-            if (!this.#collectingUpdates) {
+            if (!this._collectingUpdates) {
                 this.forceUpdate();
                 return true;
             }
 
-            this.#updateScheduled = true;
+            this._updateScheduled = true;
             return false;
         }
 
@@ -475,7 +475,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * Start collecting updates.
          */
         collectUpdatesStart() {
-            this.#collectingUpdates = true;
+            this._collectingUpdates = true;
         }
 
         /**
@@ -483,10 +483,10 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd() {
-            this.#collectingUpdates = false;
+            this._collectingUpdates = false;
 
-            if (this.#updateScheduled) {
-                this.#updateScheduled = false;
+            if (this._updateScheduled) {
+                this._updateScheduled = false;
                 this.requestUpdate();
                 return true;
             }
