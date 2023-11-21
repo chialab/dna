@@ -99,6 +99,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -344,6 +349,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -593,6 +603,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -838,6 +853,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -1087,6 +1107,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -1332,6 +1357,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -1581,6 +1611,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -1826,6 +1861,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -2075,6 +2115,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -2320,6 +2365,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -2569,6 +2619,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -2814,6 +2869,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -3063,6 +3123,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -3308,6 +3373,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -3557,6 +3627,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -3802,6 +3877,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -4051,6 +4131,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -4296,6 +4381,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -4545,6 +4635,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -4790,6 +4885,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -5039,6 +5139,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -5284,6 +5389,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -5533,6 +5643,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -5778,6 +5893,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -6027,6 +6147,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -6272,6 +6397,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -6521,6 +6651,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -6766,6 +6901,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -7015,6 +7155,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -7260,6 +7405,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -7509,6 +7659,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -7754,6 +7909,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -8003,6 +8163,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -8248,6 +8413,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -8497,6 +8667,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -8742,6 +8917,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -8991,6 +9171,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -9236,6 +9421,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -9485,6 +9675,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -9730,6 +9925,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -9979,6 +10179,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -10224,6 +10429,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -10473,6 +10683,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -10718,6 +10933,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -10967,6 +11187,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -11212,6 +11437,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -11461,6 +11691,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -11706,6 +11941,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -11955,6 +12195,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -12200,6 +12445,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -12449,6 +12699,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -12694,6 +12949,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -12943,6 +13203,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -13188,6 +13453,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -13437,6 +13707,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -13682,6 +13957,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -13931,6 +14211,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -14176,6 +14461,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -14425,6 +14715,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -14670,6 +14965,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -14919,6 +15219,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -15164,6 +15469,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -15413,6 +15723,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -15658,6 +15973,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -15907,6 +16227,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -16152,6 +16477,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -16401,6 +16731,11 @@ export declare namespace Builtins {
         ): void;
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -16646,6 +16981,11 @@ export declare namespace Builtins {
             oldValue: this[P] | undefined,
             newValue: this[P]
         ): void;
+
+        /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.

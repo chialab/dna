@@ -8,6 +8,7 @@ DNA components follow the Custom Element lifecycle specification, with the addit
 -   [attributeChangedCallback](#attributechangedcallback)
 -   [propertyChangedCallback](#propertychangedcallback)
 -   [stateChangedCallback](#statechangedcallback)
+-   [updatedCallback](#updatedcallback)
 -   [render](#render)
 -   [shouldUpdate](#shouldupdate)
 -   [requestUpdate](#requestupdate)
@@ -121,6 +122,8 @@ The signature is equivalent too: it receives the property name as first argument
 
 The same of `propertyChangedCallback`, but for state properties.
 
+````ts
+
 ## render
 
 This method is invoked each time the component should be rendered. It returns a `Template` that will be rendered in the component's realm.
@@ -138,6 +141,22 @@ export class MyArticle extends Component {
                 <time>{this.lastUpdate}</time>
             </article>
         );
+    }
+}
+````
+
+## updatedCallback
+
+This method is invoked each time the component is updated and re-rendered.
+
+```ts
+import { Component, customElement } from '@chialab/dna';
+
+@customElement('my-article')
+export class MyArticle extends Component {
+    updatedCallback() {
+        super.updatedCallback();
+        this.landmarks = this.querySelectorAll('h1, h2, h3, h4, h5, h6');
     }
 }
 ```

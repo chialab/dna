@@ -286,6 +286,11 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
         }
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback() {}
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -468,6 +473,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
                     internalRender(getRootContext(realm.root), this.render(), realm);
                 });
                 this.collectUpdatesEnd();
+                this.updatedCallback();
             }
         }
 
