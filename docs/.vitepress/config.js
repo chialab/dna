@@ -50,8 +50,8 @@ export default defineConfig({
                         link: '/guide/properties',
                     },
                     {
-                        text: 'Life cycle',
-                        link: '/guide/life-cycle',
+                        text: 'Lifecycle',
+                        link: '/guide/lifecycle',
                     },
                     {
                         text: 'Events',

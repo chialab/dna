@@ -1,6 +1,6 @@
-# Life cycle
+# Lifecycle
 
-DNA components follow the Custom Element life cycle specification, with the addition of the `propertyChangedCallback` and `render` methods. The complete list of methods is:
+DNA components follow the Custom Element lifecycle specification, with the addition of the `propertyChangedCallback` and `render` methods. The complete list of methods is:
 
 -   [initialize](#initialize)
 -   [connectedCallback](#connectedcallback)
@@ -8,6 +8,10 @@ DNA components follow the Custom Element life cycle specification, with the addi
 -   [attributeChangedCallback](#attributechangedcallback)
 -   [propertyChangedCallback](#propertychangedcallback)
 -   [stateChangedCallback](#statechangedcallback)
+-   [render](#render)
+-   [shouldUpdate](#shouldupdate)
+-   [requestUpdate](#requestupdate)
+-   [forceUpdate](#forceupdate)
 
 ## initialize
 

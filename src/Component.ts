@@ -536,7 +536,7 @@ export const builtin = new Proxy({} as typeof Builtins, {
 /**
  * The DNA base Component constructor, a Custom Element constructor with
  * declarative properties and event delegations, custom template and
- * a complete life cycle implementation.
+ * a complete lifecycle implementation.
  * All DNA components **must** extends this class.
  */
 export const Component = builtin.HTMLElement;
