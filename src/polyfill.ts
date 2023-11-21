@@ -193,8 +193,11 @@ function polyfillBuiltin() {
  */
 function checkBuiltin() {
     const name = 'builtin-br';
-    const Constructor = class extends HTMLBRElement {};
-    customElements.define(name, Constructor, { extends: 'br' });
+    let Constructor = customElements.get(name);
+    if (!Constructor) {
+        Constructor = class extends HTMLBRElement {};
+        customElements.define(name, Constructor, { extends: 'br' });
+    }
 
     return document.createElement('br', { is: name }) instanceof Constructor;
 }
