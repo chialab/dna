@@ -1,5 +1,16 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.6
+
+### Major Changes
+
+-   c8dafc0: Add `shouldUpdate` and `requestUpdate` component methods.
+-   8e63e39: Add `updatedCallback` component method.
+
+### Patch Changes
+
+-   0b4a9c2: Globally check polyfilled custom elements.
+
 ## 4.0.0-alpha.5
 
 ### Minor Changes
