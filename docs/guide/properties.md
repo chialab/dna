@@ -1,8 +1,8 @@
 # Reactive properties
 
-Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it triggers the [`propertyChangedCallback`](./life-cycle#propertychangedcallback) method of the component.
+Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it triggers the [`propertyChangedCallback`](./lifecycle#propertychangedcallback) method of the component.
 
-State properties store component's data that can't be configured from the outside using attributes. Like properties, states changes trigger a new render cycle and they have the dedicated [`stateChangedCallback`](./life-cycle#statechangedcallback) method callback
+State properties store component's data that can't be configured from the outside using attributes. Like properties, states changes trigger a new render cycle and they have the dedicated [`stateChangedCallback`](./lifecycle#statechangedcallback) method callback
 
 ## Declare a property
 
@@ -183,7 +183,7 @@ class Toggle extends Component {
 ### Decorated accessors
 
 The `property` decorator can be used also for accessor fields. This is useful when you want to transform the value of an assignment before setting it, or you want to modify the inner value of a property when getted.  
-For this scenario you need to use the `getInnerPropertyValue` and `setInnerPropertyValue` in order to execute the correct life-cycle:
+For this scenario you need to use the `getInnerPropertyValue` and `setInnerPropertyValue` in order to execute the correct lifecycle:
 
 ```ts
 import { Component, customElement, property } from '@chialab/dna';
