@@ -113,12 +113,12 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
         /**
          * A flag to indicate if the component is collecting updates.
          */
-        collectingUpdates = false;
+        #collectingUpdates = false;
 
         /**
          * A flag to indicate if the component has a scheduled update.
          */
-        updateScheduled = false;
+        #updateScheduled = false;
 
         /**
          * A flag to indicate component instances.
@@ -220,7 +220,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
                 }
             }
 
-            this.realm.observe(() => this.forceUpdate());
+            this.realm.observe(() => this.requestUpdate());
             (this as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
         }
 
@@ -247,7 +247,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
             }
 
             // trigger a re-render when the Node is connected
-            this.forceUpdate();
+            this.requestUpdate();
         }
 
         /**
@@ -434,14 +434,33 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
         }
 
         /**
+         * Check if the component should update.
+         *
+         * @returns True if the component should update.
+         */
+        shouldUpdate() {
+            return true;
+        }
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate() {
+            if (!this.#collectingUpdates) {
+                this.forceUpdate();
+                return true;
+            }
+
+            this.#updateScheduled = true;
+            return false;
+        }
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate() {
-            if (this.collectingUpdates) {
-                this.updateScheduled = true;
-                return;
-            }
-
             const realm = this.realm;
             if (realm) {
                 this.collectUpdatesStart();
@@ -456,7 +475,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * Start collecting updates.
          */
         collectUpdatesStart() {
-            this.collectingUpdates = true;
+            this.#collectingUpdates = true;
         }
 
         /**
@@ -464,11 +483,11 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd() {
-            this.collectingUpdates = false;
+            this.#collectingUpdates = false;
 
-            if (this.updateScheduled) {
-                this.updateScheduled = false;
-                this.forceUpdate();
+            if (this.#updateScheduled) {
+                this.#updateScheduled = false;
+                this.requestUpdate();
                 return true;
             }
             return false;

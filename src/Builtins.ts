@@ -34,16 +34,6 @@ export declare namespace Builtins {
         readonly realm: Realm;
 
         /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -221,6 +211,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -272,16 +283,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -461,6 +462,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -512,16 +534,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -701,6 +713,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -752,16 +785,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -941,6 +964,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -992,16 +1036,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -1181,6 +1215,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -1232,16 +1287,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -1421,6 +1466,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -1472,16 +1538,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -1661,6 +1717,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -1712,16 +1789,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -1901,6 +1968,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -1952,16 +2040,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -2141,6 +2219,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -2192,16 +2291,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -2381,6 +2470,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -2432,16 +2542,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -2621,6 +2721,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -2672,16 +2793,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -2861,6 +2972,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -2912,16 +3044,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -3101,6 +3223,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -3152,16 +3295,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -3341,6 +3474,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -3392,16 +3546,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -3581,6 +3725,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -3632,16 +3797,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -3821,6 +3976,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -3872,16 +4048,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -4061,6 +4227,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -4112,16 +4299,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -4301,6 +4478,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -4352,16 +4550,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -4541,6 +4729,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -4592,16 +4801,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -4781,6 +4980,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -4832,16 +5052,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -5021,6 +5231,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -5072,16 +5303,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -5261,6 +5482,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -5312,16 +5554,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -5501,6 +5733,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -5552,16 +5805,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -5741,6 +5984,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -5792,16 +6056,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -5981,6 +6235,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -6032,16 +6307,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -6221,6 +6486,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -6272,16 +6558,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -6461,6 +6737,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -6512,16 +6809,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -6701,6 +6988,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -6752,16 +7060,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -6941,6 +7239,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -6992,16 +7311,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -7181,6 +7490,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -7232,16 +7562,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -7421,6 +7741,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -7472,16 +7813,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -7661,6 +7992,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -7712,16 +8064,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -7901,6 +8243,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -7952,16 +8315,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -8141,6 +8494,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -8192,16 +8566,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -8381,6 +8745,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -8432,16 +8817,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -8621,6 +8996,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -8672,16 +9068,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -8861,6 +9247,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -8912,16 +9319,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -9101,6 +9498,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -9152,16 +9570,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -9341,6 +9749,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -9392,16 +9821,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -9581,6 +10000,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -9632,16 +10072,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -9821,6 +10251,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -9872,16 +10323,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -10061,6 +10502,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -10112,16 +10574,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -10301,6 +10753,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -10352,16 +10825,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -10541,6 +11004,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -10592,16 +11076,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -10781,6 +11255,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -10832,16 +11327,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -11021,6 +11506,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -11072,16 +11578,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -11261,6 +11757,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -11312,16 +11829,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -11501,6 +12008,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -11552,16 +12080,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -11741,6 +12259,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -11792,16 +12331,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -11981,6 +12510,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -12032,16 +12582,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -12221,6 +12761,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -12272,16 +12833,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -12461,6 +13012,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -12512,16 +13084,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -12701,6 +13263,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -12752,16 +13335,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -12941,6 +13514,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -12992,16 +13586,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -13181,6 +13765,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -13232,16 +13837,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -13421,6 +14016,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -13472,16 +14088,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -13661,6 +14267,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -13712,16 +14339,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -13901,6 +14518,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -13952,16 +14590,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -14141,6 +14769,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -14192,16 +14841,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -14381,6 +15020,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -14432,16 +15092,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -14621,6 +15271,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -14672,16 +15343,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -14861,6 +15522,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -14912,16 +15594,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -15101,6 +15773,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -15152,16 +15845,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -15341,6 +16024,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -15392,16 +16096,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -15581,6 +16275,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -15632,16 +16347,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -15821,6 +16526,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -15872,16 +16598,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -16061,6 +16777,27 @@ export declare namespace Builtins {
         render(): Template | undefined;
 
         /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
+
+        /**
          * Force an element to re-render.
          */
         forceUpdate(): void;
@@ -16112,16 +16849,6 @@ export declare namespace Builtins {
          * The realm of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * A flag to indicate if the component is collecting updates.
-         */
-        collectingUpdates: boolean;
-
-        /**
-         * A flag to indicate if the component has a scheduled update.
-         */
-        updateScheduled: boolean;
 
         /**
          * The defined component name.
@@ -16299,6 +17026,27 @@ export declare namespace Builtins {
          * @returns The instances of the rendered Components and/or Nodes
          */
         render(): Template | undefined;
+
+        /**
+         * Check if the component should update.
+         *
+         * @param propertyName The name of the changed property.
+         * @param oldValue The previous value of the property.
+         * @param newValue The new value for the property (undefined if removed).
+         * @returns True if the component should update.
+         */
+        shouldUpdate<P extends keyof this>(
+            propertyName: P,
+            oldValue: this[P] | undefined,
+            newValue: this[P]
+        ): boolean;
+
+        /**
+         * Request an element to re-render.
+         *
+         * @returns True if a re-render has been triggered.
+         */
+        requestUpdate(): boolean;
 
         /**
          * Force an element to re-render.

@@ -477,8 +477,8 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
                 this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
-            if (update) {
-                this.forceUpdate();
+            if (update && this.shouldUpdate(propertyKey, oldValue, newValue)) {
+                this.requestUpdate();
             }
         },
     };
