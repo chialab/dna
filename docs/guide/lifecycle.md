@@ -131,11 +131,13 @@ import { Component, customElement } from '@chialab/dna';
 @customElement('my-article')
 export class MyArticle extends Component {
     render() {
-        return <article>
-            <h1>{this.title}</h1>
-            <slot></slot>
-            <time>{this.lastUpdate}</time>
-        </article>;
+        return (
+            <article>
+                <h1>{this.title}</h1>
+                <slot></slot>
+                <time>{this.lastUpdate}</time>
+            </article>
+        );
     }
 }
 ```

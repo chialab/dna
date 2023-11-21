@@ -218,11 +218,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -469,11 +465,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -720,11 +712,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -971,11 +959,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -1222,11 +1206,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -1473,11 +1453,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -1724,11 +1700,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -1975,11 +1947,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -2226,11 +2194,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -2477,11 +2441,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -2728,11 +2688,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -2979,11 +2935,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -3230,11 +3182,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -3481,11 +3429,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -3732,11 +3676,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -3983,11 +3923,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -4234,11 +4170,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -4485,11 +4417,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -4736,11 +4664,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -4987,11 +4911,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -5238,11 +5158,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -5489,11 +5405,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -5740,11 +5652,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -5991,11 +5899,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -6242,11 +6146,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -6493,11 +6393,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -6744,11 +6640,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -6995,11 +6887,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -7246,11 +7134,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -7497,11 +7381,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -7748,11 +7628,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -7999,11 +7875,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -8250,11 +8122,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -8501,11 +8369,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -8752,11 +8616,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -9003,11 +8863,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -9254,11 +9110,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -9505,11 +9357,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -9756,11 +9604,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -10007,11 +9851,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -10258,11 +10098,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -10509,11 +10345,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -10760,11 +10592,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -11011,11 +10839,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -11262,11 +11086,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -11513,11 +11333,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -11764,11 +11580,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -12015,11 +11827,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -12266,11 +12074,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -12517,11 +12321,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -12768,11 +12568,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -13019,11 +12815,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -13270,11 +13062,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -13521,11 +13309,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -13772,11 +13556,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -14023,11 +13803,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -14274,11 +14050,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -14525,11 +14297,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -14776,11 +14544,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -15027,11 +14791,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -15278,11 +15038,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -15529,11 +15285,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -15780,11 +15532,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -16031,11 +15779,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -16282,11 +16026,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -16533,11 +16273,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -16784,11 +16520,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
@@ -17035,11 +16767,7 @@ export declare namespace Builtins {
          * @param newValue The new value for the property (undefined if removed).
          * @returns True if the component should update.
          */
-        shouldUpdate<P extends keyof this>(
-            propertyName: P,
-            oldValue: this[P] | undefined,
-            newValue: this[P]
-        ): boolean;
+        shouldUpdate<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]): boolean;
 
         /**
          * Request an element to re-render.
