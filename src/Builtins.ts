@@ -6,6 +6,11 @@ import { type PropertyConfig, type PropertyObserver } from './property';
 export declare namespace Builtins {
     export class HTMLElement extends globalThis.HTMLElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -257,6 +262,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLAnchorElement extends globalThis.HTMLAnchorElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -510,6 +520,11 @@ export declare namespace Builtins {
     }
     export class HTMLAreaElement extends globalThis.HTMLAreaElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -761,6 +776,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLAudioElement extends globalThis.HTMLAudioElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -1014,6 +1034,11 @@ export declare namespace Builtins {
     }
     export class HTMLBaseElement extends globalThis.HTMLBaseElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -1265,6 +1290,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLQuoteElement extends globalThis.HTMLQuoteElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -1518,6 +1548,11 @@ export declare namespace Builtins {
     }
     export class HTMLBodyElement extends globalThis.HTMLBodyElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -1769,6 +1804,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLBRElement extends globalThis.HTMLBRElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -2022,6 +2062,11 @@ export declare namespace Builtins {
     }
     export class HTMLButtonElement extends globalThis.HTMLButtonElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -2273,6 +2318,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLCanvasElement extends globalThis.HTMLCanvasElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -2526,6 +2576,11 @@ export declare namespace Builtins {
     }
     export class HTMLTableCaptionElement extends globalThis.HTMLTableCaptionElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -2777,6 +2832,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTableColElement extends globalThis.HTMLTableColElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -3030,6 +3090,11 @@ export declare namespace Builtins {
     }
     export class HTMLDataElement extends globalThis.HTMLDataElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -3281,6 +3346,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLDataListElement extends globalThis.HTMLDataListElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -3534,6 +3604,11 @@ export declare namespace Builtins {
     }
     export class HTMLModElement extends globalThis.HTMLModElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -3785,6 +3860,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLDetailsElement extends globalThis.HTMLDetailsElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -4038,6 +4118,11 @@ export declare namespace Builtins {
     }
     export class HTMLDialogElement extends globalThis.HTMLDialogElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -4289,6 +4374,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLDirectoryElement extends globalThis.HTMLDirectoryElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -4542,6 +4632,11 @@ export declare namespace Builtins {
     }
     export class HTMLDivElement extends globalThis.HTMLDivElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -4793,6 +4888,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLDListElement extends globalThis.HTMLDListElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -5046,6 +5146,11 @@ export declare namespace Builtins {
     }
     export class HTMLEmbedElement extends globalThis.HTMLEmbedElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -5297,6 +5402,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLFieldSetElement extends globalThis.HTMLFieldSetElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -5550,6 +5660,11 @@ export declare namespace Builtins {
     }
     export class HTMLFontElement extends globalThis.HTMLFontElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -5801,6 +5916,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLFormElement extends globalThis.HTMLFormElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -6054,6 +6174,11 @@ export declare namespace Builtins {
     }
     export class HTMLFrameElement extends globalThis.HTMLFrameElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -6305,6 +6430,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLFrameSetElement extends globalThis.HTMLFrameSetElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -6558,6 +6688,11 @@ export declare namespace Builtins {
     }
     export class HTMLHeadingElement extends globalThis.HTMLHeadingElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -6809,6 +6944,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLHeadElement extends globalThis.HTMLHeadElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -7062,6 +7202,11 @@ export declare namespace Builtins {
     }
     export class HTMLHRElement extends globalThis.HTMLHRElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -7313,6 +7458,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLIFrameElement extends globalThis.HTMLIFrameElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -7566,6 +7716,11 @@ export declare namespace Builtins {
     }
     export class HTMLImageElement extends globalThis.HTMLImageElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -7817,6 +7972,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLInputElement extends globalThis.HTMLInputElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -8070,6 +8230,11 @@ export declare namespace Builtins {
     }
     export class HTMLLabelElement extends globalThis.HTMLLabelElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -8321,6 +8486,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLLegendElement extends globalThis.HTMLLegendElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -8574,6 +8744,11 @@ export declare namespace Builtins {
     }
     export class HTMLLIElement extends globalThis.HTMLLIElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -8825,6 +9000,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLLinkElement extends globalThis.HTMLLinkElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -9078,6 +9258,11 @@ export declare namespace Builtins {
     }
     export class HTMLMapElement extends globalThis.HTMLMapElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -9329,6 +9514,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLMarqueeElement extends globalThis.HTMLMarqueeElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -9582,6 +9772,11 @@ export declare namespace Builtins {
     }
     export class HTMLMenuElement extends globalThis.HTMLMenuElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -9833,6 +10028,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLMetaElement extends globalThis.HTMLMetaElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -10086,6 +10286,11 @@ export declare namespace Builtins {
     }
     export class HTMLMeterElement extends globalThis.HTMLMeterElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -10337,6 +10542,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLObjectElement extends globalThis.HTMLObjectElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -10590,6 +10800,11 @@ export declare namespace Builtins {
     }
     export class HTMLOListElement extends globalThis.HTMLOListElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -10841,6 +11056,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLOptGroupElement extends globalThis.HTMLOptGroupElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -11094,6 +11314,11 @@ export declare namespace Builtins {
     }
     export class HTMLOptionElement extends globalThis.HTMLOptionElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -11345,6 +11570,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLOutputElement extends globalThis.HTMLOutputElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -11598,6 +11828,11 @@ export declare namespace Builtins {
     }
     export class HTMLParagraphElement extends globalThis.HTMLParagraphElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -11849,6 +12084,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLParamElement extends globalThis.HTMLParamElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -12102,6 +12342,11 @@ export declare namespace Builtins {
     }
     export class HTMLPictureElement extends globalThis.HTMLPictureElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -12353,6 +12598,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLPreElement extends globalThis.HTMLPreElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -12606,6 +12856,11 @@ export declare namespace Builtins {
     }
     export class HTMLProgressElement extends globalThis.HTMLProgressElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -12857,6 +13112,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLScriptElement extends globalThis.HTMLScriptElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -13110,6 +13370,11 @@ export declare namespace Builtins {
     }
     export class HTMLSelectElement extends globalThis.HTMLSelectElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -13361,6 +13626,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLSlotElement extends globalThis.HTMLSlotElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -13614,6 +13884,11 @@ export declare namespace Builtins {
     }
     export class HTMLSourceElement extends globalThis.HTMLSourceElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -13865,6 +14140,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLSpanElement extends globalThis.HTMLSpanElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -14118,6 +14398,11 @@ export declare namespace Builtins {
     }
     export class HTMLStyleElement extends globalThis.HTMLStyleElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -14369,6 +14654,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTableElement extends globalThis.HTMLTableElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -14622,6 +14912,11 @@ export declare namespace Builtins {
     }
     export class HTMLTableSectionElement extends globalThis.HTMLTableSectionElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -14873,6 +15168,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTableCellElement extends globalThis.HTMLTableCellElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -15126,6 +15426,11 @@ export declare namespace Builtins {
     }
     export class HTMLTemplateElement extends globalThis.HTMLTemplateElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -15377,6 +15682,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTextAreaElement extends globalThis.HTMLTextAreaElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -15630,6 +15940,11 @@ export declare namespace Builtins {
     }
     export class HTMLTimeElement extends globalThis.HTMLTimeElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -15881,6 +16196,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTitleElement extends globalThis.HTMLTitleElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -16134,6 +16454,11 @@ export declare namespace Builtins {
     }
     export class HTMLTableRowElement extends globalThis.HTMLTableRowElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -16385,6 +16710,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLTrackElement extends globalThis.HTMLTrackElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */
@@ -16638,6 +16968,11 @@ export declare namespace Builtins {
     }
     export class HTMLUListElement extends globalThis.HTMLUListElement {
         /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
+        /**
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
@@ -16889,6 +17224,11 @@ export declare namespace Builtins {
         assign(props: object): this;
     }
     export class HTMLVideoElement extends globalThis.HTMLVideoElement {
+        /**
+         * The tag name of the extended builtin element.
+         */
+        static readonly tagName?: string;
+
         /**
          * An array containing the names of the attributes to observe.
          */

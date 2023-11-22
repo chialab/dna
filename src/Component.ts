@@ -559,6 +559,11 @@ export type ComponentInstance = InstanceType<typeof Component>;
  */
 export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance> {
     /**
+     * The tag name of the extended builtin element.
+     */
+    readonly tagName?: string;
+
+    /**
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes?: string[];
@@ -616,17 +621,21 @@ export function define(name: string, constructor: ComponentConstructor, options?
         }
     }
 
-    if (constructor.name) {
-        defineProperty(Component, 'name', {
-            writable: false,
-            configurable: false,
-            value: constructor.name,
-        });
-    }
-
     defineProperties(Component.prototype);
     defineListeners(Component.prototype);
     try {
+        if (constructor.name) {
+            defineProperty(Component, 'name', {
+                writable: false,
+                configurable: false,
+                value: constructor.name,
+            });
+        }
+        defineProperty(Component, 'tagName', {
+            writable: false,
+            configurable: false,
+            value: (options && options.extends) || name,
+        });
         defineProperty(Component.prototype, 'is', {
             writable: false,
             configurable: false,
