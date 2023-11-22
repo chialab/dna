@@ -12,6 +12,11 @@ export default defineConfig({
     themeConfig: {
         logo: 'https://raw.githubusercontent.com/chialab/dna/main/logo.svg',
 
+        editLink: {
+            pattern: 'https://github.com/chialab/dna/edit/main/docs/:path',
+            text: 'Suggest changes to this page',
+        },
+
         search: {
             provider: 'algolia',
             options: {
