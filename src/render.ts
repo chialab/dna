@@ -145,6 +145,13 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
 };
 
 /**
+ * Check if a property should be ignored.
+ * @param propertyKey The property key to check.
+ * @returns `true` if the property should be ignored.
+ */
+const shouldIgnoreProperty = (propertyKey: string) => ['children', 'key', 'is', 'xmlns'].includes(propertyKey);
+
+/**
  * Set property value to a node.
  * @param node The node to update.
  * @param propertyKey The property key to update.
@@ -499,7 +506,7 @@ const renderTemplate = (
 
         if (oldProperties) {
             for (const propertyKey in oldProperties) {
-                if (!(propertyKey in properties)) {
+                if (!(propertyKey in properties) && !shouldIgnoreProperty(propertyKey)) {
                     setProperty(
                         node,
                         propertyKey as keyof Node,
@@ -512,20 +519,14 @@ const renderTemplate = (
         }
 
         for (const propertyKey in properties) {
-            switch (propertyKey) {
-                case 'children':
-                case 'key':
-                case 'is':
-                case 'xmlns':
-                    break;
-                default:
-                    setProperty(
-                        node,
-                        propertyKey as keyof Node,
-                        properties[propertyKey as keyof typeof properties] as Node[keyof Node],
-                        oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                        constructor
-                    );
+            if (!shouldIgnoreProperty(propertyKey)) {
+                setProperty(
+                    node,
+                    propertyKey as keyof Node,
+                    properties[propertyKey as keyof typeof properties] as Node[keyof Node],
+                    oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
+                    constructor
+                );
             }
         }
 
