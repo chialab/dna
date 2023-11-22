@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.7
+
+### Patch Changes
+
+-   d218fe1: Use `event.composedPath()` for event delegation.
+
 ## 4.0.0-alpha.6
 
 ### Major Changes
