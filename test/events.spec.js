@@ -278,6 +278,41 @@ describe(
                     DNA.undelegateEventListener(wrapper, 'click', 'button', false);
                 }).toThrow(TypeError, 'The provided callback must be a function');
             });
+
+            it('should delegate listeners to slotted contents', () => {
+                const callback = vi.fn();
+                const is = getComponentName();
+                const TestElement = DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        static get listeners() {
+                            return {
+                                'click .button_wrapper': this.prototype.method,
+                            };
+                        }
+
+                        render() {
+                            return DNA.html`<div class="button_wrapper"><slot /></div>`;
+                        }
+
+                        method(event, target) {
+                            event.preventDefault();
+                            callback(event.type, target.tagName);
+                        }
+                    }
+                );
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                const button = document.createElement('button');
+                element.appendChild(button);
+
+                expect(callback).not.toHaveBeenCalled();
+                button.click();
+                expect(callback).toHaveBeenCalled();
+                expect(callback).toHaveBeenCalledWith('click', 'DIV');
+            });
         });
 
         describe('listeners getter', () => {

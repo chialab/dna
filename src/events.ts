@@ -164,7 +164,6 @@ export const delegateEventListener = (
             if (!event.target) {
                 return;
             }
-            const eventTarget = event.target as Node;
             // wrap the Event's stopPropagation in order to prevent other delegations from the same root
             const originalStopPropagation = event.stopPropagation;
             const originalImmediatePropagation = event.stopImmediatePropagation;
@@ -188,13 +187,14 @@ export const delegateEventListener = (
                 const { selector, callback } = descriptors[i];
                 let selectorTarget;
                 if (selector) {
-                    let target = eventTarget;
+                    const path = event.composedPath();
+                    let target = path.shift();
                     while (target && target !== element) {
                         if (isElement(target) && target.matches(selector)) {
                             selectorTarget = target;
                             break;
                         }
-                        target = target.parentNode as Node;
+                        target = path.shift();
                     }
                 } else {
                     selectorTarget = element;
