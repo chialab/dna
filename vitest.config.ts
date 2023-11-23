@@ -29,5 +29,9 @@ export default defineConfig({
         name: `DNA${job ? ` (${job})` : ''}`,
         dir: './test',
         include: ['./*.spec.js'],
+        coverage: {
+            include: ['src'],
+            reporter: [['clover'], ['html']],
+        },
     },
 });
