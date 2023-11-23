@@ -13,11 +13,13 @@
       "default": "./dist/dna.js"
     },
     "./jsx-runtime": "./jsx-runtime.js",
-    "./jsx-dev-runtime": "./jsx-runtime.js"
+    "./jsx-dev-runtime": "./jsx-runtime.js",
+    "./frameworks/*": "./frameworks/*.d.ts"
   },
   "files": [
     "dist",
     "types",
+    "frameworks",
     "jsx-runtime.js",
     "jsx-runtime.d.ts",
     "LICENSE",
@@ -72,6 +74,7 @@
     "rimraf": "^5.0.2",
     "rxjs": "^7.8.1",
     "saucelabs": "^7.4.0",
+    "svelte": "^4.2.7",
     "typescript": "^5.0.0",
     "vitepress": "^1.0.0-rc.25",
     "vitest": "^1.0.0-beta.5",
