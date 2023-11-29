@@ -58,65 +58,6 @@ DNA composition is based on Quantum, which is [tested across different framework
 | Angular    |        ✅         |    ✅     |      ✅       |     ✅      |
 | Svelte     |        ✅         |    ✅     |      ✅       |     ✅      |
 
-### Svelte integration
-
-Import DNA typings in your `app.d.ts` in order to enable integrated support with svelte:
-
-::: code-group
-
-```ts [app.d.ts]
-import '@chialab/dna/frameworks/svelte';
-
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
-declare global {
-    namespace App {
-        // interface Error {}
-        // interface Locals {}
-        // interface PageData {}
-        // interface Platform {}
-    }
-}
-
-export {};
-```
-
-```ts [hello-world.ts]
-import { Component, customElement, html, property } from '@chialab/dna';
-
-@customElement('hello-world')
-export class HelloWorld extends Component {
-    @property({
-        type: String,
-    })
-    name?: string;
-
-    render() {
-        return html`Hello ${this.name || 'world'}!`;
-    }
-}
-
-declare module '@chialab/dna' {
-    namespace JSX {
-        interface CustomElements {
-            'hello-world': HelloWorld;
-        }
-    }
-}
-```
-
-```svelte [+page.svelte]
-<script lang="ts">
-    import './hello-world';
-</script>
-
-<hello-world
-    name={2} // [!code error] Type 'number' is not assignable to type 'string'.
-/>
-```
-
-:::
-
 ## View libraries
 
 Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are DOM nodes, the integration is possible using the element context as library param:

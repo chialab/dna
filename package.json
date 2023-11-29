@@ -13,13 +13,11 @@
       "default": "./dist/dna.js"
     },
     "./jsx-runtime": "./jsx-runtime.js",
-    "./jsx-dev-runtime": "./jsx-runtime.js",
-    "./frameworks/*": "./frameworks/*.d.ts"
+    "./jsx-dev-runtime": "./jsx-runtime.js"
   },
   "files": [
     "dist",
     "types",
-    "frameworks",
     "jsx-runtime.js",
     "jsx-runtime.d.ts",
     "LICENSE",
