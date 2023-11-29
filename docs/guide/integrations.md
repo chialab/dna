@@ -20,7 +20,7 @@ render(
 ```
 
 ```tsx [x-card.tsx]
-import { builtin, Component, customElement } from '@chialab/dna';
+import { Component, customElement, HTML } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
@@ -28,7 +28,7 @@ class Card extends Component {
 }
 
 @customElement('x-link', { extends: 'a' })
-class Link extends builtin.HTMLAnchorElement {
+class Link extends HTML.Anchor {
     // ...
 }
 

@@ -1,10 +1,10 @@
 import { type Realm } from '@chialab/quantum';
 import { type DelegatedEventCallback, type ListenerConfig } from './events';
-import { type KeyedProperties, type Props, type Template } from './JSX';
+import { type Template as JSXTemplate, type KeyedProperties, type Props } from './JSX';
 import { type PropertyConfig, type PropertyObserver } from './property';
 
 export declare namespace Builtins {
-    export class HTMLElement extends globalThis.HTMLElement {
+    export class Element extends globalThis.HTMLElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -218,7 +218,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -261,7 +261,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLAnchorElement extends globalThis.HTMLAnchorElement {
+    export class Anchor extends globalThis.HTMLAnchorElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -475,7 +475,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -518,7 +518,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLAreaElement extends globalThis.HTMLAreaElement {
+    export class Area extends globalThis.HTMLAreaElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -732,7 +732,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -775,7 +775,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLAudioElement extends globalThis.HTMLAudioElement {
+    export class Audio extends globalThis.HTMLAudioElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -989,7 +989,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -1032,7 +1032,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLBaseElement extends globalThis.HTMLBaseElement {
+    export class Base extends globalThis.HTMLBaseElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -1246,7 +1246,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -1289,7 +1289,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLQuoteElement extends globalThis.HTMLQuoteElement {
+    export class Quote extends globalThis.HTMLQuoteElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -1503,7 +1503,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -1546,7 +1546,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLBodyElement extends globalThis.HTMLBodyElement {
+    export class Body extends globalThis.HTMLBodyElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -1760,7 +1760,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -1803,7 +1803,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLBRElement extends globalThis.HTMLBRElement {
+    export class BR extends globalThis.HTMLBRElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -2017,7 +2017,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -2060,7 +2060,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLButtonElement extends globalThis.HTMLButtonElement {
+    export class Button extends globalThis.HTMLButtonElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -2274,7 +2274,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -2317,7 +2317,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLCanvasElement extends globalThis.HTMLCanvasElement {
+    export class Canvas extends globalThis.HTMLCanvasElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -2531,7 +2531,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -2574,7 +2574,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableCaptionElement extends globalThis.HTMLTableCaptionElement {
+    export class TableCaption extends globalThis.HTMLTableCaptionElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -2788,7 +2788,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -2831,7 +2831,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableColElement extends globalThis.HTMLTableColElement {
+    export class TableCol extends globalThis.HTMLTableColElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -3045,7 +3045,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -3088,7 +3088,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDataElement extends globalThis.HTMLDataElement {
+    export class Data extends globalThis.HTMLDataElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -3302,7 +3302,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -3345,7 +3345,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDataListElement extends globalThis.HTMLDataListElement {
+    export class DataList extends globalThis.HTMLDataListElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -3559,7 +3559,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -3602,7 +3602,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLModElement extends globalThis.HTMLModElement {
+    export class Mod extends globalThis.HTMLModElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -3816,7 +3816,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -3859,7 +3859,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDetailsElement extends globalThis.HTMLDetailsElement {
+    export class Details extends globalThis.HTMLDetailsElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -4073,7 +4073,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -4116,7 +4116,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDialogElement extends globalThis.HTMLDialogElement {
+    export class Dialog extends globalThis.HTMLDialogElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -4330,7 +4330,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -4373,7 +4373,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDirectoryElement extends globalThis.HTMLDirectoryElement {
+    export class Directory extends globalThis.HTMLDirectoryElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -4587,7 +4587,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -4630,7 +4630,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDivElement extends globalThis.HTMLDivElement {
+    export class Div extends globalThis.HTMLDivElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -4844,7 +4844,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -4887,7 +4887,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLDListElement extends globalThis.HTMLDListElement {
+    export class DList extends globalThis.HTMLDListElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -5101,7 +5101,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -5144,7 +5144,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLEmbedElement extends globalThis.HTMLEmbedElement {
+    export class Embed extends globalThis.HTMLEmbedElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -5358,7 +5358,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -5401,7 +5401,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLFieldSetElement extends globalThis.HTMLFieldSetElement {
+    export class FieldSet extends globalThis.HTMLFieldSetElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -5615,7 +5615,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -5658,7 +5658,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLFontElement extends globalThis.HTMLFontElement {
+    export class Font extends globalThis.HTMLFontElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -5872,7 +5872,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -5915,7 +5915,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLFormElement extends globalThis.HTMLFormElement {
+    export class Form extends globalThis.HTMLFormElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -6129,7 +6129,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -6172,7 +6172,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLFrameElement extends globalThis.HTMLFrameElement {
+    export class Frame extends globalThis.HTMLFrameElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -6386,7 +6386,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -6429,7 +6429,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLFrameSetElement extends globalThis.HTMLFrameSetElement {
+    export class FrameSet extends globalThis.HTMLFrameSetElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -6643,7 +6643,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -6686,7 +6686,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLHeadingElement extends globalThis.HTMLHeadingElement {
+    export class Heading extends globalThis.HTMLHeadingElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -6900,7 +6900,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -6943,7 +6943,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLHeadElement extends globalThis.HTMLHeadElement {
+    export class Head extends globalThis.HTMLHeadElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -7157,7 +7157,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -7200,7 +7200,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLHRElement extends globalThis.HTMLHRElement {
+    export class HR extends globalThis.HTMLHRElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -7414,7 +7414,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -7457,7 +7457,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLIFrameElement extends globalThis.HTMLIFrameElement {
+    export class IFrame extends globalThis.HTMLIFrameElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -7671,7 +7671,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -7714,7 +7714,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLImageElement extends globalThis.HTMLImageElement {
+    export class Image extends globalThis.HTMLImageElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -7928,7 +7928,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -7971,7 +7971,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLInputElement extends globalThis.HTMLInputElement {
+    export class Input extends globalThis.HTMLInputElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -8185,7 +8185,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -8228,7 +8228,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLLabelElement extends globalThis.HTMLLabelElement {
+    export class Label extends globalThis.HTMLLabelElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -8442,7 +8442,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -8485,7 +8485,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLLegendElement extends globalThis.HTMLLegendElement {
+    export class Legend extends globalThis.HTMLLegendElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -8699,7 +8699,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -8742,7 +8742,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLLIElement extends globalThis.HTMLLIElement {
+    export class LI extends globalThis.HTMLLIElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -8956,7 +8956,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -8999,7 +8999,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLLinkElement extends globalThis.HTMLLinkElement {
+    export class Link extends globalThis.HTMLLinkElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -9213,7 +9213,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -9256,7 +9256,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLMapElement extends globalThis.HTMLMapElement {
+    export class Map extends globalThis.HTMLMapElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -9470,7 +9470,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -9513,7 +9513,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLMarqueeElement extends globalThis.HTMLMarqueeElement {
+    export class Marquee extends globalThis.HTMLMarqueeElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -9727,7 +9727,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -9770,7 +9770,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLMenuElement extends globalThis.HTMLMenuElement {
+    export class Menu extends globalThis.HTMLMenuElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -9984,7 +9984,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -10027,7 +10027,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLMetaElement extends globalThis.HTMLMetaElement {
+    export class Meta extends globalThis.HTMLMetaElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -10241,7 +10241,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -10284,7 +10284,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLMeterElement extends globalThis.HTMLMeterElement {
+    export class Meter extends globalThis.HTMLMeterElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -10498,7 +10498,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -10541,7 +10541,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLObjectElement extends globalThis.HTMLObjectElement {
+    export class Object extends globalThis.HTMLObjectElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -10755,7 +10755,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -10798,7 +10798,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLOListElement extends globalThis.HTMLOListElement {
+    export class OList extends globalThis.HTMLOListElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -11012,7 +11012,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -11055,7 +11055,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLOptGroupElement extends globalThis.HTMLOptGroupElement {
+    export class OptGroup extends globalThis.HTMLOptGroupElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -11269,7 +11269,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -11312,7 +11312,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLOptionElement extends globalThis.HTMLOptionElement {
+    export class Option extends globalThis.HTMLOptionElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -11526,7 +11526,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -11569,7 +11569,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLOutputElement extends globalThis.HTMLOutputElement {
+    export class Output extends globalThis.HTMLOutputElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -11783,7 +11783,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -11826,7 +11826,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLParagraphElement extends globalThis.HTMLParagraphElement {
+    export class Paragraph extends globalThis.HTMLParagraphElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -12040,7 +12040,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -12083,7 +12083,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLParamElement extends globalThis.HTMLParamElement {
+    export class Param extends globalThis.HTMLParamElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -12297,7 +12297,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -12340,7 +12340,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLPictureElement extends globalThis.HTMLPictureElement {
+    export class Picture extends globalThis.HTMLPictureElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -12554,7 +12554,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -12597,7 +12597,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLPreElement extends globalThis.HTMLPreElement {
+    export class Pre extends globalThis.HTMLPreElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -12811,7 +12811,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -12854,7 +12854,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLProgressElement extends globalThis.HTMLProgressElement {
+    export class Progress extends globalThis.HTMLProgressElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -13068,7 +13068,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -13111,7 +13111,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLScriptElement extends globalThis.HTMLScriptElement {
+    export class Script extends globalThis.HTMLScriptElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -13325,7 +13325,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -13368,7 +13368,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLSelectElement extends globalThis.HTMLSelectElement {
+    export class Select extends globalThis.HTMLSelectElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -13582,7 +13582,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -13625,7 +13625,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLSlotElement extends globalThis.HTMLSlotElement {
+    export class Slot extends globalThis.HTMLSlotElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -13839,7 +13839,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -13882,7 +13882,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLSourceElement extends globalThis.HTMLSourceElement {
+    export class Source extends globalThis.HTMLSourceElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -14096,7 +14096,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -14139,7 +14139,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLSpanElement extends globalThis.HTMLSpanElement {
+    export class Span extends globalThis.HTMLSpanElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -14353,7 +14353,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -14396,7 +14396,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLStyleElement extends globalThis.HTMLStyleElement {
+    export class Style extends globalThis.HTMLStyleElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -14610,7 +14610,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -14653,7 +14653,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableElement extends globalThis.HTMLTableElement {
+    export class Table extends globalThis.HTMLTableElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -14867,7 +14867,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -14910,7 +14910,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableSectionElement extends globalThis.HTMLTableSectionElement {
+    export class TableSection extends globalThis.HTMLTableSectionElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -15124,7 +15124,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -15167,7 +15167,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableCellElement extends globalThis.HTMLTableCellElement {
+    export class TableCell extends globalThis.HTMLTableCellElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -15381,7 +15381,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -15424,7 +15424,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTemplateElement extends globalThis.HTMLTemplateElement {
+    export class Template extends globalThis.HTMLTemplateElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -15638,7 +15638,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -15681,7 +15681,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTextAreaElement extends globalThis.HTMLTextAreaElement {
+    export class TextArea extends globalThis.HTMLTextAreaElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -15895,7 +15895,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -15938,7 +15938,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTimeElement extends globalThis.HTMLTimeElement {
+    export class Time extends globalThis.HTMLTimeElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -16152,7 +16152,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -16195,7 +16195,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTitleElement extends globalThis.HTMLTitleElement {
+    export class Title extends globalThis.HTMLTitleElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -16409,7 +16409,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -16452,7 +16452,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTableRowElement extends globalThis.HTMLTableRowElement {
+    export class TableRow extends globalThis.HTMLTableRowElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -16666,7 +16666,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -16709,7 +16709,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLTrackElement extends globalThis.HTMLTrackElement {
+    export class Track extends globalThis.HTMLTrackElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -16923,7 +16923,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -16966,7 +16966,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLUListElement extends globalThis.HTMLUListElement {
+    export class UList extends globalThis.HTMLUListElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -17180,7 +17180,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.
@@ -17223,7 +17223,7 @@ export declare namespace Builtins {
          */
         assign(props: object): this;
     }
-    export class HTMLVideoElement extends globalThis.HTMLVideoElement {
+    export class Video extends globalThis.HTMLVideoElement {
         /**
          * The tag name of the extended builtin element.
          */
@@ -17437,7 +17437,7 @@ export declare namespace Builtins {
          *
          * @returns The instances of the rendered Components and/or Nodes
          */
-        render(): Template | undefined;
+        render(): JSXTemplate | undefined;
 
         /**
          * Check if the component should update.

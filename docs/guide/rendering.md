@@ -354,12 +354,12 @@ Slotted children are nodes that semantically are children of the component, but 
 For example, we may declare a custom `<dialog is="x-dialog">` tag with some layout features:
 
 ```tsx
-import { builtin, customElement, property } from '@chialab/dna';
+import { customElement, HTML, property } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
-class Dialog extends builtin.HTMLDialogElement {
+class Dialog extends HTML.Dialog {
     @property() title: string = '';
     @property() content: string = '';
 

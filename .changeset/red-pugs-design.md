@@ -2,4 +2,4 @@
 '@chialab/dna': major
 ---
 
-Add support for `svelte`.
+Rename `builtins` to `HTML` namespace.

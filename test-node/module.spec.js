@@ -7,7 +7,7 @@ describe(
         const EXPECTED_EXPORT_MAP = {
             customElement: 'function',
             define: 'function',
-            builtin: 'object',
+            HTML: 'object',
             extend: 'function',
             render: 'function',
             Fragment: 'symbol',

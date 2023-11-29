@@ -114,12 +114,12 @@ This is very useful when you want to extend a HTML tag, preserving its semanthic
 ::: code-group
 
 ```tsx [TypeScript]
-import { builtin, customElement, property } from '@chialab/dna';
+import { customElement, HTML, property } from '@chialab/dna';
 
 @customElement('alert-dialog', {
     extends: 'dialog',
 })
-class AlertDialog extends builtin.HTMLDialogElement {
+class AlertDialog extends HTML.Dialog {
     @property() title: string = '';
 
     render() {
@@ -129,11 +129,11 @@ class AlertDialog extends builtin.HTMLDialogElement {
 ```
 
 ```ts [JavaScript]
-import { builtin, define, html } from '@chialab/dna';
+import { define, HTML, html } from '@chialab/dna';
 
 const AlertDialog = define(
     'alert-dialog',
-    class extends builtin.HTMLDialogElement {
+    class extends HTML.Dialog {
         static get properties() {
             return {
                 title: {

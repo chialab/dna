@@ -522,11 +522,16 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
 /**
  * A collection of extended builtin HTML constructors.
  */
-export const builtin = new Proxy({} as typeof Builtins, {
+export const HTML = new Proxy({} as typeof Builtins, {
     get(target, name) {
         const constructor = Reflect.get(target, name);
         if (constructor) {
             return constructor;
+        }
+        if (name === 'Element') {
+            name = 'HTMLElement';
+        } else {
+            name = `HTML${name as string}Element`;
         }
 
         if (name in Elements) {
@@ -545,7 +550,7 @@ export const builtin = new Proxy({} as typeof Builtins, {
  * a complete lifecycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = builtin.HTMLElement;
+export const Component = HTML.Element;
 
 /**
  * The basic DNA Component interface.

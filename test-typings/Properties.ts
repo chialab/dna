@@ -1,4 +1,4 @@
-import { builtin, Component, customElement, observe, property } from '@chialab/dna';
+import { Component, customElement, HTML, observe, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -13,7 +13,7 @@ export class TestElement2 extends Component {
 }
 
 @customElement('x-test3')
-export class TestElement3 extends builtin.HTMLDetailsElement {
+export class TestElement3 extends HTML.Details {
     // override native prop
     @property() open!: boolean;
 }

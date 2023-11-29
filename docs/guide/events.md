@@ -10,12 +10,12 @@ You can declare event listeners on a component using the `listen` decorator or t
 ::: code-group
 
 ```ts [@listen]
-import { builtin, customElement, listen } from '@chialab/dna';
+import { customElement, HTML, listen } from '@chialab/dna';
 
 @customElement('x-button', {
     extends: 'button',
 })
-class Button extends builtin.HTMLButtonElement {
+class Button extends HTML.Button {
     @listen('click')
     onClick(event) {
         event.preventDefault();
@@ -29,11 +29,11 @@ class Button extends builtin.HTMLButtonElement {
 ```
 
 ```ts [get listeners]
-import { builtin, define } from '@chialab/dna';
+import { define, HTML } from '@chialab/dna';
 
 const Button = define(
     'x-button',
-    class extends builtin.HTMLButtonElement {
+    class extends HTML.Button {
         static get listeners() {
             return {
                 'click': function (event) {
@@ -165,12 +165,12 @@ Using the `listen` decorator or the `listeners` static getter, you can specify t
 ::: code-group
 
 ```ts [@listen]
-import { builtin, customElement, listen } from '@chialab/dna';
+import { customElement, HTML, listen } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
-class Dialog extends builtin.HTMLDialogElement {
+class Dialog extends HTML.Dialog {
     @listen('click', 'nav button', { passive: false })
     onClick(event, target) {
         // ...
@@ -179,11 +179,11 @@ class Dialog extends builtin.HTMLDialogElement {
 ```
 
 ```ts [get listeners]
-import { builtin, define } from '@chialab/dna';
+import { define, HTML } from '@chialab/dna';
 
 const Dialog = define(
     'x-dialog',
-    class extends builtin.HTMLDialogElement {
+    class extends HTML.Dialog {
         static get listeners() {
             return {
                 'click nav button': {
@@ -206,12 +206,12 @@ const Dialog = define(
 You can also use `delegateEventListener` and `undelegateEventListener` methods:
 
 ```ts
-import { builtin, customElement } from '@chialab/idom';
+import { HTML, customElement } from '@chialab/idom';
 
 @customElement('x-dialog', {
     extends: 'dialog',
 })
-class Dialog extends builtin.HTMLDialogElement { ... }
+class Dialog extends HTML.Dialog { ... }
 
 const element = new Dialog();
 const closeDialog = (event, target) => { ... };
@@ -227,12 +227,12 @@ element.undelegateEventListener('click', 'nav button', closeDialog);
 DNA components overrides the `dispatchEvent` method in order to support an alternative signature for easier [CustomEvents](https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events) creation:
 
 ```ts
-import { builtin, customElement } from '@chialab/dna';
+import { HTML, customElement } from '@chialab/dna';
 
 @customElement('x-button', {
     extends: 'button',
 })
-class Button extends builtin.HTMLButtonElement { ... }
+class Button extends HTML.Button { ... }
 
 const button = new Button();
 document.body.appendChild(element);

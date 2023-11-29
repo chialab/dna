@@ -12,7 +12,7 @@ export {
     defineListeners,
 } from './events';
 export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { define, extend, builtin, Component, isComponent, isComponentConstructor, customElement } from './Component';
+export { define, extend, HTML, Component, isComponent, isComponentConstructor, customElement } from './Component';
 export { $parse, $await, $until, $pipe } from './directives';
 
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';

@@ -43,7 +43,7 @@ describe(
             });
 
             it('should create a base class starting from the anchor base class', () => {
-                const TestElement = DNA.define(getComponentName(), class extends DNA.builtin.HTMLAnchorElement {}, {
+                const TestElement = DNA.define(getComponentName(), class extends DNA.HTML.Anchor {}, {
                     extends: 'a',
                 });
                 const element = new TestElement();

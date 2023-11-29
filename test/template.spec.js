@@ -217,7 +217,7 @@ describe(
                     const rootName = getComponentName();
                     const MyElement = DNA.define(
                         `${rootName}-${type.toLowerCase()}`,
-                        class MyElement extends DNA.builtin.HTMLDivElement {
+                        class MyElement extends DNA.HTML.Div {
                             render() {
                                 return TEMPLATES[type]();
                             }
