@@ -1,5 +1,15 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.8
+
+### Major Changes
+
+-   41ded18: Rename `builtins` to `HTML` namespace.
+
+### Minor Changes
+
+-   7ed3a2e: Define `tagName` property to component constructors.
+
 ## 4.0.0-alpha.7
 
 ### Patch Changes
