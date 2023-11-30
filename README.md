@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
+    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna/alpha.svg"></a>
 </p>
 
 ## Features
@@ -43,11 +43,11 @@ import { Component, define, html, ... } from 'https://unpkg.com/@chialab/dna?mod
 Or install via NPM:
 
 ```
-npm i @chialab/dna
+npm i @chialab/dna@alpha
 ```
 
 ```
-yarn add @chialab/dna
+yarn add @chialab/dna@alpha
 ```
 
 ## Define a Component
