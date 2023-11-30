@@ -24,7 +24,7 @@ import { Component, define } from '@chialab/dna';
 
 const Card = define(
     'x-card',
-    class extends Component {
+    class Card extends Component {
         static get properties() {
             return {
                 age: Number,
@@ -62,7 +62,7 @@ import { Component, define } from '@chialab/dna';
 
 const Card = define(
     'x-card',
-    class extends Component {
+    class Card extends Component {
         static get properties() {
             return {
                 collapsed: {
@@ -218,7 +218,7 @@ import { Component, define } from '@chialab/dna';
 
 const Card = define(
     'x-card',
-    class extends Component {
+    class Card extends Component {
         static get properties() {
             return {
                 phone: {

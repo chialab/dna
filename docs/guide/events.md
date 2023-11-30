@@ -33,7 +33,7 @@ import { define, HTML } from '@chialab/dna';
 
 const Button = define(
     'x-button',
-    class extends HTML.Button {
+    class Button extends HTML.Button {
         static get listeners() {
             return {
                 'click': function (event) {
@@ -74,7 +74,7 @@ import { Component, define } from '@chialab/dna';
 
 const Tracker = define(
     'x-tracker',
-    class extends Component {
+    class Tracker extends Component {
         static get listeners() {
             return {
                 touchmove: {
@@ -138,7 +138,7 @@ import { Component, define } from '@chialab/dna';
 
 const Tracker = define(
     'x-tracker',
-    class extends Component {
+    class Tracker extends Component {
         static get listeners() {
             return {
                 touchmove: {
@@ -183,7 +183,7 @@ import { define, HTML } from '@chialab/dna';
 
 const Dialog = define(
     'x-dialog',
-    class extends HTML.Dialog {
+    class Dialog extends HTML.Dialog {
         static get listeners() {
             return {
                 'click nav button': {

@@ -87,7 +87,7 @@ import { Component, define, html } from '@chialab/dna';
 
 const HelloWorld = define(
     'hello-world',
-    class extends Component {
+    class HelloWorld extends Component {
         static get properties() {
             return {
                 name: {
@@ -133,7 +133,7 @@ import { define, HTML, html } from '@chialab/dna';
 
 const AlertDialog = define(
     'alert-dialog',
-    class extends HTML.Dialog {
+    class AlertDialog extends HTML.Dialog {
         static get properties() {
             return {
                 title: {

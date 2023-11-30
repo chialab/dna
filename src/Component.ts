@@ -1,5 +1,4 @@
 import { attachRealm, type Realm } from '@chialab/quantum';
-import { type Builtins } from './Builtins';
 import { type ClassDescriptor } from './ClassDescriptor';
 import { $parse } from './directives';
 import * as Elements from './Elements';
@@ -15,6 +14,7 @@ import {
     type ListenerConfig,
 } from './events';
 import { defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import { type HTML as HTMLNamespace } from './HTML';
 import { type KeyedProperties, type Props, type Template } from './JSX';
 import {
     addObserver,
@@ -68,8 +68,8 @@ export const isComponentConstructor = <T extends ComponentConstructor>(construct
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
  */
-export const extend = <T extends { new (...args: any[]): HTMLElement; prototype: HTMLElement }>(ctor: T) =>
-    class Component extends ctor {
+export const extend = <T extends HTMLElement, C extends { new (...args: any[]): T; prototype: T }>(ctor: C) =>
+    class Component extends (ctor as { new (...args: any[]): HTMLElement; prototype: HTMLElement }) {
         /**
          * Type getter for JSX properties.
          */
@@ -79,7 +79,7 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
          * @returns The list of attributes to observe.
          */
         static get observedAttributes(): string[] {
-            const propertiesDescriptor = getProperties(this.prototype);
+            const propertiesDescriptor = getProperties(this.prototype as ComponentInstance);
             const attributes = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
@@ -517,12 +517,12 @@ export const extend = <T extends { new (...args: any[]): HTMLElement; prototype:
 
             return this;
         }
-    };
+    } as unknown as BaseComponentConstructor<T>;
 
 /**
  * A collection of extended builtin HTML constructors.
  */
-export const HTML = new Proxy({} as typeof Builtins, {
+export const HTML = new Proxy({} as typeof HTMLNamespace, {
     get(target, name) {
         const constructor = Reflect.get(target, name);
         if (constructor) {
@@ -560,9 +560,9 @@ export const Component = HTML.Element;
 export type ComponentInstance = InstanceType<typeof Component>;
 
 /**
- * The basic DNA Component constructor.
+ * Base Component constructor.
  */
-export interface ComponentConstructor<T extends ComponentInstance = ComponentInstance> {
+export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
     /**
      * The tag name of the extended builtin element.
      */
@@ -600,6 +600,11 @@ export interface ComponentConstructor<T extends ComponentInstance = ComponentIns
 }
 
 /**
+ * The basic DNA Component constructor.
+ */
+export type ComponentConstructor<T extends ComponentInstance = ComponentInstance> = BaseComponentConstructor<T>;
+
+/**
  * Check if a component has been constructed.
  * @param element The element to check.
  * @returns True if the element has been constructed.
@@ -616,8 +621,12 @@ export const isInitialized = (element: ComponentInstance) =>
  * @throws If the name has already been registered.
  * @throws An error if the component is already defined.
  */
-export function define(name: string, constructor: ComponentConstructor, options?: ElementDefinitionOptions) {
-    class Component extends constructor {
+export function define<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    name: string,
+    constructor: C,
+    options?: ElementDefinitionOptions
+) {
+    class Component extends (constructor as ComponentConstructor) {
         constructor(...args: any[]) {
             super(...args);
             if (new.target === Component && !isInitialized(this)) {
@@ -656,7 +665,7 @@ export function define(name: string, constructor: ComponentConstructor, options?
         customElements.define(name, Component, options);
     }
 
-    return Component;
+    return Component as C;
 }
 
 /**

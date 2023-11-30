@@ -72,8 +72,6 @@ export type {
     VideoHTMLAttributes,
     SVGAttributes,
     IntrinsicElementAttributes,
-    /** @deprecated Use `IntrinsicElementAttributes` instead */
-    IntrinsicElementAttributes as AttributesMap,
 } from './Attributes';
 export type {
     Props,

@@ -3,7 +3,7 @@ import { type DelegatedEventCallback, type ListenerConfig } from './events';
 import { type Template as JSXTemplate, type KeyedProperties, type Props } from './JSX';
 import { type PropertyConfig, type PropertyObserver } from './property';
 
-export declare namespace Builtins {
+export declare namespace HTML {
     export class Element extends globalThis.HTMLElement {
         /**
          * The tag name of the extended builtin element.
