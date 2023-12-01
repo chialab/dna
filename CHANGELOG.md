@@ -1,5 +1,15 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.9
+
+### Major Changes
+
+-   e77bbc9: Remove Observable builtin support.
+
+### Patch Changes
+
+-   ec8bf4a: Better typings for `define` and `extend` methods.
+
 ## 4.0.0-alpha.8
 
 ### Major Changes

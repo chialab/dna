@@ -5,6 +5,8 @@
     "@chialab/dna": "3.22.0"
   },
   "changesets": [
+    "big-cooks-explain",
+    "bright-trainers-judge",
     "calm-phones-agree",
     "clean-ears-press",
     "fluffy-penguins-complain",
