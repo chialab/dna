@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -109,10 +109,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage/clover.xml
 
-  test-saucelabs:
-    name: Test Saucelabs
+  test-browserstack:
+    name: Test Browserstack
     runs-on: ubuntu-latest
-    concurrency: saucelabs
+    concurrency: browserstack
     strategy:
       max-parallel: 2
       matrix:
@@ -125,13 +125,13 @@ jobs:
           - 'firefox-latest-1'
           - 'firefox-latest-2'
           - 'firefox-90'
-          # - 'safari-latest'
-          # - 'safari-latest-1'
+          - 'safari-latest'
+          - 'safari-16'
           - 'safari-14'
           - 'edge-latest'
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -144,15 +144,10 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 2
-          retry_on: error
-          command: yarn test:saucelabs --browser.name sauce:${{ matrix.browser }} --coverage
+        run: yarn test:browserstack --browser.name browserstack:${{ matrix.browser }} --coverage
         env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3

@@ -9,3 +9,4 @@ public
 tsconfig.tsbuildinfo
 docs/.vitepress/dist
 docs/.vitepress/cache
+local.log

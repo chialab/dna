@@ -1,17 +1,6 @@
 import { Local, type Options } from 'browserstack-local';
 import ip from 'ip';
-import type { Task } from 'vitest';
-import { remote, type Browser, type RemoteOptions } from 'webdriverio';
-
-/**
- * Check if a test of the suite has failed.
- * @param suite List of tasks.
- * @returns Whetever the suite failed or not.
- * @see https://github.com/vitest-dev/vitest/blob/main/packages/runner/src/utils/tasks.ts
- */
-function hasFailed(suite: Task[]): boolean {
-    return suite.some((s) => !s.result || s.result.state === 'fail' || (s.type === 'suite' && hasFailed(s.tasks)));
-}
+import { remote, type RemoteOptions } from 'webdriverio';
 
 /**
  * A BrowserStack provider for vitest.
@@ -29,7 +18,7 @@ export default class BrowserStackProvider {
     protected bsOptions: Partial<Options>;
     protected capabilities: RemoteOptions['capabilities'];
 
-    private _browserPromise: Promise<Browser> | null = null;
+    private _browserPromise: Promise<WebdriverIO.Browser> | null = null;
     private _tunnelPromise: Promise<() => Promise<void>> | null = null;
 
     getSupportedBrowsers() {
@@ -147,22 +136,6 @@ export default class BrowserStackProvider {
             if (this._browserPromise) {
                 const browser = await this._browserPromise;
                 await browser.deleteSession();
-
-                // const { user, key } = this.browserstackOptions;
-                // if (user && key) {
-                //     const files = this.ctx.state.getFiles();
-                //     const passed = !!files.length && !hasFailed(Array.from(files));
-                //     await fetch(`https://saucelabs.com/rest/v1/${user}/jobs/${browser.sessionId}`, {
-                //         method: 'PUT',
-                //         headers: {
-                //             'Authorization': `Basic ${Buffer.from(`${user}:${key}`).toString('base64')}`,
-                //             'Content-Type': 'application/json',
-                //         },
-                //         body: JSON.stringify({
-                //             passed,
-                //         }),
-                //     });
-                // }
             }
         } catch {
             //
