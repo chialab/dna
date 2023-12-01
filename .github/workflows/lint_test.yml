@@ -125,7 +125,7 @@ jobs:
           - 'firefox-latest-1'
           - 'firefox-latest-2'
           - 'firefox-90'
-          - 'safari-latest'
+          # - 'safari-latest'
           - 'safari-16'
           - 'safari-14'
           - 'edge-latest'

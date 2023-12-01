@@ -104,7 +104,6 @@ export default class BrowserStackProvider {
             url = url.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)/, networkAddress);
         }
 
-        await browser.executeScript('browserstack_executor: {"action": "acceptSsl"}', []);
         await browser.navigateTo(url);
 
         const title = await browser.getTitle();
