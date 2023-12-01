@@ -47,7 +47,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "prepack": "yarn build"
+    "prepack": "yarn build && publint"
   },
   "dependencies": {
     "@chialab/quantum": "^1.0.0-alpha.6",
@@ -70,7 +70,6 @@
     "prettier": "^3.0.3",
     "publint": "^0.2.3",
     "rimraf": "^5.0.2",
-    "rxjs": "^7.8.1",
     "saucelabs": "^7.4.0",
     "svelte": "^4.2.7",
     "typescript": "^5.0.0",

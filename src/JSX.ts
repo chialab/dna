@@ -3,7 +3,6 @@ import htm from 'htm';
 import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
-import { type Observable } from './Observable';
 import { type Context } from './render';
 
 /**
@@ -271,17 +270,7 @@ export type VObject =
 /**
  * A generic template. Can be a single atomic item or a list of items.
  */
-export type Template =
-    | string
-    | number
-    | boolean
-    | undefined
-    | null
-    | Node
-    | Promise<unknown>
-    | Observable<unknown>
-    | VObject
-    | Template[];
+export type Template = string | number | boolean | object | undefined | null | Node | VObject | Template[];
 
 /**
  * Check if the current virtual node is a fragment.

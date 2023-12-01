@@ -1,5 +1,4 @@
 import { h, type FunctionComponent, type Template } from './JSX';
-import { getObservableState, type Observable } from './Observable';
 import { getThenableState } from './Thenable';
 
 /**
@@ -62,31 +61,3 @@ export const $until = (thenable: Promise<unknown>, template: Template) => {
     state.result = original.pending && template;
     return $await(wrapper);
 };
-
-/**
- * Pipe observable value to the template.
- * @param observable The observable to pipe.
- * @returns The virtual DOM template function.
- */
-export const $pipe = (observable: Observable<unknown>) =>
-    h((props, context) => {
-        const status = getObservableState(observable);
-        if (!status.complete) {
-            const subscription = observable.subscribe(
-                () => {
-                    if (!context.requestUpdate()) {
-                        subscription.unsubscribe();
-                    }
-                },
-                () => {
-                    if (!context.requestUpdate()) {
-                        subscription.unsubscribe();
-                    }
-                },
-                () => {
-                    subscription.unsubscribe();
-                }
-            );
-        }
-        return status.current as Template;
-    }, null);

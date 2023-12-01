@@ -172,23 +172,6 @@ const json = fetch('/data.json')
 </>;
 ```
 
-### Observables
-
-DNA has also a directive to `$pipe` [`Observable`](https://rxjs-dev.firebaseapp.com/)s like as first class references. You can interpolate [`Observable`]s' values or pipe a template:
-
-```tsx
-import { $pipe } from '@chialab/dna';
-import { interval, timer } from 'rxjs';
-import { take } from 'rxjs/operators';
-
-const clock$ = timer(Date.now());
-const numbers$ = interval(1000).pipe(take(4));
-
-<>
-    Timer: {$pipe(timer$)}, Numbers: {numbers$.pipe((val) => (val % 2 ? <strong>{$pipe(val)}</strong> : $pipe(val)))}
-</>;
-```
-
 ## HTML content
 
 By default, HTML strings will be interpolated as plain content. It means that a property `content` valorized as `"<h1>Hello</h1>"` will not create a H1 element, but it will print the code as is. In order to render dynamic html content, you can use the `$parse` directive:

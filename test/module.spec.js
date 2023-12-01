@@ -37,7 +37,6 @@ describe(
             $parse: 'function',
             $await: 'function',
             $until: 'function',
-            $pipe: 'function',
         };
 
         for (const ref in EXPECTED_EXPORT_MAP) {

@@ -1,5 +1,4 @@
 import * as DNA from '@chialab/dna';
-import { Observable } from 'rxjs/internal/Observable';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getComponentName } from './helpers.js';
 
@@ -656,96 +655,6 @@ describe(
                 );
                 await new Promise((r) => setTimeout(r, 1500));
                 expect(wrapper.innerHTML).toBe('<div><!----></div>');
-            });
-        });
-
-        describe('observables', () => {
-            describe('should subscribe', () => {
-                const TEMPLATES = {
-                    JSX(context) {
-                        return DNA.h('div', null, DNA.$pipe(context.observable$));
-                    },
-                    HTML(context) {
-                        return DNA.html`<div>
-                        ${DNA.$pipe(context.observable$)}
-                    </div>`;
-                    },
-                };
-
-                for (const type in TEMPLATES) {
-                    it(type, async () => {
-                        const observable$ = new Observable((subscriber) => {
-                            Promise.resolve().then(async () => {
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(1);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(2);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(3);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(4);
-                                subscriber.complete();
-                            });
-                        });
-
-                        DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
-
-                        await new Promise((r) => setTimeout(r, 150));
-                        expect(wrapper.innerHTML).toBe('<div><!---->1</div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><!---->2</div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><!---->3</div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><!---->4</div>');
-                    });
-                }
-            });
-
-            describe('should subscribe and pipe', () => {
-                const TEMPLATES = {
-                    JSX(context) {
-                        return DNA.h(
-                            'div',
-                            null,
-                            context.observable$.pipe((num) => DNA.h('span', null, DNA.$pipe(num)))
-                        );
-                    },
-                    HTML(context) {
-                        return DNA.html`<div>
-                        ${context.observable$.pipe((num) => DNA.html`<span>${DNA.$pipe(num)}</span>`)}
-                    </div>`;
-                    },
-                };
-
-                for (const type in TEMPLATES) {
-                    it(type, async () => {
-                        const observable$ = new Observable((subscriber) => {
-                            Promise.resolve().then(async () => {
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(1);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(2);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(3);
-                                await new Promise((r) => setTimeout(r, 100));
-                                subscriber.next(4);
-                                subscriber.complete();
-                            });
-                        });
-
-                        DNA.render(TEMPLATES[type]({ observable$ }), wrapper);
-
-                        await new Promise((r) => setTimeout(r, 150));
-                        expect(wrapper.innerHTML).toBe('<div><span><!---->1</span></div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><span><!---->2</span></div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><span><!---->3</span></div>');
-                        await new Promise((r) => setTimeout(r, 100));
-                        expect(wrapper.innerHTML).toBe('<div><span><!---->4</span></div>');
-                    });
-                }
             });
         });
     },
