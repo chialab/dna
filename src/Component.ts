@@ -7,6 +7,7 @@ import {
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
+    EventTargets,
     getListeners,
     setListeners,
     undelegateEventListener,
@@ -242,7 +243,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, callback, options } = listeners[i];
                 if (target) {
-                    target.addEventListener(event, callback, options);
+                    if (target === EventTargets.window) {
+                        window.addEventListener(event, callback, options);
+                    } else {
+                        document.addEventListener(event, callback, options);
+                    }
                 }
             }
 
@@ -258,7 +263,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             for (let i = 0, len = listeners.length; i < len; i++) {
                 const { event, target, callback, options } = listeners[i];
                 if (target) {
-                    target.removeEventListener(event, callback, options);
+                    if (target === EventTargets.window) {
+                        window.removeEventListener(event, callback, options);
+                    } else {
+                        document.removeEventListener(event, callback, options);
+                    }
                 }
             }
         }

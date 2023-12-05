@@ -9,6 +9,14 @@ import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Construc
 const EVENT_CALLBACKS_SYMBOL: unique symbol = Symbol();
 
 /**
+ * Global event targets.
+ */
+export enum EventTargets {
+    window = 1,
+    document = 2,
+}
+
+/**
  * Async event interface.
  */
 export type AsyncEvent = Event & {
@@ -26,7 +34,7 @@ export type DelegatedEventCallback = (event: Event, target?: Node) => unknown;
  * A descriptor for an event delegation.
  */
 export type DelegatedEventDescriptor = AddEventListenerOptions & {
-    target?: EventTarget;
+    target?: EventTargets;
     callback: DelegatedEventCallback;
 };
 
@@ -54,7 +62,7 @@ type DelegationList = {
         /**
          * The event target.
          */
-        target: EventTarget | null;
+        target: EventTargets | null;
         /**
          * The callback for the delegated event.
          */
@@ -386,7 +394,7 @@ type WithListeners<T extends ComponentInstance> = T & {
 type Listener = {
     event: string;
     selector: string | null;
-    target: EventTarget | null;
+    target: EventTargets | null;
     callback: DelegatedEventCallback;
     options?: AddEventListenerOptions;
 };
@@ -430,7 +438,7 @@ export const setListeners = <T extends ComponentInstance>(prototype: WithListene
 export function defineListener<T extends ComponentInstance>(
     prototype: WithListeners<T>,
     eventName: string,
-    target: EventTarget | null,
+    target: EventTargets | null,
     selector: string | null,
     callback: DelegatedEventCallback,
     options: AddEventListenerOptions = {}
@@ -494,7 +502,7 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
 export const createListener = <T extends ComponentInstance, P extends keyof T>(
     targetOrClassElement: T,
     eventName: string,
-    target: EventTarget | null,
+    target: EventTargets | null,
     selector: string | null,
     options: AddEventListenerOptions,
     methodKey?: P
@@ -517,13 +525,12 @@ export const createListener = <T extends ComponentInstance, P extends keyof T>(
     };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isEventTarget = (target: any): target is EventTarget =>
-    typeof target === 'object' && 'addEventListener' in target;
+const isEventTarget = (target: string | EventTargets | AddEventListenerOptions | undefined): target is EventTargets =>
+    target === EventTargets.window || target === EventTargets.document;
 
 function listen(eventName: string, options?: AddEventListenerOptions): Function;
 function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
-function listen(eventName: string, target: EventTarget, options?: AddEventListenerOptions): Function;
+function listen(eventName: string, target: EventTargets, options?: AddEventListenerOptions): Function;
 /**
  * A decorator for listening DOM events.
  * @param eventName The name of the event to listen.
@@ -533,7 +540,7 @@ function listen(eventName: string, target: EventTarget, options?: AddEventListen
  */
 function listen(
     eventName: string,
-    target?: string | EventTarget | AddEventListenerOptions,
+    target?: string | EventTargets | AddEventListenerOptions,
     options?: AddEventListenerOptions
 ) {
     return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>

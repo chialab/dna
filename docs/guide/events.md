@@ -122,11 +122,11 @@ Event listeners are automatically bound with the component. If you need a differ
 ::: code-group
 
 ```ts [@listen]
-import { Component, customElement, listen } from '@chialab/dna';
+import { Component, customElement, EventTargets, listen } from '@chialab/dna';
 
 @customElement('x-tracker')
 class Tracker extends Component {
-    @listen('touchmove', window, { passive: true })
+    @listen('touchmove', EventTargets.window, { passive: true })
     onTouchMove() {
         // ...
     }
