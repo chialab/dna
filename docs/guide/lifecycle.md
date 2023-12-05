@@ -122,11 +122,9 @@ The signature is equivalent too: it receives the property name as first argument
 
 The same of `propertyChangedCallback`, but for state properties.
 
-````ts
-
 ## render
 
-This method is invoked each time the component should be rendered. It returns a `Template` that will be rendered in the component's realm.
+This method is invoked each time the component should be rendered. It returns a template that will be rendered in the component's realm.
 
 ```tsx
 import { Component, customElement } from '@chialab/dna';
@@ -143,7 +141,7 @@ export class MyArticle extends Component {
         );
     }
 }
-````
+```
 
 ## updatedCallback
 

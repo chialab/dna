@@ -270,7 +270,8 @@ export type VObject =
 /**
  * A generic template. Can be a single atomic item or a list of items.
  */
-export type Template = string | number | boolean | object | undefined | null | Node | VObject | Template[];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Template = any;
 
 /**
  * Check if the current virtual node is a fragment.
