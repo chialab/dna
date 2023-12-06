@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.10
+
+### Major Changes
+
+-   b24f0e6: Remove target handling from `@listen` decorator.
+
 ## 4.0.0-alpha.9
 
 ### Major Changes
