@@ -902,37 +902,6 @@ describe(
                 expect(callback).toHaveBeenCalledOnce();
             });
         });
-
-        describe('listener target', () => {
-            it('should delegate an event to document', () => {
-                const callback = vi.fn((event) => {
-                    event.preventDefault();
-                });
-                const target = document.body;
-                const TestElement = DNA.define(
-                    getComponentName(),
-                    class extends DNA.Component {
-                        static get listeners() {
-                            return {
-                                click: {
-                                    callback,
-                                    target,
-                                },
-                            };
-                        }
-                    }
-                );
-                const element = new TestElement();
-                wrapper.appendChild(element);
-
-                expect(callback).not.toHaveBeenCalled();
-                target.click();
-                expect(callback).toHaveBeenCalled();
-                wrapper.removeChild(element);
-                target.click();
-                expect(callback).toHaveBeenCalledOnce();
-            });
-        });
     },
     10 * 1000
 );

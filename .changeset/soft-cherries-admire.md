@@ -2,4 +2,4 @@
 '@chialab/dna': major
 ---
 
-Use `EventTargets` enum instead of window references for static listeners.
+Remove target handling from `@listen` decorator.

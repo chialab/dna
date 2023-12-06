@@ -7,9 +7,7 @@ import {
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
-    EventTargets,
     getListeners,
-    setListeners,
     undelegateEventListener,
     type DelegatedEventCallback,
     type ListenerConfig,
@@ -196,17 +194,10 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             }
 
             // setup listeners
-            const computedListeners = getListeners(this).map((listener) => ({
-                ...listener,
-                callback: listener.callback.bind(this),
-            }));
-            setListeners(this, computedListeners);
-
+            const computedListeners = getListeners(this);
             for (let i = 0, len = computedListeners.length; i < len; i++) {
-                const { event, target, selector, callback, options } = computedListeners[i];
-                if (!target) {
-                    this.delegateEventListener(event, selector, callback, options);
-                }
+                const { event, selector, callback, options } = computedListeners[i];
+                this.delegateEventListener(event, selector, callback.bind(this), options);
             }
 
             // setup properties
@@ -239,18 +230,6 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 this.setAttribute(':defined', '');
             }
 
-            const listeners = getListeners(this);
-            for (let i = 0, len = listeners.length; i < len; i++) {
-                const { event, target, callback, options } = listeners[i];
-                if (target) {
-                    if (target === EventTargets.window) {
-                        window.addEventListener(event, callback, options);
-                    } else {
-                        document.addEventListener(event, callback, options);
-                    }
-                }
-            }
-
             // trigger a re-render when the Node is connected
             this.requestUpdate();
         }
@@ -258,19 +237,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         /**
          * Invoked each time the Component is disconnected from the document's DOM.
          */
-        disconnectedCallback() {
-            const listeners = getListeners(this);
-            for (let i = 0, len = listeners.length; i < len; i++) {
-                const { event, target, callback, options } = listeners[i];
-                if (target) {
-                    if (target === EventTargets.window) {
-                        window.removeEventListener(event, callback, options);
-                    } else {
-                        document.removeEventListener(event, callback, options);
-                    }
-                }
-            }
-        }
+        disconnectedCallback() {}
 
         /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.

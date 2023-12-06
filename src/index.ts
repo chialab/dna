@@ -4,7 +4,6 @@ export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
 export { render } from './render';
 export { css } from './css';
 export {
-    EventTargets,
     listen,
     delegateEventListener,
     undelegateEventListener,

@@ -115,47 +115,6 @@ class Header extends Component {
 }
 ```
 
-## Target
-
-Event listeners are automatically bound with the component. If you need a different target, such as the document or the window, you can pass the target to the declaration. In this case, event listeners are added once the element has been added to the DOM tree and removed once disconnected.
-
-::: code-group
-
-```ts [@listen]
-import { Component, customElement, EventTargets, listen } from '@chialab/dna';
-
-@customElement('x-tracker')
-class Tracker extends Component {
-    @listen('touchmove', EventTargets.window, { passive: true })
-    onTouchMove() {
-        // ...
-    }
-}
-```
-
-```ts [get listeners]
-import { Component, define } from '@chialab/dna';
-
-const Tracker = define(
-    'x-tracker',
-    class Tracker extends Component {
-        static get listeners() {
-            return {
-                touchmove: {
-                    callback(event) {
-                        // ...
-                    },
-                    target: window,
-                    passive: true,
-                },
-            };
-        }
-    }
-);
-```
-
-:::
-
 ## Delegation
 
 DNA supports event delegation for both imperatively and declaratively declarations. The listener callback will receive the original fired event as first argument and the matched target as second argument. Do not confuse the `event.target` property with the second argument of the listener: the first one is the node which actually fired the event, the second one is the node which matches the selector and it is in the event path (`event.target` may be a descending child of the matched one).

@@ -30,7 +30,6 @@ describe(
             property: 'function',
             state: 'function',
             observe: 'function',
-            EventTargets: 'object',
             listen: 'function',
             isComponent: 'function',
             isComponentConstructor: 'function',
