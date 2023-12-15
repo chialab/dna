@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import htm from 'htm';
-import { type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
+import { type ElementAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
 import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type Context } from './render';
@@ -79,7 +79,7 @@ export const Fragment: unique symbol = Symbol();
 /**
  * Get all the property keys that extends a builtin element.
  */
-export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
+type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
     {
         [K in keyof JSXInternal.CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
             ? JSXInternal.CustomElements[K]['extends'] extends T
@@ -89,13 +89,6 @@ export type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
     }[keyof JSXInternal.CustomElements],
     never
 >;
-
-/**
- * Get HTML attributes by prototype.
- */
-type ElementAttributes<T extends Element> = {
-    [K in keyof HTMLTagNameMap]: HTMLTagNameMap[K] extends T ? IntrinsicElementAttributes[K] : HTMLAttributes;
-}[keyof HTMLTagNameMap];
 
 /**
  * Get render attributes set.

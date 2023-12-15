@@ -1245,3 +1245,102 @@ export type IntrinsicElementAttributes = {
 
     [k: string]: HTMLAttributes;
 };
+
+/**
+ * Get HTML attributes by prototype.
+ */
+export type ElementAttributes<T extends Element> = T extends HTMLAnchorElement
+    ? AnchorHTMLAttributes
+    : T extends HTMLAreaElement
+      ? AreaHTMLAttributes
+      : T extends HTMLAudioElement
+        ? AudioHTMLAttributes
+        : T extends HTMLBaseElement
+          ? BaseHTMLAttributes
+          : T extends HTMLQuoteElement
+            ? BlockquoteHTMLAttributes
+            : T extends HTMLButtonElement
+              ? ButtonHTMLAttributes
+              : T extends HTMLCanvasElement
+                ? CanvasHTMLAttributes
+                : T extends HTMLTableColElement
+                  ? ColHTMLAttributes | ColgroupHTMLAttributes
+                  : T extends HTMLDataElement
+                    ? DataHTMLAttributes
+                    : T extends HTMLModElement
+                      ? DelHTMLAttributes | InsHTMLAttributes
+                      : T extends HTMLDetailsElement
+                        ? DetailsHTMLAttributes
+                        : T extends HTMLDialogElement
+                          ? DialogHTMLAttributes
+                          : T extends HTMLEmbedElement
+                            ? EmbedHTMLAttributes
+                            : T extends HTMLFieldSetElement
+                              ? FieldsetHTMLAttributes
+                              : T extends HTMLFormElement
+                                ? FormHTMLAttributes
+                                : T extends HTMLHtmlElement
+                                  ? HtmlHTMLAttributes
+                                  : T extends HTMLIFrameElement
+                                    ? IframeHTMLAttributes
+                                    : T extends HTMLImageElement
+                                      ? ImgHTMLAttributes
+                                      : T extends HTMLInputElement
+                                        ? InputHTMLAttributes
+                                        : T extends HTMLLabelElement
+                                          ? LabelHTMLAttributes
+                                          : T extends HTMLLIElement
+                                            ? LiHTMLAttributes
+                                            : T extends HTMLLinkElement
+                                              ? LinkHTMLAttributes
+                                              : T extends HTMLMapElement
+                                                ? MapHTMLAttributes
+                                                : T extends HTMLMenuElement
+                                                  ? MenuHTMLAttributes
+                                                  : T extends HTMLMetaElement
+                                                    ? MetaHTMLAttributes
+                                                    : T extends HTMLMeterElement
+                                                      ? MeterHTMLAttributes
+                                                      : T extends HTMLObjectElement
+                                                        ? ObjectHTMLAttributes
+                                                        : T extends HTMLOListElement
+                                                          ? OlHTMLAttributes
+                                                          : T extends HTMLOptGroupElement
+                                                            ? OptgroupHTMLAttributes
+                                                            : T extends HTMLOptionElement
+                                                              ? OptionHTMLAttributes
+                                                              : T extends HTMLOutputElement
+                                                                ? OutputHTMLAttributes
+                                                                : T extends HTMLParamElement
+                                                                  ? ParamHTMLAttributes
+                                                                  : T extends HTMLProgressElement
+                                                                    ? ProgressHTMLAttributes
+                                                                    : T extends HTMLQuoteElement
+                                                                      ? QuoteHTMLAttributes
+                                                                      : T extends HTMLScriptElement
+                                                                        ? ScriptHTMLAttributes
+                                                                        : T extends HTMLSelectElement
+                                                                          ? SelectHTMLAttributes
+                                                                          : T extends HTMLSlotElement
+                                                                            ? SlotHTMLAttributes
+                                                                            : T extends HTMLSourceElement
+                                                                              ? SourceHTMLAttributes
+                                                                              : T extends HTMLStyleElement
+                                                                                ? StyleHTMLAttributes
+                                                                                : T extends HTMLTableElement
+                                                                                  ? TableHTMLAttributes
+                                                                                  : T extends HTMLTableCellElement
+                                                                                    ?
+                                                                                          | TdHTMLAttributes
+                                                                                          | ThHTMLAttributes
+                                                                                    : T extends HTMLTextAreaElement
+                                                                                      ? TextareaHTMLAttributes
+                                                                                      : T extends HTMLTimeElement
+                                                                                        ? TimeHTMLAttributes
+                                                                                        : T extends HTMLTrackElement
+                                                                                          ? TrackHTMLAttributes
+                                                                                          : T extends HTMLVideoElement
+                                                                                            ? VideoHTMLAttributes
+                                                                                            : T extends SVGAElement
+                                                                                              ? SVGAttributes
+                                                                                              : HTMLAttributes;
