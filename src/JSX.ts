@@ -2,23 +2,14 @@
 import htm from 'htm';
 import { type ElementAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { isComponentConstructor, type ComponentConstructor } from './Component';
-import { type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
+import { type BaseClass, type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
+import { type HTML } from './HTML';
 import { type Context } from './render';
 
 /**
  * Identify virtual dom objects.
  */
 const V_SYM: unique symbol = Symbol();
-
-/**
- * Checks types equality.
- */
-type IfEquals<X, Y, A, B> = (<G>() => G extends X ? 1 : 2) extends <G>() => G extends Y ? 1 : 2 ? A : B;
-
-/**
- * Check if a property is writable.
- */
-type IfWritable<T, K extends keyof T, A, B> = IfEquals<{ [Q in K]: T[K] }, { -readonly [Q in K]: T[K] }, A, B>;
 
 /**
  * Check if a property is a method.
@@ -29,6 +20,7 @@ type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
  * Exclude component mixin properties.
  */
 type ReservedKeys =
+    | 'extends'
     | 'realm'
     | 'collectingUpdates'
     | 'updateScheduled'
@@ -59,8 +51,10 @@ type ReservedKeys =
 /**
  * Pick defined properties of a component.
  */
-export type Props<T> = {
-    [K in keyof T as K extends ReservedKeys ? never : IfMethod<T, K, never, IfWritable<T, K, K, never>>]?: T[K];
+export type Props<T extends HTML.Element> = ElementAttributes<T> & {
+    [K in keyof T as K extends ReservedKeys
+        ? never
+        : IfMethod<T, K, never, K extends keyof BaseClass<T> ? never : K>]?: T[K];
 };
 
 /**
@@ -76,23 +70,9 @@ export type Methods<T> = {
 export const Fragment: unique symbol = Symbol();
 
 /**
- * Get all the property keys that extends a builtin element.
- */
-type GetCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
-    {
-        [K in keyof JSXInternal.CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
-            ? JSXInternal.CustomElements[K]['extends'] extends T
-                ? { is: K } & Props<JSXInternal.CustomElements[K]>
-                : never
-            : never;
-    }[keyof JSXInternal.CustomElements],
-    never
->;
-
-/**
  * Get render attributes set.
  */
-export type AttributeProperties<T, A> = T & Omit<A, 'style' | 'class' | keyof T>;
+export type AttributeProperties<T> = Omit<T, 'style' | 'class'>;
 
 /**
  * Get render properties for keyed nodes.
@@ -182,7 +162,7 @@ export type VElement<T extends Node> = {
     type: T;
     key: unknown;
     namespace: string;
-    properties: AttributeProperties<Props<T>, T extends Element ? ElementAttributes<T> : {}> &
+    properties: AttributeProperties<T extends HTML.Element ? Props<T> : T extends Element ? ElementAttributes<T> : {}> &
         KeyedProperties &
         TreeProperties &
         EventProperties &
@@ -198,7 +178,7 @@ export type VComponent<T extends ComponentConstructor> = {
     type: T;
     key?: unknown;
     namespace?: string;
-    properties: AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+    properties: AttributeProperties<Props<InstanceType<T>>> &
         KeyedProperties &
         TreeProperties &
         EventProperties &
@@ -213,7 +193,7 @@ export type VComponent<T extends ComponentConstructor> = {
 export type VSlot = {
     type: 'slot';
     key: unknown;
-    properties: AttributeProperties<Props<HTMLSlotElement>, IntrinsicElementAttributes['slot']> &
+    properties: AttributeProperties<IntrinsicElementAttributes['slot']> &
         KeyedProperties &
         TreeProperties &
         EventProperties;
@@ -230,11 +210,10 @@ export type VTag<T extends keyof HTMLTagNameMap | keyof SVGTagNameMap> = {
     namespace: string;
     properties: AttributeProperties<
         T extends keyof HTMLTagNameMap
-            ? Props<HTMLTagNameMap[T]>
-            : T extends keyof SVGTagNameMap
-              ? Props<SVGTagNameMap[T]>
-              : Props<HTMLElement>,
-        IntrinsicElementAttributes[T]
+            ? HTMLTagNameMap[T] extends HTML.Element
+                ? Props<HTMLTagNameMap[T]>
+                : IntrinsicElementAttributes[T]
+            : IntrinsicElementAttributes[T]
     > &
         KeyedProperties &
         TreeProperties &
@@ -342,25 +321,31 @@ function h<
               : T extends FunctionComponent
                 ? Parameters<T>[0] & KeyedProperties & TreeProperties
                 : T extends ComponentConstructor
-                  ? AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+                  ? AttributeProperties<Props<InstanceType<T>>> &
                         KeyedProperties &
                         TreeProperties &
                         EventProperties &
                         ElementProperties
                   : T extends Node
-                    ? AttributeProperties<Props<T>, T extends Element ? ElementAttributes<T> : {}> &
+                    ? AttributeProperties<
+                          T extends HTML.Element ? Props<T> : T extends Element ? ElementAttributes<T> : {}
+                      > &
                           KeyedProperties &
                           TreeProperties &
                           EventProperties &
                           ElementProperties
                     : T extends keyof SVGTagNameMap
-                      ? AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+                      ? AttributeProperties<IntrinsicElementAttributes[T]> &
                             KeyedProperties &
                             TreeProperties &
                             EventProperties &
                             ElementProperties
                       : T extends keyof HTMLTagNameMap
-                        ? AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+                        ? AttributeProperties<
+                              HTMLTagNameMap[T] extends HTML.Element
+                                  ? Props<HTMLTagNameMap[T]>
+                                  : IntrinsicElementAttributes[T]
+                          > &
                               KeyedProperties &
                               TreeProperties &
                               EventProperties &
@@ -408,25 +393,31 @@ function jsx<T extends FunctionComponent | ComponentConstructor | Node | keyof S
               : T extends FunctionComponent
                 ? Parameters<T>[0] & KeyedProperties & TreeProperties
                 : T extends ComponentConstructor
-                  ? AttributeProperties<Props<InstanceType<T>>, HTMLAttributes> &
+                  ? AttributeProperties<Props<InstanceType<T>>> &
                         KeyedProperties &
                         TreeProperties &
                         EventProperties &
                         ElementProperties
                   : T extends Node
-                    ? AttributeProperties<Props<T>, T extends Element ? ElementAttributes<T> : {}> &
+                    ? AttributeProperties<
+                          T extends HTML.Element ? Props<T> : T extends Element ? ElementAttributes<T> : {}
+                      > &
                           KeyedProperties &
                           TreeProperties &
                           EventProperties &
                           ElementProperties
                     : T extends keyof SVGTagNameMap
-                      ? AttributeProperties<Props<SVGTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+                      ? AttributeProperties<IntrinsicElementAttributes[T]> &
                             KeyedProperties &
                             TreeProperties &
                             EventProperties &
                             ElementProperties
                       : T extends keyof HTMLTagNameMap
-                        ? AttributeProperties<Props<HTMLTagNameMap[T]>, IntrinsicElementAttributes[T]> &
+                        ? AttributeProperties<
+                              HTMLTagNameMap[T] extends HTML.Element
+                                  ? Props<HTMLTagNameMap[T]>
+                                  : IntrinsicElementAttributes[T]
+                          > &
                               KeyedProperties &
                               TreeProperties &
                               EventProperties &
@@ -481,6 +472,24 @@ export const compile = (string: string): Template => {
 };
 
 /**
+ * Get all the property keys that extends a builtin element.
+ */
+type InstrinsicCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
+    {
+        [K in keyof JSXInternal.CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
+            ? JSXInternal.CustomElements[K]['extends'] extends T
+                ? AttributeProperties<{ is: K } & Props<JSXInternal.CustomElements[K]>> &
+                      KeyedProperties &
+                      TreeProperties &
+                      EventProperties &
+                      ElementProperties
+                : never
+            : never;
+    }[keyof JSXInternal.CustomElements],
+    never
+>;
+
+/**
  * The internal JSX namespace.
  */
 export namespace JSXInternal {
@@ -495,22 +504,21 @@ export namespace JSXInternal {
     } & {
         [K in keyof CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
             ? never
-            : AttributeProperties<Props<CustomElements[K]>, HTMLAttributes> &
+            : AttributeProperties<Props<CustomElements[K]>> &
                   KeyedProperties &
                   TreeProperties &
                   EventProperties &
                   ElementProperties;
     } & {
-        [K in keyof HTMLTagNameMap]: AttributeProperties<
-            ({ is?: never } & Props<HTMLTagNameMap[K]>) | GetCustomElementsProps<K>,
-            IntrinsicElementAttributes[K]
-        > &
-            KeyedProperties &
-            TreeProperties &
-            EventProperties &
-            ElementProperties;
+        [K in keyof HTMLTagNameMap]:
+            | ({ is?: never } & AttributeProperties<Omit<IntrinsicElementAttributes[K], 'is'>> &
+                  KeyedProperties &
+                  TreeProperties &
+                  EventProperties &
+                  ElementProperties)
+            | InstrinsicCustomElementsProps<K>;
     } & {
-        [K in keyof SVGTagNameMap]: AttributeProperties<Props<SVGTagNameMap[K]>, IntrinsicElementAttributes[K]> &
+        [K in keyof SVGTagNameMap]: AttributeProperties<IntrinsicElementAttributes[K]> &
             KeyedProperties &
             TreeProperties &
             EventProperties &

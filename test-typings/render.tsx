@@ -2,7 +2,13 @@ import { Fragment, h, render } from '@chialab/dna';
 
 render(<details open />);
 render(<details ref={document.createElement('details')} />);
-render(<x-test active={true} />);
+render(
+    <x-test
+        active={true}
+        width={4}
+        title="test"
+    />
+);
 render(
     <details
         is="x-test-builtin"

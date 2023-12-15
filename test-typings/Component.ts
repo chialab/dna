@@ -9,6 +9,11 @@ export class TestElement extends Component {
     })
     width: number = 2;
 
+    @property({
+        type: String,
+    })
+    title: string = 'test';
+
     get computed(): string {
         return this.getInnerPropertyValue('computed');
     }

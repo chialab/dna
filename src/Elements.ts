@@ -255,3 +255,142 @@ export const {
     HTMLUListElement = HTMLElement as (typeof globalThis)['HTMLUListElement'],
     HTMLVideoElement = HTMLElement as (typeof globalThis)['HTMLVideoElement'],
 } = (isBrowser ? window : {}) as unknown as typeof window;
+
+/**
+ * Extract the base class from a given element type.
+ */
+export type BaseClass<T extends HTMLElement> = T extends HTMLAnchorElement
+    ? HTMLAnchorElement
+    : T extends HTMLAreaElement
+      ? HTMLAreaElement
+      : T extends HTMLAudioElement
+        ? HTMLAudioElement
+        : T extends HTMLBaseElement
+          ? HTMLBaseElement
+          : T extends HTMLQuoteElement
+            ? HTMLQuoteElement
+            : T extends HTMLBodyElement
+              ? HTMLBodyElement
+              : T extends HTMLBRElement
+                ? HTMLBRElement
+                : T extends HTMLButtonElement
+                  ? HTMLButtonElement
+                  : T extends HTMLCanvasElement
+                    ? HTMLCanvasElement
+                    : T extends HTMLTableCaptionElement
+                      ? HTMLTableCaptionElement
+                      : T extends HTMLTableColElement
+                        ? HTMLTableColElement
+                        : T extends HTMLDataElement
+                          ? HTMLDataElement
+                          : T extends HTMLDataListElement
+                            ? HTMLDataListElement
+                            : T extends HTMLModElement
+                              ? HTMLModElement
+                              : T extends HTMLDetailsElement
+                                ? HTMLDetailsElement
+                                : T extends HTMLDialogElement
+                                  ? HTMLDialogElement
+                                  : T extends HTMLDirectoryElement
+                                    ? HTMLDirectoryElement
+                                    : T extends HTMLDivElement
+                                      ? HTMLDivElement
+                                      : T extends HTMLDListElement
+                                        ? HTMLDListElement
+                                        : T extends HTMLEmbedElement
+                                          ? HTMLEmbedElement
+                                          : T extends HTMLFieldSetElement
+                                            ? HTMLFieldSetElement
+                                            : T extends HTMLFontElement
+                                              ? HTMLFontElement
+                                              : T extends HTMLFormElement
+                                                ? HTMLFormElement
+                                                : T extends HTMLFrameElement
+                                                  ? HTMLFrameElement
+                                                  : T extends HTMLFrameSetElement
+                                                    ? HTMLFrameSetElement
+                                                    : T extends HTMLHeadingElement
+                                                      ? HTMLHeadingElement
+                                                      : T extends HTMLHeadElement
+                                                        ? HTMLHeadElement
+                                                        : T extends HTMLHRElement
+                                                          ? HTMLHRElement
+                                                          : T extends HTMLIFrameElement
+                                                            ? HTMLIFrameElement
+                                                            : T extends HTMLImageElement
+                                                              ? HTMLImageElement
+                                                              : T extends HTMLInputElement
+                                                                ? HTMLInputElement
+                                                                : T extends HTMLLabelElement
+                                                                  ? HTMLLabelElement
+                                                                  : T extends HTMLLegendElement
+                                                                    ? HTMLLegendElement
+                                                                    : T extends HTMLLIElement
+                                                                      ? HTMLLIElement
+                                                                      : T extends HTMLLinkElement
+                                                                        ? HTMLLinkElement
+                                                                        : T extends HTMLMapElement
+                                                                          ? HTMLMapElement
+                                                                          : T extends HTMLMarqueeElement
+                                                                            ? HTMLMarqueeElement
+                                                                            : T extends HTMLMenuElement
+                                                                              ? HTMLMenuElement
+                                                                              : T extends HTMLMetaElement
+                                                                                ? HTMLMetaElement
+                                                                                : T extends HTMLMeterElement
+                                                                                  ? HTMLMeterElement
+                                                                                  : T extends HTMLObjectElement
+                                                                                    ? HTMLObjectElement
+                                                                                    : T extends HTMLOListElement
+                                                                                      ? HTMLOListElement
+                                                                                      : T extends HTMLOptGroupElement
+                                                                                        ? HTMLOptGroupElement
+                                                                                        : T extends HTMLOptionElement
+                                                                                          ? HTMLOptionElement
+                                                                                          : T extends HTMLOutputElement
+                                                                                            ? HTMLOutputElement
+                                                                                            : T extends HTMLParagraphElement
+                                                                                              ? HTMLParagraphElement
+                                                                                              : T extends HTMLParamElement
+                                                                                                ? HTMLParamElement
+                                                                                                : T extends HTMLPictureElement
+                                                                                                  ? HTMLPictureElement
+                                                                                                  : T extends HTMLPreElement
+                                                                                                    ? HTMLPreElement
+                                                                                                    : T extends HTMLProgressElement
+                                                                                                      ? HTMLProgressElement
+                                                                                                      : T extends HTMLScriptElement
+                                                                                                        ? HTMLScriptElement
+                                                                                                        : T extends HTMLSelectElement
+                                                                                                          ? HTMLSelectElement
+                                                                                                          : T extends HTMLSlotElement
+                                                                                                            ? HTMLSlotElement
+                                                                                                            : T extends HTMLSourceElement
+                                                                                                              ? HTMLSourceElement
+                                                                                                              : T extends HTMLSpanElement
+                                                                                                                ? HTMLSpanElement
+                                                                                                                : T extends HTMLStyleElement
+                                                                                                                  ? HTMLStyleElement
+                                                                                                                  : T extends HTMLTableElement
+                                                                                                                    ? HTMLTableElement
+                                                                                                                    : T extends HTMLTableSectionElement
+                                                                                                                      ? HTMLTableSectionElement
+                                                                                                                      : T extends HTMLTableCellElement
+                                                                                                                        ? HTMLTableCellElement
+                                                                                                                        : T extends HTMLTemplateElement
+                                                                                                                          ? HTMLTemplateElement
+                                                                                                                          : T extends HTMLTextAreaElement
+                                                                                                                            ? HTMLTextAreaElement
+                                                                                                                            : T extends HTMLTimeElement
+                                                                                                                              ? HTMLTimeElement
+                                                                                                                              : T extends HTMLTitleElement
+                                                                                                                                ? HTMLTitleElement
+                                                                                                                                : T extends HTMLTableRowElement
+                                                                                                                                  ? HTMLTableRowElement
+                                                                                                                                  : T extends HTMLTrackElement
+                                                                                                                                    ? HTMLTrackElement
+                                                                                                                                    : T extends HTMLUListElement
+                                                                                                                                      ? HTMLUListElement
+                                                                                                                                      : T extends HTMLVideoElement
+                                                                                                                                        ? HTMLVideoElement
+                                                                                                                                        : HTMLElement;
