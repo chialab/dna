@@ -1,6 +1,6 @@
 import { type Realm } from '@chialab/quantum';
 import { type DelegatedEventCallback, type ListenerConfig } from './events';
-import { type Template as JSXTemplate, type KeyedProperties, type Props } from './JSX';
+import { type Template as JSXTemplate } from './JSX';
 import { type PropertyConfig, type PropertyObserver } from './property';
 
 export declare namespace HTML {
@@ -28,10 +28,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -285,10 +281,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -542,10 +534,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -799,10 +787,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -1056,10 +1040,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -1313,10 +1293,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -1570,10 +1546,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -1827,10 +1799,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -2084,10 +2052,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -2341,10 +2305,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -2598,10 +2558,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -2855,10 +2811,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -3112,10 +3064,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -3369,10 +3317,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -3626,10 +3570,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -3883,10 +3823,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -4140,10 +4076,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -4397,10 +4329,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -4654,10 +4582,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -4911,10 +4835,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -5168,10 +5088,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -5425,10 +5341,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -5682,10 +5594,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -5939,10 +5847,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -6196,10 +6100,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -6453,10 +6353,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -6710,10 +6606,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -6967,10 +6859,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -7224,10 +7112,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -7481,10 +7365,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -7738,10 +7618,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -7995,10 +7871,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -8252,10 +8124,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -8509,10 +8377,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -8766,10 +8630,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -9023,10 +8883,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -9280,10 +9136,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -9537,10 +9389,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -9794,10 +9642,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -10051,10 +9895,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -10308,10 +10148,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -10565,10 +10401,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -10822,10 +10654,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -11079,10 +10907,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -11336,10 +11160,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -11593,10 +11413,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -11850,10 +11666,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -12107,10 +11919,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -12364,10 +12172,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -12621,10 +12425,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -12878,10 +12678,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -13135,10 +12931,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -13392,10 +13184,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -13649,10 +13437,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -13906,10 +13690,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -14163,10 +13943,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -14420,10 +14196,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -14677,10 +14449,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -14934,10 +14702,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -15191,10 +14955,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -15448,10 +15208,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -15705,10 +15461,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -15962,10 +15714,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -16219,10 +15967,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -16476,10 +16220,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -16733,10 +16473,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -16990,10 +16726,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.
@@ -17247,10 +16979,6 @@ export declare namespace HTML {
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-        /**
-         * Type getter for JSX properties.
-         */
-        readonly __jsxProperties__: Props<this> & KeyedProperties;
 
         /**
          * The realm of the component.

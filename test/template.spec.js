@@ -213,9 +213,9 @@ describe(
 
             for (const type in TEMPLATES) {
                 it(type, async () => {
-                    const rootName = getComponentName();
-                    const MyElement = DNA.define(
-                        `${rootName}-${type.toLowerCase()}`,
+                    const name = getComponentName();
+                    DNA.define(
+                        name,
                         class MyElement extends DNA.HTML.Div {
                             render() {
                                 return TEMPLATES[type]();
@@ -224,16 +224,14 @@ describe(
                         { extends: 'div' }
                     );
 
-                    const element = DNA.render(DNA.h(MyElement), wrapper);
+                    const element = DNA.render(DNA.h('div', { is: name }), wrapper);
                     await new Promise((r) => setTimeout(r, 0));
 
                     const realm = element.realm;
                     realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('STYLE');
-                    expect(element.childNodes[0].textContent).toBe(
-                        `[:scope="${rootName}-${type.toLowerCase()}"] .test {}`
-                    );
+                    expect(element.childNodes[0].textContent).toBe(`[:scope="${name}"] .test {}`);
                     realm.dangerouslyClose();
                 });
             }
@@ -248,7 +246,7 @@ describe(
                         DNA.h(
                             'div',
                             { class: 'layout-header' },
-                            DNA.h(`${titleName}-jsx`, null, DNA.h('slot', { name: 'title' }))
+                            DNA.h(titleName, null, DNA.h('slot', { name: 'title' }))
                         ),
                         DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
                     );
@@ -256,7 +254,7 @@ describe(
                 HTML(titleName) {
                     return DNA.html`
                     <div class="layout-header">
-                        <${`${titleName}-${'html'}`}>
+                        <${titleName}>
                             <slot name="title" />
                         </>
                     </div>
@@ -269,10 +267,10 @@ describe(
 
             for (const type in TEMPLATES) {
                 it(type, () => {
-                    const rootName = getComponentName();
+                    const name = getComponentName();
                     const titleName = getComponentName();
                     DNA.define(
-                        `${rootName}-${type.toLowerCase()}`,
+                        name,
                         class MyElement extends DNA.Component {
                             render() {
                                 return TEMPLATES[type](titleName);
@@ -280,7 +278,7 @@ describe(
                         }
                     );
                     DNA.define(
-                        `${titleName}-${type.toLowerCase()}`,
+                        titleName,
                         class MyTitle extends DNA.Component {
                             render() {
                                 return DNA.h('span', { class: 'title' }, DNA.h('slot', {}, ['Untitled']));
@@ -289,12 +287,7 @@ describe(
                     );
 
                     const element = DNA.render(
-                        DNA.h(
-                            `${rootName}-${type.toLowerCase()}`,
-                            null,
-                            DNA.h('img', { src: IMG }),
-                            DNA.h('p', null, 'Body')
-                        ),
+                        DNA.h(name, null, DNA.h('img', { src: IMG }), DNA.h('p', null, 'Body')),
                         wrapper
                     );
                     const realm = element.realm;
@@ -306,7 +299,7 @@ describe(
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].className).toBe('layout-header');
                     expect(element.childNodes[0].childNodes).toHaveLength(1);
-                    expect(element.childNodes[0].childNodes[0].tagName).toBe(`${titleName}-${type}`.toUpperCase());
+                    expect(element.childNodes[0].childNodes[0].tagName).toBe(titleName.toUpperCase());
                     expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('SPAN');
                     expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).toBe('Untitled');
                     innerRealm.dangerouslyClose();
@@ -314,7 +307,7 @@ describe(
 
                     DNA.render(
                         DNA.h(
-                            `${rootName}-${type.toLowerCase()}`,
+                            name,
                             null,
                             DNA.h('h1', { slot: 'title' }, 'Title'),
                             DNA.h('img', { src: IMG }),
@@ -366,7 +359,7 @@ describe(
                     const name = getComponentName();
                     const element = DNA.render(
                         DNA.h(
-                            `${name}-${type.toLowerCase()}`,
+                            name,
                             null,
                             DNA.h('h1', { slot: 'title' }, 'Title'),
                             DNA.h('img', { src: IMG }),
@@ -376,7 +369,7 @@ describe(
                     );
 
                     DNA.define(
-                        `${name}-${type.toLowerCase()}`,
+                        name,
                         class MyElement extends DNA.Component {
                             render() {
                                 return TEMPLATES[type]();
@@ -430,7 +423,7 @@ describe(
                     const name = getComponentName();
                     const cardName = getComponentName();
                     DNA.define(
-                        `${cardName}-${type.toLowerCase()}`,
+                        cardName,
                         class MyCard extends DNA.Component {
                             render() {
                                 return DNA.h('slot');
@@ -440,7 +433,7 @@ describe(
 
                     const element = DNA.render(
                         DNA.h(
-                            `${name}-${type.toLowerCase()}`,
+                            name,
                             null,
                             DNA.h('h1', {}, 'Title'),
                             DNA.h('img', { src: IMG }),
@@ -450,10 +443,10 @@ describe(
                     );
 
                     DNA.define(
-                        `${name}-${type.toLowerCase()}`,
+                        name,
                         class MyElement extends DNA.Component {
                             render() {
-                                return TEMPLATES[type](`${cardName}-${type.toLowerCase()}`, this.collapsed);
+                                return TEMPLATES[type](cardName, this.collapsed);
                             }
                         }
                     );

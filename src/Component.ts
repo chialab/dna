@@ -14,7 +14,7 @@ import {
 } from './events';
 import { defineProperty, isBrowser, setPrototypeOf } from './helpers';
 import { type HTML as HTMLNamespace } from './HTML';
-import { type KeyedProperties, type Props, type Template } from './JSX';
+import { type Template } from './JSX';
 import {
     addObserver,
     defineProperties,
@@ -69,10 +69,6 @@ export const isComponentConstructor = <T extends ComponentConstructor>(construct
  */
 export const extend = <T extends HTMLElement, C extends { new (...args: any[]): T; prototype: T }>(ctor: C) =>
     class Component extends (ctor as { new (...args: any[]): HTMLElement; prototype: HTMLElement }) {
-        /**
-         * Type getter for JSX properties.
-         */
-        declare readonly __jsxProperties__: Props<this> & KeyedProperties;
         /**
          * An array containing the names of the attributes to observe.
          * @returns The list of attributes to observe.

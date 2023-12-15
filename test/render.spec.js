@@ -50,13 +50,6 @@ describe(
                 expect(ul.querySelector('li:nth-child(2)').textContent).toBe('Two');
             });
 
-            it('should render component constructor', () => {
-                const name = getComponentName();
-                const TestElement = DNA.define(name, class TestElement extends DNA.Component {});
-
-                expect(DNA.render(DNA.h(TestElement))).to.be.instanceof(TestElement);
-            });
-
             it('should render a text node', () => {
                 expect(DNA.render(document.createTextNode('Hello')).textContent).toBe('Hello');
             });
@@ -92,7 +85,7 @@ describe(
             it('should render an element node using the `h` helper inside a component', () => {
                 const name = getComponentName();
                 const name2 = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         render() {
@@ -100,12 +93,12 @@ describe(
                         }
                     }
                 );
-                const TestElement2 = DNA.define(
+                DNA.define(
                     name2,
                     class TestElement2 extends DNA.Component {
                         render() {
                             return DNA.h(
-                                TestElement,
+                                name,
                                 {},
                                 DNA.h('div', { class: 'test', key: 0 }, 'test'),
                                 DNA.h('div', { class: 'test', key: 1 }, 'test')
@@ -114,7 +107,7 @@ describe(
                     }
                 );
 
-                const root = DNA.render(DNA.h(TestElement2), wrapper);
+                const root = DNA.render(DNA.h(name2), wrapper);
                 const elem = wrapper.querySelector(name);
                 const divs = [elem.children[0], elem.children[1]];
                 // force renders in order to check if keyed elements are respected
@@ -368,7 +361,7 @@ describe(
 
             it('should convert observed attributes', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -381,13 +374,13 @@ describe(
                     }
                 );
 
-                DNA.render(DNA.h(TestElement, { number: '2' }), wrapper);
+                DNA.render(DNA.h(name, { number: '2' }), wrapper);
                 expect(wrapper.querySelector(name).number).toBe(2);
             });
 
             it('should assign not observed attributes', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -400,13 +393,13 @@ describe(
                     }
                 );
 
-                DNA.render(DNA.h(TestElement, { string: '2' }), wrapper);
+                DNA.render(DNA.h(name, { string: '2' }), wrapper);
                 expect(wrapper.querySelector(name).string).toBe('2');
             });
 
             it('should assign not string attribute', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -419,7 +412,7 @@ describe(
                     }
                 );
 
-                DNA.render(DNA.h(TestElement, { number: 2 }), wrapper);
+                DNA.render(DNA.h(name, { number: 2 }), wrapper);
                 expect(wrapper.querySelector(name).number).toBe(2);
             });
 
@@ -526,7 +519,7 @@ describe(
 
             it('should not reuse slotted children', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -548,7 +541,7 @@ describe(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(TestElement, {}, DNA.h('div', {})), wrapper);
+                const elem = DNA.render(DNA.h(name, {}, DNA.h('div', {})), wrapper);
                 const realm = elem.realm;
 
                 realm.dangerouslyOpen();
@@ -557,7 +550,7 @@ describe(
                 const [div1, div2, div3] = elem.childNodes;
                 realm.dangerouslyClose();
 
-                DNA.render(DNA.h(TestElement, { oneMore: true }, DNA.h('div', {})), wrapper);
+                DNA.render(DNA.h(name, { oneMore: true }, DNA.h('div', {})), wrapper);
 
                 realm.dangerouslyOpen();
                 expect(elem.childNodes).toHaveLength(4);
@@ -576,7 +569,7 @@ describe(
 
             it('should not reuse slotted text', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -593,7 +586,7 @@ describe(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
+                const elem = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
                 const realm = elem.realm;
 
                 realm.dangerouslyOpen();
@@ -602,7 +595,7 @@ describe(
                 const [textNode] = elem.childNodes;
                 realm.dangerouslyClose();
 
-                DNA.render(DNA.h(TestElement, { showPrefix: true }, 'Text'), wrapper);
+                DNA.render(DNA.h(name, { showPrefix: true }, 'Text'), wrapper);
 
                 realm.dangerouslyOpen();
                 expect(elem.childNodes).toHaveLength(2);
@@ -613,7 +606,7 @@ describe(
                 expect(newTextNode.textContent).toBe('Text');
                 realm.dangerouslyClose();
 
-                DNA.render(DNA.h(TestElement, { showPrefix: false }, 'Text'), wrapper);
+                DNA.render(DNA.h(name, { showPrefix: false }, 'Text'), wrapper);
 
                 realm.dangerouslyOpen();
                 expect(elem.childNodes).toHaveLength(1);
@@ -622,7 +615,7 @@ describe(
 
             it('should handle emptied slot nodes', () => {
                 const name = getComponentName();
-                const TestElement = DNA.define(
+                DNA.define(
                     name,
                     class TestElement extends DNA.Component {
                         static get properties() {
@@ -643,7 +636,7 @@ describe(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(TestElement, {}, 'Text'), wrapper);
+                const elem = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
                 const realm = elem.realm;
 
                 realm.dangerouslyOpen();
@@ -652,7 +645,7 @@ describe(
                 expect(div.childNodes).toHaveLength(1);
                 realm.dangerouslyClose();
 
-                DNA.render(DNA.h(TestElement, { showSlotted: false }, 'Text'), wrapper);
+                DNA.render(DNA.h(name, { showSlotted: false }, 'Text'), wrapper);
 
                 realm.dangerouslyOpen();
                 expect(realm.childNodes).toHaveLength(1);
