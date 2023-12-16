@@ -22,6 +22,23 @@ pnpm add @chialab/dna@alpha
 
 :::
 
+## Configure Typescript
+
+This enables support for DNA decorators as well as correct transpilation of class property fields.
+
+::: code-group
+
+```json [tsconfig.json]
+{
+    "compilerOptions": {
+        "useDefineForClassFields": false,
+        "experimentalDecorators": true
+    }
+}
+```
+
+:::
+
 ## Configure JSX
 
 ### Typescript
@@ -31,7 +48,6 @@ pnpm add @chialab/dna@alpha
 ```json [tsconfig.json]
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
         "jsx": "react-jsx",
         "jsxImportSource": "@chialab/dna"
     }
