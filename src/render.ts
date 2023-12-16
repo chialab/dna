@@ -3,7 +3,6 @@ import { isComponent, type ComponentConstructor, type ComponentInstance } from '
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
 import {
-    isVComponent,
     isVFragment,
     isVFunction,
     isVNode,
@@ -38,11 +37,11 @@ enum ContextKind {
 export type Context = {
     node: Node;
     kind: ContextKind;
-    type: FunctionComponent | ComponentConstructor | string | null;
+    type: FunctionComponent | string | null;
     root?: Context;
     owner?: Context;
     children: Context[];
-    properties?: KeyedProperties & TreeProperties;
+    properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
     requestUpdate?: UpdateRequest;
     store?: Store;
     end?: Context;
@@ -435,6 +434,10 @@ const renderTemplate = (
         }
 
         const { key, children, namespace: namespaceURI = namespace } = template;
+        const properties = template.properties as KeyedProperties &
+            TreeProperties &
+            EventProperties &
+            ElementProperties;
 
         let templateContext: Context | undefined;
         let currentContext: Context | null;
@@ -445,12 +448,11 @@ const renderTemplate = (
             currentContext.key == null &&
             currentContext.owner === rootContext
         ) {
-            if (isVComponent(template) && currentContext.type === template.type) {
-                templateContext = currentContext;
-            } else if (
+            if (
                 isVTag(template) &&
                 currentContext.kind === ContextKind.VNODE &&
-                currentContext.type === template.type
+                currentContext.type === template.type &&
+                currentContext.properties?.is === properties?.is
             ) {
                 templateContext = currentContext;
             }
@@ -462,19 +464,12 @@ const renderTemplate = (
                 templateContext =
                     currentChildren.find((child) => child.node === node) ||
                     createContext(ContextKind.REF, null, template.type, rootContext);
-            } else if (isVComponent(template)) {
-                templateContext = createContext(
-                    ContextKind.VNODE,
-                    template.type,
-                    new template.type(),
-                    rootContext,
-                    rootContext
-                );
             } else {
+                const constructor = customElements?.get(properties?.is ?? template.type);
                 templateContext = createContext(
                     ContextKind.VNODE,
                     template.type,
-                    document.createElementNS(namespaceURI, template.type),
+                    constructor ? new constructor() : document.createElementNS(namespaceURI, template.type),
                     rootContext,
                     rootContext
                 );
@@ -487,15 +482,10 @@ const renderTemplate = (
             fragment.keys = (fragment.keys || new Map()).set(key, templateContext);
         }
 
-        // update the Node properties
+        // update node properties
         const oldProperties = templateContext.properties as
             | undefined
             | (KeyedProperties & TreeProperties & EventProperties & ElementProperties);
-        const properties = template.properties as KeyedProperties &
-            TreeProperties &
-            EventProperties &
-            ElementProperties;
-
         templateContext.properties = properties;
 
         let constructor: ComponentConstructor | undefined;
