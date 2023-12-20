@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.1
+
+### Patch Changes
+
+- 7ebd457: Fix setting property to native elements.
+
 ## 3.22.0
 
 ### Minor Changes
