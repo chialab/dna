@@ -233,8 +233,9 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     const wasType = typeof oldValue;
     const isReference = (value && type === 'object') || type === 'function';
     const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
+    const isProtoProperty = type !== 'string' && propertyKey in node.constructor.prototype;
 
-    if (isReference || wasReference || isInputValue || (constructor && type !== 'string')) {
+    if (isReference || wasReference || isInputValue || isProtoProperty) {
         (node as unknown as Record<string, unknown>)[propertyKey] = value;
     } else if (constructor) {
         const observedAttributes = constructor.observedAttributes;
@@ -254,14 +255,16 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         }
     }
 
-    if (value == null || value === false) {
-        if ((node as HTMLElement).hasAttribute(propertyKey)) {
-            (node as HTMLElement).removeAttribute(propertyKey);
-        }
-    } else if (!isReference) {
-        const attrValue = value === true ? '' : (value as string).toString();
-        if ((node as HTMLElement).getAttribute(propertyKey) !== attrValue) {
-            (node as HTMLElement).setAttribute(propertyKey, attrValue);
+    if (!isProtoProperty) {
+        if (value == null || value === false) {
+            if ((node as HTMLElement).hasAttribute(propertyKey)) {
+                (node as HTMLElement).removeAttribute(propertyKey);
+            }
+        } else if (!isReference) {
+            const attrValue = value === true ? '' : (value as string).toString();
+            if ((node as HTMLElement).getAttribute(propertyKey) !== attrValue) {
+                (node as HTMLElement).setAttribute(propertyKey, attrValue);
+            }
         }
     }
 };

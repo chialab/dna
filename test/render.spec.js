@@ -338,25 +338,31 @@ describe(
             it('should update native properties', () => {
                 DNA.render(
                     DNA.html`<form>
-                <input type="radio" name="test" value="1" checked=${false} />
-                <input type="radio" name="test" value="2" checked=${false} />
-            </form>`,
+                        <input type="radio" name="test" value="1" checked=${false} />
+                        <input type="radio" name="test" value="2" checked=${false} />
+                    </form>`,
                     wrapper
                 );
                 const elem = wrapper.querySelector('input[value="2"]');
                 expect(elem.getAttribute('checked')).toBeNull();
-                expect(elem.checked).to.be.false;
+                expect(elem.checked).toBe(false);
                 elem.checked = true;
-                expect(elem.checked).to.be.true;
+                expect(elem.checked).toBe(true);
                 DNA.render(
                     DNA.html`<form>
-                <input type="radio" name="test" value="1" checked=${false} />
-                <input type="radio" name="test" value="2" checked=${false} />
-            </form>`,
+                        <input type="radio" name="test" value="1" checked=${false} />
+                        <input type="radio" name="test" value="2" checked=${false} />
+                    </form>`,
                     wrapper
                 );
                 expect(elem.getAttribute('checked')).toBeNull();
-                expect(elem.checked).to.be.false;
+                expect(elem.checked).toBe(false);
+
+                DNA.render(DNA.html`<img src="" alt="" />`, wrapper);
+                const img = wrapper.querySelector('img');
+                expect(img.draggable).toBe(true);
+                DNA.render(DNA.html`<img src="" alt="" draggable=${false} />`, wrapper);
+                expect(img.draggable).toBe(false);
             });
 
             it('should convert observed attributes', () => {
@@ -430,21 +436,19 @@ describe(
                 DNA.render(DNA.h('div', { style: 'color: red;' }), wrapper);
                 const elem = wrapper.children[0];
                 elem.style.fontFamily = 'sans-serif';
-                expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(255, 0, 0)', 'red']);
-                expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+                expect(['rgb(255, 0, 0)', 'red']).toContain(window.getComputedStyle(elem).color);
+                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
                 DNA.render(DNA.h('div', { style: { backgroundColor: 'blue' } }), wrapper);
-                expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
-                expect(window.getComputedStyle(elem).backgroundColor).to.be.oneOf(['rgb(0, 0, 255)', 'blue']);
-                expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
+                expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(elem).backgroundColor);
+                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
                 DNA.render(DNA.h('div', { style: 'font-weight: bold;' }), wrapper);
-                expect(window.getComputedStyle(elem).color).to.be.oneOf(['rgb(0, 0, 0)', '']);
-                expect(window.getComputedStyle(elem).backgroundColor).to.be.oneOf([
-                    'rgba(0, 0, 0, 0)',
-                    '',
-                    'transparent',
-                ]);
-                expect(window.getComputedStyle(elem).fontWeight).to.be.oneOf(['700', 'bold']);
-                expect(window.getComputedStyle(elem).fontFamily).to.be.oneOf(['sans-serif']);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
+                expect(['rgba(0, 0, 0, 0)', '', 'transparent']).toContain(
+                    window.getComputedStyle(elem).backgroundColor
+                );
+                expect(['700', 'bold']).toContain(window.getComputedStyle(elem).fontWeight);
+                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
             });
 
             it('should render svgs', () => {
@@ -765,7 +769,7 @@ describe(
 
                 expect(wrapper.childNodes[0].childNodes[4].tagName).toBe('OPTION');
                 expect(wrapper.childNodes[0].childNodes[4].textContent).toBe('Other');
-                expect(wrapper.childNodes[0].childNodes[4]).to.not.be.equal(otherOption);
+                expect(wrapper.childNodes[0].childNodes[4]).not.toBe(otherOption);
             });
 
             it('should swap rows', () => {
@@ -936,7 +940,7 @@ describe(
 
                 expect(wrapper.childNodes[0].childNodes[3].tagName).toBe('OPTION');
                 expect(wrapper.childNodes[0].childNodes[3].textContent).toBe('Gabriella');
-                expect(wrapper.childNodes[0].childNodes[3]).to.not.be.equal(otherOption);
+                expect(wrapper.childNodes[0].childNodes[3]).not.toBe(otherOption);
 
                 expect(wrapper.childNodes[0].childNodes[4].tagName).toBe('OPTION');
                 expect(wrapper.childNodes[0].childNodes[4].textContent).toBe('Other');

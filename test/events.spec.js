@@ -248,7 +248,7 @@ describe(
                     DNA.undelegateEventListener(button, 'click', null, (event) => {
                         event.preventDefault();
                     });
-                }).to.not.throw();
+                }).not.toThrow();
             });
 
             it('should do nothing if there are no delegations for an event', () => {
@@ -258,7 +258,7 @@ describe(
                 });
                 expect(() => {
                     DNA.undelegateEventListener(button, 'missing', null, () => {});
-                }).to.not.throw();
+                }).not.toThrow();
             });
 
             it('should validate undelegateEventListener input', () => {

@@ -56,7 +56,7 @@ describe(
 
             it('should throw if element is not defined', () => {
                 class TestElement extends DNA.Component {}
-                expect(() => new TestElement()).to.throw(TypeError);
+                expect(() => new TestElement()).toThrow(TypeError);
             });
 
             it('should setup properties', () => {
@@ -301,7 +301,7 @@ describe(
                 let connected = false;
 
                 wrapper.innerHTML = `<${is}></${is}>`;
-                expect(connected).to.be.false;
+                expect(connected).toBe(false);
                 DNA.define(
                     is,
                     class extends DNA.Component {
@@ -567,7 +567,7 @@ describe(
                 DNA.define(is, class extends DNA.Component {});
 
                 const element = document.createElement(is);
-                expect(element.isConnected).to.be.false;
+                expect(element.isConnected).toBe(false);
             });
         });
 
@@ -758,14 +758,14 @@ describe(
                         element.setAttribute('any', 'test');
                         expect(element.any).toBe('test');
                         element.removeAttribute('any');
-                        expect(element.any).to.be.null;
+                        expect(element.any).toBeNull();
                     });
 
                     it('should handle boolean type', () => {
                         element.setAttribute('boolean', '');
                         expect(element.boolean).toBe(true);
                         element.removeAttribute('boolean');
-                        expect(element.boolean).to.be.false;
+                        expect(element.boolean).toBe(false);
                     });
 
                     it('should handle string type', () => {
@@ -780,7 +780,7 @@ describe(
                         element.setAttribute('string', '[1]');
                         expect(element.string).toBe('[1]');
                         element.removeAttribute('string');
-                        expect(element.string).to.be.null;
+                        expect(element.string).toBeNull();
                     });
 
                     it('should handle number type', () => {
@@ -791,7 +791,7 @@ describe(
                         element.setAttribute('number', '1234.1234');
                         expect(element.number).toBe(1234.1234);
                         element.removeAttribute('number');
-                        expect(element.number).to.be.null;
+                        expect(element.number).toBeNull();
                     });
 
                     it('should handle string/number type', () => {
@@ -806,25 +806,25 @@ describe(
                         element.setAttribute('string-number', '[1]');
                         expect(element.stringNumber).toBe('[1]');
                         element.removeAttribute('string-number');
-                        expect(element.stringNumber).to.be.null;
+                        expect(element.stringNumber).toBeNull();
                     });
 
                     it('should handle object type', () => {
                         element.setAttribute('object', '{}');
-                        expect(element.object).to.be.deep.equal({});
+                        expect(element.object).toStrictEqual({});
                         element.setAttribute('object', '{"test":1}');
-                        expect(element.object).to.be.deep.equal({ test: 1 });
+                        expect(element.object).toStrictEqual({ test: 1 });
                         element.removeAttribute('object');
-                        expect(element.object).to.be.null;
+                        expect(element.object).toBeNull();
                     });
 
                     it('should handle array type', () => {
                         element.setAttribute('array', '[]');
-                        expect(element.array).to.be.deep.equal([]);
+                        expect(element.array).toStrictEqual([]);
                         element.setAttribute('array', '[1]');
-                        expect(element.array).to.be.deep.equal([1]);
+                        expect(element.array).toStrictEqual([1]);
                         element.removeAttribute('array');
-                        expect(element.array).to.be.null;
+                        expect(element.array).toBeNull();
                     });
 
                     it('should convert using configuration', () => {
@@ -1187,8 +1187,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot></slot> inner text
-                    </div>`;
+                                <slot></slot> inner text
+                            </div>`;
                         }
                     }
                 );
@@ -1204,8 +1204,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot></slot>
-                    </div>`;
+                                <slot></slot>
+                            </div>`;
                         }
                     }
                 );
@@ -1228,8 +1228,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot></slot> inner text
-                    </div>`;
+                                <slot></slot> inner text
+                            </div>`;
                         }
                     }
                 );
@@ -1237,7 +1237,7 @@ describe(
                 element.innerHTML = '<span>Test</span>';
 
                 expect(element.innerHTML.indexOf('<div>')).toBe(0);
-                expect(element.innerHTML.indexOf('<span>Test</span>')).to.not.be.equal(-1);
+                expect(element.innerHTML.indexOf('<span>Test</span>')).not.toBe(-1);
             });
 
             it('should set slot text using innerHTML setter', () => {
@@ -1246,8 +1246,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot></slot>
-                    </div>`;
+                                <slot></slot>
+                            </div>`;
                         }
                     }
                 );
@@ -1325,10 +1325,10 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot>
-                            <span>Test</span>
-                        </slot>
-                    </div>`;
+                                <slot>
+                                    <span>Test</span>
+                                </slot>
+                            </div>`;
                         }
                     }
                 );
@@ -1350,10 +1350,10 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot>
-                            <span>Test</span>
-                        </slot>
-                    </div>`;
+                                <slot>
+                                    <span>Test</span>
+                                </slot>
+                            </div>`;
                         }
                     }
                 );
@@ -1401,8 +1401,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot />
-                    </div>`;
+                                <slot />
+                            </div>`;
                         }
                     }
                 );
@@ -1666,8 +1666,8 @@ describe(
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<div>
-                        <slot />
-                    </div>`;
+                                <slot />
+                            </div>`;
                         }
                     }
                 );
@@ -1721,7 +1721,7 @@ describe(
 
             describe('#getAttribute', () => {
                 it('should get an empty attribute', () => {
-                    expect(element.getAttribute('missing')).to.be.null;
+                    expect(element.getAttribute('missing')).toBeNull();
                 });
 
                 it('should get a string attribute', () => {
@@ -1756,24 +1756,24 @@ describe(
                 });
 
                 it('should return `false` if element has an attribute', () => {
-                    expect(element.hasAttribute('missing')).to.be.false;
+                    expect(element.hasAttribute('missing')).toBe(false);
                 });
             });
 
             describe('#removeAttribute', () => {
                 it('should remove an attribute', () => {
                     element.removeAttribute('title');
-                    expect(element.hasAttribute('title')).to.be.false;
+                    expect(element.hasAttribute('title')).toBe(false);
                 });
 
                 it('should remove a string attribute and update the property', () => {
                     element.removeAttribute('title');
-                    expect(element.title).to.be.null;
+                    expect(element.title).toBeNull();
                 });
 
                 it('should remove a numeric attribute and update the property', () => {
                     element.removeAttribute('age');
-                    expect(element.age).to.be.null;
+                    expect(element.age).toBeNull();
                 });
             });
         });
