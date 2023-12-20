@@ -500,8 +500,9 @@ const renderTemplate = (
             const wasType = typeof oldValue;
             const isReference = (value && type === 'object') || type === 'function';
             const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
+            const isProperty = type !== 'string' && propertyKey in templateNode.constructor.prototype;
 
-            if (isReference || wasReference || isRenderingInput(templateNode, propertyKey)) {
+            if (isReference || wasReference || isRenderingInput(templateNode, propertyKey) || isProperty) {
                 setValue(templateNode, propertyKey, value);
             } else if (isVComponent(template)) {
                 if (type === 'string') {
@@ -522,14 +523,16 @@ const renderTemplate = (
                 }
             }
 
-            if (value == null || value === false) {
-                if ((templateNode as HTMLElement).hasAttribute(propertyKey)) {
-                    (templateNode as HTMLElement).removeAttribute(propertyKey);
-                }
-            } else if (!isReference) {
-                const attrValue = value === true ? '' : (value as string).toString();
-                if ((templateNode as HTMLElement).getAttribute(propertyKey) !== attrValue) {
-                    (templateNode as HTMLElement).setAttribute(propertyKey, attrValue);
+            if (!isProperty) {
+                if (value == null || value === false) {
+                    if ((templateNode as HTMLElement).hasAttribute(propertyKey)) {
+                        (templateNode as HTMLElement).removeAttribute(propertyKey);
+                    }
+                } else if (!isReference) {
+                    const attrValue = value === true ? '' : (value as string).toString();
+                    if ((templateNode as HTMLElement).getAttribute(propertyKey) !== attrValue) {
+                        (templateNode as HTMLElement).setAttribute(propertyKey, attrValue);
+                    }
                 }
             }
         }

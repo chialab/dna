@@ -328,6 +328,12 @@ describe('render', function() {
             </form>`, wrapper);
             expect(elem.getAttribute('checked')).to.be.null;
             expect(elem.checked).to.be.false;
+
+            DNA.render(DNA.html`<img src="" alt="" />`, wrapper);
+            const img = wrapper.querySelector('img');
+            expect(img.draggable).to.be.true;
+            DNA.render(DNA.html`<img src="" alt="" draggable=${false} />`, wrapper);
+            expect(img.draggable).to.be.false;
         });
 
         it('should convert observed attributes', () => {
