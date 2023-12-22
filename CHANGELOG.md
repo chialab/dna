@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.2
+
+### Patch Changes
+
+- 3b1ae38: Fix setting read-only properties.
+
 ## 3.22.1
 
 ### Patch Changes
