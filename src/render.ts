@@ -195,6 +195,17 @@ const addKeyedNode = (context: Context, node: Node, key: unknown) => {
 };
 
 /**
+ * Check if a property is writable.
+ * @param element The element to check.
+ * @param propertyKey The property to check.
+ * @returns True if writable, false otherwise.
+ */
+const isWritableProperty = (element: Node, propertyKey: string) => {
+    const descriptor = getPropertyDescriptor(element, propertyKey);
+    return (!descriptor || !descriptor.get || descriptor.set);
+};
+
+/**
  * Render a a template into the root.
  * @param parent The root Node for the render.
  * @param slot Should handle slot children.
@@ -500,16 +511,15 @@ const renderTemplate = (
             const wasType = typeof oldValue;
             const isReference = (value && type === 'object') || type === 'function';
             const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
-            const isProperty = type !== 'string' && propertyKey in templateNode.constructor.prototype;
+            const setAsProperty = type !== 'string' && propertyKey in templateNode && isWritableProperty(templateNode, propertyKey);
 
-            if (isReference || wasReference || isRenderingInput(templateNode, propertyKey) || isProperty) {
+            if (isReference || wasReference || isRenderingInput(templateNode, propertyKey) || setAsProperty) {
                 setValue(templateNode, propertyKey, value);
             } else if (isVComponent(template)) {
                 if (type === 'string') {
                     const observedAttributes = template.type.observedAttributes;
                     if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                        const descriptor = (propertyKey in templateNode) && getPropertyDescriptor(templateNode, propertyKey);
-                        if (!descriptor || !descriptor.get || descriptor.set) {
+                        if (isWritableProperty(templateNode, propertyKey)) {
                             setValue(templateNode, propertyKey, value);
                         }
                     } else {
@@ -523,7 +533,7 @@ const renderTemplate = (
                 }
             }
 
-            if (!isProperty) {
+            if (!setAsProperty) {
                 if (value == null || value === false) {
                     if ((templateNode as HTMLElement).hasAttribute(propertyKey)) {
                         (templateNode as HTMLElement).removeAttribute(propertyKey);

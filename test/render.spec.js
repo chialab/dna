@@ -334,6 +334,10 @@ describe('render', function() {
             expect(img.draggable).to.be.true;
             DNA.render(DNA.html`<img src="" alt="" draggable=${false} />`, wrapper);
             expect(img.draggable).to.be.false;
+
+            expect(() => DNA.render(DNA.html`<svg width=${12}></svg>`, wrapper)).to.not.throw();
+            const svg = wrapper.querySelector('svg');
+            expect(svg.getAttribute('width')).to.be.equal('12');
         });
 
         it('should convert observed attributes', () => {
