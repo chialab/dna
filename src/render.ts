@@ -151,6 +151,17 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
 const shouldIgnoreProperty = (propertyKey: string) => ['children', 'key', 'is', 'xmlns'].includes(propertyKey);
 
 /**
+ * Check if a property is writable.
+ * @param element The element to check.
+ * @param propertyKey The property to check.
+ * @returns True if writable, false otherwise.
+ */
+const isWritableProperty = (element: Node, propertyKey: string) => {
+    const descriptor = getPropertyDescriptor(element, propertyKey);
+    return !descriptor || !descriptor.get || descriptor.set;
+};
+
+/**
  * Set property value to a node.
  * @param node The node to update.
  * @param propertyKey The property key to update.
@@ -233,15 +244,14 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     const wasType = typeof oldValue;
     const isReference = (value && type === 'object') || type === 'function';
     const wasReference = (oldValue && wasType === 'object') || wasType === 'function';
-    const isProtoProperty = type !== 'string' && propertyKey in node.constructor.prototype;
+    const isProtoProperty = type !== 'string' && propertyKey in node && isWritableProperty(node, propertyKey);
 
     if (isReference || wasReference || isInputValue || isProtoProperty) {
         (node as unknown as Record<string, unknown>)[propertyKey] = value;
     } else if (constructor) {
         const observedAttributes = constructor.observedAttributes;
         if (!observedAttributes?.includes(propertyKey)) {
-            const descriptor = propertyKey in node && getPropertyDescriptor(node, propertyKey);
-            if (!descriptor || !descriptor.get || descriptor.set) {
+            if (isWritableProperty(node, propertyKey)) {
                 (node as unknown as Record<string, unknown>)[propertyKey] = value;
             }
         } else {
