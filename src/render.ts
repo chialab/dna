@@ -9,7 +9,6 @@ import { DOM } from './DOM';
 import { isThenable, getThenableState } from './Thenable';
 import { isObservable, getObservableState } from './Observable';
 import { css } from './css';
-import { type Props, getProperty } from './property';
 
 const innerHtml = htm.bind(h);
 
@@ -515,22 +514,6 @@ const renderTemplate = (
 
             if (isReference || wasReference || isRenderingInput(templateNode, propertyKey) || setAsProperty) {
                 setValue(templateNode, propertyKey, value);
-            } else if (isVComponent(template)) {
-                if (type === 'string') {
-                    const observedAttributes = template.type.observedAttributes;
-                    if (!observedAttributes || observedAttributes.indexOf(propertyKey) === -1) {
-                        if (isWritableProperty(templateNode, propertyKey)) {
-                            setValue(templateNode, propertyKey, value);
-                        }
-                    } else {
-                        const property = getProperty(templateNode as ComponentInstance, propertyKey as keyof Props<ComponentInstance>);
-                        if (property && property.fromAttribute) {
-                            setValue(templateNode, propertyKey, (property.fromAttribute as Function).call(templateNode, value as string));
-                        }
-                    }
-                } else {
-                    setValue(templateNode, propertyKey, value);
-                }
             }
 
             if (!setAsProperty) {

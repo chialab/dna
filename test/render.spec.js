@@ -372,8 +372,14 @@ describe('render', function() {
 
             DNA.customElements.define(name, TestElement);
 
-            DNA.render(DNA.h(TestElement, { string: '2' }), wrapper);
-            expect(wrapper.querySelector(name).string).to.be.equal('2');
+            DNA.render(DNA.h(TestElement, { 'string': '2', 'object': {}, 'data-test': '3' }), wrapper);
+            expect(wrapper.querySelector(name).string).to.be.undefined;
+            expect(wrapper.querySelector(name).getAttribute('string')).to.be.equal('2');
+            expect(wrapper.querySelector(name).object).to.be.a('object');
+            expect(wrapper.querySelector(name).getAttribute('object')).to.be.null;
+            expect(wrapper.querySelector(name)['data-test']).to.be.undefined;
+            expect(wrapper.querySelector(name).getAttribute('data-test')).to.be.equal('3');
+            expect(wrapper.querySelector(name).dataset.test).to.be.equal('3');
         });
 
         it('should assign not string attribute', () => {
