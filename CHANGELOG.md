@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.3
+
+### Patch Changes
+
+- beaae40: Fix setting `data-` attributes during render.
+
 ## 3.22.2
 
 ### Patch Changes
