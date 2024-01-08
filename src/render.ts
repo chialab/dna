@@ -1,5 +1,5 @@
 import type { Realm } from '@chialab/quantum';
-import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
+import { isComponent, type ComponentInstance } from './Component';
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
 import { HooksManager, type HooksState } from './Hooks';
@@ -17,7 +17,6 @@ import {
     type Template,
     type TreeProperties,
 } from './JSX';
-import { getProperty } from './property';
 
 /**
  * A symbol for node render context.
@@ -165,14 +164,12 @@ const isWritableProperty = (element: Node, propertyKey: string) => {
  * @param propertyKey The property key to update.
  * @param value The new value.
  * @param oldValue The old value.
- * @param constructor The constructor of the node.
  */
 const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     node: T,
     propertyKey: P,
     value: T[P] | undefined,
-    oldValue?: T[P],
-    constructor?: ComponentConstructor
+    oldValue?: T[P]
 ) => {
     const isInputValue =
         (propertyKey === 'checked' || propertyKey === 'value') && (node as HTMLElement).tagName === 'INPUT';
@@ -246,21 +243,6 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
 
     if (isReference || wasReference || isInputValue || isProtoProperty) {
         (node as unknown as Record<string, unknown>)[propertyKey] = value;
-    } else if (constructor) {
-        const observedAttributes = constructor.observedAttributes;
-        if (!observedAttributes?.includes(propertyKey)) {
-            if (isWritableProperty(node, propertyKey)) {
-                (node as unknown as Record<string, unknown>)[propertyKey] = value;
-            }
-        } else {
-            const property = getProperty(node as ComponentInstance, propertyKey as keyof ComponentInstance);
-            if (property?.fromAttribute) {
-                (node as unknown as Record<string, unknown>)[propertyKey] = (property.fromAttribute as Function).call(
-                    node,
-                    value as string
-                );
-            }
-        }
     }
 
     if (!isProtoProperty) {
@@ -500,6 +482,7 @@ const renderTemplate = (
         }
 
         const node = templateContext.node;
+        const isComponentNode = isComponent(node);
         if (key != null) {
             templateContext.key = key;
             fragment.keys = (fragment.keys || new Map()).set(key, templateContext);
@@ -511,9 +494,7 @@ const renderTemplate = (
             | (KeyedProperties & TreeProperties & EventProperties & ElementProperties);
         templateContext.properties = properties;
 
-        let constructor: ComponentConstructor | undefined;
-        if (isComponent(node)) {
-            constructor = (node as ComponentInstance).constructor as ComponentConstructor;
+        if (isComponentNode) {
             node.collectUpdatesStart();
         }
 
@@ -524,8 +505,7 @@ const renderTemplate = (
                         node,
                         propertyKey as keyof Node,
                         undefined,
-                        oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                        constructor
+                        oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node]
                     );
                 }
             }
@@ -537,13 +517,12 @@ const renderTemplate = (
                     node,
                     propertyKey as keyof Node,
                     properties[propertyKey as keyof typeof properties] as Node[keyof Node],
-                    oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                    constructor
+                    oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node]
                 );
             }
         }
 
-        if (constructor) {
+        if (isComponentNode) {
             (node as ComponentInstance).collectUpdatesEnd();
         }
 

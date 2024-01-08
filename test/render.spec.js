@@ -383,11 +383,11 @@ describe(
                     }
                 );
 
-                DNA.render(DNA.h(name, { number: '2' }), wrapper);
-                expect(wrapper.querySelector(name).number).toBe(2);
+                const elem = DNA.render(DNA.h(name, { number: '2' }), wrapper);
+                expect(elem.number).toBe(2);
             });
 
-            it('should assign not observed attributes', () => {
+            it('should assign properties and attributes to component', () => {
                 const name = getComponentName();
                 DNA.define(
                     name,
@@ -402,27 +402,18 @@ describe(
                     }
                 );
 
-                DNA.render(DNA.h(name, { string: '2' }), wrapper);
-                expect(wrapper.querySelector(name).string).toBe('2');
-            });
-
-            it('should assign not string attribute', () => {
-                const name = getComponentName();
-                DNA.define(
-                    name,
-                    class TestElement extends DNA.Component {
-                        static get properties() {
-                            return {
-                                number: {
-                                    type: Number,
-                                },
-                            };
-                        }
-                    }
+                const elem = DNA.render(
+                    DNA.h(name, { 'number': 2, 'string': '2', 'object': {}, 'data-test': '3' }),
+                    wrapper
                 );
-
-                DNA.render(DNA.h(name, { number: 2 }), wrapper);
-                expect(wrapper.querySelector(name).number).toBe(2);
+                expect(elem.number).toBe(2);
+                expect(elem.string).toBeUndefined();
+                expect(elem.getAttribute('string')).toBe('2');
+                expect(elem.object).toBeTypeOf('object');
+                expect(elem.getAttribute('object')).toBeNull();
+                expect(elem['data-test']).toBeUndefined();
+                expect(elem.getAttribute('data-test')).toBe('3');
+                expect(elem.dataset.test).toBe('3');
             });
 
             it('should update add and remove classes', () => {
