@@ -41,7 +41,7 @@ export type Context = {
     owner?: Context;
     children: Context[];
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
-    store?: HooksState;
+    state?: HooksState;
     end?: Context;
     key?: unknown;
     keys?: Map<unknown, Context>;
@@ -378,7 +378,7 @@ const renderTemplate = (
             const renderContext = currentChildren[context._pos - 1];
             renderContext.type = Function;
 
-            const hooks = new HooksManager((renderContext.store = renderContext.store || []));
+            const hooks = new HooksManager((renderContext.state = renderContext.state || []));
             if (key != null) {
                 fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
             }
