@@ -193,17 +193,20 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 ## Function components
 
-Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use functional components. Function components have first class support in many frameworks like React and Vue, but they require hooks in order to update DOM changes. Since DNA's state is reflected to the DOM and a "current context" is missing, the implemention is slightly different and does not require extra abstraction.
+Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use function components.
+
+Function components are plain functions that receive properties as first argument and modifier methods as second argument. The function must return a template to render.
+
+### The `useState` hook
+
+The `useState` hook is a function that returns a tuple with the current state and a function to update it. The first argument is the initial state. When the state is updated, the function component is re-rendered.
 
 ::: code-group
 
 ```tsx [jsx]
-function Row({ children, id }, { store, requestUpdate }) {
-    const selected = store.get('selcted') ?? false;
-    const toggle = () => {
-        store.set('selected', !selected);
-        requestUpdate();
-    };
+function Row({ children, id }, { useState }) {
+    const [selected, setSelected] = useState(false);
+    const toggle = () => setSelected(!selected);
 
     return (
         <tr
@@ -228,12 +231,9 @@ function Row({ children, id }, { store, requestUpdate }) {
 ```
 
 ```ts [html]
-function Row({ children, id }, { store, requestUpdate }) {
-    const selected = store.get('selcted') ?? false;
-    const toggle = () => {
-        store.set('selected', !selected);
-        requestUpdate();
-    };
+function Row({ children, id }, { useState }) {
+    const [selected, setSelected] = useState(false);
+    const toggle = () => setSelected(!selected);
 
     return html`<tr
         id=${id}
@@ -256,23 +256,53 @@ html`<table>
 </table>`;
 ```
 
-```ts [vdom]
-function Row({ children, id }, { store, requestUpdate }) {
-    const selected = store.get('selcted') ?? false;
-    const toggle = () => {
-        store.set('selected', !selected);
-        requestUpdate();
-    };
+### The `useMemo` hook
 
-    return h('tr', { id, selected, onclick: toggle }, ...children);
+The `useMemo` hook is a function that returns a memoized value. The first argument is a function that returns the value to memoize. The second argument is an array of dependencies. When the dependencies change, the memoized value is re-computed.
+
+::: code-group
+
+```tsx [jsx]
+function Rows({ items, filter }, { useMemo }) {
+    const rows = useMemo(() => items.filter((item) => item.title.includes(filter)), [filter]);
+
+    return rows.map(({ id }) => <Row id={id} />);
+}
+
+<table>
+    <tbody>
+        <Rows
+            items={items}
+            filter={filter}
+        />
+    </tbody>
+</table>;
+```
+
+```ts [html]
+function Rows({ items, filter }, { useMemo }) {
+    const rows = useMemo(() => items.filter((item) => item.title.includes(filter)), [filter]);
+
+    return rows.map(({ id }) => html`<${Row} id=${id} />)`;
+}
+
+html`<table>
+    <tbody>
+        <${Rows} items=${items} filter=${filter} />
+    </tbody>
+</table>`;
+```
+
+```ts [vdom]
+function Rows({ items, filter }, { useMemo }) {
+    const rows = useMemo(() => items.filter((item) => item.title.includes(filter)), [filter]);
+
+    return rows.map(({ id }) => h(Row, { id });
 }
 
 h('table', null,
     h('tbody', null
-        items.map((item) => h(Row, ...item,
-            h('td', null, item.id)
-            h('td', null, item.label)
-        ))
+        h(Rows, { items, filter })
     ),
 )
 ```

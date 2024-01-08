@@ -180,16 +180,15 @@ describe(
                     return 'hello';
                 };
 
-                const Clock = function Clock(props, context) {
+                const Clock = function Clock(props, { useState }) {
                     render2();
-                    let count = context.store.get('count') || 0;
-                    count++;
-                    context.store.set('count', count);
+                    const [count, setCount] = useState(1);
                     if (count === 1) {
                         setTimeout(() => {
-                            context.requestUpdate();
+                            setCount(count + 1);
                         }, 200);
                     }
+
                     return count;
                 };
 
@@ -698,6 +697,77 @@ describe(
                 wrapper.appendChild(parent);
 
                 expect(child.textContent).toBe('Hello');
+            });
+        });
+
+        describe('hooks', () => {
+            it('should re-render on state change', () => {
+                const render = vi.fn();
+                const Test = function Test(props, { useState }) {
+                    const [count, setCount] = useState(0);
+                    render();
+                    return DNA.h(
+                        'button',
+                        {
+                            onclick() {
+                                setCount(count + 1);
+                            },
+                        },
+                        count
+                    );
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                const button = wrapper.children[0];
+                expect(button.textContent).toBe('0');
+                expect(render).toHaveBeenCalled();
+                expect(render).toHaveBeenCalledOnce();
+
+                button.click();
+                expect(wrapper.textContent).toBe('1');
+                expect(render).toHaveBeenCalled();
+                expect(render).toHaveBeenCalledTimes(2);
+
+                DNA.render(DNA.h(Test), wrapper);
+                expect(button.textContent).toBe('1');
+            });
+
+            it('should memo calculated value', () => {
+                const factory = vi.fn(() => 1);
+                const Test = function Test(props, { useMemo }) {
+                    const value = useMemo(factory);
+                    return DNA.h('button', {}, value);
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                const button = wrapper.children[0];
+                expect(button.textContent).toBe('1');
+                expect(factory).toHaveBeenCalled();
+                expect(factory).toHaveBeenCalledOnce();
+
+                DNA.render(DNA.h(Test), wrapper);
+                expect(wrapper.textContent).toBe('1');
+                expect(factory).toHaveBeenCalledOnce();
+            });
+
+            it('should memo calculated value with deps', () => {
+                let dep = 1;
+                const factory = vi.fn(() => dep);
+                const Test = function Test(props, { useMemo }) {
+                    const value = useMemo(factory, [dep]);
+                    return DNA.h('button', {}, value);
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                const button = wrapper.children[0];
+                expect(button.textContent).toBe('1');
+                expect(factory).toHaveBeenCalled();
+                expect(factory).toHaveBeenCalledOnce();
+
+                dep = 2;
+                DNA.render(DNA.h(Test), wrapper);
+                expect(wrapper.textContent).toBe('2');
+                expect(factory).toHaveBeenCalledTimes(2);
             });
         });
 

@@ -3,7 +3,6 @@ import htm from 'htm';
 import { type ElementAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { type BaseClass, type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type HTML } from './HTML';
-import { type Context } from './render';
 
 /**
  * Identify virtual dom objects.
@@ -107,28 +106,18 @@ export type ElementProperties = {
 };
 
 /**
- * A re-render function.
- */
-export type UpdateRequest = () => boolean;
-
-/**
- * Function component store.
- */
-export type Store = Map<string, unknown>;
-
-/**
  * A function that returns a template.
  *
  * @param props A set of properties with children.
- * @param context The current render context.
+ * @param hooks Hooks methods.
  * @returns A template.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FunctionComponent<P = any> = (
     props: P & { key?: unknown; children?: Template[] },
-    context: Context & {
-        store: Store;
-        requestUpdate: UpdateRequest;
+    hooks: {
+        useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
+        useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
     }
 ) => Template;
 

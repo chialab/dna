@@ -8,22 +8,14 @@ import { getThenableState } from './Thenable';
  */
 export const $parse = (string: string): Template =>
     h(
-        (props, context) => {
-            const source = props.source;
-            const store = context.store;
+        (props, { useMemo }) =>
+            useMemo<ChildNode[] | null>(() => {
+                const parser = new DOMParser();
+                const fragment = parser.parseFromString(props.source, 'text/html').body;
+                customElements.upgrade(fragment);
 
-            if (store.get('source') === source) {
-                return store.get('dom') as Node[];
-            }
-
-            const parser = new DOMParser();
-            const fragment = parser.parseFromString(source, 'text/html').body;
-            customElements.upgrade(fragment);
-            const dom = Array.from(fragment.childNodes);
-            store.set('source', source);
-            store.set('dom', dom);
-            return dom;
-        },
+                return Array.from(fragment.childNodes);
+            }, [props.source]),
         { source: string }
     );
 
@@ -34,16 +26,17 @@ export const $parse = (string: string): Template =>
  */
 export const $await = (thenable: Promise<unknown>) =>
     h(
-        ((props, context) => {
+        ((props, { useState }) => {
             const state = getThenableState(thenable);
+            const [result, setResult] = useState<Template | null>(state.result);
             if (state.pending) {
                 thenable
                     .catch(() => 1)
                     .then(() => {
-                        context.requestUpdate();
+                        setResult(state.result);
                     });
             }
-            return state.result as Template;
+            return result as Template;
         }) as FunctionComponent,
         null
     );

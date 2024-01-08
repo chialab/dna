@@ -2,6 +2,7 @@ import type { Realm } from '@chialab/quantum';
 import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
+import { HooksManager, type HooksState } from './Hooks';
 import {
     isVFragment,
     isVFunction,
@@ -13,10 +14,8 @@ import {
     type EventProperties,
     type FunctionComponent,
     type KeyedProperties,
-    type Store,
     type Template,
     type TreeProperties,
-    type UpdateRequest,
 } from './JSX';
 import { getProperty } from './property';
 
@@ -42,8 +41,7 @@ export type Context = {
     owner?: Context;
     children: Context[];
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
-    requestUpdate?: UpdateRequest;
-    store?: Store;
+    store?: HooksState;
     end?: Context;
     key?: unknown;
     keys?: Map<unknown, Context>;
@@ -379,33 +377,11 @@ const renderTemplate = (
 
             const renderContext = currentChildren[context._pos - 1];
             renderContext.type = Function;
-            renderContext.store = renderContext.store || new Map();
 
+            const hooks = new HooksManager((renderContext.store = renderContext.store || []));
             if (key != null) {
                 fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
             }
-
-            let running = true;
-            const requestUpdate: UpdateRequest = (renderContext.requestUpdate = () => {
-                if (renderContext.requestUpdate !== requestUpdate) {
-                    return (renderContext.requestUpdate as UpdateRequest)();
-                }
-                if (running) {
-                    throw new Error('An update request is already running');
-                }
-                if (!currentChildren.includes(renderContext)) {
-                    return false;
-                }
-
-                if (isComponent(rootContext.node) && realm) {
-                    realm.requestUpdate(() => {
-                        internalRender(context, template, realm, rootContext, namespace, renderContext);
-                    });
-                } else {
-                    internalRender(context, template, realm, rootContext, namespace, renderContext);
-                }
-                return true;
-            });
 
             renderTemplate(
                 context,
@@ -415,9 +391,44 @@ const renderTemplate = (
                         children,
                         ...properties,
                     },
-                    renderContext as Context & {
-                        store: Store;
-                        requestUpdate: UpdateRequest;
+                    {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        useState(initialValue: any) {
+                            const [value, setInternal] = hooks.useState(initialValue);
+
+                            return [
+                                value,
+                                (newValue: typeof initialValue, requestUpdate?: boolean) => {
+                                    if (!setInternal(newValue)) {
+                                        return;
+                                    }
+                                    if (requestUpdate === false) {
+                                        return;
+                                    }
+                                    if (!currentChildren.includes(renderContext)) {
+                                        return;
+                                    }
+                                    if (isComponent(rootContext.node) && realm) {
+                                        realm.requestUpdate(() => {
+                                            internalRender(
+                                                context,
+                                                template,
+                                                realm,
+                                                rootContext,
+                                                namespace,
+                                                renderContext
+                                            );
+                                        });
+                                    } else {
+                                        internalRender(context, template, realm, rootContext, namespace, renderContext);
+                                    }
+                                },
+                            ];
+                        },
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        useMemo(factory: () => any, deps: unknown[] = []) {
+                            return hooks.useMemo(factory, deps);
+                        },
                     }
                 ),
                 namespace,
@@ -426,7 +437,6 @@ const renderTemplate = (
             );
 
             renderContext.end = currentChildren[context._pos - 1];
-            running = false;
             return;
         }
 
