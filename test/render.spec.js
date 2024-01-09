@@ -366,13 +366,20 @@ describe('render', function() {
                         number: {
                             type: Number,
                         },
+                        camelCase: {
+                            type: String,
+                            attribute: 'camel-case',
+                        },
                     };
                 }
             }
 
             DNA.customElements.define(name, TestElement);
 
-            DNA.render(DNA.h(TestElement, { 'string': '2', 'object': {}, 'data-test': '3' }), wrapper);
+            DNA.render(DNA.h(TestElement, { 'camelCase': 'test', 'string': '2', 'object': {}, 'data-test': '3' }), wrapper);
+            expect(wrapper.querySelector(name).camelCase).to.be.equal('test');
+            expect(wrapper.querySelector(name).getAttribute('camelCase')).to.be.null;
+            expect(wrapper.querySelector(name).getAttribute('camel-case')).to.be.equal('test');
             expect(wrapper.querySelector(name).string).to.be.undefined;
             expect(wrapper.querySelector(name).getAttribute('string')).to.be.equal('2');
             expect(wrapper.querySelector(name).object).to.be.a('object');
