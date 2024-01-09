@@ -1,5 +1,15 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.13
+
+### Major Changes
+
+-   ad55600: Refactored function components hooks.
+
+### Patch Changes
+
+-   7d3ab21: Fix setting property on native elements during render.
+
 ## 4.0.0-alpha.12
 
 ### Patch Changes
