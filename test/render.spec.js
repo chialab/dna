@@ -397,17 +397,24 @@ describe(
                                 number: {
                                     type: Number,
                                 },
+                                camelCase: {
+                                    type: String,
+                                    attribute: 'camel-case',
+                                },
                             };
                         }
                     }
                 );
 
                 const elem = DNA.render(
-                    DNA.h(name, { 'number': 2, 'string': '2', 'object': {}, 'data-test': '3' }),
+                    DNA.h(name, { 'number': 2, 'camelCase': 'test', 'string': '2', 'object': {}, 'data-test': '3' }),
                     wrapper
                 );
                 expect(elem.number).toBe(2);
                 expect(elem.string).toBeUndefined();
+                expect(elem.camelCase).toBe('test');
+                expect(elem.getAttribute('camelCase')).toBeNull();
+                expect(elem.getAttribute('camel-case')).toBe('test');
                 expect(elem.getAttribute('string')).toBe('2');
                 expect(elem.object).toBeTypeOf('object');
                 expect(elem.getAttribute('object')).toBeNull();
