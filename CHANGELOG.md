@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.14
+
+### Patch Changes
+
+-   04f9e02: Handle component properties in rendering.
+
 ## 4.0.0-alpha.13
 
 ### Major Changes
