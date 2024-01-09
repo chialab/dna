@@ -239,7 +239,7 @@ function Row({ children, id }, { useState }) {
         id=${id}
         class="${{ selected }}"
         onclick=${toggle}
-        >${children}>${children}</tr
+        >${children}</tr
     >`;
 }
 
@@ -255,6 +255,35 @@ html`<table>
     </tbody>
 </table>`;
 ```
+
+```ts [vdom]
+function Row({ children, id }, { useState }) {
+    const [selected, setSelected] = useState(false);
+    const toggle = () => setSelected(!selected);
+
+    return h(
+        'tr',
+        {
+            id,
+            class: { selected },
+            onclick: toggle,
+        },
+        children
+    );
+}
+
+h(
+    'table',
+    null,
+    h(
+        'tbody',
+        null,
+        items.map((item) => h(Row, item, h('td', null, item.id), h('td', null, item.label)))
+    )
+);
+```
+
+:::
 
 ### The `useMemo` hook
 
