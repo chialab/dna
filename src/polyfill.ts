@@ -25,16 +25,28 @@ function polyfillBuiltin() {
                 if (mutation.addedNodes) {
                     for (let i = 0, len = mutation.addedNodes.length; i < len; i++) {
                         const node = mutation.addedNodes[i];
-                        if (CE_SYMBOL in node) {
-                            (node as unknown as CustomElement).connectedCallback();
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (CE_SYMBOL in node) {
+                                (node as unknown as CustomElement).connectedCallback();
+                            }
+
+                            (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
+                                (child as unknown as CustomElement).connectedCallback();
+                            });
                         }
                     }
                 }
                 if (mutation.removedNodes) {
                     for (let i = 0, len = mutation.removedNodes.length; i < len; i++) {
                         const node = mutation.removedNodes[i];
-                        if (CE_SYMBOL in node) {
-                            (node as unknown as CustomElement).disconnectedCallback();
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (CE_SYMBOL in node) {
+                                (node as unknown as CustomElement).disconnectedCallback();
+                            }
+
+                            (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
+                                (child as unknown as CustomElement).disconnectedCallback();
+                            });
                         }
                     }
                 }
@@ -86,6 +98,7 @@ function polyfillBuiltin() {
 
             const element = nativeCreateElement(tag) as CustomElement;
             setPrototypeOf(element, ActualConstructor.prototype);
+            element.setAttribute(':ce-polyfill', '');
 
             const observedAttributes = ActualConstructor.observedAttributes || [];
             const observer = new MutationObserver((mutations) => {
@@ -125,13 +138,18 @@ function polyfillBuiltin() {
         CurrentConstructor.__shim = true;
     };
 
-    customElements.upgrade = function (root: HTMLElement) {
-        const nodes = root.children;
-        for (let i = 0, len = nodes.length; i < len; i++) {
-            const node = nodes[i] as HTMLElement;
-            if (node) {
-                customElements.upgrade(node);
-            }
+    customElements.upgrade = function polyfillUpgrade(root: HTMLElement, nested = false) {
+        if (!nested) {
+            upgrade(root);
+        }
+
+        Array.from(root.children).forEach((node) => {
+            polyfillUpgrade(node as HTMLElement, true);
+        });
+
+        if (CE_SYMBOL in root) {
+            // already upgraded
+            return;
         }
 
         const is = root.getAttribute('is');
