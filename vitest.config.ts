@@ -30,6 +30,7 @@ export default defineConfig({
         dir: './test',
         include: ['./*.spec.js'],
         coverage: {
+            all: false,
             include: ['src'],
             reporter: [['clover'], ['html']],
         },
