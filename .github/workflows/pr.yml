@@ -7,6 +7,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-test:
-    uses: ./.github/workflows/lint_test.yml
+  lint-build-test:
+    uses: ./.github/workflows/lint_build_test.yml
     secrets: inherit

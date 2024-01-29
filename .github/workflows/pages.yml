@@ -2,7 +2,8 @@ name: Pages
 on:
   workflow_dispatch:
   push:
-    branches: ['main', 'v4']
+    branches:
+      - main
 
 jobs:
   build:
