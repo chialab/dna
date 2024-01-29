@@ -34,13 +34,7 @@ DNA uses [**Quantum**](https://chialab.github.io/quantum/) instead of ShadowDOM 
 
 ## Get the library
 
-Usage via [unpkg.com](https://unpkg.com/) as ES6 module:
-
-```js
-import { Component, define, html, ... } from 'https://unpkg.com/@chialab/dna?module';
-```
-
-Or install via NPM:
+Install via NPM:
 
 ```
 npm i @chialab/dna@alpha
