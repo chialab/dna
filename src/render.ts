@@ -430,7 +430,8 @@ const renderTemplate = (
                         useMemo(factory: () => any, deps: unknown[] = []) {
                             return hooks.useMemo(factory, deps);
                         },
-                    }
+                    },
+                    context
                 ),
                 namespace,
                 keys,

@@ -3,6 +3,7 @@ import htm from 'htm';
 import { type ElementAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
 import { type BaseClass, type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
 import { type HTML } from './HTML';
+import { type Context } from './render';
 
 /**
  * Identify virtual dom objects.
@@ -118,7 +119,8 @@ export type FunctionComponent<P = any> = (
     hooks: {
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
-    }
+    },
+    context: Context
 ) => Template;
 
 /**
