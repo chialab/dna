@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0-alpha.16
+
+### Patch Changes
+
+- eec481f: Pass context to function component.
+
 ## 4.0.0-alpha.15
 
 ### Patch Changes
