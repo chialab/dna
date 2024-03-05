@@ -7,7 +7,7 @@ interface BrowserStackConfig {
 }
 
 declare module 'vite' {
-    interface UserConfig {
+    interface ResolvedConfig {
         browserstack?: BrowserStackConfig;
     }
 }

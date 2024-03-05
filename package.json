@@ -50,7 +50,7 @@
     "prepack": "yarn build && publint"
   },
   "dependencies": {
-    "@chialab/quantum": "^1.0.0-alpha.6",
+    "@chialab/quantum": "^1.0.0",
     "htm": "^3.0.3"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.1",
     "browserstack-local": "^1.5.5",
-    "esbuild": "^0.19.4",
+    "esbuild": "^0.20.0",
     "eslint": "^8.0.0",
     "eslint-plugin-jsdoc": "^39.3.2",
     "ip": "^1.1.8",

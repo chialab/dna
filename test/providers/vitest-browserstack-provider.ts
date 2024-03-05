@@ -1,18 +1,15 @@
 import { Local, type Options } from 'browserstack-local';
 import ip from 'ip';
+import type { BrowserProvider, BrowserProviderInitializationOptions, WorkspaceProject } from 'vitest/node';
 import { remote, type RemoteOptions } from 'webdriverio';
 
 /**
  * A BrowserStack provider for vitest.
  */
-export default class BrowserStackProvider {
+export default class BrowserStackProvider implements BrowserProvider {
     name = 'browserstack';
 
-    /**
-     * Vitest does not exposes WorkspaceProject
-     * @see https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/workspace.ts
-     */
-    protected ctx: any;
+    protected ctx: WorkspaceProject;
     protected testName: string;
     protected bs: Local;
     protected bsOptions: Partial<Options>;
@@ -27,18 +24,29 @@ export default class BrowserStackProvider {
         });
     }
 
-    initialize({ ctx, config, browser }, { browser: browserName }) {
+    initialize(ctx: WorkspaceProject, options: BrowserProviderInitializationOptions) {
         this.ctx = ctx;
+
+        const { config, browser } = ctx;
+        if (!browser) {
+            throw new Error('BrowserStack provider requires a browser configuration');
+        }
+
         this.testName = config.name;
 
+        const { browser: browserName } = options;
         const browserstackConfig = browser.config.browserstack || {};
+        if (!browserstackConfig.capabilities) {
+            throw new Error('Missing capabilities in browserstack configuration');
+        }
+
         this.bsOptions = {
             force: true,
             forceLocal: true,
             user: process.env.BROWSERSTACK_USERNAME as string,
             key: process.env.BROWSERSTACK_ACCESS_KEY as string,
             localIdentifier: `vitest-${Date.now()}`,
-            ...browserstackConfig.options,
+            ...(browserstackConfig.options || {}),
         };
         this.capabilities = browserstackConfig.capabilities[browserName.replace('browserstack:', '')];
         if (!this.capabilities) {
@@ -110,15 +118,6 @@ export default class BrowserStackProvider {
         if (title !== 'Vitest Browser Runner') {
             throw new Error('Failed to open url');
         }
-    }
-
-    /**
-     * TODO
-     * @returns A callback.
-     * @see https://github.com/vitest-dev/vitest/blob/eac7776521bcf4e335771b1ab4f823f40ad9c4ff/packages/vitest/src/node/browser/webdriver.ts#L74
-     */
-    catchError() {
-        return () => {};
     }
 
     async close() {
