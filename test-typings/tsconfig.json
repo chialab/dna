@@ -18,7 +18,7 @@
     "baseUrl": ".",
     "rootDir": "../..",
     "paths": {
-      "@chialab/dna": ["../src/index.ts"],
-    },
-  },
+      "@chialab/dna": ["../src/index.ts"]
+    }
+  }
 }

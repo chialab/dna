@@ -497,7 +497,7 @@ describe(
                         return DNA.h('button', { onclick: context.listener });
                     },
                     HTML(context) {
-                        return DNA.html`<button onclick=${context.listener}></button>`;
+                        return DNA.html`<button title="click me" onclick=${context.listener}></button>`;
                     },
                 };
 

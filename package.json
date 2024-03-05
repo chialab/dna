@@ -65,7 +65,7 @@
     "browserstack-local": "^1.5.5",
     "esbuild": "^0.20.0",
     "eslint": "^8.0.0",
-    "eslint-plugin-jsdoc": "^39.3.2",
+    "eslint-plugin-jsdoc": "^48.0.0",
     "ip": "^1.1.8",
     "playwright": "^1.38.1",
     "prettier": "^3.0.3",

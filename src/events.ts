@@ -341,6 +341,7 @@ export const dispatchEvent = (
  * @param bubbles Should the event bubble.
  * @param cancelable Should the event be cancelable.
  * @param composed Is the event composed.
+ * @returns A promise that resolves when all the async event's promises are resolved.
  */
 export const dispatchAsyncEvent = async (
     element: Element,

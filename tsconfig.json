@@ -24,8 +24,8 @@
     "isolatedModules": true,
     "moduleResolution": "node",
     "paths": {
-      "@chialab/dna": ["./src/index.ts"],
-    },
+      "@chialab/dna": ["./src/index.ts"]
+    }
   },
-  "include": ["src"],
+  "include": ["src"]
 }

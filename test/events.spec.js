@@ -863,7 +863,7 @@ describe(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<button></button>`;
+                            return DNA.html`<button title="click me"></button>`;
                         }
                     }
                 );
@@ -886,7 +886,7 @@ describe(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<button></button>`;
+                            return DNA.html`<button title="click me"></button>`;
                         }
                     }
                 );

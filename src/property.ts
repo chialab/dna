@@ -265,7 +265,7 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
  * @param chain Should create inheritance chain of properties.
  * @returns A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance>(prototype: T, chain = false) => {
+export const getProperties = <T extends ComponentInstance>(prototype: T, chain: boolean = false) => {
     const props = ((prototype as WithProperties<T>)[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (chain && !hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
