@@ -58,15 +58,14 @@
     "@changesets/cli": "^2.22.0",
     "@chialab/eslint-config": "^4.0.0",
     "@chialab/prettier-config": "^1.2.2",
+    "@chialab/vitest-provider-browserstack": "^0.18.0",
     "@vitest/browser": "^1.0.0",
     "@vitest/coverage-istanbul": "^1.0.0",
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.1",
-    "browserstack-local": "^1.5.5",
     "esbuild": "^0.20.0",
     "eslint": "^8.0.0",
     "eslint-plugin-jsdoc": "^48.0.0",
-    "ip": "^1.1.8",
     "playwright": "^1.38.1",
     "prettier": "^3.0.3",
     "publint": "^0.2.3",
@@ -74,7 +73,6 @@
     "tslib": "^2.6.2",
     "typescript": "^5.0.0",
     "vitepress": "^1.0.0-rc.25",
-    "vitest": "^1.0.0",
-    "webdriverio": "^8.17.0"
+    "vitest": "^1.0.0"
   }
 }

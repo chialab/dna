@@ -25,7 +25,8 @@
     "moduleResolution": "node",
     "paths": {
       "@chialab/dna": ["./src/index.ts"]
-    }
+    },
+    "types": ["@chialab/vitest-provider-browserstack"]
   },
   "include": ["src"]
 }

@@ -1,6 +1,7 @@
+/// <reference types="@chialab/vitest-provider-browserstack" />
+
 import { defineConfig, mergeConfig } from 'vitest/config';
 import vitestConfig from './vitest.config';
-import './test/providers/vitest-browserstack-provider.d';
 
 export default mergeConfig(
     vitestConfig,
@@ -11,7 +12,7 @@ export default mergeConfig(
             },
             browser: {
                 enabled: true,
-                provider: './test/providers/vitest-browserstack-provider.ts',
+                provider: '@chialab/vitest-provider-browserstack',
                 name: 'browserstack:chrome-latest',
                 slowHijackESM: false,
                 api: {
