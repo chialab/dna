@@ -9,15 +9,15 @@ DNA is published to the NPM registry
 ::: code-group
 
 ```bash [npm]
-npm install @chialab/dna@alpha
+npm install @chialab/dna
 ```
 
 ```bash [yarn]
-yarn add @chialab/dna@alpha
+yarn add @chialab/dna
 ```
 
 ```bash [pnpm]
-pnpm add @chialab/dna@alpha
+pnpm add @chialab/dna
 ```
 
 :::

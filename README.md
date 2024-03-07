@@ -37,11 +37,11 @@ DNA uses [**Quantum**](https://chialab.github.io/quantum/) instead of ShadowDOM 
 Install via NPM:
 
 ```
-npm i @chialab/dna@alpha
+npm i @chialab/dna
 ```
 
 ```
-yarn add @chialab/dna@alpha
+yarn add @chialab/dna
 ```
 
 ## Define a Component
