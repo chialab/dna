@@ -1,6 +1,6 @@
 {
   "name": "@chialab/dna",
-  "version": "4.0.0-alpha.16",
+  "version": "4.0.0",
   "description": "Progressive Web Components",
   "type": "module",
   "main": "dist/dna.js",
