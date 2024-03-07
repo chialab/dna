@@ -86,10 +86,10 @@ export default mergeConfig(
                     },
                 },
                 // oldest safari supported by vitest
-                'safari-14': {
+                'safari-15': {
                     'browserName': 'Safari',
                     'bstack:options': {
-                        browserVersion: '14.1',
+                        browserVersion: '15.6',
                     },
                 },
                 'edge-latest': {

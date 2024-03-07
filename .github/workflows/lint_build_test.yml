@@ -127,7 +127,7 @@ jobs:
           - 'firefox-90'
           # - 'safari-latest'
           - 'safari-16'
-          - 'safari-14'
+          - 'safari-15'
           - 'edge-latest'
     steps:
       - name: Checkout the repository
