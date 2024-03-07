@@ -40,7 +40,7 @@
     "build": "rimraf 'dist' 'types' && yarn types && esbuild dna=src/index.ts jsx-runtime=src/jsx-runtime.ts --splitting --outdir=dist --out-extension:.js=.js --format=esm --bundle --packages=external --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "tsc -p test-typings --noEmit",
+    "test:typings": "tsc -p test/typings --noEmit",
     "test:browser": "vitest run --config vitest.browser.ts",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run --config vitest.node.ts",

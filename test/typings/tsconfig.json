@@ -16,9 +16,9 @@
     "jsx": "react",
     "jsxFactory": "h",
     "baseUrl": ".",
-    "rootDir": "../..",
+    "rootDir": "../../..",
     "paths": {
-      "@chialab/dna": ["../src/index.ts"]
+      "@chialab/dna": ["../../src/index.ts"]
     }
   }
 }
