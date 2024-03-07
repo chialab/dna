@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna/alpha.svg"></a>
+    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
 </p>
 
 ## Features
