@@ -1,5 +1,44 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.0
+
+### Major Changes
+
+- e77bbc9: Remove Observable builtin support.
+- 9bac484: Remove support for node environment.
+- ad55600: Refactored function components hooks.
+- c8dafc0: Add `shouldUpdate` and `requestUpdate` component methods.
+- 02d314e: Use quantum to handle component slotted children in light DOM.
+- 02d314e: Expose `$await` and `$pipe` directives to treat promises and observables.
+- 41ded18: Rename `builtins` to `HTML` namespace.
+- 8e63e39: Add `updatedCallback` component method.
+- b24f0e6: Remove target handling from `@listen` decorator.
+- 5f108c0: Remove support for HTML constructors in rendering.
+
+### Minor Changes
+
+- 0bb72a6: The `define` method now returns the decorated constructor.
+- 93a980a: Externalize htm and quantum packages.
+- 0bb72a6: Remove `customElementPrototype` decorator.
+- 7ed3a2e: Define `tagName` property to component constructors.
+
+### Patch Changes
+
+- ec8bf4a: Better typings for `define` and `extend` methods.
+- be5a445: Update Quantum
+- 33b0a0d: Fix recursive `connectedCallback` for polyfilled elements.
+- eec481f: Pass context to function component.
+- cfb6f5f: Improve and fixing typings.
+- 04f9e02: Handle component properties in rendering.
+- 7d3ab21: Fix setting property on native elements during render.
+- 1224baf: Move element initialization to `inizitialize` method.
+- a163273: Remove internal `VComponent` type.
+- c9d3e40: Fix components render cycle.
+- 0b4a9c2: Globally check polyfilled custom elements.
+- 94e919c: Improve builtin classes typings.
+- d218fe1: Use `event.composedPath()` for event delegation.
+- 8c0b0a3: Treat Quantum as dependency.
+
 ## 4.0.0-alpha.16
 
 ### Patch Changes
