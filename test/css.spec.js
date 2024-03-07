@@ -1,7 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { describe, expect, it } from 'vitest';
 
-describe(
+describe.runIf(typeof window !== 'undefined')(
     'css',
     () => {
         it('should convert :host selector', () => {

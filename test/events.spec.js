@@ -4,7 +4,7 @@ import { __decorate } from 'tslib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getComponentName } from './helpers.js';
 
-describe(
+describe.runIf(typeof window !== 'undefined')(
     'events',
     () => {
         let wrapper;

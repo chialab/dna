@@ -2,11 +2,11 @@ import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getComponentName } from './helpers.js';
 
-const IMG = 'data:image/png;base64,';
-
-describe(
+describe.runIf(typeof window !== 'undefined')(
     'template',
     () => {
+        const IMG = 'data:image/png;base64,';
+
         let wrapper;
         beforeEach(() => {
             wrapper = document.createElement('div');

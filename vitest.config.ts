@@ -34,5 +34,10 @@ export default defineConfig({
             include: ['src'],
             reporter: [['clover'], ['html']],
         },
+        browser: {
+            headless: true,
+            name: 'chromium',
+            provider: 'playwright',
+        },
     },
 });

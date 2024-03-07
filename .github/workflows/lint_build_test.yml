@@ -73,7 +73,7 @@ jobs:
         run: yarn playwright install --with-deps chromium
 
       - name: Run tests
-        run: yarn test:browser --coverage
+        run: yarn test:browser --coverage --coverage.provider istanbul
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
