@@ -31,6 +31,7 @@ This enables support for DNA decorators as well as correct transpilation of clas
 ```json [tsconfig.json]
 {
     "compilerOptions": {
+        "moduleResolution": "bundler",
         "useDefineForClassFields": false,
         "experimentalDecorators": true
     }
