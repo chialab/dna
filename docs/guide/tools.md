@@ -2,11 +2,11 @@
 
 A list of tools and how-to that will improve your experience with DNA.
 
-### Syntax highlighting for templates
+## Templates syntax highlighting
 
 If you are using the `html` helper to generate template, you can install the [lit-html](https://github.com/mjbvz/vscode-lit-html) VSCode extension to enable HTML syntax highlightinh.
 
-### Custom Elements Manifest
+## Custom Elements Manifest
 
 The [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) is a JSON file that describes Custom Elements definitions. It can be used to generate documentation or to provide hints to the IDE when using them. The [CEM Analyzer](https://www.npmjs.com/package/@custom-elements-manifest/analyzer) is a CLI to generate the manifest with suppoort for JSDoc, TypeScript and a bunch of flavors based on most common frameworks. You can use the analyzer DNA plugin to correctly detect features by components interface.  
 For example:
@@ -71,33 +71,39 @@ A map component based on mapbox-gl.
 | `zoom` | The map zoom level changed.   |
 ```
 
-### Storybook
+## Storybook
 
 [Storybook](https://storybook.js.org/) is a fantastic tool for components development. You can create samples for your elements, provide a documentation and an API reference, run accessibility tests and more. Since version 5.6 it also supports [Web Components](https://storybook.js.org/docs/web-components/get-started/introduction).
 
-A DNA addon for Storybook is available with automatic Custom Elements Manifest scans that run across your components to generate documentation and controls.  
-You can install it using the `@chialab/storybook-addon-dna` package from NPM:
+A DNA preset for Storybook is available with automatic Custom Elements Manifest scans that run across your components to generate documentation and controls.  
+You can install it using the `@chialab/storybook-dna-vite` package from NPM:
 
 ::: code-group
 
-```[npm]
-npm i @chialab/storybook-addon-dna -D
+```bash[npm]
+npm i @chialab/storybook-dna-vite -D
 ```
 
-```[yarn]
-yarn add @chialab/storybook-addon-dna -D
+```bash[yarn]
+yarn add @chialab/storybook-dna-vite -D
 ```
 
-```[pnpm]
-pnpm add @chialab/storybook-addon-dna -D
+```bash[pnpm]
+pnpm add @chialab/storybook-dna-vite -D
 ```
 
 :::
 
 And load it in the **main.js** config file:
 
-```js
-module.exports = {
-    addons: ['@storybook/addon-a11y', '@storybook/addon-essentials', '@chialab/storybook-addon-dna'],
+```ts
+export default {
+    framework: {
+        name: '@chialab/storybook-dna-vite',
+        options: {},
+    },
+    docs: {
+        autodocs: 'tag',
+    },
 };
 ```

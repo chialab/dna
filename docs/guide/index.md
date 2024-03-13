@@ -79,7 +79,7 @@ This enables support for DNA decorators as well as correct transpilation of clas
 
 ## Define a component
 
-DNA components are classes which extends the base `HTMLElement``.
+DNA components are classes which extends the base `HTMLElement`.
 
 Defining a component means to link a HTML tag with the element's constructor, as described by the Custom Elements specification.
 In this example we are going to use the `customElement` decorator method to register the component in the DNA registry:
@@ -95,6 +95,14 @@ class HelloWorld extends Component {
 
     render() {
         return <h1>Hello {this.name || 'world'}!</h1>;
+    }
+}
+
+declare module '@chialab/dna' {
+    namespace JSX {
+        interface CustomElements {
+            'hello-world': HelloWorld;
+        }
     }
 }
 ```
@@ -123,6 +131,12 @@ const HelloWorld = define(
 
 :::
 
+::: info
+
+TypeScript enables type checking and hints for component properties when you register the tag name with the `JSX.CustomElements` interface in DNA.
+
+:::
+
 ### Extending native elements
 
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
@@ -141,6 +155,16 @@ class AlertDialog extends HTML.Dialog {
 
     render() {
         return <h1>{this.title}</h1>;
+    }
+}
+
+declare module '@chialab/dna' {
+    namespace JSX {
+        interface CustomElements {
+            'alert-dialog': AlertDialog & {
+                extends: 'dialog';
+            };
+        }
     }
 }
 ```
