@@ -67,6 +67,7 @@ This enables support for DNA decorators as well as correct transpilation of clas
         [
             "@babel/plugin-transform-react-jsx",
             {
+                "runtime": "automatic",
                 "importSource": "@chialab/dna"
             }
         ]
