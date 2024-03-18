@@ -1,7 +1,5 @@
 # Get started
 
-The recommended way to use DNA is to setup a project with Babel or TypeScript which has a lot of life saver features like modules, decorators and typechecking, but it also works untranspiled in the browser.
-
 ## Install
 
 DNA is published to the NPM registry

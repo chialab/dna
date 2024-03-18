@@ -7,10 +7,10 @@ export default defineConfig({
     base: '/dna/',
     outDir: '../public',
 
-    head: [['link', { rel: 'icon', href: 'https://www.chialab.it/favicon.png' }]],
+    head: [['link', { rel: 'icon', href: '/dna/favicon.png' }]],
 
     themeConfig: {
-        logo: 'https://raw.githubusercontent.com/chialab/dna/main/logo.svg',
+        logo: '/chialab.svg',
 
         editLink: {
             pattern: 'https://github.com/chialab/dna/edit/main/docs/:path',
@@ -46,7 +46,7 @@ export default defineConfig({
                 ],
             },
             {
-                text: 'Chialab.io',
+                text: 'Chialab Open Source',
                 link: 'https://www.chialab.io',
             },
         ],
