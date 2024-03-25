@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.5
+
+### Patch Changes
+
+- c41fb69: Set textarea value.
+
 ## 3.22.4
 
 ### Patch Changes
