@@ -178,7 +178,8 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     constructor?: ComponentConstructor
 ) => {
     const isInputValue =
-        (propertyKey === 'checked' || propertyKey === 'value') && (node as HTMLElement).tagName === 'INPUT';
+        (propertyKey === 'checked' || propertyKey === 'value') &&
+        ((node as HTMLElement).tagName === 'INPUT' || (node as HTMLElement).tagName === 'TEXTAREA');
 
     if (oldValue === value && !isInputValue) {
         return;
