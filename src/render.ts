@@ -120,7 +120,7 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
  */
 const isRenderingInput = (element: Node, propertyKey: string): element is HTMLInputElement =>
     (propertyKey === 'checked' || propertyKey === 'value') &&
-    (element as HTMLElement).tagName === 'INPUT' || (element as HTMLElement).tagName === 'TEXTAREA';
+    ((element as HTMLElement).tagName === 'INPUT' || (element as HTMLElement).tagName === 'TEXTAREA');
 
 /**
  * Set a value to an HTML element.
