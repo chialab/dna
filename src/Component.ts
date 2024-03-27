@@ -317,6 +317,10 @@ function initSlotChildNodes<T extends HTMLElement, C extends ComponentInstance<T
         DOM.removeChild(element, child, false);
         childContext.hosts = [element];
         childContext.parent = context;
+
+        if (isElement(child)) {
+            customElements.upgrade(child as HTMLElement);
+        }
     }
     context.children = slotChildNodes;
     return slotChildNodes;
