@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.1
+
+### Patch Changes
+
+- 9ec10fe: Fix root node type in `customElements.upgrade` polyfill.
+- 197d483: Fix setting value to textarea via render.
+
 ## 4.0.0
 
 ### Major Changes
