@@ -138,55 +138,61 @@ function polyfillBuiltin() {
         CurrentConstructor.__shim = true;
     };
 
-    customElements.upgrade = function polyfillUpgrade(root: HTMLElement, nested = false) {
+    const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
+    const isParent = (node: Node): node is ParentNode => 'children' in node;
+
+    customElements.upgrade = function polyfillUpgrade(root: Node, nested = false) {
         if (!nested) {
             upgrade(root);
         }
 
-        Array.from(root.children).forEach((node) => {
-            polyfillUpgrade(node as HTMLElement, true);
-        });
+        upgradeBlock: if (isElement(root)) {
+            if (CE_SYMBOL in root) {
+                // already upgraded
+                break upgradeBlock;
+            }
 
-        if (CE_SYMBOL in root) {
-            // already upgraded
-            return;
-        }
+            const is = root.getAttribute('is');
+            if (!is) {
+                upgrade(root);
+                break upgradeBlock;
+            }
 
-        const is = root.getAttribute('is');
-        if (!is) {
-            upgrade(root);
-            return;
-        }
+            const constructor = customElements.get(is) as CustomElementConstructor;
+            if (!constructor) {
+                break upgradeBlock;
+            }
 
-        const constructor = customElements.get(is) as CustomElementConstructor;
-        if (!constructor) {
-            return;
-        }
+            const attributes: { name: string; value: string }[] = [];
+            const observed = (constructor as CustomElementConstructor).observedAttributes || [];
+            for (let i = 0, len = root.attributes.length; i < len; i++) {
+                const attr = root.attributes[i];
+                if (observed.includes(attr.name)) {
+                    attributes.push({
+                        name: attr.name,
+                        value: attr.value,
+                    });
+                }
+            }
 
-        const attributes: { name: string; value: string }[] = [];
-        const observed = (constructor as CustomElementConstructor).observedAttributes || [];
-        for (let i = 0, len = root.attributes.length; i < len; i++) {
-            const attr = root.attributes[i];
-            if (observed.includes(attr.name)) {
-                attributes.push({
-                    name: attr.name,
-                    value: attr.value,
-                });
+            const upgradedNode = Reflect.construct(constructor, [root], constructor) as CustomElement;
+            for (let i = 0, len = attributes.length; i < len; i++) {
+                const { name, value } = attributes[i];
+                if (upgradedNode.getAttribute(name) === value) {
+                    upgradedNode.attributeChangedCallback(name, null, value);
+                } else {
+                    upgradedNode.setAttribute(name, value);
+                }
+            }
+            if (upgradedNode.isConnected) {
+                upgradedNode.connectedCallback();
             }
         }
 
-        root = Reflect.construct(constructor, [root], constructor);
-
-        for (let i = 0, len = attributes.length; i < len; i++) {
-            const { name, value } = attributes[i];
-            if (root.getAttribute(name) === value) {
-                (root as CustomElement).attributeChangedCallback(name, null, value);
-            } else {
-                root.setAttribute(name, value);
-            }
-        }
-        if (root.isConnected) {
-            (root as CustomElement).connectedCallback();
+        if (isParent(root)) {
+            Array.from(root.children).forEach((node) => {
+                polyfillUpgrade(node as HTMLElement, true);
+            });
         }
     };
 
