@@ -108,7 +108,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         /**
          * A flag to indicate if the component is collecting updates.
          */
-        _collectingUpdates = false;
+        _collectingUpdates = 0;
 
         /**
          * A flag to indicate if the component has a scheduled update.
@@ -425,7 +425,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns True if a re-render has been triggered.
          */
         requestUpdate() {
-            if (!this._collectingUpdates) {
+            if (this._collectingUpdates === 0) {
                 this.forceUpdate();
                 return true;
             }
@@ -453,7 +453,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * Start collecting updates.
          */
         collectUpdatesStart() {
-            this._collectingUpdates = true;
+            this._collectingUpdates++;
         }
 
         /**
@@ -461,9 +461,9 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd() {
-            this._collectingUpdates = false;
+            this._collectingUpdates--;
 
-            if (this._updateScheduled) {
+            if (this._updateScheduled && this._collectingUpdates === 0) {
                 this._updateScheduled = false;
                 this.requestUpdate();
                 return true;
