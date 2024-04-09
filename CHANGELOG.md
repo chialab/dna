@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.3
+
+### Patch Changes
+
+- 8ae7c63: Replace `context` argument with `useRenderContext` hook.
+
 ## 4.0.2
 
 ### Patch Changes
