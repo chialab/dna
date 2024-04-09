@@ -119,8 +119,8 @@ export type FunctionComponent<P = any> = (
     hooks: {
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
-    },
-    context: Context
+        useRenderContext: () => Context;
+    }
 ) => Template;
 
 /**

@@ -338,6 +338,16 @@ h('table', null,
 
 :::
 
+### The `useRenderContext` hook
+
+The `useRenderContext` hook is a function that returns the current context of the DNA render cycle. The render context is an object that contains the informations about the virtual node as well as its position in the tree.
+
+::: warning
+
+It is highly discouraged to use the `useRenderContext` hook in function components. Also, please note that this hook will be deprecated once `useRef` and `useEffect` hooks will be available.
+
+:::
+
 ## Nodes and references
 
 DNA can handle `Node` instances as children and hyper nodes as well. When passed as children, the very same node is positioned "as is" to the right place in the template:
