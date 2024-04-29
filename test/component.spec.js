@@ -706,9 +706,11 @@ describe(
                 });
 
                 describe('attribute and properties sync', () => {
-                    let element;
+                    let element, fromAttributeSpy;
 
-                    beforeAll(() => {
+                    beforeEach(() => {
+                        fromAttributeSpy = vi.fn();
+
                         let TestElement = class TestElement extends DNA.Component {
                             constructor(...args) {
                                 super(...args);
@@ -739,6 +741,7 @@ describe(
                             [
                                 DNA.property({
                                     fromAttribute(value) {
+                                        fromAttributeSpy();
                                         return parseInt(value) * 2;
                                     },
                                     toAttribute(value) {
@@ -841,6 +844,11 @@ describe(
                         it('should convert using configuration', () => {
                             element.convertion = 4;
                             expect(element.getAttribute('convertion')).toBe('2');
+                        });
+
+                        it('should not convert attribute if set by property', () => {
+                            element.convertion = 4;
+                            expect(fromAttributeSpy).not.toHaveBeenCalled();
                         });
                     });
                 });
