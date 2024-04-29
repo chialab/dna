@@ -573,30 +573,6 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
 };
 
 /**
- * Reflect attribute value to property.
- *
- * @param element The node to update.
- * @param attributeName The name of the changed attribute.
- * @param newValue The new value of the attribute (null if removed).
- */
-export const reflectAttributeToProperty = <T extends ComponentInstance>(
-    element: T,
-    attributeName: string,
-    newValue: string | null
-) => {
-    const property = getPropertyForAttribute(element, attributeName);
-    if (!property) {
-        return;
-    }
-
-    // update the Component Property value
-    const { name, attribute, fromAttribute } = property;
-    if (attribute && fromAttribute) {
-        element[name] = fromAttribute.call(element, newValue);
-    }
-};
-
-/**
  * Populate property declaration using its field descriptor.
  * @param declaration The declaration to update.
  * @param descriptor The field descriptor.

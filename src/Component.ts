@@ -20,7 +20,7 @@ import {
     defineProperties,
     getProperties,
     getProperty,
-    reflectAttributeToProperty,
+    getPropertyForAttribute,
     reflectPropertyToAttribute,
     removeObserver,
     type PropertyConfig,
@@ -114,6 +114,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * A flag to indicate if the component has a scheduled update.
          */
         _updateScheduled = false;
+
+        /**
+         * The property that changed.
+         */
+        _changedProperty: keyof this | null = null;
 
         /**
          * A flag to indicate component instances.
@@ -236,6 +241,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         disconnectedCallback() {}
 
         /**
+         * Invoked each time the component has been updated.
+         */
+        updatedCallback() {}
+
+        /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.
          *
          * @param attributeName The name of the updated attribute.
@@ -243,7 +253,19 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @param newValue The new value for the attribute (null if removed).
          */
         attributeChangedCallback(attributeName: string, oldValue: null | string, newValue: string | null) {
-            reflectAttributeToProperty(this, attributeName, newValue);
+            const property = getPropertyForAttribute(this, attributeName);
+            if (!property) {
+                return;
+            }
+
+            const { name, attribute, fromAttribute } = property;
+            if (name === this._changedProperty) {
+                return;
+            }
+
+            if (attribute && fromAttribute) {
+                this[name] = fromAttribute.call(this, newValue);
+            }
         }
 
         /**
@@ -254,13 +276,10 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @param newValue The new value for the property (undefined if removed).
          */
         stateChangedCallback<P extends keyof this>(propertyName: P, oldValue: this[P] | undefined, newValue: this[P]) {
+            this._changedProperty = propertyName;
             reflectPropertyToAttribute(this, propertyName, newValue);
+            this._changedProperty = null;
         }
-
-        /**
-         * Invoked each time the component has been updated.
-         */
-        updatedCallback() {}
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -274,7 +293,9 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             oldValue: this[P] | undefined,
             newValue: this[P]
         ) {
+            this._changedProperty = propertyName;
             reflectPropertyToAttribute(this, propertyName, newValue);
+            this._changedProperty = null;
         }
 
         /**
@@ -284,8 +305,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns The inner value of the property.
          */
         getInnerPropertyValue<P extends keyof this>(propertyName: P): this[P] {
-            const property = getProperty(this, propertyName, true);
-            return this[property.symbol as keyof this] as this[P];
+            return this[getProperty(this, propertyName, true).symbol as keyof this] as this[P];
         }
 
         /**
@@ -295,8 +315,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @param value The inner value to set.
          */
         setInnerPropertyValue<P extends keyof this>(propertyName: P, value: this[P]) {
-            const property = getProperty(this, propertyName, true);
-            this[property.symbol as keyof this] = value;
+            this[getProperty(this, propertyName, true).symbol as keyof this] = value;
         }
 
         /**
