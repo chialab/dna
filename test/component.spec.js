@@ -708,7 +708,7 @@ describe(
                 describe('attribute and properties sync', () => {
                     let element, fromAttributeSpy;
 
-                    beforeAll(() => {
+                    beforeEach(() => {
                         fromAttributeSpy = vi.fn();
 
                         let TestElement = class TestElement extends DNA.Component {
@@ -846,7 +846,7 @@ describe(
                             expect(element.getAttribute('convertion')).toBe('2');
                         });
 
-                        it.only('should not convert attribute if set by property', () => {
+                        it('should not convert attribute if set by property', () => {
                             element.convertion = 4;
                             expect(fromAttributeSpy).not.toHaveBeenCalled();
                         });
