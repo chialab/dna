@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.4
+
+### Patch Changes
+
+- 9c06bf3: Prevent calling `fromAttribute` when attribute set by property.
+
 ## 4.0.3
 
 ### Patch Changes
