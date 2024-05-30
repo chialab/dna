@@ -670,7 +670,11 @@ export const internalRender = (
     }
 
     while (currentIndex <= --end) {
-        context.node.removeChild(contextChildren.splice(end, 1)[0].node);
+        const [child] = contextChildren.splice(end, 1);
+        const parentNode = child.node.parentNode;
+        if (parentNode === context.node || (realm?.open && parentNode === realm.node && realm.root === context.node)) {
+            context.node.removeChild(child.node);
+        }
     }
 
     return contextChildren;
