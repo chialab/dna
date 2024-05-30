@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.6
+
+### Patch Changes
+
+- d63ed8e: Fix render cycle cleanup.
+
 ## 4.0.5
 
 ### Patch Changes
