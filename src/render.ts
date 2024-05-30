@@ -39,8 +39,9 @@ export type Context = {
     type: FunctionComponent | string | null;
     root?: Context;
     owner?: Context;
+    parent?: Context;
     children: Context[];
-    parents: WeakMap<Node, Context>;
+    contexts: WeakMap<Node, Context>;
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
     state?: HooksState;
     end?: Context;
@@ -71,7 +72,7 @@ export const createContext = (
     root,
     owner,
     children: [],
-    parents: new WeakMap(),
+    contexts: new WeakMap(),
     _pos: 0,
 });
 
@@ -296,17 +297,20 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
         let currentContext: Context | null;
         while ((currentContext = currentChildren[pos]) && childContext !== currentContext) {
             parentNode.removeChild(currentContext.node);
-            rootContext.parents.delete(currentContext.node);
+            rootContext.contexts.delete(currentContext.node);
             currentChildren.splice(pos, 1);
         }
     } else {
-        const currentParentContext = rootContext.parents.get(childContext.node);
-        if (currentParentContext) {
-            currentParentContext.children.splice(currentParentContext.children.indexOf(childContext), 1);
+        const currentChildContext = rootContext.contexts.get(childContext.node);
+        if (currentChildContext?.parent && currentChildContext.parent !== parentContext) {
+            const { node: currentParentNode, children: currentParentChildren } = currentChildContext.parent;
+            currentParentNode.removeChild(childContext.node);
+            currentParentChildren.splice(currentParentChildren.indexOf(currentChildContext), 1);
         }
         parentNode.insertBefore(childContext.node, currentChildren[pos]?.node);
         currentChildren.splice(pos, 0, childContext);
-        rootContext.parents.set(childContext.node, parentContext);
+        childContext.parent = parentContext;
+        rootContext.contexts.set(childContext.node, childContext);
     }
     parentContext._pos++;
 };
