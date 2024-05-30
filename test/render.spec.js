@@ -696,6 +696,56 @@ describe.runIf(typeof window !== 'undefined')(
 
                 expect(child.textContent).toBe('Hello');
             });
+
+            it('should resuse refs context', () => {
+                const name = getComponentName();
+                DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                showList: {
+                                    type: Boolean,
+                                    defaultValue: true,
+                                },
+                                items: {
+                                    type: Array,
+                                },
+                            };
+                        }
+
+                        list = this.ownerDocument.createElement('ul');
+
+                        render() {
+                            if (this.showList) {
+                                return DNA.h('ul', { ref: this.list }, [
+                                    ...this.items.map((item) => DNA.h('li', null, item)),
+                                ]);
+                            }
+                        }
+                    }
+                );
+
+                const element = document.createElement(name);
+                element.items = ['one', 'two', 'three'];
+                wrapper.appendChild(element);
+
+                expect(element.list.childNodes).toHaveLength(3);
+                expect(element.list.childNodes[0].textContent).toBe('one');
+                expect(element.list.childNodes[1].textContent).toBe('two');
+                expect(element.list.childNodes[2].textContent).toBe('three');
+
+                element.showList = false;
+                element.items = ['four', 'five'];
+
+                expect(element.list.isConnected).toBe(false);
+
+                element.showList = true;
+
+                expect(element.list.childNodes).toHaveLength(2);
+                expect(element.list.childNodes[0].textContent).toBe('four');
+                expect(element.list.childNodes[1].textContent).toBe('five');
+            });
         });
 
         describe('hooks', () => {

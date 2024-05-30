@@ -47,6 +47,7 @@ export type Context = {
     end?: Context;
     key?: unknown;
     keys?: Map<unknown, Context>;
+    refs?: Map<Node, Context>;
     _pos: number;
 };
 
@@ -322,6 +323,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
  * @param template The template to render in Virtual DOM format.
  * @param namespace The current namespace uri of the render.
  * @param keys The current keys map of the render.
+ * @param refs The current refs map of the render.
  * @param realm The realm to use for the render.
  * @param fragment The fragment context to update.
  */
@@ -331,6 +333,7 @@ const renderTemplate = (
     template: Template,
     namespace: string,
     keys: Map<unknown, Context> | undefined,
+    refs: Map<Node, Context> | undefined,
     realm?: Realm,
     fragment: Context = context
 ) => {
@@ -344,13 +347,13 @@ const renderTemplate = (
             return;
         }
         if (len === 1) {
-            renderTemplate(context, rootContext, template[0], namespace, keys, realm, fragment);
+            renderTemplate(context, rootContext, template[0], namespace, keys, refs, realm, fragment);
             return;
         }
 
         // call the render function for each child
         for (let i = 0; i < len; i++) {
-            renderTemplate(context, rootContext, template[i], namespace, keys, realm, fragment);
+            renderTemplate(context, rootContext, template[i], namespace, keys, refs, realm, fragment);
         }
         return;
     }
@@ -360,7 +363,7 @@ const renderTemplate = (
 
     if (isVObject(template)) {
         if (isVFragment(template)) {
-            renderTemplate(context, rootContext, template.children, namespace, keys, realm, fragment);
+            renderTemplate(context, rootContext, template.children, namespace, keys, refs, realm, fragment);
             return;
         }
 
@@ -385,6 +388,7 @@ const renderTemplate = (
                 rootNode || document.createComment(Function.name),
                 namespace,
                 keys,
+                refs,
                 realm,
                 fragment
             );
@@ -450,6 +454,7 @@ const renderTemplate = (
                 ),
                 namespace,
                 keys,
+                refs,
                 realm
             );
 
@@ -466,9 +471,9 @@ const renderTemplate = (
             const name = properties?.name;
             const slotted = realm.childNodesBySlot(name);
             if (slotted.length) {
-                renderTemplate(context, rootContext, slotted, namespace, keys, realm, fragment);
+                renderTemplate(context, rootContext, slotted, namespace, keys, refs, realm, fragment);
             } else if (children) {
-                renderTemplate(context, rootContext, children, namespace, keys, realm, fragment);
+                renderTemplate(context, rootContext, children, namespace, keys, refs, realm, fragment);
             }
             return;
         }
@@ -501,9 +506,8 @@ const renderTemplate = (
         if (!templateContext) {
             if (isVNode(template)) {
                 const node = template.type;
-                templateContext =
-                    currentChildren.find((child) => child.node === node) ||
-                    createContext(ContextKind.REF, null, template.type, rootContext);
+                templateContext = refs?.get(node) || createContext(ContextKind.REF, null, template.type, rootContext);
+                fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
             } else {
                 const constructor = customElements?.get(properties?.is ?? template.type);
                 templateContext = createContext(
@@ -638,18 +642,21 @@ export const internalRender = (
 
     let endContext: Context | undefined;
     let currentKeys: Map<unknown, Context> | undefined;
+    let currentRefs: Map<Node, Context> | undefined;
     if (fragment) {
         context._pos = context.children.indexOf(fragment);
         endContext = fragment.end as Context;
         currentKeys = fragment.keys;
+        currentRefs = fragment.refs;
         delete fragment.keys;
     } else {
         context._pos = 0;
         currentKeys = context.keys;
+        currentRefs = context.refs;
         delete context.keys;
     }
 
-    renderTemplate(context, rootContext, template, namespace, currentKeys, realm, fragment);
+    renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, realm, fragment);
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
