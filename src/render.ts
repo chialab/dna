@@ -40,6 +40,7 @@ export type Context = {
     root?: Context;
     owner?: Context;
     children: Context[];
+    parents: WeakMap<Node, Context>;
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
     state?: HooksState;
     end?: Context;
@@ -70,6 +71,7 @@ export const createContext = (
     root,
     owner,
     children: [],
+    parents: new WeakMap(),
     _pos: 0,
 });
 
@@ -283,8 +285,9 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
  * Insert a node into the render tree.
  * @param parentContext The parent context.
  * @param childContext The child context.
+ * @param rootContext The root context.
  */
-const insertNode = (parentContext: Context, childContext: Context) => {
+const insertNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
     const { node: parentNode, _pos: pos } = parentContext;
     const currentChildren = parentContext.children;
     if (currentChildren.includes(childContext)) {
@@ -293,12 +296,17 @@ const insertNode = (parentContext: Context, childContext: Context) => {
         let currentContext: Context | null;
         while ((currentContext = currentChildren[pos]) && childContext !== currentContext) {
             parentNode.removeChild(currentContext.node);
+            rootContext.parents.delete(currentContext.node);
             currentChildren.splice(pos, 1);
         }
     } else {
-        // we need to insert the new node into the tree
+        const currentParentContext = rootContext.parents.get(childContext.node);
+        if (currentParentContext) {
+            currentParentContext.children.splice(currentParentContext.children.indexOf(childContext), 1);
+        }
         parentNode.insertBefore(childContext.node, currentChildren[pos]?.node);
         currentChildren.splice(pos, 0, childContext);
+        rootContext.parents.set(childContext.node, parentContext);
     }
     parentContext._pos++;
 };
@@ -552,7 +560,7 @@ const renderTemplate = (
             (node as ComponentInstance).collectUpdatesEnd();
         }
 
-        insertNode(context, templateContext);
+        insertNode(context, templateContext, rootContext);
 
         if ((templateContext && children && children.length) || templateContext.root === rootContext) {
             internalRender(templateContext, children, realm, rootContext, namespaceURI, undefined);
@@ -563,7 +571,8 @@ const renderTemplate = (
         insertNode(
             context,
             currentChildren.find((child) => child.node === template) ||
-                createContext(ContextKind.REF, null, template, rootContext)
+                createContext(ContextKind.REF, null, template, rootContext),
+            rootContext
         );
         return;
     }
@@ -583,7 +592,7 @@ const renderTemplate = (
             currentContext.type = template;
             currentContext.node.nodeValue = template as string;
         }
-        insertNode(context, currentContext);
+        insertNode(context, currentContext, rootContext);
         return;
     }
 
@@ -596,7 +605,8 @@ const renderTemplate = (
             document.createTextNode(template as string),
             rootContext,
             rootContext
-        )
+        ),
+        rootContext
     );
 };
 
@@ -649,11 +659,7 @@ export const internalRender = (
     }
 
     while (currentIndex <= --end) {
-        const [child] = contextChildren.splice(end, 1);
-        const parentNode = child.node.parentNode;
-        if (parentNode === context.node || (realm?.open && parentNode === realm.node && realm.root === context.node)) {
-            context.node.removeChild(child.node);
-        }
+        context.node.removeChild(contextChildren.splice(end, 1)[0].node);
     }
 
     return contextChildren;
