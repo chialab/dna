@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.5
+
+### Patch Changes
+
+- 3fd85a7: Reuse render context for referenced nodes.
+- 8f65687: Fix runtime error while moving and replacing slot nodes in the same render cycle.
+
 ## 4.0.4
 
 ### Patch Changes
