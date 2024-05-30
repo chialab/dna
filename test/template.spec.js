@@ -490,6 +490,56 @@ describe.runIf(typeof window !== 'undefined')(
             }
         });
 
+        describe('slot moved and replaced', () => {
+            const TEMPLATES = {
+                JSX(switchProp) {
+                    return [
+                        DNA.h('div', { class: 'parent-1' }, switchProp ? DNA.h('slot') : 'Empty'),
+                        DNA.h('div', { class: 'parent-2' }, !switchProp ? DNA.h('slot') : 'Empty'),
+                    ];
+                },
+                HTML(switchProp) {
+                    return DNA.html`
+                        <div class="parent-1">${switchProp ? DNA.html`<slot />` : 'Empty'}</div>
+                        <div class="parent-2">${!switchProp ? DNA.html`<slot />` : 'Empty'}</div>
+                    `;
+                },
+            };
+
+            for (const type in TEMPLATES) {
+                it(type, () => {
+                    const name = getComponentName();
+                    DNA.define(
+                        name,
+                        class TestElement extends DNA.Component {
+                            static get properties() {
+                                return {
+                                    switch: {
+                                        type: Boolean,
+                                    },
+                                };
+                            }
+
+                            render() {
+                                return TEMPLATES[type](this.switch);
+                            }
+                        }
+                    );
+
+                    const element = document.createElement(name);
+                    element.appendChild(document.createTextNode('Hello'));
+
+                    expect(element.querySelector('.parent-1').textContent).toBe('Empty');
+                    expect(element.querySelector('.parent-2').textContent).toBe('Hello');
+
+                    element.switch = true;
+
+                    expect(element.querySelector('.parent-1').textContent).toBe('Hello');
+                    expect(element.querySelector('.parent-2').textContent).toBe('Empty');
+                });
+            }
+        });
+
         describe('events', () => {
             describe('should add an event listener', () => {
                 const TEMPLATES = {
