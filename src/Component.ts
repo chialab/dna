@@ -362,7 +362,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             cancelable?: boolean,
             composed?: boolean
         ) {
-            return dispatchEvent(this, event as string, detail, bubbles, cancelable, composed);
+            return dispatchEvent(this, event, detail, bubbles, cancelable, composed);
         }
 
         /**

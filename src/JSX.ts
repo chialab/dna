@@ -16,6 +16,11 @@ const V_SYM: unique symbol = Symbol();
 type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
 
 /**
+ * Check if a property is any.
+ */
+type IfAny<T, K extends keyof T, A, B> = 0 extends 1 & T[K] ? A : B;
+
+/**
  * Exclude component mixin properties.
  */
 type ReservedKeys =
@@ -48,12 +53,20 @@ type ReservedKeys =
     | keyof ElementCSSInlineStyle;
 
 /**
+ * Extract known keys of an Element class.
+ */
+type KnownKeys<T> = keyof {
+    [K in keyof T as K extends string ? IfAny<T, K, never, K> : never]: unknown;
+};
+
+/**
  * Pick defined properties of a component.
  */
-export type Props<T extends HTML.Element> = ElementAttributes<T> & {
-    [K in keyof T as K extends ReservedKeys
-        ? never
-        : IfMethod<T, K, never, K extends keyof BaseClass<T> ? never : K>]?: T[K];
+export type Props<
+    T extends HTML.Element,
+    InvalidKeys = ReservedKeys | KnownKeys<BaseClass<T>>,
+> = ElementAttributes<T> & {
+    [K in keyof T as K extends InvalidKeys ? never : IfMethod<T, K, never, K>]?: T[K];
 };
 
 /**
