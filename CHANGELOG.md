@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.0.7
+
+### Patch Changes
+
+- 688da65: Remove `any` properties from the base `HTMLFormElement` when computing JSX props.
+
 ## 4.0.6
 
 ### Patch Changes
