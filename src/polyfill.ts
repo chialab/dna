@@ -139,9 +139,7 @@ function polyfillBuiltin() {
     };
 
     const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
-    const isParent = (node: Node): node is ParentNode => 'children' in node;
-
-    customElements.upgrade = function polyfillUpgrade(root: Node, nested = false) {
+    const polyfillUpgrade = (customElements.upgrade = function (root: Element, nested = false, filter?: NodeFilter) {
         if (!nested) {
             upgrade(root);
         }
@@ -154,7 +152,6 @@ function polyfillBuiltin() {
 
             const is = root.getAttribute('is');
             if (!is) {
-                upgrade(root);
                 break upgradeBlock;
             }
 
@@ -189,12 +186,15 @@ function polyfillBuiltin() {
             }
         }
 
-        if (isParent(root)) {
-            Array.from(root.children).forEach((node) => {
-                polyfillUpgrade(node as HTMLElement, true);
-            });
+        if (!nested) {
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter);
+            let node = walker.nextNode() as Element | null;
+            while (node) {
+                polyfillUpgrade(node, true);
+                node = walker.nextNode() as Element | null;
+            }
         }
-    };
+    });
 
     customElements.define = function (
         name: string,
@@ -208,6 +208,13 @@ function polyfillBuiltin() {
         tagNames[name] = options.extends;
         shimConstructor(constructor);
         define.call(customElements, name, constructor, options);
+        polyfillUpgrade(document.documentElement, false, (node: Node) =>
+            isElement(node) &&
+            node.tagName?.toLowerCase() === options.extends &&
+            node.getAttribute('is')?.toLowerCase() === name
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_SKIP
+        );
     };
 }
 
