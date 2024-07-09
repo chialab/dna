@@ -21,7 +21,7 @@ export interface CustomElementMixin {
     /**
      * Invoked each time one of the elements's attributes is added, removed, or changed.
      *
-     * @param attributeName The name of the updated attribute.
+     * @param attrName The name of the updated attribute.
      * @param oldValue The previous value of the attribute.
      * @param newValue The new value for the attribute (null if removed).
      * @param namespace Attribute namespace.
