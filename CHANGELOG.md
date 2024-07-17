@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.1.1
+
+### Patch Changes
+
+-   1b17025: Polyfill `document.createElement` and `Element.prototype.innerHTML` behaviors for Safari.
+
 ## 4.1.0
 
 ### Minor Changes
