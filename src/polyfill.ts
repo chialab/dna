@@ -13,6 +13,8 @@ function polyfillBuiltin() {
     const customElements = window.customElements;
     const define = customElements.define.bind(customElements);
     const upgrade = customElements.upgrade.bind(customElements);
+    const cloneNode = Node.prototype.cloneNode;
+    const setInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
     const filterBuiltinElement = (node: Node) =>
         isElement(node) && node.getAttribute('is') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
     let childListObserver: MutationObserver;
@@ -181,6 +183,7 @@ function polyfillBuiltin() {
             }
 
             const upgradedNode = Reflect.construct(constructor, [root], constructor) as CustomElement;
+            upgradedNode.setAttribute(':ce-polyfill', '');
             for (let i = 0, len = attributes.length; i < len; i++) {
                 const { name, value } = attributes[i];
                 if (upgradedNode.getAttribute(name) === value) {
@@ -235,7 +238,12 @@ function polyfillBuiltin() {
         return nativeCreateElement.call(document, tagName, options);
     };
 
-    const setInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+    Node.prototype.cloneNode = function (deep?: boolean) {
+        const clone = cloneNode.call(this, deep);
+        polyfillUpgrade(clone as Element);
+        return clone;
+    };
+
     if (setInnerHTML) {
         Object.defineProperty(Element.prototype, 'innerHTML', {
             ...setInnerHTML,
