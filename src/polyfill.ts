@@ -13,6 +13,8 @@ function polyfillBuiltin() {
     const customElements = window.customElements;
     const define = customElements.define.bind(customElements);
     const upgrade = customElements.upgrade.bind(customElements);
+    const filterBuiltinElement = (node: Node) =>
+        isElement(node) && node.getAttribute('is') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
     let childListObserver: MutationObserver;
 
     /**
@@ -26,6 +28,8 @@ function polyfillBuiltin() {
                     for (let i = 0, len = mutation.addedNodes.length; i < len; i++) {
                         const node = mutation.addedNodes[i];
                         if (node.nodeType === Node.ELEMENT_NODE) {
+                            polyfillUpgrade(node as Element);
+
                             if (CE_SYMBOL in node) {
                                 (node as unknown as CustomElement).connectedCallback();
                             }
@@ -139,7 +143,11 @@ function polyfillBuiltin() {
     };
 
     const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
-    const polyfillUpgrade = (customElements.upgrade = function (root: Element, nested = false, filter?: NodeFilter) {
+    const polyfillUpgrade = (customElements.upgrade = function (
+        root: Element,
+        nested = false,
+        filter: NodeFilter = filterBuiltinElement
+    ) {
         if (!nested) {
             upgrade(root);
         }
@@ -216,6 +224,27 @@ function polyfillBuiltin() {
                 : NodeFilter.FILTER_SKIP
         );
     };
+
+    document.createElement = function (tagName: string, options?: ElementCreationOptions) {
+        if (options?.is) {
+            const constructor = customElements.get(options.is);
+            if (constructor) {
+                return new constructor();
+            }
+        }
+        return nativeCreateElement.call(document, tagName, options);
+    };
+
+    const setInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+    if (setInnerHTML) {
+        Object.defineProperty(Element.prototype, 'innerHTML', {
+            ...setInnerHTML,
+            set(this: Element, value: string) {
+                setInnerHTML.set?.call(this, value);
+                polyfillUpgrade(this);
+            },
+        });
+    }
 }
 
 /**
