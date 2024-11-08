@@ -1213,10 +1213,11 @@
   integrity sha512-N0wVbWvZG1mtyFGkyryvgrPkqJOcs5Mv3nvteUBkcv1egiS3Uh7sDTmbEM2NNp/Z4F5kWmg40+1HVSVgvxvbRA==
 
 "@chialab/vitest-provider-browserstack@^0.19.0-beta.0":
-  version "0.19.0-beta.1"
-  resolved "https://registry.npmjs.org/@chialab/vitest-provider-browserstack/-/vitest-provider-browserstack-0.19.0-beta.1.tgz#58f0f116a50b7ab2643b220b32c12f3058efd094"
-  integrity sha512-CLYubuH6OwWbqfMgdh5PP94TTxvCbsN9d+ir0QHSR0N2CxYT8koz/wMuWzlI+4bYDetsbAbiNqNPjmLrGWBUjQ==
+  version "0.19.0-beta.2"
+  resolved "https://registry.npmjs.org/@chialab/vitest-provider-browserstack/-/vitest-provider-browserstack-0.19.0-beta.2.tgz#414c6ae4bc565a5c668c904befb8d261bec56e8f"
+  integrity sha512-PUM450z53B01YfYkcoaysiilZdredTgQJqn27ogXTOUcZUsRLMJCXkXRaptkRc9Q0poS9yaaJpL0AzkBAmPmlA==
   dependencies:
+    "@vitest/browser" "^2.1.4"
     browserstack-local "^1.5.5"
     ip "^2.0.0"
     webdriverio "^8.17.0"
@@ -2172,7 +2173,7 @@
   resolved "https://registry.npmjs.org/@vitejs/plugin-vue/-/plugin-vue-5.1.4.tgz#72b8b705cfce36b00b59af196195146e356500c4"
   integrity sha512-N2XSI2n3sQqp5w7Y/AN/L2XDjBIRGqXko+eDp42sydYSBeJuSm5a1sLf8zakmo8u7tA8NmBgoDLA1HeOESjp9A==
 
-"@vitest/browser@^2.0.0":
+"@vitest/browser@^2.0.0", "@vitest/browser@^2.1.4":
   version "2.1.4"
   resolved "https://registry.npmjs.org/@vitest/browser/-/browser-2.1.4.tgz#11096cdfb7853d93184eb65a3930d6cd2e4c8f84"
   integrity sha512-89SrvShW6kWzmEYtBj5k1gBq88emoC2qrngw5hE1vNpRFteQ5/1URbKIVww391rIALTpzhhCt5yJt5tjLPZxYw==
