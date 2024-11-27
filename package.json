@@ -75,5 +75,8 @@
     "typescript": "^5.0.0",
     "vitepress": "^1.0.0",
     "vitest": "^2.0.0"
+  },
+  "resolutions": {
+    "esbuild": "^0.24.0"
   }
 }
