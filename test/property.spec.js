@@ -443,6 +443,61 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(listener1).toHaveBeenCalledWith(42, 84, 'testProp');
                 expect(listener2).toHaveBeenCalledWith(42, 84, 'testProp');
             });
+
+            it('should restore a property after upgrade', () => {
+                const tagName = getComponentName();
+                const element = document.createElement(tagName);
+
+                expect(element).not.toHaveProperty('testProp');
+                expect(element.getAttribute('test-prop')).toBeNull();
+                element.testProp = 84;
+                expect(element.getAttribute('test-prop')).toBeNull();
+
+                const MyElement = class MyElement extends DNA.Component {
+                    constructor(...args) {
+                        super(...args);
+                        this.testProp = 42;
+                    }
+                };
+                __decorate(
+                    [
+                        DNA.property({
+                            attribute: 'test-prop',
+                        }),
+                    ],
+                    MyElement.prototype,
+                    'testProp',
+                    undefined
+                );
+                expect(element).not.toBeInstanceOf(MyElement);
+                DNA.define(tagName, MyElement);
+                window.customElements.upgrade(element);
+
+                expect(element).toBeInstanceOf(MyElement);
+                expect(element).toHaveProperty('testProp', 84);
+                expect(element.getAttribute('test-prop')).toBe('84');
+            });
+
+            it('should discard a getter property after upgrade', () => {
+                const tagName = getComponentName();
+                const element = document.createElement(tagName);
+
+                expect(element).not.toHaveProperty('testProp');
+                element.testProp = 84;
+
+                const MyElement = class MyElement extends DNA.Component {
+                    get testProp() {
+                        return 42;
+                    }
+                };
+                __decorate([DNA.property()], MyElement.prototype, 'testProp', undefined);
+                expect(element).not.toBeInstanceOf(MyElement);
+                DNA.define(tagName, MyElement);
+                window.customElements.upgrade(element);
+
+                expect(element).toBeInstanceOf(MyElement);
+                expect(element).toHaveProperty('testProp', 42);
+            });
         });
 
         describe('properties getter', () => {

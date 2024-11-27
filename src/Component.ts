@@ -108,17 +108,22 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         /**
          * A flag to indicate if the component is collecting updates.
          */
-        _collectingUpdates = 0;
+        private _collectingUpdates = 0;
 
         /**
          * A flag to indicate if the component has a scheduled update.
          */
-        _updateScheduled = false;
+        private _updateScheduled = false;
 
         /**
          * The property that changed.
          */
-        _changedProperty: keyof this | null = null;
+        private _changedProperty: keyof this | null = null;
+
+        /**
+         * The initial properties of the component.
+         */
+        private _initialProps?: Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>;
 
         /**
          * A flag to indicate component instances.
@@ -181,6 +186,14 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 configurable: true,
             });
 
+            element._initialProps = Object.getOwnPropertyNames(element).reduce(
+                (acc, key) => {
+                    acc[key as Extract<keyof this, string>] = element[key as Extract<keyof this, string>];
+                    return acc;
+                },
+                {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
+            );
+
             return element;
         }
 
@@ -215,6 +228,14 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
 
             this.realm.observe(() => this.requestUpdate());
             (this as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
+
+            for (const propertyKey in computedProperties) {
+                const property = computedProperties[propertyKey];
+                if (this._initialProps?.[propertyKey] !== undefined && (!property.get || property.set)) {
+                    this[propertyKey] = this._initialProps[propertyKey];
+                }
+            }
+            delete this._initialProps;
         }
 
         /**
