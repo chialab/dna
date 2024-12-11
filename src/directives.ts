@@ -2,22 +2,27 @@ import { h, type FunctionComponent, type Template } from './JSX';
 import { getThenableState } from './Thenable';
 
 /**
+ * The parser function.
+ * @param props The properties of the component.
+ * @param hooks The hooks.
+ * @param hooks.useMemo The hook to create a memoized value.
+ * @returns The parsed DOM nodes.
+ */
+const ParseFunction: FunctionComponent = (props, { useMemo }) =>
+    useMemo<ChildNode[] | null>(() => {
+        const parser = new DOMParser();
+        const fragment = parser.parseFromString(props.source, 'text/html').body;
+        customElements.upgrade(fragment);
+
+        return Array.from(fragment.childNodes);
+    }, [props.source]);
+
+/**
  * Convert an HTML string to DOM nodes.
  * @param string The HTML string to conver.
  * @returns The virtual DOM template function.
  */
-export const $parse = (string: string): Template =>
-    h(
-        (props, { useMemo }) =>
-            useMemo<ChildNode[] | null>(() => {
-                const parser = new DOMParser();
-                const fragment = parser.parseFromString(props.source, 'text/html').body;
-                customElements.upgrade(fragment);
-
-                return Array.from(fragment.childNodes);
-            }, [props.source]),
-        { source: string }
-    );
+export const $parse = (string: string): Template => h(ParseFunction, { source: string });
 
 /**
  * Render a promise when it is resolved.
