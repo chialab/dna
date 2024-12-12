@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.3.0
+
+### Minor Changes
+
+- 692e1d3: Convert `Fragnment` into a function in order to support TypeScript ^5.7
+
 ## 4.2.1
 
 ### Patch Changes
