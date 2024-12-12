@@ -8,7 +8,7 @@ import { getThenableState } from './Thenable';
  * @param hooks.useMemo The hook to create a memoized value.
  * @returns The parsed DOM nodes.
  */
-const ParseFunction: FunctionComponent = (props, { useMemo }) =>
+const ParseFunction: FunctionComponent<{ source: string }> = (props, { useMemo }) =>
     useMemo<ChildNode[] | null>(() => {
         const parser = new DOMParser();
         const fragment = parser.parseFromString(props.source, 'text/html').body;
