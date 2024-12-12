@@ -48,3 +48,4 @@ render(
 );
 // @ts-expect-error Promise is not a a function component
 render(<Promise />);
+render(<>Hello</>);
