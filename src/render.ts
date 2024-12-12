@@ -4,7 +4,7 @@ import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
 import { HooksManager, type HooksState } from './Hooks';
 import {
-    isVFragment,
+    Fragment,
     isVFunction,
     isVNode,
     isVObject,
@@ -362,12 +362,11 @@ const renderTemplate = (
     const currentChildren = context.children;
 
     if (isVObject(template)) {
-        if (isVFragment(template)) {
-            renderTemplate(context, rootContext, template.children, namespace, keys, refs, realm, fragment);
-            return;
-        }
-
         if (isVFunction(template)) {
+            if (template.type === Fragment) {
+                renderTemplate(context, rootContext, template.children, namespace, keys, refs, realm, fragment);
+                return;
+            }
             const { type: Function, key, properties, children } = template;
 
             let rootNode: Node | undefined;
@@ -690,7 +689,7 @@ export const internalRender = (
  */
 export const render = (input: Template, root: Node = document.createDocumentFragment()): Node | Node[] | void => {
     const childNodes = internalRender(getRootContext(root), input).map((child) => child.node);
-    if (!isArray(input) && !(input != null && isVObject(input) && isVFragment(input)) && childNodes.length < 2) {
+    if (!isArray(input) && !(input != null && isVObject(input) && input.type === Fragment) && childNodes.length < 2) {
         return childNodes[0];
     }
     return childNodes;

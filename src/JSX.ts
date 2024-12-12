@@ -78,8 +78,10 @@ export type Methods<T> = {
 
 /**
  * A constructor alias used for JSX fragments </>.
+ * @param props The properties of the fragment.
+ * @returns The fragment children.
  */
-export const Fragment: unique symbol = Symbol();
+export const Fragment: FunctionComponent<{}> = (props) => props.children;
 
 /**
  * Get render attributes set.
@@ -135,17 +137,6 @@ export type FunctionComponent<P = any> = (
         useRenderContext: () => Context;
     }
 ) => Template;
-
-/**
- * The interface of a JSX fragment node.
- */
-export type VFragment = {
-    type: typeof Fragment;
-    key: unknown;
-    properties: {};
-    children: Template[];
-    [V_SYM]: true;
-};
 
 /**
  * The interface of a functional component.
@@ -222,8 +213,7 @@ export type VObject =
     | VFunction<FunctionComponent>
     | VElement<Node>
     | VSlot
-    | VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap>
-    | VFragment;
+    | VTag<keyof HTMLTagNameMap | keyof SVGTagNameMap>;
 
 /**
  * A generic template. Can be a single atomic item or a list of items.
@@ -238,13 +228,6 @@ export type Template = any;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isVObject = (target: any): target is VObject => !!target[V_SYM];
-
-/**
- * Check if the current virtual node is a fragment.
- * @param target The node to check.
- * @returns True if the target is a fragment.
- */
-export const isVFragment = (target: VObject): target is VFragment => target.type === Fragment;
 
 /**
  * Check if the current virtual node is a functional component.
@@ -327,17 +310,15 @@ function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNa
         namespace:
             properties?.xmlns || ((type as unknown as string) === 'svg' ? 'http://www.w3.org/2000/svg' : undefined),
         [V_SYM]: true,
-    } as T extends typeof Fragment
-        ? VFragment
-        : T extends FunctionComponent
-          ? VFunction<T>
-          : T extends Element
-            ? VElement<T>
-            : T extends keyof SVGTagNameMap
+    } as T extends FunctionComponent
+        ? VFunction<T>
+        : T extends Element
+          ? VElement<T>
+          : T extends keyof SVGTagNameMap
+            ? VTag<T>
+            : T extends keyof HTMLTagNameMap
               ? VTag<T>
-              : T extends keyof HTMLTagNameMap
-                ? VTag<T>
-                : never;
+              : never;
 }
 
 /**

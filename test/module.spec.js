@@ -10,7 +10,7 @@ describe(
             HTML: 'object',
             extend: 'function',
             render: 'function',
-            Fragment: 'symbol',
+            Fragment: 'function',
             h: 'function',
             jsx: 'function',
             jsxDEV: 'function',

@@ -79,7 +79,6 @@ export type {
     FunctionComponent,
     Template,
     VObject,
-    VFragment,
     VFunction,
     VElement,
     VSlot,
