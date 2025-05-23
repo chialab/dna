@@ -32,13 +32,17 @@ export default defineConfig({
         coverage: {
             all: false,
             provider: 'istanbul',
-            include: ['src'],
-            reporter: [['clover'], ['html']],
+            include: ['src/**/*.js'],
+            reporter: ['clover', 'html'],
         },
         browser: {
             headless: true,
-            name: 'chromium',
             provider: 'playwright',
+            instances: [
+                {
+                    browser: 'chromium',
+                },
+            ],
         },
     },
 });
