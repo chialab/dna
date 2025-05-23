@@ -31,13 +31,17 @@ export default defineConfig({
         include: ['./**/*.spec.js'],
         coverage: {
             all: false,
-            include: ['src'],
-            reporter: [['clover'], ['html']],
+            include: ['src/**/*.js'],
+            reporter: ['clover', 'html'],
         },
         browser: {
             headless: true,
-            name: 'chromium',
             provider: 'playwright',
+            instances: [
+                {
+                    browser: 'chromium',
+                },
+            ],
         },
     },
 });
