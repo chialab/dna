@@ -226,13 +226,9 @@ describe.runIf(typeof window !== 'undefined')(
 
                     const element = DNA.render(DNA.h('div', { is: name }), wrapper);
                     await new Promise((r) => setTimeout(r, 0));
-
-                    const realm = element.realm;
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('STYLE');
                     expect(element.childNodes[0].textContent).toBe(`[:scope="${name}"] .test {}`);
-                    realm.dangerouslyClose();
                 });
             }
         });
@@ -290,11 +286,6 @@ describe.runIf(typeof window !== 'undefined')(
                         DNA.h(name, null, DNA.h('img', { src: IMG }), DNA.h('p', null, 'Body')),
                         wrapper
                     );
-                    const realm = element.realm;
-
-                    realm.dangerouslyOpen();
-                    const innerRealm = element.childNodes[0].childNodes[0].realm;
-                    innerRealm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(2);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].className).toBe('layout-header');
@@ -302,9 +293,6 @@ describe.runIf(typeof window !== 'undefined')(
                     expect(element.childNodes[0].childNodes[0].tagName).toBe(titleName.toUpperCase());
                     expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('SPAN');
                     expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).toBe('Untitled');
-                    innerRealm.dangerouslyClose();
-                    realm.dangerouslyClose();
-
                     DNA.render(
                         DNA.h(
                             name,
@@ -315,9 +303,6 @@ describe.runIf(typeof window !== 'undefined')(
                         ),
                         wrapper
                     );
-
-                    realm.dangerouslyOpen();
-                    innerRealm.dangerouslyOpen();
                     expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('SPAN');
                     expect(element.childNodes[0].childNodes[0].childNodes[0].textContent).toBe('Title');
                     expect(element.childNodes[1].tagName).toBe('DIV');
@@ -326,8 +311,6 @@ describe.runIf(typeof window !== 'undefined')(
                     expect(element.childNodes[1].childNodes[0].getAttribute('src')).toBe(IMG);
                     expect(element.childNodes[1].childNodes[1].tagName).toBe('P');
                     expect(element.childNodes[1].childNodes[1].textContent).toBe('Body');
-                    innerRealm.dangerouslyClose();
-                    realm.dangerouslyClose();
                 });
             }
         });
@@ -378,9 +361,6 @@ describe.runIf(typeof window !== 'undefined')(
                     );
                     window.customElements.upgrade(element);
 
-                    const realm = element.realm;
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(2);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].className).toBe('layout-header');
@@ -393,7 +373,6 @@ describe.runIf(typeof window !== 'undefined')(
                     expect(element.childNodes[1].childNodes[0].getAttribute('src')).toBe(IMG);
                     expect(element.childNodes[1].childNodes[1].tagName).toBe('P');
                     expect(element.childNodes[1].childNodes[1].textContent).toBe('Body');
-                    realm.dangerouslyClose();
                 });
             }
         });
@@ -451,9 +430,6 @@ describe.runIf(typeof window !== 'undefined')(
                         }
                     );
                     window.customElements.upgrade(element);
-                    const realm = element.realm;
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('H1');
                     expect(element.childNodes[0].childNodes[0].textContent).toBe('Title');
@@ -461,31 +437,22 @@ describe.runIf(typeof window !== 'undefined')(
                     expect(element.childNodes[0].childNodes[1].getAttribute('src')).toBe(IMG);
                     expect(element.childNodes[0].childNodes[2].tagName).toBe('P');
                     expect(element.childNodes[0].childNodes[2].textContent).toBe('Body');
-                    realm.dangerouslyClose();
-
                     element.collapsed = true;
                     element.forceUpdate();
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes[0].tagName).toBe('H1');
                     expect(element.childNodes[0].textContent).toBe('Title');
                     expect(element.childNodes[1].tagName).toBe('IMG');
                     expect(element.childNodes[1].getAttribute('src')).toBe(IMG);
                     expect(element.childNodes[2].tagName).toBe('P');
                     expect(element.childNodes[2].textContent).toBe('Body');
-                    realm.dangerouslyClose();
-
                     element.collapsed = false;
                     element.forceUpdate();
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('H1');
                     expect(element.childNodes[0].childNodes[0].textContent).toBe('Title');
                     expect(element.childNodes[0].childNodes[1].tagName).toBe('IMG');
                     expect(element.childNodes[0].childNodes[1].getAttribute('src')).toBe(IMG);
                     expect(element.childNodes[0].childNodes[2].tagName).toBe('P');
                     expect(element.childNodes[0].childNodes[2].textContent).toBe('Body');
-                    realm.dangerouslyClose();
                 });
             }
         });
@@ -527,13 +494,11 @@ describe.runIf(typeof window !== 'undefined')(
                     );
 
                     const element = document.createElement(name);
+                    wrapper.appendChild(element);
                     element.appendChild(document.createTextNode('Hello'));
-
                     expect(element.querySelector('.parent-1').textContent).toBe('Empty');
                     expect(element.querySelector('.parent-2').textContent).toBe('Hello');
-
                     element.switch = true;
-
                     expect(element.querySelector('.parent-1').textContent).toBe('Hello');
                     expect(element.querySelector('.parent-2').textContent).toBe('Empty');
                 });

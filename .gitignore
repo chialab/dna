@@ -9,4 +9,5 @@ dist
 tsconfig.tsbuildinfo
 docs/.vitepress/dist
 docs/.vitepress/cache
+test/**/__screenshots__
 local.log

@@ -1,4 +1,3 @@
-import { type Realm } from '@chialab/quantum';
 import { type DelegatedEventCallback, type ListenerConfig } from './events';
 import { type Template as JSXTemplate } from './JSX';
 import { type PropertyConfig, type PropertyObserver } from './property';
@@ -30,11 +29,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -42,9 +36,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -53,6 +52,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -248,6 +254,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -283,11 +299,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -295,9 +306,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -306,6 +322,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLAnchorElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -501,6 +524,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -536,11 +569,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -548,9 +576,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -559,6 +592,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLAreaElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -754,6 +794,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -789,11 +839,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -801,9 +846,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -812,6 +862,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLAudioElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -1007,6 +1064,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -1042,11 +1109,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -1054,9 +1116,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1065,6 +1132,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLBaseElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -1260,6 +1334,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -1295,11 +1379,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -1307,9 +1386,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1318,6 +1402,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLQuoteElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -1513,6 +1604,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -1548,11 +1649,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -1560,9 +1656,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1571,6 +1672,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLBodyElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -1766,6 +1874,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -1801,11 +1919,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -1813,9 +1926,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1824,6 +1942,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLBRElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -2019,6 +2144,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -2054,11 +2189,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -2066,9 +2196,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2077,6 +2212,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLButtonElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -2272,6 +2414,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -2307,11 +2459,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -2319,9 +2466,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2330,6 +2482,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLCanvasElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -2525,6 +2684,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -2560,11 +2729,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -2572,9 +2736,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2583,6 +2752,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableCaptionElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -2778,6 +2954,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -2813,11 +2999,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -2825,9 +3006,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2836,6 +3022,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableColElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -3031,6 +3224,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -3066,11 +3269,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -3078,9 +3276,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3089,6 +3292,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDataElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -3284,6 +3494,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -3319,11 +3539,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -3331,9 +3546,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3342,6 +3562,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDataListElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -3537,6 +3764,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -3572,11 +3809,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -3584,9 +3816,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3595,6 +3832,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLModElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -3790,6 +4034,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -3825,11 +4079,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -3837,9 +4086,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3848,6 +4102,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDetailsElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -4043,6 +4304,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -4078,11 +4349,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -4090,9 +4356,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4101,6 +4372,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDialogElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -4296,6 +4574,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -4331,11 +4619,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -4343,9 +4626,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4354,6 +4642,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDirectoryElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -4549,6 +4844,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -4584,11 +4889,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -4596,9 +4896,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4607,6 +4912,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDivElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -4802,6 +5114,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -4837,11 +5159,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -4849,9 +5166,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4860,6 +5182,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLDListElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -5055,6 +5384,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -5090,11 +5429,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -5102,9 +5436,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5113,6 +5452,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLEmbedElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -5308,6 +5654,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -5343,11 +5699,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -5355,9 +5706,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5366,6 +5722,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLFieldSetElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -5561,6 +5924,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -5596,11 +5969,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -5608,9 +5976,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5619,6 +5992,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLFontElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -5814,6 +6194,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -5849,11 +6239,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -5861,9 +6246,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5872,6 +6262,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLFormElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -6067,6 +6464,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -6102,11 +6509,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -6114,9 +6516,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6125,6 +6532,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLFrameElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -6320,6 +6734,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -6355,11 +6779,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -6367,9 +6786,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6378,6 +6802,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLFrameSetElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -6573,6 +7004,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -6608,11 +7049,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -6620,9 +7056,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6631,6 +7072,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLHeadingElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -6826,6 +7274,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -6861,11 +7319,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -6873,9 +7326,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6884,6 +7342,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLHeadElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -7079,6 +7544,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -7114,11 +7589,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -7126,9 +7596,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7137,6 +7612,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLHRElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -7332,6 +7814,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -7367,11 +7859,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -7379,9 +7866,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7390,6 +7882,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLIFrameElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -7585,6 +8084,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -7620,11 +8129,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -7632,9 +8136,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7643,6 +8152,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLImageElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -7838,6 +8354,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -7873,11 +8399,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -7885,9 +8406,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7896,6 +8422,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLInputElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -8091,6 +8624,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -8126,11 +8669,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -8138,9 +8676,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8149,6 +8692,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLLabelElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -8344,6 +8894,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -8379,11 +8939,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -8391,9 +8946,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8402,6 +8962,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLLegendElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -8597,6 +9164,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -8632,11 +9209,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -8644,9 +9216,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8655,6 +9232,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLLIElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -8850,6 +9434,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -8885,11 +9479,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -8897,9 +9486,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8908,6 +9502,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLLinkElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -9103,6 +9704,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -9138,11 +9749,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -9150,9 +9756,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9161,6 +9772,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLMapElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -9356,6 +9974,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -9391,11 +10019,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -9403,9 +10026,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9414,6 +10042,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLMarqueeElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -9609,6 +10244,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -9644,11 +10289,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -9656,9 +10296,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9667,6 +10312,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLMenuElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -9862,6 +10514,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -9897,11 +10559,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -9909,9 +10566,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9920,6 +10582,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLMetaElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -10115,6 +10784,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -10150,11 +10829,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -10162,9 +10836,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10173,6 +10852,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLMeterElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -10368,6 +11054,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -10403,11 +11099,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -10415,9 +11106,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10426,6 +11122,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLObjectElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -10621,6 +11324,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -10656,11 +11369,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -10668,9 +11376,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10679,6 +11392,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLOListElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -10874,6 +11594,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -10909,11 +11639,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -10921,9 +11646,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10932,6 +11662,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLOptGroupElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -11127,6 +11864,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -11162,11 +11909,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -11174,9 +11916,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11185,6 +11932,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLOptionElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -11380,6 +12134,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -11415,11 +12179,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -11427,9 +12186,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11438,6 +12202,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLOutputElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -11633,6 +12404,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -11668,11 +12449,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -11680,9 +12456,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11691,6 +12472,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLParagraphElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -11886,6 +12674,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -11921,11 +12719,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -11933,9 +12726,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11944,6 +12742,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLParamElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -12139,6 +12944,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -12174,11 +12989,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -12186,9 +12996,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12197,6 +13012,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLPictureElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -12392,6 +13214,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -12427,11 +13259,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -12439,9 +13266,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12450,6 +13282,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLPreElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -12645,6 +13484,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -12680,11 +13529,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -12692,9 +13536,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12703,6 +13552,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLProgressElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -12898,6 +13754,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -12933,11 +13799,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -12945,9 +13806,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12956,6 +13822,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLScriptElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -13151,6 +14024,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -13186,11 +14069,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -13198,9 +14076,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13209,6 +14092,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLSelectElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -13404,6 +14294,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -13439,11 +14339,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -13451,9 +14346,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13462,6 +14362,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLSlotElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -13657,6 +14564,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -13692,11 +14609,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -13704,9 +14616,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13715,6 +14632,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLSourceElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -13910,6 +14834,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -13945,11 +14879,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -13957,9 +14886,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13968,6 +14902,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLSpanElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -14163,6 +15104,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -14198,11 +15149,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -14210,9 +15156,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14221,6 +15172,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLStyleElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -14416,6 +15374,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -14451,11 +15419,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -14463,9 +15426,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14474,6 +15442,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -14669,6 +15644,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -14704,11 +15689,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -14716,9 +15696,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14727,6 +15712,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableSectionElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -14922,6 +15914,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -14957,11 +15959,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -14969,9 +15966,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14980,6 +15982,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableCellElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -15175,6 +16184,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -15210,11 +16229,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -15222,9 +16236,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15233,6 +16252,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTemplateElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -15428,6 +16454,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -15463,11 +16499,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -15475,9 +16506,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15486,6 +16522,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTextAreaElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -15681,6 +16724,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -15716,11 +16769,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -15728,9 +16776,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15739,6 +16792,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTimeElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -15934,6 +16994,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -15969,11 +17039,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -15981,9 +17046,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15992,6 +17062,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTitleElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -16187,6 +17264,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -16222,11 +17309,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -16234,9 +17316,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16245,6 +17332,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTableRowElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -16440,6 +17534,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -16475,11 +17579,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -16487,9 +17586,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16498,6 +17602,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLTrackElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -16693,6 +17804,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -16728,11 +17849,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -16740,9 +17856,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16751,6 +17872,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLUListElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -16946,6 +18074,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.
@@ -16981,11 +18119,6 @@ export declare namespace HTML {
         };
 
         /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
-
-        /**
          * The defined component name.
          * For autonomous custom elements, this is the tag name.
          */
@@ -16993,9 +18126,14 @@ export declare namespace HTML {
 
         /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          */
-        get slotChildNodes(): Node[] | undefined;
+        readonly slotChildNodes: Node[];
+
+        /**
+         * The flag to indicate if the component is rendering.
+         * @returns True if the component is rendering.
+         */
+        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -17004,6 +18142,13 @@ export declare namespace HTML {
          */
         // We cannot infer component properties from the base class
         constructor(node?: HTMLVideoElement);
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name?: string | null): Node[];
 
         /**
          * The callback for initialized components.
@@ -17199,6 +18344,16 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
+
+        /**
+         * Start rendering the component.
+         */
+        renderStart(): void;
+
+        /**
+         * Stop rendering the component.
+         */
+        renderEnd(): void;
 
         /**
          * Assign properties to the component.

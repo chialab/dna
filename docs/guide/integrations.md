@@ -2,7 +2,7 @@
 
 ## Frameworks
 
-DNA composition is based on Quantum, which is [tested across different frameworks](https://github.com/chialab/quantum/tree/main/tests).
+DNA composition is tested across different frameworks.
 
 | Framwework | Update a property | Slot text | Slot elements | Named slots |
 | ---------- | :---------------: | :-------: | :-----------: | :---------: |

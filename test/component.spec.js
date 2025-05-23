@@ -1027,8 +1027,7 @@ describe(
                     __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
                     TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
-                    const element = new TestElement();
-                    wrapper.appendChild(element);
+                    const element = wrapper.appendChild(new TestElement());
                     expect(element.innerHTML).toBe('<h1></h1>');
                     element.title = 'test';
                     expect(element.innerHTML).toBe('<h1>test</h1>');
@@ -1053,8 +1052,7 @@ describe(
                     __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'description', undefined);
                     TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
-                    const element = new TestElement();
-                    wrapper.appendChild(element);
+                    const element = wrapper.appendChild(new TestElement());
                     expect(element.innerHTML).toBe('<h1></h1><h2></h2>');
                     element.assign({
                         title: 'test',
@@ -1090,8 +1088,7 @@ describe(
                     __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'description', undefined);
                     TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
-                    const element = new TestElement();
-                    wrapper.appendChild(element);
+                    const element = wrapper.appendChild(new TestElement());
                     expect(element.innerHTML).toBe('<h1>test</h1><h2>test</h2>');
                     expect(spy).toHaveBeenCalledTimes(2);
                 });
@@ -1135,11 +1132,10 @@ describe(
                     TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
 
                     expect(callback).not.toHaveBeenCalled();
-                    const element = new TestElement();
+                    const element = wrapper.appendChild(new TestElement());
                     element.title = 'Test';
                     element.description = 'Test';
                     element.author = 'Test';
-                    wrapper.appendChild(element);
                     expect(callback).toHaveBeenCalledTimes(4);
                     expect(element.innerHTML).toBe(
                         '<div>Test</div><div>Test</div><div>Test</div><div>Test</div><div>0</div>'
@@ -1236,8 +1232,7 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
-
+                    const element = wrapper.appendChild(new TestElement());
                     element.textContent = 'Test';
                     expect(element.textContent).toBe('Test inner text');
                 });
@@ -1254,14 +1249,11 @@ describe(
                         }
                     );
                     const element = new TestElement();
-                    const realm = element.realm;
                     element.textContent = 'Test';
-
-                    realm.dangerouslyOpen();
+                    wrapper.appendChild(element);
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].textContent).toBe('Test');
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1277,9 +1269,8 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
+                    const element = wrapper.appendChild(new TestElement());
                     element.innerHTML = '<span>Test</span>';
-
                     expect(element.innerHTML.indexOf('<div>')).toBe(0);
                     expect(element.innerHTML.indexOf('<span>Test</span>')).not.toBe(-1);
                 });
@@ -1295,16 +1286,12 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
-                    const realm = element.realm;
+                    const element = wrapper.appendChild(new TestElement());
                     element.innerHTML = '<span>Test</span>';
-
-                    realm.dangerouslyOpen();
                     expect(element.children).toHaveLength(1);
                     expect(element.children[0].tagName).toBe('DIV');
                     expect(element.children[0].children[0].tagName).toBe('SPAN');
                     expect(element.children[0].children[0].textContent).toBe('Test');
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1323,7 +1310,6 @@ describe(
                     );
                     const element = new TestElement();
                     const child = new TestChild();
-
                     expect(connectedCallback).not.toHaveBeenCalled();
                     wrapper.appendChild(element);
                     element.appendChild(child);
@@ -1376,16 +1362,11 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
-                    const realm = element.realm;
-                    wrapper.appendChild(element);
-
-                    realm.dangerouslyOpen();
+                    const element = wrapper.appendChild(new TestElement());
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
                     expect(element.childNodes[0].childNodes[0].textContent).toBe('Test');
-                    realm.dangerouslyClose();
                 });
 
                 it('should append slot item', () => {
@@ -1401,17 +1382,11 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
-                    const realm = element.realm;
-                    const span = document.createElement('span');
-                    wrapper.appendChild(element);
-                    element.appendChild(span);
-
-                    realm.dangerouslyOpen();
+                    const element = wrapper.appendChild(new TestElement());
+                    element.appendChild(document.createElement('span'));
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1451,24 +1426,16 @@ describe(
                         }
                     );
                     const element = new TestElement();
-                    const realm = element.realm;
                     const span = document.createElement('span');
                     wrapper.appendChild(element);
                     element.appendChild(span);
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
-                    realm.dangerouslyClose();
-
                     element.removeChild(span);
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes).toHaveLength(0);
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1540,20 +1507,14 @@ describe(
                             }
                         }
                     );
-                    const element = new TestElement();
-                    const realm = element.realm;
-                    const span = document.createElement('span');
+                    const element = wrapper.appendChild(new TestElement());
+                    const span = element.appendChild(document.createElement('span'));
                     const input = document.createElement('input');
-                    wrapper.appendChild(element);
-                    element.appendChild(span);
                     element.insertBefore(input, span);
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
                     expect(element.childNodes[0].childNodes[1].tagName).toBe('SPAN');
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1632,18 +1593,14 @@ describe(
                         }
                     );
                     const element = new TestElement();
-                    const realm = element.realm;
                     const span = document.createElement('span');
                     const input = document.createElement('input');
                     wrapper.appendChild(element);
                     element.appendChild(span);
                     element.replaceChild(input, span);
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
-                    realm.dangerouslyClose();
                 });
             });
 
@@ -1716,19 +1673,15 @@ describe(
                         }
                     );
                     const element = new TestElement();
-                    const realm = element.realm;
                     const span = document.createElement('span');
                     const input = document.createElement('input');
                     wrapper.appendChild(element);
                     element.appendChild(span);
                     element.insertAdjacentElement('afterbegin', input);
-
-                    realm.dangerouslyOpen();
                     expect(element.childNodes).toHaveLength(1);
                     expect(element.childNodes[0].tagName).toBe('DIV');
                     expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
                     expect(element.childNodes[0].childNodes[1].tagName).toBe('SPAN');
-                    realm.dangerouslyClose();
                 });
             });
 

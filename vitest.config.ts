@@ -28,7 +28,7 @@ export default defineConfig({
     test: {
         name: `DNA${job ? ` (${job})` : ''}`,
         dir: './test',
-        include: ['./*.spec.js'],
+        include: ['./**/*.spec.js'],
         coverage: {
             all: false,
             provider: 'istanbul',
