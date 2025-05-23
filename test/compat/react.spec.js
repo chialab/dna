@@ -1,8 +1,9 @@
 import * as DNA from '@chialab/dna';
-import { html, render } from 'lit';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-describe('Lit compatibility', () => {
+describe('React compatibility', () => {
     let wrapper;
     beforeEach(() => {
         wrapper = document.createElement('div');
@@ -15,9 +16,9 @@ describe('Lit compatibility', () => {
         }
     });
 
-    test('should update text content', () => {
+    test('should update text content', async () => {
         DNA.define(
-            'lit-test-1',
+            'react-test-1',
             class extends DNA.Component {
                 render() {
                     return DNA.html`
@@ -27,25 +28,29 @@ describe('Lit compatibility', () => {
                 }
             }
         );
-        const Template = (text) => html`<lit-test-1>${text}</lit-test-1>`;
-        render(Template('Text'), wrapper);
+        const Template = (text) => React.createElement('react-test-1', null, [text]);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template('Text'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         expect(element.childNodes[0].textContent).toBe('Text');
         expect(wrapper.innerHTML).toBe(
-            `<!----><lit-test-1 :scope="lit-test-1" :defined=""><span>Text</span><div></div></lit-test-1>`
+            `<react-test-1 :scope="react-test-1" :defined=""><span>Text</span><div></div></react-test-1>`
         );
 
-        render(Template('Update'), wrapper);
+        root.render(Template('Update'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
         expect(element.childNodes[0].textContent).toBe('Update');
         expect(wrapper.innerHTML).toBe(
-            `<!----><lit-test-1 :scope="lit-test-1" :defined=""><span>Update</span><div></div></lit-test-1>`
+            `<react-test-1 :scope="react-test-1" :defined=""><span>Update</span><div></div></react-test-1>`
         );
     });
 
-    test('should update text content with multiple text nodes', () => {
+    test('should update text content with multiple text nodes', async () => {
         DNA.define(
-            'lit-test-2',
+            'react-test-2',
             class extends DNA.Component {
                 render() {
                     return DNA.html`
@@ -55,29 +60,33 @@ describe('Lit compatibility', () => {
                 }
             }
         );
-        const Template = (text) => html`<lit-test-2>${text} ${'children'}</lit-test-2>`;
-        render(Template('Text'), wrapper);
+        const Template = (text) => React.createElement('react-test-2', null, [text, ' ', 'children']);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template('Text'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         expect(element.childNodes[0].textContent).toBe('Text children');
         expect(element.childNodes[0].childNodes[0].textContent).toBe('Text');
         expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
         expect(wrapper.innerHTML).toBe(
-            `<!----><lit-test-2 :scope="lit-test-2" :defined=""><span>Text children</span><div></div></lit-test-2>`
+            `<react-test-2 :scope="react-test-2" :defined=""><span>Text children</span><div></div></react-test-2>`
         );
 
-        render(Template('Update'), wrapper);
+        root.render(Template('Update'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
         expect(element.childNodes[0].textContent).toBe('Update children');
         expect(element.childNodes[0].childNodes[0].textContent).toBe('Update');
         expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
         expect(wrapper.innerHTML).toBe(
-            `<!----><lit-test-2 :scope="lit-test-2" :defined=""><span>Update children</span><div></div></lit-test-2>`
+            `<react-test-2 :scope="react-test-2" :defined=""><span>Update children</span><div></div></react-test-2>`
         );
     });
 
-    test('should update named slots', () => {
+    test('should update named slots', async () => {
         DNA.define(
-            'lit-test-3',
+            'react-test-3',
             class extends DNA.Component {
                 render() {
                     return DNA.html`
@@ -88,21 +97,28 @@ describe('Lit compatibility', () => {
             }
         );
         const Template = (title) =>
-            html`<lit-test-3>
-                Text ${title ? html`<h1 slot="children">Title</h1>` : html`<h2 slot="children">Subtitle</h2>`}
-            </lit-test-3>`;
-        render(Template(true), wrapper);
+            React.createElement('react-test-3', null, [
+                'Text ',
+                title
+                    ? React.createElement('h1', { slot: 'children', key: 1 }, 'Title')
+                    : React.createElement('h2', { slot: 'children', key: 2 }, 'Subtitle'),
+                '\n',
+            ]);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template(true));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         const textNode = element.childNodes[0].childNodes[0];
-        expect(wrapper.innerHTML.replace(/\n\s+/g, '')).toBe(
-            `<!----><lit-test-3 :scope="lit-test-3" :defined=""><span>Text </span><div><h1 slot="children">Title</h1></div></lit-test-3>`
+        expect(wrapper.innerHTML).toBe(
+            `<react-test-3 :scope="react-test-3" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></react-test-3>`
         );
 
-        render(Template(false), wrapper);
+        root.render(Template(false));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(wrapper.innerHTML.replace(/\n\s+/g, '')).toBe(
-            `<!----><lit-test-3 :scope="lit-test-3" :defined=""><span>Text </span><div><h2 slot="children">Subtitle</h2></div></lit-test-3>`
+        expect(wrapper.innerHTML).toBe(
+            `<react-test-3 :scope="react-test-3" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></react-test-3>`
         );
     });
 });

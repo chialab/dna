@@ -2,7 +2,7 @@ import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getComponentName } from './helpers.js';
 
-describe.runIf(typeof window !== 'undefined')(
+describe(
     'template',
     () => {
         const IMG = 'data:image/png;base64,';
