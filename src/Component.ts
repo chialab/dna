@@ -648,24 +648,39 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
 
             const root = this;
             if (node.nodeType === Node.COMMENT_NODE) {
-                Object.defineProperty(node, 'parentNode', {
-                    get() {
+                const proto = Object.getPrototypeOf(node as Comment);
+                const shadowProto = {
+                    get parentNode() {
                         return root;
                     },
-                    configurable: true,
-                    enumerable: false,
-                });
-                Object.defineProperty(node, 'nextSibling', {
-                    get() {
+                    get nextSibling() {
                         const io = root.slotChildNodes.indexOf(node);
                         if (io === -1) {
                             return null;
                         }
                         return root.slotChildNodes[io + 1] || null;
                     },
-                    configurable: true,
-                    enumerable: false,
-                });
+                    get previousSibling() {
+                        const io = root.slotChildNodes.indexOf(node);
+                        if (io === -1) {
+                            return null;
+                        }
+                        return root.slotChildNodes[io - 1] || null;
+                    },
+                    before(...nodes: (Node | string)[]) {
+                        root._insertNodesBefore(root._importNodes(nodes), node);
+                        root.requestUpdate();
+                    },
+                    after(...nodes: (Node | string)[]) {
+                        const io = root.slotChildNodes.indexOf(node);
+                        const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
+                        root._insertNodesBefore(root._importNodes(nodes), nextSibling);
+                        root.requestUpdate();
+                    },
+                };
+
+                Object.setPrototypeOf(shadowProto, proto);
+                Object.setPrototypeOf(node, shadowProto);
             }
         }
 
