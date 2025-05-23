@@ -1,4 +1,3 @@
-import type { Realm } from '@chialab/quantum';
 import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
@@ -23,6 +22,11 @@ import { getProperty } from './property';
  * A symbol for node render context.
  */
 const CONTEXT_SYMBOL: unique symbol = Symbol();
+
+/**
+ * A symbol for shadow context.
+ */
+const SHADOW_CONTEXT_SYMBOL: unique symbol = Symbol();
 
 enum ContextKind {
     LITERAL = 0,
@@ -80,13 +84,24 @@ export const createContext = (
 /**
  * Get (or create) the root context attached to a node.
  * @param node The scope of the context.
+ * @param shadowRoot If the context is a shadow root.
  * @returns The context object (if it exists).
  */
 export const getRootContext = <T extends Node>(
     node: T & {
         [CONTEXT_SYMBOL]?: Context;
+        [SHADOW_CONTEXT_SYMBOL]?: Context;
+    },
+    shadowRoot?: boolean
+) => {
+    if (shadowRoot) {
+        node[SHADOW_CONTEXT_SYMBOL] = node[SHADOW_CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node);
+        return node[SHADOW_CONTEXT_SYMBOL];
     }
-) => (node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node));
+
+    node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node);
+    return node[CONTEXT_SYMBOL];
+};
 
 /**
  * Convert strings or classes map to a list of classes.
@@ -334,7 +349,6 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
  * @param namespace The current namespace uri of the render.
  * @param keys The current keys map of the render.
  * @param refs The current refs map of the render.
- * @param realm The realm to use for the render.
  * @param fragment The fragment context to update.
  */
 const renderTemplate = (
@@ -344,7 +358,6 @@ const renderTemplate = (
     namespace: string,
     keys: Map<unknown, Context> | undefined,
     refs: Map<Node, Context> | undefined,
-    realm?: Realm,
     fragment: Context = context
 ) => {
     if (template == null || template === false) {
@@ -357,13 +370,13 @@ const renderTemplate = (
             return;
         }
         if (len === 1) {
-            renderTemplate(context, rootContext, template[0], namespace, keys, refs, realm, fragment);
+            renderTemplate(context, rootContext, template[0], namespace, keys, refs, fragment);
             return;
         }
 
         // call the render function for each child
         for (let i = 0; i < len; i++) {
-            renderTemplate(context, rootContext, template[i], namespace, keys, refs, realm, fragment);
+            renderTemplate(context, rootContext, template[i], namespace, keys, refs, fragment);
         }
         return;
     }
@@ -374,7 +387,7 @@ const renderTemplate = (
     if (isVObject(template)) {
         if (isVFunction(template)) {
             if (template.type === Fragment) {
-                renderTemplate(context, rootContext, template.children, namespace, keys, refs, realm, fragment);
+                renderTemplate(context, rootContext, template.children, namespace, keys, refs, fragment);
                 return;
             }
             const { type: Function, key, properties, children } = template;
@@ -398,7 +411,6 @@ const renderTemplate = (
                 namespace,
                 keys,
                 refs,
-                realm,
                 fragment
             );
 
@@ -435,19 +447,12 @@ const renderTemplate = (
                                     if (!currentChildren.includes(renderContext)) {
                                         return;
                                     }
-                                    if (isComponent(rootContext.node) && realm) {
-                                        realm.requestUpdate(() => {
-                                            internalRender(
-                                                context,
-                                                template,
-                                                realm,
-                                                rootContext,
-                                                namespace,
-                                                renderContext
-                                            );
-                                        });
+                                    if (isComponent(rootContext.node)) {
+                                        rootContext.node.renderStart();
+                                        internalRender(context, template, rootContext, namespace, renderContext);
+                                        rootContext.node.renderEnd();
                                     } else {
-                                        internalRender(context, template, realm, rootContext, namespace, renderContext);
+                                        internalRender(context, template, rootContext, namespace, renderContext);
                                     }
                                 },
                             ];
@@ -463,8 +468,7 @@ const renderTemplate = (
                 ),
                 namespace,
                 keys,
-                refs,
-                realm
+                refs
             );
 
             renderContext.end = currentChildren[context._pos - 1];
@@ -473,16 +477,16 @@ const renderTemplate = (
 
         // if the current patch is a slot,
         if (isVSlot(template)) {
-            if (!isComponent(rootContext.node) || !realm) {
+            if (!isComponent(rootContext.node)) {
                 return;
             }
             const { properties, children } = template;
             const name = properties?.name;
-            const slotted = realm.childNodesBySlot(name);
+            const slotted = rootContext.node.childNodesBySlot(name);
             if (slotted.length) {
-                renderTemplate(context, rootContext, slotted, namespace, keys, refs, realm, fragment);
+                renderTemplate(context, rootContext, slotted, namespace, keys, refs, fragment);
             } else if (children) {
-                renderTemplate(context, rootContext, children, namespace, keys, refs, realm, fragment);
+                renderTemplate(context, rootContext, children, namespace, keys, refs, fragment);
             }
             return;
         }
@@ -580,7 +584,7 @@ const renderTemplate = (
         insertNode(context, templateContext, rootContext);
 
         if ((templateContext && children && children.length) || templateContext.root === rootContext) {
-            internalRender(templateContext, children, realm, rootContext, namespaceURI, undefined);
+            internalRender(templateContext, children, rootContext, namespaceURI, undefined);
         }
         return;
     }
@@ -633,7 +637,6 @@ const renderTemplate = (
  *
  * @param context The render context of the root.
  * @param template The child (or the children) to render in Virtual DOM format or already generated.
- * @param realm The realm to use for the render.
  * @param rootContext The current root context of the render.
  * @param namespace The current namespace uri of the render.
  * @param fragment The fragment context to update.
@@ -642,7 +645,6 @@ const renderTemplate = (
 export const internalRender = (
     context: Context,
     template: Template,
-    realm?: Realm,
     rootContext: Context = context,
     namespace = 'http://www.w3.org/1999/xhtml',
     fragment?: Context
@@ -665,7 +667,7 @@ export const internalRender = (
         delete context.keys;
     }
 
-    renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, realm, fragment);
+    renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
 
     // all children of the root have been handled,
     // we can start to cleanup the tree
@@ -681,7 +683,7 @@ export const internalRender = (
     while (currentIndex <= --end) {
         const [child] = contextChildren.splice(end, 1);
         const parentNode = child.node.parentNode;
-        if (parentNode === context.node || (realm?.open && parentNode === realm.node && realm.root === context.node)) {
+        if (parentNode === context.node) {
             context.node.removeChild(child.node);
         }
     }
