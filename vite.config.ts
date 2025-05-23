@@ -1,5 +1,7 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { svelteTesting } from '@testing-library/svelte/vite';
+import { defineConfig, type Plugin } from 'vitest/config';
 
 const job = (() => {
     if (process.env.TRAVIS) {
@@ -16,11 +18,13 @@ const job = (() => {
 })();
 
 export default defineConfig({
+    plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],
     },
     resolve: {
+        conditions: ['browser'],
         alias: {
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         },
