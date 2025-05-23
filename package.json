@@ -51,7 +51,6 @@
     "prepack": "yarn build && publint"
   },
   "dependencies": {
-    "@chialab/quantum": "^1.0.0",
     "htm": "^3.0.3"
   },
   "devDependencies": {
@@ -67,6 +66,7 @@
     "esbuild": "^0.23.0",
     "eslint": "^8.0.0",
     "eslint-plugin-jsdoc": "^48.0.0",
+    "lit": "^3.3.0",
     "playwright": "^1.38.1",
     "prettier": "^3.0.3",
     "publint": "^0.2.3",

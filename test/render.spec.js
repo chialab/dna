@@ -89,7 +89,7 @@ describe.runIf(typeof window !== 'undefined')(
                     name,
                     class TestElement extends DNA.Component {
                         render() {
-                            return this.realm.childNodes.map((node) => DNA.html`<${node} id="test" />`);
+                            return this.childNodesBySlot().map((node) => DNA.html`<${node} id="test" />`);
                         }
                     }
                 );
@@ -550,21 +550,14 @@ describe.runIf(typeof window !== 'undefined')(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(name, {}, DNA.h('div', {})), wrapper);
-                const realm = elem.realm;
-
-                realm.dangerouslyOpen();
-                expect(elem.childNodes).toHaveLength(3);
-                const [slotted] = realm.childNodes;
-                const [div1, div2, div3] = elem.childNodes;
-                realm.dangerouslyClose();
-
+                const element = DNA.render(DNA.h(name, {}, DNA.h('div', {})), wrapper);
+                expect(element.childNodes).toHaveLength(3);
+                const [slotted] = element.childNodesBySlot();
+                const [div1, div2, div3] = element.childNodes;
                 DNA.render(DNA.h(name, { oneMore: true }, DNA.h('div', {})), wrapper);
-
-                realm.dangerouslyOpen();
-                expect(elem.childNodes).toHaveLength(4);
-                const [slotted2] = realm.childNodes;
-                const [div4, div5, div6, div7] = elem.childNodes;
+                expect(element.childNodes).toHaveLength(4);
+                const [slotted2] = element.childNodesBySlot();
+                const [div4, div5, div6, div7] = element.childNodes;
                 expect(slotted).toBe(slotted2);
                 expect(div1).toBe(div4);
                 expect(div2).toBe(div5);
@@ -573,7 +566,6 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(div5.className).toBe('child2');
                 expect(div6.className).toBe('child3');
                 expect(div7.className).toBe('');
-                realm.dangerouslyClose();
             });
 
             it('should not reuse slotted text', () => {
@@ -595,31 +587,19 @@ describe.runIf(typeof window !== 'undefined')(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
-                const realm = elem.realm;
-
-                realm.dangerouslyOpen();
-                expect(elem.childNodes).toHaveLength(1);
-                const [slotted] = realm.childNodes;
-                const [textNode] = elem.childNodes;
-                realm.dangerouslyClose();
-
+                const element = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
+                expect(element.childNodes).toHaveLength(1);
+                const [slotted] = element.childNodesBySlot();
+                const [textNode] = element.childNodes;
                 DNA.render(DNA.h(name, { showPrefix: true }, 'Text'), wrapper);
-
-                realm.dangerouslyOpen();
-                expect(elem.childNodes).toHaveLength(2);
-                const [prefixNode, newTextNode] = elem.childNodes;
-                expect(slotted).toBe(realm.childNodes[0]);
+                expect(element.childNodes).toHaveLength(2);
+                const [prefixNode, newTextNode] = element.childNodes;
+                expect(slotted).toBe(element.childNodesBySlot()[0]);
                 expect(textNode).toBe(newTextNode);
                 expect(prefixNode.textContent).toBe('Prefix:');
                 expect(newTextNode.textContent).toBe('Text');
-                realm.dangerouslyClose();
-
                 DNA.render(DNA.h(name, { showPrefix: false }, 'Text'), wrapper);
-
-                realm.dangerouslyOpen();
-                expect(elem.childNodes).toHaveLength(1);
-                realm.dangerouslyClose();
+                expect(element.childNodes).toHaveLength(1);
             });
 
             it('should handle emptied slot nodes', () => {
@@ -645,21 +625,13 @@ describe.runIf(typeof window !== 'undefined')(
                     }
                 );
 
-                const elem = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
-                const realm = elem.realm;
-
-                realm.dangerouslyOpen();
-                const div = elem.childNodes[0];
-                expect(realm.childNodes).toHaveLength(1);
+                const element = DNA.render(DNA.h(name, {}, 'Text'), wrapper);
+                const div = element.childNodes[0];
+                expect(element.childNodesBySlot()).toHaveLength(1);
                 expect(div.childNodes).toHaveLength(1);
-                realm.dangerouslyClose();
-
                 DNA.render(DNA.h(name, { showSlotted: false }, 'Text'), wrapper);
-
-                realm.dangerouslyOpen();
-                expect(realm.childNodes).toHaveLength(1);
+                expect(element.childNodesBySlot()).toHaveLength(1);
                 expect(div.childNodes).toHaveLength(0);
-                realm.dangerouslyClose();
             });
 
             it('should return a shallow clone of child list', () => {
@@ -677,7 +649,7 @@ describe.runIf(typeof window !== 'undefined')(
                     name1,
                     class Parent extends DNA.Component {
                         render() {
-                            return this.realm.childNodes
+                            return this.childNodesBySlot()
                                 .filter((elem) => !!elem.tagName)
                                 .map((elem) => DNA.html`<div test="test" ref=${elem} />`);
                         }
