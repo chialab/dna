@@ -31,17 +31,19 @@ export const $parse = (string: string): Template => h(ParseFunction, { source: s
  */
 export const $await = (thenable: Promise<unknown>) =>
     h(
-        ((props, { useState }) => {
+        ((props, { useState, useMemo }) => {
             const state = getThenableState(thenable);
-            const [result, setResult] = useState<Template | null>(state.result);
-            if (state.pending) {
-                thenable
-                    .catch(() => 1)
-                    .then(() => {
-                        setResult(state.result);
-                    });
-            }
-            return result as Template;
+            return useMemo(() => {
+                const [result, setResult] = useState<Template | null>(state.result);
+                if (state.pending) {
+                    thenable
+                        .catch(() => 1)
+                        .then(() => {
+                            setResult(state.result);
+                        });
+                }
+                return result as Template;
+            }, [thenable, state.pending]);
         }) as FunctionComponent,
         null
     );
