@@ -16,7 +16,20 @@ export default mergeConfig(vitestConfig, {
                 host: '0.0.0.0',
                 port: 5176,
             },
-            instances: [{ browser: 'browserstack:chrome-latest' }],
+            instances: [
+                { browser: 'browserstack:chrome-latest' },
+                { browser: 'browserstack:chrome-latest-1' },
+                { browser: 'browserstack:chrome-latest-2' },
+                { browser: 'browserstack:chrome-80' },
+                { browser: 'browserstack:firefox-latest' },
+                { browser: 'browserstack:firefox-latest-1' },
+                { browser: 'browserstack:firefox-latest-2' },
+                { browser: 'browserstack:firefox-90' },
+                { browser: 'browserstack:safari-latest' },
+                { browser: 'browserstack:safari-16' },
+                { browser: 'browserstack:safari-15' },
+                { browser: 'browserstack:edge-latest' },
+            ],
         },
         browserstack: {
             capabilities: {
