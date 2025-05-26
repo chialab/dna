@@ -722,6 +722,44 @@ describe(
                 expect(element.list.childNodes[0].textContent).toBe('four');
                 expect(element.list.childNodes[1].textContent).toBe('five');
             });
+
+            it('should clean up render state when removed', () => {
+                const name = getComponentName();
+                DNA.define(
+                    name,
+                    class TestElement extends DNA.Component {
+                        static get properties() {
+                            return {
+                                showList: {
+                                    type: Boolean,
+                                    defaultValue: true,
+                                },
+                                items: {
+                                    type: Array,
+                                },
+                            };
+                        }
+
+                        list = this.ownerDocument.createElement('ul');
+
+                        render() {
+                            if (this.showList) {
+                                return DNA.h('ul', { ref: this.list }, [
+                                    ...this.items.map((item) => DNA.h('li', null, item)),
+                                ]);
+                            }
+                        }
+                    }
+                );
+
+                const element = document.createElement(name);
+                element.items = ['one', 'two', 'three'];
+                wrapper.appendChild(element);
+                expect(element.list.childNodes).toHaveLength(3);
+
+                wrapper.removeChild(element);
+                expect(element.list.childNodes).toHaveLength(0);
+            });
         });
 
         describe('hooks', () => {

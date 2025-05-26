@@ -658,7 +658,7 @@ export const internalRender = (
     let currentKeys: Map<unknown, Context> | undefined;
     let currentRefs: Map<Node, Context> | undefined;
     if (fragment) {
-        context._pos = context.children.indexOf(fragment);
+        context._pos = contextChildren.indexOf(fragment);
         endContext = fragment.end as Context;
         currentKeys = fragment.keys;
         currentRefs = fragment.refs;
@@ -688,6 +688,7 @@ export const internalRender = (
         const parentNode = child.node.parentNode;
         if (parentNode === context.node) {
             context.node.removeChild(child.node);
+            internalRender(child, null, rootContext, namespace);
         }
     }
 
