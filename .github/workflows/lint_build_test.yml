@@ -73,7 +73,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Install chromium
-        run: yarn playwright install --with-deps chromium
+        run: yarn playwright install chromium --with-deps --only-shell
 
       - name: Run tests
         run: yarn test:browser --coverage --coverage.provider istanbul
