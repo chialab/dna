@@ -50,7 +50,7 @@ export class HooksManager {
      * @param initialValue The initial value of the state.
      * @returns The state value and its setter.
      */
-    useState<T = unknown>(initialValue: T) {
+    useState<T = unknown>(initialValue: T): [T, (newValue: T) => boolean] {
         const state = this.nextState(
             typeof initialValue === 'function' ? (initialValue as () => T) : () => initialValue
         );
@@ -74,7 +74,7 @@ export class HooksManager {
      * @param deps The dependencies of the state.
      * @returns The memoized value.
      */
-    useMemo<T = unknown>(factory: () => T, deps: unknown[] = []) {
+    useMemo<T = unknown>(factory: () => T, deps: unknown[] = []): T {
         return this.nextState(factory, deps)[0];
     }
 }

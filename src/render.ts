@@ -28,11 +28,12 @@ const CONTEXT_SYMBOL: unique symbol = Symbol();
  */
 const SHADOW_CONTEXT_SYMBOL: unique symbol = Symbol();
 
-enum ContextKind {
-    LITERAL = 0,
-    VNODE = 1,
-    REF = 2,
-}
+const ContextKind = {
+    LITERAL: 0,
+    VNODE: 1,
+    REF: 2,
+};
+type ContextKind = (typeof ContextKind)[keyof typeof ContextKind];
 
 /**
  * The node context interface.
@@ -93,7 +94,7 @@ export const getRootContext = <T extends Node>(
         [SHADOW_CONTEXT_SYMBOL]?: Context;
     },
     shadowRoot?: boolean
-) => {
+): Context => {
     if (shadowRoot) {
         node[SHADOW_CONTEXT_SYMBOL] = node[SHADOW_CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node);
         return node[SHADOW_CONTEXT_SYMBOL];
@@ -648,7 +649,7 @@ export const internalRender = (
     rootContext: Context = context,
     namespace = 'http://www.w3.org/1999/xhtml',
     fragment?: Context
-) => {
+): Context[] => {
     const contextChildren = context.children;
 
     let endContext: Context | undefined;
