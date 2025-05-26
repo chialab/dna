@@ -33,15 +33,15 @@ export default defineConfig({
         name: `DNA${job ? ` (${job})` : ''}`,
         dir: './test',
         include: ['./**/*.spec.js'],
+        fileParallelism: false,
         coverage: {
             all: false,
             include: ['src/**/*.js'],
             reporter: ['clover', 'html'],
         },
         browser: {
-            headless: true,
             provider: 'playwright',
-            fileParallelism: false,
+            headless: true,
             instances: [
                 {
                     browser: 'chromium',
