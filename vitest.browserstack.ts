@@ -11,12 +11,12 @@ export default mergeConfig(vitestConfig, {
         browser: {
             enabled: true,
             provider: '@chialab/vitest-provider-browserstack',
-            name: 'browserstack:chrome-latest',
             slowHijackESM: false,
             api: {
                 host: '0.0.0.0',
                 port: 5176,
             },
+            instances: [{ browser: 'browserstack:chrome-latest' }],
         },
     },
     browserstack: {
