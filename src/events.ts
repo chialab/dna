@@ -137,7 +137,7 @@ export const delegateEventListener = (
     selector: string | null,
     callback: DelegatedEventCallback,
     options?: AddEventListenerOptions
-) => {
+): void => {
     const delegatedElement: Node & WithEventDelegations = element;
 
     assertNode(element);
@@ -246,7 +246,7 @@ export const undelegateEventListener = (
     eventName: string,
     selector: string | null,
     callback: DelegatedEventCallback
-) => {
+): void => {
     assertNode(element);
     assertEventName(eventName);
     assertEventSelector(selector);
@@ -391,7 +391,7 @@ type Listener = {
  * @param prototype The component prototype.
  * @returns A list of listeners.
  */
-export const getListeners = <T extends ComponentInstance>(prototype: WithListeners<T>) => {
+export const getListeners = <T extends ComponentInstance>(prototype: WithListeners<T>): Listener[] => {
     const listeners = prototype[LISTENERS_SYMBOL];
     if (!listeners) {
         return [];
@@ -409,7 +409,7 @@ export const getListeners = <T extends ComponentInstance>(prototype: WithListene
  * @param prototype The component prototype.
  * @param listeners The list of listeners to set.
  */
-export const setListeners = <T extends ComponentInstance>(prototype: WithListeners<T>, listeners: Listener[]) => {
+export const setListeners = <T extends ComponentInstance>(prototype: WithListeners<T>, listeners: Listener[]): void => {
     prototype[LISTENERS_SYMBOL] = listeners;
 };
 
@@ -427,7 +427,7 @@ export function defineListener<T extends ComponentInstance>(
     selector: string | null,
     callback: DelegatedEventCallback,
     options: AddEventListenerOptions = {}
-) {
+): void {
     const listeners = getListeners(prototype);
     setListeners(prototype, listeners);
     listeners.push({
@@ -442,7 +442,7 @@ export function defineListener<T extends ComponentInstance>(
  * Define component listeners.
  * @param prototype The component prototype.
  */
-export const defineListeners = <T extends ComponentInstance>(prototype: T) => {
+export const defineListeners = <T extends ComponentInstance>(prototype: T): void => {
     const constructor = prototype.constructor as ComponentConstructor<T>;
     let ctr = constructor;
     while (ctr && ctr.prototype && ctr !== HTMLElement) {

@@ -374,8 +374,8 @@ function jsx<T extends FunctionComponent | HTMLElement | 'slot' | string>(
     } as DistinctVObject<T>;
 }
 
-const jsxs = jsx;
-const jsxDEV = jsx;
+const jsxs: typeof jsx = jsx;
+const jsxDEV: typeof jsx = jsx;
 
 export { h, jsx, jsxs, jsxDEV };
 
@@ -385,7 +385,8 @@ export { h, jsx, jsxs, jsxDEV };
  * @param values Values to interpolate.
  * @returns The virtual DOM template.
  */
-export const html = htm.bind(h);
+export const html: (strings: TemplateStringsArray, ...values: any[]) => ReturnType<typeof h> | ReturnType<typeof h>[] =
+    htm.bind(h);
 
 /**
  * Compile a string into virtual DOM template.

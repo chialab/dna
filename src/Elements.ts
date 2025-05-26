@@ -185,76 +185,90 @@ export interface SVGTagNameMap {
     view: SVGViewElement;
 }
 
-export const {
-    HTMLElement = class {} as (typeof globalThis)['HTMLElement'],
-    HTMLAnchorElement = HTMLElement as (typeof globalThis)['HTMLAnchorElement'],
-    HTMLAreaElement = HTMLElement as (typeof globalThis)['HTMLAreaElement'],
-    HTMLAudioElement = HTMLElement as (typeof globalThis)['HTMLAudioElement'],
-    HTMLBaseElement = HTMLElement as (typeof globalThis)['HTMLBaseElement'],
-    HTMLQuoteElement = HTMLElement as (typeof globalThis)['HTMLQuoteElement'],
-    HTMLBodyElement = HTMLElement as (typeof globalThis)['HTMLBodyElement'],
-    HTMLBRElement = HTMLElement as (typeof globalThis)['HTMLBRElement'],
-    HTMLButtonElement = HTMLElement as (typeof globalThis)['HTMLButtonElement'],
-    HTMLCanvasElement = HTMLElement as (typeof globalThis)['HTMLCanvasElement'],
-    HTMLTableCaptionElement = HTMLElement as (typeof globalThis)['HTMLTableCaptionElement'],
-    HTMLTableColElement = HTMLElement as (typeof globalThis)['HTMLTableColElement'],
-    HTMLDataElement = HTMLElement as (typeof globalThis)['HTMLDataElement'],
-    HTMLDataListElement = HTMLElement as (typeof globalThis)['HTMLDataListElement'],
-    HTMLModElement = HTMLElement as (typeof globalThis)['HTMLModElement'],
-    HTMLDetailsElement = HTMLElement as (typeof globalThis)['HTMLDetailsElement'],
-    HTMLDialogElement = HTMLElement as (typeof globalThis)['HTMLDialogElement'],
-    HTMLDirectoryElement = HTMLElement as (typeof globalThis)['HTMLDirectoryElement'],
-    HTMLDivElement = HTMLElement as (typeof globalThis)['HTMLDivElement'],
-    HTMLDListElement = HTMLElement as (typeof globalThis)['HTMLDListElement'],
-    HTMLEmbedElement = HTMLElement as (typeof globalThis)['HTMLEmbedElement'],
-    HTMLFieldSetElement = HTMLElement as (typeof globalThis)['HTMLFieldSetElement'],
-    HTMLFontElement = HTMLElement as (typeof globalThis)['HTMLFontElement'],
-    HTMLFormElement = HTMLElement as (typeof globalThis)['HTMLFormElement'],
-    HTMLFrameElement = HTMLElement as (typeof globalThis)['HTMLFrameElement'],
-    HTMLFrameSetElement = HTMLElement as (typeof globalThis)['HTMLFrameSetElement'],
-    HTMLHeadingElement = HTMLElement as (typeof globalThis)['HTMLHeadingElement'],
-    HTMLHeadElement = HTMLElement as (typeof globalThis)['HTMLHeadElement'],
-    HTMLHRElement = HTMLElement as (typeof globalThis)['HTMLHRElement'],
-    HTMLIFrameElement = HTMLElement as (typeof globalThis)['HTMLIFrameElement'],
-    HTMLImageElement = HTMLElement as (typeof globalThis)['HTMLImageElement'],
-    HTMLInputElement = HTMLElement as (typeof globalThis)['HTMLInputElement'],
-    HTMLLabelElement = HTMLElement as (typeof globalThis)['HTMLLabelElement'],
-    HTMLLegendElement = HTMLElement as (typeof globalThis)['HTMLLegendElement'],
-    HTMLLIElement = HTMLElement as (typeof globalThis)['HTMLLIElement'],
-    HTMLLinkElement = HTMLElement as (typeof globalThis)['HTMLLinkElement'],
-    HTMLMapElement = HTMLElement as (typeof globalThis)['HTMLMapElement'],
-    HTMLMarqueeElement = HTMLElement as (typeof globalThis)['HTMLMarqueeElement'],
-    HTMLMenuElement = HTMLElement as (typeof globalThis)['HTMLMenuElement'],
-    HTMLMetaElement = HTMLElement as (typeof globalThis)['HTMLMetaElement'],
-    HTMLMeterElement = HTMLElement as (typeof globalThis)['HTMLMeterElement'],
-    HTMLObjectElement = HTMLElement as (typeof globalThis)['HTMLObjectElement'],
-    HTMLOListElement = HTMLElement as (typeof globalThis)['HTMLOListElement'],
-    HTMLOptGroupElement = HTMLElement as (typeof globalThis)['HTMLOptGroupElement'],
-    HTMLOptionElement = HTMLElement as (typeof globalThis)['HTMLOptionElement'],
-    HTMLOutputElement = HTMLElement as (typeof globalThis)['HTMLOutputElement'],
-    HTMLParagraphElement = HTMLElement as (typeof globalThis)['HTMLParagraphElement'],
-    HTMLParamElement = HTMLElement as (typeof globalThis)['HTMLParamElement'],
-    HTMLPictureElement = HTMLElement as (typeof globalThis)['HTMLPictureElement'],
-    HTMLPreElement = HTMLElement as (typeof globalThis)['HTMLPreElement'],
-    HTMLProgressElement = HTMLElement as (typeof globalThis)['HTMLProgressElement'],
-    HTMLScriptElement = HTMLElement as (typeof globalThis)['HTMLScriptElement'],
-    HTMLSelectElement = HTMLElement as (typeof globalThis)['HTMLSelectElement'],
-    HTMLSlotElement = HTMLElement as (typeof globalThis)['HTMLSlotElement'],
-    HTMLSourceElement = HTMLElement as (typeof globalThis)['HTMLSourceElement'],
-    HTMLSpanElement = HTMLElement as (typeof globalThis)['HTMLSpanElement'],
-    HTMLStyleElement = HTMLElement as (typeof globalThis)['HTMLStyleElement'],
-    HTMLTableElement = HTMLElement as (typeof globalThis)['HTMLTableElement'],
-    HTMLTableSectionElement = HTMLElement as (typeof globalThis)['HTMLTableSectionElement'],
-    HTMLTableCellElement = HTMLElement as (typeof globalThis)['HTMLTableCellElement'],
-    HTMLTemplateElement = HTMLElement as (typeof globalThis)['HTMLTemplateElement'],
-    HTMLTextAreaElement = HTMLElement as (typeof globalThis)['HTMLTextAreaElement'],
-    HTMLTimeElement = HTMLElement as (typeof globalThis)['HTMLTimeElement'],
-    HTMLTitleElement = HTMLElement as (typeof globalThis)['HTMLTitleElement'],
-    HTMLTableRowElement = HTMLElement as (typeof globalThis)['HTMLTableRowElement'],
-    HTMLTrackElement = HTMLElement as (typeof globalThis)['HTMLTrackElement'],
-    HTMLUListElement = HTMLElement as (typeof globalThis)['HTMLUListElement'],
-    HTMLVideoElement = HTMLElement as (typeof globalThis)['HTMLVideoElement'],
-} = (isBrowser ? window : {}) as unknown as typeof window;
+const global = (isBrowser ? window : {}) as unknown as typeof window;
+
+export const HTMLElement: (typeof globalThis)['HTMLElement'] = global.HTMLElement ?? class {};
+export const HTMLAnchorElement: (typeof globalThis)['HTMLAnchorElement'] = global.HTMLAnchorElement ?? HTMLElement;
+export const HTMLAreaElement: (typeof globalThis)['HTMLAreaElement'] = global.HTMLAreaElement ?? HTMLElement;
+export const HTMLAudioElement: (typeof globalThis)['HTMLAudioElement'] = global.HTMLAudioElement ?? HTMLElement;
+export const HTMLBaseElement: (typeof globalThis)['HTMLBaseElement'] = global.HTMLBaseElement ?? HTMLElement;
+export const HTMLQuoteElement: (typeof globalThis)['HTMLQuoteElement'] = global.HTMLQuoteElement ?? HTMLElement;
+export const HTMLBodyElement: (typeof globalThis)['HTMLBodyElement'] = global.HTMLBodyElement ?? HTMLElement;
+export const HTMLBRElement: (typeof globalThis)['HTMLBRElement'] = global.HTMLBRElement ?? HTMLElement;
+export const HTMLButtonElement: (typeof globalThis)['HTMLButtonElement'] = global.HTMLButtonElement ?? HTMLElement;
+export const HTMLCanvasElement: (typeof globalThis)['HTMLCanvasElement'] = global.HTMLCanvasElement ?? HTMLElement;
+export const HTMLTableCaptionElement: (typeof globalThis)['HTMLTableCaptionElement'] =
+    global.HTMLTableCaptionElement ?? HTMLElement;
+export const HTMLTableColElement: (typeof globalThis)['HTMLTableColElement'] =
+    global.HTMLTableColElement ?? HTMLElement;
+export const HTMLDataElement: (typeof globalThis)['HTMLDataElement'] = global.HTMLDataElement ?? HTMLElement;
+export const HTMLDataListElement: (typeof globalThis)['HTMLDataListElement'] =
+    global.HTMLDataListElement ?? HTMLElement;
+export const HTMLModElement: (typeof globalThis)['HTMLModElement'] = global.HTMLModElement ?? HTMLElement;
+export const HTMLDetailsElement: (typeof globalThis)['HTMLDetailsElement'] = global.HTMLDetailsElement ?? HTMLElement;
+export const HTMLDialogElement: (typeof globalThis)['HTMLDialogElement'] = global.HTMLDialogElement ?? HTMLElement;
+export const HTMLDirectoryElement: (typeof globalThis)['HTMLDirectoryElement'] =
+    global.HTMLDirectoryElement ?? HTMLElement;
+export const HTMLDivElement: (typeof globalThis)['HTMLDivElement'] = global.HTMLDivElement ?? HTMLElement;
+export const HTMLDListElement: (typeof globalThis)['HTMLDListElement'] = global.HTMLDListElement ?? HTMLElement;
+export const HTMLEmbedElement: (typeof globalThis)['HTMLEmbedElement'] = global.HTMLEmbedElement ?? HTMLElement;
+export const HTMLFieldSetElement: (typeof globalThis)['HTMLFieldSetElement'] =
+    global.HTMLFieldSetElement ?? HTMLElement;
+export const HTMLFontElement: (typeof globalThis)['HTMLFontElement'] = global.HTMLFontElement ?? HTMLElement;
+export const HTMLFormElement: (typeof globalThis)['HTMLFormElement'] = global.HTMLFormElement ?? HTMLElement;
+export const HTMLFrameElement: (typeof globalThis)['HTMLFrameElement'] = global.HTMLFrameElement ?? HTMLElement;
+export const HTMLFrameSetElement: (typeof globalThis)['HTMLFrameSetElement'] =
+    global.HTMLFrameSetElement ?? HTMLElement;
+export const HTMLHeadingElement: (typeof globalThis)['HTMLHeadingElement'] = global.HTMLHeadingElement ?? HTMLElement;
+export const HTMLHeadElement: (typeof globalThis)['HTMLHeadElement'] = global.HTMLHeadElement ?? HTMLElement;
+export const HTMLHRElement: (typeof globalThis)['HTMLHRElement'] = global.HTMLHRElement ?? HTMLElement;
+export const HTMLIFrameElement: (typeof globalThis)['HTMLIFrameElement'] = global.HTMLIFrameElement ?? HTMLElement;
+export const HTMLImageElement: (typeof globalThis)['HTMLImageElement'] = global.HTMLImageElement ?? HTMLElement;
+export const HTMLInputElement: (typeof globalThis)['HTMLInputElement'] = global.HTMLInputElement ?? HTMLElement;
+export const HTMLLabelElement: (typeof globalThis)['HTMLLabelElement'] = global.HTMLLabelElement ?? HTMLElement;
+export const HTMLLegendElement: (typeof globalThis)['HTMLLegendElement'] = global.HTMLLegendElement ?? HTMLElement;
+export const HTMLLIElement: (typeof globalThis)['HTMLLIElement'] = global.HTMLLIElement ?? HTMLElement;
+export const HTMLLinkElement: (typeof globalThis)['HTMLLinkElement'] = global.HTMLLinkElement ?? HTMLElement;
+export const HTMLMapElement: (typeof globalThis)['HTMLMapElement'] = global.HTMLMapElement ?? HTMLElement;
+export const HTMLMarqueeElement: (typeof globalThis)['HTMLMarqueeElement'] = global.HTMLMarqueeElement ?? HTMLElement;
+export const HTMLMenuElement: (typeof globalThis)['HTMLMenuElement'] = global.HTMLMenuElement ?? HTMLElement;
+export const HTMLMetaElement: (typeof globalThis)['HTMLMetaElement'] = global.HTMLMetaElement ?? HTMLElement;
+export const HTMLMeterElement: (typeof globalThis)['HTMLMeterElement'] = global.HTMLMeterElement ?? HTMLElement;
+export const HTMLObjectElement: (typeof globalThis)['HTMLObjectElement'] = global.HTMLObjectElement ?? HTMLElement;
+export const HTMLOListElement: (typeof globalThis)['HTMLOListElement'] = global.HTMLOListElement ?? HTMLElement;
+export const HTMLOptGroupElement: (typeof globalThis)['HTMLOptGroupElement'] =
+    global.HTMLOptGroupElement ?? HTMLElement;
+export const HTMLOptionElement: (typeof globalThis)['HTMLOptionElement'] = global.HTMLOptionElement ?? HTMLElement;
+export const HTMLOutputElement: (typeof globalThis)['HTMLOutputElement'] = global.HTMLOutputElement ?? HTMLElement;
+export const HTMLParagraphElement: (typeof globalThis)['HTMLParagraphElement'] =
+    global.HTMLParagraphElement ?? HTMLElement;
+export const HTMLParamElement: (typeof globalThis)['HTMLParamElement'] = global.HTMLParamElement ?? HTMLElement;
+export const HTMLPictureElement: (typeof globalThis)['HTMLPictureElement'] = global.HTMLPictureElement ?? HTMLElement;
+export const HTMLPreElement: (typeof globalThis)['HTMLPreElement'] = global.HTMLPreElement ?? HTMLElement;
+export const HTMLProgressElement: (typeof globalThis)['HTMLProgressElement'] =
+    global.HTMLProgressElement ?? HTMLElement;
+export const HTMLScriptElement: (typeof globalThis)['HTMLScriptElement'] = global.HTMLScriptElement ?? HTMLElement;
+export const HTMLSelectElement: (typeof globalThis)['HTMLSelectElement'] = global.HTMLSelectElement ?? HTMLElement;
+export const HTMLSlotElement: (typeof globalThis)['HTMLSlotElement'] = global.HTMLSlotElement ?? HTMLElement;
+export const HTMLSourceElement: (typeof globalThis)['HTMLSourceElement'] = global.HTMLSourceElement ?? HTMLElement;
+export const HTMLSpanElement: (typeof globalThis)['HTMLSpanElement'] = global.HTMLSpanElement ?? HTMLElement;
+export const HTMLStyleElement: (typeof globalThis)['HTMLStyleElement'] = global.HTMLStyleElement ?? HTMLElement;
+export const HTMLTableElement: (typeof globalThis)['HTMLTableElement'] = global.HTMLTableElement ?? HTMLElement;
+export const HTMLTableSectionElement: (typeof globalThis)['HTMLTableSectionElement'] =
+    global.HTMLTableSectionElement ?? HTMLElement;
+export const HTMLTableCellElement: (typeof globalThis)['HTMLTableCellElement'] =
+    global.HTMLTableCellElement ?? HTMLElement;
+export const HTMLTemplateElement: (typeof globalThis)['HTMLTemplateElement'] =
+    global.HTMLTemplateElement ?? HTMLElement;
+export const HTMLTextAreaElement: (typeof globalThis)['HTMLTextAreaElement'] =
+    global.HTMLTextAreaElement ?? HTMLElement;
+export const HTMLTimeElement: (typeof globalThis)['HTMLTimeElement'] = global.HTMLTimeElement ?? HTMLElement;
+export const HTMLTitleElement: (typeof globalThis)['HTMLTitleElement'] = global.HTMLTitleElement ?? HTMLElement;
+export const HTMLTableRowElement: (typeof globalThis)['HTMLTableRowElement'] =
+    global.HTMLTableRowElement ?? HTMLElement;
+export const HTMLTrackElement: (typeof globalThis)['HTMLTrackElement'] = global.HTMLTrackElement ?? HTMLElement;
+export const HTMLUListElement: (typeof globalThis)['HTMLUListElement'] = global.HTMLUListElement ?? HTMLElement;
+export const HTMLVideoElement: (typeof globalThis)['HTMLVideoElement'] = global.HTMLVideoElement ?? HTMLElement;
 
 /**
  * Extract the base class from a given element type.

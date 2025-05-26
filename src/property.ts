@@ -265,7 +265,7 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
  * @param chain Should create inheritance chain of properties.
  * @returns A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance>(prototype: T, chain: boolean = false) => {
+export const getProperties = <T extends ComponentInstance>(prototype: T, chain: boolean = false): PropertiesOf<T> => {
     const props = ((prototype as WithProperties<T>)[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
 
     if (chain && !hasOwnProperty.call(prototype, PROPERTIES_SYMBOL)) {
@@ -500,7 +500,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
  * Define component constructor properties.
  * @param prototype The component prototype.
  */
-export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
+export const defineProperties = <T extends ComponentInstance>(prototype: T): void => {
     const handled: { [key: string]: boolean } = {};
     const constructor = prototype.constructor as ComponentConstructor;
     let ctr = constructor;
@@ -537,7 +537,10 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T) => {
  * @param attributeName The name of the bound attribute.
  * @returns The property declaration.
  */
-export const getPropertyForAttribute = <T extends ComponentInstance>(prototype: T, attributeName: string) => {
+export const getPropertyForAttribute = <T extends ComponentInstance>(
+    prototype: T,
+    attributeName: string
+): PropertiesOf<T>[keyof T] | null => {
     const properties = getProperties(prototype);
     for (const propertyKey in properties) {
         const property = properties[propertyKey as keyof T];
@@ -559,7 +562,7 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
     element: T,
     propertyName: P,
     newValue: T[P]
-) => {
+): void => {
     const property = getProperty(element, propertyName, true);
     const { attribute, toAttribute } = property;
     if (attribute && toAttribute) {
@@ -687,7 +690,7 @@ export const createObserver = <T extends ComponentInstance, P extends keyof T, M
  * @param element The node.
  * @returns The map of observers.
  */
-export const getObservers = <T extends ComponentInstance>(element: T) => {
+export const getObservers = <T extends ComponentInstance>(element: T): ObserversOf<T> => {
     const observers = ((element as WithProperties<T>)[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
 
     if (!hasOwnProperty.call(element, OBSERVERS_SYMBOL)) {
@@ -708,12 +711,16 @@ export const getObservers = <T extends ComponentInstance>(element: T) => {
  * @returns A list of observers.
  * @throws If the property is not defined.
  */
-export const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(element: T, propertyName: P) => {
+export const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(
+    element: T,
+    propertyName: P
+): ObserversOf<T>[P] => {
     if (!getProperty(element, propertyName)) {
         throw new Error(`Missing property ${String(propertyName)}`);
     }
     const observers = getObservers(element);
-    return (observers[propertyName] = observers[propertyName] || []);
+    observers[propertyName] = observers[propertyName] || [];
+    return observers[propertyName];
 };
 
 /**
@@ -726,7 +733,7 @@ export const addObserver = <T extends ComponentInstance, P extends keyof T>(
     element: T,
     propertyName: P,
     observer: PropertyObserver<T[P]>
-) => {
+): void => {
     getPropertyObservers(element, propertyName).push(observer);
 };
 
@@ -740,7 +747,7 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof T>(
     element: T,
     propertyName: P,
     observer: PropertyObserver<T[P]>
-) => {
+): void => {
     const observers = getPropertyObservers(element, propertyName);
     const io = observers.indexOf(observer);
     if (io !== -1) {
@@ -755,7 +762,7 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof T>(
  */
 export function property<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(
     declaration: PropertyDeclaration<TypeConstructorHint> = {}
-) {
+): Function {
     return <T extends ComponentInstance, P extends keyof T>(
         targetOrClassElement: T,
         propertyKey?: P,
@@ -776,7 +783,7 @@ export function property<TypeConstructorHint extends Constructor<unknown> = Cons
  */
 export function state<TypeConstructorHint extends Constructor<unknown> = Constructor<unknown>>(
     declaration: PropertyDeclaration<TypeConstructorHint> = {}
-) {
+): Function {
     return <T extends ComponentInstance, P extends keyof T>(
         targetOrClassElement: T,
         propertyKey?: P,

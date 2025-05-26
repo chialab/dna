@@ -29,7 +29,7 @@ export const $parse = (string: string): Template => h(ParseFunction, { source: s
  * @param thenable The Promise-like object.
  * @returns The virtual DOM template function.
  */
-export const $await = (thenable: Promise<unknown>) =>
+export const $await = (thenable: Promise<unknown>): Template =>
     h(
         ((props, { useState, useMemo }) => {
             const state = getThenableState(thenable);
@@ -54,7 +54,7 @@ export const $await = (thenable: Promise<unknown>) =>
  * @param template The template to render.
  * @returns A promise which resolves the template while the Thenable is in pending status.
  */
-export const $until = (thenable: Promise<unknown>, template: Template) => {
+export const $until = (thenable: Promise<unknown>, template: Template): Template => {
     const original = getThenableState(thenable);
     const wrapper = thenable.then(() => false).catch(() => false);
     const state = getThenableState(wrapper);

@@ -10,7 +10,7 @@ import {
     type DelegatedEventCallback,
     type ListenerConfig,
 } from './events';
-import { defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import { defineProperty, getPrototypeOf, isBrowser, setPrototypeOf } from './helpers';
 import { type HTML as HTMLNamespace } from './HTML';
 import { type Template } from './JSX';
 import {
@@ -656,7 +656,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             setOwner(node, this);
 
             const root = this;
-            const proto = Object.getPrototypeOf(node as Comment);
+            const proto = getPrototypeOf(node as Comment);
             const shadowProto = {
                 get parentNode() {
                     if (root.rendering || !root.isConnected) {
@@ -710,8 +710,8 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 },
             };
 
-            Object.setPrototypeOf(shadowProto, proto);
-            Object.setPrototypeOf(node, shadowProto);
+            setPrototypeOf(shadowProto, proto);
+            setPrototypeOf(node, shadowProto);
         }
 
         /**
@@ -722,7 +722,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             if (getOwner(node) === this) {
                 setOwner(node, null);
                 // Restore the original prototype
-                Object.setPrototypeOf(node, Object.getPrototypeOf(Object.getPrototypeOf(node)));
+                setPrototypeOf(node, getPrototypeOf(getPrototypeOf(node)));
             }
         }
 
@@ -915,7 +915,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
 /**
  * A collection of extended builtin HTML constructors.
  */
-export const HTML = new Proxy({} as typeof HTMLNamespace, {
+export const HTML: typeof HTMLNamespace = new Proxy({} as typeof HTMLNamespace, {
     get(target, name) {
         const constructor = Reflect.get(target, name);
         if (constructor) {
@@ -943,7 +943,7 @@ export const HTML = new Proxy({} as typeof HTMLNamespace, {
  * a complete lifecycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = HTML.Element;
+export const Component: (typeof HTMLNamespace)['Element'] = HTML.Element;
 
 /**
  * The basic DNA Component interface.
@@ -1002,7 +1002,7 @@ export type ComponentConstructor<T extends ComponentInstance = ComponentInstance
  * @param element The element to check.
  * @returns True if the element has been constructed.
  */
-export const isInitialized = (element: ComponentInstance) =>
+export const isInitialized = (element: ComponentInstance): boolean =>
     !!(element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL];
 
 /**
