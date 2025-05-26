@@ -37,9 +37,14 @@ const COMPONENT_SYMBOL: unique symbol = Symbol();
 const INITIALIZED_SYMBOL: unique symbol = Symbol();
 
 /**
+ * A symbol which identify connected elements.
+ */
+const CONNECTED_SYMBOL: unique symbol = Symbol();
+
+/**
  * A symbol which identify the owner of a node.
  */
-const OWNER_SYMBOL = Symbol();
+const OWNER_SYMBOL: unique symbol = Symbol();
 
 /**
  * An augmented node with component flags.
@@ -47,6 +52,7 @@ const OWNER_SYMBOL = Symbol();
 type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
     [INITIALIZED_SYMBOL]?: boolean;
+    [CONNECTED_SYMBOL]?: boolean;
 };
 
 /**
@@ -295,6 +301,8 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
+            (this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL] = true;
+
             if (!this.hasAttribute(':defined')) {
                 if (this.is !== this.localName) {
                     // force the is attribute
@@ -312,6 +320,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * Invoked each time the Component is disconnected from the document's DOM.
          */
         disconnectedCallback() {
+            (this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL] = false;
             this._resetRendering();
             this._restoreSlotChildNodes();
         }
@@ -520,7 +529,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns True if a re-render has been triggered.
          */
         requestUpdate() {
-            if (!this.isConnected) {
+            if (!(this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL]) {
                 return false;
             }
             if (this._collectingUpdates === 0) {
@@ -647,41 +656,62 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             setOwner(node, this);
 
             const root = this;
-            if (node.nodeType === Node.COMMENT_NODE) {
-                const proto = Object.getPrototypeOf(node as Comment);
-                const shadowProto = {
-                    get parentNode() {
-                        return root;
-                    },
-                    get nextSibling() {
-                        const io = root.slotChildNodes.indexOf(node);
-                        if (io === -1) {
-                            return null;
-                        }
-                        return root.slotChildNodes[io + 1] || null;
-                    },
-                    get previousSibling() {
-                        const io = root.slotChildNodes.indexOf(node);
-                        if (io === -1) {
-                            return null;
-                        }
-                        return root.slotChildNodes[io - 1] || null;
-                    },
-                    before(...nodes: (Node | string)[]) {
-                        root._insertNodesBefore(root._importNodes(nodes), node);
-                        root.requestUpdate();
-                    },
-                    after(...nodes: (Node | string)[]) {
-                        const io = root.slotChildNodes.indexOf(node);
-                        const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
-                        root._insertNodesBefore(root._importNodes(nodes), nextSibling);
-                        root.requestUpdate();
-                    },
-                };
+            const proto = Object.getPrototypeOf(node as Comment);
+            const shadowProto = {
+                get parentNode() {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'parentNode', node);
+                    }
+                    return root;
+                },
+                get nextSibling() {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'nextSibling', node);
+                    }
+                    const io = root.slotChildNodes.indexOf(node);
+                    if (io === -1) {
+                        return null;
+                    }
+                    return root.slotChildNodes[io + 1] || null;
+                },
+                get previousSibling() {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'previousSibling', node);
+                    }
+                    const io = root.slotChildNodes.indexOf(node);
+                    if (io === -1) {
+                        return null;
+                    }
+                    return root.slotChildNodes[io - 1] || null;
+                },
+                before(...nodes: (Node | string)[]) {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'before', node).apply(node, nodes);
+                    }
+                    root._insertNodesBefore(root._importNodes(nodes), node);
+                    root.requestUpdate();
+                },
+                after(...nodes: (Node | string)[]) {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'after', node).apply(node, nodes);
+                    }
+                    const io = root.slotChildNodes.indexOf(node);
+                    const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
+                    root._insertNodesBefore(root._importNodes(nodes), nextSibling);
+                    root.requestUpdate();
+                },
+                remove() {
+                    if (root.rendering || !root.isConnected) {
+                        return Reflect.get(proto, 'remove', node).call(node);
+                    }
+                    root._removeNodes([node]);
+                    root._releaseNode(node);
+                    root.requestUpdate();
+                },
+            };
 
-                Object.setPrototypeOf(shadowProto, proto);
-                Object.setPrototypeOf(node, shadowProto);
-            }
+            Object.setPrototypeOf(shadowProto, proto);
+            Object.setPrototypeOf(node, shadowProto);
         }
 
         /**
@@ -691,6 +721,8 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         private _releaseNode(node: Node): void {
             if (getOwner(node) === this) {
                 setOwner(node, null);
+                // Restore the original prototype
+                Object.setPrototypeOf(node, Object.getPrototypeOf(Object.getPrototypeOf(node)));
             }
         }
 

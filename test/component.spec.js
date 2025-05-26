@@ -314,6 +314,74 @@ describe(
                 window.customElements.upgrade(wrapper);
                 expect(connected).toBe(true);
             });
+
+            it('should setup component via innerHTML', () => {
+                const is = getComponentName();
+                DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        static get properties() {
+                            return {
+                                myCustomProp1: {
+                                    attribute: 'custom-prop',
+                                },
+                            };
+                        }
+
+                        render() {
+                            return DNA.html`<div><slot /></div>`;
+                        }
+                    }
+                );
+
+                wrapper.innerHTML = `<${is} custom-prop="test"><span>test</span></${is}>`;
+                const element = wrapper.children[0];
+                expect(element).toBeInstanceOf(DNA.Component);
+                expect(element.is).toBe(is);
+                expect(element.tagName).toBe(is.toUpperCase());
+                expect(element.myCustomProp1).toBe('test');
+                expect(element.childNodes.length).toBe(1);
+                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0].childNodes[0].textContent).toBe('test');
+            });
+
+            it('should setup nested component via innerHTML', () => {
+                const is = getComponentName();
+                const title = getComponentName();
+                DNA.define(
+                    is,
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div><${title}><slot /></${title}></div>`;
+                        }
+                    }
+                );
+                DNA.define(
+                    title,
+                    class extends DNA.Component {
+                        render() {
+                            return DNA.html`<div><slot /></div>`;
+                        }
+                    }
+                );
+
+                wrapper.innerHTML = `<${is}><span>test</span></${is}>`;
+                const element = wrapper.children[0];
+                expect(element).toBeInstanceOf(DNA.Component);
+                expect(element.is).toBe(is);
+                expect(element.tagName).toBe(is.toUpperCase());
+                expect(element.childNodes.length).toBe(1);
+                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes[0].tagName).toBe(title.toUpperCase());
+                expect(element.childNodes[0].childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent).toBe('test');
+            });
         });
 
         describe('#connectedCallback|disconnectedCallback', () => {
