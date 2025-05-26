@@ -9,12 +9,12 @@ export type Constructor<T> = {
 /**
  * Alias to Array.isArray.
  */
-export const isArray = Array.isArray;
+export const isArray: (typeof Array)['isArray'] = Array.isArray;
 
 /**
  * Alias to Object.getOwnPropertyDescriptor.
  */
-export const getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+export const getOwnPropertyDescriptor: (typeof Object)['getOwnPropertyDescriptor'] = Object.getOwnPropertyDescriptor;
 
 /**
  * Like Object.getOwnPropertyDescriptor, but for all the property chain.
@@ -33,29 +33,29 @@ export const getPropertyDescriptor = (object: any, propertyKey: PropertyKey): Pr
 /**
  * Alias to Object.setPrototypeOf.
  */
-export const getPrototypeOf = Object.getPrototypeOf;
+export const getPrototypeOf: (typeof Object)['getPrototypeOf'] = Object.getPrototypeOf;
 
 /**
  * Alias to Object.setPrototypeOf.
  */
-export const setPrototypeOf = Object.setPrototypeOf;
+export const setPrototypeOf: (typeof Object)['setPrototypeOf'] = Object.setPrototypeOf;
 
 /**
  * Alias to Object.prototype.hasOwnProperty.
  */
-export const hasOwnProperty = Object.prototype.hasOwnProperty;
+export const hasOwnProperty: (typeof Object)['hasOwnProperty'] = Object.prototype.hasOwnProperty;
 
 /**
  * Alias to Object.defineProperty.
  */
-export const defineProperty = Object.defineProperty;
+export const defineProperty: (typeof Object)['defineProperty'] = Object.defineProperty;
 
 /**
  * Alias to Object.create.
  */
-export const createObject = Object.create;
+export const createObject: (typeof Object)['create'] = Object.create;
 
 /**
  * Check if runtime has DOM specs.
  */
-export const isBrowser = typeof HTMLElement !== 'undefined';
+export const isBrowser: boolean = typeof HTMLElement !== 'undefined';
