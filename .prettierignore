@@ -4,4 +4,5 @@ coverage
 public
 docs/.vitepress/dist
 docs/.vitepress/cache
+docs/**/*.md
 CHANGELOG.md
