@@ -649,69 +649,76 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @throws An error if the node is already adopted.
          */
         private _adoptNode(node: Node) {
-            if (getOwner(node)) {
+            const owner = getOwner(node);
+            if (owner === this) {
+                return;
+            }
+            if (owner) {
                 throw new Error('Node already adopted');
             }
 
             setOwner(node, this);
 
-            const root = this;
-            const proto = getPrototypeOf(node as Comment);
-            const shadowProto = {
-                get parentNode() {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'parentNode', node);
-                    }
-                    return root;
-                },
-                get nextSibling() {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'nextSibling', node);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io + 1] || null;
-                },
-                get previousSibling() {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'previousSibling', node);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io - 1] || null;
-                },
-                before(...nodes: (Node | string)[]) {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'before', node).apply(node, nodes);
-                    }
-                    root._insertNodesBefore(root._importNodes(nodes), node);
-                    root.requestUpdate();
-                },
-                after(...nodes: (Node | string)[]) {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'after', node).apply(node, nodes);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
-                    root._insertNodesBefore(root._importNodes(nodes), nextSibling);
-                    root.requestUpdate();
-                },
-                remove() {
-                    if (root.rendering || !root.isConnected) {
-                        return Reflect.get(proto, 'remove', node).call(node);
-                    }
-                    root._removeNodes([node]);
-                    root._releaseNode(node);
-                    root.requestUpdate();
-                },
-            };
-
-            setPrototypeOf(shadowProto, proto);
-            setPrototypeOf(node, shadowProto);
+            if (node.nodeType === Node.COMMENT_NODE) {
+                // Most of the rendering libraries use comment nodes to mark fragments.
+                // We need to extend the comment node prototype to provide a custom parentNode
+                // Checkout the tests folder for supported frameworks.
+                const root = this;
+                const proto = getPrototypeOf(node as Comment);
+                setPrototypeOf(node, {
+                    get parentNode() {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'parentNode', node);
+                        }
+                        return root;
+                    },
+                    get previousSibling() {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'previousSibling', node);
+                        }
+                        const io = root.slotChildNodes.indexOf(node);
+                        if (io === -1) {
+                            return null;
+                        }
+                        return root.slotChildNodes[io - 1] || null;
+                    },
+                    get nextSibling() {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'nextSibling', node);
+                        }
+                        const io = root.slotChildNodes.indexOf(node);
+                        if (io === -1) {
+                            return null;
+                        }
+                        return root.slotChildNodes[io + 1] || null;
+                    },
+                    before(...nodes: (Node | string)[]) {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'before', node).apply(node, nodes);
+                        }
+                        root._insertNodesBefore(root._importNodes(nodes), node);
+                        root.requestUpdate();
+                    },
+                    after(...nodes: (Node | string)[]) {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'after', node).apply(node, nodes);
+                        }
+                        const io = root.slotChildNodes.indexOf(node);
+                        const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
+                        root._insertNodesBefore(root._importNodes(nodes), nextSibling);
+                        root.requestUpdate();
+                    },
+                    remove() {
+                        if (root.rendering || !root.isConnected) {
+                            return Reflect.get(proto, 'remove', node).call(node);
+                        }
+                        root._removeNodes([node]);
+                        root._releaseNode(node);
+                        root.requestUpdate();
+                    },
+                    __proto__: proto,
+                });
+            }
         }
 
         /**
@@ -721,8 +728,10 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         private _releaseNode(node: Node): void {
             if (getOwner(node) === this) {
                 setOwner(node, null);
-                // Restore the original prototype
-                setPrototypeOf(node, getPrototypeOf(getPrototypeOf(node)));
+                if (node.nodeType === Node.COMMENT_NODE) {
+                    // Restore the original prototype
+                    setPrototypeOf(node, getPrototypeOf(getPrototypeOf(node)));
+                }
             }
         }
 
