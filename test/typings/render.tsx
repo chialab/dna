@@ -24,11 +24,12 @@ render(
 // @ts-expect-error Active is not a known property of the core details element
 render(<details active={true} />);
 render(<details open />);
-render(<div key={{}}></div>);
+render(<div key={{}} />);
 render(
     <unknown
         key={{}}
-        slot="2"></unknown>
+        slot="2"
+    />
 );
 
 render(h('details', { open: true }));
@@ -62,3 +63,4 @@ render(
 render(<Promise />);
 render(<>Hello</>);
 render(<svg viewBox="0 0 100 100"></svg>);
+render('Hello');

@@ -394,7 +394,7 @@ describe(
                         static get listeners() {
                             return {
                                 'click button': callback1,
-                                'change': callback2,
+                                change: callback2,
                             };
                         }
 
@@ -409,7 +409,7 @@ describe(
                         static get listeners() {
                             return {
                                 'click button': callback3,
-                                'drop': callback4,
+                                drop: callback4,
                             };
                         }
                     }

@@ -1,19 +1,21 @@
-import { type ClassDescriptor } from './ClassDescriptor';
+import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
+import type { HTML as HTMLNamespace } from './HTML';
+import type { Template } from './JSX';
 import {
+    type DelegatedEventCallback,
+    type ListenerConfig,
     defineListeners,
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
     getListeners,
     undelegateEventListener,
-    type DelegatedEventCallback,
-    type ListenerConfig,
 } from './events';
-import { defineProperty, getPrototypeOf, isBrowser, setPrototypeOf } from './helpers';
-import { type HTML as HTMLNamespace } from './HTML';
-import { type Template } from './JSX';
+import { type Constructor, defineProperty, getPrototypeOf, isBrowser, setPrototypeOf } from './helpers';
 import {
+    type PropertyConfig,
+    type PropertyObserver,
     addObserver,
     defineProperties,
     getProperties,
@@ -21,8 +23,6 @@ import {
     getPropertyForAttribute,
     reflectPropertyToAttribute,
     removeObserver,
-    type PropertyConfig,
-    type PropertyObserver,
 } from './property';
 import { getRootContext, internalRender } from './render';
 
@@ -88,19 +88,19 @@ export const isComponent = <T extends ComponentInstance>(node: T | Node): node i
 
 /**
  * Check if a constructor is a component constructor.
- * @param constructor The constructor to check.
+ * @param ctr The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentConstructor>(constructor: Function | T): constructor is T =>
-    !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = (ctr: Constructor<HTMLElement>): ctr is ComponentConstructor =>
+    !!(ctr.prototype as WithComponentProto<HTMLElement>)?.[COMPONENT_SYMBOL];
 
 /**
  * Create a base Component class which extends a native constructor.
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
  */
-export const extend = <T extends HTMLElement, C extends { new (...args: any[]): T; prototype: T }>(ctor: C) =>
-    class Component extends (ctor as { new (...args: any[]): HTMLElement; prototype: HTMLElement }) {
+export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>>(ctor: C) =>
+    class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * An array containing the names of the attributes to observe.
          * @returns The list of attributes to observe.
@@ -110,7 +110,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             const attributes = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
-                if (prop && prop.attribute && !prop.state) {
+                if (prop?.attribute && !prop.state) {
                     attributes.push(prop.attribute);
                 }
             }
@@ -217,13 +217,19 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             return this._rendering;
         }
 
-        constructor(...args: any[]) {
+        constructor(node?: HTMLElement) {
             super();
             if (!isBrowser) {
                 throw new Error('Components can be used only in browser environment');
             }
 
-            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
+            let element: this;
+            if (node) {
+                setPrototypeOf(node, this);
+                element = node as this;
+            } else {
+                element = this;
+            }
             element._initialProps = Object.getOwnPropertyNames(element).reduce(
                 (acc, key) => {
                     acc[key as Extract<keyof this, string>] = element[key as Extract<keyof this, string>];
@@ -232,6 +238,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
             );
 
+            // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
             return element;
         }
 
@@ -272,7 +279,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                     this[propertyKey] = this._initialProps[propertyKey];
                 }
             }
-            delete this._initialProps;
+            this._initialProps = undefined;
         }
 
         /**
@@ -459,14 +466,15 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
         dispatchAsyncEvent(
             event: Event | string,
@@ -828,7 +836,8 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          */
         append(...nodes: (Node | string)[]): void {
             if (!this.isConnected || this.rendering) {
-                return Reflect.get(ctor.prototype, 'append').apply(this, nodes);
+                Reflect.get(ctor.prototype, 'append').apply(this, nodes);
+                return;
             }
             this._appendNodes(this._importNodes(nodes));
             this.requestUpdate();
@@ -839,7 +848,8 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          */
         prepend(...nodes: (Node | string)[]): void {
             if (!this.isConnected || this.rendering) {
-                return Reflect.get(ctor.prototype, 'prepend').apply(this, nodes);
+                Reflect.get(ctor.prototype, 'prepend').apply(this, nodes);
+                return;
             }
             this._prependNodes(this._importNodes(nodes));
             this.requestUpdate();
@@ -926,20 +936,16 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
  */
 export const HTML: typeof HTMLNamespace = new Proxy({} as typeof HTMLNamespace, {
     get(target, name) {
-        const constructor = Reflect.get(target, name);
-        if (constructor) {
-            return constructor;
+        const ctr = Reflect.get(target, name);
+        if (ctr) {
+            return ctr;
         }
-        if (name === 'Element') {
-            name = 'HTMLElement';
-        } else {
-            name = `HTML${name as string}Element`;
-        }
-
-        if (name in Elements) {
-            const constructor = extend(Elements[name as keyof typeof Elements]);
-            Reflect.set(target, name, constructor);
-            return constructor;
+        const className =
+            name === 'Element' ? 'HTMLElement' : (`HTML${name as string}Element` as keyof typeof Elements);
+        if (className in Elements) {
+            const ctr = extend(Elements[className]);
+            Reflect.set(target, name, ctr);
+            return ctr;
         }
 
         return null;
@@ -994,8 +1000,7 @@ export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    // We cannot infer component properties from the base class
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: We cannot infer component properties from the base class
     new (...args: any[]): T;
 
     prototype: T;
@@ -1017,7 +1022,7 @@ export const isInitialized = (element: ComponentInstance): boolean =>
 /**
  * Define a component class.
  * @param name The name of the custom element.
- * @param constructor The component class to define.
+ * @param ctr The component class to define.
  * @param options The custom element options.
  * @returns The decorated component class.
  * @throws If the name has already been registered.
@@ -1025,12 +1030,12 @@ export const isInitialized = (element: ComponentInstance): boolean =>
  */
 export function define<T extends ComponentInstance, C extends ComponentConstructor<T>>(
     name: string,
-    constructor: C,
+    ctr: C,
     options?: ElementDefinitionOptions
 ) {
-    class Component extends (constructor as ComponentConstructor) {
-        constructor(...args: any[]) {
-            super(...args);
+    class Component extends (ctr as ComponentConstructor) {
+        constructor(node?: HTMLElement) {
+            super(node);
             if (new.target === Component && !isInitialized(this)) {
                 this.initialize();
             }
@@ -1040,17 +1045,17 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
     defineProperties(Component.prototype);
     defineListeners(Component.prototype);
     try {
-        if (constructor.name) {
+        if (ctr.name) {
             defineProperty(Component, 'name', {
                 writable: false,
                 configurable: false,
-                value: constructor.name,
+                value: ctr.name,
             });
         }
         defineProperty(Component, 'tagName', {
             writable: false,
             configurable: false,
-            value: (options && options.extends) || name,
+            value: options?.extends || name,
         });
         defineProperty(Component.prototype, 'is', {
             writable: false,
@@ -1078,9 +1083,8 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
  */
 export const customElement =
     (name: string, options?: ElementDefinitionOptions) =>
-    // TypeScript complains about return type because we handle babel output
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
+    // biome-ignore lint/suspicious/noExplicitAny: TypeScript complains about return type because we handle babel output
+    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor<T, unknown>): any => {
         if (typeof classOrDescriptor === 'function') {
             // typescript
             return define(name, classOrDescriptor, options);
@@ -1091,8 +1095,8 @@ export const customElement =
         return {
             kind,
             elements,
-            finisher(constructor: Function) {
-                return define(name, constructor as T, options);
+            finisher(ctr: T) {
+                return define(name, ctr, options);
             },
         };
     };

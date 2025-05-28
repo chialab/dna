@@ -104,7 +104,9 @@ describe(
                 MyElement = __decorate([DNA.customElement(getComponentName())], MyElement);
 
                 const elem = new MyElement();
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 42;
+                }).toThrow(TypeError);
             });
 
             it('should define a property with multiple type checkers', () => {
@@ -134,7 +136,9 @@ describe(
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
 
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 42;
+                }).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
@@ -171,8 +175,12 @@ describe(
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
 
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
-                expect(() => (elem.testProp = 'invalid')).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 42;
+                }).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 'invalid';
+                }).toThrow(TypeError);
             });
 
             it('should define a property with custom getter', () => {
@@ -547,7 +555,9 @@ describe(
                     }
                 );
 
-                expect(() => (new MyElement().testProp = 42)).toThrow(TypeError);
+                expect(() => {
+                    new MyElement().testProp = 42;
+                }).toThrow(TypeError);
             });
 
             it('should define a property with multiple type checkers', () => {
@@ -570,7 +580,9 @@ describe(
 
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 42;
+                }).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
@@ -600,8 +612,12 @@ describe(
 
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
-                expect(() => (elem.testProp = 42)).toThrow(TypeError);
-                expect(() => (elem.testProp = 'invalid')).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 42;
+                }).toThrow(TypeError);
+                expect(() => {
+                    elem.testProp = 'invalid';
+                }).toThrow(TypeError);
             });
 
             it('should define a property with custom getter', () => {

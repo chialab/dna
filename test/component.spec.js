@@ -770,7 +770,8 @@ describe(
             });
 
             describe('attribute and properties sync', () => {
-                let element, fromAttributeSpy;
+                let element;
+                let fromAttributeSpy;
 
                 beforeEach(() => {
                     fromAttributeSpy = vi.fn();
@@ -794,7 +795,12 @@ describe(
                     __decorate([DNA.property({ type: String })], TestElement.prototype, 'string', undefined);
                     __decorate([DNA.property({ type: Number })], TestElement.prototype, 'number', undefined);
                     __decorate(
-                        [DNA.property({ type: [String, Number], attribute: 'string-number' })],
+                        [
+                            DNA.property({
+                                type: [String, Number],
+                                attribute: 'string-number',
+                            }),
+                        ],
                         TestElement.prototype,
                         'stringNumber',
                         undefined
@@ -806,7 +812,7 @@ describe(
                             DNA.property({
                                 fromAttribute(value) {
                                     fromAttributeSpy();
-                                    return parseInt(value) * 2;
+                                    return Number.parseInt(value) * 2;
                                 },
                                 toAttribute(value) {
                                     return `${value / 2}`;
@@ -1072,6 +1078,7 @@ describe(
                 element.title = 'test';
                 expect(propertyChangedCallback).toHaveBeenCalled();
                 expect(propertyChangedCallback).toHaveBeenCalledWith('title', '', 'test');
+                // biome-ignore lint/performance/noDelete: Here we are testing delete
                 delete element.title;
                 expect(propertyChangedCallback).toHaveBeenCalledOnce();
             });
@@ -1750,7 +1757,8 @@ describe(
         });
 
         describe('attributes', () => {
-            let element, TestElement;
+            let element;
+            let TestElement;
 
             beforeAll(() => {
                 TestElement = class TestElement extends DNA.Component {

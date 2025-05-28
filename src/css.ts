@@ -35,31 +35,34 @@ export const css = (name: string, cssText: string): string => {
         throw new TypeError('The provided CSS text must be a string');
     }
 
-    const cached = (CACHE[name] = CACHE[name] || {});
+    const cached = CACHE[name] || {};
+    CACHE[name] = cached;
     const scope = `[:scope="${name}"]`;
     if (cssText in cached) {
         return cached[cssText];
     }
-    return (cached[cssText] = cssText
+    cached[cssText] = cssText
         .replace(CSS_COMMENTS_REGEX, '\n')
         .replace(
             HOST_REGEX,
             (fullMatch, mod) => `${scope}${mod ? mod.slice(1, -1).replace(':defined', '[:defined]') : ''}`
         )
         .replace(CSS_SELECTORS_REGEX, (match) => {
-            match = match.trim();
-            if (match[0] === '@') {
-                return match;
+            const multiSelector = match.trim();
+            if (multiSelector[0] === '@') {
+                return multiSelector;
             }
-            return match
+            return multiSelector
                 .split(',')
                 .map((selector) => {
-                    selector = selector.trim();
-                    if (selector.indexOf(scope) === 0) {
-                        return selector;
+                    const trimmedSelector = selector.trim();
+                    if (trimmedSelector.indexOf(scope) === 0) {
+                        return trimmedSelector;
                     }
-                    return `${scope} ${selector}`;
+                    return `${scope} ${trimmedSelector}`;
                 })
                 .join(',');
-        }));
+        });
+
+    return cached[cssText];
 };

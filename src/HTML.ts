@@ -1,6 +1,6 @@
-import { type DelegatedEventCallback, type ListenerConfig } from './events';
-import { type Template as JSXTemplate } from './JSX';
-import { type PropertyConfig, type PropertyObserver } from './property';
+import type { Template as JSXTemplate } from './JSX';
+import type { DelegatedEventCallback, ListenerConfig } from './events';
+import type { PropertyConfig, PropertyObserver } from './property';
 
 export declare namespace HTML {
     export class Element extends globalThis.HTMLElement {
@@ -182,14 +182,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -452,14 +453,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -722,14 +724,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -992,14 +995,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -1262,14 +1266,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -1532,14 +1537,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -1802,14 +1808,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -2072,14 +2079,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -2342,14 +2350,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -2612,14 +2621,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -2882,14 +2892,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -3152,14 +3163,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -3422,14 +3434,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -3692,14 +3705,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -3962,14 +3976,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -4232,14 +4247,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -4502,14 +4518,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -4772,14 +4789,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -5042,14 +5060,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -5312,14 +5331,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -5582,14 +5602,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -5852,14 +5873,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -6122,14 +6144,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -6392,14 +6415,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -6662,14 +6686,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -6932,14 +6957,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -7202,14 +7228,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -7472,14 +7499,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -7742,14 +7770,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -8012,14 +8041,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -8282,14 +8312,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -8552,14 +8583,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -8822,14 +8854,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -9092,14 +9125,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -9362,14 +9396,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -9632,14 +9667,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -9723,6 +9759,7 @@ export declare namespace HTML {
          */
         assign(props: object): this;
     }
+    // biome-ignore lint/suspicious/noShadowRestrictedNames: For consistency with other elements.
     export class Map extends globalThis.HTMLMapElement {
         /**
          * The tag name of the extended builtin element.
@@ -9902,14 +9939,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -10172,14 +10210,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -10442,14 +10481,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -10712,14 +10752,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -10982,14 +11023,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -11073,6 +11115,7 @@ export declare namespace HTML {
          */
         assign(props: object): this;
     }
+    // biome-ignore lint/suspicious/noShadowRestrictedNames: For consistency with other elements.
     export class Object extends globalThis.HTMLObjectElement {
         /**
          * The tag name of the extended builtin element.
@@ -11252,14 +11295,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -11522,14 +11566,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -11792,14 +11837,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -12062,14 +12108,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -12332,14 +12379,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -12602,14 +12650,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -12872,14 +12921,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -13142,14 +13192,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -13412,14 +13463,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -13682,14 +13734,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -13952,14 +14005,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -14222,14 +14276,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -14492,14 +14547,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -14762,14 +14818,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -15032,14 +15089,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -15302,14 +15360,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -15572,14 +15631,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -15842,14 +15902,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -16112,14 +16173,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -16382,14 +16444,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -16652,14 +16715,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -16922,14 +16986,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -17192,14 +17257,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -17462,14 +17528,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -17732,14 +17799,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -18002,14 +18070,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**
@@ -18272,14 +18341,15 @@ export declare namespace HTML {
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
 
         /**

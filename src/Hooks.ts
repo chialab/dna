@@ -36,7 +36,9 @@ export class HooksManager {
         const index = this.index++;
         const state = this.state[index];
         if (!state) {
-            return (this.state[index] = [factory(), deps]) as [T, unknown[]];
+            const newState = [factory(), deps] as [T, unknown[]];
+            this.state[index] = newState;
+            return newState;
         }
         if (state[1].length !== deps.length || state[1].some((dep, i) => !Object.is(dep, deps[i]))) {
             state[0] = factory();
