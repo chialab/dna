@@ -1,0 +1,89 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "ignore": [".changeset", "./node_modules", "./dist", "./docs/.vitepress", "./public", "./coverage"],
+    "maxSize": 2097152
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "formatter": {
+    "attributePosition": "multiline",
+    "useEditorconfig": true
+  },
+  "linter": {
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "noRedundantAlt": "warn",
+        "useButtonType": "warn"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noThisInStatic": "off",
+        "noUselessSwitchCase": "warn",
+        "noUselessThisAlias": "warn",
+        "useArrowFunction": "warn",
+        "useFlatMap": "warn",
+        "useLiteralKeys": "off",
+        "useOptionalChain": "warn"
+      },
+      "correctness": {
+        "useJsxKeyInIterable": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "warn",
+        "noDelete": "warn"
+      },
+      "style": {
+        "noInferrableTypes": "warn",
+        "noParameterAssign": "warn",
+        "noNamespace": "off",
+        "useConst": "warn",
+        "useExponentiationOperator": "warn",
+        "useImportType": "warn",
+        "useSelfClosingElements": "warn",
+        "useSingleCaseStatement": "off",
+        "useSingleVarDeclarator": "warn",
+        "useTemplate": "warn",
+        "noUselessElse": "warn"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "warn",
+        "noClassAssign": "off",
+        "noConfusingLabels": "warn",
+        "noConsoleLog": "warn",
+        "noExplicitAny": "warn"
+      }
+    }
+  },
+  "css": {
+    "linter": {
+      "enabled": true
+    },
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "attributePosition": "multiline",
+      "bracketSameLine": true,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteStyle": "single",
+      "quoteProperties": "preserve",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    }
+  },
+  "overrides": [
+    {
+      "include": ["**/package.json"],
+      "formatter": {
+        "lineWidth": 1
+      }
+    }
+  ]
+}

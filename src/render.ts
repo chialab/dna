@@ -1,21 +1,21 @@
-import { isComponent, type ComponentConstructor, type ComponentInstance } from './Component';
-import { css } from './css';
-import { getPropertyDescriptor, isArray } from './helpers';
+import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { HooksManager, type HooksState } from './Hooks';
 import {
+    type ElementProperties,
+    type EventProperties,
     Fragment,
+    type FunctionComponent,
+    type KeyedProperties,
+    type Template,
+    type TreeProperties,
     isVFunction,
     isVNode,
     isVObject,
     isVSlot,
     isVTag,
-    type ElementProperties,
-    type EventProperties,
-    type FunctionComponent,
-    type KeyedProperties,
-    type Template,
-    type TreeProperties,
 } from './JSX';
+import { css } from './css';
+import { getPropertyDescriptor, isArray } from './helpers';
 import { getProperty } from './property';
 
 /**
@@ -188,14 +188,14 @@ const isWritableProperty = (element: Node, propertyKey: string) => {
  * @param propertyKey The property key to update.
  * @param value The new value.
  * @param oldValue The old value.
- * @param constructor The constructor of the node.
+ * @param ctr The constructor of the node.
  */
 const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     node: T,
     propertyKey: P,
     value: T[P] | undefined,
     oldValue?: T[P],
-    constructor?: ComponentConstructor
+    ctr?: ComponentConstructor
 ) => {
     const isInputValue =
         (propertyKey === 'checked' || propertyKey === 'value') &&
@@ -205,56 +205,59 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
 
+    let literalOldValue = oldValue;
+    let literalValue = value;
+
     if (propertyKey === 'style') {
-        if (value == null) {
+        if (literalValue == null) {
             (node as HTMLElement).removeAttribute('style');
             return;
         }
 
-        if ((node as HTMLElement).getAttribute('style') != oldValue) {
-            oldValue = convertStyles(oldValue as string) as T[P];
-            value = convertStyles(value as string) as T[P];
+        if ((node as HTMLElement).getAttribute('style') !== literalOldValue) {
+            literalOldValue = convertStyles(literalOldValue as string) as T[P];
+            literalValue = convertStyles(literalValue as string) as T[P];
         }
 
-        if (typeof value === 'string') {
-            (node as HTMLElement).setAttribute('style', value as string);
+        if (typeof literalValue === 'string') {
+            (node as HTMLElement).setAttribute('style', literalValue as string);
         } else {
             const style = (node as HTMLElement).style;
-            for (const propertyKey in oldValue as Record<string, string>) {
-                if (!(propertyKey in (value as Record<string, string>))) {
+            for (const propertyKey in literalOldValue as Record<string, string>) {
+                if (!(propertyKey in (literalValue as Record<string, string>))) {
                     style.removeProperty(propertyKey);
                 }
             }
-            for (const propertyKey in value) {
-                style.setProperty(propertyKey, (value as Record<string, string>)[propertyKey]);
+            for (const propertyKey in literalValue) {
+                style.setProperty(propertyKey, (literalValue as Record<string, string>)[propertyKey]);
             }
         }
         return;
     }
     if (propertyKey === 'class') {
-        if (value == null) {
+        if (literalValue == null) {
             (node as HTMLElement).removeAttribute('class');
             return;
         }
 
-        if ((node as HTMLElement).className !== (oldValue || '')) {
-            oldValue = convertClasses(oldValue as string) as T[P];
-            value = convertClasses(value as string) as T[P];
+        if ((node as HTMLElement).className !== (literalOldValue || '')) {
+            literalOldValue = convertClasses(literalOldValue as string) as T[P];
+            literalValue = convertClasses(literalValue as string) as T[P];
         }
 
-        if (typeof value === 'string') {
-            (node as HTMLElement).className = value as string;
+        if (typeof literalValue === 'string') {
+            (node as HTMLElement).className = literalValue as string;
         } else {
             const classList = (node as HTMLElement).classList;
-            if (oldValue) {
-                for (const className in oldValue) {
-                    if (!(value as Record<string, boolean>)[className]) {
+            if (literalOldValue) {
+                for (const className in literalOldValue) {
+                    if (!(literalValue as Record<string, boolean>)[className]) {
                         classList.remove(className);
                     }
                 }
             }
-            for (const className in value as Record<string, boolean>) {
-                if ((value as Record<string, boolean>)[className] && !classList.contains(className)) {
+            for (const className in literalValue as Record<string, boolean>) {
+                if ((literalValue as Record<string, boolean>)[className] && !classList.contains(className)) {
                     classList.add(className);
                 }
             }
@@ -263,45 +266,45 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     }
     if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in node.constructor.prototype)) {
         const eventName = propertyKey.substring(2);
-        if (oldValue) {
-            (node as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
+        if (literalOldValue) {
+            (node as HTMLElement).removeEventListener(eventName, literalOldValue as EventListener);
         }
-        if (value) {
-            (node as HTMLElement).addEventListener(eventName, value as EventListener);
+        if (literalValue) {
+            (node as HTMLElement).addEventListener(eventName, literalValue as EventListener);
         }
         return;
     }
 
-    const type = typeof value;
-    const wasType = typeof oldValue;
-    const isReference = (value && type === 'object') || type === 'function';
+    const type = typeof literalValue;
+    const wasType = typeof literalOldValue;
+    const isReference = (literalValue && type === 'object') || type === 'function';
     let shouldSetAttribute = type === 'string' || !(propertyKey in node && isWritableProperty(node, propertyKey));
 
     if (
         isReference ||
-        (oldValue && wasType === 'object') ||
+        (literalOldValue && wasType === 'object') ||
         wasType === 'function' ||
         isInputValue ||
         !shouldSetAttribute
     ) {
-        (node as unknown as Record<string, unknown>)[propertyKey] = value;
-    } else if (type === 'string' && constructor) {
+        (node as unknown as Record<string, unknown>)[propertyKey] = literalValue;
+    } else if (type === 'string' && ctr) {
         const property = getProperty(node as ComponentInstance, propertyKey as keyof ComponentInstance);
         if (property) {
             (node as unknown as Record<string, unknown>)[propertyKey] = property.fromAttribute
-                ? property.fromAttribute.call(node, value as string)
-                : value;
+                ? property.fromAttribute.call(node, literalValue as string)
+                : literalValue;
             shouldSetAttribute = false;
         }
     }
 
     if (shouldSetAttribute) {
-        if (value == null || value === false) {
+        if (literalValue == null || literalValue === false) {
             if ((node as HTMLElement).hasAttribute(propertyKey)) {
                 (node as HTMLElement).removeAttribute(propertyKey);
             }
         } else if (!isReference) {
-            const attrValue = value === true ? '' : (value as string).toString();
+            const attrValue = literalValue === true ? '' : (literalValue as string).toString();
             if ((node as HTMLElement).getAttribute(propertyKey) !== attrValue) {
                 (node as HTMLElement).setAttribute(propertyKey, attrValue);
             }
@@ -321,11 +324,12 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
     if (currentChildren.includes(childContext)) {
         // the node is already in the child list
         // remove nodes until the correct instance
-        let currentContext: Context | null;
-        while ((currentContext = currentChildren[pos]) && childContext !== currentContext) {
+        let currentContext = currentChildren[pos];
+        while (currentContext && childContext !== currentContext) {
             parentNode.removeChild(currentContext.node);
             rootContext.contexts.delete(currentContext.node);
             currentChildren.splice(pos, 1);
+            currentContext = currentChildren[pos];
         }
     } else {
         const currentChildContext = rootContext.contexts.get(childContext.node);
@@ -391,24 +395,20 @@ const renderTemplate = (
                 renderTemplate(context, rootContext, template.children, namespace, keys, refs, fragment);
                 return;
             }
-            const { type: Function, key, properties, children } = template;
+            const { type: Fn, key, properties, children } = template;
 
             let rootNode: Node | undefined;
-            let currentContext: Context | null = null;
+            const currentContext = currentChildren[context._pos];
             if (key) {
                 rootNode = keys?.get(key)?.node;
-            } else if (
-                (currentContext = currentChildren[context._pos]) &&
-                currentContext.type === Function &&
-                currentContext.key == null
-            ) {
+            } else if (currentContext && currentContext.type === Fn && currentContext.key == null) {
                 rootNode = currentContext.node;
             }
 
             renderTemplate(
                 context,
                 rootContext,
-                rootNode || document.createComment(Function.name),
+                rootNode || document.createComment(Fn.name),
                 namespace,
                 keys,
                 refs,
@@ -416,9 +416,9 @@ const renderTemplate = (
             );
 
             const renderContext = currentChildren[context._pos - 1];
-            renderContext.type = Function;
-
-            const hooks = new HooksManager((renderContext.state = renderContext.state || []));
+            renderContext.type = Fn;
+            renderContext.state = renderContext.state || [];
+            const hooks = new HooksManager(renderContext.state);
             if (key != null) {
                 fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
             }
@@ -426,14 +426,13 @@ const renderTemplate = (
             renderTemplate(
                 context,
                 rootContext,
-                Function(
+                Fn(
                     {
                         children,
                         ...properties,
                     },
                     {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        useState(initialValue: any) {
+                        useState(initialValue) {
                             const [value, setInternal] = hooks.useState(initialValue);
 
                             return [
@@ -458,8 +457,7 @@ const renderTemplate = (
                                 },
                             ];
                         },
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        useMemo(factory: () => any, deps: unknown[] = []) {
+                        useMemo(factory, deps = []) {
                             return hooks.useMemo(factory, deps);
                         },
                         useRenderContext() {
@@ -499,14 +497,10 @@ const renderTemplate = (
             ElementProperties;
 
         let templateContext: Context | undefined;
-        let currentContext: Context | null;
+        const currentContext = currentChildren[context._pos];
         if (key != null) {
             templateContext = keys?.get(key);
-        } else if (
-            (currentContext = currentChildren[context._pos]) &&
-            currentContext.key == null &&
-            currentContext.owner === rootContext
-        ) {
+        } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
             if (
                 isVTag(template) &&
                 currentContext.kind === ContextKind.VNODE &&
@@ -523,11 +517,11 @@ const renderTemplate = (
                 templateContext = refs?.get(node) || createContext(ContextKind.REF, null, template.type, rootContext);
                 fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
             } else {
-                const constructor = customElements?.get(properties?.is ?? template.type);
+                const ctr = customElements?.get(properties?.is ?? template.type);
                 templateContext = createContext(
                     ContextKind.VNODE,
                     template.type,
-                    constructor ? new constructor() : document.createElementNS(namespaceURI, template.type),
+                    ctr ? new ctr() : document.createElementNS(namespaceURI, template.type),
                     rootContext,
                     rootContext
                 );
@@ -546,9 +540,9 @@ const renderTemplate = (
             | (KeyedProperties & TreeProperties & EventProperties & ElementProperties);
         templateContext.properties = properties;
 
-        let constructor: ComponentConstructor | undefined;
+        let ctr: ComponentConstructor | undefined;
         if (isComponent(node)) {
-            constructor = (node as ComponentInstance).constructor as ComponentConstructor;
+            ctr = (node as ComponentInstance).constructor as ComponentConstructor;
             node.collectUpdatesStart();
         }
 
@@ -560,7 +554,7 @@ const renderTemplate = (
                         propertyKey as keyof Node,
                         undefined,
                         oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                        constructor
+                        ctr
                     );
                 }
             }
@@ -573,12 +567,12 @@ const renderTemplate = (
                     propertyKey as keyof Node,
                     properties[propertyKey as keyof typeof properties] as Node[keyof Node],
                     oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                    constructor
+                    ctr
                 );
             }
         }
 
-        if (constructor) {
+        if (ctr) {
             (node as ComponentInstance).collectUpdatesEnd();
         }
 
@@ -599,20 +593,16 @@ const renderTemplate = (
         return;
     }
 
-    template = String(template);
-    if (isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE') {
-        template = css(rootContext.node.is, template as string);
-    }
+    const normalizedTemplate =
+        isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE'
+            ? css(rootContext.node.is, String(template))
+            : String(template);
 
-    let currentContext: Context | null;
-    if (
-        (currentContext = currentChildren[context._pos]) &&
-        currentContext.kind === ContextKind.LITERAL &&
-        currentContext.owner === rootContext
-    ) {
-        if (currentContext.kind === ContextKind.LITERAL && currentContext.type != template) {
-            currentContext.type = template;
-            currentContext.node.nodeValue = template as string;
+    const currentContext = currentChildren[context._pos];
+    if (currentContext?.kind === ContextKind.LITERAL && currentContext.owner === rootContext) {
+        if (currentContext.type !== normalizedTemplate) {
+            currentContext.type = normalizedTemplate;
+            currentContext.node.nodeValue = normalizedTemplate;
         }
         insertNode(context, currentContext, rootContext);
         return;
@@ -623,8 +613,8 @@ const renderTemplate = (
         context,
         createContext(
             ContextKind.LITERAL,
-            template,
-            document.createTextNode(template as string),
+            normalizedTemplate,
+            document.createTextNode(normalizedTemplate),
             rootContext,
             rootContext
         ),
@@ -660,12 +650,12 @@ export const internalRender = (
         endContext = fragment.end as Context;
         currentKeys = fragment.keys;
         currentRefs = fragment.refs;
-        delete fragment.keys;
+        fragment.keys = undefined;
     } else {
         context._pos = 0;
         currentKeys = context.keys;
         currentRefs = context.refs;
-        delete context.keys;
+        context.keys = undefined;
     }
 
     renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
@@ -701,7 +691,7 @@ export const internalRender = (
  * @param root The root Node for the render.
  * @returns The resulting child Nodes.
  */
-export const render = (input: Template, root: Node = document.createDocumentFragment()): Node | Node[] | void => {
+export const render = (input: Template, root: Node = document.createDocumentFragment()): Node | Node[] | undefined => {
     const childNodes = internalRender(getRootContext(root), input).map((child) => child.node);
     if (!isArray(input) && !(input != null && isVObject(input) && input.type === Fragment) && childNodes.length < 2) {
         return childNodes[0];

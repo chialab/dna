@@ -15,11 +15,12 @@ render(
         active={true}
     />
 );
-render(<div key={{}}></div>);
+render(<div key={{}} />);
 render(
     <unknown
         key={{}}
-        slot="2"></unknown>
+        slot="2"
+    />
 );
 
 render(h('details', { open: true }));
@@ -48,4 +49,4 @@ render(
 );
 // @ts-expect-error Promise is not a a function component
 render(<Promise />);
-render(<>Hello</>);
+render('Hello');

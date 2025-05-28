@@ -11,8 +11,24 @@ export {
     dispatchAsyncEvent,
     defineListeners,
 } from './events';
-export { property, state, observe, getProperty, getProperties, defineProperties, defineProperty } from './property';
-export { define, extend, HTML, Component, isComponent, isComponentConstructor, customElement } from './Component';
+export {
+    property,
+    state,
+    observe,
+    getProperty,
+    getProperties,
+    defineProperties,
+    defineProperty,
+} from './property';
+export {
+    define,
+    extend,
+    HTML,
+    Component,
+    isComponent,
+    isComponentConstructor,
+    customElement,
+} from './Component';
 export { $parse, $await, $until } from './directives';
 
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
@@ -85,6 +101,10 @@ export type {
     VTag,
 } from './JSX';
 export type { Context } from './render';
-export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
+export type {
+    AsyncEvent,
+    DelegatedEventCallback,
+    DelegatedEventDescriptor,
+} from './events';
 export type { PropertyDeclaration, PropertyObserver } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';
