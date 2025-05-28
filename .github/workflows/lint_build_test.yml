@@ -65,7 +65,7 @@ jobs:
           cache: yarn
 
       - name: Install project dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
