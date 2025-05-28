@@ -1,7 +1,7 @@
-import { type ClassElement } from './ClassDescriptor';
-import { type ComponentConstructor, type ComponentInstance } from './Component';
+import type { ClassElement } from './ClassDescriptor';
+import type { ComponentConstructor, ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
-import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
+import { type Constructor, type MemberDecorator, getOwnPropertyDescriptor, getPrototypeOf, hasOwn } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -71,8 +71,7 @@ type WithEventDelegations = {
     };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isElement = (node: any): node is Element => node && node.nodeType === Node.ELEMENT_NODE;
+const isElement = (node: unknown): node is Element => (node as Node)?.nodeType === Node.ELEMENT_NODE;
 
 const assertNode = (element: unknown) => {
     if (!isElement(element)) {
@@ -146,11 +145,13 @@ export const delegateEventListener = (
     assertEventCallback(callback);
 
     // get all delegations
-    const delegations = (delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {});
+    const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
+    delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegations;
     // initialize the delegation list
-    const callbacks: DelegationList = (delegations[eventName] = delegations[eventName] || {
+    const callbacks: DelegationList = delegations[eventName] || {
         descriptors: [],
-    });
+    };
+    delegations[eventName] = callbacks;
     const descriptors = callbacks.descriptors;
     // check if the event has already been delegated
     if (!callbacks.listener) {
@@ -180,7 +181,7 @@ export const delegateEventListener = (
             const filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
                 const { selector, callback } = descriptors[i];
-                let selectorTarget;
+                let selectorTarget: Node | null = null;
                 if (selector) {
                     const path = event.composedPath();
                     let target = path.shift();
@@ -323,13 +324,12 @@ export const dispatchEvent = (
     element: Element,
     event: Event | string,
     detail?: CustomEventInit['detail'],
-    bubbles: boolean = true,
-    cancelable: boolean = true,
-    composed: boolean = false
+    bubbles = true,
+    cancelable = true,
+    composed = false
 ): boolean => {
     assertNode(element);
-    event = initEvent(event, detail, bubbles, cancelable, composed);
-    return HTMLElement.prototype.dispatchEvent.call(element, event);
+    return HTMLElement.prototype.dispatchEvent.call(element, initEvent(event, detail, bubbles, cancelable, composed));
 };
 
 /**
@@ -347,13 +347,13 @@ export const dispatchAsyncEvent = async (
     element: Element,
     event: Event | string,
     detail?: CustomEventInit['detail'],
-    bubbles: boolean = true,
-    cancelable: boolean = true,
-    composed: boolean = false
+    bubbles = true,
+    cancelable = true,
+    composed = false
 ): Promise<unknown[]> => {
     const asyncEvent = initEvent(event, detail, bubbles, cancelable, composed) as unknown as AsyncEvent;
     const promises: unknown[] = [];
-    asyncEvent.respondWith = function (callback) {
+    asyncEvent.respondWith = (callback) => {
         promises.push(callback());
     };
     if (!dispatchEvent(element, asyncEvent)) {
@@ -397,7 +397,7 @@ export const getListeners = <T extends ComponentInstance>(prototype: WithListene
         return [];
     }
 
-    if (!hasOwnProperty.call(prototype, LISTENERS_SYMBOL)) {
+    if (!hasOwn.call(prototype, LISTENERS_SYMBOL)) {
         return listeners.slice(0);
     }
 
@@ -443,16 +443,16 @@ export function defineListener<T extends ComponentInstance>(
  * @param prototype The component prototype.
  */
 export const defineListeners = <T extends ComponentInstance>(prototype: T): void => {
-    const constructor = prototype.constructor as ComponentConstructor<T>;
-    let ctr = constructor;
-    while (ctr && ctr.prototype && ctr !== HTMLElement) {
-        if (hasOwnProperty.call(ctr.prototype, LISTENERS_SYMBOL)) {
+    const ctr = prototype.constructor as ComponentConstructor<T>;
+    let currentCtr = ctr;
+    while (currentCtr?.prototype && currentCtr !== HTMLElement) {
+        if (hasOwn.call(currentCtr.prototype, LISTENERS_SYMBOL)) {
             break;
         }
-        const listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
-        const listenersGetter = listenersDescriptor && listenersDescriptor.get;
+        const listenersDescriptor = getOwnPropertyDescriptor(currentCtr, 'listeners');
+        const listenersGetter = listenersDescriptor?.get;
         if (listenersGetter) {
-            const listenerDescriptors = (listenersGetter.call(constructor) || {}) as {
+            const listenerDescriptors = (listenersGetter.call(ctr) || {}) as {
                 [key: string]: ListenerConfig;
             };
             // register listeners
@@ -465,7 +465,7 @@ export const defineListeners = <T extends ComponentInstance>(prototype: T): void
                 defineListener(prototype, eventName, selector, callback, options);
             }
         }
-        ctr = getPrototypeOf(ctr);
+        currentCtr = getPrototypeOf(currentCtr);
     }
 };
 
@@ -484,27 +484,33 @@ export const createListener = <T extends ComponentInstance, P extends keyof T>(
     selector: string | null,
     options: AddEventListenerOptions,
     methodKey?: P
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any => {
+): ClassElement<T, P> | undefined => {
     if (methodKey !== undefined) {
         const method = targetOrClassElement[methodKey] as unknown as DelegatedEventCallback;
         defineListener(targetOrClassElement, eventName, selector, method, options);
         return;
     }
 
-    const element = targetOrClassElement as unknown as ClassElement;
+    const element = targetOrClassElement as unknown as ClassElement<T, P>;
     return {
         ...element,
-        finisher(constructor: Constructor<T>) {
-            const prototype = constructor.prototype as T;
+        finisher(ctr: Constructor<T>) {
+            const prototype = ctr.prototype as T;
             const method = prototype[element.key as P] as unknown as DelegatedEventCallback;
             defineListener(prototype, eventName, selector, method, options);
         },
     };
 };
 
-function listen(eventName: string, options?: AddEventListenerOptions): Function;
-function listen(eventName: string, selector: string, options?: AddEventListenerOptions): Function;
+function listen<T extends ComponentInstance, P extends keyof T>(
+    eventName: string,
+    options?: AddEventListenerOptions
+): MemberDecorator<T, P>;
+function listen<T extends ComponentInstance, P extends keyof T>(
+    eventName: string,
+    selector: string,
+    options?: AddEventListenerOptions
+): MemberDecorator<T, P>;
 /**
  * A decorator for listening DOM events.
  * @param eventName The name of the event to listen.
@@ -512,8 +518,12 @@ function listen(eventName: string, selector: string, options?: AddEventListenerO
  * @param options Options to pass to addEventListener.
  * @returns The decorator initializer.
  */
-function listen(eventName: string, target?: string | AddEventListenerOptions, options?: AddEventListenerOptions) {
-    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
+function listen<T extends ComponentInstance, P extends keyof T>(
+    eventName: string,
+    target?: string | AddEventListenerOptions,
+    options?: AddEventListenerOptions
+): MemberDecorator<T, P> {
+    return (targetOrClassElement, methodKey) =>
         createListener(
             targetOrClassElement,
             eventName,

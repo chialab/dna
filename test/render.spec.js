@@ -407,7 +407,13 @@ describe(
                 );
 
                 const elem = DNA.render(
-                    DNA.h(name, { 'number': 2, 'camelCase': 'test', 'string': '2', 'object': {}, 'data-test': '3' }),
+                    DNA.h(name, {
+                        number: 2,
+                        camelCase: 'test',
+                        string: '2',
+                        object: {},
+                        'data-test': '3',
+                    }),
                     wrapper
                 );
                 expect(elem.number).toBe(2);
@@ -1260,9 +1266,7 @@ describe(
             });
 
             it('should correctly update nodes after Function render', () => {
-                const Fn = function () {
-                    return DNA.html`<div class="test" data-ref=${true}></div>`;
-                };
+                const Fn = () => DNA.html`<div class="test" data-ref=${true}></div>`;
 
                 const [, div1, div2] = DNA.render(
                     DNA.html`
@@ -1299,13 +1303,9 @@ describe(
             });
 
             it('should correctly update nodes after nested Function renders', () => {
-                const Parent = function () {
-                    return DNA.html`<${Child} key="2" />`;
-                };
+                const Parent = () => DNA.html`<${Child} key="2" />`;
 
-                const Child = function () {
-                    return DNA.html`<div class="test" data-ref=${true}></div>`;
-                };
+                const Child = () => DNA.html`<div class="test" data-ref=${true}></div>`;
 
                 const [comment1, comment2, div1, div2] = DNA.render(
                     DNA.html`

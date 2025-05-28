@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { svelteTesting } from '@testing-library/svelte/vite';
-import { defineConfig, type Plugin } from 'vitest/config';
+import { type Plugin, defineConfig } from 'vitest/config';
 
 const job = (() => {
     if (process.env.TRAVIS) {

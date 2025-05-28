@@ -26,9 +26,10 @@ export const getThenableState = (target: WithThenableState<Promise<unknown>>): T
         return state;
     }
 
-    const newState = (target[THENABLE_SYMBOL] = {
+    const newState = {
         pending: true,
-    } as ThenableState);
+    } as ThenableState;
+    target[THENABLE_SYMBOL] = newState;
     target
         .then((result: unknown) => {
             newState.result = result;

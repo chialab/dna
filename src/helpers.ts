@@ -1,10 +1,21 @@
 /**
  * Constructor type helper.
  */
-export type Constructor<T> = {
+export interface Constructor<T> {
+    // biome-ignore lint/suspicious/noExplicitAny: This is a generic type definition.
     new (...args: any[]): T;
     prototype: T;
-};
+}
+
+/**
+ * Member decorator type helper.
+ */
+export type MemberDecorator<T extends object, P extends keyof T> = (
+    targetOrClassElement: T,
+    propertyKey?: P,
+    descriptor?: PropertyDescriptor
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+) => any;
 
 /**
  * Alias to Array.isArray.
@@ -22,8 +33,7 @@ export const getOwnPropertyDescriptor: (typeof Object)['getOwnPropertyDescriptor
  * @param propertyKey The property key.
  * @returns A prototyped property descriptor.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getPropertyDescriptor = (object: any, propertyKey: PropertyKey): PropertyDescriptor | undefined => {
+export const getPropertyDescriptor = (object: object, propertyKey: PropertyKey): PropertyDescriptor | undefined => {
     if (!object) {
         return;
     }
@@ -43,7 +53,7 @@ export const setPrototypeOf: (typeof Object)['setPrototypeOf'] = Object.setProto
 /**
  * Alias to Object.prototype.hasOwnProperty.
  */
-export const hasOwnProperty: (typeof Object)['hasOwnProperty'] = Object.prototype.hasOwnProperty;
+export const hasOwn: (typeof Object)['hasOwnProperty'] = Object.prototype.hasOwnProperty;
 
 /**
  * Alias to Object.defineProperty.
