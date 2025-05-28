@@ -18,7 +18,7 @@ const job = (() => {
 })();
 
 export default defineConfig({
-    plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
+    // plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],
