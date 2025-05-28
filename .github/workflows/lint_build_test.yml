@@ -65,7 +65,7 @@ jobs:
           cache: yarn
 
       - name: Install project dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
@@ -73,9 +73,7 @@ jobs:
         run: yarn playwright install chromium --with-deps --only-shell
 
       - name: Run tests
-        run: |
-          export DEBUG=*
-          yarn test:browser --coverage --coverage.provider istanbul
+        run: yarn test:browser --coverage --coverage.provider istanbul
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4
