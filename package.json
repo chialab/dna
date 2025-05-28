@@ -47,8 +47,7 @@
     "lint": "biome check",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "prepack": "yarn build && publint"
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "htm": "^3.0.3"
@@ -64,12 +63,12 @@
     "@vitest/coverage-istanbul": "^3.0.0",
     "@vitest/ui": "^3.0.0",
     "axe-core": "^4.10.3",
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.25.0",
     "ivya": "^1.6.0",
     "lit": "^3.3.0",
     "playwright": "^1.38.1",
     "preact": "^10.26.6",
-    "publint": "^0.2.3",
+    "publint": "^0.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "rimraf": "^6.0.0",
@@ -83,7 +82,7 @@
     "vue": "^3.5.14"
   },
   "resolutions": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.25.0"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
