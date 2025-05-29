@@ -430,8 +430,8 @@ class Dialog extends HTML.Dialog {
 
 This example has two problems:
 
--   content is passed as property, which is not good for semantic
--   body is interpolated as string, so HTML code is rendered as plain text.
+- content is passed as property, which is not good for semantic
+- body is interpolated as string, so HTML code is rendered as plain text.
 
 DNA solves those two issues, rendering "soft" children of an element into the `<slot>` tag:
 

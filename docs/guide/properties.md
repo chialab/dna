@@ -327,7 +327,7 @@ Attributes can be used to update the component properties and viceversa. Every t
 
 If you are using the `html` helper or JSX templates, the value of an attribute will be reflected to the property using the following logic:
 
--   passing a **string** value via attribute:
+- passing a **string** value via attribute:
 
 ```ts
 @property({ type: String }) firstName: string;
@@ -341,7 +341,7 @@ If you are using the `html` helper or JSX templates, the value of an attribute w
 card.firstName; // "Alan"
 ```
 
--   passing a **number** value:
+- passing a **number** value:
 
 ```ts
 @property({ type: Number }) age: number;
@@ -355,7 +355,7 @@ card.firstName; // "Alan"
 card.age; // 24
 ```
 
--   passing a **boolean** value:
+- passing a **boolean** value:
 
 ```ts
 @property({ type: Boolean }) disabled: boolean = false;
@@ -369,7 +369,7 @@ card.age; // 24
 button.disabled; // true
 ```
 
--   passing an **object** or **array** value:
+- passing an **object** or **array** value:
 
 ```ts
 @property({ type: Array }) items: string[] = [];
@@ -383,7 +383,7 @@ button.disabled; // true
 list.items; // ["Alan", "Bob", "Charlie"]
 ```
 
--   removing the attribute from the template will set the property value as `undefined`.
+- removing the attribute from the template will set the property value as `undefined`.
 
 ### Attribute updates
 

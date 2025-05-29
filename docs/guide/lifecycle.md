@@ -2,17 +2,17 @@
 
 DNA components follow the Custom Element lifecycle specification, with the addition of the `propertyChangedCallback` and `render` methods. The complete list of methods is:
 
--   [initialize](#initialize)
--   [connectedCallback](#connectedcallback)
--   [disconnectedCallback](#disconnectedcallback)
--   [attributeChangedCallback](#attributechangedcallback)
--   [propertyChangedCallback](#propertychangedcallback)
--   [stateChangedCallback](#statechangedcallback)
--   [updatedCallback](#updatedcallback)
--   [render](#render)
--   [shouldUpdate](#shouldupdate)
--   [requestUpdate](#requestupdate)
--   [forceUpdate](#forceupdate)
+- [initialize](#initialize)
+- [connectedCallback](#connectedcallback)
+- [disconnectedCallback](#disconnectedcallback)
+- [attributeChangedCallback](#attributechangedcallback)
+- [propertyChangedCallback](#propertychangedcallback)
+- [stateChangedCallback](#statechangedcallback)
+- [updatedCallback](#updatedcallback)
+- [render](#render)
+- [shouldUpdate](#shouldupdate)
+- [requestUpdate](#requestupdate)
+- [forceUpdate](#forceupdate)
 
 ## initialize
 
