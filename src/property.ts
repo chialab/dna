@@ -66,22 +66,23 @@ export type TypeConstructor<T> = T extends number
         : // biome-ignore lint/suspicious/noExplicitAny: Check any type of array.
           T extends any[]
           ? ArrayConstructor
-          : T extends object
-            ? ObjectConstructor
-            : T extends symbol
-              ? SymbolConstructor
-              : T extends bigint
-                ? BigIntConstructor
-                : T extends Date
-                  ? DateConstructor
-                  : T extends RegExp
-                    ? RegExpConstructor
+          : T extends symbol
+            ? SymbolConstructor
+            : T extends bigint
+              ? BigIntConstructor
+              : T extends Date
+                ? DateConstructor
+                : T extends RegExp
+                  ? RegExpConstructor
+                  : T extends object
+                    ? ObjectConstructor
                     : Constructor<T>;
 
 /**
  * A state property declaration.
  */
-export type PropertyDeclaration<T extends ComponentInstance, P extends keyof T> = PropertyDescriptor & {
+// biome-ignore lint/suspicious/noExplicitAny: Properties can be of any type.
+export type PropertyDeclaration<T = any> = PropertyDescriptor & {
     /**
      * The property private symbol.
      */
@@ -97,7 +98,7 @@ export type PropertyDeclaration<T extends ComponentInstance, P extends keyof T> 
     /**
      * The event to fire on property change.
      */
-    event?: true | string;
+    event?: boolean | string;
     /**
      * Property change should trigger component update.
      */
@@ -108,29 +109,29 @@ export type PropertyDeclaration<T extends ComponentInstance, P extends keyof T> 
      * @param value The attributue value.
      * @returns The property value.
      */
-    fromAttribute?: (value: string | null) => T[P] | undefined;
+    fromAttribute?: (value: string | null) => T | undefined;
     /**
      * Convert property to attribute value.
      * @param value The property value.
      * @returns The attributue value.
      */
-    toAttribute?: (value: T[P]) => string | null | undefined;
+    toAttribute?: (value: T) => string | null | undefined;
     /**
      * The initial value of the property.
      */
-    defaultValue?: T[P];
+    defaultValue?: T;
     /**
      * A list of valid property values prototypes.
      */
-    type?: TypeConstructor<T[P]> | TypeConstructor<T[P]>[];
+    type?: TypeConstructor<T> | TypeConstructor<T>[];
     /**
      * Define a property observable.
      */
-    observe?: PropertyObserver<T[P]>;
+    observe?: PropertyObserver<T>;
     /**
      * A list of field observables.
      */
-    observers?: PropertyObserver<T[P]>[];
+    observers?: PropertyObserver<T>[];
     /**
      * A custom validation function for the property.
      * Property assignement throws when this function returns falsy values.
@@ -148,27 +149,25 @@ export type PropertyDeclaration<T extends ComponentInstance, P extends keyof T> 
      * Define custom getter for the property.
      * @param value The current property value.
      */
-    getter?: (value?: T[P]) => ReturnType<NonNullable<PropertyDescriptor['get']>>;
+    getter?: (value?: T) => ReturnType<NonNullable<PropertyDescriptor['get']>>;
     /**
      * Define a custom setter for the property.
      * It runs before property validations.
      * The returned value will be set to the property.
      * @param newValue The value to set.
      */
-    setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T[P];
+    setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T;
     /**
      * The initializer function.
      */
-    initializer?: () => T[P];
+    initializer?: () => T;
 };
 
 /**
  * Property configuration for properties accessor.
  */
-export type PropertyConfig<T extends ComponentInstance = ComponentInstance, P extends keyof T = keyof T> =
-    | PropertyDeclaration<T, P>
-    | TypeConstructor<T[P]>
-    | TypeConstructor<T[P]>[];
+// biome-ignore lint/suspicious/noExplicitAny: Properties can be of any type.
+export type PropertyConfig<T = any> = PropertyDeclaration<T> | TypeConstructor<T> | TypeConstructor<T>[];
 
 /**
  * A property instance.
@@ -302,7 +301,7 @@ export const getProperty = <T extends ComponentInstance, P extends keyof T>(
 export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
     prototype: T,
     propertyKey: P,
-    declaration: PropertyDeclaration<T, P>,
+    declaration: PropertyDeclaration<T[P]>,
     symbolKey: symbol,
     isStatic = false
 ): PropertyDescriptor => {
@@ -495,7 +494,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T): voi
             const descriptorProperties = (
                 propertiesDescriptor.get ? propertiesDescriptor.get.call(ctr) || {} : propertiesDescriptor.value
             ) as {
-                [P in keyof T]: PropertyConfig<T, P>;
+                [P in keyof T]: PropertyConfig<T[P]>;
             };
             for (const propertyKey in descriptorProperties) {
                 if (propertyKey in handled) {
@@ -504,7 +503,7 @@ export const defineProperties = <T extends ComponentInstance>(prototype: T): voi
                 const config = descriptorProperties[propertyKey as keyof T];
                 const declaration = (
                     typeof config === 'function' || isArray(config) ? { type: config } : config
-                ) as PropertyDeclaration<T, keyof T>;
+                ) as PropertyDeclaration<T[keyof T]>;
                 // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
                 const symbol: unique symbol = (declaration.symbol as any) || Symbol(propertyKey as string);
                 defineProperty(prototype, propertyKey as keyof T, declaration, symbol, true);
@@ -567,7 +566,7 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
  * @param initializer The property initializer function.
  */
 const assignFromDescriptor = <T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T, P>,
+    declaration: PropertyDeclaration<T[P]>,
     descriptor: PropertyDescriptor,
     initializer?: () => T[P]
 ) => {
@@ -589,15 +588,15 @@ const assignFromDescriptor = <T extends ComponentInstance, P extends keyof T>(
  */
 export const createProperty = <T extends ComponentInstance, P extends keyof T>(
     targetOrClassElement: T,
-    declaration: PropertyDeclaration<T, P>,
+    declaration: PropertyDeclaration<T[P]>,
     propertyKey?: P,
-    descriptor?: PropertyDeclaration<T, P>
+    descriptor?: PropertyDeclaration<T[P]>
 ): ClassElement<T, T[P]> | PropertyDescriptor => {
     // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
     const symbol: unique symbol = declaration.symbol || (Symbol(propertyKey as string) as any);
     if (propertyKey !== undefined) {
         const computedDescriptor =
-            descriptor || (getOwnPropertyDescriptor(targetOrClassElement, propertyKey) as PropertyDeclaration<T, P>);
+            descriptor || (getOwnPropertyDescriptor(targetOrClassElement, propertyKey) as PropertyDeclaration<T[P]>);
         if (computedDescriptor) {
             assignFromDescriptor(declaration, computedDescriptor, computedDescriptor.initializer);
         }
@@ -745,7 +744,7 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof T>(
  * @returns The decorator initializer.
  */
 export function property<T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T, P> = {}
+    declaration: PropertyDeclaration<T[P]> = {}
 ): MemberDecorator<T, P> {
     return (targetOrClassElement, propertyKey, descriptor) =>
         createProperty(targetOrClassElement, declaration, propertyKey, descriptor);
@@ -757,7 +756,7 @@ export function property<T extends ComponentInstance, P extends keyof T>(
  * @returns The decorator initializer.
  */
 export function state<T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T, P> = {}
+    declaration: PropertyDeclaration<T[P]> = {}
 ): MemberDecorator<T, P> {
     return (targetOrClassElement, propertyKey, descriptor) =>
         createProperty(

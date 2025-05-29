@@ -2,9 +2,9 @@ import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { __decorate } from 'tslib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getComponentName } from './helpers.js';
+import { IS_BROWSER, getComponentName } from './helpers';
 
-describe(
+describe.runIf(IS_BROWSER)(
     'events',
     () => {
         let wrapper;

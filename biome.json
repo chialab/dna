@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
-    "ignore": [".changeset", "./node_modules", "./dist", "./docs/.vitepress", "./public", "./coverage"],
+    "ignore": [".changeset", "./node_modules", "./dist", "./types", "./docs/.vitepress", "./public", "./coverage"],
     "maxSize": 2097152
   },
   "organizeImports": {

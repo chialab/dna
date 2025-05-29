@@ -1,10 +1,16 @@
 import * as DNA from '@chialab/dna';
-import { userEvent } from '@vitest/browser/context';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { getComponentName } from '../helpers.js';
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { IS_BROWSER, getComponentName } from '../helpers';
 
-describe('Vitest compatibility', () => {
+describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
     let wrapper;
+    let userEvent;
+
+    beforeAll(async () => {
+        const context = await import('@vitest/browser/context');
+        userEvent = context.userEvent;
+    });
+
     beforeEach(() => {
         wrapper = document.createElement('div');
         document.body.appendChild(wrapper);

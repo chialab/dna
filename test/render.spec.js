@@ -1,8 +1,8 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getComponentName } from './helpers.js';
+import { IS_BROWSER, getComponentName } from './helpers';
 
-describe(
+describe.runIf(IS_BROWSER)(
     'render',
     () => {
         let wrapper;

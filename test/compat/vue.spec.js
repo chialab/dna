@@ -1,8 +1,9 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Vue from 'vue';
+import { IS_BROWSER } from '../helpers';
 
-describe('Vue compatibility', () => {
+describe.runIf(IS_BROWSER)('Vue compatibility', () => {
     let wrapper;
     beforeEach(() => {
         wrapper = document.createElement('div');
