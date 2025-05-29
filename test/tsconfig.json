@@ -13,12 +13,12 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "jsx": "react",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@chialab/dna",
     "baseUrl": ".",
     "rootDir": "../..",
     "paths": {
+      "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
       "@chialab/dna": ["../src/index.ts"]
     }
   }
