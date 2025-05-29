@@ -7,7 +7,7 @@ import { IS_BROWSER, getComponentName } from './helpers';
 describe.runIf(IS_BROWSER)(
     'events',
     () => {
-        let wrapper;
+        let wrapper: HTMLElement;
         beforeEach(() => {
             wrapper = document.createElement('div');
             wrapper.ownerDocument.body.appendChild(wrapper);
@@ -90,22 +90,27 @@ describe.runIf(IS_BROWSER)(
 
             it('should validate dispatch input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(null);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, null);
-                }).toThrow(TypeError, 'The provided object must be an Event');
+                }).toThrow(new TypeError('The provided object must be an Event'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, null, null, null);
                 }).toThrow(TypeError);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, true, null, null);
                 }).toThrow(TypeError);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, true, true, null);
                 }).toThrow(TypeError);
             });
@@ -113,14 +118,14 @@ describe.runIf(IS_BROWSER)(
 
         describe('dispatchAyncEvent', () => {
             it('should trigger an event and return a Promise', async () => {
-                wrapper.addEventListener('click', (event) => {
-                    event.respondWith(async () => event.type);
+                wrapper.addEventListener('custom', (event) => {
+                    (event as DNA.AsyncEvent).respondWith(async () => event.type);
                 });
-                wrapper.addEventListener('click', (event) => {
-                    event.respondWith(async () => event.target.tagName);
+                wrapper.addEventListener('custom', (event) => {
+                    (event as DNA.AsyncEvent).respondWith(async () => (event.target as HTMLElement).tagName);
                 });
-                const response = await DNA.dispatchAsyncEvent(wrapper, 'click');
-                expect(response).toStrictEqual(['click', 'DIV']);
+                const response = await DNA.dispatchAsyncEvent(wrapper, 'custom');
+                expect(response).toStrictEqual(['custom', 'DIV']);
             });
         });
 
@@ -142,20 +147,24 @@ describe.runIf(IS_BROWSER)(
 
             it('should validate delegation input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(false, false, false, false);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, false, false, false);
-                }).toThrow(TypeError, 'The provided event name must be a string');
+                }).toThrow(new TypeError('The provided event name must be a string'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, 'click', false, false);
-                }).toThrow(TypeError, 'The provided selector must be a string');
+                }).toThrow(new TypeError('The provided selector must be a string or null'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, 'click', 'button', false);
-                }).toThrow(TypeError, 'The provided callback must be a function');
+                }).toThrow(new TypeError('The provided callback must be a function'));
             });
 
             it('should stop propagation', () => {
@@ -263,20 +272,24 @@ describe.runIf(IS_BROWSER)(
 
             it('should validate undelegateEventListener input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(false, false, false, false);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, false, false, false);
-                }).toThrow(TypeError, 'The provided event name must be a string');
+                }).toThrow(new TypeError('The provided event name must be a string'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, 'click', false, false);
-                }).toThrow(TypeError, 'The provided selector must be a string');
+                }).toThrow(new TypeError('The provided selector must be a string or null'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, 'click', 'button', false);
-                }).toThrow(TypeError, 'The provided callback must be a function');
+                }).toThrow(new TypeError('The provided callback must be a function'));
             });
 
             it('should delegate listeners to slotted contents', () => {
@@ -295,9 +308,9 @@ describe.runIf(IS_BROWSER)(
                             return DNA.html`<div class="button_wrapper"><slot /></div>`;
                         }
 
-                        method(event, target) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            callback(event.type, target.tagName);
+                            callback(event.type, (target as HTMLElement).tagName);
                         }
                     }
                 );
@@ -325,13 +338,15 @@ describe.runIf(IS_BROWSER)(
                         static get listeners() {
                             return {
                                 click: this.prototype.method,
-                                change: (event, target) => callback(event.type, target.tagName),
+                                change: (event: Event, target?: Node) => {
+                                    callback(event.type, (target as HTMLElement).tagName);
+                                },
                             };
                         }
 
-                        method(event, target) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            callback(event.type, target.tagName);
+                            callback(event.type, (target as HTMLElement).tagName);
                         }
                     }
                 );
@@ -358,9 +373,9 @@ describe.runIf(IS_BROWSER)(
                     class extends DNA.Component {
                         static get listeners() {
                             return {
-                                'click button': (event, target) => {
+                                'click button': (event: Event, target?: Node) => {
                                     event.preventDefault();
-                                    callback(event.type, target.tagName);
+                                    callback(event.type, (target as HTMLElement).tagName);
                                 },
                             };
                         }
@@ -374,24 +389,24 @@ describe.runIf(IS_BROWSER)(
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
             });
 
             it('should inherit listeners', () => {
-                const callback1 = vi.fn((event) => {
+                const callback1 = vi.fn((event: Event) => {
                     event.preventDefault();
                 });
                 const callback2 = vi.fn();
-                const callback3 = vi.fn((event) => {
+                const callback3 = vi.fn((event: Event) => {
                     event.preventDefault();
                 });
                 const callback4 = vi.fn();
                 const BaseElement = DNA.define(
                     getComponentName(),
                     class extends DNA.Component {
-                        static get listeners() {
+                        static get listeners(): Record<string, DNA.ListenerConfig> {
                             return {
                                 'click button': callback1,
                                 change: callback2,
@@ -428,7 +443,7 @@ describe.runIf(IS_BROWSER)(
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -440,7 +455,7 @@ describe.runIf(IS_BROWSER)(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -459,9 +474,9 @@ describe.runIf(IS_BROWSER)(
 
                 const is = getComponentName();
                 let TestElement = class TestElement extends DNA.Component {
-                    method(event, target) {
+                    method(event: Event, target?: Node) {
                         event.preventDefault();
-                        callback(event.type, target.tagName);
+                        callback(event.type, (target as HTMLElement).tagName);
                     }
                 };
 
@@ -480,9 +495,9 @@ describe.runIf(IS_BROWSER)(
                 const callback = vi.fn();
 
                 let TestElement = class TestElement extends DNA.Component {
-                    method(event, target) {
+                    method(event: Event, target?: Node) {
                         event.preventDefault();
-                        callback(event.type, target.tagName);
+                        callback(event.type, (target as HTMLElement).tagName);
                     }
 
                     render() {
@@ -496,7 +511,7 @@ describe.runIf(IS_BROWSER)(
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
                 expect(callback).toHaveBeenCalled();
             });
@@ -508,12 +523,12 @@ describe.runIf(IS_BROWSER)(
                 const callback4 = vi.fn();
 
                 let BaseElement = class BaseElement extends DNA.Component {
-                    callback1(event, target) {
+                    callback1(event: Event, target?: Node) {
                         event.preventDefault();
                         callback1(event, target);
                     }
 
-                    callback2(event, target) {
+                    callback2(event: Event, target?: Node) {
                         event.preventDefault();
                         callback2(event, target);
                     }
@@ -524,12 +539,12 @@ describe.runIf(IS_BROWSER)(
                 };
 
                 let TestElement1 = class TestElement1 extends BaseElement {
-                    callback3(event, target) {
+                    callback3(event: Event, target?: Node) {
                         event.preventDefault();
                         callback3(event, target);
                     }
 
-                    callback4(event, target) {
+                    callback4(event: Event, target?: Node) {
                         event.preventDefault();
                         callback4(event, target);
                     }
@@ -552,7 +567,7 @@ describe.runIf(IS_BROWSER)(
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -564,7 +579,7 @@ describe.runIf(IS_BROWSER)(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -586,8 +601,8 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(is)],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -600,9 +615,9 @@ describe.runIf(IS_BROWSER)(
                                     kind: 'method',
                                     decorators: [DNA.listen('click')],
                                     key: 'method',
-                                    value: function method(event, target) {
+                                    value: function method(event: Event, target?: Node) {
                                         event.preventDefault();
-                                        callback(event.type, target.tagName);
+                                        callback(event.type, (target as HTMLElement).tagName);
                                     },
                                 },
                             ],
@@ -626,8 +641,8 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -640,9 +655,9 @@ describe.runIf(IS_BROWSER)(
                                     kind: 'method',
                                     decorators: [DNA.listen('click', 'button')],
                                     key: 'method',
-                                    value: function method(event, target) {
+                                    value: function method(event: Event, target?: Node) {
                                         event.preventDefault();
-                                        callback(event.type, target.tagName);
+                                        callback(event.type, (target as HTMLElement).tagName);
                                     },
                                 },
                                 {
@@ -661,7 +676,7 @@ describe.runIf(IS_BROWSER)(
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
             });
@@ -680,8 +695,8 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _DNA$Component) => {
                         class BaseElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -719,8 +734,8 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _BaseElement) => {
                         class TestElement1 extends _BaseElement {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -751,8 +766,8 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _BaseElement) => {
                         class TestElement2 extends _BaseElement {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -771,7 +786,7 @@ describe.runIf(IS_BROWSER)(
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -783,7 +798,7 @@ describe.runIf(IS_BROWSER)(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -840,10 +855,10 @@ describe.runIf(IS_BROWSER)(
                             };
                         }
 
-                        method(event) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            event.respondWith(async () => event.type);
-                            event.respondWith(async () => event.target.tagName);
+                            (event as DNA.AsyncEvent).respondWith(async () => event.type);
+                            (event as DNA.AsyncEvent).respondWith(async () => (event.target as HTMLElement).tagName);
                         }
                     }
                 );
@@ -872,7 +887,7 @@ describe.runIf(IS_BROWSER)(
                 wrapper.appendChild(element);
                 element.delegateEventListener('click', 'button', callback);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
             });
         });
@@ -895,10 +910,10 @@ describe.runIf(IS_BROWSER)(
                 element.delegateEventListener('click', 'button', callback);
 
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 element.undelegateEventListener('click', 'button', callback);
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalledOnce();
             });
         });
