@@ -17,9 +17,9 @@
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
     "baseUrl": ".",
-    "rootDir": "../../..",
+    "rootDir": "../..",
     "paths": {
-      "@chialab/dna": ["../../src/index.ts"]
+      "@chialab/dna": ["../src/index.ts"]
     }
   }
 }

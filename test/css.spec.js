@@ -1,7 +1,8 @@
 import * as DNA from '@chialab/dna';
 import { describe, expect, it } from 'vitest';
+import { IS_BROWSER } from './helpers';
 
-describe(
+describe.runIf(IS_BROWSER)(
     'css',
     () => {
         it('should convert :host selector', () => {

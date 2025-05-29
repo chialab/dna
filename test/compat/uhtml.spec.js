@@ -1,9 +1,18 @@
 import * as DNA from '@chialab/dna';
-import { html, render } from 'uhtml';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { IS_BROWSER } from '../helpers';
 
-describe('uhtml compatibility', () => {
+describe.runIf(IS_BROWSER)('uhtml compatibility', () => {
     let wrapper;
+    let html;
+    let render;
+
+    beforeAll(async () => {
+        const uhtml = await import('uhtml');
+        html = uhtml.html;
+        render = uhtml.render;
+    });
+
     beforeEach(() => {
         wrapper = document.createElement('div');
         document.body.appendChild(wrapper);

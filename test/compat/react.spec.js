@@ -2,8 +2,9 @@ import * as DNA from '@chialab/dna';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { IS_BROWSER } from '../helpers';
 
-describe('React compatibility', () => {
+describe.runIf(IS_BROWSER)('React compatibility', () => {
     let wrapper;
     beforeEach(() => {
         wrapper = document.createElement('div');

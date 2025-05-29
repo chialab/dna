@@ -1,13 +1,13 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { __decorate } from 'tslib';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getComponentName } from './helpers.js';
+import { type Mock, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { IS_BROWSER, IS_NODE, getComponentName } from './helpers';
 
-describe(
-    'Component',
+describe.runIf(IS_BROWSER)(
+    'Component (browser)',
     () => {
-        let wrapper;
+        let wrapper: HTMLElement;
         beforeEach(() => {
             wrapper = document.createElement('div');
             document.body.appendChild(wrapper);
@@ -69,11 +69,9 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp2 = '';
-                        this.myCustomProp3 = '';
-                    }
+                    declare myCustomProp1: string;
+                    myCustomProp2 = '';
+                    myCustomProp3 = '';
                 };
 
                 __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
@@ -92,8 +90,8 @@ describe(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
                                 _initialize(this);
                             }
                         }
@@ -153,11 +151,9 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp2 = '';
-                        this.myCustomProp3 = '';
-                    }
+                    declare myCustomProp1: string;
+                    myCustomProp2 = '';
+                    myCustomProp3 = '';
 
                     render() {
                         return this.myCustomProp1;
@@ -195,11 +191,9 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp2 = '';
-                        this.myCustomProp3 = '';
-                    }
+                    declare myCustomProp1: string;
+                    myCustomProp2 = '';
+                    myCustomProp3 = '';
 
                     render() {
                         return this.myCustomProp1;
@@ -212,10 +206,7 @@ describe(
 
                 const _forceUpdate = vi.fn(() => {});
                 let TestElement = class TestElement extends BaseElement {
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp4 = '';
-                    }
+                    myCustomProp4 = '';
 
                     forceUpdate() {
                         _forceUpdate();
@@ -240,7 +231,7 @@ describe(
 
             it('should setup properties for extended components (js over ts)', () => {
                 let BaseElement = class extends DNA.Component {
-                    static get properties() {
+                    static get properties(): Record<string, DNA.PropertyConfig> {
                         return {
                             myCustomProp1: {
                                 attribute: 'custom-prop',
@@ -248,11 +239,9 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.myCustomProp2 = '';
-                        this.myCustomProp3 = '';
-                    }
+                    declare myCustomProp1: string;
+                    myCustomProp2 = '';
+                    myCustomProp3 = '';
 
                     render() {
                         return this.myCustomProp1;
@@ -266,7 +255,7 @@ describe(
                 const _forceUpdate = vi.fn();
                 const TestElement = DNA.define(
                     getComponentName(),
-                    class extends BaseElement {
+                    class TestElement extends BaseElement {
                         static get properties() {
                             return {
                                 myCustomProp4: {
@@ -317,47 +306,45 @@ describe(
 
             it('should setup component via innerHTML', () => {
                 const is = getComponentName();
-                DNA.define(
-                    is,
-                    class extends DNA.Component {
-                        static get properties() {
-                            return {
-                                myCustomProp1: {
-                                    attribute: 'custom-prop',
-                                },
-                            };
-                        }
-
-                        render() {
-                            return DNA.html`<div><slot /></div>`;
-                        }
+                class TestElement extends DNA.Component {
+                    static get properties() {
+                        return {
+                            myCustomProp1: {
+                                attribute: 'custom-prop',
+                            },
+                        };
                     }
-                );
+
+                    declare myCustomProp1: string;
+
+                    render() {
+                        return DNA.html`<div><slot /></div>`;
+                    }
+                }
+                DNA.define(is, TestElement);
 
                 wrapper.innerHTML = `<${is} custom-prop="test"><span>test</span></${is}>`;
-                const element = wrapper.children[0];
+                const element = wrapper.children[0] as TestElement;
                 expect(element).toBeInstanceOf(DNA.Component);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe(is.toUpperCase());
                 expect(element.myCustomProp1).toBe('test');
                 expect(element.childNodes.length).toBe(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].childNodes.length).toBe(1);
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect((element.childNodes[0].childNodes[0] as HTMLElement).tagName).toBe('SPAN');
                 expect(element.childNodes[0].childNodes[0].textContent).toBe('test');
             });
 
             it('should setup nested component via innerHTML', () => {
                 const is = getComponentName();
                 const title = getComponentName();
-                DNA.define(
-                    is,
-                    class extends DNA.Component {
-                        render() {
-                            return DNA.html`<div><${title}><slot /></${title}></div>`;
-                        }
+                class TestElement extends DNA.Component {
+                    render() {
+                        return DNA.html`<div><${title}><slot /></${title}></div>`;
                     }
-                );
+                }
+                DNA.define(is, TestElement);
                 DNA.define(
                     title,
                     class extends DNA.Component {
@@ -368,18 +355,21 @@ describe(
                 );
 
                 wrapper.innerHTML = `<${is}><span>test</span></${is}>`;
-                const element = wrapper.children[0];
+                const element = wrapper.children[0] as TestElement;
                 expect(element).toBeInstanceOf(DNA.Component);
                 expect(element.is).toBe(is);
                 expect(element.tagName).toBe(is.toUpperCase());
                 expect(element.childNodes.length).toBe(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].childNodes.length).toBe(1);
-                expect(element.childNodes[0].childNodes[0].tagName).toBe(title.toUpperCase());
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', title.toUpperCase());
                 expect(element.childNodes[0].childNodes[0].childNodes.length).toBe(1);
-                expect(element.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0].childNodes[0].childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes.length).toBe(1);
-                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0]).toHaveProperty(
+                    'tagName',
+                    'SPAN'
+                );
                 expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent).toBe('test');
             });
         });
@@ -387,11 +377,8 @@ describe(
         describe('#connectedCallback|disconnectedCallback', () => {
             it('should connect on appendChild and disconnect on removeChild', async () => {
                 class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
-                        this.spyConnectedCallback = vi.fn();
-                        this.spyDisconnectedCallback = vi.fn();
-                    }
+                    spyConnectedCallback = vi.fn();
+                    spyDisconnectedCallback = vi.fn();
 
                     connectedCallback() {
                         super.connectedCallback();
@@ -433,11 +420,8 @@ describe(
 
             it('should connect on replaceChild', async () => {
                 class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
-                        this.spyConnectedCallback = vi.fn();
-                        this.spyDisconnectedCallback = vi.fn();
-                    }
+                    spyConnectedCallback = vi.fn();
+                    spyDisconnectedCallback = vi.fn();
 
                     connectedCallback() {
                         super.connectedCallback();
@@ -492,11 +476,8 @@ describe(
 
             it('should connect on insertBefore', async () => {
                 class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
-                        this.spyConnectedCallback = vi.fn();
-                        this.spyDisconnectedCallback = vi.fn();
-                    }
+                    spyConnectedCallback = vi.fn();
+                    spyDisconnectedCallback = vi.fn();
 
                     connectedCallback() {
                         super.connectedCallback();
@@ -547,11 +528,8 @@ describe(
 
             it('should connect if not moved', async () => {
                 class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
-                        this.spyConnectedCallback = vi.fn();
-                        this.spyDisconnectedCallback = vi.fn();
-                    }
+                    spyConnectedCallback = vi.fn();
+                    spyDisconnectedCallback = vi.fn();
 
                     connectedCallback() {
                         super.connectedCallback();
@@ -646,14 +624,16 @@ describe(
                         return ['title'];
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.spyAttributeChangedCallback = vi.fn();
-                    }
+                    spyAttributeChangedCallback = vi.fn();
 
-                    attributeChangedCallback(...args) {
-                        super.attributeChangedCallback(...args);
-                        this.spyAttributeChangedCallback(...args);
+                    attributeChangedCallback(
+                        attrName: string,
+                        oldValue: null | string,
+                        newValue: null | string,
+                        namespace?: null | string
+                    ) {
+                        super.attributeChangedCallback(attrName, oldValue, newValue, namespace);
+                        this.spyAttributeChangedCallback(attrName, oldValue, newValue, namespace);
                     }
                 }
 
@@ -689,14 +669,16 @@ describe(
                         return ['title'];
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.spyAttributeChangedCallback = vi.fn();
-                    }
+                    spyAttributeChangedCallback = vi.fn();
 
-                    attributeChangedCallback(...args) {
-                        super.attributeChangedCallback(...args);
-                        this.spyAttributeChangedCallback(...args);
+                    attributeChangedCallback(
+                        attrName: string,
+                        oldValue: null | string,
+                        newValue: null | string,
+                        namespace?: null | string
+                    ) {
+                        super.attributeChangedCallback(attrName, oldValue, newValue, namespace);
+                        this.spyAttributeChangedCallback(attrName, oldValue, newValue, namespace);
                     }
                 }
 
@@ -732,14 +714,16 @@ describe(
                         return ['title'];
                     }
 
-                    constructor(...args) {
-                        super(...args);
-                        this.spyAttributeChangedCallback = vi.fn();
-                    }
+                    spyAttributeChangedCallback = vi.fn();
 
-                    attributeChangedCallback(...args) {
-                        super.attributeChangedCallback(...args);
-                        this.spyAttributeChangedCallback(...args);
+                    attributeChangedCallback(
+                        attrName: string,
+                        oldValue: null | string,
+                        newValue: null | string,
+                        namespace?: null | string
+                    ) {
+                        super.attributeChangedCallback(attrName, oldValue, newValue, namespace);
+                        this.spyAttributeChangedCallback(attrName, oldValue, newValue, namespace);
                     }
                 }
 
@@ -770,25 +754,21 @@ describe(
             });
 
             describe('attribute and properties sync', () => {
-                let element;
-                let fromAttributeSpy;
+                let TestElement = class TestElement extends DNA.Component {
+                    any = undefined;
+                    boolean = false;
+                    string = '';
+                    number = 0;
+                    stringNumber = '';
+                    object = {};
+                    array = [];
+                    convertion: string | number = '';
+                };
+                let element: InstanceType<typeof TestElement>;
+                let fromAttributeSpy: Mock;
 
                 beforeEach(() => {
                     fromAttributeSpy = vi.fn();
-
-                    let TestElement = class TestElement extends DNA.Component {
-                        constructor(...args) {
-                            super(...args);
-                            this.any = undefined;
-                            this.boolean = false;
-                            this.string = '';
-                            this.number = 0;
-                            this.stringNumber = '';
-                            this.object = {};
-                            this.array = [];
-                            this.convertion = '';
-                        }
-                    };
 
                     __decorate([DNA.property()], TestElement.prototype, 'any', undefined);
                     __decorate([DNA.property({ type: Boolean })], TestElement.prototype, 'boolean', undefined);
@@ -812,10 +792,10 @@ describe(
                             DNA.property({
                                 fromAttribute(value) {
                                     fromAttributeSpy();
-                                    return Number.parseInt(value) * 2;
+                                    return Number.parseInt(value as string) * 2;
                                 },
                                 toAttribute(value) {
-                                    return `${value / 2}`;
+                                    return `${(value as number) / 2}`;
                                 },
                             }),
                         ],
@@ -937,14 +917,20 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    declare age: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
 
-                    propertyChangedCallback(...args) {
-                        super.propertyChangedCallback(...args);
-                        propertyChangedCallback(...args);
+                    propertyChangedCallback<P extends keyof this>(
+                        propertyName: P,
+                        oldValue: this[P] | undefined,
+                        newValue: this[P]
+                    ) {
+                        super.propertyChangedCallback(propertyName, oldValue, newValue);
+                        propertyChangedCallback(propertyName, oldValue, newValue);
                     }
                 };
 
@@ -982,14 +968,20 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    declare age: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
 
-                    stateChangedCallback(...args) {
-                        super.stateChangedCallback(...args);
-                        stateChangedCallback(...args);
+                    stateChangedCallback<P extends keyof this>(
+                        propertyName: P,
+                        oldValue: this[P] | undefined,
+                        newValue: this[P]
+                    ) {
+                        super.stateChangedCallback(propertyName, oldValue, newValue);
+                        stateChangedCallback(propertyName, oldValue, newValue);
                     }
                 };
 
@@ -1025,14 +1017,20 @@ describe(
                             };
                         }
 
+                        declare page: number;
+
                         connectedCallback() {
                             super.connectedCallback();
                             this.page = 2;
                         }
 
-                        propertyChangedCallback(...args) {
-                            super.propertyChangedCallback(...args);
-                            propertyChangedCallback(...args);
+                        propertyChangedCallback<P extends keyof this>(
+                            propertyName: P,
+                            oldValue: this[P] | undefined,
+                            newValue: this[P]
+                        ) {
+                            super.propertyChangedCallback(propertyName, oldValue, newValue);
+                            propertyChangedCallback(propertyName, oldValue, newValue);
                         }
                     },
                     {
@@ -1059,14 +1057,20 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    declare age: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
 
-                    propertyChangedCallback(...args) {
-                        super.propertyChangedCallback(...args);
-                        propertyChangedCallback(...args);
+                    propertyChangedCallback<P extends keyof this>(
+                        propertyName: P,
+                        oldValue: this[P] | undefined,
+                        newValue: this[P]
+                    ) {
+                        super.propertyChangedCallback(propertyName, oldValue, newValue);
+                        propertyChangedCallback(propertyName, oldValue, newValue);
                     }
                 };
 
@@ -1078,6 +1082,7 @@ describe(
                 element.title = 'test';
                 expect(propertyChangedCallback).toHaveBeenCalled();
                 expect(propertyChangedCallback).toHaveBeenCalledWith('title', '', 'test');
+                // @ts-expect-error
                 // biome-ignore lint/performance/noDelete: Here we are testing delete
                 delete element.title;
                 expect(propertyChangedCallback).toHaveBeenCalledOnce();
@@ -1085,8 +1090,8 @@ describe(
 
             it('should should re-render on property changes', () => {
                 let TestElement = class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
 
@@ -1107,8 +1112,10 @@ describe(
             it('should should re-render once using assign', () => {
                 const spy = vi.fn();
                 let TestElement = class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare description: string;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                         this.description = '';
                     }
@@ -1136,8 +1143,10 @@ describe(
             it('should should re-render once using assign inside rendering cycle', () => {
                 const spy = vi.fn();
                 let TestElement = class TestElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare description: string;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                         this.description = '';
                     }
@@ -1178,8 +1187,13 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    declare description: string;
+                    declare body: string;
+                    declare author: string;
+                    declare date: Date;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                         this.description = '';
                         this.body = 'Test';
@@ -1225,14 +1239,18 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
 
-                    propertyChangedCallback(...args) {
-                        super.propertyChangedCallback(...args);
-                        propertyChangedCallback(...args);
+                    propertyChangedCallback<P extends keyof this>(
+                        propertyName: P,
+                        oldValue: this[P] | undefined,
+                        newValue: this[P]
+                    ) {
+                        super.propertyChangedCallback(propertyName, oldValue, newValue);
+                        propertyChangedCallback(propertyName, oldValue, newValue);
                     }
                 };
 
@@ -1263,8 +1281,10 @@ describe(
                         };
                     }
 
-                    constructor(...args) {
-                        super(...args);
+                    declare age: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.title = '';
                     }
                 };
@@ -1274,10 +1294,18 @@ describe(
 
                 const element = new TestElement();
                 element.addEventListener('agechange', (event) =>
-                    callback1(event.type, event.detail.oldValue, event.detail.newValue)
+                    callback1(
+                        event.type,
+                        (event as CustomEvent).detail.oldValue,
+                        (event as CustomEvent).detail.newValue
+                    )
                 );
                 element.addEventListener('titleupdate', (event) =>
-                    callback2(event.type, event.detail.oldValue, event.detail.newValue)
+                    callback2(
+                        event.type,
+                        (event as CustomEvent).detail.oldValue,
+                        (event as CustomEvent).detail.newValue
+                    )
                 );
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
@@ -1323,7 +1351,7 @@ describe(
                 element.textContent = 'Test';
                 wrapper.appendChild(element);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].textContent).toBe('Test');
             });
         });
@@ -1435,8 +1463,8 @@ describe(
                 );
                 const element = wrapper.appendChild(new TestElement());
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'SPAN');
                 expect(element.childNodes[0].childNodes[0].textContent).toBe('Test');
             });
 
@@ -1456,8 +1484,8 @@ describe(
                 const element = wrapper.appendChild(new TestElement());
                 element.appendChild(document.createElement('span'));
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'SPAN');
             });
         });
 
@@ -1501,11 +1529,11 @@ describe(
                 wrapper.appendChild(element);
                 element.appendChild(span);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('SPAN');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'SPAN');
                 element.removeChild(span);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].childNodes).toHaveLength(0);
             });
         });
@@ -1583,9 +1611,9 @@ describe(
                 const input = document.createElement('input');
                 element.insertBefore(input, span);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
-                expect(element.childNodes[0].childNodes[1].tagName).toBe('SPAN');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'INPUT');
+                expect(element.childNodes[0].childNodes[1]).toHaveProperty('tagName', 'SPAN');
             });
         });
 
@@ -1670,8 +1698,8 @@ describe(
                 element.appendChild(span);
                 element.replaceChild(input, span);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'INPUT');
             });
         });
 
@@ -1750,33 +1778,35 @@ describe(
                 element.appendChild(span);
                 element.insertAdjacentElement('afterbegin', input);
                 expect(element.childNodes).toHaveLength(1);
-                expect(element.childNodes[0].tagName).toBe('DIV');
-                expect(element.childNodes[0].childNodes[0].tagName).toBe('INPUT');
-                expect(element.childNodes[0].childNodes[1].tagName).toBe('SPAN');
+                expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'INPUT');
+                expect(element.childNodes[0].childNodes[1]).toHaveProperty('tagName', 'SPAN');
             });
         });
 
         describe('attributes', () => {
-            let element;
-            let TestElement;
+            let TestElement = class TestElement extends DNA.Component {
+                static get properties() {
+                    return {
+                        age: {
+                            type: [Number],
+                        },
+                    };
+                }
+
+                declare age: number;
+                declare test: string;
+
+                constructor(node?: HTMLElement) {
+                    super(node);
+                    this.title = '';
+                    this.test = '';
+                }
+            };
+
+            let element: InstanceType<typeof TestElement>;
 
             beforeAll(() => {
-                TestElement = class TestElement extends DNA.Component {
-                    static get properties() {
-                        return {
-                            age: {
-                                type: [Number],
-                            },
-                        };
-                    }
-
-                    constructor(...args) {
-                        super(...args);
-                        this.title = '';
-                        this.test = '';
-                    }
-                };
-
                 __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
                 __decorate([DNA.property({ attribute: 'alias' })], TestElement.prototype, 'test', undefined);
                 TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
@@ -1845,6 +1875,37 @@ describe(
                     expect(element.age).toBeNull();
                 });
             });
+        });
+    },
+    10 * 1000
+);
+
+describe.runIf(IS_NODE)(
+    'Component (node)',
+    () => {
+        it('should define a component', () => {
+            expect(() => {
+                const is = getComponentName();
+                DNA.define(is, class TestElement extends DNA.Component {});
+            }).not.toThrow();
+        });
+
+        it('should define a builtin component', () => {
+            expect(() => {
+                const is = getComponentName();
+                DNA.define(is, class TestElement extends DNA.Component {}, {
+                    extends: 'article',
+                });
+            }).not.toThrow();
+        });
+
+        it('should throw on construct', () => {
+            expect(() => {
+                const is = getComponentName();
+                const TestElement = DNA.define(is, class TestElement extends DNA.Component {});
+
+                new TestElement();
+            }).toThrow();
         });
     },
     10 * 1000
