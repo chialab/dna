@@ -1,10 +1,11 @@
 import { render } from '@testing-library/svelte';
 import { describe, expect, test } from 'vitest';
+import { IS_BROWSER } from '../helpers';
 import Test1 from './Test1.svelte';
 import Test2 from './Test2.svelte';
 import Test3 from './Test3.svelte';
 
-describe('Svelte', () => {
+describe.runIf(IS_BROWSER)('Svelte', () => {
     test('should update text content', async () => {
         const { container, rerender } = render(Test1, {
             props: {

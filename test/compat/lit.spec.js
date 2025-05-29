@@ -1,8 +1,9 @@
 import * as DNA from '@chialab/dna';
 import { html, render } from 'lit';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { IS_BROWSER } from '../helpers';
 
-describe('Lit compatibility', () => {
+describe.runIf(IS_BROWSER)('Lit compatibility', () => {
     let wrapper;
     beforeEach(() => {
         wrapper = document.createElement('div');

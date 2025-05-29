@@ -106,5 +106,5 @@ export type {
     DelegatedEventCallback,
     DelegatedEventDescriptor,
 } from './events';
-export type { PropertyDeclaration, PropertyObserver } from './property';
+export type { PropertyDeclaration, PropertyObserver, PropertyConfig } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';

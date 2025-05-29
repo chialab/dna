@@ -1,9 +1,9 @@
 import * as DNA from '@chialab/dna';
 import { run } from 'axe-core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getComponentName } from '../helpers.js';
+import { IS_BROWSER, getComponentName } from '../helpers';
 
-describe('Axe compatibility', () => {
+describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     let wrapper;
     beforeEach(() => {
         wrapper = document.createElement('div');
