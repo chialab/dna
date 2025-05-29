@@ -136,23 +136,15 @@ h3 {
 
         it('should validate css input', () => {
             expect(() => {
+                // @ts-expect-error We are checking the type validation
                 DNA.css(null, null);
-            }).toThrow(TypeError, 'The provided name must be a string');
+            }).toThrow(new TypeError('The provided name must be a string'));
 
             expect(() => {
+                // @ts-expect-error We are checking the type validation
                 DNA.css('test-style', null);
-            }).toThrow(TypeError, 'The provided CSS text must be a string');
+            }).toThrow(new TypeError('The provided CSS text must be a string'));
         });
-
-        // describe.skip('adoptedStyleSheets', () => {
-        //     it('should handle style in adoptedStyleSheets', () => {
-        //         //
-        //     });
-
-        //     it('should handle multiple styles in adoptedStyleSheets', () => {
-        //         //
-        //     });
-        // });
     },
     10 * 1000
 );
