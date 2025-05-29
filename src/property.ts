@@ -63,17 +63,20 @@ export type TypeConstructor<T> = T extends number
       ? StringConstructor
       : T extends boolean
         ? BooleanConstructor
-        : T extends object
-          ? ObjectConstructor
-          : T extends symbol
-            ? SymbolConstructor
-            : T extends bigint
-              ? BigIntConstructor
-              : T extends Date
-                ? DateConstructor
-                : T extends RegExp
-                  ? RegExpConstructor
-                  : Constructor<T>;
+        : // biome-ignore lint/suspicious/noExplicitAny: Check any type of array.
+          T extends any[]
+          ? ArrayConstructor
+          : T extends object
+            ? ObjectConstructor
+            : T extends symbol
+              ? SymbolConstructor
+              : T extends bigint
+                ? BigIntConstructor
+                : T extends Date
+                  ? DateConstructor
+                  : T extends RegExp
+                    ? RegExpConstructor
+                    : Constructor<T>;
 
 /**
  * A state property declaration.
@@ -164,8 +167,8 @@ export type PropertyDeclaration<T extends ComponentInstance, P extends keyof T> 
  */
 export type PropertyConfig<T extends ComponentInstance = ComponentInstance, P extends keyof T = keyof T> =
     | PropertyDeclaration<T, P>
-    | Constructor<T[P]>
-    | Constructor<T[P]>[];
+    | TypeConstructor<T[P]>
+    | TypeConstructor<T[P]>[];
 
 /**
  * A property instance.
