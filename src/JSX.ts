@@ -2,6 +2,7 @@ import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
 import type { BaseClass, HTMLTagNameMap, SVGTagNameMap } from './Elements';
 import type { HTML } from './HTML';
+import type { Effect } from './Hooks';
 import type { Context } from './render';
 
 /**
@@ -149,6 +150,7 @@ export type FunctionComponent<P = any> = (
     hooks: {
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+        useEffect: (effect: Effect, deps?: unknown[]) => void;
         useRenderContext: () => Context;
     }
 ) => Template;

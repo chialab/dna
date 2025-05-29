@@ -837,6 +837,98 @@ describe(
                 expect(wrapper.textContent).toBe('2');
                 expect(factory).toHaveBeenCalledTimes(2);
             });
+
+            it('should run an effect on render', () => {
+                const effect = vi.fn(() => wrapper.querySelector('button'));
+                const Test = function Test(props, { useEffect }) {
+                    useEffect(() => {
+                        effect();
+                    });
+                    return DNA.h('button', {});
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                const button = wrapper.children[0];
+                DNA.render(DNA.h(Test), wrapper);
+
+                expect(effect).toHaveBeenCalled();
+                expect(effect).toHaveBeenCalledOnce();
+                expect(effect).toHaveReturnedWith(button);
+            });
+
+            it('should re-run an effect on render if dependency change', () => {
+                const effect = vi.fn(() => wrapper.querySelector('button'));
+                const Test = function Test({ dep }, { useEffect }) {
+                    useEffect(() => {
+                        effect();
+                    }, [dep]);
+                    return DNA.h('button', {});
+                };
+
+                DNA.render(DNA.h(Test, { dep: 1 }), wrapper);
+                DNA.render(DNA.h(Test, { dep: 1 }), wrapper);
+                DNA.render(DNA.h(Test, { dep: 2 }), wrapper);
+                DNA.render(DNA.h(Test, { dep: 2 }), wrapper);
+
+                expect(effect).toHaveBeenCalled();
+                expect(effect).toHaveBeenCalledTimes(2);
+            });
+
+            it('should re-run an effect on on fragment re-render', () => {
+                const effect = vi.fn();
+                const Test = function Test(props, { useState, useEffect }) {
+                    const [dep, setDep] = useState(1);
+                    useEffect(() => {
+                        effect();
+                    }, [dep]);
+                    return DNA.h('button', {
+                        onclick() {
+                            setDep(dep + 1);
+                        },
+                    });
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                const button = wrapper.children[0];
+                button.click();
+
+                expect(effect).toHaveBeenCalled();
+                expect(effect).toHaveBeenCalledTimes(2);
+            });
+
+            it('should run cleanup if dep changed', () => {
+                const cleanup = vi.fn();
+                const Test = function Test(props, { useState, useEffect }) {
+                    const [dep, setDep] = useState(1);
+                    useEffect(() => cleanup, [dep]);
+                    return DNA.h('button', {
+                        onclick() {
+                            setDep(dep + 1);
+                        },
+                    });
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                expect(cleanup).not.toHaveBeenCalled();
+                const button = wrapper.children[0];
+                button.click();
+                expect(cleanup).toHaveBeenCalled();
+                expect(cleanup).toHaveBeenCalledOnce();
+            });
+
+            it('should run cleanup if node removed', () => {
+                const cleanup = vi.fn();
+                const Test = function Test(props, { useEffect }) {
+                    useEffect(() => cleanup);
+                    return DNA.h('button', {});
+                };
+
+                DNA.render(DNA.h(Test), wrapper);
+                expect(cleanup).not.toHaveBeenCalled();
+                DNA.render(null, wrapper);
+                expect(cleanup).toHaveBeenCalled();
+                expect(cleanup).toHaveBeenCalledOnce();
+            });
         });
 
         describe('not keyed', () => {
