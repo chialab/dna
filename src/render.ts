@@ -1,5 +1,5 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
-import { HooksManager, type HooksState } from './Hooks';
+import { type Effect, HooksManager, type HooksState } from './Hooks';
 import {
     type ElementProperties,
     type EventProperties,
@@ -463,6 +463,9 @@ const renderTemplate = (
                         useMemo(factory, deps = []) {
                             return hooks.useMemo(factory, deps);
                         },
+                        useEffect(effect: Effect, deps: unknown[] = []) {
+                            return hooks.useEffect(effect, deps);
+                        },
                         useRenderContext() {
                             return context;
                         },
@@ -474,6 +477,7 @@ const renderTemplate = (
             );
 
             renderContext.end = currentChildren[context._pos - 1];
+            hooks.runEffects();
             return;
         }
 
@@ -679,6 +683,9 @@ export const internalRender = (
         const parentNode = child.node.parentNode;
         if (parentNode === context.node) {
             context.node.removeChild(child.node);
+            if (child.state) {
+                new HooksManager(child.state).cleanup();
+            }
             internalRender(child, null, rootContext, namespace);
         }
     }
