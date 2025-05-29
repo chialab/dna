@@ -190,6 +190,11 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     }
 
     if (propertyKey === 'style') {
+        if (value == null) {
+            (node as HTMLElement).removeAttribute('style');
+            return;
+        }
+
         if ((node as HTMLElement).getAttribute('style') != oldValue) {
             oldValue = convertStyles(oldValue as string) as T[P];
             value = convertStyles(value as string) as T[P];
@@ -211,6 +216,11 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
     if (propertyKey === 'class') {
+        if (value == null) {
+            (node as HTMLElement).removeAttribute('class');
+            return;
+        }
+
         if ((node as HTMLElement).className !== (oldValue || '')) {
             oldValue = convertClasses(oldValue as string) as T[P];
             value = convertClasses(value as string) as T[P];
@@ -478,7 +488,7 @@ const renderTemplate = (
         }
 
         const { key, children, namespace: namespaceURI = namespace } = template;
-        const properties = template.properties as KeyedProperties &
+        const properties = (template.properties || {}) as KeyedProperties &
             TreeProperties &
             EventProperties &
             ElementProperties;

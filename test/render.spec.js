@@ -431,6 +431,8 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(elem.getAttribute('class')).toBe('test1 test2');
                 DNA.render(DNA.h('div', { class: { test3: true } }), wrapper);
                 expect(elem.getAttribute('class')).toBe('test2 test3');
+                DNA.render(DNA.h('div', undefined), wrapper);
+                expect(elem.getAttribute('class')).toBe(null);
             });
 
             it('should update add and remove styles', () => {
@@ -450,6 +452,8 @@ describe.runIf(typeof window !== 'undefined')(
                 );
                 expect(['700', 'bold']).toContain(window.getComputedStyle(elem).fontWeight);
                 expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
+                DNA.render(DNA.h('div', undefined), wrapper);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
             });
 
             it('should render svgs', () => {
