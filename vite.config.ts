@@ -26,6 +26,8 @@ export default defineConfig({
     resolve: {
         conditions: ['browser'],
         alias: {
+            '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
+            '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         },
     },

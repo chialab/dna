@@ -1,6 +1,5 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { __decorate } from 'tslib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IS_BROWSER, getComponentName } from './helpers';
 
@@ -381,7 +380,7 @@ describe.runIf(IS_BROWSER)(
                         }
 
                         render() {
-                            return DNA.compile('<button></button>');
+                            return <button type="button">Click me</button>;
                         }
                     }
                 );
@@ -414,7 +413,7 @@ describe.runIf(IS_BROWSER)(
                         }
 
                         render() {
-                            return DNA.compile('<button></button>');
+                            return <button type="button">Click me</button>;
                         }
                     }
                 );
@@ -473,15 +472,15 @@ describe.runIf(IS_BROWSER)(
                 const callback = vi.fn();
 
                 const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
+
+                @DNA.customElement(is)
+                class TestElement extends DNA.Component {
+                    @DNA.listen('click')
                     method(event: Event, target?: Node) {
                         event.preventDefault();
                         callback(event.type, (target as HTMLElement).tagName);
                     }
-                };
-
-                __decorate([DNA.listen('click')], TestElement.prototype, 'method', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -494,19 +493,18 @@ describe.runIf(IS_BROWSER)(
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
+                    render() {
+                        return <button type="button">Click me</button>;
+                    }
+
+                    @DNA.listen('click', 'button')
                     method(event: Event, target?: Node) {
                         event.preventDefault();
                         callback(event.type, (target as HTMLElement).tagName);
                     }
-
-                    render() {
-                        return DNA.compile('<button></button>');
-                    }
-                };
-
-                __decorate([DNA.listen('click', 'button')], TestElement.prototype, 'method', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -522,45 +520,42 @@ describe.runIf(IS_BROWSER)(
                 const callback3 = vi.fn();
                 const callback4 = vi.fn();
 
-                let BaseElement = class BaseElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class BaseElement extends DNA.Component {
+                    render() {
+                        return <button type="button">Click me</button>;
+                    }
+
+                    @DNA.listen('click', 'button')
                     callback1(event: Event, target?: Node) {
                         event.preventDefault();
                         callback1(event, target);
                     }
 
+                    @DNA.listen('change')
                     callback2(event: Event, target?: Node) {
                         event.preventDefault();
                         callback2(event, target);
                     }
+                }
 
-                    render() {
-                        return DNA.compile('<button></button>');
-                    }
-                };
-
-                let TestElement1 = class TestElement1 extends BaseElement {
+                @DNA.customElement(getComponentName())
+                class TestElement1 extends BaseElement {
+                    @DNA.listen('click', 'button')
                     callback3(event: Event, target?: Node) {
                         event.preventDefault();
                         callback3(event, target);
                     }
 
+                    @DNA.listen('drop')
                     callback4(event: Event, target?: Node) {
                         event.preventDefault();
                         callback4(event, target);
                     }
-                };
+                }
 
-                let TestElement2 = class TestElement2 extends BaseElement {};
-
-                __decorate([DNA.listen('click', 'button')], BaseElement.prototype, 'callback1', undefined);
-                __decorate([DNA.listen('change')], BaseElement.prototype, 'callback2', undefined);
-                BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
-
-                __decorate([DNA.listen('click', 'button')], TestElement1.prototype, 'callback3', undefined);
-                __decorate([DNA.listen('drop')], TestElement1.prototype, 'callback4', undefined);
-                TestElement1 = __decorate([DNA.customElement(getComponentName())], TestElement1);
-
-                TestElement2 = __decorate([DNA.customElement(getComponentName())], TestElement2);
+                @DNA.customElement(getComponentName())
+                class TestElement2 extends BaseElement {}
 
                 const element1 = new TestElement1();
                 wrapper.appendChild(element1);
@@ -664,7 +659,7 @@ describe.runIf(IS_BROWSER)(
                                     kind: 'method',
                                     key: 'render',
                                     value: function render() {
-                                        return DNA.compile('<button></button>');
+                                        return <button type="button">Click me</button>;
                                     },
                                 },
                             ],
@@ -721,7 +716,7 @@ describe.runIf(IS_BROWSER)(
                                     kind: 'method',
                                     key: 'render',
                                     value: function render() {
-                                        return DNA.compile('<button></button>');
+                                        return <button type="button">Click me</button>;
                                     },
                                 },
                             ],

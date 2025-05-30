@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { IS_BROWSER } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Lit compatibility', () => {
-    let wrapper;
+    let wrapper: HTMLElement;
     beforeEach(() => {
         wrapper = document.createElement('div');
         document.body.appendChild(wrapper);
@@ -21,14 +21,16 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-1',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <span>${this.childNodesBySlot(null)}</span>
-                        <div>${this.childNodesBySlot('children')}</div>
-                    `;
+                    return (
+                        <>
+                            <span>{this.childNodesBySlot(null)}</span>
+                            <div>{this.childNodesBySlot('children')}</div>
+                        </>
+                    );
                 }
             }
         );
-        const Template = (text) => html`<lit-test-1>${text}</lit-test-1>`;
+        const Template = (text: string) => html`<lit-test-1>${text}</lit-test-1>`;
         render(Template('Text'), wrapper);
 
         const element = wrapper.children[0];
@@ -49,14 +51,16 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-2',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <span>${this.childNodesBySlot(null)}</span>
-                        <div>${this.childNodesBySlot('children')}</div>
-                    `;
+                    return (
+                        <>
+                            <span>{this.childNodesBySlot(null)}</span>
+                            <div>{this.childNodesBySlot('children')}</div>
+                        </>
+                    );
                 }
             }
         );
-        const Template = (text) => html`<lit-test-2>${text} ${'children'}</lit-test-2>`;
+        const Template = (text: string) => html`<lit-test-2>${text} ${'children'}</lit-test-2>`;
         render(Template('Text'), wrapper);
 
         const element = wrapper.children[0];
@@ -81,14 +85,16 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-3',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <span>${this.childNodesBySlot(null)}</span>
-                        <div>${this.childNodesBySlot('children')}</div>
-                    `;
+                    return (
+                        <>
+                            <span>{this.childNodesBySlot(null)}</span>
+                            <div>{this.childNodesBySlot('children')}</div>
+                        </>
+                    );
                 }
             }
         );
-        const Template = (title) =>
+        const Template = (title: boolean) =>
             html`<lit-test-3>
                 Text ${title ? html`<h1 slot="children">Title</h1>` : html`<h2 slot="children">Subtitle</h2>`}
             </lit-test-3>`;
@@ -113,15 +119,17 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-4',
             class extends DNA.Component {
                 render() {
-                    return DNA.h(
-                        DNA.Fragment,
-                        null,
-                        DNA.h(
-                            'div',
-                            { class: 'layout-header' },
-                            DNA.h('lit-test-4-title', null, DNA.h('slot', { name: 'title' }))
-                        ),
-                        DNA.h('div', { class: 'layout-body' }, DNA.h('slot'))
+                    return (
+                        <>
+                            <div class="layout-header">
+                                <lit-test-4-title>
+                                    <slot name="title" />
+                                </lit-test-4-title>
+                            </div>
+                            <div class="layout-body">
+                                <slot />
+                            </div>
+                        </>
                     );
                 }
             }
@@ -130,10 +138,15 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-4-title',
             class MyTitle extends DNA.Component {
                 render() {
-                    return DNA.h('span', { class: 'title' }, DNA.h('slot', {}, ['Untitled']));
+                    return (
+                        <span class="title">
+                            <slot>Untitled</slot>
+                        </span>
+                    );
                 }
             }
         );
+
         const template = (showTitle = false) =>
             html`<lit-test-4 key="1">
                 ${showTitle ? html`<h1 slot="title">Title</h1>` : null}
@@ -168,7 +181,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             'lit-test-5-card',
             class MyCard extends DNA.Component {
                 render() {
-                    return DNA.h('slot');
+                    return <slot />;
                 }
             }
         );
@@ -190,11 +203,17 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
                     };
                 }
 
+                declare collapsed: boolean;
+
                 render() {
                     if (this.collapsed) {
-                        return DNA.h('slot');
+                        return <slot />;
                     }
-                    return DNA.h('lit-test-5-card', {}, DNA.h('slot'));
+                    return (
+                        <lit-test-5-card>
+                            <slot />
+                        </lit-test-5-card>
+                    );
                 }
             }
         );
@@ -233,11 +252,15 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
                     };
                 }
 
+                declare switch: boolean;
+
                 render() {
-                    return [
-                        DNA.h('div', { class: 'parent-1' }, this.switch ? DNA.h('slot') : 'Empty'),
-                        DNA.h('div', { class: 'parent-2' }, !this.switch ? DNA.h('slot') : 'Empty'),
-                    ];
+                    return (
+                        <>
+                            <div class="parent-1">{this.switch ? <slot /> : 'Empty'}</div>
+                            <div class="parent-2">{!this.switch ? <slot /> : 'Empty'}</div>
+                        </>
+                    );
                 }
             }
         );
@@ -245,10 +268,10 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             html`<lit-test-6 .switch=${switchValue}>${!switchValue ? 'Hello' : 'World'}</lit-test-6>`;
         render(Template(), wrapper);
         const element = wrapper.children[0];
-        expect(element.querySelector('.parent-1').textContent).toBe('Empty');
-        expect(element.querySelector('.parent-2').textContent).toBe('Hello');
+        expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
+        expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Hello');
         render(Template(true), wrapper);
-        expect(element.querySelector('.parent-1').textContent).toBe('World');
-        expect(element.querySelector('.parent-2').textContent).toBe('Empty');
+        expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
+        expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
     });
 });
