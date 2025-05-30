@@ -14,7 +14,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -35,7 +34,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -64,7 +62,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -73,7 +70,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Install chromium
-        run: yarn playwright install --with-deps chromium
+        run: yarn playwright install chromium --with-deps --only-shell
 
       - name: Run tests
         run: yarn test:browser --coverage --coverage.provider istanbul
@@ -95,7 +92,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -124,12 +120,12 @@ jobs:
           - 'chrome-latest'
           - 'chrome-latest-1'
           - 'chrome-latest-2'
-          - 'chrome-80'
+          - 'chrome-87'
           - 'firefox-latest'
           - 'firefox-latest-1'
           - 'firefox-latest-2'
           - 'firefox-90'
-          # - 'safari-latest'
+          - 'safari-latest'
           - 'safari-16'
           - 'safari-15'
           - 'edge-latest'
@@ -140,7 +136,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -154,7 +149,7 @@ jobs:
           timeout_minutes: 10
           max_attempts: 2
           retry_on: error
-          command: yarn test:browserstack --browser.name browserstack:${{ matrix.browser }} --coverage
+          command: yarn test:browserstack --browser browserstack:${{ matrix.browser }} --coverage
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}

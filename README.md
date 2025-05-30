@@ -30,7 +30,7 @@ DNA uses event delegation for listening to events from a component's elements or
 
 ### Slots
 
-DNA uses [**Quantum**](https://chialab.github.io/quantum/) instead of ShadowDOM to render slotted children, simplifying the usage of custom elements inside forms and providing a more flexible management of slotted contents. Unlike ShadowDOM, Quantum also works for built-in elements, allowing you to use <slot> even inside buttons.
+DNA uses a custom light DOM rendering system instead of ShadowDOM to render slotted children, simplifying the usage of custom elements inside forms and providing a more flexible management of slotted contents. Unlike ShadowDOM, this also works for built-in elements, allowing you to use <slot> even inside buttons.
 
 ## Get the library
 

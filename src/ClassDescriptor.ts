@@ -1,7 +1,9 @@
+import type { Constructor } from './helpers';
+
 /**
  * Decorator class element descriptor.
  */
-export interface ClassElement {
+export interface ClassElement<T, P> {
     /**
      * The kind of the class element.
      */
@@ -17,7 +19,7 @@ export interface ClassElement {
     /**
      * An initializer function.
      */
-    initializer?: Function;
+    initializer?: () => P;
     /**
      * The element property descriptor.
      */
@@ -25,14 +27,14 @@ export interface ClassElement {
     /**
      * The descriptor finisher method.
      */
-    finisher?: (constructor: Function) => void;
+    finisher?: (ctr: Constructor<T>) => void;
 }
 
 /**
  * The class descriptor interface.
  */
-export type ClassDescriptor = {
+export type ClassDescriptor<T, P> = {
     kind: 'class';
-    elements: ClassElement[];
-    finisher?: <T>(constructor: { new (): T }) => void | { new (): T };
+    elements: ClassElement<T, P>[];
+    finisher?: (ctr: Constructor<T>) => Constructor<T> | undefined;
 };
