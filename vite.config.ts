@@ -3,21 +3,19 @@ import { fileURLToPath } from 'node:url';
 // import { svelteTesting } from '@testing-library/svelte/vite';
 import { type Plugin, defineConfig } from 'vitest/config';
 
-// const job = (() => {
-//     if (process.env.TRAVIS) {
-//         return `TRAVIS ${process.env.TRAVIS_BUILD_ID}#${process.env.TRAVIS_BUILD_NUMBER}`;
-//     }
-//     if (process.env.GITLAB_CI) {
-//         return `GITLAB ${process.env.CI_JOB_ID}#${process.env.CI_JOB_NAME}`;
-//     }
-//     if (process.env.GITHUB_ACTIONS) {
-//         return `GITHUB ${process.env.GITHUB_JOB}#${process.env.GITHUB_RUN_NUMBER}`;
-//     }
+const job = (() => {
+    if (process.env.TRAVIS) {
+        return `TRAVIS ${process.env.TRAVIS_BUILD_ID}#${process.env.TRAVIS_BUILD_NUMBER}`;
+    }
+    if (process.env.GITLAB_CI) {
+        return `GITLAB ${process.env.CI_JOB_ID}#${process.env.CI_JOB_NAME}`;
+    }
+    if (process.env.GITHUB_ACTIONS) {
+        return `GITHUB ${process.env.GITHUB_JOB}#${process.env.GITHUB_RUN_NUMBER}`;
+    }
 
-//     return null;
-// })();
-
-console.log(fileURLToPath(new URL('./src/index.ts', import.meta.url)));
+    return null;
+})();
 
 export default defineConfig({
     // plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
