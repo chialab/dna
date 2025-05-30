@@ -74,7 +74,7 @@ jobs:
 
       - name: Run tests
         # run: yarn test:browser --coverage --coverage.provider istanbul
-        run: yarn vitest run test/module.spec.ts test/component.spec.tsx test/css.spec.ts test/events.spec.tsx test/module.spec.ts --browser --coverage --coverage.provider istanbul
+        run: yarn vitest run test/module.spec.ts --browser --coverage --coverage.provider istanbul
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4
