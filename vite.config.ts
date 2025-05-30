@@ -33,15 +33,15 @@ export default defineConfig({
     },
     test: {
         name: `DNA${job ? ` (${job})` : ''}`,
-        dir: './test',
-        include: ['./**/*.spec.{js,ts,tsx}'],
-        fileParallelism: false,
-        reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : [],
-        coverage: {
-            all: false,
-            include: ['src/**/*'],
-            reporter: ['clover', 'html'],
-        },
+        // dir: './test',
+        // include: ['./**/*.spec.{js,ts,tsx}'],
+        // fileParallelism: false,
+        // reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : [],
+        // coverage: {
+        //     all: false,
+        //     include: ['src/**/*'],
+        //     reporter: ['clover', 'html'],
+        // },
         browser: {
             provider: 'playwright',
             headless: true,
