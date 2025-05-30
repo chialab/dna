@@ -272,7 +272,7 @@ export const isVTag = (target: VObject): target is VTag<keyof HTMLTagNameMap | k
  * @param children The children of the Node.
  * @returns The virtual DOM object.
  */
-function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNameMap | keyof HTMLTagNameMap>(
+function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNameMap | keyof HTMLTagNameMap | string>(
     type: T,
     properties:
         | (T extends typeof Fragment
@@ -303,7 +303,13 @@ function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNa
                             TreeProperties &
                             EventProperties &
                             ElementProperties
-                      : never)
+                      : T extends string
+                        ? Record<string, unknown> &
+                              KeyedProperties &
+                              TreeProperties &
+                              EventProperties &
+                              ElementProperties
+                        : never)
         | null = null,
     ...children: Template[]
 ) {
@@ -334,7 +340,7 @@ function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNa
  * @param key The Node key reference.
  * @returns The virtual DOM object.
  */
-function jsx<T extends FunctionComponent | Node | keyof SVGTagNameMap | keyof HTMLTagNameMap>(
+function jsx<T extends FunctionComponent | Node | keyof SVGTagNameMap | keyof HTMLTagNameMap | string>(
     type: T,
     properties:
         | (T extends typeof Fragment
@@ -365,7 +371,13 @@ function jsx<T extends FunctionComponent | Node | keyof SVGTagNameMap | keyof HT
                             TreeProperties &
                             EventProperties &
                             ElementProperties
-                      : never)
+                      : T extends string
+                        ? Record<string, unknown> &
+                              KeyedProperties &
+                              TreeProperties &
+                              EventProperties &
+                              ElementProperties
+                        : never)
         | null = null,
     key?: unknown
 ) {
