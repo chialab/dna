@@ -12,12 +12,13 @@ export type HooksState = HookState[];
  * The type of a cleanup function.
  * It is called when the effect is no longer needed.
  */
-type Cleanup = () => undefined;
+type Cleanup = () => void;
 
 /**
  * The type of an effect function.
  */
-export type Effect = () => Cleanup | undefined;
+// biome-ignore lint/suspicious/noConfusingVoidType: This is a valid use case for an effect.
+export type Effect = () => Cleanup | undefined | void;
 
 /**
  * The symbol used to mark cleanup functions.
@@ -136,7 +137,7 @@ export class HooksManager {
      */
     useEffect(effect: Effect, deps: unknown[] = []): void {
         this.nextState(() => {
-            let cleanup: Cleanup | undefined;
+            let cleanup: ReturnType<Effect>;
             this.effects.add(() => {
                 cleanup = effect();
                 return cleanup;
