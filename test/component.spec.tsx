@@ -1,6 +1,5 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { __decorate } from 'tslib';
 import { type Mock, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IS_BROWSER, IS_NODE, getComponentName } from './helpers';
 
@@ -60,7 +59,8 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should setup properties', () => {
-                let TestElement = class extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -70,13 +70,13 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare myCustomProp1: string;
-                    myCustomProp2 = '';
-                    myCustomProp3 = '';
-                };
 
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                    @DNA.property()
+                    myCustomProp2 = '';
+
+                    @DNA.property()
+                    myCustomProp3 = '';
+                }
 
                 const element = new TestElement();
                 expect(element).toHaveProperty('myCustomProp1');
@@ -142,7 +142,9 @@ describe.runIf(IS_BROWSER)(
 
             it('should setup properties for extended elements', () => {
                 const _forceUpdate = vi.fn();
-                let TestElement = class TestElement extends DNA.Component {
+
+                @DNA.customElement(getComponentName(), { extends: 'article' })
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -152,7 +154,11 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare myCustomProp1: string;
+
+                    @DNA.property()
                     myCustomProp2 = '';
+
+                    @DNA.property()
                     myCustomProp3 = '';
 
                     render() {
@@ -163,11 +169,7 @@ describe.runIf(IS_BROWSER)(
                         _forceUpdate();
                         super.forceUpdate();
                     }
-                };
-
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp2', undefined);
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp3', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName(), { extends: 'article' })], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(element).toHaveProperty('myCustomProp1');
@@ -182,7 +184,8 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should setup properties for extended components (ts over ts)', () => {
-                let BaseElement = class BaseElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class BaseElement extends DNA.Component {
                     static get properties() {
                         return {
                             myCustomProp1: {
@@ -192,29 +195,30 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare myCustomProp1: string;
+
+                    @DNA.property()
                     myCustomProp2 = '';
+
+                    @DNA.property()
                     myCustomProp3 = '';
 
                     render() {
                         return this.myCustomProp1;
                     }
-                };
-
-                __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp2', undefined);
-                __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp3', undefined);
-                BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
+                }
 
                 const _forceUpdate = vi.fn(() => {});
-                let TestElement = class TestElement extends BaseElement {
+
+                @DNA.customElement(getComponentName())
+                class TestElement extends BaseElement {
+                    @DNA.property()
                     myCustomProp4 = '';
 
                     forceUpdate() {
                         _forceUpdate();
                         super.forceUpdate();
                     }
-                };
-                __decorate([DNA.property()], TestElement.prototype, 'myCustomProp4', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(element).toHaveProperty('myCustomProp1');
@@ -230,7 +234,8 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should setup properties for extended components (js over ts)', () => {
-                let BaseElement = class extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class BaseElement extends DNA.Component {
                     static get properties(): Record<string, DNA.PropertyConfig> {
                         return {
                             myCustomProp1: {
@@ -240,17 +245,17 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare myCustomProp1: string;
+
+                    @DNA.property()
                     myCustomProp2 = '';
+
+                    @DNA.property()
                     myCustomProp3 = '';
 
                     render() {
                         return this.myCustomProp1;
                     }
-                };
-
-                __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp2', undefined);
-                __decorate([DNA.property()], BaseElement.prototype, 'myCustomProp3', undefined);
-                BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
+                }
 
                 const _forceUpdate = vi.fn();
                 const TestElement = DNA.define(
@@ -318,7 +323,11 @@ describe.runIf(IS_BROWSER)(
                     declare myCustomProp1: string;
 
                     render() {
-                        return DNA.html`<div><slot /></div>`;
+                        return (
+                            <div>
+                                <slot />
+                            </div>
+                        );
                     }
                 }
                 DNA.define(is, TestElement);
@@ -349,7 +358,11 @@ describe.runIf(IS_BROWSER)(
                     title,
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div><slot /></div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -575,7 +588,7 @@ describe.runIf(IS_BROWSER)(
             it('should render when connected', async () => {
                 class TestElement extends DNA.Component {
                     render() {
-                        return DNA.html`<h1>test</h1>`;
+                        return <h1>test</h1>;
                     }
                 }
 
@@ -754,57 +767,47 @@ describe.runIf(IS_BROWSER)(
             });
 
             describe('attribute and properties sync', () => {
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
+                    @DNA.property()
                     any = undefined;
-                    boolean = false;
-                    string = '';
-                    number = 0;
-                    stringNumber = '';
-                    object = {};
-                    array = [];
-                    convertion: string | number = '';
-                };
-                let element: InstanceType<typeof TestElement>;
-                let fromAttributeSpy: Mock;
 
+                    @DNA.property({ type: Boolean })
+                    boolean = false;
+
+                    @DNA.property({ type: String })
+                    string = '';
+
+                    @DNA.property({ type: Number })
+                    number = 0;
+
+                    @DNA.property({
+                        type: [String, Number],
+                        attribute: 'string-number',
+                    })
+                    stringNumber?: string | number = '';
+
+                    @DNA.property({ type: [Object] })
+                    object = {};
+
+                    @DNA.property({ type: [Array] })
+                    array = [];
+
+                    @DNA.property({
+                        fromAttribute(value) {
+                            return Number.parseInt(value as string) * 2;
+                        },
+                        toAttribute(value) {
+                            return `${(value as number) / 2}`;
+                        },
+                    })
+                    convertion: string | number = '';
+                }
+
+                let element: TestElement;
+                let fromAttributeSpy: Mock;
                 beforeEach(() => {
                     fromAttributeSpy = vi.fn();
-
-                    __decorate([DNA.property()], TestElement.prototype, 'any', undefined);
-                    __decorate([DNA.property({ type: Boolean })], TestElement.prototype, 'boolean', undefined);
-                    __decorate([DNA.property({ type: String })], TestElement.prototype, 'string', undefined);
-                    __decorate([DNA.property({ type: Number })], TestElement.prototype, 'number', undefined);
-                    __decorate(
-                        [
-                            DNA.property({
-                                type: [String, Number],
-                                attribute: 'string-number',
-                            }),
-                        ],
-                        TestElement.prototype,
-                        'stringNumber',
-                        undefined
-                    );
-                    __decorate([DNA.property({ type: [Object] })], TestElement.prototype, 'object', undefined);
-                    __decorate([DNA.property({ type: [Array] })], TestElement.prototype, 'array', undefined);
-                    __decorate(
-                        [
-                            DNA.property({
-                                fromAttribute(value) {
-                                    fromAttributeSpy();
-                                    return Number.parseInt(value as string) * 2;
-                                },
-                                toAttribute(value) {
-                                    return `${(value as number) / 2}`;
-                                },
-                            }),
-                        ],
-                        TestElement.prototype,
-                        'convertion',
-                        undefined
-                    );
-                    TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
-
                     element = new TestElement();
                 });
 
@@ -908,7 +911,8 @@ describe.runIf(IS_BROWSER)(
             it('should handle property changes on assignment', () => {
                 const propertyChangedCallback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             age: {
@@ -918,6 +922,9 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare age: number;
+
+                    @DNA.property({ type: [String], attribute: false })
+                    title: string;
 
                     constructor(node?: HTMLElement) {
                         super(node);
@@ -932,15 +939,7 @@ describe.runIf(IS_BROWSER)(
                         super.propertyChangedCallback(propertyName, oldValue, newValue);
                         propertyChangedCallback(propertyName, oldValue, newValue);
                     }
-                };
-
-                __decorate(
-                    [DNA.property({ type: [String], attribute: false })],
-                    TestElement.prototype,
-                    'title',
-                    undefined
-                );
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(propertyChangedCallback).not.toHaveBeenCalled();
@@ -958,7 +957,8 @@ describe.runIf(IS_BROWSER)(
             it('should handle state property changes on assignment', () => {
                 const stateChangedCallback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             age: {
@@ -969,6 +969,9 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare age: number;
+
+                    @DNA.state({ type: [String], attribute: false })
+                    title: string;
 
                     constructor(node?: HTMLElement) {
                         super(node);
@@ -983,10 +986,7 @@ describe.runIf(IS_BROWSER)(
                         super.stateChangedCallback(propertyName, oldValue, newValue);
                         stateChangedCallback(propertyName, oldValue, newValue);
                     }
-                };
-
-                __decorate([DNA.state({ type: [String] })], TestElement.prototype, 'title', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(stateChangedCallback).not.toHaveBeenCalled();
@@ -1048,7 +1048,8 @@ describe.runIf(IS_BROWSER)(
             it('should NOT handle property changes on delete', () => {
                 const propertyChangedCallback = vi.fn((name, old, value) => [name, old, value]);
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             age: {
@@ -1058,6 +1059,9 @@ describe.runIf(IS_BROWSER)(
                     }
 
                     declare age: number;
+
+                    @DNA.property()
+                    title: string;
 
                     constructor(node?: HTMLElement) {
                         super(node);
@@ -1072,10 +1076,7 @@ describe.runIf(IS_BROWSER)(
                         super.propertyChangedCallback(propertyName, oldValue, newValue);
                         propertyChangedCallback(propertyName, oldValue, newValue);
                     }
-                };
-
-                __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(propertyChangedCallback).not.toHaveBeenCalled();
@@ -1089,19 +1090,20 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should should re-render on property changes', () => {
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: [String] })
+                    title: string;
+
                     constructor(node?: HTMLElement) {
                         super(node);
                         this.title = '';
                     }
 
                     render() {
-                        return DNA.html`<h1>${this.title}</h1>`;
+                        return <h1>{this.title}</h1>;
                     }
-                };
-
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = wrapper.appendChild(new TestElement());
                 expect(element.innerHTML).toBe('<h1></h1>');
@@ -1111,8 +1113,14 @@ describe.runIf(IS_BROWSER)(
 
             it('should should re-render once using assign', () => {
                 const spy = vi.fn();
-                let TestElement = class TestElement extends DNA.Component {
-                    declare description: string;
+
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: [String] })
+                    title: string;
+
+                    @DNA.property({ type: [String] })
+                    description: string;
 
                     constructor(node?: HTMLElement) {
                         super(node);
@@ -1122,13 +1130,14 @@ describe.runIf(IS_BROWSER)(
 
                     render() {
                         spy();
-                        return DNA.html`<h1>${this.title}</h1><h2>${this.description}</h2>`;
+                        return (
+                            <>
+                                <h1>{this.title}</h1>
+                                <h2>{this.description}</h2>
+                            </>
+                        );
                     }
-                };
-
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'description', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = wrapper.appendChild(new TestElement());
                 expect(element.innerHTML).toBe('<h1></h1><h2></h2>');
@@ -1142,8 +1151,14 @@ describe.runIf(IS_BROWSER)(
 
             it('should should re-render once using assign inside rendering cycle', () => {
                 const spy = vi.fn();
-                let TestElement = class TestElement extends DNA.Component {
-                    declare description: string;
+
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: [String] })
+                    title: string;
+
+                    @DNA.property({ type: [String] })
+                    description: string;
 
                     constructor(node?: HTMLElement) {
                         super(node);
@@ -1153,7 +1168,12 @@ describe.runIf(IS_BROWSER)(
 
                     render() {
                         spy();
-                        const tpl = DNA.html`<h1>${this.title}</h1><h2>${this.description}</h2>`;
+                        const tpl = (
+                            <>
+                                <h1>{this.title}</h1>
+                                <h2>{this.description}</h2>
+                            </>
+                        );
                         if (!this.title) {
                             this.assign({
                                 title: 'test',
@@ -1162,11 +1182,7 @@ describe.runIf(IS_BROWSER)(
                         }
                         return tpl;
                     }
-                };
-
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'description', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = wrapper.appendChild(new TestElement());
                 expect(element.innerHTML).toBe('<h1>test</h1><h2>test</h2>');
@@ -1176,7 +1192,8 @@ describe.runIf(IS_BROWSER)(
             it('should render only once after construction', () => {
                 const callback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             author: String,
@@ -1187,34 +1204,31 @@ describe.runIf(IS_BROWSER)(
                         };
                     }
 
-                    declare description: string;
-                    declare body: string;
+                    @DNA.property()
+                    title = '';
+
+                    @DNA.property()
+                    description = '';
+
+                    @DNA.property()
+                    body = 'Test';
+
                     declare author: string;
                     declare date: Date;
 
-                    constructor(node?: HTMLElement) {
-                        super(node);
-                        this.title = '';
-                        this.description = '';
-                        this.body = 'Test';
-                    }
-
                     render() {
                         callback();
-                        return DNA.html`
-                        <div>${this.title}</div>
-                        <div>${this.description}</div>
-                        <div>${this.body}</div>
-                        <div>${this.author}</div>
-                        <div>${this.date.getTime()}</div>
-                    `;
+                        return (
+                            <>
+                                <div>{this.title}</div>
+                                <div>{this.description}</div>
+                                <div>{this.body}</div>
+                                <div>{this.author}</div>
+                                <div>{this.date.getTime()}</div>
+                            </>
+                        );
                     }
-                };
-
-                __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
-                __decorate([DNA.property()], TestElement.prototype, 'description', undefined);
-                __decorate([DNA.property()], TestElement.prototype, 'body', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 expect(callback).not.toHaveBeenCalled();
                 const element = wrapper.appendChild(new TestElement());
@@ -1230,7 +1244,8 @@ describe.runIf(IS_BROWSER)(
             it('should NOT handle property if nothing changed on assignment', () => {
                 const propertyChangedCallback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             age: {
@@ -1239,10 +1254,10 @@ describe.runIf(IS_BROWSER)(
                         };
                     }
 
-                    constructor(node?: HTMLElement) {
-                        super(node);
-                        this.title = '';
-                    }
+                    declare age: number;
+
+                    @DNA.property({ type: [String] })
+                    title = '';
 
                     propertyChangedCallback<P extends keyof this>(
                         propertyName: P,
@@ -1252,10 +1267,7 @@ describe.runIf(IS_BROWSER)(
                         super.propertyChangedCallback(propertyName, oldValue, newValue);
                         propertyChangedCallback(propertyName, oldValue, newValue);
                     }
-                };
-
-                __decorate([DNA.property({ type: [String] })], TestElement.prototype, 'title', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                }
 
                 const element = new TestElement();
                 expect(propertyChangedCallback).not.toHaveBeenCalled();
@@ -1270,7 +1282,8 @@ describe.runIf(IS_BROWSER)(
                 const callback1 = vi.fn();
                 const callback2 = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement(getComponentName())
+                class TestElement extends DNA.Component {
                     static get properties() {
                         return {
                             age: {
@@ -1283,14 +1296,9 @@ describe.runIf(IS_BROWSER)(
 
                     declare age: number;
 
-                    constructor(node?: HTMLElement) {
-                        super(node);
-                        this.title = '';
-                    }
-                };
-
-                __decorate([DNA.property({ event: 'titleupdate' })], TestElement.prototype, 'title', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                    @DNA.property({ event: 'titleupdate' })
+                    title = '';
+                }
 
                 const element = new TestElement();
                 element.addEventListener('agechange', (event) =>
@@ -1325,9 +1333,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot></slot> inner text
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot /> inner text
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1341,9 +1351,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot></slot>
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1362,9 +1374,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot></slot> inner text
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot /> inner text
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1379,9 +1393,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot></slot>
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1453,11 +1469,13 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot>
-                                    <span>Test</span>
-                                </slot>
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot>
+                                        <span>Test</span>
+                                    </slot>
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1473,11 +1491,13 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot>
-                                    <span>Test</span>
-                                </slot>
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot>
+                                        <span>Test</span>
+                                    </slot>
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1518,9 +1538,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot />
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1600,9 +1622,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                        <slot />
-                    </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1685,9 +1709,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                        <slot />
-                    </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1765,9 +1791,11 @@ describe.runIf(IS_BROWSER)(
                     getComponentName(),
                     class extends DNA.Component {
                         render() {
-                            return DNA.html`<div>
-                                <slot />
-                            </div>`;
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
                         }
                     }
                 );
@@ -1785,7 +1813,8 @@ describe.runIf(IS_BROWSER)(
         });
 
         describe('attributes', () => {
-            let TestElement = class TestElement extends DNA.Component {
+            @DNA.customElement(getComponentName())
+            class TestElement extends DNA.Component {
                 static get properties() {
                     return {
                         age: {
@@ -1795,23 +1824,15 @@ describe.runIf(IS_BROWSER)(
                 }
 
                 declare age: number;
-                declare test: string;
 
-                constructor(node?: HTMLElement) {
-                    super(node);
-                    this.title = '';
-                    this.test = '';
-                }
-            };
+                @DNA.property()
+                title = '';
 
-            let element: InstanceType<typeof TestElement>;
+                @DNA.property({ attribute: 'alias' })
+                test = '';
+            }
 
-            beforeAll(() => {
-                __decorate([DNA.property()], TestElement.prototype, 'title', undefined);
-                __decorate([DNA.property({ attribute: 'alias' })], TestElement.prototype, 'test', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
-            });
-
+            let element: TestElement;
             beforeEach(() => {
                 element = new TestElement();
                 element.title = 'DNA';

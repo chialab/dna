@@ -4,8 +4,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest
 import { IS_BROWSER, getComponentName } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
-    let ivya;
-    let wrapper;
+    let ivya: Ivya;
+    let wrapper: HTMLElement;
     beforeAll(() => {
         ivya = Ivya.create({
             browser: 'chromium',

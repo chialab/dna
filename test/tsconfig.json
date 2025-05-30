@@ -10,6 +10,7 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
     "isolatedModules": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
@@ -19,6 +20,7 @@
     "rootDir": "../..",
     "paths": {
       "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
+      "@chialab/dna/jsx-dev-runtime": ["../src/jsx-runtime.ts"],
       "@chialab/dna": ["../src/index.ts"]
     }
   }
