@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { IS_BROWSER, getComponentName } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Axe compatibility', () => {
-    let wrapper;
+    let wrapper: HTMLElement;
     beforeEach(() => {
         wrapper = document.createElement('div');
         document.body.appendChild(wrapper);
