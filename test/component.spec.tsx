@@ -1,7 +1,7 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { type Mock, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER, IS_NODE, getComponentName } from './helpers';
+import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { IS_BROWSER, IS_NODE } from './helpers';
 
 describe.runIf(IS_BROWSER)(
     'Component (browser)',
@@ -20,29 +20,27 @@ describe.runIf(IS_BROWSER)(
 
         describe('#new', () => {
             it('should create a node', () => {
-                const is = getComponentName();
-                const TestElement = DNA.define(is, class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-1', class extends DNA.Component {});
                 const element = new TestElement();
 
                 expect(element).toBeInstanceOf(window.HTMLElement);
-                expect(element.is).toBe(is);
-                expect(element.tagName).toBe(is.toUpperCase());
+                expect(element).toHaveProperty('is', 'test-component-1');
+                expect(element).toHaveProperty('tagName', 'TEST-COMPONENT-1');
             });
 
             it('should extend a native node', () => {
-                const is = getComponentName();
-                const TestElement = DNA.define(is, class extends DNA.Component {}, {
+                const TestElement = DNA.define('test-component-2', class extends DNA.Component {}, {
                     extends: 'article',
                 });
                 const element = new TestElement();
 
                 expect(element).toBeInstanceOf(window.HTMLElement);
-                expect(element.is).toBe(is);
-                expect(element.tagName).toBe('ARTICLE');
+                expect(element).toHaveProperty('is', 'test-component-2');
+                expect(element).toHaveProperty('tagName', 'ARTICLE');
             });
 
             it('should create a base class starting from the anchor base class', () => {
-                const TestElement = DNA.define(getComponentName(), class extends DNA.HTML.Anchor {}, {
+                const TestElement = DNA.define('test-component-3', class extends DNA.HTML.Anchor {}, {
                     extends: 'a',
                 });
                 const element = new TestElement();
@@ -59,7 +57,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should setup properties', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-4')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -87,7 +85,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should setup properties with babel decorator', () => {
                 const TestElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-component-5')],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
                             constructor(node?: HTMLElement) {
@@ -143,7 +141,7 @@ describe.runIf(IS_BROWSER)(
             it('should setup properties for extended elements', () => {
                 const _forceUpdate = vi.fn();
 
-                @DNA.customElement(getComponentName(), { extends: 'article' })
+                @DNA.customElement('test-component-6', { extends: 'article' })
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -180,11 +178,11 @@ describe.runIf(IS_BROWSER)(
 
                 element.myCustomProp1 = 'Hello';
                 element.forceUpdate();
-                expect(element.textContent).toBe('Hello');
+                expect(element).toHaveProperty('textContent', 'Hello');
             });
 
             it('should setup properties for extended components (ts over ts)', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-7')
                 class BaseElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -209,7 +207,7 @@ describe.runIf(IS_BROWSER)(
 
                 const _forceUpdate = vi.fn(() => {});
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-8')
                 class TestElement extends BaseElement {
                     @DNA.property()
                     myCustomProp4 = '';
@@ -230,11 +228,11 @@ describe.runIf(IS_BROWSER)(
 
                 element.myCustomProp1 = 'Hello';
                 element.forceUpdate();
-                expect(element.textContent).toBe('Hello');
+                expect(element).toHaveProperty('textContent', 'Hello');
             });
 
             it('should setup properties for extended components (js over ts)', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-9')
                 class BaseElement extends DNA.Component {
                     static get properties(): Record<string, DNA.PropertyConfig> {
                         return {
@@ -259,7 +257,7 @@ describe.runIf(IS_BROWSER)(
 
                 const _forceUpdate = vi.fn();
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-10',
                     class TestElement extends BaseElement {
                         static get properties() {
                             return {
@@ -284,20 +282,18 @@ describe.runIf(IS_BROWSER)(
                 expect(element).toHaveProperty('myCustomProp4');
                 expect(element).not.toHaveProperty('myCustomProp5');
                 expect(_forceUpdate).not.toHaveBeenCalled();
-
                 element.myCustomProp1 = 'Hello';
                 element.forceUpdate();
-                expect(element.textContent).toBe('Hello');
+                expect(element).toHaveProperty('textContent', 'Hello');
             });
 
             it('should connect already connected nodes', () => {
-                const is = getComponentName();
                 let connected = false;
 
-                wrapper.innerHTML = `<${is}></${is}>`;
+                wrapper.innerHTML = '<test-component-11></test-component-11>';
                 expect(connected).toBe(false);
                 DNA.define(
-                    is,
+                    'test-component-11',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -310,7 +306,6 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should setup component via innerHTML', () => {
-                const is = getComponentName();
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -330,32 +325,36 @@ describe.runIf(IS_BROWSER)(
                         );
                     }
                 }
-                DNA.define(is, TestElement);
+                DNA.define('test-component-12', TestElement);
 
-                wrapper.innerHTML = `<${is} custom-prop="test"><span>test</span></${is}>`;
+                wrapper.innerHTML = '<test-component-12 custom-prop="test"><span>test</span></test-component-12>';
                 const element = wrapper.children[0] as TestElement;
                 expect(element).toBeInstanceOf(DNA.Component);
-                expect(element.is).toBe(is);
-                expect(element.tagName).toBe(is.toUpperCase());
-                expect(element.myCustomProp1).toBe('test');
-                expect(element.childNodes.length).toBe(1);
+                expect(element).toHaveProperty('is', 'test-component-12');
+                expect(element).toHaveProperty('tagName', 'TEST-COMPONENT-12');
+                expect(element).toHaveProperty('myCustomProp1', 'test');
+                expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
-                expect(element.childNodes[0].childNodes.length).toBe(1);
-                expect((element.childNodes[0].childNodes[0] as HTMLElement).tagName).toBe('SPAN');
-                expect(element.childNodes[0].childNodes[0].textContent).toBe('test');
+                expect(element.childNodes[0].childNodes).toHaveLength(1);
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'SPAN');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'test');
             });
 
             it('should setup nested component via innerHTML', () => {
-                const is = getComponentName();
-                const title = getComponentName();
                 class TestElement extends DNA.Component {
                     render() {
-                        return DNA.html`<div><${title}><slot /></${title}></div>`;
+                        return (
+                            <div>
+                                <test-component-14>
+                                    <slot />
+                                </test-component-14>
+                            </div>
+                        );
                     }
                 }
-                DNA.define(is, TestElement);
+                DNA.define('test-component-13', TestElement);
                 DNA.define(
-                    title,
+                    'test-component-14',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -367,23 +366,26 @@ describe.runIf(IS_BROWSER)(
                     }
                 );
 
-                wrapper.innerHTML = `<${is}><span>test</span></${is}>`;
+                wrapper.innerHTML = '<test-component-13><span>test</span></test-component-13>';
                 const element = wrapper.children[0] as TestElement;
                 expect(element).toBeInstanceOf(DNA.Component);
-                expect(element.is).toBe(is);
-                expect(element.tagName).toBe(is.toUpperCase());
-                expect(element.childNodes.length).toBe(1);
+                expect(element).toHaveProperty('is', 'test-component-13');
+                expect(element).toHaveProperty('tagName', 'TEST-COMPONENT-13');
+                expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
-                expect(element.childNodes[0].childNodes.length).toBe(1);
-                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', title.toUpperCase());
-                expect(element.childNodes[0].childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes).toHaveLength(1);
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'TEST-COMPONENT-14');
+                expect(element.childNodes[0].childNodes[0].childNodes).toHaveLength(1);
                 expect(element.childNodes[0].childNodes[0].childNodes[0]).toHaveProperty('tagName', 'DIV');
-                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes.length).toBe(1);
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes).toHaveLength(1);
                 expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0]).toHaveProperty(
                     'tagName',
                     'SPAN'
                 );
-                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0].textContent).toBe('test');
+                expect(element.childNodes[0].childNodes[0].childNodes[0].childNodes[0]).toHaveProperty(
+                    'textContent',
+                    'test'
+                );
             });
         });
 
@@ -403,8 +405,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-15', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-16', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -447,8 +449,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-17', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-18', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -503,8 +505,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-19', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-20', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -555,8 +557,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-21', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-22', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -592,8 +594,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-23', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-24', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -613,19 +615,17 @@ describe.runIf(IS_BROWSER)(
 
         describe('~isConnected', () => {
             it('return `true` if element is connected', () => {
-                const is = getComponentName();
-                DNA.define(is, class extends DNA.Component {});
-                const element = document.createElement(is);
+                const TestElement = DNA.define('test-component-25', class extends DNA.Component {});
+                const element = new TestElement();
 
                 wrapper.appendChild(element);
                 expect(element.isConnected).toBe(true);
             });
 
             it('return `false` if element is disconnected', () => {
-                const is = getComponentName();
-                DNA.define(is, class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-26', class extends DNA.Component {});
+                const element = new TestElement();
 
-                const element = document.createElement(is);
                 expect(element.isConnected).toBe(false);
             });
         });
@@ -650,8 +650,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-27', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-28', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -695,8 +695,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-29', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-30', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -740,8 +740,8 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const TestElement1 = DNA.define(getComponentName(), class extends TestElement {});
-                const TestElement2 = DNA.define(getComponentName(), class extends TestElement {}, {
+                const TestElement1 = DNA.define('test-component-31', class extends TestElement {});
+                const TestElement2 = DNA.define('test-component-32', class extends TestElement {}, {
                     extends: 'article',
                 });
 
@@ -767,7 +767,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             describe('attribute and properties sync', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-33')
                 class TestElement extends DNA.Component {
                     @DNA.property()
                     any = undefined;
@@ -911,7 +911,7 @@ describe.runIf(IS_BROWSER)(
             it('should handle property changes on assignment', () => {
                 const propertyChangedCallback = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-34')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -957,7 +957,7 @@ describe.runIf(IS_BROWSER)(
             it('should handle state property changes on assignment', () => {
                 const stateChangedCallback = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-35')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -1003,11 +1003,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should not loop on connection assignement', async () => {
                 const propertyChangedCallback = vi.fn();
-                const name = getComponentName();
-                wrapper.innerHTML = `<section is="${name}" page="1"></section>`;
+                wrapper.innerHTML = `<section is="test-component-36" page="1"></section>`;
                 const element = wrapper.children[0];
                 DNA.define(
-                    name,
+                    'test-component-36',
                     class TestElement extends DNA.Component {
                         static get properties() {
                             return {
@@ -1048,7 +1047,7 @@ describe.runIf(IS_BROWSER)(
             it('should NOT handle property changes on delete', () => {
                 const propertyChangedCallback = vi.fn((name, old, value) => [name, old, value]);
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-37')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -1090,7 +1089,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should should re-render on property changes', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-38')
                 class TestElement extends DNA.Component {
                     @DNA.property({ type: [String] })
                     title: string;
@@ -1114,7 +1113,7 @@ describe.runIf(IS_BROWSER)(
             it('should should re-render once using assign', () => {
                 const spy = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-39')
                 class TestElement extends DNA.Component {
                     @DNA.property({ type: [String] })
                     title: string;
@@ -1152,7 +1151,7 @@ describe.runIf(IS_BROWSER)(
             it('should should re-render once using assign inside rendering cycle', () => {
                 const spy = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-40')
                 class TestElement extends DNA.Component {
                     @DNA.property({ type: [String] })
                     title: string;
@@ -1192,7 +1191,7 @@ describe.runIf(IS_BROWSER)(
             it('should render only once after construction', () => {
                 const callback = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-41')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -1244,7 +1243,7 @@ describe.runIf(IS_BROWSER)(
             it('should NOT handle property if nothing changed on assignment', () => {
                 const propertyChangedCallback = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-42')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -1282,7 +1281,7 @@ describe.runIf(IS_BROWSER)(
                 const callback1 = vi.fn();
                 const callback2 = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-component-43')
                 class TestElement extends DNA.Component {
                     static get properties() {
                         return {
@@ -1330,7 +1329,7 @@ describe.runIf(IS_BROWSER)(
         describe('#textContent', () => {
             it('should retrieve whole textContent', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-44',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1343,12 +1342,12 @@ describe.runIf(IS_BROWSER)(
                 );
                 const element = wrapper.appendChild(new TestElement());
                 element.textContent = 'Test';
-                expect(element.textContent).toBe('Test inner text');
+                expect(element).toHaveProperty('textContent', 'Test inner text');
             });
 
             it('should set slot text using textContent setter', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-45',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1364,14 +1363,14 @@ describe.runIf(IS_BROWSER)(
                 wrapper.appendChild(element);
                 expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
-                expect(element.childNodes[0].textContent).toBe('Test');
+                expect(element.childNodes[0]).toHaveProperty('textContent', 'Test');
             });
         });
 
         describe('#innerHTML', () => {
             it('should retrieve whole innerHTML', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-46',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1390,7 +1389,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should set slot text using innerHTML setter', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-47',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1404,18 +1403,18 @@ describe.runIf(IS_BROWSER)(
                 const element = wrapper.appendChild(new TestElement());
                 element.innerHTML = '<span>Test</span>';
                 expect(element.children).toHaveLength(1);
-                expect(element.children[0].tagName).toBe('DIV');
-                expect(element.children[0].children[0].tagName).toBe('SPAN');
-                expect(element.children[0].children[0].textContent).toBe('Test');
+                expect(element.children[0]).toHaveProperty('tagName', 'DIV');
+                expect(element.children[0].children[0]).toHaveProperty('tagName', 'SPAN');
+                expect(element.children[0].children[0]).toHaveProperty('textContent', 'Test');
             });
         });
 
         describe('#appendChild', () => {
             it('should append and connect child', () => {
                 const connectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-48', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-49',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1436,9 +1435,9 @@ describe.runIf(IS_BROWSER)(
             it('should move and connect a child from a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-50', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-51',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1466,7 +1465,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should render default slot', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-52',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1483,12 +1482,12 @@ describe.runIf(IS_BROWSER)(
                 expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'DIV');
                 expect(element.childNodes[0].childNodes[0]).toHaveProperty('tagName', 'SPAN');
-                expect(element.childNodes[0].childNodes[0].textContent).toBe('Test');
+                expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Test');
             });
 
             it('should append slot item', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-53',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1512,9 +1511,9 @@ describe.runIf(IS_BROWSER)(
         describe('#removeChild', () => {
             it('should remove and disconnect a child', () => {
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-54', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-55',
                     class extends DNA.Component {
                         disconnectedCallback() {
                             super.disconnectedCallback();
@@ -1535,7 +1534,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should remove slot item', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-56',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1563,9 +1562,9 @@ describe.runIf(IS_BROWSER)(
         describe('#insertBefore', () => {
             it('should insert and connect a child before another', () => {
                 const connectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-57', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-58',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1583,15 +1582,15 @@ describe.runIf(IS_BROWSER)(
                 element.insertBefore(child2, child1);
                 expect(connectedCallback).toHaveBeenCalledTimes(2);
                 element.insertBefore(child2, child1);
-                expect(element.slotChildNodes.length).toBe(2);
+                expect(element.slotChildNodes).toHaveLength(2);
             });
 
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-59', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-60',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1619,7 +1618,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should insert slot item', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-61',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1645,9 +1644,9 @@ describe.runIf(IS_BROWSER)(
             it('should reaplce and connect child in a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-62', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-63',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1675,9 +1674,9 @@ describe.runIf(IS_BROWSER)(
             it('should reaplce and connect a child (and remove it from the previous parent) in a parent', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-64', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-65',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1706,7 +1705,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should replace slot item', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-66',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1732,9 +1731,9 @@ describe.runIf(IS_BROWSER)(
         describe('#insertAdjacentElement', () => {
             it('should insert and connect a child at first position', () => {
                 const connectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-67', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-68',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1752,15 +1751,15 @@ describe.runIf(IS_BROWSER)(
                 element.insertAdjacentElement('afterbegin', child2);
                 expect(connectedCallback).toHaveBeenCalledTimes(2);
                 element.insertBefore(child2, child1);
-                expect(element.slotChildNodes.length).toBe(2);
+                expect(element.slotChildNodes).toHaveLength(2);
             });
 
             it('should insert and connect a child (and remove it from the previous parent) at last position', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-component-69', class extends DNA.Component {});
                 const TestChild = DNA.define(
-                    getComponentName(),
+                    'test-component-70',
                     class extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1788,7 +1787,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should insert slot item', () => {
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-component-71',
                     class extends DNA.Component {
                         render() {
                             return (
@@ -1813,7 +1812,7 @@ describe.runIf(IS_BROWSER)(
         });
 
         describe('attributes', () => {
-            @DNA.customElement(getComponentName())
+            @DNA.customElement('test-component-72')
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -1906,15 +1905,13 @@ describe.runIf(IS_NODE)(
     () => {
         it('should define a component', () => {
             expect(() => {
-                const is = getComponentName();
-                DNA.define(is, class TestElement extends DNA.Component {});
+                DNA.define('test-component-73', class TestElement extends DNA.Component {});
             }).not.toThrow();
         });
 
         it('should define a builtin component', () => {
             expect(() => {
-                const is = getComponentName();
-                DNA.define(is, class TestElement extends DNA.Component {}, {
+                DNA.define('test-component-74', class TestElement extends DNA.Component {}, {
                     extends: 'article',
                 });
             }).not.toThrow();
@@ -1922,8 +1919,7 @@ describe.runIf(IS_NODE)(
 
         it('should throw on construct', () => {
             expect(() => {
-                const is = getComponentName();
-                const TestElement = DNA.define(is, class TestElement extends DNA.Component {});
+                const TestElement = DNA.define('test-component-75', class TestElement extends DNA.Component {});
 
                 new TestElement();
             }).toThrow();

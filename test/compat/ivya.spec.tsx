@@ -1,7 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { Ivya } from 'ivya';
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { IS_BROWSER, getComponentName } from '../helpers';
+import { IS_BROWSER } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
     let ivya: Ivya;
@@ -23,12 +23,11 @@ describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
     });
 
     test('should correctly create locator selector for simple component', () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-ivya-1',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`Internal`;
+                    return <>Internal</>;
                 }
             }
         );
@@ -42,12 +41,16 @@ describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
     });
 
     test('should correctly create locator selector for simple component with slot', () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-ivya-2',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`Internal<slot />`;
+                    return (
+                        <>
+                            Internal
+                            <slot />
+                        </>
+                    );
                 }
             }
         );

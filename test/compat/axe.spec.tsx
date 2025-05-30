@@ -1,7 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { run } from 'axe-core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { IS_BROWSER, getComponentName } from '../helpers';
+import { IS_BROWSER } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     let wrapper: HTMLElement;
@@ -15,14 +15,16 @@ describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     });
 
     test('should find violations for simple components', async () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-axe-1',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <input id="input" type="text" />
-                    `;
+                    return (
+                        <input
+                            id="input"
+                            type="text"
+                        />
+                    );
                 }
             }
         );
@@ -36,15 +38,19 @@ describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     });
 
     test('should not find violations for simple components', async () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-axe-2',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <label for="input">Label</label>
-                        <input id="input" type="text" />
-                    `;
+                    return (
+                        <>
+                            <label for="input">Label</label>
+                            <input
+                                id="input"
+                                type="text"
+                            />
+                        </>
+                    );
                 }
             }
         );
@@ -57,12 +63,11 @@ describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     });
 
     test('should find violations for simple components with slotted children', async () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-axe-3',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`<slot />`;
+                    return <slot />;
                 }
             }
         );
@@ -80,15 +85,16 @@ describe.runIf(IS_BROWSER)('Axe compatibility', () => {
     });
 
     test('should not find violations for simple components with slotted children', async () => {
-        const is = getComponentName();
         const Component = DNA.define(
-            is,
+            'test-axe-4',
             class extends DNA.Component {
                 render() {
-                    return DNA.html`
-                        <label for="input">Label</label>
-                        <slot />
-                    `;
+                    return (
+                        <>
+                            <label for="input">Label</label>
+                            <slot />
+                        </>
+                    );
                 }
             }
         );

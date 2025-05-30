@@ -1,6 +1,6 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER, getComponentName } from '../helpers';
+import { IS_BROWSER } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
     let wrapper;
@@ -22,9 +22,8 @@ describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
 
     describe('user events', () => {
         test('should click internal elements', async () => {
-            const is = getComponentName();
             const Component = DNA.define(
-                is,
+                'test-vitest-1',
                 class extends DNA.Component {
                     render() {
                         return DNA.html`<button><slot /></button>`;
@@ -44,9 +43,8 @@ describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
         });
 
         test('should click slotted elements', async () => {
-            const is = getComponentName();
             const Component = DNA.define(
-                is,
+                'test-vitest-2',
                 class extends DNA.Component {
                     render() {
                         return DNA.html`<div>Before<slot />After</div>`;

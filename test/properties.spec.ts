@@ -1,14 +1,14 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER, getComponentName } from './helpers';
+import { IS_BROWSER } from './helpers';
 
 describe.runIf(IS_BROWSER)(
     'property',
     () => {
         describe('@property', () => {
             it('should define a property', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-1')
                 class MyElement extends DNA.Component {
                     @DNA.property()
                     testProp?: number;
@@ -18,7 +18,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should update component on a property change', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-2')
                 class MyElement extends DNA.Component {
                     @DNA.property()
                     testProp = 42;
@@ -28,16 +28,16 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const elem = new MyElement();
-                document.body.appendChild(elem);
-                expect(elem.textContent).toBe('42');
-                elem.testProp = 84;
-                expect(elem.textContent).toBe('84');
-                document.body.removeChild(elem);
+                const element = new MyElement();
+                document.body.appendChild(element);
+                expect(element).toHaveProperty('textContent', '42');
+                element.testProp = 84;
+                expect(element).toHaveProperty('textContent', '84');
+                document.body.removeChild(element);
             });
 
             it('should not update component on a property change if not requested', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-3')
                 class MyElement extends DNA.Component {
                     @DNA.property({ update: false })
                     testProp = 42;
@@ -47,27 +47,27 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const elem = new MyElement();
-                document.body.appendChild(elem);
-                expect(elem.textContent).toBe('42');
-                elem.testProp = 84;
-                expect(elem.textContent).toBe('42');
-                document.body.removeChild(elem);
+                const element = new MyElement();
+                document.body.appendChild(element);
+                expect(element).toHaveProperty('textContent', '42');
+                element.testProp = 84;
+                expect(element).toHaveProperty('textContent', '42');
+                document.body.removeChild(element);
             });
 
             it('should define a property with a defaultValue', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-4')
                 class MyElement extends DNA.Component {
                     @DNA.property()
                     testProp = 42;
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
             });
 
             it('should define a property with single type checker', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-5')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         type: String,
@@ -75,15 +75,15 @@ describe.runIf(IS_BROWSER)(
                     testProp?: string;
                 }
 
-                const elem = new MyElement();
+                const element = new MyElement();
                 expect(() => {
                     // @ts-expect-error We are checking the type validation
-                    elem.testProp = 42;
+                    element.testProp = 42;
                 }).toThrow(TypeError);
             });
 
             it('should define a property with multiple type checkers', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-6')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         type: [String, Boolean],
@@ -91,21 +91,21 @@ describe.runIf(IS_BROWSER)(
                     testProp?: string | boolean;
                 }
 
-                const elem = new MyElement();
-                elem.testProp = 'string';
-                expect(elem).toHaveProperty('testProp', 'string');
+                const element = new MyElement();
+                element.testProp = 'string';
+                expect(element).toHaveProperty('testProp', 'string');
 
-                elem.testProp = true;
-                expect(elem).toHaveProperty('testProp', true);
+                element.testProp = true;
+                expect(element).toHaveProperty('testProp', true);
 
                 expect(() => {
                     // @ts-expect-error We are checking the type validation
-                    elem.testProp = 42;
+                    element.testProp = 42;
                 }).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-7')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         type: [String, Boolean],
@@ -120,24 +120,24 @@ describe.runIf(IS_BROWSER)(
                     testProp?: string | boolean;
                 }
 
-                const elem = new MyElement();
-                elem.testProp = 'string';
-                expect(elem).toHaveProperty('testProp', 'string');
+                const element = new MyElement();
+                element.testProp = 'string';
+                expect(element).toHaveProperty('testProp', 'string');
 
-                elem.testProp = true;
-                expect(elem).toHaveProperty('testProp', true);
+                element.testProp = true;
+                expect(element).toHaveProperty('testProp', true);
 
                 expect(() => {
                     // @ts-expect-error We are checking the type validation
-                    elem.testProp = 42;
+                    element.testProp = 42;
                 }).toThrow(TypeError);
                 expect(() => {
-                    elem.testProp = 'invalid';
+                    element.testProp = 'invalid';
                 }).toThrow(TypeError);
             });
 
             it('should define a property with custom getter', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-8')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         getter(value) {
@@ -147,15 +147,15 @@ describe.runIf(IS_BROWSER)(
                     testProp = 42;
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 84);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 84);
 
-                elem.testProp = 2;
-                expect(elem).toHaveProperty('testProp', 4);
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 4);
             });
 
             it('should define a property with custom setter', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-9')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         attribute: false,
@@ -166,15 +166,15 @@ describe.runIf(IS_BROWSER)(
                     testProp = 42;
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
 
-                elem.testProp = 2;
-                expect(elem).toHaveProperty('testProp', 1);
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 1);
             });
 
             it('should define a property with decorated accessor', () => {
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-10')
                 class MyElement extends DNA.Component {
                     @DNA.property()
                     get testProp(): number {
@@ -190,17 +190,17 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 84);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 84);
 
-                elem.testProp = 2;
-                expect(elem).toHaveProperty('testProp', 4);
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 4);
             });
 
             it('should define a property with a single observer', () => {
                 const listener = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-11')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         observe: listener,
@@ -208,12 +208,12 @@ describe.runIf(IS_BROWSER)(
                     testProp = 42;
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener).not.toHaveBeenCalled();
 
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledWith(42, 84, 'testProp');
             });
@@ -221,7 +221,7 @@ describe.runIf(IS_BROWSER)(
             it('should define a property with observe decorator', () => {
                 const listener = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-12')
                 class MyElement extends DNA.Component {
                     @DNA.property()
                     testProp = 42;
@@ -232,12 +232,11 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener).not.toHaveBeenCalled();
-
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledWith(42, 84, 'testProp');
             });
@@ -246,7 +245,7 @@ describe.runIf(IS_BROWSER)(
                 const listener = vi.fn();
                 const listener2 = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-13')
                 class MyParent extends DNA.Component {
                     @DNA.property()
                     testProp = 42;
@@ -257,7 +256,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-14')
                 class MyElement extends MyParent {
                     @DNA.observe('testProp')
                     listener2(oldValue?: number, newValue?: number) {
@@ -271,9 +270,9 @@ describe.runIf(IS_BROWSER)(
                 expect(listener).toHaveBeenCalled();
                 expect(listener2).not.toHaveBeenCalled();
 
-                const elem = new MyElement();
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                const element = new MyElement();
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener2).toHaveBeenCalled();
             });
 
@@ -281,7 +280,7 @@ describe.runIf(IS_BROWSER)(
                 const listener = vi.fn();
 
                 const MyElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-properties-15')],
                     (_initialize, _DNA$Component) => {
                         class MyElement extends _DNA$Component {
                             declare testProp?: number;
@@ -317,12 +316,11 @@ describe.runIf(IS_BROWSER)(
                     DNA.Component
                 );
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener).not.toHaveBeenCalled();
-
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledWith(42, 84, 'testProp');
             });
@@ -330,7 +328,7 @@ describe.runIf(IS_BROWSER)(
             it('should define a property with multiple observers', () => {
                 const listener1 = vi.fn();
                 const listener2 = vi.fn();
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-16')
                 class MyElement extends DNA.Component {
                     @DNA.property({
                         observers: [listener1, listener2],
@@ -338,13 +336,12 @@ describe.runIf(IS_BROWSER)(
                     testProp = 42;
                 }
 
-                const elem = new MyElement();
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener1).not.toHaveBeenCalled();
                 expect(listener2).not.toHaveBeenCalled();
-
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener1).toHaveBeenCalled();
                 expect(listener2).toHaveBeenCalled();
                 expect(listener1).toHaveBeenCalledWith(42, 84, 'testProp');
@@ -352,7 +349,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should restore a property after upgrade', () => {
-                const tagName = getComponentName();
+                const tagName = 'test-properties-17';
                 const element = document.createElement(tagName) as InstanceType<typeof MyElement>;
 
                 expect(element).not.toHaveProperty('testProp');
@@ -376,8 +373,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should discard a getter property after upgrade', () => {
-                const tagName = getComponentName();
-                const element = document.createElement(tagName) as InstanceType<typeof MyElement>;
+                const element = document.createElement('test-properties-18') as InstanceType<typeof MyElement>;
 
                 expect(element).not.toHaveProperty('testProp');
                 // @ts-expect-error testProp is not defined yet
@@ -391,7 +387,7 @@ describe.runIf(IS_BROWSER)(
                 }
 
                 expect(element).not.toBeInstanceOf(MyElement);
-                DNA.define(tagName, MyElement);
+                DNA.define('test-properties-18', MyElement);
                 window.customElements.upgrade(element);
 
                 expect(element).toBeInstanceOf(MyElement);
@@ -402,7 +398,7 @@ describe.runIf(IS_BROWSER)(
         describe('properties getter', () => {
             it('should define a property', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-19',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -417,7 +413,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with a defaultValue', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-20',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -434,7 +430,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with single type checker', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-21',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -455,7 +451,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with multiple type checkers', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-22',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -468,22 +464,22 @@ describe.runIf(IS_BROWSER)(
                         declare testProp?: string | boolean;
                     }
                 );
-                const elem = new MyElement();
 
-                elem.testProp = 'string';
-                expect(elem).toHaveProperty('testProp', 'string');
+                const element = new MyElement();
+                element.testProp = 'string';
+                expect(element).toHaveProperty('testProp', 'string');
 
-                elem.testProp = true;
-                expect(elem).toHaveProperty('testProp', true);
+                element.testProp = true;
+                expect(element).toHaveProperty('testProp', true);
                 expect(() => {
                     // @ts-expect-error We are checking the type validation
-                    elem.testProp = 42;
+                    element.testProp = 42;
                 }).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-23',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -503,25 +499,24 @@ describe.runIf(IS_BROWSER)(
                         declare testProp?: string | boolean;
                     }
                 );
-                const elem = new MyElement();
-                elem.testProp = 'string';
 
-                expect(elem).toHaveProperty('testProp', 'string');
-
-                elem.testProp = true;
-                expect(elem).toHaveProperty('testProp', true);
+                const element = new MyElement();
+                element.testProp = 'string';
+                expect(element).toHaveProperty('testProp', 'string');
+                element.testProp = true;
+                expect(element).toHaveProperty('testProp', true);
                 expect(() => {
                     // @ts-expect-error We are checking the type validation
-                    elem.testProp = 42;
+                    element.testProp = 42;
                 }).toThrow(TypeError);
                 expect(() => {
-                    elem.testProp = 'invalid';
+                    element.testProp = 'invalid';
                 }).toThrow(TypeError);
             });
 
             it('should define a property with custom getter', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-24',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -537,17 +532,16 @@ describe.runIf(IS_BROWSER)(
                         declare testProp?: number;
                     }
                 );
-                const elem = new MyElement();
 
-                expect(elem).toHaveProperty('testProp', 84);
-
-                elem.testProp = 2;
-                expect(elem).toHaveProperty('testProp', 4);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 84);
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 4);
             });
 
             it('should define a property with custom setter', () => {
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-25',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -564,18 +558,17 @@ describe.runIf(IS_BROWSER)(
                         declare testProp?: number;
                     }
                 );
-                const elem = new MyElement();
 
-                expect(elem).toHaveProperty('testProp', 42);
-
-                elem.testProp = 2;
-                expect(elem).toHaveProperty('testProp', 1);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 1);
             });
 
             it('should define a property with a single observer', () => {
                 const listener = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-26',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -589,13 +582,12 @@ describe.runIf(IS_BROWSER)(
                         declare testProp?: number;
                     }
                 );
-                const elem = new MyElement();
 
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener).not.toHaveBeenCalled();
-
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledWith(42, 84, 'testProp');
             });
@@ -604,7 +596,7 @@ describe.runIf(IS_BROWSER)(
                 const listener1 = vi.fn();
                 const listener2 = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-27',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -619,14 +611,12 @@ describe.runIf(IS_BROWSER)(
                     }
                 );
 
-                const elem = new MyElement();
-
-                expect(elem).toHaveProperty('testProp', 42);
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
                 expect(listener1).not.toHaveBeenCalled();
                 expect(listener2).not.toHaveBeenCalled();
-
-                elem.testProp = 84;
-                expect(elem).toHaveProperty('testProp', 84);
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
                 expect(listener1).toHaveBeenCalled();
                 expect(listener2).toHaveBeenCalled();
                 expect(listener1).toHaveBeenCalledWith(42, 84, 'testProp');
@@ -649,7 +639,7 @@ describe.runIf(IS_BROWSER)(
                 }
 
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-28',
                     class extends BaseElement {
                         static get properties() {
                             return {
@@ -666,7 +656,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 );
                 const MyElement2 = DNA.define(
-                    getComponentName(),
+                    'test-properties-29',
                     class extends BaseElement {
                         static get properties() {
                             return {
@@ -701,7 +691,7 @@ describe.runIf(IS_BROWSER)(
                     override = 42;
                 }
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-30')
                 class MyElement extends BaseElement {
                     @DNA.property()
                     override = 84;
@@ -710,7 +700,7 @@ describe.runIf(IS_BROWSER)(
                     newProp = true;
                 }
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-properties-31')
                 class MyElement2 extends BaseElement {
                     @DNA.property()
                     newProp = false;
@@ -731,7 +721,7 @@ describe.runIf(IS_BROWSER)(
             it('should observe property changes', () => {
                 const listener = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-32',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -758,7 +748,7 @@ describe.runIf(IS_BROWSER)(
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-33',
                     class extends DNA.Component {
                         declare testProp?: number;
                     }
@@ -773,7 +763,7 @@ describe.runIf(IS_BROWSER)(
             it('should unobserve property changes', () => {
                 const listener = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-34',
                     class extends DNA.Component {
                         static get properties() {
                             return {
@@ -800,7 +790,7 @@ describe.runIf(IS_BROWSER)(
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
                 const MyElement = DNA.define(
-                    getComponentName(),
+                    'test-properties-35',
                     class extends DNA.Component {
                         declare testProp?: number;
                     }

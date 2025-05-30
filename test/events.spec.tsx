@@ -1,7 +1,7 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER, getComponentName } from './helpers';
+import { IS_BROWSER } from './helpers';
 
 describe.runIf(IS_BROWSER)(
     'events',
@@ -293,9 +293,8 @@ describe.runIf(IS_BROWSER)(
 
             it('should delegate listeners to slotted contents', () => {
                 const callback = vi.fn();
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-1',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -330,9 +329,8 @@ describe.runIf(IS_BROWSER)(
         describe('listeners getter', () => {
             it('should add a listener', () => {
                 const callback = vi.fn();
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-2',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -355,20 +353,20 @@ describe.runIf(IS_BROWSER)(
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-2');
                 element.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
                     composed: false,
                 });
-                expect(callback).toHaveBeenCalledWith('change', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('change', 'TEST-EVENTS-2');
                 expect(callback).toHaveBeenCalledTimes(2);
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-3',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -403,7 +401,7 @@ describe.runIf(IS_BROWSER)(
                 });
                 const callback4 = vi.fn();
                 const BaseElement = DNA.define(
-                    getComponentName(),
+                    'test-events-4',
                     class extends DNA.Component {
                         static get listeners(): Record<string, DNA.ListenerConfig> {
                             return {
@@ -418,7 +416,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 );
                 const TestElement1 = DNA.define(
-                    getComponentName(),
+                    'test-events-5',
                     class extends BaseElement {
                         static get listeners() {
                             return {
@@ -429,7 +427,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 );
                 const TestElement2 = DNA.define(
-                    getComponentName(),
+                    'test-events-6',
                     class extends BaseElement {
                         static get listeners() {
                             return {};
@@ -471,9 +469,7 @@ describe.runIf(IS_BROWSER)(
             it('should add a listener', () => {
                 const callback = vi.fn();
 
-                const is = getComponentName();
-
-                @DNA.customElement(is)
+                @DNA.customElement('test-events-7')
                 class TestElement extends DNA.Component {
                     @DNA.listen('click')
                     method(event: Event, target?: Node) {
@@ -487,13 +483,13 @@ describe.runIf(IS_BROWSER)(
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-7');
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-events-8')
                 class TestElement extends DNA.Component {
                     render() {
                         return <button type="button">Click me</button>;
@@ -520,7 +516,7 @@ describe.runIf(IS_BROWSER)(
                 const callback3 = vi.fn();
                 const callback4 = vi.fn();
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-events-9')
                 class BaseElement extends DNA.Component {
                     render() {
                         return <button type="button">Click me</button>;
@@ -539,7 +535,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-events-10')
                 class TestElement1 extends BaseElement {
                     @DNA.listen('click', 'button')
                     callback3(event: Event, target?: Node) {
@@ -554,7 +550,7 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                @DNA.customElement(getComponentName())
+                @DNA.customElement('test-events-11')
                 class TestElement2 extends BaseElement {}
 
                 const element1 = new TestElement1();
@@ -591,9 +587,8 @@ describe.runIf(IS_BROWSER)(
             it('should add a listener', () => {
                 const callback = vi.fn();
 
-                const is = getComponentName();
                 const TestElement = _decorate(
-                    [DNA.customElement(is)],
+                    [DNA.customElement('test-events-12')],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
                             constructor(node?: HTMLElement) {
@@ -626,14 +621,14 @@ describe.runIf(IS_BROWSER)(
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-12');
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
 
                 const TestElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-13')],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
                             constructor(node?: HTMLElement) {
@@ -687,7 +682,7 @@ describe.runIf(IS_BROWSER)(
                 const callback4 = vi.fn();
 
                 const BaseElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-14')],
                     (_initialize, _DNA$Component) => {
                         class BaseElement extends _DNA$Component {
                             constructor(node?: HTMLElement) {
@@ -726,7 +721,7 @@ describe.runIf(IS_BROWSER)(
                 );
 
                 const TestElement1 = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-15')],
                     (_initialize, _BaseElement) => {
                         class TestElement1 extends _BaseElement {
                             constructor(node?: HTMLElement) {
@@ -758,7 +753,7 @@ describe.runIf(IS_BROWSER)(
                 );
 
                 const TestElement2 = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-16')],
                     (_initialize, _BaseElement) => {
                         class TestElement2 extends _BaseElement {
                             constructor(node?: HTMLElement) {
@@ -811,7 +806,7 @@ describe.runIf(IS_BROWSER)(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-events-17', class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
@@ -826,7 +821,7 @@ describe.runIf(IS_BROWSER)(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-events-18', class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
@@ -840,9 +835,8 @@ describe.runIf(IS_BROWSER)(
 
         describe('#dispatchAyncEvent', () => {
             it('should trigger an event and return a Promise', async () => {
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-19',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -860,7 +854,7 @@ describe.runIf(IS_BROWSER)(
                 const element = new TestElement();
                 const response = await element.dispatchAsyncEvent('click');
 
-                expect(response).toStrictEqual(['click', is.toUpperCase()]);
+                expect(response).toStrictEqual(['click', 'TEST-EVENTS-19']);
             });
         });
 
@@ -870,7 +864,7 @@ describe.runIf(IS_BROWSER)(
                     event.preventDefault();
                 });
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-20',
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<button title="click me"></button>`;
@@ -893,7 +887,7 @@ describe.runIf(IS_BROWSER)(
                     event.preventDefault();
                 });
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-21',
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<button title="click me"></button>`;

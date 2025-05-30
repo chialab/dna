@@ -10,6 +10,18 @@ render(
     />
 );
 render(
+    <x-test
+        // @ts-expect-error Width accepts only numbers
+        width={true}
+    />
+);
+render(
+    <x-test
+        // @ts-expect-error Missing is not a known property of x-test
+        missing={true}
+    />
+);
+render(
     <details
         is="x-test-builtin"
         active={true}
@@ -31,6 +43,10 @@ render(h(Fragment));
 
 // @ts-expect-error Unknown is not a known property of a div
 render(h('div', { key: {}, unknown: 2 }));
+// @ts-expect-error Missing is not a known property of x-test
+render(h('x-test', { key: {}, missing: true }));
+// @ts-expect-error Width accepts only numbers
+render(h('x-test', { key: {}, width: true }));
 render(
     <details
         is="x-test-builtin"
