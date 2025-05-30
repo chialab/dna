@@ -10,8 +10,10 @@ describe.runIf(IS_BROWSER)(
         describe('@property', () => {
             it('should define a property', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = undefined;
                     }
                 };
@@ -24,8 +26,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should update component on a property change', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
 
@@ -47,8 +51,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should not update component on a property change if not requested', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
 
@@ -70,8 +76,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with a defaultValue', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -85,8 +93,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with single type checker', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = undefined;
                     }
                 };
@@ -111,8 +121,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with multiple type checkers', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: string | boolean;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = undefined;
                     }
                 };
@@ -137,14 +149,17 @@ describe.runIf(IS_BROWSER)(
                 expect(elem).toHaveProperty('testProp', true);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     elem.testProp = 42;
                 }).toThrow(TypeError);
             });
 
             it('should define a property with custom validation', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: string | boolean;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = undefined;
                     }
                 };
@@ -176,6 +191,7 @@ describe.runIf(IS_BROWSER)(
                 expect(elem).toHaveProperty('testProp', true);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     elem.testProp = 42;
                 }).toThrow(TypeError);
                 expect(() => {
@@ -185,8 +201,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with custom getter', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -195,7 +213,7 @@ describe.runIf(IS_BROWSER)(
                     [
                         DNA.property({
                             getter(value) {
-                                return value * 2;
+                                return (value as number) * 2;
                             },
                         }),
                     ],
@@ -214,8 +232,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with custom setter', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -244,12 +264,12 @@ describe.runIf(IS_BROWSER)(
 
             it('should define a property with decorated accessor', () => {
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
 
-                    get testProp() {
+                    get testProp(): number {
                         return this.getInnerPropertyValue('testProp') * 2;
                     }
 
@@ -272,8 +292,10 @@ describe.runIf(IS_BROWSER)(
                 const listener = vi.fn();
 
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -304,13 +326,15 @@ describe.runIf(IS_BROWSER)(
                 const listener = vi.fn();
 
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
 
-                    listener(...args) {
-                        listener(...args);
+                    listener(oldValue?: number, newValue?: number, propName?: string) {
+                        listener(oldValue, newValue, propName);
                     }
                 };
 
@@ -333,13 +357,15 @@ describe.runIf(IS_BROWSER)(
                 const listener2 = vi.fn();
 
                 let MyParent = class MyParent extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
 
-                    listener(...args) {
-                        listener(...args);
+                    listener(oldValue?: number, newValue?: number) {
+                        listener(oldValue, newValue);
                     }
                 };
 
@@ -348,8 +374,8 @@ describe.runIf(IS_BROWSER)(
                 __decorate([DNA.observe('testProp')], MyParent.prototype, 'listener', undefined);
 
                 let MyElement = class MyElement extends MyParent {
-                    listener2(...args) {
-                        listener2(...args);
+                    listener2(oldValue?: number, newValue?: number) {
+                        listener2(oldValue, newValue);
                     }
                 };
 
@@ -375,8 +401,10 @@ describe.runIf(IS_BROWSER)(
                     [DNA.customElement(getComponentName())],
                     (_initialize, _DNA$Component) => {
                         class MyElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            declare testProp?: number;
+
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -421,8 +449,10 @@ describe.runIf(IS_BROWSER)(
                 const listener2 = vi.fn();
 
                 let MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -454,7 +484,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should restore a property after upgrade', () => {
                 const tagName = getComponentName();
-                const element = document.createElement(tagName);
+                const element = document.createElement(tagName) as InstanceType<typeof MyElement>;
 
                 expect(element).not.toHaveProperty('testProp');
                 expect(element.getAttribute('test-prop')).toBeNull();
@@ -462,8 +492,10 @@ describe.runIf(IS_BROWSER)(
                 expect(element.getAttribute('test-prop')).toBeNull();
 
                 const MyElement = class MyElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare testProp?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.testProp = 42;
                     }
                 };
@@ -488,9 +520,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should discard a getter property after upgrade', () => {
                 const tagName = getComponentName();
-                const element = document.createElement(tagName);
+                const element = document.createElement(tagName) as InstanceType<typeof MyElement>;
 
                 expect(element).not.toHaveProperty('testProp');
+                // @ts-expect-error testProp is not defined yet
                 element.testProp = 84;
 
                 const MyElement = class MyElement extends DNA.Component {
@@ -552,6 +585,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
 
@@ -571,6 +606,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: string | boolean;
                     }
                 );
                 const elem = new MyElement();
@@ -581,6 +618,7 @@ describe.runIf(IS_BROWSER)(
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     elem.testProp = 42;
                 }).toThrow(TypeError);
             });
@@ -593,7 +631,7 @@ describe.runIf(IS_BROWSER)(
                             return {
                                 testProp: {
                                     type: [String, Boolean],
-                                    validate(value) {
+                                    validate(value: unknown) {
                                         if (typeof value === 'string') {
                                             return value !== 'invalid';
                                         }
@@ -603,6 +641,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: string | boolean;
                     }
                 );
                 const elem = new MyElement();
@@ -613,6 +653,7 @@ describe.runIf(IS_BROWSER)(
                 elem.testProp = true;
                 expect(elem).toHaveProperty('testProp', true);
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     elem.testProp = 42;
                 }).toThrow(TypeError);
                 expect(() => {
@@ -628,12 +669,14 @@ describe.runIf(IS_BROWSER)(
                             return {
                                 testProp: {
                                     defaultValue: 42,
-                                    getter(value) {
-                                        return value * 2;
+                                    getter(value: unknown) {
+                                        return (value as number) * 2;
                                     },
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
                 const elem = new MyElement();
@@ -653,12 +696,14 @@ describe.runIf(IS_BROWSER)(
                                 testProp: {
                                     attribute: false,
                                     defaultValue: 42,
-                                    setter(value) {
-                                        return value / 2;
+                                    setter(value: unknown) {
+                                        return (value as number) / 2;
                                     },
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
                 const elem = new MyElement();
@@ -682,6 +727,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
                 const elem = new MyElement();
@@ -709,6 +756,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
 
@@ -728,7 +777,7 @@ describe.runIf(IS_BROWSER)(
 
             it('should inherit and reduce the prototype chain', () => {
                 class BaseElement extends DNA.Component {
-                    static get properties() {
+                    static get properties(): Record<string, DNA.PropertyConfig> {
                         return {
                             inherit: String,
                             override: {
@@ -736,6 +785,9 @@ describe.runIf(IS_BROWSER)(
                             },
                         };
                     }
+
+                    declare inherit?: string;
+                    declare override?: number;
                 }
 
                 const MyElement = DNA.define(
@@ -751,6 +803,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare newProp?: boolean;
                     }
                 );
                 const MyElement2 = DNA.define(
@@ -763,6 +817,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare newProp?: boolean;
                     }
                 );
 
@@ -778,8 +834,10 @@ describe.runIf(IS_BROWSER)(
 
             it('should inherit and reduce the prototype chain with decorator', () => {
                 class BaseElement extends DNA.Component {
-                    constructor(...args) {
-                        super(...args);
+                    declare override?: number;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.override = 42;
                     }
                 }
@@ -797,8 +855,11 @@ describe.runIf(IS_BROWSER)(
                 __decorate([DNA.property()], BaseElement.prototype, 'override', undefined);
 
                 let MyElement = class extends BaseElement {
-                    constructor(...args) {
-                        super(...args);
+                    declare override?: number;
+                    declare newProp?: boolean;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.override = 84;
                         this.newProp = true;
                     }
@@ -809,8 +870,10 @@ describe.runIf(IS_BROWSER)(
                 MyElement = __decorate([DNA.customElement(getComponentName())], MyElement);
 
                 let MyElement2 = class extends BaseElement {
-                    constructor(...args) {
-                        super(...args);
+                    declare newProp?: boolean;
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
                         this.newProp = false;
                     }
                 };
@@ -842,6 +905,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
                 const element = new MyElement();
@@ -857,10 +922,15 @@ describe.runIf(IS_BROWSER)(
 
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
-                const MyElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        declare testProp?: number;
+                    }
+                );
                 const element = new MyElement();
 
-                expect(() => element.observe('testProp', listener)).toThrow(Error, 'Missing property testProp');
+                expect(() => element.observe('testProp', listener)).toThrow(new Error('Missing property testProp'));
             });
         });
 
@@ -877,6 +947,8 @@ describe.runIf(IS_BROWSER)(
                                 },
                             };
                         }
+
+                        declare testProp?: number;
                     }
                 );
 
@@ -892,10 +964,15 @@ describe.runIf(IS_BROWSER)(
 
             it('should throw for undeclared properties', () => {
                 const listener = vi.fn();
-                const MyElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const MyElement = DNA.define(
+                    getComponentName(),
+                    class extends DNA.Component {
+                        declare testProp?: number;
+                    }
+                );
 
                 const element = new MyElement();
-                expect(() => element.unobserve('testProp', listener)).toThrow(Error, 'Missing property testProp');
+                expect(() => element.unobserve('testProp', listener)).toThrow(new Error('Missing property testProp'));
             });
         });
     },
