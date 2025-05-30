@@ -1,16 +1,16 @@
 import { fileURLToPath } from 'node:url';
-// import { svelte } from '@sveltejs/vite-plugin-svelte';
-// import { svelteTesting } from '@testing-library/svelte/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { svelteTesting } from '@testing-library/svelte/vite';
 import { type Plugin, defineConfig } from 'vitest/config';
 
 export default defineConfig({
-    // plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
+    plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],
     },
     resolve: {
-        // conditions: ['browser'],
+        conditions: ['browser'],
         alias: {
             '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
             '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
