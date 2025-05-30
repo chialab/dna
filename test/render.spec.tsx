@@ -1,6 +1,6 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER, getComponentName } from './helpers';
+import { IS_BROWSER } from './helpers';
 
 describe.runIf(IS_BROWSER)(
     'render',
@@ -93,37 +93,42 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should render an element node using the `h` helper inside a component', () => {
-                const name = getComponentName();
-                const name2 = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-1')
                 class TestElement extends DNA.Component {
                     render() {
                         return this.childNodesBySlot().map((node) => DNA.html`<${node} id="test" />`);
                     }
                 }
 
-                @DNA.customElement(name2)
+                @DNA.customElement('test-render-2')
                 class TestElement2 extends DNA.Component {
                     render() {
-                        return DNA.h(
-                            name,
-                            {},
-                            DNA.h('div', { class: 'test', key: 0 }, 'test'),
-                            DNA.h('div', { class: 'test', key: 1 }, 'test')
+                        return (
+                            <test-render-1>
+                                <div
+                                    class="test"
+                                    key={0}>
+                                    test
+                                </div>
+                                <div
+                                    class="test"
+                                    key={1}>
+                                    test
+                                </div>
+                            </test-render-1>
                         );
                     }
                 }
 
-                const root = DNA.render(DNA.h(name2), wrapper) as TestElement2;
-                const elem = wrapper.querySelector(name) as TestElement;
-                const divs = [elem.children[0], elem.children[1]];
+                const root = DNA.render(<test-render-2 />, wrapper) as TestElement2;
+                const element = wrapper.querySelector('test-render-1') as TestElement;
+                const divs = [element.children[0], element.children[1]];
                 // force renders in order to check if keyed elements are respected
                 root.forceUpdate();
-                elem.forceUpdate();
-                expect(elem).toBe(wrapper.querySelector(name));
-                expect(elem.children[0]).toBe(divs[0]);
-                expect(elem.children[1]).toBe(divs[1]);
+                element.forceUpdate();
+                expect(element).toBe(wrapper.querySelector('test-render-1'));
+                expect(element.children[0]).toBe(divs[0]);
+                expect(element.children[1]).toBe(divs[1]);
 
                 divs.forEach((div) => {
                     expect(div).toHaveProperty('id', 'test');
@@ -336,9 +341,9 @@ describe.runIf(IS_BROWSER)(
                     />,
                     wrapper
                 );
-                const elem = wrapper.children[0];
-                expect(elem.getAttribute('prop1')).toBe('test1');
-                expect(elem.getAttribute('prop2')).toBe('2');
+                const element = wrapper.children[0];
+                expect(element.getAttribute('prop1')).toBe('test1');
+                expect(element.getAttribute('prop2')).toBe('2');
                 DNA.render(
                     <div
                         // @ts-ignore
@@ -347,34 +352,34 @@ describe.runIf(IS_BROWSER)(
                     />,
                     wrapper
                 );
-                expect(elem.getAttribute('prop1')).toBe('test1');
-                expect(elem.getAttribute('prop2')).toBeNull();
-                expect(elem.getAttribute('prop3')).toBe('');
+                expect(element.getAttribute('prop1')).toBe('test1');
+                expect(element.getAttribute('prop2')).toBeNull();
+                expect(element.getAttribute('prop3')).toBe('');
             });
 
             it('should add and remove native listeners', () => {
                 const listener = vi.fn();
                 DNA.render(<div onclick={listener} />, wrapper);
-                const elem = wrapper.children[0] as HTMLElement;
+                const element = wrapper.children[0] as HTMLElement;
                 expect(listener).not.toHaveBeenCalled();
-                elem.click();
+                element.click();
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledOnce();
                 DNA.render(<div onclick={undefined} />, wrapper);
-                elem.click();
+                element.click();
                 expect(listener).toHaveBeenCalledOnce();
             });
 
             it('should add and remove custom listeners', () => {
                 const listener = vi.fn();
                 DNA.render(<div onCustom={listener} />, wrapper);
-                const elem = wrapper.children[0] as HTMLElement;
+                const element = wrapper.children[0] as HTMLElement;
                 expect(listener).not.toHaveBeenCalled();
-                DNA.dispatchEvent(elem, 'Custom');
+                DNA.dispatchEvent(element, 'Custom');
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledOnce();
                 DNA.render(<div onCustom={undefined} />, wrapper);
-                elem.click();
+                element.click();
                 expect(listener).toHaveBeenCalledOnce();
             });
 
@@ -396,11 +401,11 @@ describe.runIf(IS_BROWSER)(
                     </form>,
                     wrapper
                 );
-                const elem = wrapper.querySelector('input[value="2"]') as HTMLInputElement;
-                expect(elem.getAttribute('checked')).toBeNull();
-                expect(elem.checked).toBe(false);
-                elem.checked = true;
-                expect(elem.checked).toBe(true);
+                const element = wrapper.querySelector('input[value="2"]') as HTMLInputElement;
+                expect(element.getAttribute('checked')).toBeNull();
+                expect(element.checked).toBe(false);
+                element.checked = true;
+                expect(element.checked).toBe(true);
                 DNA.render(
                     <form>
                         <input
@@ -418,8 +423,8 @@ describe.runIf(IS_BROWSER)(
                     </form>,
                     wrapper
                 );
-                expect(elem.getAttribute('checked')).toBeNull();
-                expect(elem.checked).toBe(false);
+                expect(element.getAttribute('checked')).toBeNull();
+                expect(element.checked).toBe(false);
 
                 DNA.render(
                     <img
@@ -446,8 +451,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should convert observed attributes', () => {
-                const name = getComponentName();
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-3')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Number,
@@ -455,14 +459,12 @@ describe.runIf(IS_BROWSER)(
                     number?: number;
                 }
 
-                const elem = DNA.render(DNA.h(name, { number: '2' }), wrapper) as TestElement;
-                expect(elem.number).toBe(2);
+                const element = DNA.render(<test-render-3 number={2} />, wrapper) as TestElement;
+                expect(element.number).toBe(2);
             });
 
             it('should assign properties and attributes to component', () => {
-                const name = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-4')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Number,
@@ -479,60 +481,67 @@ describe.runIf(IS_BROWSER)(
                     declare object?: object;
                 }
 
-                const elem = DNA.render(
-                    DNA.h(name, {
-                        number: 2,
-                        camelCase: 'test',
-                        string: '2',
-                        object: {},
-                        'data-test': '3',
-                    }),
+                const element = DNA.render(
+                    <test-render-4
+                        number={2}
+                        camelCase="test"
+                        string="2"
+                        object={{}}
+                        data-test="3"
+                    />,
                     wrapper
                 ) as TestElement;
-                expect(elem.number).toBe(2);
-                expect(elem.string).toBeUndefined();
-                expect(elem.camelCase).toBe('test');
-                expect(elem.getAttribute('camelCase')).toBeNull();
-                expect(elem.getAttribute('camel-case')).toBe('test');
-                expect(elem.getAttribute('string')).toBe('2');
-                expect(elem.object).toBeTypeOf('object');
-                expect(elem.getAttribute('object')).toBeNull();
+                expect(element.number).toBe(2);
+                expect(element.string).toBeUndefined();
+                expect(element.camelCase).toBe('test');
+                expect(element.getAttribute('camelCase')).toBeNull();
+                expect(element.getAttribute('camel-case')).toBe('test');
+                expect(element.getAttribute('string')).toBe('2');
+                expect(element.object).toBeTypeOf('object');
+                expect(element.getAttribute('object')).toBeNull();
                 // @ts-expect-error We are testing if the property has not been set
-                expect(elem['data-test']).toBeUndefined();
-                expect(elem.getAttribute('data-test')).toBe('3');
-                expect(elem.dataset.test).toBe('3');
+                expect(element['data-test']).toBeUndefined();
+                expect(element.getAttribute('data-test')).toBe('3');
+                expect(element.dataset.test).toBe('3');
             });
 
             it('should update add and remove classes', () => {
-                DNA.render(DNA.h('div', { class: 'test1' }), wrapper);
-                const elem = wrapper.children[0];
-                expect(elem.getAttribute('class')).toBe('test1');
-                elem.classList.add('test2');
-                expect(elem.getAttribute('class')).toBe('test1 test2');
-                DNA.render(DNA.h('div', { class: { test3: true } }), wrapper);
-                expect(elem.getAttribute('class')).toBe('test2 test3');
-                DNA.render(DNA.h('div', undefined), wrapper);
-                expect(elem.getAttribute('class')).toBe(null);
+                DNA.render(<div class="test1" />, wrapper);
+                const element = wrapper.children[0];
+                expect(element.getAttribute('class')).toBe('test1');
+                element.classList.add('test2');
+                expect(element.getAttribute('class')).toBe('test1 test2');
+                DNA.render(
+                    <div
+                        class={{
+                            test3: true,
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(element.getAttribute('class')).toBe('test2 test3');
+                DNA.render(<div />, wrapper);
+                expect(element.getAttribute('class')).toBe(null);
             });
 
             it('should update add and remove styles', () => {
-                const elem = DNA.render(DNA.h('div', { style: 'color: red;' }), wrapper) as HTMLDivElement;
-                elem.style.fontFamily = 'sans-serif';
-                expect(['rgb(255, 0, 0)', 'red']).toContain(window.getComputedStyle(elem).color);
-                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
-                DNA.render(DNA.h('div', { style: { backgroundColor: 'blue' } }), wrapper);
-                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
-                expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(elem).backgroundColor);
-                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
-                DNA.render(DNA.h('div', { style: 'font-weight: bold;' }), wrapper);
-                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
+                const element = DNA.render(<div style="color: red;" />, wrapper) as HTMLDivElement;
+                element.style.fontFamily = 'sans-serif';
+                expect(['rgb(255, 0, 0)', 'red']).toContain(window.getComputedStyle(element).color);
+                expect(['sans-serif']).toContain(window.getComputedStyle(element).fontFamily);
+                DNA.render(<div style={{ backgroundColor: 'blue' }} />, wrapper);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
+                expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(element).backgroundColor);
+                expect(['sans-serif']).toContain(window.getComputedStyle(element).fontFamily);
+                DNA.render(<div style="font-weight: bold;" />, wrapper);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
                 expect(['rgba(0, 0, 0, 0)', '', 'transparent']).toContain(
-                    window.getComputedStyle(elem).backgroundColor
+                    window.getComputedStyle(element).backgroundColor
                 );
-                expect(['700', 'bold']).toContain(window.getComputedStyle(elem).fontWeight);
-                expect(['sans-serif']).toContain(window.getComputedStyle(elem).fontFamily);
-                DNA.render(DNA.h('div', undefined), wrapper);
-                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(elem).color);
+                expect(['700', 'bold']).toContain(window.getComputedStyle(element).fontWeight);
+                expect(['sans-serif']).toContain(window.getComputedStyle(element).fontFamily);
+                DNA.render(<div />, wrapper);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
             });
 
             it('should render svgs', () => {
@@ -576,10 +585,10 @@ describe.runIf(IS_BROWSER)(
                         return 'Test';
                     },
                 };
-                DNA.render(DNA.h('div', {}, obj), wrapper);
-                const elem = wrapper.children[0];
-                expect(elem.childNodes).toHaveLength(1);
-                expect(elem).toHaveProperty('textContent', 'Test');
+                DNA.render(<div>{obj}</div>, wrapper);
+                const element = wrapper.children[0];
+                expect(element.childNodes).toHaveLength(1);
+                expect(element).toHaveProperty('textContent', 'Test');
             });
 
             it('should not set svgs properties', () => {
@@ -602,19 +611,17 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should not empty nodes when no slotted children has been passed', () => {
-                DNA.render(DNA.h('div'), wrapper);
-                const elem = wrapper.children[0];
-                expect(elem.childNodes).toHaveLength(0);
-                elem.appendChild(document.createElement('span'));
-                expect(elem.childNodes).toHaveLength(1);
-                DNA.render(DNA.h('div'), wrapper);
-                expect(elem.childNodes).toHaveLength(1);
+                DNA.render(<div />, wrapper);
+                const element = wrapper.children[0];
+                expect(element.childNodes).toHaveLength(0);
+                element.appendChild(document.createElement('span'));
+                expect(element.childNodes).toHaveLength(1);
+                DNA.render(<div />, wrapper);
+                expect(element.childNodes).toHaveLength(1);
             });
 
             it('should not reuse slotted children', () => {
-                const name = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-5')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Boolean,
@@ -622,20 +629,32 @@ describe.runIf(IS_BROWSER)(
                     more = false;
 
                     render() {
-                        return [
-                            DNA.h('div', { class: 'child1' }),
-                            DNA.h('div', { class: 'child2' }),
-                            this.more && DNA.h('div', { class: 'child3' }),
-                            DNA.h('slot'),
-                        ];
+                        return (
+                            <>
+                                <div class="child1" />
+                                <div class="child2" />
+                                {this.more && <div class="child3" />}
+                                <slot />
+                            </>
+                        );
                     }
                 }
 
-                const element = DNA.render(DNA.h(name, {}, DNA.h('div', {})), wrapper) as TestElement;
+                const element = DNA.render(
+                    <test-render-5>
+                        <div />
+                    </test-render-5>,
+                    wrapper
+                ) as TestElement;
                 expect(element.childNodes).toHaveLength(3);
                 const [slotted] = element.childNodesBySlot();
                 const [div1, div2, div3] = Array.from(element.childNodes);
-                DNA.render(DNA.h(name, { more: true }, DNA.h('div', {})), wrapper);
+                DNA.render(
+                    <test-render-5 more>
+                        <div />
+                    </test-render-5>,
+                    wrapper
+                );
                 expect(element.childNodes).toHaveLength(4);
                 const [slotted2] = element.childNodesBySlot();
                 const [div4, div5, div6, div7] = Array.from(element.childNodes);
@@ -650,9 +669,7 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should not reuse slotted text', () => {
-                const name = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-6')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Boolean,
@@ -669,25 +686,23 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const element = DNA.render(DNA.h(name, {}, 'Text'), wrapper) as TestElement;
+                const element = DNA.render(<test-render-6>Text</test-render-6>, wrapper) as TestElement;
                 expect(element.childNodes).toHaveLength(1);
                 const [slotted] = element.childNodesBySlot();
                 const [textNode] = Array.from(element.childNodes);
-                DNA.render(DNA.h(name, { showPrefix: true }, 'Text'), wrapper);
+                DNA.render(<test-render-6 showPrefix>Text</test-render-6>, wrapper);
                 expect(element.childNodes).toHaveLength(2);
                 const [prefixNode, newTextNode] = Array.from(element.childNodes);
                 expect(slotted).toBe(element.childNodesBySlot()[0]);
                 expect(textNode).toBe(newTextNode);
                 expect(prefixNode).toHaveProperty('textContent', 'Prefix:');
                 expect(newTextNode).toHaveProperty('textContent', 'Text');
-                DNA.render(DNA.h(name, { showPrefix: false }, 'Text'), wrapper);
+                DNA.render(<test-render-6 showPrefix={false}>Text</test-render-6>, wrapper);
                 expect(element.childNodes).toHaveLength(1);
             });
 
             it('should handle emptied slot nodes', () => {
-                const name = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-7')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Boolean,
@@ -706,29 +721,40 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const element = DNA.render(DNA.h(name, {}, 'Text'), wrapper) as TestElement;
+                const element = DNA.render(<test-render-7>Text</test-render-7>, wrapper) as TestElement;
                 const div = element.childNodes[0];
                 expect(element.childNodesBySlot()).toHaveLength(1);
                 expect(div.childNodes).toHaveLength(1);
-                DNA.render(DNA.h(name, { showSlotted: false }, 'Text'), wrapper);
+                DNA.render(<test-render-7 showSlotted={false}>Text</test-render-7>, wrapper);
                 expect(element.childNodesBySlot()).toHaveLength(1);
                 expect(div.childNodes).toHaveLength(0);
             });
 
             it('should return a shallow clone of child list', () => {
-                const list = DNA.render([DNA.h('div'), DNA.h('div'), DNA.h('div')], wrapper);
+                const list = DNA.render(
+                    <>
+                        <div />
+                        <div />
+                        <div />
+                    </>,
+                    wrapper
+                );
                 expect(list).toHaveLength(3);
-                const newList = DNA.render([DNA.h('div')], wrapper);
-                expect(newList).toHaveLength(1);
+                const newList = DNA.render(
+                    <>
+                        <div />
+                        <div />
+                    </>,
+                    wrapper
+                );
+                expect(newList).toHaveLength(2);
                 expect(list).toHaveLength(3);
             });
 
             it('should not replace contents when initializing parent and child components', () => {
-                const name1 = getComponentName();
-                const name2 = getComponentName();
-                DNA.define(
-                    name1,
-                    class Parent extends DNA.Component {
+                const Parent = DNA.define(
+                    'test-render-8',
+                    class extends DNA.Component {
                         render() {
                             return this.childNodesBySlot()
                                 .filter((elem) => !!(elem as HTMLElement).tagName)
@@ -741,28 +767,26 @@ describe.runIf(IS_BROWSER)(
                         }
                     }
                 );
-                DNA.define(
-                    name2,
-                    class Child extends DNA.Component {
+                const Child = DNA.define(
+                    'test-render-9',
+                    class extends DNA.Component {
                         render() {
                             return <slot />;
                         }
                     }
                 );
 
-                const parent = document.createElement(name1);
-                const child = document.createElement(name2);
+                const parent = new Parent();
+                const child = new Child();
                 child.appendChild(document.createTextNode('Hello'));
                 parent.insertBefore(child, null);
                 wrapper.appendChild(parent);
-
                 expect(child).toHaveProperty('textContent', 'Hello');
                 expect(child.dataset).toHaveProperty('test', 'test');
             });
 
             it('should resuse refs context', () => {
-                const name = getComponentName();
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-10')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Boolean,
@@ -789,31 +813,24 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const element = document.createElement(name) as TestElement;
+                const element = new TestElement();
                 element.items = ['one', 'two', 'three'];
                 wrapper.appendChild(element);
-
                 expect(element.list.childNodes).toHaveLength(3);
                 expect(element.list.childNodes[0]).toHaveProperty('textContent', 'one');
                 expect(element.list.childNodes[1]).toHaveProperty('textContent', 'two');
                 expect(element.list.childNodes[2]).toHaveProperty('textContent', 'three');
-
                 element.showList = false;
                 element.items = ['four', 'five'];
-
                 expect(element.list.isConnected).toBe(false);
-
                 element.showList = true;
-
                 expect(element.list.childNodes).toHaveLength(2);
                 expect(element.list.childNodes[0]).toHaveProperty('textContent', 'four');
                 expect(element.list.childNodes[1]).toHaveProperty('textContent', 'five');
             });
 
             it('should clean up render state when removed', () => {
-                const name = getComponentName();
-
-                @DNA.customElement(name)
+                @DNA.customElement('test-render-11')
                 class TestElement extends DNA.Component {
                     @DNA.property({
                         type: Boolean,
@@ -840,11 +857,10 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                const element = document.createElement(name) as TestElement;
+                const element = new TestElement();
                 element.items = ['one', 'two', 'three'];
                 wrapper.appendChild(element);
                 expect(element.list.childNodes).toHaveLength(3);
-
                 wrapper.removeChild(element);
                 expect(element.list.childNodes).toHaveLength(0);
             });
@@ -1384,13 +1400,11 @@ describe.runIf(IS_BROWSER)(
 
                 const option4 = wrapper.childNodes[0].childNodes[0];
                 const option5 = wrapper.childNodes[0].childNodes[1];
-
                 expect(option1).toHaveProperty('textContent', items[0]);
                 expect(option2).toHaveProperty('textContent', items[1]);
                 expect(option3).toHaveProperty('textContent', items[2]);
                 expect(option4).toHaveProperty('textContent', items[1]);
                 expect(option5).toHaveProperty('textContent', items[2]);
-
                 expect(option1).not.toBe(option4);
                 expect(option2).toBe(option4);
                 expect(option3).toBe(option5);
@@ -1398,9 +1412,8 @@ describe.runIf(IS_BROWSER)(
 
             it('should delete nodes until the attached one', () => {
                 const connectedCallback = vi.fn();
-                const name = getComponentName();
                 const TestElement = DNA.define(
-                    name,
+                    'test-render-12',
                     class TestElement extends DNA.Component {
                         connectedCallback() {
                             super.connectedCallback();
@@ -1408,8 +1421,8 @@ describe.runIf(IS_BROWSER)(
                         }
                     }
                 );
-                const ref = new TestElement();
 
+                const ref = new TestElement();
                 DNA.render(
                     <>
                         <h1>Title</h1>
@@ -1418,10 +1431,8 @@ describe.runIf(IS_BROWSER)(
                     </>,
                     wrapper
                 );
-
                 expect(connectedCallback).toHaveBeenCalled();
                 expect(connectedCallback).toHaveBeenCalledOnce();
-
                 DNA.render(
                     <>
                         <h1>Title</h1>
@@ -1429,7 +1440,6 @@ describe.runIf(IS_BROWSER)(
                     </>,
                     wrapper
                 );
-
                 expect(connectedCallback).toHaveBeenCalledOnce();
             });
 

@@ -287,29 +287,9 @@ function h<T extends typeof Fragment | FunctionComponent | Node | keyof SVGTagNa
                         TreeProperties &
                         EventProperties &
                         ElementProperties
-                  : T extends keyof SVGTagNameMap
-                    ? AttributeProperties<IntrinsicElementAttributes[T]> &
-                          KeyedProperties &
-                          TreeProperties &
-                          EventProperties &
-                          ElementProperties
-                    : T extends keyof HTMLTagNameMap
-                      ? AttributeProperties<
-                            HTMLTagNameMap[T] extends HTML.Element
-                                ? Props<HTMLTagNameMap[T]>
-                                : IntrinsicElementAttributes[T]
-                        > &
-                            KeyedProperties &
-                            TreeProperties &
-                            EventProperties &
-                            ElementProperties
-                      : T extends string
-                        ? Record<string, unknown> &
-                              KeyedProperties &
-                              TreeProperties &
-                              EventProperties &
-                              ElementProperties
-                        : never)
+                  : T extends keyof JSXInternal.IntrinsicElements
+                    ? JSXInternal.IntrinsicElements[T]
+                    : never)
         | null = null,
     ...children: Template[]
 ) {
@@ -355,29 +335,9 @@ function jsx<T extends FunctionComponent | Node | keyof SVGTagNameMap | keyof HT
                         TreeProperties &
                         EventProperties &
                         ElementProperties
-                  : T extends keyof SVGTagNameMap
-                    ? AttributeProperties<IntrinsicElementAttributes[T]> &
-                          KeyedProperties &
-                          TreeProperties &
-                          EventProperties &
-                          ElementProperties
-                    : T extends keyof HTMLTagNameMap
-                      ? AttributeProperties<
-                            HTMLTagNameMap[T] extends HTML.Element
-                                ? Props<HTMLTagNameMap[T]>
-                                : IntrinsicElementAttributes[T]
-                        > &
-                            KeyedProperties &
-                            TreeProperties &
-                            EventProperties &
-                            ElementProperties
-                      : T extends string
-                        ? Record<string, unknown> &
-                              KeyedProperties &
-                              TreeProperties &
-                              EventProperties &
-                              ElementProperties
-                        : never)
+                  : T extends keyof JSXInternal.IntrinsicElements
+                    ? JSXInternal.IntrinsicElements[T]
+                    : never)
         | null = null,
     key?: unknown
 ) {
@@ -457,7 +417,12 @@ export namespace JSXInternal {
     export interface ElementClass extends HTMLElement {}
 
     export type IntrinsicElements = {
-        [key: string]: HTMLAttributes & KeyedProperties & TreeProperties & EventProperties & ElementProperties;
+        [key: string]: Record<string, unknown> &
+            HTMLAttributes &
+            KeyedProperties &
+            TreeProperties &
+            EventProperties &
+            ElementProperties;
     } & {
         [K in keyof CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
             ? never
