@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 describe(
     'module',
     () => {
-        const EXPECTED_EXPORT_MAP = {
+        const EXPECTED_EXPORT_MAP: Record<keyof typeof DNA, 'boolean' | 'function' | 'number' | 'object' | 'string'> = {
             customElement: 'function',
             define: 'function',
             HTML: 'object',
@@ -39,9 +39,9 @@ describe(
             $until: 'function',
         };
 
-        for (const ref in EXPECTED_EXPORT_MAP) {
+        for (const [ref, type] of Object.entries(EXPECTED_EXPORT_MAP)) {
             it(`should export "${ref}"`, () => {
-                expect(DNA[ref]).toBeTypeOf(EXPECTED_EXPORT_MAP[ref]);
+                expect(DNA[ref as keyof typeof DNA]).toBeTypeOf(type);
             });
         }
 
