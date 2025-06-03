@@ -11,9 +11,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
     });
 
     afterEach(() => {
-        if (wrapper.parentNode) {
-            document.body.removeChild(wrapper);
-        }
+        wrapper.remove();
     });
 
     test('should update text content', () => {

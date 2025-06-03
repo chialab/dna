@@ -1,22 +1,13 @@
 import * as DNA from '@chialab/dna';
-import { h, render } from 'preact';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { render } from '@testing-library/svelte';
+import { describe, expect, test } from 'vitest';
 import { IS_BROWSER } from '../helpers';
 
-describe.runIf(IS_BROWSER)('Preact compatibility', () => {
-    let wrapper: HTMLElement;
-    beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
-    });
-
-    afterEach(() => {
-        wrapper.remove();
-    });
-
-    test('should update text content', () => {
+describe.runIf(IS_BROWSER)('Svelte', () => {
+    test('should update text content', async () => {
+        const { default: Test1 } = await import('./Test1.svelte');
         DNA.define(
-            'preact-test-1',
+            'svelte-test-1',
             class extends DNA.Component {
                 render() {
                     return (
@@ -28,25 +19,29 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (text: string) => h('preact-test-1', null, [text]);
-        render(Template('Text'), wrapper);
+        const { container, rerender } = render(Test1, {
+            props: {
+                text: 'Text',
+            },
+        });
 
-        const element = wrapper.children[0];
+        const element = container.children[0];
         expect(element.childNodes[0].textContent).toBe('Text');
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Text</span><div></div></preact-test-1>`
+        expect(container.innerHTML).toBe(
+            '<svelte-test-1 :scope="svelte-test-1" :defined=""><span>Text</span><div></div></svelte-test-1>'
         );
 
-        render(Template('Update'), wrapper);
+        await rerender({ text: 'Update' });
         expect(element.childNodes[0].textContent).toBe('Update');
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Update</span><div></div></preact-test-1>`
+        expect(container.innerHTML).toBe(
+            '<svelte-test-1 :scope="svelte-test-1" :defined=""><span>Update</span><div></div></svelte-test-1>'
         );
     });
 
-    test('should update text content with multiple text nodes', () => {
+    test('should update text content with multiple text nodes', async () => {
+        const { default: Test2 } = await import('./Test2.svelte');
         DNA.define(
-            'preact-test-2',
+            'svelte-test-2',
             class extends DNA.Component {
                 render() {
                     return (
@@ -58,29 +53,29 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (text: string) => h('preact-test-2', null, [text, ' ', 'children']);
-        render(Template('Text'), wrapper);
+        const { container, rerender } = render(Test2, {
+            props: {
+                text: 'Text',
+            },
+        });
 
-        const element = wrapper.children[0];
+        const element = container.children[0];
         expect(element.childNodes[0].textContent).toBe('Text children');
-        expect(element.childNodes[0].childNodes[0].textContent).toBe('Text');
-        expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Text children</span><div></div></preact-test-2>`
+        expect(container.innerHTML).toBe(
+            '<svelte-test-2 :scope="svelte-test-2" :defined=""><span>Text children</span><div></div></svelte-test-2>'
         );
 
-        render(Template('Update'), wrapper);
+        await rerender({ text: 'Update' });
         expect(element.childNodes[0].textContent).toBe('Update children');
-        expect(element.childNodes[0].childNodes[0].textContent).toBe('Update');
-        expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Update children</span><div></div></preact-test-2>`
+        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+            '<svelte-test-2 :scope="svelte-test-2" :defined=""><span>Update children</span><div></div></svelte-test-2>'
         );
     });
 
-    test('should update named slots', () => {
+    test('should update named slots', async () => {
+        const { default: Test3 } = await import('./Test3.svelte');
         DNA.define(
-            'preact-test-3',
+            'svelte-test-3',
             class extends DNA.Component {
                 render() {
                     return (
@@ -92,41 +87,37 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (title: boolean) =>
-            h('preact-test-3', null, [
-                'Text ',
-                title
-                    ? h('h1', { slot: 'children', key: 1 }, 'Title')
-                    : h('h2', { slot: 'children', key: 2 }, 'Subtitle'),
-                '\n',
-            ]);
-        render(Template(true), wrapper);
+        const { container, rerender } = render(Test3, {
+            props: {
+                title: true,
+            },
+        });
 
-        const element = wrapper.children[0];
+        const element = container.children[0];
         const textNode = element.childNodes[0].childNodes[0];
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></preact-test-3>`
+        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+            '<svelte-test-3 :scope="svelte-test-3" :defined=""><span>Text  end</span><div><h1 slot="children">Title</h1></div></svelte-test-3>'
         );
 
-        render(Template(false), wrapper);
+        await rerender({ title: false });
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></preact-test-3>`
+        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+            '<svelte-test-3 :scope="svelte-test-3" :defined=""><span>Text  end</span><div><h2 slot="children">Subitle</h2></div></svelte-test-3>'
         );
     });
 
-    test('nested slot', () => {
-        const IMG = 'data:image/png;base64,';
+    test('nested slot', async () => {
+        const { default: Test4 } = await import('./Test4.svelte');
         DNA.define(
-            'preact-test-4',
+            'svelte-test-4',
             class extends DNA.Component {
                 render() {
                     return (
                         <>
                             <div class="layout-header">
-                                <preact-test-4-title>
+                                <svelte-test-4-title>
                                     <slot name="title" />
-                                </preact-test-4-title>
+                                </svelte-test-4-title>
                             </div>
                             <div class="layout-body">
                                 <slot />
@@ -136,64 +127,54 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
+
         DNA.define(
-            'preact-test-4-title',
+            'svelte-test-4-title',
             class MyTitle extends DNA.Component {
                 render() {
                     return (
-                        <span class="title">
-                            <slot>Untitled</slot>
-                        </span>
+                        <>
+                            <span class="title">
+                                <slot>Untitled</slot>
+                            </span>
+                        </>
                     );
                 }
             }
         );
-
-        const template = (showTitle = false) =>
-            h('preact-test-4', { key: '1' }, [
-                showTitle ? h('h1', { slot: 'title' }, 'Title') : null,
-                h('img', { src: IMG, alt: '' }),
-                h('p', null, 'Body'),
-            ]);
-        render(template(), wrapper);
-        const element = wrapper.children[0];
+        const { container, rerender } = render(Test4, {
+            props: {
+                title: false,
+            },
+        });
+        const element = container.children[0];
         expect(element.children).toHaveLength(2);
         expect(element.children[0].tagName).toBe('DIV');
         expect(element.children[0].className).toBe('layout-header');
         expect(element.children[0].children).toHaveLength(1);
-        expect(element.children[0].children[0].tagName).toBe('preact-test-4-title'.toUpperCase());
+        expect(element.children[0].children[0].tagName).toBe('svelte-test-4-title'.toUpperCase());
         expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
         expect(element.children[0].children[0].children[0].textContent).toBe('Untitled');
-        render(template(true), wrapper);
+        await rerender({ title: true });
         expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
         expect(element.children[0].children[0].children[0].textContent).toBe('Title');
         expect(element.children[1].tagName).toBe('DIV');
         expect(element.children[1].className).toBe('layout-body');
         expect(element.children[1].children[0].tagName).toBe('IMG');
-        expect(element.children[1].children[0].getAttribute('src')).toBe(IMG);
+        expect(element.children[1].children[0].getAttribute('src')).toBe('data:image/png;base64,');
         expect(element.children[1].children[1].tagName).toBe('P');
         expect(element.children[1].children[1].textContent).toBe('Body');
     });
 
-    test('slot moved across elements', () => {
-        const IMG = 'data:image/png;base64,';
+    test('slot moved across elements', async () => {
+        const { default: Test5 } = await import('./Test5.svelte');
+        const { container, rerender } = render(Test5, {
+            props: {
+                collapsed: false,
+            },
+        });
         DNA.define(
-            'preact-test-5-card',
-            class MyCard extends DNA.Component {
-                render() {
-                    return <slot />;
-                }
-            }
-        );
-        const Template = (collapsed = false) =>
-            h('preact-test-5', { collapsed }, [
-                h('h1', null, 'Title'),
-                h('img', { src: IMG, alt: '' }),
-                h('p', null, 'Body'),
-            ]);
-        render(Template(), wrapper);
-        DNA.define(
-            'preact-test-5',
+            'svelte-test-5',
             class MyElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -208,41 +189,47 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                         return <slot />;
                     }
                     return (
-                        <preact-test-5-card>
+                        <svelte-test-5-card>
                             <slot />
-                        </preact-test-5-card>
+                        </svelte-test-5-card>
                     );
                 }
             }
         );
-        const element = wrapper.children[0];
+        const element = container.children[0];
         window.customElements.upgrade(element);
         expect(element.children).toHaveLength(1);
         expect(element.children[0].children[0].tagName).toBe('H1');
         expect(element.children[0].children[0].textContent).toBe('Title');
         expect(element.children[0].children[1].tagName).toBe('IMG');
-        expect(element.children[0].children[1].getAttribute('src')).toBe(IMG);
+        expect(element.children[0].children[1].getAttribute('src')).toBe('data:image/png;base64,');
         expect(element.children[0].children[2].tagName).toBe('P');
         expect(element.children[0].children[2].textContent).toBe('Body');
-        render(Template(true), wrapper);
+        await rerender({ collapsed: true });
         expect(element.children[0].tagName).toBe('H1');
         expect(element.children[0].textContent).toBe('Title');
         expect(element.children[1].tagName).toBe('IMG');
-        expect(element.children[1].getAttribute('src')).toBe(IMG);
+        expect(element.children[1].getAttribute('src')).toBe('data:image/png;base64,');
         expect(element.children[2].tagName).toBe('P');
         expect(element.children[2].textContent).toBe('Body');
-        render(Template(false), wrapper);
+        await rerender({ collapsed: false });
         expect(element.children[0].children[0].tagName).toBe('H1');
         expect(element.children[0].children[0].textContent).toBe('Title');
         expect(element.children[0].children[1].tagName).toBe('IMG');
-        expect(element.children[0].children[1].getAttribute('src')).toBe(IMG);
+        expect(element.children[0].children[1].getAttribute('src')).toBe('data:image/png;base64,');
         expect(element.children[0].children[2].tagName).toBe('P');
         expect(element.children[0].children[2].textContent).toBe('Body');
     });
 
-    test('slot moved and replaced', () => {
+    test('slot moved and replaced', async () => {
+        const { default: Test6 } = await import('./Test6.svelte');
+        const { container, rerender } = render(Test6, {
+            props: {
+                switchValue: false,
+            },
+        });
         DNA.define(
-            'preact-test-6',
+            'svelte-test-6',
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -262,13 +249,11 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (switchValue = false) =>
-            h('preact-test-6', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
-        render(Template(), wrapper);
-        const element = wrapper.children[0];
+
+        const element = container.children[0];
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Hello');
-        render(Template(true), wrapper);
+        await rerender({ switchValue: true });
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
     });
