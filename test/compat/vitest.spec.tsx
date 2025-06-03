@@ -3,8 +3,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vi
 import { IS_BROWSER } from '../helpers';
 
 describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
-    let wrapper;
-    let userEvent;
+    let wrapper: HTMLElement;
+    let userEvent: typeof import('@vitest/browser/context').userEvent;
 
     beforeAll(async () => {
         const context = await import('@vitest/browser/context');
@@ -26,7 +26,11 @@ describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
                 'test-vitest-1',
                 class extends DNA.Component {
                     render() {
-                        return DNA.html`<button><slot /></button>`;
+                        return (
+                            <button type="button">
+                                <slot />
+                            </button>
+                        );
                     }
                 }
             );
@@ -34,7 +38,7 @@ describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
             wrapper.appendChild(element);
             element.textContent = 'Text';
             const spy = vi.fn();
-            const trigger = element.childNodes[0];
+            const trigger = element.childNodes[0] as HTMLButtonElement;
             trigger.appendChild(document.createTextNode('Internal'));
             trigger.addEventListener('click', spy);
             await userEvent.click(trigger);
@@ -47,7 +51,13 @@ describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
                 'test-vitest-2',
                 class extends DNA.Component {
                     render() {
-                        return DNA.html`<div>Before<slot />After</div>`;
+                        return (
+                            <div>
+                                Before
+                                <slot />
+                                After
+                            </div>
+                        );
                     }
                 }
             );

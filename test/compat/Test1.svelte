@@ -1,18 +1,4 @@
 <script>
-import * as DNA from '@chialab/dna';
-
-DNA.define(
-	'svelte-test-1',
-	class extends DNA.Component {
-		render() {
-			return DNA.html`
-                    <span>${this.childNodesBySlot(null)}</span>
-                    <div>${this.childNodesBySlot('children')}</div>
-                `;
-		}
-	}
-);
-
 /**
  * @type {string}
  */
