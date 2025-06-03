@@ -1,3 +1,4 @@
+import type { Realm } from './Component';
 import type { Template as JSXTemplate } from './JSX';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
@@ -38,6 +39,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -311,6 +317,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -580,6 +591,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -853,6 +869,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -1122,6 +1143,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -1395,6 +1421,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -1664,6 +1695,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -1937,6 +1973,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -2206,6 +2247,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -2479,6 +2525,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -2748,6 +2799,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -3021,6 +3077,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -3290,6 +3351,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -3563,6 +3629,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -3832,6 +3903,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -4105,6 +4181,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -4374,6 +4455,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -4647,6 +4733,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -4916,6 +5007,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -5189,6 +5285,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -5458,6 +5559,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -5731,6 +5837,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -6000,6 +6111,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -6273,6 +6389,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -6542,6 +6663,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -6815,6 +6941,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -7084,6 +7215,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -7357,6 +7493,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -7626,6 +7767,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -7899,6 +8045,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -8168,6 +8319,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -8441,6 +8597,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -8710,6 +8871,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -8983,6 +9149,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -9254,6 +9425,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -9523,6 +9699,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -9797,6 +9978,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -10066,6 +10252,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -10339,6 +10530,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -10610,6 +10806,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -10879,6 +11080,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -11153,6 +11359,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -11422,6 +11633,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -11695,6 +11911,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -11964,6 +12185,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -12237,6 +12463,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -12506,6 +12737,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -12779,6 +13015,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -13048,6 +13289,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -13321,6 +13567,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -13590,6 +13841,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -13863,6 +14119,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -14132,6 +14393,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -14405,6 +14671,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -14674,6 +14945,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -14947,6 +15223,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -15216,6 +15497,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -15489,6 +15775,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -15758,6 +16049,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -16031,6 +16327,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -16300,6 +16601,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -16573,6 +16879,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -16842,6 +17153,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -17115,6 +17431,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -17384,6 +17705,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
@@ -17657,6 +17983,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -17928,6 +18259,11 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * The flag to indicate if the component is rendering.
          * @returns True if the component is rendering.
          */
@@ -18197,6 +18533,11 @@ export declare namespace HTML {
          * A list of slot nodes.
          */
         readonly slotChildNodes: Node[];
+
+        /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
 
         /**
          * The flag to indicate if the component is rendering.
