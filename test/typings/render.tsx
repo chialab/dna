@@ -77,6 +77,15 @@ render(
 );
 // @ts-expect-error Promise is not a a function component
 render(<Promise />);
-render(<>Hello</>);
-render(<svg viewBox="0 0 100 100"></svg>);
+render(
+    <>
+        {'Hello'} {'world'}
+    </>
+);
+render(
+    <svg
+        viewBox="0 0 100 100"
+        title=""
+    />
+);
 render('Hello');

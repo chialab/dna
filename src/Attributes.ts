@@ -1009,6 +1009,7 @@ export interface SVGAttributes extends AriaAttributes {
     tableValues?: number | string | undefined;
     targetX?: number | string | undefined;
     targetY?: number | string | undefined;
+    title?: string | undefined;
     textAnchor?: string | undefined;
     textDecoration?: number | string | undefined;
     textLength?: number | string | undefined;

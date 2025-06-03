@@ -1,14 +1,7 @@
 import type { ClassElement } from './ClassDescriptor';
 import type { ComponentConstructor, ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
-import {
-    type Constructor,
-    type MemberDecorator,
-    defineProperty,
-    getOwnPropertyDescriptor,
-    getPrototypeOf,
-    hasOwn,
-} from './helpers';
+import { type Constructor, defineProperty, getOwnPropertyDescriptor, getPrototypeOf, hasOwn } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -509,15 +502,17 @@ export const createListener = <T extends ComponentInstance, P extends keyof T>(
     };
 };
 
-function listen<T extends ComponentInstance, P extends keyof T>(
+function listen(
     eventName: string,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P>;
-function listen<T extends ComponentInstance, P extends keyof T>(
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any;
+function listen(
     eventName: string,
     selector: string,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P>;
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any;
 /**
  * A decorator for listening DOM events.
  * @param eventName The name of the event to listen.
@@ -525,12 +520,13 @@ function listen<T extends ComponentInstance, P extends keyof T>(
  * @param options Options to pass to addEventListener.
  * @returns The decorator initializer.
  */
-function listen<T extends ComponentInstance, P extends keyof T>(
+function listen(
     eventName: string,
     target?: string | AddEventListenerOptions,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P> {
-    return (targetOrClassElement, methodKey) =>
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any {
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
         createListener(
             targetOrClassElement,
             eventName,
@@ -545,7 +541,8 @@ export { listen };
 /**
  * A type for custom event properties.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+// biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
 export type EventHandler<T extends Event = Event> = ((event: T) => any) | null;
 
 /**
@@ -586,7 +583,7 @@ function createEvent<T extends ComponentInstance, P extends keyof T>(
     eventName?: string,
     propertyKey?: P,
     descriptor?: PropertyDescriptor
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
 ): any {
     const key: unique symbol = Symbol();
 
@@ -639,8 +636,13 @@ function createEvent<T extends ComponentInstance, P extends keyof T>(
  * @param eventName The name of the event to create a property for.
  * @returns A decorator for creating event properties.
  */
-export function fires<T extends ComponentInstance, P extends keyof T>(eventName?: string): MemberDecorator<T, P> {
-    return (targetOrClassElement: T, propertyKey?: P, descriptor?: PropertyDescriptor) => {
+// biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+export function fires(eventName?: string): any {
+    return <T extends ComponentInstance, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey?: P,
+        descriptor?: PropertyDescriptor
+    ) => {
         createEvent(targetOrClassElement, eventName, propertyKey, descriptor);
     };
 }

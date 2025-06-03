@@ -10,6 +10,9 @@ import type { Context } from './render';
  */
 const V_SYM: unique symbol = Symbol();
 
+// biome-ignore lint/complexity/noBannedTypes: Base empty object that can be extended.
+type EmptyObject = {};
+
 /**
  * Check if a property is a method.
  */
@@ -24,7 +27,7 @@ type IfAny<T, K extends keyof T, A, B> = 0 extends 1 & T[K] ? A : B;
 /**
  * Get the values of a type.
  */
-type Values<T> = T[keyof T] extends never ? {} : T[keyof T];
+type Values<T> = T[keyof T] extends never ? EmptyObject : T[keyof T];
 
 /**
  * Exclude component mixin properties.
@@ -74,7 +77,7 @@ export type Props<T extends HTMLElement, InvalidKeys = ReservedKeys | KnownKeys<
     ? {
           [K in keyof T as K extends InvalidKeys ? never : IfMethod<T, K, never, K>]?: T[K];
       }
-    : {};
+    : EmptyObject;
 
 /**
  * Pick methods of a class.
@@ -224,7 +227,7 @@ type VTagBaseRenderProperties<T extends string> = RenderAttributes<T> &
  */
 type VTagRenderProperties<T extends string> = (T extends keyof JSXInternal.CustomElements
     ? Props<JSXInternal.CustomElements[T]>
-    : {}) &
+    : EmptyObject) &
     VTagBaseRenderProperties<T>;
 
 /**
