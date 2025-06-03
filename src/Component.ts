@@ -27,6 +27,15 @@ import {
 import { getRootContext, internalRender } from './render';
 
 /**
+ * An alias type fot the previous quantum implementation.
+ * @deprecated Use component ptorotype instead.
+ */
+export type Realm = {
+    readonly childNodes: Node[];
+    childNodesBySlot: (name?: string | null) => Node[];
+};
+
+/**
  * A symbol which identify components.
  */
 const COMPONENT_SYMBOL: unique symbol = Symbol();
@@ -180,6 +189,11 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         readonly slotChildNodes: Node[] = [];
 
         /**
+         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         */
+        readonly realm: Realm;
+
+        /**
          * Handle setting text content to component.
          * @returns The element text content.
          */
@@ -237,6 +251,17 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 },
                 {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
             );
+
+            Object.defineProperty(element, 'realm', {
+                value: {
+                    get childNodes(): Node[] {
+                        return this.slotChildNodes;
+                    },
+                    childNodesBySlot: (name?: string | null): Node[] => {
+                        return element.childNodesBySlot(name);
+                    },
+                },
+            });
 
             // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
             return element;
