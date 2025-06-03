@@ -8,7 +8,6 @@ import {
 } from './Component';
 import {
     type Constructor,
-    type MemberDecorator,
     defineProperty as _defineProperty,
     createObject,
     getOwnPropertyDescriptor,
@@ -743,11 +742,13 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof T>(
  * @param declaration The property declaration.
  * @returns The decorator initializer.
  */
-export function property<T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T[P]> = {}
-): MemberDecorator<T, P> {
-    return (targetOrClassElement, propertyKey, descriptor) =>
-        createProperty(targetOrClassElement, declaration, propertyKey, descriptor);
+// biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+export function property(declaration: PropertyDeclaration = {}): any {
+    return <T extends ComponentInstance, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey: P,
+        descriptor: PropertyDescriptor
+    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<T[P]>, propertyKey, descriptor);
 }
 
 /**
@@ -755,16 +756,19 @@ export function property<T extends ComponentInstance, P extends keyof T>(
  * @param declaration The state property declaration.
  * @returns The decorator initializer.
  */
-export function state<T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T[P]> = {}
-): MemberDecorator<T, P> {
-    return (targetOrClassElement, propertyKey, descriptor) =>
+// biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+export function state(declaration: PropertyDeclaration = {}): any {
+    return <T extends ComponentInstance, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey: P,
+        descriptor: PropertyDescriptor
+    ) =>
         createProperty(
             targetOrClassElement,
             {
                 ...declaration,
                 state: true,
-            },
+            } as PropertyDeclaration<T[P]>,
             propertyKey,
             descriptor
         );
@@ -776,7 +780,8 @@ export function state<T extends ComponentInstance, P extends keyof T>(
  * @param propertyKey The property key to observe.
  * @returns The decorator initializer.
  */
-export function observe<T extends ComponentInstance, P extends keyof T>(propertyKey: string): MemberDecorator<T, P> {
-    return (targetOrClassElement, methodKey) =>
+// biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+export function observe(propertyKey: string): any {
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
         createObserver(targetOrClassElement, propertyKey as keyof PropertiesOf<T>, methodKey);
 }

@@ -8,16 +8,6 @@ export interface Constructor<T> {
 }
 
 /**
- * Member decorator type helper.
- */
-export type MemberDecorator<T extends object, P extends keyof T> = (
-    targetOrClassElement: T,
-    propertyKey?: P,
-    descriptor?: PropertyDescriptor
-    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
-) => any;
-
-/**
  * Alias to Array.isArray.
  */
 export const isArray: (typeof Array)['isArray'] = Array.isArray;
