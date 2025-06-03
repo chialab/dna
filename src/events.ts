@@ -1,7 +1,7 @@
 import type { ClassElement } from './ClassDescriptor';
 import type { ComponentConstructor, ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
-import { type Constructor, type MemberDecorator, getOwnPropertyDescriptor, getPrototypeOf, hasOwn } from './helpers';
+import { type Constructor, getOwnPropertyDescriptor, getPrototypeOf, hasOwn } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -502,15 +502,17 @@ export const createListener = <T extends ComponentInstance, P extends keyof T>(
     };
 };
 
-function listen<T extends ComponentInstance, P extends keyof T>(
+function listen(
     eventName: string,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P>;
-function listen<T extends ComponentInstance, P extends keyof T>(
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any;
+function listen(
     eventName: string,
     selector: string,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P>;
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any;
 /**
  * A decorator for listening DOM events.
  * @param eventName The name of the event to listen.
@@ -518,12 +520,13 @@ function listen<T extends ComponentInstance, P extends keyof T>(
  * @param options Options to pass to addEventListener.
  * @returns The decorator initializer.
  */
-function listen<T extends ComponentInstance, P extends keyof T>(
+function listen(
     eventName: string,
     target?: string | AddEventListenerOptions,
     options?: AddEventListenerOptions
-): MemberDecorator<T, P> {
-    return (targetOrClassElement, methodKey) =>
+    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
+): any {
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
         createListener(
             targetOrClassElement,
             eventName,
