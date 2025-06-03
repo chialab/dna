@@ -1,9 +1,10 @@
 import * as DNA from '@chialab/dna';
-import { h, render } from 'preact';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { IS_BROWSER } from '../helpers';
 
-describe.runIf(IS_BROWSER)('Preact compatibility', () => {
+describe.runIf(IS_BROWSER)('React compatibility', () => {
     let wrapper: HTMLElement;
     beforeEach(() => {
         wrapper = document.createElement('div');
@@ -14,9 +15,9 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         wrapper.remove();
     });
 
-    test('should update text content', () => {
+    test('should update text content', async () => {
         DNA.define(
-            'preact-test-1',
+            'react-test-1',
             class extends DNA.Component {
                 render() {
                     return (
@@ -28,25 +29,29 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (text: string) => h('preact-test-1', null, [text]);
-        render(Template('Text'), wrapper);
+        const Template = (text: string) => React.createElement('react-test-1', null, [text]);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template('Text'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         expect(element.childNodes[0].textContent).toBe('Text');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Text</span><div></div></preact-test-1>`
+            `<react-test-1 :scope="react-test-1" :defined=""><span>Text</span><div></div></react-test-1>`
         );
 
-        render(Template('Update'), wrapper);
+        root.render(Template('Update'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
         expect(element.childNodes[0].textContent).toBe('Update');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Update</span><div></div></preact-test-1>`
+            `<react-test-1 :scope="react-test-1" :defined=""><span>Update</span><div></div></react-test-1>`
         );
     });
 
-    test('should update text content with multiple text nodes', () => {
+    test('should update text content with multiple text nodes', async () => {
         DNA.define(
-            'preact-test-2',
+            'react-test-2',
             class extends DNA.Component {
                 render() {
                     return (
@@ -58,29 +63,33 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                 }
             }
         );
-        const Template = (text: string) => h('preact-test-2', null, [text, ' ', 'children']);
-        render(Template('Text'), wrapper);
+        const Template = (text: string) => React.createElement('react-test-2', null, [text, ' ', 'children']);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template('Text'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         expect(element.childNodes[0].textContent).toBe('Text children');
         expect(element.childNodes[0].childNodes[0].textContent).toBe('Text');
         expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Text children</span><div></div></preact-test-2>`
+            `<react-test-2 :scope="react-test-2" :defined=""><span>Text children</span><div></div></react-test-2>`
         );
 
-        render(Template('Update'), wrapper);
+        root.render(Template('Update'));
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
         expect(element.childNodes[0].textContent).toBe('Update children');
         expect(element.childNodes[0].childNodes[0].textContent).toBe('Update');
         expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Update children</span><div></div></preact-test-2>`
+            `<react-test-2 :scope="react-test-2" :defined=""><span>Update children</span><div></div></react-test-2>`
         );
     });
 
-    test('should update named slots', () => {
+    test('should update named slots', async () => {
         DNA.define(
-            'preact-test-3',
+            'react-test-3',
             class extends DNA.Component {
                 render() {
                     return (
@@ -93,40 +102,43 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
             }
         );
         const Template = (title: boolean) =>
-            h('preact-test-3', null, [
+            React.createElement('react-test-3', null, [
                 'Text ',
                 title
-                    ? h('h1', { slot: 'children', key: 1 }, 'Title')
-                    : h('h2', { slot: 'children', key: 2 }, 'Subtitle'),
+                    ? React.createElement('h1', { slot: 'children', key: 1 }, 'Title')
+                    : React.createElement('h2', { slot: 'children', key: 2 }, 'Subtitle'),
                 '\n',
             ]);
-        render(Template(true), wrapper);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template(true));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         const element = wrapper.children[0];
         const textNode = element.childNodes[0].childNodes[0];
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></preact-test-3>`
+            `<react-test-3 :scope="react-test-3" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></react-test-3>`
         );
 
-        render(Template(false), wrapper);
+        root.render(Template(false));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></preact-test-3>`
+            `<react-test-3 :scope="react-test-3" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></react-test-3>`
         );
     });
 
-    test('nested slot', () => {
+    test('nested slot', async () => {
         const IMG = 'data:image/png;base64,';
         DNA.define(
-            'preact-test-4',
+            'react-test-4',
             class extends DNA.Component {
                 render() {
                     return (
                         <>
                             <div class="layout-header">
-                                <preact-test-4-title>
+                                <react-test-4-title>
                                     <slot name="title" />
-                                </preact-test-4-title>
+                                </react-test-4-title>
                             </div>
                             <div class="layout-body">
                                 <slot />
@@ -137,7 +149,7 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
             }
         );
         DNA.define(
-            'preact-test-4-title',
+            'react-test-4-title',
             class MyTitle extends DNA.Component {
                 render() {
                     return (
@@ -150,21 +162,24 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         );
 
         const template = (showTitle = false) =>
-            h('preact-test-4', { key: '1' }, [
-                showTitle ? h('h1', { slot: 'title' }, 'Title') : null,
-                h('img', { src: IMG, alt: '' }),
-                h('p', null, 'Body'),
+            React.createElement('react-test-4', { key: '1' }, [
+                showTitle ? React.createElement('h1', { slot: 'title' }, 'Title') : null,
+                React.createElement('img', { src: IMG, alt: '' }),
+                React.createElement('p', null, 'Body'),
             ]);
-        render(template(), wrapper);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(template());
+        await new Promise((resolve) => setTimeout(resolve, 10));
         const element = wrapper.children[0];
         expect(element.children).toHaveLength(2);
         expect(element.children[0].tagName).toBe('DIV');
         expect(element.children[0].className).toBe('layout-header');
         expect(element.children[0].children).toHaveLength(1);
-        expect(element.children[0].children[0].tagName).toBe('preact-test-4-title'.toUpperCase());
+        expect(element.children[0].children[0].tagName).toBe('react-test-4-title'.toUpperCase());
         expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
         expect(element.children[0].children[0].children[0].textContent).toBe('Untitled');
-        render(template(true), wrapper);
+        root.render(template(true));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
         expect(element.children[0].children[0].children[0].textContent).toBe('Title');
         expect(element.children[1].tagName).toBe('DIV');
@@ -175,10 +190,10 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         expect(element.children[1].children[1].textContent).toBe('Body');
     });
 
-    test('slot moved across elements', () => {
+    test('slot moved across elements', async () => {
         const IMG = 'data:image/png;base64,';
         DNA.define(
-            'preact-test-5-card',
+            'react-test-5-card',
             class MyCard extends DNA.Component {
                 render() {
                     return <slot />;
@@ -186,14 +201,16 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
             }
         );
         const Template = (collapsed = false) =>
-            h('preact-test-5', { collapsed }, [
-                h('h1', null, 'Title'),
-                h('img', { src: IMG, alt: '' }),
-                h('p', null, 'Body'),
+            React.createElement('react-test-5', { collapsed }, [
+                React.createElement('h1', null, 'Title'),
+                React.createElement('img', { src: IMG, alt: '' }),
+                React.createElement('p', null, 'Body'),
             ]);
-        render(Template(), wrapper);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template());
+        await new Promise((resolve) => setTimeout(resolve, 10));
         DNA.define(
-            'preact-test-5',
+            'react-test-5',
             class MyElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -208,9 +225,9 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
                         return <slot />;
                     }
                     return (
-                        <preact-test-5-card>
+                        <react-test-5-card>
                             <slot />
-                        </preact-test-5-card>
+                        </react-test-5-card>
                     );
                 }
             }
@@ -224,14 +241,16 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         expect(element.children[0].children[1].getAttribute('src')).toBe(IMG);
         expect(element.children[0].children[2].tagName).toBe('P');
         expect(element.children[0].children[2].textContent).toBe('Body');
-        render(Template(true), wrapper);
+        root.render(Template(true));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.children[0].tagName).toBe('H1');
         expect(element.children[0].textContent).toBe('Title');
         expect(element.children[1].tagName).toBe('IMG');
         expect(element.children[1].getAttribute('src')).toBe(IMG);
         expect(element.children[2].tagName).toBe('P');
         expect(element.children[2].textContent).toBe('Body');
-        render(Template(false), wrapper);
+        root.render(Template(false));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.children[0].children[0].tagName).toBe('H1');
         expect(element.children[0].children[0].textContent).toBe('Title');
         expect(element.children[0].children[1].tagName).toBe('IMG');
@@ -240,9 +259,9 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         expect(element.children[0].children[2].textContent).toBe('Body');
     });
 
-    test('slot moved and replaced', () => {
+    test('slot moved and replaced', async () => {
         DNA.define(
-            'preact-test-6',
+            'react-test-6',
             class TestElement extends DNA.Component {
                 static get properties() {
                     return {
@@ -263,12 +282,15 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
             }
         );
         const Template = (switchValue = false) =>
-            h('preact-test-6', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
-        render(Template(), wrapper);
+            React.createElement('react-test-6', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
+        const root = ReactDOM.createRoot(wrapper);
+        root.render(Template());
+        await new Promise((resolve) => setTimeout(resolve, 10));
         const element = wrapper.children[0];
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Hello');
-        render(Template(true), wrapper);
+        root.render(Template(true));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
     });
