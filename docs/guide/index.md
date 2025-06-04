@@ -2,7 +2,7 @@
 
 ## Install
 
-DNA is published to the NPM registry
+DNA is published to the NPM registry and can be installed using your favorite package manager.
 
 ::: code-group
 
@@ -22,7 +22,8 @@ pnpm add @chialab/dna
 
 ## Configure Typescript
 
-This enables support for DNA decorators as well as correct transpilation of class property fields.
+Advanced typechecking and decorators support are available in TypeScript, which is the recommended way to use DNA.
+Add this to your `tsconfig.json` to support DNA decorators as well as correct transpilation of class property fields.
 
 ::: code-group
 
@@ -38,7 +39,7 @@ This enables support for DNA decorators as well as correct transpilation of clas
 
 :::
 
-## Configure JSX
+## Configure JSX / TSX
 
 ### Typescript
 
