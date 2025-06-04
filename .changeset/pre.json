@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@chialab/dna": "4.3.0"
+  },
+  "changesets": [
+    "fruity-poets-lick",
+    "full-ears-stop",
+    "gold-cobras-exist",
+    "petite-brooms-shop",
+    "puny-times-hope",
+    "wide-views-change"
+  ]
+}

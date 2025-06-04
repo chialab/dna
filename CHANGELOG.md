@@ -1,5 +1,19 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.0
+
+### Minor Changes
+
+- 26984f1: Clean up rendering state when removing a node.
+- 26984f1: Components now only render when connected.
+- c5df947: Introducing the `childListChangedCallback`.
+- 26984f1: Node slotting now works only for methods that actually mutate the tree.
+- 9efebb6: Introducing the `useEffect` hook.
+
+### Patch Changes
+
+- c42cf28: Fix reset of `class` and `style` properties.
+
 ## 4.3.0
 
 ### Minor Changes

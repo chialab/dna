@@ -1,4 +1,4 @@
-import { Component, customElement, HTML, property } from '@chialab/dna';
+import { Component, HTML, customElement, listen, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -7,12 +7,12 @@ export class TestElement extends Component {
     @property({
         type: Number,
     })
-    width: number = 2;
+    width = 2;
 
     @property({
         type: String,
     })
-    title: string = 'test';
+    title = 'test';
 
     get computed(): string {
         return this.getInnerPropertyValue('computed');
@@ -20,6 +20,18 @@ export class TestElement extends Component {
     set computed(value) {
         this.setInnerPropertyValue('computed', value);
     }
+
+    @property()
+    private privateSymbol = 1;
+
+    @listen('click')
+    handleClick(event: MouseEvent) {}
+
+    @listen('click')
+    protected handleClick2(event: MouseEvent) {}
+
+    @listen('click')
+    private handleClick3(event: MouseEvent) {}
 }
 
 new TestElement().focus();
