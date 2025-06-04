@@ -33,6 +33,7 @@ import { getRootContext, internalRender } from './render';
 export type Realm = {
     readonly childNodes: Node[];
     childNodesBySlot: (name?: string | null) => Node[];
+    requestUpdate: <T>(callback: () => T) => T;
 };
 
 /**
@@ -255,10 +256,13 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             Object.defineProperty(element, 'realm', {
                 value: {
                     get childNodes(): Node[] {
-                        return this.slotChildNodes;
+                        return [...element.slotChildNodes];
                     },
                     childNodesBySlot: (name?: string | null): Node[] => {
                         return element.childNodesBySlot(name);
+                    },
+                    requestUpdate: <T>(callback: () => T): T => {
+                        return callback();
                     },
                 },
             });
