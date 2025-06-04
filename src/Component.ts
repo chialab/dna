@@ -105,6 +105,31 @@ export const isComponentConstructor = (ctr: Constructor<HTMLElement>): ctr is Co
     !!(ctr.prototype as WithComponentProto<HTMLElement>)?.[COMPONENT_SYMBOL];
 
 /**
+ * Check if a component is connected.
+ * @param element The component instance to check.
+ * @returns True if the component is connected to the DOM and initialized.
+ */
+const isConnected = <T extends ComponentInstance>(element: T): boolean =>
+    !!(element as WithComponentProto<T>)[CONNECTED_SYMBOL];
+
+/**
+ * Add connected flag to a component instance.
+ * This is used to mark the component as connected to the DOM and initialized.
+ * @param element The component instance to mark as connected.
+ */
+const connect = <T extends ComponentInstance>(element: T): void => {
+    (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = true;
+};
+
+/**
+ * Mark a component instance as disconnected.
+ * @param element The component instance to mark as disconnected.
+ */
+const disconnect = <T extends ComponentInstance>(element: T): void => {
+    (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = false;
+};
+
+/**
  * Create a base Component class which extends a native constructor.
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
@@ -337,7 +362,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            (this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL] = true;
+            connect(this);
 
             if (!this.hasAttribute(':defined')) {
                 if (this.is !== this.localName) {
@@ -356,7 +381,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Invoked each time the Component is disconnected from the document's DOM.
          */
         disconnectedCallback() {
-            (this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL] = false;
+            disconnect(this);
             this._resetRendering();
             this._restoreSlotChildNodes();
         }
@@ -566,7 +591,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @returns True if a re-render has been triggered.
          */
         requestUpdate() {
-            if (!(this as WithComponentProto<ComponentInstance>)[CONNECTED_SYMBOL]) {
+            if (!isConnected(this)) {
                 return false;
             }
             if (this._collectingUpdates === 0) {
@@ -696,20 +721,19 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             setOwner(node, this);
 
-            // Most of the rendering libraries use comment nodes to mark fragments.
-            // We need to extend the comment node prototype to provide a custom parentNode
-            // Checkout the tests folder for supported frameworks.
             const root = this;
             const proto = getPrototypeOf(node as Comment);
+
+            // Override prototype methods that may change host child list.
             setPrototypeOf(node, {
                 get parentNode() {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'parentNode', node);
                     }
                     return root;
                 },
                 get previousSibling() {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'previousSibling', node);
                     }
                     const io = root.slotChildNodes.indexOf(node);
@@ -719,7 +743,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     return root.slotChildNodes[io - 1] || null;
                 },
                 get nextSibling() {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'nextSibling', node);
                     }
                     const io = root.slotChildNodes.indexOf(node);
@@ -729,14 +753,14 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     return root.slotChildNodes[io + 1] || null;
                 },
                 before(...nodes: (Node | string)[]) {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'before', node).apply(node, nodes);
                     }
                     root._insertNodesBefore(root._importNodes(nodes), node);
                     root.requestUpdate();
                 },
                 after(...nodes: (Node | string)[]) {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'after', node).apply(node, nodes);
                     }
                     const io = root.slotChildNodes.indexOf(node);
@@ -745,7 +769,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     root.requestUpdate();
                 },
                 replaceWith(...nodes: (Node | string)[]) {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'replaceWith', node).apply(node, nodes);
                     }
 
@@ -755,13 +779,14 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     root.requestUpdate();
                 },
                 remove() {
-                    if (root.rendering || !root.isConnected) {
+                    if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'remove', node).call(node);
                     }
                     root._removeNodes([node]);
                     root._releaseNode(node);
                     root.requestUpdate();
                 },
+
                 __proto__: proto,
             });
         }
@@ -870,7 +895,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         append(...nodes: (Node | string)[]): void {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 Reflect.get(ctor.prototype, 'append').apply(this, nodes);
                 return;
             }
@@ -882,7 +907,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         prepend(...nodes: (Node | string)[]): void {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 Reflect.get(ctor.prototype, 'prepend').apply(this, nodes);
                 return;
             }
@@ -894,7 +919,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         appendChild<T extends Node>(node: T): T {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 return Reflect.get(ctor.prototype, 'appendChild').call(this, node) as T;
             }
             this._appendNodes(this._importNodes([node]));
@@ -906,7 +931,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         insertBefore<T extends Node>(node: T, referenceNode: Node | null): T {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 return Reflect.get(ctor.prototype, 'insertBefore').call(this, node, referenceNode) as T;
             }
 
@@ -919,7 +944,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         replaceChild<T extends Node>(node: Node, referenceNode: T): T {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 return Reflect.get(ctor.prototype, 'replaceChild').call(this, node, referenceNode) as T;
             }
 
@@ -933,7 +958,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @inheritdoc
          */
         removeChild<T extends Node>(node: T): T {
-            if (!this.isConnected || this.rendering) {
+            if (!isConnected(this) || this.rendering) {
                 return Reflect.get(ctor.prototype, 'removeChild').call(this, node) as T;
             }
 

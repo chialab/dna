@@ -770,21 +770,21 @@ describe.runIf(IS_BROWSER)(
                 const promise = new Promise((resolve) => {
                     setTimeout(() => {
                         flag = true;
-                        DNA.render(template(), wrapper);
+                        DNA.render(Template(), wrapper);
                         resolve('World!');
                     }, 1000);
                 });
 
-                const template = () => (
+                const Template = () => (
                     <div>
                         {!flag && DNA.$until(promise, 'Loading...')}
                         {flag && 'Done'}
                     </div>
                 );
 
-                DNA.render(template(), wrapper);
+                DNA.render(Template(), wrapper);
                 expect(wrapper.innerHTML).toBe('<div><!---->Loading...</div>');
-                DNA.render(template(), wrapper);
+                DNA.render(Template(), wrapper);
                 await new Promise((r) => setTimeout(r, 1500));
                 expect(wrapper.innerHTML).toBe('<div>Done</div>');
             });
