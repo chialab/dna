@@ -2,6 +2,7 @@ import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
 import type { HTML as HTMLNamespace } from './HTML';
 import type { Template } from './JSX';
+import { Realm } from './Realm';
 import {
     type DelegatedEventCallback,
     type ListenerConfig,
@@ -25,16 +26,6 @@ import {
     removeObserver,
 } from './property';
 import { getRootContext, internalRender } from './render';
-
-/**
- * An alias type fot the previous quantum implementation.
- * @deprecated Use component ptorotype instead.
- */
-export type Realm = {
-    readonly childNodes: Node[];
-    childNodesBySlot: (name?: string | null) => Node[];
-    requestUpdate: <T>(callback: () => T) => T;
-};
 
 /**
  * A symbol which identify components.
@@ -279,17 +270,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             );
 
             Object.defineProperty(element, 'realm', {
-                value: {
-                    get childNodes(): Node[] {
-                        return [...element.slotChildNodes];
-                    },
-                    childNodesBySlot: (name?: string | null): Node[] => {
-                        return element.childNodesBySlot(name);
-                    },
-                    requestUpdate: <T>(callback: () => T): T => {
-                        return callback();
-                    },
-                },
+                value: new Realm(element as ComponentInstance),
             });
 
             // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
@@ -390,6 +371,14 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Invoked each time the component has been updated.
          */
         updatedCallback() {}
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback() {
+            this.realm.notify();
+            this.requestUpdate();
+        }
 
         /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.
@@ -681,7 +670,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 this._adoptNode(node);
                 remove(node);
             });
-            this.requestUpdate();
+            this.childListChangedCallback();
         }
 
         /**
@@ -743,7 +732,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                         return Reflect.get(proto, 'before', node).apply(node, nodes);
                     }
                     root._insertNodesBefore(root._importNodes(nodes), node);
-                    root.requestUpdate();
+                    root.childListChangedCallback();
                 },
                 after(...nodes: (Node | string)[]) {
                     if (root.rendering || !isConnected(root)) {
@@ -752,7 +741,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     const io = root.slotChildNodes.indexOf(node);
                     const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
                     root._insertNodesBefore(root._importNodes(nodes), nextSibling);
-                    root.requestUpdate();
+                    root.childListChangedCallback();
                 },
                 replaceWith(...nodes: (Node | string)[]) {
                     if (root.rendering || !isConnected(root)) {
@@ -762,7 +751,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     const importedNodes = root._importNodes(nodes);
                     root._replaceNodes(importedNodes, node);
                     root._releaseNode(node);
-                    root.requestUpdate();
+                    root.childListChangedCallback();
                 },
                 remove() {
                     if (root.rendering || !isConnected(root)) {
@@ -770,7 +759,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     }
                     root._removeNodes([node]);
                     root._releaseNode(node);
-                    root.requestUpdate();
+                    root.childListChangedCallback();
                 },
 
                 __proto__: proto,
@@ -917,7 +906,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 return;
             }
             this._appendNodes(this._importNodes(nodes));
-            this.requestUpdate();
+            this.childListChangedCallback();
         }
 
         /**
@@ -929,7 +918,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 return;
             }
             this._prependNodes(this._importNodes(nodes));
-            this.requestUpdate();
+            this.childListChangedCallback();
         }
 
         /**
@@ -940,7 +929,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 return Reflect.get(ctor.prototype, 'appendChild').call(this, node) as T;
             }
             this._appendNodes(this._importNodes([node]));
-            this.requestUpdate();
+            this.childListChangedCallback();
             return node;
         }
 
@@ -953,7 +942,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             }
 
             this._insertNodesBefore(this._importNodes([node]), referenceNode);
-            this.requestUpdate();
+            this.childListChangedCallback();
             return node;
         }
 
@@ -967,7 +956,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             this._replaceNodes(this._importNodes([node]), referenceNode);
             this._releaseNode(referenceNode);
-            this.requestUpdate();
+            this.childListChangedCallback();
             return referenceNode;
         }
 
@@ -981,7 +970,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             this._removeNodes([node]);
             this._releaseNode(node);
-            this.requestUpdate();
+            this.childListChangedCallback();
             return node;
         }
 
@@ -996,11 +985,11 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             switch (where) {
                 case 'afterbegin':
                     this._prependNodes(this._importNodes([node]));
-                    this.requestUpdate();
+                    this.childListChangedCallback();
                     return node;
                 case 'beforeend':
                     this._appendNodes(this._importNodes([node]));
-                    this.requestUpdate();
+                    this.childListChangedCallback();
                     return node;
                 default:
                     return Reflect.get(ctor.prototype, 'insertAdjacentElement', this).call(this, where, node);

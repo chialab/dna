@@ -613,6 +613,98 @@ describe.runIf(IS_BROWSER)(
             });
         });
 
+        describe('childListChangedCallback', () => {
+            it('should trigger once, once connected', () => {
+                const spyChildListChangedCallback = vi.fn();
+                const TestElement = DNA.define(
+                    'test-component-76',
+                    class extends DNA.Component {
+                        childListChangedCallback() {
+                            super.childListChangedCallback();
+                            spyChildListChangedCallback();
+                        }
+                    }
+                );
+
+                const element = new TestElement();
+                element.appendChild(document.createElement('div'));
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                wrapper.appendChild(element);
+                expect(spyChildListChangedCallback).toHaveBeenCalledOnce();
+            });
+
+            it('should when a node has been added', () => {
+                const spyChildListChangedCallback = vi.fn();
+                const TestElement = DNA.define(
+                    'test-component-77',
+                    class extends DNA.Component {
+                        childListChangedCallback() {
+                            super.childListChangedCallback();
+                            spyChildListChangedCallback();
+                        }
+                    }
+                );
+
+                const element = new TestElement();
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                wrapper.appendChild(element);
+                expect(spyChildListChangedCallback).toHaveBeenCalledOnce();
+
+                element.appendChild(document.createElement('div'));
+                expect(spyChildListChangedCallback).toHaveBeenCalledTimes(2);
+            });
+
+            it('should when a node has been removed', () => {
+                const spyChildListChangedCallback = vi.fn();
+                const TestElement = DNA.define(
+                    'test-component-78',
+                    class extends DNA.Component {
+                        childListChangedCallback() {
+                            super.childListChangedCallback();
+                            spyChildListChangedCallback();
+                        }
+                    }
+                );
+
+                const element = new TestElement();
+                const child = document.createElement('div');
+                element.appendChild(child);
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                wrapper.appendChild(element);
+                expect(spyChildListChangedCallback).toHaveBeenCalledOnce();
+
+                element.removeChild(child);
+                expect(spyChildListChangedCallback).toHaveBeenCalledTimes(2);
+            });
+
+            it('should when the component has been upgraded', () => {
+                const spyChildListChangedCallback = vi.fn();
+                class TestElement extends DNA.Component {
+                    childListChangedCallback() {
+                        super.childListChangedCallback();
+                        spyChildListChangedCallback();
+                    }
+                }
+
+                const element = document.createElement('test-component-79') as TestElement;
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                wrapper.appendChild(element);
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                element.appendChild(document.createElement('div'));
+                expect(spyChildListChangedCallback).not.toHaveBeenCalled();
+
+                DNA.define('test-component-79', TestElement);
+                window.customElements.upgrade(wrapper);
+
+                expect(spyChildListChangedCallback).toHaveBeenCalledOnce();
+            });
+        });
+
         describe('~isConnected', () => {
             it('return `true` if element is connected', () => {
                 const TestElement = DNA.define('test-component-25', class extends DNA.Component {});

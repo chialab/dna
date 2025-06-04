@@ -8,8 +8,9 @@ DNA components follow the Custom Element lifecycle specification, with the addit
 - [attributeChangedCallback](#attributechangedcallback)
 - [propertyChangedCallback](#propertychangedcallback)
 - [stateChangedCallback](#statechangedcallback)
-- [updatedCallback](#updatedcallback)
+- [childListChangedCallback](#childlistchangedcallback)
 - [render](#render)
+- [updatedCallback](#updatedcallback)
 - [shouldUpdate](#shouldupdate)
 - [requestUpdate](#requestupdate)
 - [forceUpdate](#forceupdate)
@@ -121,6 +122,10 @@ The signature is equivalent too: it receives the property name as first argument
 ## stateChangedCallback
 
 The same of `propertyChangedCallback`, but for state properties.
+
+## childListChangedCallback
+
+This method is invoked each time the component's children are changed.
 
 ## render
 
