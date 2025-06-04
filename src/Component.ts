@@ -721,36 +721,22 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             setOwner(node, this);
 
+            // From here to the end of the method, we enter the realm of dark magic.
+            // We're going to modify the prototype of slotted nodes to improve compatibility with other rendering frameworks.
+            // In addition to patching methods that manipulate the DOM, we also handle a few special cases:
+            // 1. Since most frameworks that rely on the DOM to manage rendering state use comment markers
+            // —and comments aren't slotted— we pretend they're correctly positioned.
+            // 2. Some frameworks use parentNode to remove the current node. Here,
+            // we make a "controlled" exception to the rule that forbids modifying the DOM tree during read operations.
+            // In any case, we preserve compatibility with frameworks that analyze the DOM using a top-down approach.
             const root = this;
             const proto = getPrototypeOf(node as Comment);
-
-            // Override prototype methods that may change host child list.
-            setPrototypeOf(node, {
+            const adoptedProto = {
                 get parentNode() {
                     if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'parentNode', node);
                     }
                     return root;
-                },
-                get previousSibling() {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'previousSibling', node);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io - 1] || null;
-                },
-                get nextSibling() {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'nextSibling', node);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io + 1] || null;
                 },
                 before(...nodes: (Node | string)[]) {
                     if (root.rendering || !isConnected(root)) {
@@ -788,7 +774,38 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 },
 
                 __proto__: proto,
-            });
+            };
+
+            if (node.nodeType === Node.COMMENT_NODE) {
+                Object.defineProperties(adoptedProto, {
+                    previousSibling: {
+                        get() {
+                            if (root.rendering || !isConnected(root)) {
+                                return Reflect.get(proto, 'previousSibling', node);
+                            }
+                            const io = root.slotChildNodes.indexOf(node);
+                            if (io === -1) {
+                                return null;
+                            }
+                            return root.slotChildNodes[io - 1] || null;
+                        },
+                    },
+                    nextSibling: {
+                        get() {
+                            if (root.rendering || !isConnected(root)) {
+                                return Reflect.get(proto, 'nextSibling', node);
+                            }
+                            const io = root.slotChildNodes.indexOf(node);
+                            if (io === -1) {
+                                return null;
+                            }
+                            return root.slotChildNodes[io + 1] || null;
+                        },
+                    },
+                });
+            }
+
+            setPrototypeOf(node, adoptedProto);
         }
 
         /**

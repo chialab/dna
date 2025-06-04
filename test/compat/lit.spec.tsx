@@ -97,6 +97,42 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
         );
     });
 
+    test('mixed slots', () => {
+        const Template = (showTitle = false) =>
+            html`<test-compat-1 key="1">
+                <span>Test</span>
+                ${showTitle ? html`<h1 slot="children">Title</h1>` : null}
+                <span>Test</span>
+                ${showTitle ? html`<h2 slot="children">Title</h2>` : null}
+                <span>Test</span>
+            </test-compat-1>`;
+        render(Template(), wrapper);
+
+        const element = wrapper.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(11);
+        expect(element.childNodesBySlot(null)).toHaveLength(9);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+
+        render(Template(true), wrapper);
+
+        expect(element.slotChildNodes).toHaveLength(13);
+        expect(element.childNodesBySlot(null)).toHaveLength(9);
+        expect(element.childNodesBySlot('children')).toHaveLength(2);
+        expect(element.childNodes[0].childNodes[1]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[4]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[7]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('tagName', 'H1');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('textContent', 'Title');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('tagName', 'H2');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('textContent', 'Title');
+
+        render(Template(false), wrapper);
+
+        expect(element.slotChildNodes).toHaveLength(11);
+        expect(element.childNodesBySlot(null)).toHaveLength(9);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+    });
+
     test('nested slot', () => {
         const Template = (showTitle = false) =>
             html`<test-compat-2 key="1">
