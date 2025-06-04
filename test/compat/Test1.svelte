@@ -5,4 +5,4 @@
 export let text;
 </script>
 
-<svelte-test-1>{text}</svelte-test-1>
+<test-compat-1>{text}</test-compat-1>

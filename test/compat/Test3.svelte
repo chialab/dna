@@ -5,7 +5,7 @@
 export let title;
 </script>
 
-<svelte-test-3>
+<test-compat-1>
     Text
     {#if title}
         <h1 slot="children">Title</h1>
@@ -13,4 +13,4 @@ export let title;
         <h2 slot="children">Subitle</h2>
     {/if}
     end
-</svelte-test-3>
+</test-compat-1>

@@ -677,12 +677,11 @@ export const internalRender = (
 
     while (currentIndex <= --end) {
         const [child] = contextChildren.splice(end, 1);
-        const parentNode = child.node.parentNode;
-        if (parentNode === context.node) {
-            context.node.removeChild(child.node);
-            if (child.state) {
-                new HooksManager(child.state).cleanup();
-            }
+        context.node.removeChild(child.node);
+        if (child.state) {
+            new HooksManager(child.state).cleanup();
+        }
+        if (child.children.length) {
             internalRender(child, null, rootContext, namespace);
         }
     }

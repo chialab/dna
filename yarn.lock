@@ -1159,6 +1159,13 @@
     lz-string "^1.5.0"
     pretty-format "^27.0.2"
 
+"@testing-library/react@^16.3.0":
+  version "16.3.0"
+  resolved "https://registry.npmjs.org/@testing-library/react/-/react-16.3.0.tgz#3a85bb9bdebf180cd76dba16454e242564d598a6"
+  integrity sha512-kFSyxiEDwv1WLl2fgsq6pPBbw5aWKrsY2/noi1Id0TK0UParSF62oFQFGHXIyaG4pp2tEub/Zlel+fjjZILDsw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@testing-library/svelte@^5.2.8":
   version "5.2.8"
   resolved "https://registry.npmjs.org/@testing-library/svelte/-/svelte-5.2.8.tgz#c9bae6da9cb436327b4a72971753d13b9da1dfcb"
@@ -1239,11 +1246,6 @@
   version "12.20.55"
   resolved "https://registry.npmjs.org/@types/node/-/node-12.20.55.tgz#c329cbd434c42164f846b909bd6f85b5537f6240"
   integrity sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==
-
-"@types/react-dom@^19.1.5":
-  version "19.1.5"
-  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.1.5.tgz#cdfe2c663742887372f54804b16e8dbc26bd794a"
-  integrity sha512-CMCjrWucUBZvohgZxkjd6S9h0nZxXjzus6yDfUb+xLxYM7VvjKNH1tQrE9GWLql1XoOP4/Ds3bwFqShHUYraGg==
 
 "@types/react@^19.1.6":
   version "19.1.6"
