@@ -611,6 +611,53 @@ describe.runIf(IS_BROWSER)(
                 await new Promise((r) => setTimeout(r, 0));
                 expect(builtin.innerHTML).toBe('<h1>test</h1>');
             });
+
+            it('should connect only once when polyfilled', async () => {
+                const spyConnectedCallback = vi.fn();
+
+                DNA.define(
+                    'test-component-80',
+                    class extends DNA.HTML.Button {
+                        connectedCallback(): void {
+                            super.connectedCallback();
+                            spyConnectedCallback();
+                        }
+                    },
+                    {
+                        extends: 'button',
+                    }
+                );
+
+                const TestElement = DNA.define(
+                    'test-component-81',
+                    class extends DNA.Component {
+                        render() {
+                            return (
+                                <button
+                                    type="button"
+                                    // @ts-ignore We are not defining custom elements for TypeScript
+                                    is="test-component-80"
+                                >
+                                    test
+                                </button>
+                            );
+                        }
+                    },
+                    {
+                        extends: 'article',
+                    }
+                );
+
+                const element = new TestElement();
+                expect(spyConnectedCallback).not.toHaveBeenCalled();
+
+                wrapper.appendChild(element);
+
+                // Wait for the connectedCallback to be called for polyfilled elements
+                await new Promise((resolve) => setTimeout(resolve, 100));
+
+                expect(spyConnectedCallback).toHaveBeenCalledOnce();
+            });
         });
 
         describe('childListChangedCallback', () => {

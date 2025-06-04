@@ -8,6 +8,7 @@ import { getPrototypeOf, hasOwn, isBrowser, setPrototypeOf } from './helpers';
 function polyfillBuiltin() {
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
+    const CONNECTED_SYMBOL = Symbol();
     const nativeCreateElement = document.createElement.bind(document);
     const builtin = Object.values(Elements);
     const customElements = window.customElements;
@@ -18,6 +19,35 @@ function polyfillBuiltin() {
     const filterBuiltinElement = (node: Node) =>
         isElement(node) && node.getAttribute('is') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
     let childListObserver: MutationObserver;
+
+    const isCustomElement = (node: Node): node is CustomElement => {
+        return CE_SYMBOL in node;
+    };
+
+    const isConnected = (element: CustomElement) => {
+        if (CONNECTED_SYMBOL in element) {
+            return element[CONNECTED_SYMBOL] === true;
+        }
+        return false;
+    };
+
+    const connect = (
+        element: CustomElement & {
+            [CONNECTED_SYMBOL]?: boolean;
+        }
+    ) => {
+        element[CONNECTED_SYMBOL] = true;
+        element.connectedCallback();
+    };
+
+    const disconnect = (
+        element: CustomElement & {
+            [CONNECTED_SYMBOL]?: boolean;
+        }
+    ) => {
+        element[CONNECTED_SYMBOL] = false;
+        element.disconnectedCallback();
+    };
 
     /**
      * Create a MutationObserver to observe childList changes.
@@ -32,12 +62,14 @@ function polyfillBuiltin() {
                         if (node.nodeType === Node.ELEMENT_NODE) {
                             polyfillUpgrade(node as Element);
 
-                            if (CE_SYMBOL in node) {
-                                (node as unknown as CustomElement).connectedCallback();
+                            if (isCustomElement(node) && !isConnected(node)) {
+                                connect(node);
                             }
 
                             (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                (child as unknown as CustomElement).connectedCallback();
+                                if (isCustomElement(child) && !isConnected(child)) {
+                                    connect(child as CustomElement);
+                                }
                             });
                         }
                     }
@@ -46,12 +78,14 @@ function polyfillBuiltin() {
                     for (let i = 0, len = mutation.removedNodes.length; i < len; i++) {
                         const node = mutation.removedNodes[i];
                         if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (CE_SYMBOL in node) {
-                                (node as unknown as CustomElement).disconnectedCallback();
+                            if (isCustomElement(node) && isConnected(node)) {
+                                disconnect(node);
                             }
 
                             (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                (child as unknown as CustomElement).disconnectedCallback();
+                                if (isCustomElement(child) && isConnected(child)) {
+                                    disconnect(child as CustomElement);
+                                }
                             });
                         }
                     }
@@ -185,7 +219,7 @@ function polyfillBuiltin() {
                 upgradedNode.setAttribute(name, value);
             }
         }
-        if (upgradedNode.isConnected) {
+        if (upgradedNode.isConnected && !isConnected(upgradedNode)) {
             upgradedNode.connectedCallback();
         }
 
