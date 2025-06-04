@@ -1,5 +1,5 @@
-import type { Realm } from './Component';
 import type { Template as JSXTemplate } from './JSX';
+import type { Realm } from './Realm';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { PropertyConfig, PropertyObserver } from './property';
 
@@ -115,6 +115,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -393,6 +398,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -667,6 +677,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -945,6 +960,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -1219,6 +1239,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -1497,6 +1522,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -1771,6 +1801,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -2049,6 +2084,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -2323,6 +2363,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -2601,6 +2646,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -2875,6 +2925,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -3153,6 +3208,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -3427,6 +3487,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -3705,6 +3770,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -3979,6 +4049,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -4257,6 +4332,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -4531,6 +4611,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -4809,6 +4894,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -5083,6 +5173,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -5361,6 +5456,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -5635,6 +5735,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -5913,6 +6018,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -6187,6 +6297,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -6465,6 +6580,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -6739,6 +6859,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -7017,6 +7142,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -7291,6 +7421,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -7569,6 +7704,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -7843,6 +7983,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -8121,6 +8266,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -8395,6 +8545,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -8673,6 +8828,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -8947,6 +9107,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -9225,6 +9390,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -9501,6 +9671,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -9775,6 +9950,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -10054,6 +10234,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -10328,6 +10513,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -10606,6 +10796,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -10882,6 +11077,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -11156,6 +11356,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -11435,6 +11640,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -11709,6 +11919,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -11987,6 +12202,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -12261,6 +12481,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -12539,6 +12764,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -12813,6 +13043,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -13091,6 +13326,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -13365,6 +13605,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -13643,6 +13888,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -13917,6 +14167,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -14195,6 +14450,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -14469,6 +14729,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -14747,6 +15012,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -15021,6 +15291,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -15299,6 +15574,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -15573,6 +15853,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -15851,6 +16136,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -16125,6 +16415,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -16403,6 +16698,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -16677,6 +16977,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -16955,6 +17260,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -17229,6 +17539,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -17507,6 +17822,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -17781,6 +18101,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
@@ -18059,6 +18384,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -18335,6 +18665,11 @@ export declare namespace HTML {
         updatedCallback(): void;
 
         /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
+
+        /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
          *
          * @param propertyName The name of the changed property.
@@ -18609,6 +18944,11 @@ export declare namespace HTML {
          * Invoked each time the component has been updated.
          */
         updatedCallback(): void;
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback(): void;
 
         /**
          * Invoked each time one of a Component's property is setted, removed, or changed.
