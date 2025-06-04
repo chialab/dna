@@ -4,5 +4,12 @@
   "initialVersions": {
     "@chialab/dna": "4.3.0"
   },
-  "changesets": []
+  "changesets": [
+    "fruity-poets-lick",
+    "full-ears-stop",
+    "gold-cobras-exist",
+    "petite-brooms-shop",
+    "puny-times-hope",
+    "wide-views-change"
+  ]
 }
