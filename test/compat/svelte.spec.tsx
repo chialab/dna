@@ -94,6 +94,39 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
         );
     });
 
+    test('mixed slots', async () => {
+        const { default: Test4 } = await import('./Test7.svelte');
+        const { container, rerender } = render(Test4, {
+            props: {
+                title: false,
+            },
+        });
+
+        const element = container.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(9);
+        expect(element.childNodesBySlot(null)).toHaveLength(7);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+
+        await rerender({ title: true });
+
+        expect(element.slotChildNodes).toHaveLength(11);
+        expect(element.childNodesBySlot(null)).toHaveLength(7);
+        expect(element.childNodesBySlot('children')).toHaveLength(2);
+        expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[3]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[6]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('tagName', 'H1');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('textContent', 'Title');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('tagName', 'H2');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('textContent', 'Title');
+
+        await rerender({ title: false });
+
+        expect(element.slotChildNodes).toHaveLength(9);
+        expect(element.childNodesBySlot(null)).toHaveLength(7);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+    });
+
     test('nested slot', async () => {
         const { default: Test4 } = await import('./Test4.svelte');
         const { container, rerender } = render(Test4, {

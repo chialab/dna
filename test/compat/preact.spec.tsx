@@ -101,6 +101,42 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         );
     });
 
+    test('mixed slots', () => {
+        const Template = (showTitle = false) =>
+            h('test-compat-1', {}, [
+                h('span', null, 'Test'),
+                showTitle ? h('h1', { slot: 'children' }, 'Title') : null,
+                h('span', null, 'Test'),
+                showTitle ? h('h2', { slot: 'children' }, 'Title') : null,
+                h('span', null, 'Test'),
+            ]);
+        render(Template(), wrapper);
+
+        const element = wrapper.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(3);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+
+        render(Template(true), wrapper);
+
+        expect(element.slotChildNodes).toHaveLength(5);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(2);
+        expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[1]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[2]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('tagName', 'H1');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('textContent', 'Title');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('tagName', 'H2');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('textContent', 'Title');
+
+        render(Template(false), wrapper);
+
+        expect(element.slotChildNodes).toHaveLength(3);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+    });
+
     test('nested slot', () => {
         const Template = (showTitle = false) =>
             h('test-compat-2', { key: '1' }, [
