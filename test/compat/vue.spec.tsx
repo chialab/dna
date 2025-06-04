@@ -148,6 +148,59 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         );
     });
 
+    test('mixed slots', async () => {
+        const app = Vue.createApp({
+            data() {
+                return {
+                    title: false,
+                };
+            },
+            render() {
+                return Vue.h('test-compat-1', {}, [
+                    Vue.h('span', null, 'Test'),
+                    this.title ? Vue.h('h1', { slot: 'children' }, 'Title') : null,
+                    Vue.h('span', null, 'Test'),
+                    this.title ? Vue.h('h2', { slot: 'children' }, 'Title') : null,
+                    Vue.h('span', null, 'Test'),
+                ]);
+            },
+            methods: {
+                updateTitle(value: boolean) {
+                    this.title = value;
+                },
+            },
+        });
+        app.mount(wrapper);
+
+        const element = wrapper.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(5);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+
+        // @ts-ignore We dont care about Vue types
+        app._instance?.proxy?.updateTitle(true);
+        await Vue.nextTick();
+
+        expect(element.slotChildNodes).toHaveLength(5);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(2);
+        expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[1]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[0].childNodes[2]).toHaveProperty('textContent', 'Test');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('tagName', 'H1');
+        expect(element.childNodes[1].childNodes[0]).toHaveProperty('textContent', 'Title');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('tagName', 'H2');
+        expect(element.childNodes[1].childNodes[1]).toHaveProperty('textContent', 'Title');
+
+        // @ts-ignore We dont care about Vue types
+        app._instance?.proxy?.updateTitle(false);
+        await Vue.nextTick();
+
+        expect(element.slotChildNodes).toHaveLength(5);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+    });
+
     test('nested slot', async () => {
         const app = Vue.createApp({
             data() {
