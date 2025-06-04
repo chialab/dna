@@ -5,4 +5,4 @@
 export let text;
 </script>
 
-<svelte-test-2>{text} {'children'}</svelte-test-2>
+<test-compat-1>{text} {'children'}</test-compat-1>

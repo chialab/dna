@@ -5,6 +5,6 @@
 export let switchValue;
 </script>
 
-<svelte-test-6 switch={switchValue}>
+<test-compat-4 switch={switchValue}>
     {#if switchValue}World{:else}Hello{/if}
-</svelte-test-6>
+</test-compat-4>

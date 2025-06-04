@@ -1,7 +1,13 @@
-import * as DNA from '@chialab/dna';
 import { h, render } from 'preact';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { IS_BROWSER } from '../helpers';
+import {
+    type TestCompat1,
+    type TestCompat2,
+    type TestCompat3,
+    type TestCompat4,
+    defineTestCompat3,
+} from './TestElements';
 
 describe.runIf(IS_BROWSER)('Preact compatibility', () => {
     let wrapper: HTMLElement;
@@ -15,85 +21,60 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
     });
 
     test('should update text content', () => {
-        DNA.define(
-            'preact-test-1',
-            class extends DNA.Component {
-                render() {
-                    return (
-                        <>
-                            <span>{this.childNodesBySlot(null)}</span>
-                            <div>{this.childNodesBySlot('children')}</div>
-                        </>
-                    );
-                }
-            }
-        );
-        const Template = (text: string) => h('preact-test-1', null, [text]);
+        const Template = (text: string) => h('test-compat-1', null, [text]);
         render(Template('Text'), wrapper);
 
-        const element = wrapper.children[0];
-        expect(element.childNodes[0].textContent).toBe('Text');
+        const element = wrapper.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(1);
+        expect(element.childNodesBySlot(null)).toHaveLength(1);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+        expect(element.childNodes[0]).toHaveProperty('textContent', 'Text');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Text</span><div></div></preact-test-1>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Text</span><div></div></test-compat-1>`
         );
 
         render(Template('Update'), wrapper);
-        expect(element.childNodes[0].textContent).toBe('Update');
+
+        expect(element.slotChildNodes).toHaveLength(1);
+        expect(element.childNodesBySlot(null)).toHaveLength(1);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+        expect(element.childNodes[0]).toHaveProperty('textContent', 'Update');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-1 :scope="preact-test-1" :defined=""><span>Update</span><div></div></preact-test-1>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Update</span><div></div></test-compat-1>`
         );
     });
 
     test('should update text content with multiple text nodes', () => {
-        DNA.define(
-            'preact-test-2',
-            class extends DNA.Component {
-                render() {
-                    return (
-                        <>
-                            <span>{this.childNodesBySlot(null)}</span>
-                            <div>{this.childNodesBySlot('children')}</div>
-                        </>
-                    );
-                }
-            }
-        );
-        const Template = (text: string) => h('preact-test-2', null, [text, ' ', 'children']);
+        const Template = (text: string) => h('test-compat-1', null, [text, ' ', 'children']);
         render(Template('Text'), wrapper);
 
-        const element = wrapper.children[0];
-        expect(element.childNodes[0].textContent).toBe('Text children');
-        expect(element.childNodes[0].childNodes[0].textContent).toBe('Text');
-        expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
+        const element = wrapper.children[0] as TestCompat1;
+        expect(element.slotChildNodes).toHaveLength(3);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+        expect(element.childNodes[0]).toHaveProperty('textContent', 'Text children');
+        expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Text');
+        expect(element.childNodes[0].childNodes[2]).toHaveProperty('textContent', 'children');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Text children</span><div></div></preact-test-2>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Text children</span><div></div></test-compat-1>`
         );
 
         render(Template('Update'), wrapper);
-        expect(element.childNodes[0].textContent).toBe('Update children');
-        expect(element.childNodes[0].childNodes[0].textContent).toBe('Update');
-        expect(element.childNodes[0].childNodes[2].textContent).toBe('children');
+
+        expect(element.slotChildNodes).toHaveLength(3);
+        expect(element.childNodesBySlot(null)).toHaveLength(3);
+        expect(element.childNodesBySlot('children')).toHaveLength(0);
+        expect(element.childNodes[0]).toHaveProperty('textContent', 'Update children');
+        expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Update');
+        expect(element.childNodes[0].childNodes[2]).toHaveProperty('textContent', 'children');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-2 :scope="preact-test-2" :defined=""><span>Update children</span><div></div></preact-test-2>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Update children</span><div></div></test-compat-1>`
         );
     });
 
     test('should update named slots', () => {
-        DNA.define(
-            'preact-test-3',
-            class extends DNA.Component {
-                render() {
-                    return (
-                        <>
-                            <span>{this.childNodesBySlot(null)}</span>
-                            <div>{this.childNodesBySlot('children')}</div>
-                        </>
-                    );
-                }
-            }
-        );
         const Template = (title: boolean) =>
-            h('preact-test-3', null, [
+            h('test-compat-1', null, [
                 'Text ',
                 title
                     ? h('h1', { slot: 'children', key: 1 }, 'Title')
@@ -102,173 +83,109 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
             ]);
         render(Template(true), wrapper);
 
-        const element = wrapper.children[0];
+        const element = wrapper.children[0] as TestCompat1;
         const textNode = element.childNodes[0].childNodes[0];
+        expect(element.childNodesBySlot('children')).toHaveLength(1);
+        expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></preact-test-3>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></test-compat-1>`
         );
 
         render(Template(false), wrapper);
+
+        expect(element.childNodesBySlot('children')).toHaveLength(1);
+        expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
         expect(wrapper.innerHTML).toBe(
-            `<preact-test-3 :scope="preact-test-3" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></preact-test-3>`
+            `<test-compat-1 :scope="test-compat-1" :defined=""><span>Text \n</span><div><h2 slot="children">Subtitle</h2></div></test-compat-1>`
         );
     });
 
     test('nested slot', () => {
-        const IMG = 'data:image/png;base64,';
-        DNA.define(
-            'preact-test-4',
-            class extends DNA.Component {
-                render() {
-                    return (
-                        <>
-                            <div class="layout-header">
-                                <preact-test-4-title>
-                                    <slot name="title" />
-                                </preact-test-4-title>
-                            </div>
-                            <div class="layout-body">
-                                <slot />
-                            </div>
-                        </>
-                    );
-                }
-            }
-        );
-        DNA.define(
-            'preact-test-4-title',
-            class MyTitle extends DNA.Component {
-                render() {
-                    return (
-                        <span class="title">
-                            <slot>Untitled</slot>
-                        </span>
-                    );
-                }
-            }
-        );
-
-        const template = (showTitle = false) =>
-            h('preact-test-4', { key: '1' }, [
+        const Template = (showTitle = false) =>
+            h('test-compat-2', { key: '1' }, [
                 showTitle ? h('h1', { slot: 'title' }, 'Title') : null,
-                h('img', { src: IMG, alt: '' }),
+                h('img', { src: 'data:image/png;base64,', alt: '' }),
                 h('p', null, 'Body'),
             ]);
-        render(template(), wrapper);
-        const element = wrapper.children[0];
+        render(Template(), wrapper);
+
+        const element = wrapper.children[0] as TestCompat2;
+        expect(element.childNodesBySlot(null)).toHaveLength(2);
+        expect(element.childNodesBySlot('title')).toHaveLength(0);
         expect(element.children).toHaveLength(2);
-        expect(element.children[0].tagName).toBe('DIV');
-        expect(element.children[0].className).toBe('layout-header');
+        expect(element.children[0]).toHaveProperty('tagName', 'DIV');
+        expect(element.children[0]).toHaveProperty('className', 'layout-header');
         expect(element.children[0].children).toHaveLength(1);
-        expect(element.children[0].children[0].tagName).toBe('preact-test-4-title'.toUpperCase());
-        expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
-        expect(element.children[0].children[0].children[0].textContent).toBe('Untitled');
-        render(template(true), wrapper);
-        expect(element.children[0].children[0].children[0].tagName).toBe('SPAN');
-        expect(element.children[0].children[0].children[0].textContent).toBe('Title');
-        expect(element.children[1].tagName).toBe('DIV');
-        expect(element.children[1].className).toBe('layout-body');
-        expect(element.children[1].children[0].tagName).toBe('IMG');
-        expect(element.children[1].children[0].getAttribute('src')).toBe(IMG);
-        expect(element.children[1].children[1].tagName).toBe('P');
-        expect(element.children[1].children[1].textContent).toBe('Body');
+        expect(element.children[0].children[0]).toHaveProperty('tagName', 'test-compat-2-title'.toUpperCase());
+        expect(element.children[0].children[0].children[0]).toHaveProperty('tagName', 'SPAN');
+        expect(element.children[0].children[0].children[0]).toHaveProperty('textContent', 'Untitled');
+
+        render(Template(true), wrapper);
+
+        expect(element.childNodesBySlot(null)).toHaveLength(2);
+        expect(element.childNodesBySlot('title')).toHaveLength(1);
+        expect(element.childNodesBySlot('title')[0]).toHaveProperty('tagName', 'H1');
+        expect(element.children[0].children[0].children[0]).toHaveProperty('tagName', 'SPAN');
+        expect(element.children[0].children[0].children[0]).toHaveProperty('textContent', 'Title');
+        expect(element.children[1]).toHaveProperty('tagName', 'DIV');
+        expect(element.children[1]).toHaveProperty('className', 'layout-body');
+        expect(element.children[1].children[0]).toHaveProperty('tagName', 'IMG');
+        expect(element.children[1].children[0]).toHaveProperty('src', 'data:image/png;base64,');
+        expect(element.children[1].children[1]).toHaveProperty('tagName', 'P');
+        expect(element.children[1].children[1]).toHaveProperty('textContent', 'Body');
     });
 
     test('slot moved across elements', () => {
-        const IMG = 'data:image/png;base64,';
-        DNA.define(
-            'preact-test-5-card',
-            class MyCard extends DNA.Component {
-                render() {
-                    return <slot />;
-                }
-            }
-        );
         const Template = (collapsed = false) =>
-            h('preact-test-5', { collapsed }, [
+            h('test-compat-3', { collapsed }, [
                 h('h1', null, 'Title'),
-                h('img', { src: IMG, alt: '' }),
+                h('img', { src: 'data:image/png;base64,', alt: '' }),
                 h('p', null, 'Body'),
             ]);
         render(Template(), wrapper);
-        DNA.define(
-            'preact-test-5',
-            class MyElement extends DNA.Component {
-                static get properties() {
-                    return {
-                        collapsed: Boolean,
-                    };
-                }
+        defineTestCompat3();
 
-                declare collapsed: boolean;
-
-                render() {
-                    if (this.collapsed) {
-                        return <slot />;
-                    }
-                    return (
-                        <preact-test-5-card>
-                            <slot />
-                        </preact-test-5-card>
-                    );
-                }
-            }
-        );
-        const element = wrapper.children[0];
+        const element = wrapper.children[0] as TestCompat3;
         window.customElements.upgrade(element);
         expect(element.children).toHaveLength(1);
-        expect(element.children[0].children[0].tagName).toBe('H1');
-        expect(element.children[0].children[0].textContent).toBe('Title');
-        expect(element.children[0].children[1].tagName).toBe('IMG');
-        expect(element.children[0].children[1].getAttribute('src')).toBe(IMG);
-        expect(element.children[0].children[2].tagName).toBe('P');
-        expect(element.children[0].children[2].textContent).toBe('Body');
+        expect(element.children[0].children[0]).toHaveProperty('tagName', 'H1');
+        expect(element.children[0].children[0]).toHaveProperty('textContent', 'Title');
+        expect(element.children[0].children[1]).toHaveProperty('tagName', 'IMG');
+        expect(element.children[0].children[1]).toHaveProperty('src', 'data:image/png;base64,');
+        expect(element.children[0].children[2]).toHaveProperty('tagName', 'P');
+        expect(element.children[0].children[2]).toHaveProperty('textContent', 'Body');
+
         render(Template(true), wrapper);
-        expect(element.children[0].tagName).toBe('H1');
-        expect(element.children[0].textContent).toBe('Title');
-        expect(element.children[1].tagName).toBe('IMG');
-        expect(element.children[1].getAttribute('src')).toBe(IMG);
-        expect(element.children[2].tagName).toBe('P');
-        expect(element.children[2].textContent).toBe('Body');
+
+        expect(element.children[0]).toHaveProperty('tagName', 'H1');
+        expect(element.children[0]).toHaveProperty('textContent', 'Title');
+        expect(element.children[1]).toHaveProperty('tagName', 'IMG');
+        expect(element.children[1]).toHaveProperty('src', 'data:image/png;base64,');
+        expect(element.children[2]).toHaveProperty('tagName', 'P');
+        expect(element.children[2]).toHaveProperty('textContent', 'Body');
+
         render(Template(false), wrapper);
-        expect(element.children[0].children[0].tagName).toBe('H1');
-        expect(element.children[0].children[0].textContent).toBe('Title');
-        expect(element.children[0].children[1].tagName).toBe('IMG');
-        expect(element.children[0].children[1].getAttribute('src')).toBe(IMG);
-        expect(element.children[0].children[2].tagName).toBe('P');
-        expect(element.children[0].children[2].textContent).toBe('Body');
+
+        expect(element.children[0].children[0]).toHaveProperty('tagName', 'H1');
+        expect(element.children[0].children[0]).toHaveProperty('textContent', 'Title');
+        expect(element.children[0].children[1]).toHaveProperty('tagName', 'IMG');
+        expect(element.children[0].children[1]).toHaveProperty('src', 'data:image/png;base64,');
+        expect(element.children[0].children[2]).toHaveProperty('tagName', 'P');
+        expect(element.children[0].children[2]).toHaveProperty('textContent', 'Body');
     });
 
     test('slot moved and replaced', () => {
-        DNA.define(
-            'preact-test-6',
-            class TestElement extends DNA.Component {
-                static get properties() {
-                    return {
-                        switch: Boolean,
-                    };
-                }
-
-                declare switch: boolean;
-
-                render() {
-                    return (
-                        <>
-                            <div class="parent-1">{this.switch ? <slot /> : 'Empty'}</div>
-                            <div class="parent-2">{!this.switch ? <slot /> : 'Empty'}</div>
-                        </>
-                    );
-                }
-            }
-        );
         const Template = (switchValue = false) =>
-            h('preact-test-6', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
+            h('test-compat-4', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
         render(Template(), wrapper);
-        const element = wrapper.children[0];
+
+        const element = wrapper.children[0] as TestCompat4;
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Hello');
+
         render(Template(true), wrapper);
+
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
     });
