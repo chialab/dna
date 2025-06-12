@@ -17,7 +17,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Setup Pages

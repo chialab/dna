@@ -25,13 +25,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
         run: yarn install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
+      - name: Run build script
+        run: yarn build
+
+      - name: Lint package
+        run: yarn publint --pack npm
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

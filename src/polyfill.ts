@@ -1,6 +1,6 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
 import * as Elements from './Elements';
-import { getPrototypeOf, hasOwnProperty, isBrowser, setPrototypeOf } from './helpers';
+import { getPrototypeOf, hasOwn, isBrowser, setPrototypeOf } from './helpers';
 
 /**
  * Register a polyfill for Customized built-in elements.
@@ -8,6 +8,7 @@ import { getPrototypeOf, hasOwnProperty, isBrowser, setPrototypeOf } from './hel
 function polyfillBuiltin() {
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
+    const CONNECTED_SYMBOL = Symbol();
     const nativeCreateElement = document.createElement.bind(document);
     const builtin = Object.values(Elements);
     const customElements = window.customElements;
@@ -18,6 +19,35 @@ function polyfillBuiltin() {
     const filterBuiltinElement = (node: Node) =>
         isElement(node) && node.getAttribute('is') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
     let childListObserver: MutationObserver;
+
+    const isCustomElement = (node: Node): node is CustomElement => {
+        return CE_SYMBOL in node;
+    };
+
+    const isConnected = (element: CustomElement) => {
+        if (CONNECTED_SYMBOL in element) {
+            return element[CONNECTED_SYMBOL] === true;
+        }
+        return false;
+    };
+
+    const connect = (
+        element: CustomElement & {
+            [CONNECTED_SYMBOL]?: boolean;
+        }
+    ) => {
+        element[CONNECTED_SYMBOL] = true;
+        element.connectedCallback();
+    };
+
+    const disconnect = (
+        element: CustomElement & {
+            [CONNECTED_SYMBOL]?: boolean;
+        }
+    ) => {
+        element[CONNECTED_SYMBOL] = false;
+        element.disconnectedCallback();
+    };
 
     /**
      * Create a MutationObserver to observe childList changes.
@@ -32,12 +62,14 @@ function polyfillBuiltin() {
                         if (node.nodeType === Node.ELEMENT_NODE) {
                             polyfillUpgrade(node as Element);
 
-                            if (CE_SYMBOL in node) {
-                                (node as unknown as CustomElement).connectedCallback();
+                            if (isCustomElement(node) && !isConnected(node)) {
+                                connect(node);
                             }
 
                             (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                (child as unknown as CustomElement).connectedCallback();
+                                if (isCustomElement(child) && !isConnected(child)) {
+                                    connect(child as CustomElement);
+                                }
                             });
                         }
                     }
@@ -46,12 +78,14 @@ function polyfillBuiltin() {
                     for (let i = 0, len = mutation.removedNodes.length; i < len; i++) {
                         const node = mutation.removedNodes[i];
                         if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (CE_SYMBOL in node) {
-                                (node as unknown as CustomElement).disconnectedCallback();
+                            if (isCustomElement(node) && isConnected(node)) {
+                                disconnect(node);
                             }
 
                             (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                (child as unknown as CustomElement).disconnectedCallback();
+                                if (isCustomElement(child) && isConnected(child)) {
+                                    disconnect(child as CustomElement);
+                                }
                             });
                         }
                     }
@@ -69,24 +103,24 @@ function polyfillBuiltin() {
 
     /**
      * Shim a Custom Element constructor.
-     * @param constructor The Custom Element constructor.
+     * @param ctr The Custom Element constructor.
      */
-    const shimConstructor = (constructor: CustomElementConstructor & { __shim?: boolean }) => {
+    const shimConstructor = (ctr: CustomElementConstructor & { __shim?: boolean }) => {
         if (!childListObserver) {
             createChildListObserver();
         }
 
-        let CurrentConstructor = constructor;
-        let ParentCostructor = getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
-        while (!builtin.includes(ParentCostructor)) {
-            CurrentConstructor = ParentCostructor;
-            if (hasOwnProperty.call(CurrentConstructor, '__shim')) {
+        let currentConstructor = ctr;
+        let parentCostructor = getPrototypeOf(currentConstructor) as CustomElementConstructor;
+        while (!builtin.includes(parentCostructor)) {
+            currentConstructor = parentCostructor;
+            if (hasOwn.call(currentConstructor, '__shim')) {
                 return;
             }
-            ParentCostructor = getPrototypeOf(CurrentConstructor) as CustomElementConstructor;
+            parentCostructor = getPrototypeOf(currentConstructor) as CustomElementConstructor;
         }
 
-        if (hasOwnProperty.call(CurrentConstructor, '__shim')) {
+        if (hasOwn.call(currentConstructor, '__shim')) {
             return;
         }
 
@@ -99,7 +133,7 @@ function polyfillBuiltin() {
             const ActualConstructor = this.constructor as CustomElementConstructor;
             const tag = tagNames[name];
             if (!tag) {
-                return Reflect.construct(ParentCostructor, [], ActualConstructor);
+                return Reflect.construct(parentCostructor, [], ActualConstructor);
             }
 
             const element = nativeCreateElement(tag) as CustomElement;
@@ -134,68 +168,70 @@ function polyfillBuiltin() {
 
             return element;
         };
-        setPrototypeOf(ShimConstructor, ParentCostructor);
-        (ShimConstructor as Function).apply = Function.apply;
-        (ShimConstructor as Function).call = Function.call;
-        ShimConstructor.prototype = ParentCostructor.prototype;
+        setPrototypeOf(ShimConstructor, parentCostructor);
+        ShimConstructor.apply = Function.apply;
+        ShimConstructor.call = Function.call;
+        ShimConstructor.prototype = parentCostructor.prototype;
 
-        setPrototypeOf(CurrentConstructor, ShimConstructor);
-        setPrototypeOf(CurrentConstructor.prototype, ShimConstructor.prototype);
-        CurrentConstructor.__shim = true;
+        setPrototypeOf(currentConstructor, ShimConstructor);
+        setPrototypeOf(currentConstructor.prototype, ShimConstructor.prototype);
+        currentConstructor.__shim = true;
     };
 
     const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
-    const polyfillUpgrade = (customElements.upgrade = function (
-        root: Element,
-        nested = false,
-        filter: NodeFilter = filterBuiltinElement
-    ) {
+
+    const upgradeNodeIfNeeded = (node: Node): boolean => {
+        if (!isElement(node)) {
+            return false;
+        }
+        if (CE_SYMBOL in node) {
+            // already upgraded
+            return false;
+        }
+        const is = node.getAttribute('is');
+        if (!is) {
+            return false;
+        }
+        const ctr = customElements.get(is) as CustomElementConstructor;
+        if (!ctr) {
+            return false;
+        }
+
+        const attributes: { name: string; value: string }[] = [];
+        const observed = (ctr as CustomElementConstructor).observedAttributes || [];
+        for (let i = 0, len = node.attributes.length; i < len; i++) {
+            const attr = node.attributes[i];
+            if (observed.includes(attr.name)) {
+                attributes.push({
+                    name: attr.name,
+                    value: attr.value,
+                });
+            }
+        }
+
+        const upgradedNode = Reflect.construct(ctr, [node], ctr) as CustomElement;
+        upgradedNode.setAttribute(':ce-polyfill', '');
+        for (let i = 0, len = attributes.length; i < len; i++) {
+            const { name, value } = attributes[i];
+            if (upgradedNode.getAttribute(name) === value) {
+                upgradedNode.attributeChangedCallback(name, null, value);
+            } else {
+                upgradedNode.setAttribute(name, value);
+            }
+        }
+        if (upgradedNode.isConnected && !isConnected(upgradedNode)) {
+            upgradedNode.connectedCallback();
+        }
+
+        return true;
+    };
+
+    const polyfillUpgrade = (root: Element, nested = false, filter: NodeFilter = filterBuiltinElement) => {
         if (!nested) {
             upgrade(root);
         }
 
-        upgradeBlock: if (isElement(root)) {
-            if (CE_SYMBOL in root) {
-                // already upgraded
-                break upgradeBlock;
-            }
-
-            const is = root.getAttribute('is');
-            if (!is) {
-                break upgradeBlock;
-            }
-
-            const constructor = customElements.get(is) as CustomElementConstructor;
-            if (!constructor) {
-                break upgradeBlock;
-            }
-
-            const attributes: { name: string; value: string }[] = [];
-            const observed = (constructor as CustomElementConstructor).observedAttributes || [];
-            for (let i = 0, len = root.attributes.length; i < len; i++) {
-                const attr = root.attributes[i];
-                if (observed.includes(attr.name)) {
-                    attributes.push({
-                        name: attr.name,
-                        value: attr.value,
-                    });
-                }
-            }
-
-            const upgradedNode = Reflect.construct(constructor, [root], constructor) as CustomElement;
-            upgradedNode.setAttribute(':ce-polyfill', '');
-            for (let i = 0, len = attributes.length; i < len; i++) {
-                const { name, value } = attributes[i];
-                if (upgradedNode.getAttribute(name) === value) {
-                    upgradedNode.attributeChangedCallback(name, null, value);
-                } else {
-                    upgradedNode.setAttribute(name, value);
-                }
-            }
-            if (upgradedNode.isConnected) {
-                upgradedNode.connectedCallback();
-            }
-        }
+        upgradeNodeIfNeeded(root);
 
         if (!nested) {
             const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, filter);
@@ -205,20 +241,18 @@ function polyfillBuiltin() {
                 node = walker.nextNode() as Element | null;
             }
         }
-    });
+    };
 
-    customElements.define = function (
-        name: string,
-        constructor: CustomElementConstructor,
-        options: ElementDefinitionOptions = {}
-    ) {
+    customElements.upgrade = polyfillUpgrade;
+
+    customElements.define = (name: string, ctr: CustomElementConstructor, options: ElementDefinitionOptions = {}) => {
         if (!options.extends) {
-            return define.call(customElements, name, constructor, options);
+            return define.call(customElements, name, ctr, options);
         }
 
         tagNames[name] = options.extends;
-        shimConstructor(constructor);
-        define.call(customElements, name, constructor, options);
+        shimConstructor(ctr);
+        define.call(customElements, name, ctr, options);
         polyfillUpgrade(document.documentElement, false, (node: Node) =>
             isElement(node) &&
             node.tagName?.toLowerCase() === options.extends &&
@@ -228,11 +262,11 @@ function polyfillBuiltin() {
         );
     };
 
-    document.createElement = function (tagName: string, options?: ElementCreationOptions) {
+    document.createElement = (tagName: string, options?: ElementCreationOptions) => {
         if (options?.is) {
-            const constructor = customElements.get(options.is);
-            if (constructor) {
-                return new constructor();
+            const ctr = customElements.get(options.is);
+            if (ctr) {
+                return new ctr();
             }
         }
         return nativeCreateElement.call(document, tagName, options);

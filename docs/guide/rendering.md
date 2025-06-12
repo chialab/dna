@@ -336,6 +336,53 @@ h('table', null,
 )
 ```
 
+### The `useEffect` hook
+
+The `useEffect` hook is a function that allows you to run side effects in your function component. The first argument is a function that will be called after the component has been rendered. The second argument is an array of dependencies. When the dependencies change, the effect is re-run.
+
+It can also return a cleanup function that will be called before the effect is re-run or when the component is unmounted.
+
+::: code-group
+
+```tsx [jsx]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return <span>{time} seconds</span>;
+}
+```
+
+```ts [html]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return html`<span>${time} seconds</span>`;
+}
+```
+
+```ts [vdom]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return h('span', null, time, ' seconds');
+}
+```
+
 :::
 
 ### The `useRenderContext` hook
@@ -344,7 +391,7 @@ The `useRenderContext` hook is a function that returns the current context of th
 
 ::: warning
 
-It is highly discouraged to use the `useRenderContext` hook in function components. Also, please note that this hook will be deprecated once `useRef` and `useEffect` hooks will be available.
+It is highly discouraged to use the `useRenderContext` hook in function components.
 
 :::
 

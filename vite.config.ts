@@ -1,0 +1,41 @@
+import { fileURLToPath } from 'node:url';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { svelteTesting } from '@testing-library/svelte/vite';
+import { type Plugin, defineConfig } from 'vitest/config';
+
+export default defineConfig({
+    plugins: [svelte() as Plugin[], svelteTesting() as Plugin],
+    esbuild: {
+        include: /\.(m?(t|j)s|[jt]sx)$/,
+        target: ['es2020'],
+    },
+    resolve: {
+        conditions: ['browser'],
+        alias: {
+            '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
+            '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
+            '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+        },
+    },
+    test: {
+        dir: './test',
+        include: ['./**/*.spec.{js,ts,tsx}'],
+        fileParallelism: false,
+        reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : [],
+        coverage: {
+            all: false,
+            include: ['src/**/*'],
+            reporter: ['clover', 'html'],
+        },
+        browser: {
+            provider: 'playwright',
+            headless: true,
+            fileParallelism: false,
+            instances: [
+                {
+                    browser: 'chromium',
+                },
+            ],
+        },
+    },
+});
