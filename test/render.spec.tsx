@@ -235,6 +235,46 @@ describe.runIf(IS_BROWSER)(
                 expect(render2).toHaveBeenCalledTimes(2);
             });
 
+            it('should re-render component function only with keys', async () => {
+                const render1 = vi.fn();
+                const render2 = vi.fn();
+
+                const Test: DNA.FunctionComponent = () => {
+                    render1();
+                    return 'hello';
+                };
+
+                const Counter: DNA.FunctionComponent = (props, { useState }) => {
+                    render2();
+                    const [count, setCount] = useState(1);
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(
+                    <>
+                        <Test key={1} />
+                        <Counter key={2} />
+                    </>,
+                    wrapper
+                );
+                expect(wrapper.childNodes).toHaveLength(4);
+                expect(wrapper.childNodes[1]).toHaveProperty('textContent', 'hello');
+                expect(wrapper.childNodes[3]).toHaveProperty('textContent', '1');
+                const button = wrapper.childNodes[3] as HTMLButtonElement;
+                button.click();
+                expect(wrapper.childNodes[1]).toHaveProperty('textContent', 'hello');
+                expect(wrapper.childNodes[3]).toHaveProperty('textContent', '2');
+                expect(wrapper.childNodes[3]).toBe(button);
+                expect(render1).toHaveBeenCalledOnce();
+                expect(render2).toHaveBeenCalledTimes(2);
+            });
+
             it('should add nodes', () => {
                 const list = DNA.render(
                     <ul class="list">
