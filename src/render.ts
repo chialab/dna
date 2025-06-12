@@ -407,7 +407,10 @@ const renderTemplate = (
 
             const hooks = new HooksManager((renderContext.state = renderContext.state || []));
             if (key != null) {
-                fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
+                renderContext.keys = (renderContext.keys || new Map()).set(key, renderContext);
+                if (renderContext !== fragment) {
+                    fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
+                }
             }
 
             renderTemplate(
