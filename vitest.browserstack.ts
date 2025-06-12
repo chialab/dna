@@ -40,10 +40,10 @@ export default mergeConfig(vitestConfig, {
                 },
             },
             // oldest chrome supported by vitest
-            'chrome-80': {
+            'chrome-87': {
                 'browserName': 'Chrome',
                 'bstack:options': {
-                    browserVersion: '80',
+                    browserVersion: '87',
                 },
             },
             'firefox-latest': {
