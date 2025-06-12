@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.3.1
+
+### Patch Changes
+
+- c42cf28: Fix reset of `class` and `style` properties.
+- 4c6348c: Fix keyed function conmponents re-render after state changed.
+
 ## 4.3.0
 
 ### Minor Changes
