@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.1
+
+### Patch Changes
+
+- 64b6e67: Fix keyed function conmponents re-render after state changed.
+
 ## 4.4.0-beta.0
 
 ### Minor Changes
