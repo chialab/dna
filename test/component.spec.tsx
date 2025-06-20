@@ -681,7 +681,7 @@ describe.runIf(IS_BROWSER)(
                 expect(spyChildListChangedCallback).toHaveBeenCalledOnce();
             });
 
-            it('should when a node has been added', () => {
+            it('should invoke when a node has been added', () => {
                 const spyChildListChangedCallback = vi.fn();
                 const TestElement = DNA.define(
                     'test-component-77',
@@ -703,7 +703,7 @@ describe.runIf(IS_BROWSER)(
                 expect(spyChildListChangedCallback).toHaveBeenCalledTimes(2);
             });
 
-            it('should when a node has been removed', () => {
+            it('should invoke when a node has been removed', () => {
                 const spyChildListChangedCallback = vi.fn();
                 const TestElement = DNA.define(
                     'test-component-78',

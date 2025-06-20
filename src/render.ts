@@ -313,6 +313,21 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
 };
 
 /**
+ * Remove a node from the render tree.
+ * @param parentContext The parent context.
+ * @param childContext The child context to remove.
+ * @param rootContext The root context.
+ */
+const removeNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
+    parentContext.node.removeChild(childContext.node);
+    rootContext.contexts.delete(childContext.node);
+    const io = parentContext.children.indexOf(childContext);
+    if (io !== -1) {
+        parentContext.children.splice(io, 1);
+    }
+}
+
+/**
  * Insert a node into the render tree.
  * @param parentContext The parent context.
  * @param childContext The child context.
@@ -326,17 +341,13 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
         // remove nodes until the correct instance
         let currentContext = currentChildren[pos];
         while (currentContext && childContext !== currentContext) {
-            parentNode.removeChild(currentContext.node);
-            rootContext.contexts.delete(currentContext.node);
-            currentChildren.splice(pos, 1);
+            removeNode(parentContext, currentContext, rootContext);
             currentContext = currentChildren[pos];
         }
     } else {
         const currentChildContext = rootContext.contexts.get(childContext.node);
         if (currentChildContext?.parent && currentChildContext.parent !== parentContext) {
-            const { node: currentParentNode, children: currentParentChildren } = currentChildContext.parent;
-            currentParentNode.removeChild(childContext.node);
-            currentParentChildren.splice(currentParentChildren.indexOf(currentChildContext), 1);
+            removeNode(currentChildContext.parent, currentChildContext, rootContext);
         }
         parentNode.insertBefore(childContext.node, currentChildren[pos]?.node);
         currentChildren.splice(pos, 0, childContext);
@@ -680,7 +691,7 @@ export const internalRender = (
 
     while (currentIndex <= --end) {
         const [child] = contextChildren.splice(end, 1);
-        context.node.removeChild(child.node);
+        removeNode(context, child, rootContext);
         if (child.state) {
             new HooksManager(child.state).cleanup();
         }
