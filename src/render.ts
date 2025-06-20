@@ -325,7 +325,7 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
     if (io !== -1) {
         parentContext.children.splice(io, 1);
     }
-}
+};
 
 /**
  * Insert a node into the render tree.
