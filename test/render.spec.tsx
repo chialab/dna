@@ -886,13 +886,15 @@ describe.runIf(IS_BROWSER)(
 
                     render() {
                         if (this.showList) {
-                            return <div class="wrapper">
-                                <ul ref={this.list}>
-                                    {this.items.map((item) => (
-                                        <li>{item}</li>
-                                    ))}
-                                </ul>
-                            </div>;
+                            return (
+                                <div class="wrapper">
+                                    <ul ref={this.list}>
+                                        {this.items.map((item) => (
+                                            <li>{item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            );
                         }
                     }
                 }
