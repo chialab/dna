@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.3
+
+### Patch Changes
+
+- 0bf804b: Prevent double `connectedCallback` invokation when upgrading via polyfill.
+
 ## 4.4.0-beta.2
 
 ### Patch Changes
