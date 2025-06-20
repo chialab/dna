@@ -220,7 +220,7 @@ function polyfillBuiltin() {
             }
         }
         if (upgradedNode.isConnected && !isConnected(upgradedNode)) {
-            upgradedNode.connectedCallback();
+            connect(upgradedNode);
         }
 
         return true;
