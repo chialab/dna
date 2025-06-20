@@ -886,13 +886,13 @@ describe.runIf(IS_BROWSER)(
 
                     render() {
                         if (this.showList) {
-                            return (
+                            return <div class="wrapper">
                                 <ul ref={this.list}>
                                     {this.items.map((item) => (
                                         <li>{item}</li>
                                     ))}
                                 </ul>
-                            );
+                            </div>;
                         }
                     }
                 }
@@ -903,6 +903,8 @@ describe.runIf(IS_BROWSER)(
                 expect(element.list.childNodes).toHaveLength(3);
                 wrapper.removeChild(element);
                 expect(element.list.childNodes).toHaveLength(0);
+                wrapper.appendChild(element);
+                expect(element.list.childNodes).toHaveLength(3);
             });
         });
 
