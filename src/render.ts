@@ -163,10 +163,19 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
 
 /**
  * Check if a property should be ignored.
+ * @param node The node to check.
  * @param propertyKey The property key to check.
  * @returns `true` if the property should be ignored.
  */
-const shouldIgnoreProperty = (propertyKey: string) => ['children', 'key', 'is', 'xmlns'].includes(propertyKey);
+const shouldIgnoreProperty = (node: Node, propertyKey: string) => {
+    if (['children', 'key', 'xmlns'].includes(propertyKey)) {
+        return true;
+    }
+    if (propertyKey === 'is') {
+        return 'is' in node;
+    }
+    return false;
+};
 
 /**
  * Check if a property is writable.
@@ -566,7 +575,7 @@ const renderTemplate = (
 
         if (oldProperties) {
             for (const propertyKey in oldProperties) {
-                if (!(propertyKey in properties) && !shouldIgnoreProperty(propertyKey)) {
+                if (!(propertyKey in properties) && !shouldIgnoreProperty(node, propertyKey)) {
                     setProperty(
                         node,
                         propertyKey as keyof Node,
@@ -579,7 +588,7 @@ const renderTemplate = (
         }
 
         for (const propertyKey in properties) {
-            if (!shouldIgnoreProperty(propertyKey)) {
+            if (!shouldIgnoreProperty(node, propertyKey)) {
                 setProperty(
                     node,
                     propertyKey as keyof Node,

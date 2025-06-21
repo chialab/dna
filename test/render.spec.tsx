@@ -908,6 +908,31 @@ describe.runIf(IS_BROWSER)(
                 wrapper.appendChild(element);
                 expect(element.list.childNodes).toHaveLength(3);
             });
+
+            it('should set is attribute if not custom element', () => {
+                @DNA.customElement('test-render-13', {
+                    extends: 'div',
+                })
+                class TestElement extends DNA.HTML.Div {}
+
+                DNA.render(
+                    <>
+                        {/* @ts-ignore */}
+                        <div is="test-render-13" />
+                        {/* @ts-ignore */}
+                        <div is="unknown-element" />
+                    </>,
+                    wrapper
+                );
+                expect(wrapper.childNodes).toHaveLength(2);
+                const [testElement, unknownElement] = Array.from(wrapper.childNodes) as HTMLElement[];
+                expect(testElement).toHaveProperty('tagName', 'DIV');
+                expect(testElement).toHaveProperty('is', 'test-render-13');
+                expect(testElement).toBeInstanceOf(TestElement);
+                expect(unknownElement).toHaveProperty('tagName', 'DIV');
+                expect(unknownElement).not.toHaveProperty('is');
+                expect(unknownElement.getAttribute('is')).toBe('unknown-element');
+            });
         });
 
         describe('hooks', () => {
