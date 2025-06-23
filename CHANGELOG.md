@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.4
+
+### Patch Changes
+
+- 13210b9: Set `is` attribute if the element is not a custom element (yet).
+
 ## 4.4.0-beta.3
 
 ### Patch Changes
