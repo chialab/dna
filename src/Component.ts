@@ -712,21 +712,78 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             // From here to the end of the method, we enter the realm of dark magic.
             // We're going to modify the prototype of slotted nodes to improve compatibility with other rendering frameworks.
-            // In addition to patching methods that manipulate the DOM, we also handle a few special cases:
-            // 1. Since most frameworks that rely on the DOM to manage rendering state use comment markers
-            // —and comments aren't slotted— we pretend they're correctly positioned.
-            // 2. Some frameworks use parentNode to remove the current node. Here,
-            // we make a "controlled" exception to the rule that forbids modifying the DOM tree during read operations.
-            // In any case, we preserve compatibility with frameworks that analyze the DOM using a top-down approach.
             const root = this;
             const proto = getPrototypeOf(node as Comment);
-            const adoptedProto = {
+            setPrototypeOf(node, {
                 get parentNode() {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'parentNode', node);
+                    if (!node.isConnected) {
+                        // The slotted node is not connected to the DOM,
+                        // because it is a comment or is using a not handled slot name.
+                        // We return the root component as the parent node.
+                        return root;
                     }
-                    return root;
+                    const parentNode = Reflect.get(proto, 'parentNode', node);
+                    if (!parentNode) {
+                        return null;
+                    }
+                    // We are proxying the real parentNode to ensure that editing methods are called on the root component.
+                    // Vue and Preact uses parentNode.removeChild(node) to remove a node.
+                    return new Proxy(parentNode, {
+                        get(target, prop) {
+                            switch (prop) {
+                                case 'append':
+                                case 'prepend':
+                                case 'appendChild':
+                                case 'insertBefore':
+                                case 'replaceChild':
+                                case 'removeChild':
+                                case 'insertAdjacentElement':
+                                    return root[prop].bind(root);
+                                default: {
+                                    const value = Reflect.get(target, prop);
+                                    if (typeof value === 'function') {
+                                        return value.bind(target);
+                                    }
+                                    return value;
+                                }
+                            }
+                        },
+                        set(target, prop, value) {
+                            return Reflect.set(target, prop, value);
+                        },
+                        has(target, prop) {
+                            return Reflect.has(target, prop);
+                        },
+                    });
                 },
+                get previousSibling() {
+                    if (node.isConnected) {
+                        return Reflect.get(proto, 'previousSibling', node);
+                    }
+                    // The slotted node is not connected to the DOM,
+                    // because it is a comment or is using a not handled slot name.
+                    // Lit and uhtml uses mark comments positions to insert and remove nodes.
+                    const io = root.slotChildNodes.indexOf(node);
+                    if (io === -1) {
+                        return null;
+                    }
+                    return root.slotChildNodes[io - 1] || null;
+                },
+                get nextSibling() {
+                    if (node.isConnected) {
+                        return Reflect.get(proto, 'nextSibling', node);
+                    }
+                    // The slotted node is not connected to the DOM,
+                    // because it is a comment or is using a not handled slot name.
+                    // Lit and uhtml uses mark comments positions to insert and remove nodes.
+                    const io = root.slotChildNodes.indexOf(node);
+                    if (io === -1) {
+                        return null;
+                    }
+                    return root.slotChildNodes[io + 1] || null;
+                },
+                // Override editing methods to ensure that they are called on the root component.
+                // Svelte uses these methods to insert and remove nodes.
                 before(...nodes: (Node | string)[]) {
                     if (root.rendering || !isConnected(root)) {
                         return Reflect.get(proto, 'before', node).apply(node, nodes);
@@ -763,38 +820,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 },
 
                 __proto__: proto,
-            };
-
-            if (node.nodeType === Node.COMMENT_NODE) {
-                Object.defineProperties(adoptedProto, {
-                    previousSibling: {
-                        get() {
-                            if (root.rendering || !isConnected(root)) {
-                                return Reflect.get(proto, 'previousSibling', node);
-                            }
-                            const io = root.slotChildNodes.indexOf(node);
-                            if (io === -1) {
-                                return null;
-                            }
-                            return root.slotChildNodes[io - 1] || null;
-                        },
-                    },
-                    nextSibling: {
-                        get() {
-                            if (root.rendering || !isConnected(root)) {
-                                return Reflect.get(proto, 'nextSibling', node);
-                            }
-                            const io = root.slotChildNodes.indexOf(node);
-                            if (io === -1) {
-                                return null;
-                            }
-                            return root.slotChildNodes[io + 1] || null;
-                        },
-                    },
-                });
-            }
-
-            setPrototypeOf(node, adoptedProto);
+            });
         }
 
         /**
