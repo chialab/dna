@@ -3,11 +3,11 @@
 </template>
 
 <script lang="ts">
-    export default {
-        props: {
-            text: {
-                type: String,
-            }
-        },
-    };
+export default {
+	props: {
+		text: {
+			type: String,
+		},
+	},
+};
 </script>
