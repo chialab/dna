@@ -95,8 +95,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('mixed slots', async () => {
-        const { default: Test4 } = await import('./Test7.svelte');
-        const { container, rerender } = render(Test4, {
+        const { default: Test7 } = await import('./Test7.svelte');
+        const { container, rerender } = render(Test7, {
             props: {
                 title: false,
             },
