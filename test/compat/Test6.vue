@@ -10,11 +10,11 @@
 </template>
 
 <script lang="ts">
-    export default {
-        props: {
-            switchValue: {
-                type: Boolean,
-            }
-        },
-    };
+export default {
+	props: {
+		switchValue: {
+			type: Boolean,
+		},
+	},
+};
 </script>

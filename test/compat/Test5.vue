@@ -7,11 +7,11 @@
 </template>
 
 <script lang="ts">
-    export default {
-        props: {
-            collapsed: {
-                type: Boolean,
-            }
-        },
-    };
+export default {
+	props: {
+		collapsed: {
+			type: Boolean,
+		},
+	},
+};
 </script>
