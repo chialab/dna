@@ -726,6 +726,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     if (!parentNode) {
                         return null;
                     }
+                    if (parentNode === root) {
+                        return root;
+                    }
                     // We are proxying the real parentNode to ensure that editing methods are called on the root component.
                     // Vue and Preact uses parentNode.removeChild(node) to remove a node.
                     return new Proxy(parentNode, {
