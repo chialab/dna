@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.6
+
+### Patch Changes
+
+- 6473dff: Do not proxy host element.
+
 ## 4.4.0-beta.5
 
 ### Patch Changes
