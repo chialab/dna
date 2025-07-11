@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.8
+
+### Patch Changes
+
+- 1d7e94a: Fix life cycle during initialization.
+
 ## 4.4.0-beta.7
 
 ### Patch Changes
