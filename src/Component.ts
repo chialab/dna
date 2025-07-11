@@ -2,7 +2,7 @@ import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
 import type { HTML as HTMLNamespace } from './HTML';
 import type { Template } from './JSX';
-import { Realm } from './Realm';
+import { type Realm, attachRealm } from './Realm';
 import {
     type DelegatedEventCallback,
     type ListenerConfig,
@@ -13,7 +13,7 @@ import {
     getListeners,
     undelegateEventListener,
 } from './events';
-import { type Constructor, defineProperty, getPrototypeOf, isBrowser, setPrototypeOf } from './helpers';
+import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
 import {
     type PropertyConfig,
     type PropertyObserver,
@@ -43,40 +43,12 @@ const INITIALIZED_SYMBOL: unique symbol = Symbol();
 const CONNECTED_SYMBOL: unique symbol = Symbol();
 
 /**
- * A symbol which identify the owner of a node.
- */
-const OWNER_SYMBOL: unique symbol = Symbol();
-
-/**
  * An augmented node with component flags.
  */
 type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
     [INITIALIZED_SYMBOL]?: boolean;
     [CONNECTED_SYMBOL]?: boolean;
-};
-
-/**
- * An augmented node with owner symbol.
- */
-type WithOwner<T> = T & {
-    [OWNER_SYMBOL]?: ComponentInstance | null;
-};
-
-/**
- * Get the owner of a node.
- * @param node The node to get the owner.
- * @returns The owner of the node.
- */
-const getOwner = <T extends Node>(node: WithOwner<T>): ComponentInstance | null => node[OWNER_SYMBOL] ?? null;
-
-/**
- * Set the owner of a node.
- * @param node The node to set the owner.
- * @param owner The owner of the node.
- */
-const setOwner = <T extends Node>(node: WithOwner<T>, owner: ComponentInstance | null): void => {
-    node[OWNER_SYMBOL] = owner;
 };
 
 /**
@@ -110,6 +82,7 @@ const isConnected = <T extends ComponentInstance>(element: T): boolean =>
  */
 const connect = <T extends ComponentInstance>(element: T): void => {
     (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = true;
+    element.realm.dangerouslyClose();
 };
 
 /**
@@ -118,6 +91,7 @@ const connect = <T extends ComponentInstance>(element: T): void => {
  */
 const disconnect = <T extends ComponentInstance>(element: T): void => {
     (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = false;
+    element.realm.dangerouslyOpen();
 };
 
 /**
@@ -200,15 +174,17 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         }
 
         /**
+         * The realm instance of the component.
+         */
+        readonly realm: Realm;
+
+        /**
          * A list of slot nodes.
          * @returns The list of slotted nodes.
          */
-        readonly slotChildNodes: Node[] = [];
-
-        /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
-         */
-        readonly realm: Realm;
+        get slotChildNodes(): Node[] {
+            return this.realm.childNodes;
+        }
 
         /**
          * Handle setting text content to component.
@@ -221,7 +197,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             this._resetRendering();
             super.textContent = value;
             if (this.isConnected) {
-                this._initializeSlotChildNodes();
+                this.realm.initialize();
             }
         }
 
@@ -236,7 +212,8 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             this._resetRendering();
             super.innerHTML = value;
             if (this.isConnected) {
-                this._initializeSlotChildNodes();
+                customElements.upgrade(this);
+                this.realm.initialize();
             }
         }
 
@@ -269,8 +246,13 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
             );
 
+            const realm = attachRealm(element);
             Object.defineProperty(element, 'realm', {
-                value: new Realm(element as ComponentInstance),
+                value: realm,
+            });
+            realm.dangerouslyOpen();
+            realm.observe(() => {
+                this.childListChangedCallback();
             });
 
             // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
@@ -323,19 +305,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @returns A list of nodes.
          */
         childNodesBySlot(name: string | null = null): Node[] {
-            return this.slotChildNodes.filter((node) => {
-                if (node.nodeType === Node.COMMENT_NODE) {
-                    return false;
-                }
-                if (getOwner(node) !== this) {
-                    return !name;
-                }
-                if (node.nodeType !== Node.ELEMENT_NODE) {
-                    return !name;
-                }
-                const slotName = (node as Element).getAttribute('slot') || null;
-                return slotName === name;
-            });
+            return this.realm.childNodesBySlot(name);
         }
 
         /**
@@ -355,7 +325,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             }
 
             // trigger a re-render when the Node is connected
-            this._initializeSlotChildNodes();
+            this.realm.initialize();
         }
 
         /**
@@ -364,7 +334,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         disconnectedCallback() {
             disconnect(this);
             this._resetRendering();
-            this._restoreSlotChildNodes();
+            this.realm.restore();
         }
 
         /**
@@ -376,7 +346,6 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Invoked each time the component child list is changed.
          */
         childListChangedCallback() {
-            this.realm.notify();
             this.requestUpdate();
         }
 
@@ -631,6 +600,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         renderStart(): void {
             this._rendering = true;
+            this.realm.dangerouslyOpen();
         }
 
         /**
@@ -638,6 +608,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         renderEnd(): void {
             this._rendering = false;
+            this.realm.dangerouslyClose();
         }
 
         /**
@@ -660,369 +631,12 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         }
 
         /**
-         * Initialize the slot child nodes.
-         */
-        private _initializeSlotChildNodes(): void {
-            const remove = Reflect.get(ctor.prototype, 'removeChild').bind(this);
-            customElements.upgrade(this);
-            this.slotChildNodes.splice(0, this.slotChildNodes.length, ...[].slice.call(this.childNodes));
-            this.slotChildNodes.forEach((node) => {
-                this._adoptNode(node);
-                remove(node);
-            });
-            this.childListChangedCallback();
-        }
-
-        /**
          * Reset the rendering state of the component.
          */
         private _resetRendering() {
             this.renderStart();
             internalRender(getRootContext(this, true), null);
             this.renderEnd();
-        }
-
-        /**
-         * Restore the slot child nodes.
-         */
-        private _restoreSlotChildNodes(): void {
-            const append = Reflect.get(ctor.prototype, 'appendChild').bind(this);
-            this.slotChildNodes.forEach((node) => {
-                this._releaseNode(node);
-                append(node);
-            });
-            this.slotChildNodes.splice(0, this.slotChildNodes.length);
-        }
-
-        /**
-         * Adopt a node into the component.
-         * @param node The node to adopt.
-         * @throws An error if the node is already adopted.
-         */
-        private _adoptNode(node: Node) {
-            const owner = getOwner(node);
-            if (owner === this) {
-                return;
-            }
-            if (owner) {
-                throw new Error('Node already adopted');
-            }
-
-            setOwner(node, this);
-
-            // From here to the end of the method, we enter the realm of dark magic.
-            // We're going to modify the prototype of slotted nodes to improve compatibility with other rendering frameworks.
-            const root = this;
-            const proto = getPrototypeOf(node as Comment);
-            setPrototypeOf(node, {
-                get parentNode() {
-                    if (!node.isConnected) {
-                        // The slotted node is not connected to the DOM,
-                        // because it is a comment or is using a not handled slot name.
-                        // We return the root component as the parent node.
-                        return root;
-                    }
-                    const parentNode = Reflect.get(proto, 'parentNode', node);
-                    if (!parentNode) {
-                        return null;
-                    }
-                    if (parentNode === root) {
-                        return root;
-                    }
-                    // We are proxying the real parentNode to ensure that editing methods are called on the root component.
-                    // Vue and Preact uses parentNode.removeChild(node) to remove a node.
-                    return new Proxy(parentNode, {
-                        get(target, prop) {
-                            switch (prop) {
-                                case 'append':
-                                case 'prepend':
-                                case 'appendChild':
-                                case 'insertBefore':
-                                case 'replaceChild':
-                                case 'removeChild':
-                                case 'insertAdjacentElement':
-                                    return root[prop].bind(root);
-                                default: {
-                                    const value = Reflect.get(target, prop);
-                                    if (typeof value === 'function') {
-                                        return value.bind(target);
-                                    }
-                                    return value;
-                                }
-                            }
-                        },
-                        set(target, prop, value) {
-                            return Reflect.set(target, prop, value);
-                        },
-                        has(target, prop) {
-                            return Reflect.has(target, prop);
-                        },
-                    });
-                },
-                get previousSibling() {
-                    if (node.isConnected) {
-                        return Reflect.get(proto, 'previousSibling', node);
-                    }
-                    // The slotted node is not connected to the DOM,
-                    // because it is a comment or is using a not handled slot name.
-                    // Lit and uhtml uses mark comments positions to insert and remove nodes.
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io - 1] || null;
-                },
-                get nextSibling() {
-                    if (node.isConnected) {
-                        return Reflect.get(proto, 'nextSibling', node);
-                    }
-                    // The slotted node is not connected to the DOM,
-                    // because it is a comment or is using a not handled slot name.
-                    // Lit and uhtml uses mark comments positions to insert and remove nodes.
-                    const io = root.slotChildNodes.indexOf(node);
-                    if (io === -1) {
-                        return null;
-                    }
-                    return root.slotChildNodes[io + 1] || null;
-                },
-                // Override editing methods to ensure that they are called on the root component.
-                // Svelte uses these methods to insert and remove nodes.
-                before(...nodes: (Node | string)[]) {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'before', node).apply(node, nodes);
-                    }
-                    root._insertNodesBefore(root._importNodes(nodes), node);
-                    root.childListChangedCallback();
-                },
-                after(...nodes: (Node | string)[]) {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'after', node).apply(node, nodes);
-                    }
-                    const io = root.slotChildNodes.indexOf(node);
-                    const nextSibling = io === -1 ? null : root.slotChildNodes[io + 1];
-                    root._insertNodesBefore(root._importNodes(nodes), nextSibling);
-                    root.childListChangedCallback();
-                },
-                replaceWith(...nodes: (Node | string)[]) {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'replaceWith', node).apply(node, nodes);
-                    }
-
-                    const importedNodes = root._importNodes(nodes);
-                    root._replaceNodes(importedNodes, node);
-                    root._releaseNode(node);
-                    root.childListChangedCallback();
-                },
-                remove() {
-                    if (root.rendering || !isConnected(root)) {
-                        return Reflect.get(proto, 'remove', node).call(node);
-                    }
-                    root._removeNodes([node]);
-                    root._releaseNode(node);
-                    root.childListChangedCallback();
-                },
-
-                __proto__: proto,
-            });
-        }
-
-        /**
-         * Release a node from the component.
-         * @param node The node to release.
-         */
-        private _releaseNode(node: Node): void {
-            if (getOwner(node) === this) {
-                setOwner(node, null);
-                // Restore the original prototype
-                setPrototypeOf(node, getPrototypeOf(getPrototypeOf(node)));
-            }
-        }
-
-        /**
-         * Create and import nodes into the component.
-         * @param nodes The nodes to create and import.
-         * @param acc The accumulator for the nodes.
-         * @returns The imported nodes.
-         */
-        private _importNodes(nodes: (Node | string)[], acc: Node[] = []): Node[] {
-            for (const node of nodes) {
-                if (typeof node === 'string') {
-                    const textNode = this.ownerDocument.createTextNode(node);
-                    this._adoptNode(textNode);
-                    acc.push(textNode);
-                    continue;
-                }
-                if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-                    this._importNodes([].slice.call(node.childNodes), acc);
-                    continue;
-                }
-                if (!getOwner(node)) {
-                    this._adoptNode(node);
-                }
-                acc.push(node);
-            }
-
-            return acc;
-        }
-
-        /**
-         * Remove nodes from the slot child nodes array.
-         * @param nodes The nodes to remove.
-         */
-        private _removeNodes(nodes: Node[]) {
-            for (const node of nodes) {
-                const io = this.slotChildNodes.indexOf(node);
-                if (io !== -1) {
-                    this.slotChildNodes.splice(io, 1);
-                }
-            }
-        }
-
-        /**
-         * Prepend nodes to the slot child nodes array.
-         * @param nodes The nodes to prepend.
-         */
-        private _prependNodes(nodes: Node[]) {
-            this._removeNodes(nodes);
-            this.slotChildNodes.unshift(...nodes);
-        }
-
-        /**
-         * Append nodes to the slot child nodes array.
-         * @param nodes The nodes to append.
-         */
-        private _appendNodes(nodes: Node[]) {
-            this._removeNodes(nodes);
-            this.slotChildNodes.push(...nodes);
-        }
-
-        /**
-         * Insert nodes before a reference node in the slot child nodes array.
-         * @param nodes The nodes to insert.
-         * @param referenceNode The reference node to insert before.
-         */
-        private _insertNodesBefore(nodes: Node[], referenceNode: Node | null) {
-            const io = referenceNode ? this.slotChildNodes.indexOf(referenceNode) : -1;
-            if (io === -1) {
-                this._appendNodes(nodes);
-                return;
-            }
-            this._removeNodes(nodes);
-            this.slotChildNodes.splice(io, 0, ...nodes);
-        }
-
-        /**
-         * Replace nodes in the slot child nodes array.
-         * @param nodes The nodes to replace.
-         * @param referenceNode The reference node to replace.
-         */
-        private _replaceNodes(nodes: Node[], referenceNode: Node) {
-            const io = this.slotChildNodes.indexOf(referenceNode);
-            if (io === -1) {
-                this._appendNodes(nodes);
-                return;
-            }
-            this._removeNodes(nodes);
-            this.slotChildNodes.splice(io, 1, ...nodes);
-        }
-
-        /**
-         * @inheritdoc
-         */
-        append(...nodes: (Node | string)[]): void {
-            if (!isConnected(this) || this.rendering) {
-                Reflect.get(ctor.prototype, 'append').apply(this, nodes);
-                return;
-            }
-            this._appendNodes(this._importNodes(nodes));
-            this.childListChangedCallback();
-        }
-
-        /**
-         * @inheritdoc
-         */
-        prepend(...nodes: (Node | string)[]): void {
-            if (!isConnected(this) || this.rendering) {
-                Reflect.get(ctor.prototype, 'prepend').apply(this, nodes);
-                return;
-            }
-            this._prependNodes(this._importNodes(nodes));
-            this.childListChangedCallback();
-        }
-
-        /**
-         * @inheritdoc
-         */
-        appendChild<T extends Node>(node: T): T {
-            if (!isConnected(this) || this.rendering) {
-                return Reflect.get(ctor.prototype, 'appendChild').call(this, node) as T;
-            }
-            this._appendNodes(this._importNodes([node]));
-            this.childListChangedCallback();
-            return node;
-        }
-
-        /**
-         * @inheritdoc
-         */
-        insertBefore<T extends Node>(node: T, referenceNode: Node | null): T {
-            if (!isConnected(this) || this.rendering) {
-                return Reflect.get(ctor.prototype, 'insertBefore').call(this, node, referenceNode) as T;
-            }
-
-            this._insertNodesBefore(this._importNodes([node]), referenceNode);
-            this.childListChangedCallback();
-            return node;
-        }
-
-        /**
-         * @inheritdoc
-         */
-        replaceChild<T extends Node>(node: Node, referenceNode: T): T {
-            if (!isConnected(this) || this.rendering) {
-                return Reflect.get(ctor.prototype, 'replaceChild').call(this, node, referenceNode) as T;
-            }
-
-            this._replaceNodes(this._importNodes([node]), referenceNode);
-            this._releaseNode(referenceNode);
-            this.childListChangedCallback();
-            return referenceNode;
-        }
-
-        /**
-         * @inheritdoc
-         */
-        removeChild<T extends Node>(node: T): T {
-            if (!isConnected(this) || this.rendering) {
-                return Reflect.get(ctor.prototype, 'removeChild').call(this, node) as T;
-            }
-
-            this._removeNodes([node]);
-            this._releaseNode(node);
-            this.childListChangedCallback();
-            return node;
-        }
-
-        /**
-         * @inheritdoc
-         */
-        insertAdjacentElement(where: InsertPosition, node: Element): Element | null {
-            if (!this.isConnected || this.rendering) {
-                return Reflect.get(ctor.prototype, 'insertAdjacentElement').call(this, where, node);
-            }
-
-            switch (where) {
-                case 'afterbegin':
-                    this._prependNodes(this._importNodes([node]));
-                    this.childListChangedCallback();
-                    return node;
-                case 'beforeend':
-                    this._appendNodes(this._importNodes([node]));
-                    this.childListChangedCallback();
-                    return node;
-                default:
-                    return Reflect.get(ctor.prototype, 'insertAdjacentElement', this).call(this, where, node);
-            }
         }
     } as unknown as BaseComponentConstructor<T>;
 

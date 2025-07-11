@@ -277,7 +277,7 @@ export interface HTMLAttributes extends AriaAttributes {
     contextMenu?: string | undefined;
     dir?: string | undefined;
     draggable?: boolean | 'true' | 'false' | undefined;
-    hidden?: boolean | undefined;
+    hidden?: 'until-found' | boolean | undefined;
     id?: string | undefined;
     lang?: string | undefined;
     placeholder?: string | undefined;

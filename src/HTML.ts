@@ -41,7 +41,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -322,7 +322,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -603,7 +603,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -884,7 +884,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -1165,7 +1165,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -1446,7 +1446,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -1727,7 +1727,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -2008,7 +2008,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -2289,7 +2289,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -2570,7 +2570,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -2851,7 +2851,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -3132,7 +3132,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -3413,7 +3413,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -3694,7 +3694,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -3975,7 +3975,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -4256,7 +4256,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -4537,7 +4537,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -4818,7 +4818,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -5099,7 +5099,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -5380,7 +5380,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -5661,7 +5661,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -5942,7 +5942,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -6223,7 +6223,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -6504,7 +6504,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -6785,7 +6785,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -7066,7 +7066,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -7347,7 +7347,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -7628,7 +7628,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -7909,7 +7909,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -8190,7 +8190,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -8471,7 +8471,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -8752,7 +8752,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -9033,7 +9033,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -9314,7 +9314,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -9595,7 +9595,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -9876,7 +9876,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -10158,7 +10158,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -10439,7 +10439,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -10720,7 +10720,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -11001,7 +11001,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -11282,7 +11282,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -11564,7 +11564,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -11845,7 +11845,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -12126,7 +12126,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -12407,7 +12407,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -12688,7 +12688,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -12969,7 +12969,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -13250,7 +13250,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -13531,7 +13531,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -13812,7 +13812,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -14093,7 +14093,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -14374,7 +14374,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -14655,7 +14655,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -14936,7 +14936,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -15217,7 +15217,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -15498,7 +15498,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -15779,7 +15779,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -16060,7 +16060,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -16341,7 +16341,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -16622,7 +16622,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -16903,7 +16903,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -17184,7 +17184,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -17465,7 +17465,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -17746,7 +17746,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -18027,7 +18027,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -18308,7 +18308,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -18589,7 +18589,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
@@ -18870,7 +18870,7 @@ export declare namespace HTML {
         readonly slotChildNodes: Node[];
 
         /**
-         * @deprecated Use `element.slotChildNodes` and `element.childNodesBySlot()` instead.
+         * The realm instance of the component.
          */
         readonly realm: Realm;
 
