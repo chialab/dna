@@ -133,15 +133,13 @@ export class Realm {
      * Initialize the realm.
      */
     initialize(): void {
+        this.dangerouslyOpen();
         this.childNodes.splice(0, this.childNodes.length, ...[].slice.call(this.node.childNodes));
         this.childNodes.forEach((node) => {
-            const wasOpen = this.dangerouslyOpen();
-            this.fragment.appendChild(node);
-            if (!wasOpen) {
-                this.dangerouslyClose();
-            }
             this.adoptNode(node);
+            this.fragment.appendChild(node);
         });
+        this.dangerouslyClose();
 
         if (typeof customElements !== 'undefined') {
             customElements.upgrade(this.fragment);
@@ -154,13 +152,10 @@ export class Realm {
      * Restore the slot child nodes.
      */
     restore(): void {
+        this.dangerouslyOpen();
         this.childNodes.forEach((node) => {
             this.releaseNode(node);
-            const wasOpen = this.dangerouslyOpen();
             this.node.appendChild(node);
-            if (!wasOpen) {
-                this.dangerouslyClose();
-            }
         });
         this.childNodes.splice(0, this.childNodes.length);
     }

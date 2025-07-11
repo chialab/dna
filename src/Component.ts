@@ -82,7 +82,6 @@ const isConnected = <T extends ComponentInstance>(element: T): boolean =>
  */
 const connect = <T extends ComponentInstance>(element: T): void => {
     (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = true;
-    element.realm.dangerouslyClose();
 };
 
 /**
@@ -91,7 +90,6 @@ const connect = <T extends ComponentInstance>(element: T): void => {
  */
 const disconnect = <T extends ComponentInstance>(element: T): void => {
     (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = false;
-    element.realm.dangerouslyOpen();
 };
 
 /**
@@ -288,7 +286,11 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 }
             }
 
-            (this as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
+            flagInitialized(this);
+            if (this.isConnected) {
+                connect(this);
+                this.realm.initialize();
+            }
 
             for (const propertyKey in computedProperties) {
                 const property = computedProperties[propertyKey];
@@ -313,8 +315,6 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
          */
         connectedCallback() {
-            connect(this);
-
             if (!this.hasAttribute(':defined')) {
                 if (this.is !== this.localName) {
                     // force the is attribute
@@ -324,8 +324,10 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 this.setAttribute(':defined', '');
             }
 
-            // trigger a re-render when the Node is connected
-            this.realm.initialize();
+            if (!isConnected(this)) {
+                connect(this);
+                this.realm.initialize();
+            }
         }
 
         /**
@@ -727,6 +729,14 @@ export type ComponentConstructor<T extends ComponentInstance = ComponentInstance
  */
 export const isInitialized = (element: ComponentInstance): boolean =>
     !!(element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL];
+
+/**
+ * Flag a component as initialized.
+ * @param element The component instance to flag as initialized.
+ */
+const flagInitialized = (element: ComponentInstance): void => {
+    (element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
+};
 
 /**
  * Define a component class.
