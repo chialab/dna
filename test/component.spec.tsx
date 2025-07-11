@@ -661,7 +661,7 @@ describe.runIf(IS_BROWSER)(
         });
 
         describe('childListChangedCallback', () => {
-            it('should trigger once, once connected', () => {
+            it('should trigger once, when connected', () => {
                 const spyChildListChangedCallback = vi.fn();
                 const TestElement = DNA.define(
                     'test-component-76',
