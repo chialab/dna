@@ -5,6 +5,7 @@
     "@chialab/dna": "4.3.0"
   },
   "changesets": [
+    "cold-bars-help",
     "eager-doodles-thank",
     "fruity-poets-lick",
     "full-ears-stop",
