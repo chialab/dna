@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.9
+
+### Patch Changes
+
+- 99c042d: Improve frameworks compatibility.
+
 ## 4.4.0-beta.8
 
 ### Patch Changes
