@@ -96,7 +96,7 @@ describe.runIf(IS_BROWSER)(
                 @DNA.customElement('test-render-1')
                 class TestElement extends DNA.Component {
                     render() {
-                        return this.childNodesBySlot().map((node) => DNA.html`<${node} id="test" />`);
+                        return this.childNodesBySlot().map((node) => DNA.html`<div ref=${node} id="test" />`);
                     }
                 }
 
@@ -311,7 +311,7 @@ describe.runIf(IS_BROWSER)(
                     wrapper
                 );
                 const list = wrapper.querySelector('ul.list') as HTMLElement;
-                const children = list.childNodes;
+                const children = Array.from(list.childNodes);
                 expect(children).toHaveLength(4);
                 DNA.render(
                     <ul class="list">
@@ -319,6 +319,42 @@ describe.runIf(IS_BROWSER)(
                         <li>Two</li>
                     </ul>,
                     wrapper
+                );
+                const newChildren = list.childNodes;
+                expect(newChildren).toHaveLength(2);
+                expect(children[0]).toBe(newChildren[0]);
+                expect(children[1]).toBe(newChildren[1]);
+            });
+
+            it('should remove nodes inside component', () => {
+                const Parent = DNA.define(
+                    'test-render-14',
+                    class extends DNA.Component {
+                        render() {
+                            return this.childNodesBySlot().map((node) => <div ref={node as HTMLElement} />);
+                        }
+                    }
+                );
+                DNA.define('test-render-15', class extends DNA.Component {});
+                const list = new Parent();
+                wrapper.appendChild(list);
+                DNA.render(
+                    <>
+                        <test-render-15>One</test-render-15>
+                        <test-render-15>Two</test-render-15>
+                        <test-render-15>Three</test-render-15>
+                        <test-render-15>Four</test-render-15>
+                    </>,
+                    list
+                );
+                const children = Array.from(list.childNodes);
+                expect(children).toHaveLength(4);
+                DNA.render(
+                    <>
+                        <test-render-15>One</test-render-15>
+                        <test-render-15>Two</test-render-15>
+                    </>,
+                    list
                 );
                 const newChildren = list.childNodes;
                 expect(newChildren).toHaveLength(2);

@@ -46,12 +46,6 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
-
-        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -268,16 +262,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -325,12 +309,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -549,16 +527,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -606,12 +574,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -830,16 +792,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -887,12 +839,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1111,16 +1057,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -1168,12 +1104,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1392,16 +1322,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -1449,12 +1369,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1673,16 +1587,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -1730,12 +1634,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -1954,16 +1852,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -2011,12 +1899,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2235,16 +2117,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -2292,12 +2164,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2516,16 +2382,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -2573,12 +2429,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -2797,16 +2647,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -2854,12 +2694,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3078,16 +2912,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -3135,12 +2959,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3359,16 +3177,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -3416,12 +3224,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3640,16 +3442,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -3697,12 +3489,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -3921,16 +3707,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -3978,12 +3754,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4202,16 +3972,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -4259,12 +4019,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4483,16 +4237,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -4540,12 +4284,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -4764,16 +4502,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -4821,12 +4549,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5045,16 +4767,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -5102,12 +4814,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5326,16 +5032,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -5383,12 +5079,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5607,16 +5297,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -5664,12 +5344,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -5888,16 +5562,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -5945,12 +5609,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6169,16 +5827,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -6226,12 +5874,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6450,16 +6092,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -6507,12 +6139,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -6731,16 +6357,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -6788,12 +6404,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7012,16 +6622,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -7069,12 +6669,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7293,16 +6887,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -7350,12 +6934,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7574,16 +7152,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -7631,12 +7199,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -7855,16 +7417,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -7912,12 +7464,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8136,16 +7682,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -8193,12 +7729,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8417,16 +7947,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -8474,12 +7994,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8698,16 +8212,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -8755,12 +8259,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -8979,16 +8477,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -9036,12 +8524,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9260,16 +8742,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -9317,12 +8789,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9541,16 +9007,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -9598,12 +9054,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -9822,16 +9272,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -9879,12 +9319,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10103,16 +9537,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -10161,12 +9585,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10385,16 +9803,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -10442,12 +9850,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10666,16 +10068,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -10723,12 +10115,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -10947,16 +10333,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -11004,12 +10380,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11228,16 +10598,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -11285,12 +10645,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11509,16 +10863,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -11567,12 +10911,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -11791,16 +11129,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -11848,12 +11176,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12072,16 +11394,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -12129,12 +11441,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12353,16 +11659,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -12410,12 +11706,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12634,16 +11924,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -12691,12 +11971,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -12915,16 +12189,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -12972,12 +12236,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13196,16 +12454,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -13253,12 +12501,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13477,16 +12719,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -13534,12 +12766,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -13758,16 +12984,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -13815,12 +13031,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14039,16 +13249,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -14096,12 +13296,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14320,16 +13514,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -14377,12 +13561,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14601,16 +13779,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -14658,12 +13826,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -14882,16 +14044,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -14939,12 +14091,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15163,16 +14309,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -15220,12 +14356,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15444,16 +14574,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -15501,12 +14621,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -15725,16 +14839,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -15782,12 +14886,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16006,16 +15104,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -16063,12 +15151,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16287,16 +15369,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -16344,12 +15416,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16568,16 +15634,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -16625,12 +15681,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -16849,16 +15899,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -16906,12 +15946,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -17130,16 +16164,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -17187,12 +16211,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -17411,16 +16429,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -17468,12 +16476,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -17692,16 +16694,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -17749,12 +16741,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -17973,16 +16959,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -18030,12 +17006,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -18254,16 +17224,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -18311,12 +17271,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -18535,16 +17489,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -18592,12 +17536,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -18816,16 +17754,6 @@ export declare namespace HTML {
         collectUpdatesEnd(): boolean;
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -18873,12 +17801,6 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering(): boolean;
 
         /**
          * Create a new Component instance.
@@ -19095,16 +18017,6 @@ export declare namespace HTML {
          * @returns True if a re-render has been triggered.
          */
         collectUpdatesEnd(): boolean;
-
-        /**
-         * Start rendering the component.
-         */
-        renderStart(): void;
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void;
 
         /**
          * Assign properties to the component.

@@ -17,6 +17,12 @@ const REALM_SYMBOL: unique symbol = Symbol();
 const REALM_PARENT_SYMBOL: unique symbol = Symbol();
 
 /**
+ * A symbol that identifies the owner of a realm.
+ * This is used to track the owner of a realm when it is moved between realms.
+ */
+const REALM_OWNER_SYMBOL: unique symbol = Symbol();
+
+/**
  * Create and attach a realm for a node.
  * @param  node The root node.
  * @returns The realm instance.
@@ -51,7 +57,7 @@ export function getRealm(node: HTMLElement): Realm | null {
  * @param node The child node.
  * @returns The owner realm instance or null.
  */
-function getOwnerRealm(node: Node): Realm | null {
+function getParentRealm(node: Node): Realm | null {
     return REALM_PARENT_SYMBOL in node ? (node[REALM_PARENT_SYMBOL] as Realm) : null;
 }
 
@@ -60,13 +66,36 @@ function getOwnerRealm(node: Node): Realm | null {
  * @param node The child node.
  * @param realm The parent realm instance.
  */
-function setOwnerRealm(node: Node, realm: Realm | null): void {
-    const currentRealm = getOwnerRealm(node);
+function setParentRealm(node: Node, realm: Realm | null): void {
+    const currentRealm = getParentRealm(node);
     if (currentRealm && realm && currentRealm !== realm) {
         throw new Error('Cannot set parent realm for a node that already has a different parent realm.');
     }
 
     defineProperty(node, REALM_PARENT_SYMBOL, {
+        value: realm,
+        writable: false,
+        enumerable: false,
+        configurable: true,
+    });
+}
+
+/**
+ * Get the owner realm instance for a node.
+ * @param node The child node.
+ * @returns The owner realm instance or null.
+ */
+function getOwnerRealm(node: Node): Realm | null {
+    return REALM_OWNER_SYMBOL in node ? (node[REALM_OWNER_SYMBOL] as Realm) : null;
+}
+
+/**
+ * Set the owner realm instance for a node.
+ * @param node The child node.
+ * @param realm The owner realm instance.
+ */
+export function setOwnerRealm(node: Node, realm: Realm | null): void {
+    defineProperty(node, REALM_OWNER_SYMBOL, {
         value: realm,
         writable: false,
         enumerable: false,
@@ -91,7 +120,7 @@ export class Realm {
     /**
      * The fragment used to temporary store nodes.
      */
-    protected fragment: DocumentFragment;
+    readonly fragment: DocumentFragment;
 
     /**
      * The callbacks to call when the realm changes.
@@ -99,9 +128,14 @@ export class Realm {
     protected callbacks: Set<RealmChangeCallback> = new Set();
 
     /**
+     * The position of the virtual iterator.
+     */
+    protected virtualCurrentNode: Node | null = null;
+
+    /**
      * Whether the realm is open.
      */
-    open = false;
+    protected _open = false;
 
     /**
      * Setup the realm.
@@ -113,20 +147,10 @@ export class Realm {
     }
 
     /**
-     * Get the closest realm ancestor of a node.
-     * @returns A realm or null.
+     * Whether the realm is open.
      */
-    get ownerRealm(): Realm | null {
-        let parentNode = this.node.parentElement;
-        while (parentNode) {
-            const realm = getRealm(parentNode);
-            if (realm) {
-                return realm;
-            }
-            parentNode = parentNode.parentElement;
-        }
-
-        return null;
+    get open(): boolean {
+        return this._open;
     }
 
     /**
@@ -137,7 +161,6 @@ export class Realm {
         this.childNodes.splice(0, this.childNodes.length, ...[].slice.call(this.node.childNodes));
         this.childNodes.forEach((node) => {
             this.adoptNode(node);
-            this.fragment.appendChild(node);
         });
         this.dangerouslyClose();
 
@@ -186,7 +209,7 @@ export class Realm {
         if (this.open) {
             return false;
         }
-        this.open = true;
+        this._open = true;
         return true;
     }
 
@@ -194,7 +217,32 @@ export class Realm {
      * Close the realm.
      */
     dangerouslyClose(): void {
-        this.open = false;
+        this._open = false;
+    }
+
+    /**
+     * Request an update of the realm.
+     * @param callback The callback to invoke.
+     * @returns The result of the callback.
+     */
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    requestUpdate<T extends (...args: any) => any>(callback: T): ReturnType<T> {
+        this.dangerouslyOpen();
+
+        try {
+            const result = callback();
+            if (result instanceof Promise) {
+                return result.finally(() => {
+                    this.dangerouslyClose();
+                    return result;
+                }) as ReturnType<T>;
+            }
+            this.dangerouslyClose();
+
+            return result;
+        } finally {
+            this.dangerouslyClose();
+        }
     }
 
     /**
@@ -204,6 +252,15 @@ export class Realm {
     protected notify(): void {
         const childNodes = Array.from(this.childNodes);
         this.callbacks.forEach((callback) => callback(childNodes));
+    }
+
+    /**
+     * Check if a node should use the virtual iterator to get the next or previous sibling.
+     * @param node The node to check.
+     * @returns Whether the node should use the virtual iterator.
+     */
+    shouldUseVirtualIterator(node: Node): boolean {
+        return this.virtualCurrentNode === node || this.fragment.contains(node);
     }
 
     /**
@@ -219,7 +276,16 @@ export class Realm {
         if (io === -1) {
             return null;
         }
-        return this.childNodes[io - 1] ?? null;
+        const sibling = this.childNodes[io - 1] ?? null;
+        // Lit and uhtml uses mark comments positions to insert and remove nodes.
+        // If the node is a comment, we are assuming that the rendering engine is iterating over the previous render result,
+        // since no other framework knows about the comment.
+        if (node.nodeType === Node.COMMENT_NODE || this.virtualCurrentNode === node) {
+            this.virtualCurrentNode = sibling;
+        } else {
+            this.virtualCurrentNode = null;
+        }
+        return sibling;
     }
 
     /**
@@ -235,7 +301,16 @@ export class Realm {
         if (io === -1) {
             return null;
         }
-        return this.childNodes[io + 1] ?? null;
+        const sibling = this.childNodes[io + 1] ?? null;
+        // Lit and uhtml uses mark comments positions to insert and remove nodes.
+        // If the node is a comment, we are assuming that the rendering engine is iterating over the previous render result,
+        // since no other framework knows about the comment.
+        if (node.nodeType === Node.COMMENT_NODE || this.virtualCurrentNode === node) {
+            this.virtualCurrentNode = sibling;
+        } else {
+            this.virtualCurrentNode = null;
+        }
+        return sibling;
     }
 
     /**
@@ -244,14 +319,15 @@ export class Realm {
      * @param node The node to adopt.
      */
     protected adoptNode(node: Node): void {
-        const ownerRealm = getOwnerRealm(node);
-        if (ownerRealm === this) {
+        const parentRealm = getParentRealm(node);
+        if (parentRealm === this) {
             return;
         }
-        if (ownerRealm) {
+        if (parentRealm) {
             throw new Error('Node already has a parent realm.');
         }
-        setOwnerRealm(node, this);
+        setParentRealm(node, this);
+        this.fragment.appendChild(node);
     }
 
     /**
@@ -259,8 +335,8 @@ export class Realm {
      * @param node The node to release.
      */
     protected releaseNode(node: Node): void {
-        if (getOwnerRealm(node) === this) {
-            setOwnerRealm(node, null);
+        if (getParentRealm(node) === this) {
+            setParentRealm(node, null);
         }
     }
 
@@ -274,22 +350,19 @@ export class Realm {
         return nodes.reduce((acc, node) => {
             if (typeof node === 'string') {
                 const childNode = this.node.ownerDocument.createTextNode(node);
-                setOwnerRealm(childNode, this);
-                this.fragment.appendChild(childNode);
+                this.adoptNode(childNode);
                 acc.push(childNode);
             } else if (node.nodeType === 11 /* Node.DOCUMENT_FRAGMENT_NODE */) {
                 this.importNodes(Array.from(node.childNodes), acc);
             } else {
-                const ownerRealm = getOwnerRealm(node);
-                if (ownerRealm) {
-                    if (!ownerRealm.contains(this)) {
-                        ownerRealm.removeChild(node);
-                        setOwnerRealm(node, this);
-                        this.fragment.appendChild(node);
+                const parentRealm = getParentRealm(node);
+                if (parentRealm) {
+                    if (!parentRealm.contains(this)) {
+                        parentRealm.removeChild(node);
+                        this.adoptNode(node);
                     }
                 } else {
-                    setOwnerRealm(node, this);
-                    this.fragment.appendChild(node);
+                    this.adoptNode(node);
                 }
                 acc.push(node);
             }
@@ -427,7 +500,7 @@ export class Realm {
             if (node.nodeType === Node.COMMENT_NODE) {
                 return false;
             }
-            if (getOwnerRealm(node) !== this) {
+            if (getParentRealm(node) !== this) {
                 // collect nodes from other realms
                 return !name;
             }
@@ -484,89 +557,46 @@ if (typeof Node !== 'undefined') {
     defineProperty(NodePrototype, 'parentNode', {
         ...getParentNodeDesc,
         get() {
-            const root = getOwnerRealm(this);
-            if (!root) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 return getParentNodeDesc.get?.call(this);
             }
             if (!this.isConnected) {
                 // The slotted node is not connected to the DOM,
                 // because it is a comment or is using a not handled slot name.
                 // We return the root component as the parent node.
-                return root.node;
+                return parentRealm.node;
             }
             const parentNode = getParentNodeDesc.get?.call(this);
             if (!parentNode) {
                 return null;
             }
-            if (parentNode === root) {
-                return root.node;
-            }
 
-            // We are proxying the real parentNode to ensure that editing methods are called on the root component.
-            // Vue and Preact uses parentNode.removeChild(node) to remove a node.
-            return new Proxy(parentNode, {
-                get(target, prop) {
-                    switch (prop) {
-                        case 'append':
-                        case 'prepend':
-                        case 'appendChild':
-                        case 'insertBefore':
-                        case 'replaceChild':
-                        case 'removeChild':
-                        case 'insertAdjacentElement':
-                            return root.node[prop].bind(root.node);
-                        default: {
-                            const value = Reflect.get(parentNode, prop);
-                            if (typeof value === 'function') {
-                                return value.bind(parentNode);
-                            }
-                            return value;
-                        }
-                    }
-                },
-                set(target, prop, value) {
-                    return Reflect.set(parentNode, prop, value);
-                },
-                has(target, prop) {
-                    return Reflect.has(parentNode, prop);
-                },
-            });
+            return parentNode;
         },
     });
 
     defineProperty(NodePrototype, 'previousSibling', {
         ...getPreviousSiblingDesc,
         get() {
-            const root = getOwnerRealm(this);
-            if (!root || root.open || this.isConnected) {
-                return getPreviousSiblingDesc.get?.call(this);
+            const parentRealm = getParentRealm(this);
+            if (parentRealm && !parentRealm.open && parentRealm.shouldUseVirtualIterator(this)) {
+                // The slotted node is not connected to the DOM or the rendering engine is iterating over the render result.
+                return parentRealm.getPreviousSibling(this);
             }
-            // The slotted node is not connected to the DOM,
-            // because it is a comment or is using a not handled slot name.
-            // Lit and uhtml uses mark comments positions to insert and remove nodes.
-            const io = root.childNodes.indexOf(this);
-            if (io === -1) {
-                return null;
-            }
-            return root.childNodes[io - 1] || null;
+            return getPreviousSiblingDesc.get?.call(this);
         },
     });
 
     defineProperty(NodePrototype, 'nextSibling', {
         ...getNextSiblingDesc,
         get() {
-            const root = getOwnerRealm(this);
-            if (!root || root.open || this.isConnected) {
-                return getNextSiblingDesc.get?.call(this);
+            const parentRealm = getParentRealm(this);
+            if (parentRealm && !parentRealm.open && parentRealm.shouldUseVirtualIterator(this)) {
+                // The slotted node is not connected to the DOM or the rendering engine is iterating over the render result.
+                return parentRealm.getNextSibling(this);
             }
-            // The slotted node is not connected to the DOM,
-            // because it is a comment or is using a not handled slot name.
-            // Lit and uhtml uses mark comments positions to insert and remove nodes.
-            const io = root.childNodes.indexOf(this);
-            if (io === -1) {
-                return null;
-            }
-            return root.childNodes[io + 1] || null;
+            return getNextSiblingDesc.get?.call(this);
         },
     });
 
@@ -575,96 +605,92 @@ if (typeof Node !== 'undefined') {
     defineProperty(ElementPrototype, 'before', {
         ...beforeDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 beforeDesc.value?.apply(this, nodes);
                 return;
             }
-            root.insertBefore(nodes, this);
+            parentRealm.insertBefore(nodes, this);
         },
     });
     defineProperty(CharacterDataPrototype, 'before', {
         ...commentBeforeDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 commentBeforeDesc.value?.apply(this, nodes);
                 return;
             }
-            root.insertBefore(nodes, this);
+            parentRealm.insertBefore(nodes, this);
         },
     });
 
     defineProperty(ElementPrototype, 'after', {
         ...afterDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 afterDesc.value?.apply(this, nodes);
                 return;
             }
-            const io = root.childNodes.indexOf(this);
-            const nextSibling = io === -1 ? null : root.childNodes[io + 1];
-            root.insertBefore(nodes, nextSibling);
+            parentRealm.insertBefore(nodes, parentRealm.getNextSibling(this));
         },
     });
     defineProperty(CharacterDataPrototype, 'after', {
         ...commentAfterDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 commentAfterDesc.value?.apply(this, nodes);
                 return;
             }
-            const io = root.childNodes.indexOf(this);
-            const nextSibling = io === -1 ? null : root.childNodes[io + 1];
-            root.insertBefore(nodes, nextSibling);
+            parentRealm.insertBefore(nodes, parentRealm.getNextSibling(this));
         },
     });
 
     defineProperty(ElementPrototype, 'replaceWith', {
         ...replaceWithDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 replaceWithDesc.value?.apply(this, nodes);
                 return;
             }
-            root.replaceChild(nodes, this);
+            parentRealm.replaceChild(nodes, this);
         },
     });
     defineProperty(CharacterDataPrototype, 'replaceWith', {
         ...commentReplaceWithDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 commentReplaceWithDesc.value?.apply(this, nodes);
                 return;
             }
-            root.replaceChild(nodes, this);
+            parentRealm.replaceChild(nodes, this);
         },
     });
 
     defineProperty(ElementPrototype, 'remove', {
         ...removeDesc,
         value(): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 removeDesc.value?.call(this);
                 return;
             }
-            root.removeChild(this);
+            parentRealm.removeChild(this);
         },
     });
     defineProperty(CharacterDataPrototype, 'remove', {
         ...commentRemoveDesc,
         value(): void {
-            const root = getOwnerRealm(this);
-            if (!root || root.open) {
+            const parentRealm = getParentRealm(this);
+            if (!parentRealm || parentRealm.open) {
                 commentRemoveDesc.value?.call(this);
                 return;
             }
-            root.removeChild(this);
+            parentRealm.removeChild(this);
         },
     });
 
@@ -672,35 +698,35 @@ if (typeof Node !== 'undefined') {
     defineProperty(ElementPrototype, 'append', {
         ...appendDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 appendDesc.value?.apply(this, nodes);
                 return;
             }
-            root.append(...nodes);
+            realm.append(...nodes);
         },
     });
 
     defineProperty(ElementPrototype, 'prepend', {
         ...prependDesc,
         value(...nodes: (Node | string)[]): void {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 prependDesc.value?.apply(this, nodes);
                 return;
             }
-            root.prepend(...nodes);
+            realm.prepend(...nodes);
         },
     });
 
     defineProperty(NodePrototype, 'appendChild', {
         ...appendChildDesc,
         value(node: Node): Node {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 return appendChildDesc.value?.call(this, node);
             }
-            root.append(node);
+            realm.append(node);
             return node;
         },
     });
@@ -708,11 +734,22 @@ if (typeof Node !== 'undefined') {
     defineProperty(NodePrototype, 'insertBefore', {
         ...insertBeforeDesc,
         value(node: Node, referenceNode: Node | null): Node {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (realm?.open) {
                 return insertBeforeDesc.value?.call(this, node, referenceNode);
             }
-            root.insertBefore([node], referenceNode);
+            const ownerRealm = getOwnerRealm(this);
+            if (ownerRealm && !ownerRealm.open) {
+                // Some rendering engines uses `parentNode.insertBefore(node, referenceNode)` to insert a node,
+                // so we need to insert the node in the owner realm when the parent node is part
+                // of the internal component template.
+                ownerRealm.insertBefore([node], referenceNode);
+                return node;
+            }
+            if (!realm) {
+                return insertBeforeDesc.value?.call(this, node, referenceNode);
+            }
+            realm.insertBefore([node], referenceNode);
             return node;
         },
     });
@@ -720,11 +757,11 @@ if (typeof Node !== 'undefined') {
     defineProperty(NodePrototype, 'replaceChild', {
         ...replaceChildDesc,
         value(newChild: Node, oldChild: Node): Node {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 return replaceChildDesc.value?.call(this, newChild, oldChild);
             }
-            root.replaceChild([newChild], oldChild);
+            realm.replaceChild([newChild], oldChild);
             return newChild;
         },
     });
@@ -732,11 +769,19 @@ if (typeof Node !== 'undefined') {
     defineProperty(NodePrototype, 'removeChild', {
         ...removeChildDesc,
         value(child: Node): Node {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const ownerRealm = getOwnerRealm(this);
+            if (ownerRealm && !ownerRealm.open && getParentRealm(child) === ownerRealm) {
+                // Preact and vue use `parentNode.removeChild(child)` to remove a child node,
+                // so we need to remove the child from the owner realm when the parent node
+                // is part of the internal component template.
+                ownerRealm.removeChild(child);
+                return child;
+            }
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 return removeChildDesc.value?.call(this, child);
             }
-            root.removeChild(child);
+            realm.removeChild(child);
             return child;
         },
     });
@@ -744,16 +789,16 @@ if (typeof Node !== 'undefined') {
     defineProperty(ElementPrototype, 'insertAdjacentElement', {
         ...insertAdjacentElementDesc,
         value(where: InsertPosition, node: Element): Element | null {
-            const root = getRealm(this);
-            if (!root || root.open) {
+            const realm = getRealm(this);
+            if (!realm || realm.open) {
                 return insertAdjacentElementDesc.value?.call(this, where, node);
             }
             switch (where) {
                 case 'afterbegin':
-                    root.prepend(node);
+                    realm.prepend(node);
                     return node;
                 case 'beforeend':
-                    root.append(node);
+                    realm.append(node);
                     return node;
                 default:
                     return insertAdjacentElementDesc.value?.call(this, where, node);

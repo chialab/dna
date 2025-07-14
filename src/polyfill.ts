@@ -17,8 +17,64 @@ function polyfillBuiltin() {
     const cloneNode = Node.prototype.cloneNode;
     const setInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
     const filterBuiltinElement = (node: Node) =>
-        isElement(node) && node.getAttribute('is') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        isElement(node) && getIs(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
     let childListObserver: MutationObserver;
+
+    const handleMutation = (mutation: MutationRecord) => {
+        if (mutation.addedNodes) {
+            for (let i = 0, len = mutation.addedNodes.length; i < len; i++) {
+                const node = mutation.addedNodes[i];
+                if (isElement(node)) {
+                    polyfillUpgrade(node as Element);
+
+                    if (isCustomElement(node) && !isConnected(node)) {
+                        connect(node);
+                    }
+
+                    node.querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
+                        if (isCustomElement(child) && !isConnected(child)) {
+                            connect(child as CustomElement);
+                        }
+                    });
+                }
+            }
+        }
+        if (mutation.removedNodes) {
+            for (let i = 0, len = mutation.removedNodes.length; i < len; i++) {
+                const node = mutation.removedNodes[i];
+                if (isElement(node)) {
+                    if (isCustomElement(node) && isConnected(node)) {
+                        disconnect(node);
+                    }
+
+                    node.querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
+                        if (isCustomElement(child) && isConnected(child)) {
+                            disconnect(child as CustomElement);
+                        }
+                    });
+                }
+            }
+        }
+
+        if (mutation.attributeName) {
+            const element = mutation.target as CustomElement;
+            const observedAttributes = (element.constructor as CustomElementConstructor).observedAttributes || [];
+            const attributeName = mutation.attributeName;
+            if (!attributeName) {
+                return;
+            }
+            if (!observedAttributes.includes(attributeName)) {
+                return;
+            }
+
+            element.attributeChangedCallback(
+                attributeName,
+                mutation.oldValue,
+                element.getAttribute(attributeName),
+                mutation.attributeNamespace
+            );
+        }
+    };
 
     const isCustomElement = (node: Node): node is CustomElement => {
         return CE_SYMBOL in node;
@@ -55,42 +111,7 @@ function polyfillBuiltin() {
      */
     const createChildListObserver = () => {
         childListObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes) {
-                    for (let i = 0, len = mutation.addedNodes.length; i < len; i++) {
-                        const node = mutation.addedNodes[i];
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            polyfillUpgrade(node as Element);
-
-                            if (isCustomElement(node) && !isConnected(node)) {
-                                connect(node);
-                            }
-
-                            (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                if (isCustomElement(child) && !isConnected(child)) {
-                                    connect(child as CustomElement);
-                                }
-                            });
-                        }
-                    }
-                }
-                if (mutation.removedNodes) {
-                    for (let i = 0, len = mutation.removedNodes.length; i < len; i++) {
-                        const node = mutation.removedNodes[i];
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (isCustomElement(node) && isConnected(node)) {
-                                disconnect(node);
-                            }
-
-                            (node as Element).querySelectorAll('[\\:ce-polyfill]').forEach((child) => {
-                                if (isCustomElement(child) && isConnected(child)) {
-                                    disconnect(child as CustomElement);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
+            mutations.forEach(handleMutation);
         });
 
         childListObserver.observe(document, {
@@ -138,31 +159,21 @@ function polyfillBuiltin() {
 
             const element = nativeCreateElement(tag) as CustomElement;
             setPrototypeOf(element, ActualConstructor.prototype);
+            if (!element.hasAttribute('is')) {
+                element.setAttribute('is', name);
+            }
             element.setAttribute(':ce-polyfill', '');
 
             const observedAttributes = ActualConstructor.observedAttributes || [];
             const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    const attributeName = mutation.attributeName;
-                    if (!attributeName) {
-                        return;
-                    }
-                    if (!observedAttributes.includes(attributeName)) {
-                        return;
-                    }
-
-                    element.attributeChangedCallback(
-                        attributeName,
-                        mutation.oldValue,
-                        element.getAttribute(attributeName),
-                        mutation.attributeNamespace
-                    );
-                });
+                mutations.forEach(handleMutation);
             });
             observer.observe(element, {
                 attributes: true,
                 attributeOldValue: true,
                 attributeFilter: observedAttributes,
+                childList: true,
+                subtree: true,
             });
             (element as CustomElement & { [CE_SYMBOL]: true })[CE_SYMBOL] = true;
 
@@ -180,15 +191,23 @@ function polyfillBuiltin() {
 
     const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 
+    const getIs = (node: Element): string | null => {
+        if (node.hasAttribute('is')) {
+            return node.getAttribute('is');
+        }
+        if ('is' in node) {
+            if (node.tagName.toLowerCase() !== (node.is as string)?.toLowerCase()) {
+                return node.is as string;
+            }
+        }
+        return null;
+    };
+
     const upgradeNodeIfNeeded = (node: Node): boolean => {
-        if (!isElement(node)) {
+        if (!isElement(node) || isCustomElement(node)) {
             return false;
         }
-        if (CE_SYMBOL in node) {
-            // already upgraded
-            return false;
-        }
-        const is = node.getAttribute('is');
+        const is = getIs(node);
         if (!is) {
             return false;
         }
@@ -210,6 +229,9 @@ function polyfillBuiltin() {
         }
 
         const upgradedNode = Reflect.construct(ctr, [node], ctr) as CustomElement;
+        if (!upgradedNode.hasAttribute('is')) {
+            upgradedNode.setAttribute('is', is);
+        }
         upgradedNode.setAttribute(':ce-polyfill', '');
         for (let i = 0, len = attributes.length; i < len; i++) {
             const { name, value } = attributes[i];
@@ -254,9 +276,7 @@ function polyfillBuiltin() {
         shimConstructor(ctr);
         define.call(customElements, name, ctr, options);
         polyfillUpgrade(document.documentElement, false, (node: Node) =>
-            isElement(node) &&
-            node.tagName?.toLowerCase() === options.extends &&
-            node.getAttribute('is')?.toLowerCase() === name
+            isElement(node) && node.tagName?.toLowerCase() === options.extends && getIs(node)?.toLowerCase() === name
                 ? NodeFilter.FILTER_ACCEPT
                 : NodeFilter.FILTER_SKIP
         );

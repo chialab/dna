@@ -14,6 +14,7 @@ import {
     isVSlot,
     isVTag,
 } from './JSX';
+import { setOwnerRealm } from './Realm';
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
 import { getProperty } from './property';
@@ -53,6 +54,7 @@ export type Context = {
     key?: unknown;
     keys?: Map<unknown, Context>;
     refs?: Map<Node, Context>;
+    shadow: boolean;
     _pos: number;
 };
 
@@ -69,6 +71,7 @@ export const createContext = (
     kind: ContextKind,
     type: Context['type'],
     node: Node,
+    shadow = false,
     root?: Context,
     owner?: Context
 ): Context => ({
@@ -79,6 +82,7 @@ export const createContext = (
     owner,
     children: [],
     contexts: new WeakMap(),
+    shadow,
     _pos: 0,
 });
 
@@ -96,11 +100,11 @@ export const getRootContext = <T extends Node>(
     shadowRoot?: boolean
 ): Context => {
     if (shadowRoot) {
-        node[SHADOW_CONTEXT_SYMBOL] = node[SHADOW_CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node);
+        node[SHADOW_CONTEXT_SYMBOL] = node[SHADOW_CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node, true);
         return node[SHADOW_CONTEXT_SYMBOL];
     }
 
-    node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node);
+    node[CONTEXT_SYMBOL] = node[CONTEXT_SYMBOL] || createContext(ContextKind.REF, null, node, false);
     return node[CONTEXT_SYMBOL];
 };
 
@@ -471,9 +475,9 @@ const renderTemplate = (
                                         return;
                                     }
                                     if (isComponent(rootContext.node)) {
-                                        rootContext.node.renderStart();
-                                        internalRender(context, template, rootContext, namespace, renderContext);
-                                        rootContext.node.renderEnd();
+                                        rootContext.node.realm.requestUpdate(() => {
+                                            internalRender(context, template, rootContext, namespace, renderContext);
+                                        });
                                     } else {
                                         internalRender(context, template, rootContext, namespace, renderContext);
                                     }
@@ -541,17 +545,27 @@ const renderTemplate = (
         if (!templateContext) {
             if (isVNode(template)) {
                 const node = template.type;
-                templateContext = refs?.get(node) || createContext(ContextKind.REF, null, template.type, rootContext);
+                templateContext =
+                    refs?.get(node) || createContext(ContextKind.REF, null, template.type, false, rootContext);
                 fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
             } else {
                 const ctr = customElements?.get(properties?.is ?? template.type);
+                const node = ctr ? new ctr() : document.createElementNS(namespaceURI, template.type);
                 templateContext = createContext(
                     ContextKind.VNODE,
                     template.type,
-                    ctr ? new ctr() : document.createElementNS(namespaceURI, template.type),
+                    node,
+                    false,
                     rootContext,
                     rootContext
                 );
+            }
+            if (
+                rootContext.shadow &&
+                isComponent(rootContext.node) &&
+                !rootContext.node.slotChildNodes.includes(templateContext.node)
+            ) {
+                setOwnerRealm(templateContext.node, rootContext.node.realm);
             }
         }
 
@@ -614,7 +628,7 @@ const renderTemplate = (
         insertNode(
             context,
             currentChildren.find((child) => child.node === template) ||
-                createContext(ContextKind.REF, null, template, rootContext),
+                createContext(ContextKind.REF, null, template, false, rootContext),
             rootContext
         );
         return;
@@ -642,6 +656,7 @@ const renderTemplate = (
             ContextKind.LITERAL,
             normalizedTemplate,
             document.createTextNode(normalizedTemplate),
+            false,
             rootContext,
             rootContext
         ),
