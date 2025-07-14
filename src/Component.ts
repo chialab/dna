@@ -151,11 +151,6 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         private _initialProps?: Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>;
 
         /**
-         * A flag to indicate if the component is rendering.
-         */
-        private _rendering = false;
-
-        /**
          * A flag to indicate component instances.
          * @returns True if the element is a component.
          */
@@ -213,14 +208,6 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 customElements.upgrade(this);
                 this.realm.initialize();
             }
-        }
-
-        /**
-         * The flag to indicate if the component is rendering.
-         * @returns True if the component is rendering.
-         */
-        get rendering() {
-            return this._rendering;
         }
 
         constructor(node?: HTMLElement) {
@@ -568,9 +555,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         forceUpdate() {
             this.collectUpdatesStart();
-            this.renderStart();
-            internalRender(getRootContext(this, true), this.render());
-            this.renderEnd();
+            this.realm.requestUpdate(() => {
+                internalRender(getRootContext(this, true), this.render());
+            });
             this.collectUpdatesEnd();
             this.updatedCallback();
         }
@@ -598,22 +585,6 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         }
 
         /**
-         * Start rendering the component.
-         */
-        renderStart(): void {
-            this._rendering = true;
-            this.realm.dangerouslyOpen();
-        }
-
-        /**
-         * Stop rendering the component.
-         */
-        renderEnd(): void {
-            this._rendering = false;
-            this.realm.dangerouslyClose();
-        }
-
-        /**
          * Assign properties to the component.
          * It runs a single re-render after the assignment.
          * @param props The properties to assign.
@@ -636,9 +607,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Reset the rendering state of the component.
          */
         private _resetRendering() {
-            this.renderStart();
-            internalRender(getRootContext(this, true), null);
-            this.renderEnd();
+            this.realm.requestUpdate(() => {
+                internalRender(getRootContext(this, true), null);
+            });
         }
     } as unknown as BaseComponentConstructor<T>;
 

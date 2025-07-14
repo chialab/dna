@@ -36,6 +36,9 @@ export default defineConfig({
                 {
                     browser: 'chromium',
                 },
+                {
+                    browser: 'webkit',
+                },
             ],
         },
     },
