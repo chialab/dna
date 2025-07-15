@@ -1,14 +1,10 @@
+import { isComponent } from './Component';
 import { defineProperty, getOwnPropertyDescriptor } from './helpers';
 
 /**
  * A callback to call when a realm changes.
  */
 type RealmChangeCallback = (childNodes: Node[]) => void;
-
-/**
- * A symbol that identifies a realm instance on a node.
- */
-const REALM_SYMBOL: unique symbol = Symbol();
 
 /**
  * A symbol that identifies a parent realm instance on a node.
@@ -23,42 +19,12 @@ const REALM_PARENT_SYMBOL: unique symbol = Symbol();
 const REALM_OWNER_SYMBOL: unique symbol = Symbol();
 
 /**
- * Create and attach a realm for a node.
- * @param  node The root node.
- * @returns The realm instance.
- */
-export function attachRealm(node: HTMLElement): Realm {
-    if (REALM_SYMBOL in node) {
-        throw new Error('Node already has a realm');
-    }
-
-    const realm = new Realm(node);
-    defineProperty(node, REALM_SYMBOL, {
-        value: realm,
-        writable: false,
-        enumerable: false,
-        configurable: false,
-    });
-
-    return realm;
-}
-
-/**
- * Get the realm instance for a node.
- * @param node The root node.
- * @returns The realm instance or null.
- */
-export function getRealm(node: HTMLElement): Realm | null {
-    return REALM_SYMBOL in node ? (node[REALM_SYMBOL] as Realm) : null;
-}
-
-/**
  * Get the owner realm instance for a node.
  * @param node The child node.
  * @returns The owner realm instance or null.
  */
 function getParentRealm(node: Node): Realm | null {
-    return REALM_PARENT_SYMBOL in node ? (node[REALM_PARENT_SYMBOL] as Realm) : null;
+    return (node as Node & { [REALM_PARENT_SYMBOL]?: Realm | null })[REALM_PARENT_SYMBOL] ?? null;
 }
 
 /**
@@ -67,17 +33,11 @@ function getParentRealm(node: Node): Realm | null {
  * @param realm The parent realm instance.
  */
 function setParentRealm(node: Node, realm: Realm | null): void {
-    const currentRealm = getParentRealm(node);
-    if (currentRealm && realm && currentRealm !== realm) {
+    const parentRealm = getParentRealm(node);
+    if (parentRealm && realm && parentRealm !== realm) {
         throw new Error('Cannot set parent realm for a node that already has a different parent realm.');
     }
-
-    defineProperty(node, REALM_PARENT_SYMBOL, {
-        value: realm,
-        writable: false,
-        enumerable: false,
-        configurable: true,
-    });
+    (node as Node & { [REALM_PARENT_SYMBOL]?: Realm | null })[REALM_PARENT_SYMBOL] = realm;
 }
 
 /**
@@ -86,7 +46,7 @@ function setParentRealm(node: Node, realm: Realm | null): void {
  * @returns The owner realm instance or null.
  */
 function getOwnerRealm(node: Node): Realm | null {
-    return REALM_OWNER_SYMBOL in node ? (node[REALM_OWNER_SYMBOL] as Realm) : null;
+    return (node as Node & { [REALM_OWNER_SYMBOL]?: Realm | null })[REALM_OWNER_SYMBOL] ?? null;
 }
 
 /**
@@ -94,13 +54,12 @@ function getOwnerRealm(node: Node): Realm | null {
  * @param node The child node.
  * @param realm The owner realm instance.
  */
-export function setOwnerRealm(node: Node, realm: Realm | null): void {
-    defineProperty(node, REALM_OWNER_SYMBOL, {
-        value: realm,
-        writable: false,
-        enumerable: false,
-        configurable: true,
-    });
+function setOwnerRealm(node: Node, realm: Realm | null): void {
+    const ownerRealm = getOwnerRealm(node);
+    if (ownerRealm && realm && ownerRealm !== realm) {
+        throw new Error('Node already has an owner realm.');
+    }
+    (node as Node & { [REALM_OWNER_SYMBOL]?: Realm | null })[REALM_OWNER_SYMBOL] = realm;
 }
 
 /**
@@ -311,6 +270,15 @@ export class Realm {
             this.virtualCurrentNode = null;
         }
         return sibling;
+    }
+
+    /**
+     * Set the owner realm for a node.
+     * @param node The node to set the owner realm for.
+     */
+    own(node: Node): void {
+        // Set the owner realm for the node.
+        setOwnerRealm(node, this);
     }
 
     /**
@@ -543,16 +511,8 @@ if (typeof Node !== 'undefined') {
         'replaceWith'
     ) as PropertyDescriptor;
     const commentRemoveDesc = getOwnPropertyDescriptor(CharacterDataPrototype, 'remove') as PropertyDescriptor;
-    const appendDesc = getOwnPropertyDescriptor(ElementPrototype, 'append') as PropertyDescriptor;
-    const prependDesc = getOwnPropertyDescriptor(ElementPrototype, 'prepend') as PropertyDescriptor;
-    const appendChildDesc = getOwnPropertyDescriptor(NodePrototype, 'appendChild') as PropertyDescriptor;
     const insertBeforeDesc = getOwnPropertyDescriptor(NodePrototype, 'insertBefore') as PropertyDescriptor;
-    const replaceChildDesc = getOwnPropertyDescriptor(NodePrototype, 'replaceChild') as PropertyDescriptor;
     const removeChildDesc = getOwnPropertyDescriptor(NodePrototype, 'removeChild') as PropertyDescriptor;
-    const insertAdjacentElementDesc = getOwnPropertyDescriptor(
-        ElementPrototype,
-        'insertAdjacentElement'
-    ) as PropertyDescriptor;
 
     defineProperty(NodePrototype, 'parentNode', {
         ...getParentNodeDesc,
@@ -613,6 +573,7 @@ if (typeof Node !== 'undefined') {
             parentRealm.insertBefore(nodes, this);
         },
     });
+
     defineProperty(CharacterDataPrototype, 'before', {
         ...commentBeforeDesc,
         value(...nodes: (Node | string)[]): void {
@@ -636,6 +597,7 @@ if (typeof Node !== 'undefined') {
             parentRealm.insertBefore(nodes, parentRealm.getNextSibling(this));
         },
     });
+
     defineProperty(CharacterDataPrototype, 'after', {
         ...commentAfterDesc,
         value(...nodes: (Node | string)[]): void {
@@ -659,6 +621,7 @@ if (typeof Node !== 'undefined') {
             parentRealm.replaceChild(nodes, this);
         },
     });
+
     defineProperty(CharacterDataPrototype, 'replaceWith', {
         ...commentReplaceWithDesc,
         value(...nodes: (Node | string)[]): void {
@@ -682,6 +645,7 @@ if (typeof Node !== 'undefined') {
             parentRealm.removeChild(this);
         },
     });
+
     defineProperty(CharacterDataPrototype, 'remove', {
         ...commentRemoveDesc,
         value(): void {
@@ -694,75 +658,23 @@ if (typeof Node !== 'undefined') {
         },
     });
 
-    // Override realm root editing methods to ensure that they are called on the root component.
-    defineProperty(ElementPrototype, 'append', {
-        ...appendDesc,
-        value(...nodes: (Node | string)[]): void {
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                appendDesc.value?.apply(this, nodes);
-                return;
-            }
-            realm.append(...nodes);
-        },
-    });
-
-    defineProperty(ElementPrototype, 'prepend', {
-        ...prependDesc,
-        value(...nodes: (Node | string)[]): void {
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                prependDesc.value?.apply(this, nodes);
-                return;
-            }
-            realm.prepend(...nodes);
-        },
-    });
-
-    defineProperty(NodePrototype, 'appendChild', {
-        ...appendChildDesc,
-        value(node: Node): Node {
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                return appendChildDesc.value?.call(this, node);
-            }
-            realm.append(node);
-            return node;
-        },
-    });
+    // Some rendering engines like vue and prect uses `parentNode.insertBefore(node, referenceNode)` to insert a node,
+    // so we need to insert the node in the owner realm when the parent node is part
+    // of the internal component template.
 
     defineProperty(NodePrototype, 'insertBefore', {
         ...insertBeforeDesc,
         value(node: Node, referenceNode: Node | null): Node {
-            const realm = getRealm(this);
+            const realm = isComponent(this) ? this.realm : null;
             if (realm?.open) {
                 return insertBeforeDesc.value?.call(this, node, referenceNode);
             }
             const ownerRealm = getOwnerRealm(this);
             if (ownerRealm && !ownerRealm.open) {
-                // Some rendering engines uses `parentNode.insertBefore(node, referenceNode)` to insert a node,
-                // so we need to insert the node in the owner realm when the parent node is part
-                // of the internal component template.
                 ownerRealm.insertBefore([node], referenceNode);
                 return node;
             }
-            if (!realm) {
-                return insertBeforeDesc.value?.call(this, node, referenceNode);
-            }
-            realm.insertBefore([node], referenceNode);
-            return node;
-        },
-    });
-
-    defineProperty(NodePrototype, 'replaceChild', {
-        ...replaceChildDesc,
-        value(newChild: Node, oldChild: Node): Node {
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                return replaceChildDesc.value?.call(this, newChild, oldChild);
-            }
-            realm.replaceChild([newChild], oldChild);
-            return newChild;
+            return insertBeforeDesc.value?.call(this, node, referenceNode);
         },
     });
 
@@ -771,38 +683,10 @@ if (typeof Node !== 'undefined') {
         value(child: Node): Node {
             const ownerRealm = getOwnerRealm(this);
             if (ownerRealm && !ownerRealm.open && getParentRealm(child) === ownerRealm) {
-                // Preact and vue use `parentNode.removeChild(child)` to remove a child node,
-                // so we need to remove the child from the owner realm when the parent node
-                // is part of the internal component template.
                 ownerRealm.removeChild(child);
                 return child;
             }
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                return removeChildDesc.value?.call(this, child);
-            }
-            realm.removeChild(child);
-            return child;
-        },
-    });
-
-    defineProperty(ElementPrototype, 'insertAdjacentElement', {
-        ...insertAdjacentElementDesc,
-        value(where: InsertPosition, node: Element): Element | null {
-            const realm = getRealm(this);
-            if (!realm || realm.open) {
-                return insertAdjacentElementDesc.value?.call(this, where, node);
-            }
-            switch (where) {
-                case 'afterbegin':
-                    realm.prepend(node);
-                    return node;
-                case 'beforeend':
-                    realm.append(node);
-                    return node;
-                default:
-                    return insertAdjacentElementDesc.value?.call(this, where, node);
-            }
+            return removeChildDesc.value?.call(this, child);
         },
     });
 }
