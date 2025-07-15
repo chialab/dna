@@ -14,7 +14,6 @@ import {
     isVSlot,
     isVTag,
 } from './JSX';
-import { setOwnerRealm } from './Realm';
 import { css } from './css';
 import { getPropertyDescriptor, isArray } from './helpers';
 import { getProperty } from './property';
@@ -561,11 +560,11 @@ const renderTemplate = (
                 );
             }
             if (
-                rootContext.shadow &&
                 isComponent(rootContext.node) &&
+                rootContext.shadow &&
                 !rootContext.node.slotChildNodes.includes(templateContext.node)
             ) {
-                setOwnerRealm(templateContext.node, rootContext.node.realm);
+                rootContext.node.realm.own(templateContext.node);
             }
         }
 

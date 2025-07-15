@@ -2,7 +2,7 @@ import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
 import type { HTML as HTMLNamespace } from './HTML';
 import type { Template } from './JSX';
-import { type Realm, attachRealm } from './Realm';
+import { Realm } from './Realm';
 import {
     type DelegatedEventCallback,
     type ListenerConfig,
@@ -231,7 +231,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
             );
 
-            const realm = attachRealm(element);
+            const realm = new Realm(element);
             Object.defineProperty(element, 'realm', {
                 value: realm,
             });
@@ -610,6 +610,98 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             this.realm.requestUpdate(() => {
                 internalRender(getRootContext(this, true), null);
             });
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        appendChild<T extends Node>(node: T): T {
+            if (this.realm.open) {
+                return super.appendChild(node);
+            }
+            this.realm.append(node);
+            return node;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        removeChild<T extends Node>(child: T): T {
+            if (this.realm.open) {
+                return super.removeChild(child);
+            }
+            this.realm.removeChild(child);
+            return child;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        insertBefore<T extends Node>(node: T, child: Node | null): T {
+            if (this.realm.open) {
+                return super.insertBefore(node, child);
+            }
+            this.realm.insertBefore([node], child);
+            return node;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        replaceChild<T extends Node>(node: Node, child: T): T {
+            if (this.realm.open) {
+                return super.replaceChild(node, child);
+            }
+            this.realm.replaceChild([node], child);
+            return child;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        append(...nodes: (Node | string)[]): void {
+            if (this.realm.open) {
+                super.append(...nodes);
+                return;
+            }
+            this.realm.append(...nodes);
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        prepend(...nodes: (Node | string)[]): void {
+            if (this.realm.open) {
+                super.prepend(...nodes);
+                return;
+            }
+            this.realm.prepend(...nodes);
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        insertAdjacentElement(where: InsertPosition, element: Element): Element | null {
+            if (this.realm.open) {
+                return super.insertAdjacentElement(where, element);
+            }
+            switch (where) {
+                case 'afterbegin':
+                    this.realm.prepend(element);
+                    return element;
+                case 'beforeend':
+                    this.realm.append(element);
+                    return element;
+                default:
+                    return super.insertAdjacentElement(where, element);
+            }
         }
     } as unknown as BaseComponentConstructor<T>;
 
