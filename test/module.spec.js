@@ -31,6 +31,7 @@ describe(
             state: 'function',
             observe: 'function',
             listen: 'function',
+            fires: 'function',
             isComponent: 'function',
             isComponentConstructor: 'function',
             Component: 'function',
