@@ -15,6 +15,9 @@ render(
         active={true}
     />
 );
+// @ts-expect-error Active is not a known property of the core details element
+render(<details active={true} />);
+render(<details open />);
 render(<div key={{}}></div>);
 render(
     <unknown

@@ -21,6 +21,11 @@ type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
 type IfAny<T, K extends keyof T, A, B> = 0 extends 1 & T[K] ? A : B;
 
 /**
+ * Exclude properties from a type using the never type.
+ */
+type Without<U, T> = { [P in Exclude<keyof T, keyof U>]?: never };
+
+/**
  * Exclude component mixin properties.
  */
 type ReservedKeys =
@@ -35,6 +40,8 @@ type ReservedKeys =
     | 'disconnectedCallback'
     | 'attributeChangedCallback'
     | 'stateChangedCallback'
+    | 'updatedCallback'
+    | 'requestUpdate'
     | 'propertyChangedCallback'
     | 'getInnerPropertyValue'
     | 'setInnerPropertyValue'
@@ -414,11 +421,7 @@ type InstrinsicCustomElementsProps<T extends keyof HTMLTagNameMap> = Exclude<
     {
         [K in keyof JSXInternal.CustomElements]: 'extends' extends keyof JSXInternal.CustomElements[K]
             ? JSXInternal.CustomElements[K]['extends'] extends T
-                ? AttributeProperties<{ is: K } & Props<JSXInternal.CustomElements[K]>> &
-                      KeyedProperties &
-                      TreeProperties &
-                      EventProperties &
-                      ElementProperties
+                ? { is: K } & AttributeProperties<Props<JSXInternal.CustomElements[K]>>
                 : never
             : never;
     }[keyof JSXInternal.CustomElements],
@@ -446,13 +449,19 @@ export namespace JSXInternal {
                   EventProperties &
                   ElementProperties;
     } & {
-        [K in keyof HTMLTagNameMap]:
-            | ({ is?: never } & AttributeProperties<Omit<IntrinsicElementAttributes[K], 'is'>> &
-                  KeyedProperties &
-                  TreeProperties &
-                  EventProperties &
-                  ElementProperties)
-            | InstrinsicCustomElementsProps<K>;
+        [K in keyof HTMLTagNameMap]: (
+            | ({ is?: undefined } & AttributeProperties<
+                  Without<
+                      Omit<IntrinsicElementAttributes[K], 'is'>,
+                      InstrinsicCustomElementsProps<K> extends never ? {} : InstrinsicCustomElementsProps<K>
+                  >
+              >)
+            | InstrinsicCustomElementsProps<K>
+        ) &
+            KeyedProperties &
+            TreeProperties &
+            EventProperties &
+            ElementProperties;
     } & {
         [K in keyof SVGTagNameMap]: AttributeProperties<IntrinsicElementAttributes[K]> &
             KeyedProperties &
