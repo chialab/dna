@@ -5,6 +5,7 @@ export { render } from './render';
 export { css } from './css';
 export {
     listen,
+    fires,
     delegateEventListener,
     undelegateEventListener,
     dispatchEvent,
@@ -85,6 +86,6 @@ export type {
     VTag,
 } from './JSX';
 export type { Context } from './render';
-export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor } from './events';
+export type { AsyncEvent, DelegatedEventCallback, DelegatedEventDescriptor, EventHandler, EventType } from './events';
 export type { PropertyDeclaration, PropertyObserver } from './property';
 export type { ComponentInstance, ComponentConstructor } from './Component';

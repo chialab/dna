@@ -796,6 +796,76 @@ describe.runIf(typeof window !== 'undefined')(
             });
         });
 
+        describe.only('fires decorator', () => {
+            it('should add and remove an event listener', () => {
+                const callback = vi.fn((event) => event.detail);
+
+                const is = getComponentName();
+                let TestElement = class TestElement extends DNA.Component {
+                    method() {
+                        this.dispatchEvent('custom', 'test');
+                    }
+                };
+
+                __decorate([DNA.fires('custom')], TestElement.prototype, 'oncustom', undefined);
+                TestElement = __decorate([DNA.customElement(is)], TestElement);
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                element.oncustom = callback;
+                expect(element.oncustom).toBeTypeOf('function');
+                expect(element.oncustom).toBe(callback);
+                expect(callback).not.toHaveBeenCalled();
+                element.method();
+                expect(callback).toHaveBeenCalled();
+                expect(callback).toHaveReturnedWith('test');
+                element.oncustom = null;
+                expect(element.oncustom).toBeNull();
+                element.method();
+                expect(callback).toHaveBeenCalledOnce();
+            });
+
+            it('should add a listener inferring event name', () => {
+                const callback = vi.fn((event) => event.detail);
+
+                const is = getComponentName();
+                let TestElement = class TestElement extends DNA.Component {
+                    method() {
+                        this.dispatchEvent('custom', 'test');
+                    }
+                };
+
+                __decorate([DNA.fires()], TestElement.prototype, 'oncustom', undefined);
+                TestElement = __decorate([DNA.customElement(is)], TestElement);
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                element.oncustom = callback;
+                expect(element.oncustom).toBeTypeOf('function');
+                expect(element.oncustom).toBe(callback);
+                expect(callback).not.toHaveBeenCalled();
+                element.method();
+                expect(callback).toHaveBeenCalled();
+                expect(callback).toHaveReturnedWith('test');
+            });
+
+            it('should throw when inferring event name with malformed property key', () => {
+                const is = getComponentName();
+                let TestElement = class TestElement extends DNA.Component {
+                    method() {
+                        this.dispatchEvent('custom', 'test');
+                    }
+                };
+
+                expect(() => {
+                    __decorate([DNA.fires()], TestElement.prototype, 'xoncustom', undefined);
+                    TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }).toThrow(TypeError);
+            });
+        });
+
         describe('#dispatchEvent', () => {
             it('should dispatch an event', () => {
                 const callback = vi.fn((event) => {

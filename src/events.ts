@@ -1,7 +1,7 @@
 import { type ClassElement } from './ClassDescriptor';
 import { type ComponentConstructor, type ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
-import { getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
+import { defineProperty, getOwnPropertyDescriptor, getPrototypeOf, hasOwnProperty, type Constructor } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
@@ -524,3 +524,107 @@ function listen(eventName: string, target?: string | AddEventListenerOptions, op
 }
 
 export { listen };
+
+/**
+ * A type for custom event properties.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EventHandler<T extends Event = Event> = ((event: T) => any) | null;
+
+/**
+ * Extract event type from handler property.
+ */
+export type EventType<T extends ComponentInstance, P extends keyof T> =
+    Exclude<T[P], undefined> extends EventHandler<infer E> ? E : never;
+
+/**
+ * Extract the event name from a property key.
+ * @param propertyKey The property key to extract the event name from.
+ * @returns The extracted event name.
+ * @throws If the property key does not start with "on".
+ */
+const extractEventName = (propertyKey: PropertyKey): string => {
+    if (typeof propertyKey !== 'string' || !propertyKey.startsWith('on')) {
+        throw new TypeError(
+            `The property key "${propertyKey as string}" must start with "on" to be used with @fires decorator.`
+        );
+    }
+    return propertyKey.slice(2).toLowerCase();
+};
+
+/**
+ * Create an event property.
+ * @param targetOrClassElement The component prototype or class element.
+ * @param eventName The name of the event to create a property for.
+ * @param propertyKey The property key of the event.
+ * @param descriptor The property descriptor.
+ * @returns The property descriptor for the event.
+ * @throws If the property key does not start with "on" or if the event name is not a string.
+ */
+function createEvent<T extends ComponentInstance, P extends keyof T>(
+    targetOrClassElement: T,
+    eventName?: string,
+    propertyKey?: P,
+    descriptor?: PropertyDescriptor
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any {
+    const key: unique symbol = Symbol();
+
+    if (propertyKey !== undefined) {
+        const computedEventName = eventName || extractEventName(propertyKey);
+        return defineProperty(targetOrClassElement as T, propertyKey, {
+            ...descriptor,
+            get(this: T & { [key]?: EventHandler }) {
+                return this[key] ?? null;
+            },
+            set(this: T & { [key]?: EventHandler }, value: EventHandler) {
+                const actualListener = this[key];
+                this[key] = value;
+                if (actualListener) {
+                    this.removeEventListener(computedEventName, actualListener);
+                }
+                if (value) {
+                    this.addEventListener(computedEventName, value);
+                }
+            },
+        });
+    }
+
+    const element = targetOrClassElement as unknown as ClassElement;
+    const computedEventName = eventName || extractEventName(element.key);
+
+    return {
+        ...element,
+        key,
+        descriptor: {
+            get(this: T & { [key]?: EventHandler }) {
+                return this[key] ?? null;
+            },
+            set(this: T & { [key]?: EventHandler }, value: EventHandler) {
+                const actualListener = this[key];
+                this[key] = value;
+                if (actualListener) {
+                    this.removeEventListener(computedEventName, actualListener);
+                }
+                if (value) {
+                    this.addEventListener(computedEventName, value);
+                }
+            },
+        },
+    };
+}
+
+/**
+ * Create `on{event}` properties.
+ * @param eventName The name of the event to create a property for.
+ * @returns A decorator for creating event properties.
+ */
+export function fires(eventName?: string) {
+    return <T extends ComponentInstance, P extends keyof T>(
+        targetOrClassElement: T,
+        propertyKey?: P,
+        descriptor?: PropertyDescriptor
+    ) => {
+        createEvent(targetOrClassElement, eventName, propertyKey, descriptor);
+    };
+}
