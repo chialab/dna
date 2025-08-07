@@ -796,7 +796,7 @@ describe.runIf(typeof window !== 'undefined')(
             });
         });
 
-        describe.only('fires decorator', () => {
+        describe('fires decorator', () => {
             it('should add and remove an event listener', () => {
                 const callback = vi.fn((event) => event.detail);
 
