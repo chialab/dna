@@ -175,7 +175,7 @@ export interface SVGTagNameMap {
     radialGradient: SVGRadialGradientElement;
     rect: SVGRectElement;
     stop: SVGStopElement;
-    svg: SVGElement;
+    svg: SVGSVGElement;
     switch: SVGSwitchElement;
     symbol: SVGSymbolElement;
     text: SVGTextElement;
