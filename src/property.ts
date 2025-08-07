@@ -458,6 +458,13 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
 
             this[symbol] = newValue;
 
+            // trigger changes
+            if (state) {
+                this.stateChangedCallback(propertyKey, oldValue, newValue);
+            } else {
+                this.propertyChangedCallback(propertyKey, oldValue, newValue);
+            }
+
             const observers = getPropertyObservers(this as T, propertyKey);
             for (let i = 0, len = observers.length; i < len; i++) {
                 observers[i].call(this, oldValue, newValue, propertyKey as string);
@@ -468,13 +475,6 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
                     newValue,
                     oldValue,
                 });
-            }
-
-            // trigger changes
-            if (state) {
-                this.stateChangedCallback(propertyKey, oldValue, newValue);
-            } else {
-                this.propertyChangedCallback(propertyKey, oldValue, newValue);
             }
 
             if (update && this.shouldUpdate(propertyKey, oldValue, newValue)) {
