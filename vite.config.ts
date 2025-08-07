@@ -18,6 +18,9 @@ export default defineConfig({
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         },
     },
+    optimizeDeps: {
+        include: ['vue'],
+    },
     test: {
         dir: './test',
         include: ['./**/*.spec.{js,ts,tsx}'],

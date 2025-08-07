@@ -144,12 +144,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 2
-          retry_on: error
-          command: yarn test:browserstack --browser browserstack:${{ matrix.browser }} --coverage
+        run: yarn test:browserstack --browser browserstack:${{ matrix.browser }} --coverage
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
