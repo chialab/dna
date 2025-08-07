@@ -22,7 +22,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
     });
 
     test('should update text content', () => {
-        const Template = (text: string) => createElement('test-compat-1', null, [text]);
+        const Template = (text: string) => createElement('test-compat-1', null, text);
         render(Template('Text'), {
             container: wrapper,
         });
@@ -50,7 +50,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
     });
 
     test('should update text content with multiple text nodes', () => {
-        const Template = (text: string) => createElement('test-compat-1', null, [text, ' ', 'children']);
+        const Template = (text: string) => createElement('test-compat-1', null, text, ' ', 'children');
         render(Template('Text'), {
             container: wrapper,
         });
@@ -83,13 +83,15 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('should update named slots', () => {
         const Template = (title: boolean) =>
-            createElement('test-compat-1', null, [
+            createElement(
+                'test-compat-1',
+                null,
                 'Text ',
                 title
                     ? createElement('h1', { slot: 'children', key: 1 }, 'Title')
                     : createElement('h2', { slot: 'children', key: 2 }, 'Subtitle'),
-                '\n',
-            ]);
+                '\n'
+            );
         render(Template(true), {
             container: wrapper,
         });
@@ -116,13 +118,15 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('mixed slots', () => {
         const Template = (showTitle = false) =>
-            createElement('test-compat-1', {}, [
+            createElement(
+                'test-compat-1',
+                {},
                 createElement('span', null, 'Test'),
                 showTitle ? createElement('h1', { slot: 'children' }, 'Title') : null,
                 createElement('span', null, 'Test'),
                 showTitle ? createElement('h2', { slot: 'children' }, 'Title') : null,
-                createElement('span', null, 'Test'),
-            ]);
+                createElement('span', null, 'Test')
+            );
         render(Template(), {
             container: wrapper,
         });
@@ -158,11 +162,13 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('nested slot', () => {
         const Template = (showTitle = false) =>
-            createElement('test-compat-2', { key: '1' }, [
+            createElement(
+                'test-compat-2',
+                { key: '1' },
                 showTitle ? createElement('h1', { slot: 'title' }, 'Title') : null,
                 createElement('img', { src: 'data:image/png;base64,', alt: '' }),
-                createElement('p', null, 'Body'),
-            ]);
+                createElement('p', null, 'Body')
+            );
         render(Template(), {
             container: wrapper,
         });
@@ -197,11 +203,13 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('slot moved across elements', () => {
         const Template = (collapsed = false) =>
-            createElement('test-compat-3', { collapsed }, [
+            createElement(
+                'test-compat-3',
+                { collapsed },
                 createElement('h1', null, 'Title'),
                 createElement('img', { src: 'data:image/png;base64,', alt: '' }),
-                createElement('p', null, 'Body'),
-            ]);
+                createElement('p', null, 'Body')
+            );
         render(Template(), {
             container: wrapper,
         });
@@ -242,7 +250,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('slot moved and replaced', () => {
         const Template = (switchValue = false) =>
-            createElement('test-compat-4', { switch: switchValue }, [switchValue ? 'World' : 'Hello']);
+            createElement('test-compat-4', { switch: switchValue }, switchValue ? 'World' : 'Hello');
         render(Template(), {
             container: wrapper,
         });
