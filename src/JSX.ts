@@ -442,7 +442,9 @@ export namespace JSXInternal {
     };
 
     export type IntrinsicElements = {
-        [key: string]: VElementRenderProperties<HTMLElement>;
+        [key: string]: VElementRenderProperties<HTMLElement> & {
+            [key: PropertyKey]: unknown;
+        };
     } & {
         [K in keyof AutonomousElements]: AutonomousElements[K] & VTagBaseRenderProperties<K>;
     } & {

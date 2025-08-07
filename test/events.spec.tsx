@@ -805,15 +805,15 @@ describe.runIf(IS_BROWSER)(
             it('should add and remove an event listener', () => {
                 const callback = vi.fn((event) => event.detail);
 
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement('test-events-22')
+                class TestElement extends DNA.Component {
+                    @DNA.fires('custom')
+                    oncustom: DNA.EventHandler;
+
                     method() {
                         this.dispatchEvent('custom', 'test');
                     }
-                };
-
-                __decorate([DNA.fires('custom')], TestElement.prototype, 'oncustom', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -834,15 +834,15 @@ describe.runIf(IS_BROWSER)(
             it('should add a listener inferring event name', () => {
                 const callback = vi.fn((event) => event.detail);
 
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement('test-events-23')
+                class TestElement extends DNA.Component {
+                    @DNA.fires()
+                    oncustom: DNA.EventHandler;
+
                     method() {
                         this.dispatchEvent('custom', 'test');
                     }
-                };
-
-                __decorate([DNA.fires()], TestElement.prototype, 'oncustom', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -857,16 +857,16 @@ describe.runIf(IS_BROWSER)(
             });
 
             it('should throw when inferring event name with malformed property key', () => {
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
-                    method() {
-                        this.dispatchEvent('custom', 'test');
-                    }
-                };
-
                 expect(() => {
-                    __decorate([DNA.fires()], TestElement.prototype, 'xoncustom', undefined);
-                    TestElement = __decorate([DNA.customElement(is)], TestElement);
+                    @DNA.customElement('test-events-24')
+                    class TestElement extends DNA.Component {
+                        @DNA.fires()
+                        xoncustom: DNA.EventHandler;
+
+                        method() {
+                            this.dispatchEvent('custom', 'test');
+                        }
+                    }
                 }).toThrow(TypeError);
             });
         });
