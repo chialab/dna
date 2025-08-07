@@ -1343,4 +1343,6 @@ export type ElementAttributes<T extends Element> = T extends HTMLAnchorElement
                                                                                             ? VideoHTMLAttributes
                                                                                             : T extends SVGAElement
                                                                                               ? SVGAttributes
-                                                                                              : HTMLAttributes;
+                                                                                              : T extends SVGElement
+                                                                                                ? SVGAttributes
+                                                                                                : HTMLAttributes;
