@@ -240,3 +240,52 @@ paginator.addEventListener('fetch', (event) => {
     });
 });
 ```
+
+## Custom events
+
+When a component dispatches custom events, it’s helpful to include that information in the class’s type definitions. This offers two main benefits:
+
+- you can define an `on<event name>` property—allowing developers to add event listeners the same way they do with native events (e.g., `onclick`), without using the `addEventListener` method.
+- the typechecker will recognize that the event exists, improving the component's interoperability.
+
+To achieve this, you can use the `@fires` decorator.
+
+```ts
+import { Component, customElement, fires, type EventHandler } from '@chialab/dna';
+
+@customElement('x-paginator')
+class Paginator extends Component {
+    protected current = 1;
+
+    @fires()
+    onnext: EventHandler<CustomEvent<number>>;
+
+    next() {
+        this.dispatchEvent('next', this.current++);
+    }
+}
+```
+
+::: info
+
+`@fires` may accept an optional `eventName` parameter, which will be used as the event name in the type definition. If not provided, it will default to the property name with the `on` prefix removed (e.g., `onnext` becomes `next`).
+
+:::
+
+### Retrieving the event type in listener
+
+When a component event property is typed with `EventHandler`, the type of the event can be inferred from the property name using `EventType`.
+
+```ts
+import { Component, customElement, fires, type EventHandler, type EventType } from '@chialab/dna';
+
+@customElement('x-paginator')
+class Paginator extends Component {
+    @fires()
+    onnext: EventHandler<CustomEvent<number>>;
+}
+
+document.addEventListener('next', (event: EventType<Paginator, 'next'>) => {
+    console.log(event.detail); // Type is inferred as CustomEvent<number>
+});
+```

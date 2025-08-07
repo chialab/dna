@@ -4,7 +4,12 @@
     --vp-button-brand-bg: var(--vp-c-brand-1);
     --vp-button-brand-hover-bg: #d56e00;
     --vp-button-brand-active-bg: #ce5900;
+    --vp-code-color: #343434;
 
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: linear-gradient(to bottom right, #ffac52 0%, #f07c00 100%);
+}
+
+.custom-block.info code {
+    color: var(--vp-code-color);
 }

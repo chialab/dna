@@ -1,4 +1,4 @@
-import { Component, customElement, HTML, property } from '@chialab/dna';
+import { Component, customElement, fires, HTML, property, type EventHandler } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -20,9 +20,20 @@ export class TestElement extends Component {
     set computed(value) {
         this.setInnerPropertyValue('computed', value);
     }
+
+    @fires()
+    onselected?: EventHandler<CustomEvent<boolean>>;
 }
 
 new TestElement().focus();
+
+new TestElement().onselected = (event) => {
+    const selected: boolean = event.detail;
+    // @ts-expect-error This is a test.
+    const label: string = event.detail;
+
+    return { selected, label };
+};
 
 @customElement('x-test-builtin', { extends: 'details' })
 export class TestBuiltinElement extends HTML.Details {
