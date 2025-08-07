@@ -5,9 +5,6 @@ import vitestConfig from './vitest.config';
 
 export default mergeConfig(vitestConfig, {
     test: {
-        coverage: {
-            provider: 'istanbul',
-        },
         browser: {
             enabled: true,
             provider: '@chialab/vitest-provider-browserstack',

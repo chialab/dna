@@ -31,6 +31,7 @@ export default defineConfig({
         include: ['./*.spec.js'],
         coverage: {
             all: false,
+            provider: 'istanbul',
             include: ['src'],
             reporter: [['clover'], ['html']],
         },
