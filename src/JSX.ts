@@ -116,7 +116,7 @@ export type TreeProperties = {
  * Get render properties for event listeners.
  */
 export type EventProperties = {
-    [listener: `on${string}`]: EventListener | undefined;
+    [listener: `on:${string}`]: EventListener | null | undefined;
 };
 
 /**

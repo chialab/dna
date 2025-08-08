@@ -93,7 +93,7 @@ const Tracker = define(
 
 ## Template listeners
 
-Listeners can be added via a template attribute named as the event with the `on` prefix:
+Listeners can be added via a template attribute named as the event with the `on` prefix for known element events, or with the `on:` prefix for delegating custom events.
 
 ```tsx
 import { Component, customElement } from '@chialab/dna';
@@ -106,8 +106,8 @@ class Header extends Component {
         return (
             <>
                 <h2>{this.title}</h2>
-                <nav>
-                    <button onclick={this.onNavClick}>Close</button>
+                <nav on:close={this.onNavClick}>
+                    <button onclick={(event) => event.target.dispatchEvent(new CustomEvent('close'))}>Close</button>
                 </nav>
             </>
         );

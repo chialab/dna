@@ -277,7 +277,7 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
     if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in node.constructor.prototype)) {
-        const eventName = propertyKey.substring(2);
+        const eventName = propertyKey[2] === ':' ? propertyKey.substring(3) : propertyKey.substring(2);
         if (literalOldValue) {
             (node as HTMLElement).removeEventListener(eventName, literalOldValue as EventListener);
         }

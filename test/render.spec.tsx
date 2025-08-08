@@ -448,13 +448,13 @@ describe.runIf(IS_BROWSER)(
 
             it('should add and remove custom listeners', () => {
                 const listener = vi.fn();
-                DNA.render(<div onCustom={listener} />, wrapper);
+                DNA.render(<div on:custom={listener} />, wrapper);
                 const element = wrapper.children[0] as HTMLElement;
                 expect(listener).not.toHaveBeenCalled();
-                DNA.dispatchEvent(element, 'Custom');
+                DNA.dispatchEvent(element, 'custom');
                 expect(listener).toHaveBeenCalled();
                 expect(listener).toHaveBeenCalledOnce();
-                DNA.render(<div onCustom={undefined} />, wrapper);
+                DNA.render(<div on:custom={undefined} />, wrapper);
                 element.click();
                 expect(listener).toHaveBeenCalledOnce();
             });
