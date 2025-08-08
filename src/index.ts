@@ -1,73 +1,40 @@
 import './polyfill';
 
-export { h, compile, html, Fragment, jsx, jsxs, jsxDEV } from './JSX';
-export { render } from './render';
-export { css } from './css';
-export {
-    listen,
-    fires,
-    delegateEventListener,
-    undelegateEventListener,
-    dispatchEvent,
-    dispatchAsyncEvent,
-    defineListeners,
-} from './events';
-export {
-    property,
-    state,
-    observe,
-    getProperty,
-    getProperties,
-    defineProperties,
-    defineProperty,
-} from './property';
-export {
-    define,
-    extend,
-    HTML,
-    Component,
-    isComponent,
-    isComponentConstructor,
-    customElement,
-} from './Component';
-export { $parse, $await, $until } from './directives';
-
-export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
-    AriaAttributes,
-    AriaRole,
-    HTMLAttributes,
-    HTMLAttributeReferrerPolicy,
     AnchorHTMLAttributes,
     AreaHTMLAttributes,
+    AriaAttributes,
+    AriaRole,
     BaseHTMLAttributes,
     BlockquoteHTMLAttributes,
     ButtonHTMLAttributes,
     CanvasHTMLAttributes,
-    ColHTMLAttributes,
     ColgroupHTMLAttributes,
+    ColHTMLAttributes,
     DataHTMLAttributes,
-    DetailsHTMLAttributes,
     DelHTMLAttributes,
+    DetailsHTMLAttributes,
     DialogHTMLAttributes,
     EmbedHTMLAttributes,
     FieldsetHTMLAttributes,
     FormHTMLAttributes,
+    HTMLAttributeReferrerPolicy,
+    HTMLAttributes,
     HtmlHTMLAttributes,
     IframeHTMLAttributes,
     ImgHTMLAttributes,
     InputHTMLAttributes,
     InsHTMLAttributes,
+    IntrinsicElementAttributes,
     KeygenHTMLAttributes,
     LabelHTMLAttributes,
     LiHTMLAttributes,
     LinkHTMLAttributes,
     MapHTMLAttributes,
-    MenuHTMLAttributes,
     MediaHTMLAttributes,
+    MenuHTMLAttributes,
     MetaHTMLAttributes,
     MeterHTMLAttributes,
-    QuoteHTMLAttributes,
     ObjectHTMLAttributes,
     OlHTMLAttributes,
     OptgroupHTMLAttributes,
@@ -75,33 +42,34 @@ export type {
     OutputHTMLAttributes,
     ParamHTMLAttributes,
     ProgressHTMLAttributes,
-    SlotHTMLAttributes,
+    QuoteHTMLAttributes,
     ScriptHTMLAttributes,
     SelectHTMLAttributes,
+    SlotHTMLAttributes,
     SourceHTMLAttributes,
     StyleHTMLAttributes,
+    SVGAttributes,
     TableHTMLAttributes,
-    TextareaHTMLAttributes,
     TdHTMLAttributes,
+    TextareaHTMLAttributes,
     ThHTMLAttributes,
     TimeHTMLAttributes,
     TrackHTMLAttributes,
     VideoHTMLAttributes,
-    SVGAttributes,
-    IntrinsicElementAttributes,
 } from './Attributes';
-export type {
-    Props,
-    JSXInternal as JSX,
-    FunctionComponent,
-    Template,
-    VObject,
-    VFunction,
-    VElement,
-    VSlot,
-    VTag,
-} from './JSX';
-export type { Context } from './render';
+export type { ComponentConstructor, ComponentInstance } from './Component';
+export {
+    Component,
+    customElement,
+    define,
+    extend,
+    HTML,
+    isComponent,
+    isComponentConstructor,
+} from './Component';
+export { css } from './css';
+export { $await, $parse, $until } from './directives';
+export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
     AsyncEvent,
     DelegatedEventCallback,
@@ -110,5 +78,36 @@ export type {
     EventType,
     ListenerConfig,
 } from './events';
-export type { PropertyDeclaration, PropertyObserver, PropertyConfig } from './property';
-export type { ComponentInstance, ComponentConstructor } from './Component';
+export {
+    defineListeners,
+    delegateEventListener,
+    dispatchAsyncEvent,
+    dispatchEvent,
+    fires,
+    listen,
+    undelegateEventListener,
+} from './events';
+export type {
+    FunctionComponent,
+    JSXInternal as JSX,
+    Props,
+    Template,
+    VElement,
+    VFunction,
+    VObject,
+    VSlot,
+    VTag,
+} from './JSX';
+export { compile, Fragment, h, html, jsx, jsxDEV, jsxs } from './JSX';
+export type { PropertyConfig, PropertyDeclaration, PropertyObserver } from './property';
+export {
+    defineProperties,
+    defineProperty,
+    getProperties,
+    getProperty,
+    observe,
+    property,
+    state,
+} from './property';
+export type { Context } from './render';
+export { render } from './render';

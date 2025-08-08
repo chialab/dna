@@ -1,14 +1,22 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
   "files": {
-    "ignore": [".changeset", "./node_modules", "./dist", "./types", "./docs/.vitepress", "./public", "./coverage"],
+    "includes": [
+      "**",
+      "!.yarn/**/*",
+      "!.changeset/**/*",
+      "!node_modules/**/*",
+      "!dist/**/*",
+      "!docs/.vitepress/**/*",
+      "!public/**/*",
+      "!coverage/**/*"
+    ],
     "maxSize": 2097152
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {
     "attributePosition": "multiline",
+    "lineWidth": 120,
     "useEditorconfig": true
   },
   "linter": {
@@ -16,7 +24,8 @@
       "recommended": true,
       "a11y": {
         "noRedundantAlt": "warn",
-        "useButtonType": "warn"
+        "useButtonType": "warn",
+        "useSemanticElements": "off"
       },
       "complexity": {
         "noForEach": "off",
@@ -29,7 +38,10 @@
         "useOptionalChain": "warn"
       },
       "correctness": {
-        "useJsxKeyInIterable": "off"
+        "useJsxKeyInIterable": "off",
+        "noSwitchDeclarations": "off",
+        "noUnusedFunctionParameters": "off",
+        "noUnusedPrivateClassMembers": "off"
       },
       "performance": {
         "noAccumulatingSpread": "warn",
@@ -43,17 +55,24 @@
         "useExponentiationOperator": "warn",
         "useImportType": "warn",
         "useSelfClosingElements": "warn",
-        "useSingleCaseStatement": "off",
         "useSingleVarDeclarator": "warn",
         "useTemplate": "warn",
-        "noUselessElse": "warn"
+        "noUselessElse": "warn",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error"
       },
       "suspicious": {
         "noAssignInExpressions": "warn",
         "noClassAssign": "off",
         "noConfusingLabels": "warn",
-        "noConsoleLog": "warn",
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noConsole": {
+          "level": "warn",
+          "options": { "allow": ["error", "warn"] }
+        }
       }
     }
   },
@@ -80,7 +99,7 @@
   },
   "overrides": [
     {
-      "include": ["**/package.json"],
+      "includes": ["**/package.json"],
       "formatter": {
         "lineWidth": 1
       }

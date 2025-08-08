@@ -27,7 +27,7 @@ describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
             'test-ivya-1',
             class extends DNA.Component {
                 render() {
-                    return <>Internal</>;
+                    return 'Internal';
                 }
             }
         );

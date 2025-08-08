@@ -3,11 +3,11 @@ import { createElement } from 'react';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { IS_BROWSER } from '../helpers';
 import {
+    defineTestCompat3,
     type TestCompat1,
     type TestCompat2,
     type TestCompat3,
     type TestCompat4,
-    defineTestCompat3,
 } from './TestElements';
 
 describe.runIf(IS_BROWSER)('React compatibility', () => {

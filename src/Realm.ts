@@ -184,8 +184,8 @@ export class Realm {
      * @param callback The callback to invoke.
      * @returns The result of the callback.
      */
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    requestUpdate<T extends (...args: any) => any>(callback: T): ReturnType<T> {
+    // biome-ignore lint/suspicious/noExplicitAny: The callback can return any type.
+    requestUpdate<T extends () => any>(callback: T): ReturnType<T> {
         this.dangerouslyOpen();
 
         try {

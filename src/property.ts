@@ -7,8 +7,8 @@ import {
     isInitialized,
 } from './Component';
 import {
-    type Constructor,
     defineProperty as _defineProperty,
+    type Constructor,
     createObject,
     getOwnPropertyDescriptor,
     getPrototypeOf,

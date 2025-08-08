@@ -1,21 +1,21 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
+import { css } from './css';
 import { type Effect, HooksManager, type HooksState } from './Hooks';
+import { getPropertyDescriptor, isArray } from './helpers';
 import {
     type ElementProperties,
     type EventProperties,
     Fragment,
     type FunctionComponent,
-    type KeyedProperties,
-    type Template,
-    type TreeProperties,
     isVFunction,
     isVNode,
     isVObject,
     isVSlot,
     isVTag,
+    type KeyedProperties,
+    type Template,
+    type TreeProperties,
 } from './JSX';
-import { css } from './css';
-import { getPropertyDescriptor, isArray } from './helpers';
 import { getProperty } from './property';
 
 /**

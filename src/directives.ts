@@ -1,4 +1,4 @@
-import { type FunctionComponent, type Template, h } from './JSX';
+import { type FunctionComponent, h, type Template } from './JSX';
 import { getThenableState } from './Thenable';
 
 /**

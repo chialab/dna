@@ -1,8 +1,8 @@
 import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
 import type { BaseClass, HTMLTagNameMap, SVGTagNameMap } from './Elements';
-import type { HTML } from './HTML';
 import type { Effect } from './Hooks';
+import type { HTML } from './HTML';
 import type { Context } from './render';
 
 /**

@@ -1,4 +1,4 @@
-import { Component, HTML, customElement, observe, property } from '@chialab/dna';
+import { Component, customElement, HTML, observe, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {

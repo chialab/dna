@@ -1,6 +1,6 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { IS_BROWSER, IS_NODE } from './helpers';
 
 describe.runIf(IS_BROWSER)(
@@ -636,8 +636,7 @@ describe.runIf(IS_BROWSER)(
                                 <button
                                     type="button"
                                     // @ts-ignore We are not defining custom elements for TypeScript
-                                    is="test-component-80"
-                                >
+                                    is="test-component-80">
                                     test
                                 </button>
                             );

@@ -4,45 +4,45 @@ import { describe, expect, it } from 'vitest';
 describe(
     'module',
     () => {
-        const EXPECTED_EXPORT_MAP: Record<keyof typeof DNA, 'boolean' | 'function' | 'number' | 'object' | 'string'> = {
-            customElement: 'function',
-            define: 'function',
-            HTML: 'object',
-            extend: 'function',
-            render: 'function',
-            Fragment: 'function',
-            h: 'function',
-            jsx: 'function',
-            jsxDEV: 'function',
-            jsxs: 'function',
-            compile: 'function',
-            html: 'function',
-            css: 'function',
-            defineListeners: 'function',
-            delegateEventListener: 'function',
-            undelegateEventListener: 'function',
-            dispatchEvent: 'function',
-            dispatchAsyncEvent: 'function',
-            defineProperty: 'function',
-            defineProperties: 'function',
-            getProperty: 'function',
-            getProperties: 'function',
-            property: 'function',
-            state: 'function',
-            observe: 'function',
-            listen: 'function',
-            fires: 'function',
-            isComponent: 'function',
-            isComponentConstructor: 'function',
-            Component: 'function',
-            $parse: 'function',
-            $await: 'function',
-            $until: 'function',
-        };
+        const EXPECTED_EXPORT_MAP = [
+            [DNA.customElement, 'customElement', 'function'],
+            [DNA.define, 'define', 'function'],
+            [DNA.HTML, 'HTML', 'object'],
+            [DNA.extend, 'extend', 'function'],
+            [DNA.render, 'render', 'function'],
+            [DNA.Fragment, 'Fragment', 'function'],
+            [DNA.h, 'h', 'function'],
+            [DNA.jsx, 'jsx', 'function'],
+            [DNA.jsxDEV, 'jsxDEV', 'function'],
+            [DNA.jsxs, 'jsxs', 'function'],
+            [DNA.compile, 'compile', 'function'],
+            [DNA.html, 'html', 'function'],
+            [DNA.css, 'css', 'function'],
+            [DNA.defineListeners, 'defineListeners', 'function'],
+            [DNA.delegateEventListener, 'delegateEventListener', 'function'],
+            [DNA.undelegateEventListener, 'undelegateEventListener', 'function'],
+            [DNA.dispatchEvent, 'dispatchEvent', 'function'],
+            [DNA.dispatchAsyncEvent, 'dispatchAsyncEvent', 'function'],
+            [DNA.defineProperty, 'defineProperty', 'function'],
+            [DNA.defineProperties, 'defineProperties', 'function'],
+            [DNA.getProperty, 'getProperty', 'function'],
+            [DNA.getProperties, 'getProperties', 'function'],
+            [DNA.property, 'property', 'function'],
+            [DNA.state, 'state', 'function'],
+            [DNA.observe, 'observe', 'function'],
+            [DNA.listen, 'listen', 'function'],
+            [DNA.fires, 'fires', 'function'],
+            [DNA.isComponent, 'isComponent', 'function'],
+            [DNA.isComponentConstructor, 'isComponentConstructor', 'function'],
+            [DNA.Component, 'Component', 'function'],
+            [DNA.$parse, '$parse', 'function'],
+            [DNA.$await, '$await', 'function'],
+            [DNA.$until, '$until', 'function'],
+        ] as const;
 
-        for (const [ref, type] of Object.entries(EXPECTED_EXPORT_MAP)) {
+        for (const [value, ref, type] of EXPECTED_EXPORT_MAP) {
             it(`should export "${ref}"`, () => {
-                expect(DNA[ref as keyof typeof DNA]).toBeTypeOf(type);
+                expect(value).toBeTypeOf(type);
             });
         }
 

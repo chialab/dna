@@ -1,5 +1,6 @@
 import type { JSXInternal } from './JSX';
-export { h, Fragment, jsx, jsxDEV, jsxs } from './JSX';
+
+export { Fragment, h, jsx, jsxDEV, jsxs } from './JSX';
 
 /**
  * Configure JSX support.

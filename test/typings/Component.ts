@@ -1,4 +1,4 @@
-import { Component, type EventHandler, HTML, customElement, fires, listen, property } from '@chialab/dna';
+import { Component, customElement, type EventHandler, fires, HTML, listen, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {

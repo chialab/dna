@@ -1,30 +1,30 @@
 import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
-import type { HTML as HTMLNamespace } from './HTML';
-import type { Template } from './JSX';
-import { Realm } from './Realm';
 import {
     type DelegatedEventCallback,
-    type ListenerConfig,
     defineListeners,
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
     getListeners,
+    type ListenerConfig,
     undelegateEventListener,
 } from './events';
+import type { HTML as HTMLNamespace } from './HTML';
 import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import type { Template } from './JSX';
 import {
-    type PropertyConfig,
-    type PropertyObserver,
     addObserver,
     defineProperties,
     getProperties,
     getProperty,
     getPropertyForAttribute,
+    type PropertyConfig,
+    type PropertyObserver,
     reflectPropertyToAttribute,
     removeObserver,
 } from './property';
+import { Realm } from './Realm';
 import { getRootContext, internalRender } from './render';
 
 /**
@@ -717,6 +717,7 @@ export const HTML: typeof HTMLNamespace = new Proxy({} as typeof HTMLNamespace, 
         const className =
             name === 'Element' ? 'HTMLElement' : (`HTML${name as string}Element` as keyof typeof Elements);
         if (className in Elements) {
+            // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Elements is an alias of global HTML namespace
             const ctr = extend(Elements[className]);
             Reflect.set(target, name, ctr);
             return ctr;

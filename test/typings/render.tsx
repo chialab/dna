@@ -1,4 +1,4 @@
-import { type EventHandler, Fragment, h, render } from '@chialab/dna';
+import { Fragment, h, render } from '@chialab/dna';
 import './Component';
 
 render(<details open />);

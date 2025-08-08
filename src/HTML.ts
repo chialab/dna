@@ -1,7 +1,7 @@
-import type { Template as JSXTemplate } from './JSX';
-import type { Realm } from './Realm';
 import type { DelegatedEventCallback, ListenerConfig } from './events';
+import type { Template as JSXTemplate } from './JSX';
 import type { PropertyConfig, PropertyObserver } from './property';
+import type { Realm } from './Realm';
 
 export declare namespace HTML {
     export class Element extends globalThis.HTMLElement {
