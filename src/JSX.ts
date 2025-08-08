@@ -421,6 +421,8 @@ export namespace JSXInternal {
 
     export interface ElementClass extends HTMLElement {}
 
+    export type IntrinsicAttributes = KeyedProperties & EventProperties & TreeProperties & ElementProperties;
+
     export type AutonomousElements = {
         [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Props<
             CustomElements[K]
@@ -452,17 +454,4 @@ export namespace JSXInternal {
     } & {
         [K in keyof SVGTagNameMap]: VTagRenderProperties<K>;
     };
-}
-
-/**
- * Configure JSX support.
- */
-declare global {
-    namespace JSX {
-        type Element = JSXInternal.Element;
-        type IntrinsicElements = JSXInternal.IntrinsicElements;
-        interface ElementClass extends JSXInternal.ElementClass {}
-    }
-
-    interface HTMLElementTagNameMap extends JSXInternal.CustomElements {}
 }
