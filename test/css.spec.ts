@@ -84,7 +84,8 @@ h3 {
     100% { top: 10px; }
 }`
             );
-            expect(style).toBe(`[\\:scope="test-style"] { color: rgb(95, 158, 160); }
+            expect(style).toBeOneOf([
+                `[\\:scope="test-style"] { color: rgb(95, 158, 160); }
 [\\:scope="test-style"] > * { background-color: rgb(95, 158, 160); }
 [\\:scope="test-style"].test { color: rgb(95, 158, 160); }
 [\\:scope="test-style"].test > * { background-color: rgb(95, 158, 160); }
@@ -101,7 +102,26 @@ h3 {
 @keyframes anim {${' '}
   0% { top: 0px; }
   100% { top: 10px; }
-}`);
+}`,
+                `[\\:scope="test-style"] { color: rgb(95, 158, 160); }
+[\\:scope="test-style"] > * { background-color: rgb(95, 158, 160); }
+[\\:scope="test-style"].test { color: rgb(95, 158, 160); }
+[\\:scope="test-style"].test > * { background-color: rgb(95, 158, 160); }
+[\\:scope="test-style"] h3 { color: blue; }
+[\\:scope="test-style"] #before1::before { content: "Hello"; }
+[\\:scope="test-style"] #before2::before { content: attr(id); }
+[\\:scope="test-style"] #before3::before { content: "Hello world"; }
+[\\:scope="test-style"] #before4::before { content: "attr(id)"; }
+[\\:scope="test-style"] #before5::before { content: "♜"; }
+[\\:scope="test-style"] #before6::before { content: "hello-world"; }
+@media (min-width: 0px) {
+  [\\:scope="test-style"] h1, [\\:scope="test-style"] h2 { color: inherit; }
+}
+@keyframes anim {
+0% { top: 0px; }
+100% { top: 10px; }
+}`,
+            ]);
         });
 
         it('should cache the result', () => {
