@@ -18,6 +18,9 @@
     "./jsx-dev-runtime": {
       "types": "./types/jsx-runtime.d.ts",
       "default": "./dist/jsx-runtime.js"
+    },
+    "./svelte": {
+      "types": "./types/svelte.d.ts"
     }
   },
   "files": [
@@ -40,7 +43,7 @@
     "build": "rimraf 'dist' 'types' && yarn types && esbuild dna=src/index.ts jsx-runtime=src/jsx-runtime.ts --splitting --outdir=dist --out-extension:.js=.js --format=esm --bundle --packages=external --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "tsc -p test --noEmit",
+    "test:typings": "tsc -p test --noEmit && svelte-check --workspace test/typings",
     "test:browser": "vitest run --browser",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run",
@@ -77,6 +80,7 @@
     "react-dom": "^19.1.0",
     "rimraf": "^6.0.0",
     "svelte": "^5.33.1",
+    "svelte-check": "^4.3.1",
     "tslib": "^2.6.2",
     "typescript": "^5.0.0",
     "uhtml": "^4.7.1",

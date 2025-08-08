@@ -39,7 +39,6 @@ export default defineConfig({
             {
                 text: 'Ecosystem',
                 items: [
-                    { text: 'Plasma', link: 'https://chialab.github.io/plasma/' },
                     { text: 'Loock', link: 'https://chialab.github.io/loock/' },
                     { text: 'Synapse', link: 'https://github.com/chialab/synapse/' },
                 ],

@@ -17,10 +17,11 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@chialab/dna",
     "baseUrl": ".",
-    "rootDir": "../..",
+    "rootDir": "..",
     "paths": {
       "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
       "@chialab/dna/jsx-dev-runtime": ["../src/jsx-runtime.ts"],
+      "@chialab/dna/svelte": ["../src/svelte.d.ts"],
       "@chialab/dna": ["../src/index.ts"]
     }
   }
