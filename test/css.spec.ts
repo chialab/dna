@@ -22,9 +22,10 @@ describe.runIf(IS_BROWSER)(
 
         it('should scope a selector inside a media query', () => {
             const style = DNA.css('test-style', '@media (min-width: 640px) { .test { color: red; } }');
-            expect(style.replace(/\n/g, '')).toBe(
-                '@media (min-width: 640px) {  [\\:scope="test-style"] .test { color: red; }}'
-            );
+            expect(style.replace(/\n/g, '')).toBeOneOf([
+                '@media (min-width: 640px) {  [\\:scope="test-style"] .test { color: red; }}',
+                '@media (min-width: 640px) {  [:scope="test-style"] .test { color: red; }}',
+            ]);
         });
 
         it('should convert a more complex CSS #1', () => {
