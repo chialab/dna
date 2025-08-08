@@ -1,13 +1,12 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
-import { __decorate } from 'tslib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getComponentName } from './helpers.js';
+import { IS_BROWSER } from './helpers';
 
-describe.runIf(typeof window !== 'undefined')(
+describe.runIf(IS_BROWSER)(
     'events',
     () => {
-        let wrapper;
+        let wrapper: HTMLElement;
         beforeEach(() => {
             wrapper = document.createElement('div');
             wrapper.ownerDocument.body.appendChild(wrapper);
@@ -90,22 +89,27 @@ describe.runIf(typeof window !== 'undefined')(
 
             it('should validate dispatch input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(null);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, null);
-                }).toThrow(TypeError, 'The provided object must be an Event');
+                }).toThrow(new TypeError('The provided object must be an Event'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, null, null, null);
                 }).toThrow(TypeError);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, true, null, null);
                 }).toThrow(TypeError);
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.dispatchEvent(wrapper, 'click', null, true, true, null);
                 }).toThrow(TypeError);
             });
@@ -113,14 +117,14 @@ describe.runIf(typeof window !== 'undefined')(
 
         describe('dispatchAyncEvent', () => {
             it('should trigger an event and return a Promise', async () => {
-                wrapper.addEventListener('click', (event) => {
-                    event.respondWith(async () => event.type);
+                wrapper.addEventListener('custom', (event) => {
+                    (event as DNA.AsyncEvent).respondWith(async () => event.type);
                 });
-                wrapper.addEventListener('click', (event) => {
-                    event.respondWith(async () => event.target.tagName);
+                wrapper.addEventListener('custom', (event) => {
+                    (event as DNA.AsyncEvent).respondWith(async () => (event.target as HTMLElement).tagName);
                 });
-                const response = await DNA.dispatchAsyncEvent(wrapper, 'click');
-                expect(response).toStrictEqual(['click', 'DIV']);
+                const response = await DNA.dispatchAsyncEvent(wrapper, 'custom');
+                expect(response).toStrictEqual(['custom', 'DIV']);
             });
         });
 
@@ -142,20 +146,24 @@ describe.runIf(typeof window !== 'undefined')(
 
             it('should validate delegation input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(false, false, false, false);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, false, false, false);
-                }).toThrow(TypeError, 'The provided event name must be a string');
+                }).toThrow(new TypeError('The provided event name must be a string'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, 'click', false, false);
-                }).toThrow(TypeError, 'The provided selector must be a string');
+                }).toThrow(new TypeError('The provided selector must be a string or null'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.delegateEventListener(wrapper, 'click', 'button', false);
-                }).toThrow(TypeError, 'The provided callback must be a function');
+                }).toThrow(new TypeError('The provided callback must be a function'));
             });
 
             it('should stop propagation', () => {
@@ -263,27 +271,30 @@ describe.runIf(typeof window !== 'undefined')(
 
             it('should validate undelegateEventListener input', () => {
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(false, false, false, false);
-                }).toThrow(TypeError, 'The provided element must be a Node');
+                }).toThrow(new TypeError('The provided element must be a Node'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, false, false, false);
-                }).toThrow(TypeError, 'The provided event name must be a string');
+                }).toThrow(new TypeError('The provided event name must be a string'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, 'click', false, false);
-                }).toThrow(TypeError, 'The provided selector must be a string');
+                }).toThrow(new TypeError('The provided selector must be a string or null'));
 
                 expect(() => {
+                    // @ts-expect-error We are checking the type validation
                     DNA.undelegateEventListener(wrapper, 'click', 'button', false);
-                }).toThrow(TypeError, 'The provided callback must be a function');
+                }).toThrow(new TypeError('The provided callback must be a function'));
             });
 
             it('should delegate listeners to slotted contents', () => {
                 const callback = vi.fn();
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-1',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -295,9 +306,9 @@ describe.runIf(typeof window !== 'undefined')(
                             return DNA.html`<div class="button_wrapper"><slot /></div>`;
                         }
 
-                        method(event, target) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            callback(event.type, target.tagName);
+                            callback(event.type, (target as HTMLElement).tagName);
                         }
                     }
                 );
@@ -318,20 +329,21 @@ describe.runIf(typeof window !== 'undefined')(
         describe('listeners getter', () => {
             it('should add a listener', () => {
                 const callback = vi.fn();
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-2',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
                                 click: this.prototype.method,
-                                change: (event, target) => callback(event.type, target.tagName),
+                                change: (event: Event, target?: Node) => {
+                                    callback(event.type, (target as HTMLElement).tagName);
+                                },
                             };
                         }
 
-                        method(event, target) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            callback(event.type, target.tagName);
+                            callback(event.type, (target as HTMLElement).tagName);
                         }
                     }
                 );
@@ -341,32 +353,32 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-2');
                 element.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
                     composed: false,
                 });
-                expect(callback).toHaveBeenCalledWith('change', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('change', 'TEST-EVENTS-2');
                 expect(callback).toHaveBeenCalledTimes(2);
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-3',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
-                                'click button': (event, target) => {
+                                'click button': (event: Event, target?: Node) => {
                                     event.preventDefault();
-                                    callback(event.type, target.tagName);
+                                    callback(event.type, (target as HTMLElement).tagName);
                                 },
                             };
                         }
 
                         render() {
-                            return DNA.compile('<button></button>');
+                            return <button type="button">Click me</button>;
                         }
                     }
                 );
@@ -374,48 +386,48 @@ describe.runIf(typeof window !== 'undefined')(
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
             });
 
             it('should inherit listeners', () => {
-                const callback1 = vi.fn((event) => {
+                const callback1 = vi.fn((event: Event) => {
                     event.preventDefault();
                 });
                 const callback2 = vi.fn();
-                const callback3 = vi.fn((event) => {
+                const callback3 = vi.fn((event: Event) => {
                     event.preventDefault();
                 });
                 const callback4 = vi.fn();
                 const BaseElement = DNA.define(
-                    getComponentName(),
+                    'test-events-4',
                     class extends DNA.Component {
-                        static get listeners() {
+                        static get listeners(): Record<string, DNA.ListenerConfig> {
                             return {
                                 'click button': callback1,
-                                'change': callback2,
+                                change: callback2,
                             };
                         }
 
                         render() {
-                            return DNA.compile('<button></button>');
+                            return <button type="button">Click me</button>;
                         }
                     }
                 );
                 const TestElement1 = DNA.define(
-                    getComponentName(),
+                    'test-events-5',
                     class extends BaseElement {
                         static get listeners() {
                             return {
                                 'click button': callback3,
-                                'drop': callback4,
+                                drop: callback4,
                             };
                         }
                     }
                 );
                 const TestElement2 = DNA.define(
-                    getComponentName(),
+                    'test-events-6',
                     class extends BaseElement {
                         static get listeners() {
                             return {};
@@ -428,7 +440,7 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -440,7 +452,7 @@ describe.runIf(typeof window !== 'undefined')(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -457,46 +469,43 @@ describe.runIf(typeof window !== 'undefined')(
             it('should add a listener', () => {
                 const callback = vi.fn();
 
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
-                    method(event, target) {
+                @DNA.customElement('test-events-7')
+                class TestElement extends DNA.Component {
+                    @DNA.listen('click')
+                    method(event: Event, target?: Node) {
                         event.preventDefault();
-                        callback(event.type, target.tagName);
+                        callback(event.type, (target as HTMLElement).tagName);
                     }
-                };
-
-                __decorate([DNA.listen('click')], TestElement.prototype, 'method', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-7');
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
 
-                let TestElement = class TestElement extends DNA.Component {
-                    method(event, target) {
-                        event.preventDefault();
-                        callback(event.type, target.tagName);
-                    }
-
+                @DNA.customElement('test-events-8')
+                class TestElement extends DNA.Component {
                     render() {
-                        return DNA.compile('<button></button>');
+                        return <button type="button">Click me</button>;
                     }
-                };
 
-                __decorate([DNA.listen('click', 'button')], TestElement.prototype, 'method', undefined);
-                TestElement = __decorate([DNA.customElement(getComponentName())], TestElement);
+                    @DNA.listen('click', 'button')
+                    method(event: Event, target?: Node) {
+                        event.preventDefault();
+                        callback(event.type, (target as HTMLElement).tagName);
+                    }
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
                 expect(callback).toHaveBeenCalled();
             });
@@ -507,52 +516,49 @@ describe.runIf(typeof window !== 'undefined')(
                 const callback3 = vi.fn();
                 const callback4 = vi.fn();
 
-                let BaseElement = class BaseElement extends DNA.Component {
-                    callback1(event, target) {
+                @DNA.customElement('test-events-9')
+                class BaseElement extends DNA.Component {
+                    render() {
+                        return <button type="button">Click me</button>;
+                    }
+
+                    @DNA.listen('click', 'button')
+                    callback1(event: Event, target?: Node) {
                         event.preventDefault();
                         callback1(event, target);
                     }
 
-                    callback2(event, target) {
+                    @DNA.listen('change')
+                    callback2(event: Event, target?: Node) {
                         event.preventDefault();
                         callback2(event, target);
                     }
+                }
 
-                    render() {
-                        return DNA.compile('<button></button>');
-                    }
-                };
-
-                let TestElement1 = class TestElement1 extends BaseElement {
-                    callback3(event, target) {
+                @DNA.customElement('test-events-10')
+                class TestElement1 extends BaseElement {
+                    @DNA.listen('click', 'button')
+                    callback3(event: Event, target?: Node) {
                         event.preventDefault();
                         callback3(event, target);
                     }
 
-                    callback4(event, target) {
+                    @DNA.listen('drop')
+                    callback4(event: Event, target?: Node) {
                         event.preventDefault();
                         callback4(event, target);
                     }
-                };
+                }
 
-                let TestElement2 = class TestElement2 extends BaseElement {};
-
-                __decorate([DNA.listen('click', 'button')], BaseElement.prototype, 'callback1', undefined);
-                __decorate([DNA.listen('change')], BaseElement.prototype, 'callback2', undefined);
-                BaseElement = __decorate([DNA.customElement(getComponentName())], BaseElement);
-
-                __decorate([DNA.listen('click', 'button')], TestElement1.prototype, 'callback3', undefined);
-                __decorate([DNA.listen('drop')], TestElement1.prototype, 'callback4', undefined);
-                TestElement1 = __decorate([DNA.customElement(getComponentName())], TestElement1);
-
-                TestElement2 = __decorate([DNA.customElement(getComponentName())], TestElement2);
+                @DNA.customElement('test-events-11')
+                class TestElement2 extends BaseElement {}
 
                 const element1 = new TestElement1();
                 wrapper.appendChild(element1);
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -564,7 +570,7 @@ describe.runIf(typeof window !== 'undefined')(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -581,13 +587,12 @@ describe.runIf(typeof window !== 'undefined')(
             it('should add a listener', () => {
                 const callback = vi.fn();
 
-                const is = getComponentName();
                 const TestElement = _decorate(
-                    [DNA.customElement(is)],
+                    [DNA.customElement('test-events-12')],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -600,9 +605,9 @@ describe.runIf(typeof window !== 'undefined')(
                                     kind: 'method',
                                     decorators: [DNA.listen('click')],
                                     key: 'method',
-                                    value: function method(event, target) {
+                                    value: function method(event: Event, target?: Node) {
                                         event.preventDefault();
-                                        callback(event.type, target.tagName);
+                                        callback(event.type, (target as HTMLElement).tagName);
                                     },
                                 },
                             ],
@@ -616,18 +621,18 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(callback).not.toHaveBeenCalled();
                 element.click();
                 expect(callback).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalledWith('click', is.toUpperCase());
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-12');
             });
 
             it('should add a delegated listener', () => {
                 const callback = vi.fn();
 
                 const TestElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-13')],
                     (_initialize, _DNA$Component) => {
                         class TestElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -640,16 +645,16 @@ describe.runIf(typeof window !== 'undefined')(
                                     kind: 'method',
                                     decorators: [DNA.listen('click', 'button')],
                                     key: 'method',
-                                    value: function method(event, target) {
+                                    value: function method(event: Event, target?: Node) {
                                         event.preventDefault();
-                                        callback(event.type, target.tagName);
+                                        callback(event.type, (target as HTMLElement).tagName);
                                     },
                                 },
                                 {
                                     kind: 'method',
                                     key: 'render',
                                     value: function render() {
-                                        return DNA.compile('<button></button>');
+                                        return <button type="button">Click me</button>;
                                     },
                                 },
                             ],
@@ -661,7 +666,7 @@ describe.runIf(typeof window !== 'undefined')(
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
             });
@@ -677,11 +682,11 @@ describe.runIf(typeof window !== 'undefined')(
                 const callback4 = vi.fn();
 
                 const BaseElement = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-14')],
                     (_initialize, _DNA$Component) => {
                         class BaseElement extends _DNA$Component {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -706,7 +711,7 @@ describe.runIf(typeof window !== 'undefined')(
                                     kind: 'method',
                                     key: 'render',
                                     value: function render() {
-                                        return DNA.compile('<button></button>');
+                                        return <button type="button">Click me</button>;
                                     },
                                 },
                             ],
@@ -716,11 +721,11 @@ describe.runIf(typeof window !== 'undefined')(
                 );
 
                 const TestElement1 = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-15')],
                     (_initialize, _BaseElement) => {
                         class TestElement1 extends _BaseElement {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -748,11 +753,11 @@ describe.runIf(typeof window !== 'undefined')(
                 );
 
                 const TestElement2 = _decorate(
-                    [DNA.customElement(getComponentName())],
+                    [DNA.customElement('test-events-16')],
                     (_initialize, _BaseElement) => {
                         class TestElement2 extends _BaseElement {
-                            constructor(...args) {
-                                super(...args);
+                            constructor(node?: HTMLElement) {
+                                super(node);
 
                                 _initialize(this);
                             }
@@ -771,7 +776,7 @@ describe.runIf(typeof window !== 'undefined')(
                 expect(callback1).not.toHaveBeenCalled();
                 expect(callback2).not.toHaveBeenCalled();
                 expect(callback3).not.toHaveBeenCalled();
-                element1.querySelector('button').click();
+                element1.querySelector('button')?.click();
                 element1.dispatchEvent('change', {
                     bubbles: true,
                     cancelable: true,
@@ -783,7 +788,7 @@ describe.runIf(typeof window !== 'undefined')(
 
                 const element2 = new TestElement2();
                 wrapper.appendChild(element2);
-                element2.querySelector('button').click();
+                element2.querySelector('button')?.click();
                 element2.dispatchEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -800,15 +805,15 @@ describe.runIf(typeof window !== 'undefined')(
             it('should add and remove an event listener', () => {
                 const callback = vi.fn((event) => event.detail);
 
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement('test-events-22')
+                class TestElement extends DNA.Component {
+                    @DNA.fires('custom')
+                    oncustom: DNA.EventHandler;
+
                     method() {
                         this.dispatchEvent('custom', 'test');
                     }
-                };
-
-                __decorate([DNA.fires('custom')], TestElement.prototype, 'oncustom', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -829,15 +834,15 @@ describe.runIf(typeof window !== 'undefined')(
             it('should add a listener inferring event name', () => {
                 const callback = vi.fn((event) => event.detail);
 
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
+                @DNA.customElement('test-events-23')
+                class TestElement extends DNA.Component {
+                    @DNA.fires()
+                    oncustom: DNA.EventHandler;
+
                     method() {
                         this.dispatchEvent('custom', 'test');
                     }
-                };
-
-                __decorate([DNA.fires()], TestElement.prototype, 'oncustom', undefined);
-                TestElement = __decorate([DNA.customElement(is)], TestElement);
+                }
 
                 const element = new TestElement();
                 wrapper.appendChild(element);
@@ -852,16 +857,16 @@ describe.runIf(typeof window !== 'undefined')(
             });
 
             it('should throw when inferring event name with malformed property key', () => {
-                const is = getComponentName();
-                let TestElement = class TestElement extends DNA.Component {
-                    method() {
-                        this.dispatchEvent('custom', 'test');
-                    }
-                };
-
                 expect(() => {
-                    __decorate([DNA.fires()], TestElement.prototype, 'xoncustom', undefined);
-                    TestElement = __decorate([DNA.customElement(is)], TestElement);
+                    @DNA.customElement('test-events-24')
+                    class TestElement extends DNA.Component {
+                        @DNA.fires()
+                        xoncustom: DNA.EventHandler;
+
+                        method() {
+                            this.dispatchEvent('custom', 'test');
+                        }
+                    }
                 }).toThrow(TypeError);
             });
         });
@@ -871,7 +876,7 @@ describe.runIf(typeof window !== 'undefined')(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-events-17', class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
@@ -886,7 +891,7 @@ describe.runIf(typeof window !== 'undefined')(
                 const callback = vi.fn((event) => {
                     event.preventDefault();
                 });
-                const TestElement = DNA.define(getComponentName(), class extends DNA.Component {});
+                const TestElement = DNA.define('test-events-18', class extends DNA.Component {});
                 const element = new TestElement();
                 wrapper.appendChild(element);
                 wrapper.addEventListener('click', callback);
@@ -900,9 +905,8 @@ describe.runIf(typeof window !== 'undefined')(
 
         describe('#dispatchAyncEvent', () => {
             it('should trigger an event and return a Promise', async () => {
-                const is = getComponentName();
                 const TestElement = DNA.define(
-                    is,
+                    'test-events-19',
                     class extends DNA.Component {
                         static get listeners() {
                             return {
@@ -910,17 +914,17 @@ describe.runIf(typeof window !== 'undefined')(
                             };
                         }
 
-                        method(event) {
+                        method(event: Event, target?: Node) {
                             event.preventDefault();
-                            event.respondWith(async () => event.type);
-                            event.respondWith(async () => event.target.tagName);
+                            (event as DNA.AsyncEvent).respondWith(async () => event.type);
+                            (event as DNA.AsyncEvent).respondWith(async () => (event.target as HTMLElement).tagName);
                         }
                     }
                 );
                 const element = new TestElement();
                 const response = await element.dispatchAsyncEvent('click');
 
-                expect(response).toStrictEqual(['click', is.toUpperCase()]);
+                expect(response).toStrictEqual(['click', 'TEST-EVENTS-19']);
             });
         });
 
@@ -930,7 +934,7 @@ describe.runIf(typeof window !== 'undefined')(
                     event.preventDefault();
                 });
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-20',
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<button title="click me"></button>`;
@@ -942,7 +946,7 @@ describe.runIf(typeof window !== 'undefined')(
                 wrapper.appendChild(element);
                 element.delegateEventListener('click', 'button', callback);
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
             });
         });
@@ -953,7 +957,7 @@ describe.runIf(typeof window !== 'undefined')(
                     event.preventDefault();
                 });
                 const TestElement = DNA.define(
-                    getComponentName(),
+                    'test-events-21',
                     class extends DNA.Component {
                         render() {
                             return DNA.html`<button title="click me"></button>`;
@@ -965,10 +969,10 @@ describe.runIf(typeof window !== 'undefined')(
                 element.delegateEventListener('click', 'button', callback);
 
                 expect(callback).not.toHaveBeenCalled();
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalled();
                 element.undelegateEventListener('click', 'button', callback);
-                element.querySelector('button').click();
+                element.querySelector('button')?.click();
                 expect(callback).toHaveBeenCalledOnce();
             });
         });

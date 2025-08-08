@@ -1,19 +1,23 @@
-/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import htm from 'htm';
-import { type ElementAttributes, type HTMLAttributes, type IntrinsicElementAttributes } from './Attributes';
-import { type BaseClass, type HTMLTagNameMap, type SVGTagNameMap } from './Elements';
-import { type HTML } from './HTML';
-import { type Context } from './render';
+import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
+import type { BaseClass, HTMLTagNameMap, SVGTagNameMap } from './Elements';
+import type { Effect } from './Hooks';
+import type { HTML } from './HTML';
+import type { Context } from './render';
 
 /**
  * Identify virtual dom objects.
  */
 const V_SYM: unique symbol = Symbol();
 
+// biome-ignore lint/complexity/noBannedTypes: Base empty object that can be extended.
+type EmptyObject = {};
+
 /**
  * Check if a property is a method.
  */
-type IfMethod<T, K extends keyof T, A, B> = T[K] extends Function ? A : B;
+// biome-ignore lint/suspicious/noExplicitAny: We really check any kind of function here.
+type IfMethod<T, K extends keyof T, A, B> = T[K] extends (...args: any[]) => any ? A : B;
 
 /**
  * Check if a property is any.
@@ -23,7 +27,7 @@ type IfAny<T, K extends keyof T, A, B> = 0 extends 1 & T[K] ? A : B;
 /**
  * Get the values of a type.
  */
-type Values<T> = T[keyof T] extends never ? {} : T[keyof T];
+type Values<T> = T[keyof T] extends never ? EmptyObject : T[keyof T];
 
 /**
  * Exclude component mixin properties.
@@ -36,12 +40,15 @@ type ReservedKeys =
     | 'is'
     | 'slotChildNodes'
     | 'initialize'
+    | 'childNodesBySlot'
     | 'connectedCallback'
     | 'disconnectedCallback'
     | 'attributeChangedCallback'
     | 'stateChangedCallback'
     | 'updatedCallback'
+    | 'childListChangedCallback'
     | 'requestUpdate'
+    | 'shouldUpdate'
     | 'propertyChangedCallback'
     | 'getInnerPropertyValue'
     | 'setInnerPropertyValue'
@@ -73,7 +80,7 @@ export type Props<T extends HTMLElement, InvalidKeys = ReservedKeys | KnownKeys<
     ? {
           [K in keyof T as K extends InvalidKeys ? never : IfMethod<T, K, never, K>]?: T[K];
       }
-    : {};
+    : EmptyObject;
 
 /**
  * Pick methods of a class.
@@ -87,7 +94,9 @@ export type Methods<T> = {
  * @param props The properties of the fragment.
  * @returns The fragment children.
  */
-export const Fragment: FunctionComponent<{}> = (props) => props.children;
+export const Fragment: FunctionComponent<{
+    [key: PropertyKey]: never;
+}> = (props) => props.children;
 
 /**
  * Get render properties for keyed nodes.
@@ -107,7 +116,7 @@ export type TreeProperties = {
  * Get render properties for event listeners.
  */
 export type EventProperties = {
-    [listener: `on${string}`]: EventListener | undefined;
+    [listener: `on:${string}`]: EventListener | null | undefined;
 };
 
 /**
@@ -141,12 +150,13 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<
  * @param hooks Hooks methods.
  * @returns A template.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: Function components can have any properties.
 export type FunctionComponent<P = any> = (
-    props: P & { key?: unknown; children?: Template[] },
+    props: P & KeyedProperties & TreeProperties,
     hooks: {
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+        useEffect: (effect: Effect, deps?: unknown[]) => void;
         useRenderContext: () => Context;
     }
 ) => Template;
@@ -220,7 +230,7 @@ type VTagBaseRenderProperties<T extends string> = RenderAttributes<T> &
  */
 type VTagRenderProperties<T extends string> = (T extends keyof JSXInternal.CustomElements
     ? Props<JSXInternal.CustomElements[T]>
-    : {}) &
+    : EmptyObject) &
     VTagBaseRenderProperties<T>;
 
 /**
@@ -283,7 +293,7 @@ export type VObject =
 /**
  * A generic template. Can be a single atomic item or a list of items.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: Anything can be a template.
 export type Template = any;
 
 /**
@@ -291,8 +301,7 @@ export type Template = any;
  * @param target The node to check.
  * @returns True if the target is a virtual DOM object.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isVObject = (target: any): target is VObject => !!target[V_SYM];
+export const isVObject = (target: Template): target is VObject => !!target[V_SYM];
 
 /**
  * Check if the current virtual node is a functional component.
@@ -374,8 +383,8 @@ function jsx<T extends FunctionComponent | HTMLElement | 'slot' | string>(
     } as DistinctVObject<T>;
 }
 
-const jsxs = jsx;
-const jsxDEV = jsx;
+const jsxs: typeof jsx = jsx;
+const jsxDEV: typeof jsx = jsx;
 
 export { h, jsx, jsxs, jsxDEV };
 
@@ -385,7 +394,10 @@ export { h, jsx, jsxs, jsxDEV };
  * @param values Values to interpolate.
  * @returns The virtual DOM template.
  */
-export const html = htm.bind(h);
+export const html: (
+    strings: TemplateStringsArray,
+    ...values: Template[]
+) => ReturnType<typeof h> | ReturnType<typeof h>[] = htm.bind(h);
 
 /**
  * Compile a string into virtual DOM template.
@@ -402,11 +414,14 @@ export const compile = (string: string): Template => {
  * The internal JSX namespace.
  */
 export namespace JSXInternal {
+    // biome-ignore lint/suspicious/noEmptyInterface: We need an empty interface to extend it later.
     export interface CustomElements {}
 
     export type Element = Template;
 
     export interface ElementClass extends HTMLElement {}
+
+    export type IntrinsicAttributes = KeyedProperties & EventProperties & TreeProperties & ElementProperties;
 
     export type AutonomousElements = {
         [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Props<
@@ -429,7 +444,9 @@ export namespace JSXInternal {
     };
 
     export type IntrinsicElements = {
-        [key: string]: VElementRenderProperties<HTMLElement>;
+        [key: string]: VElementRenderProperties<HTMLElement> & {
+            [key: PropertyKey]: unknown;
+        };
     } & {
         [K in keyof AutonomousElements]: AutonomousElements[K] & VTagBaseRenderProperties<K>;
     } & {
@@ -437,17 +454,4 @@ export namespace JSXInternal {
     } & {
         [K in keyof SVGTagNameMap]: VTagRenderProperties<K>;
     };
-}
-
-/**
- * Configure JSX support.
- */
-declare global {
-    namespace JSX {
-        type Element = JSXInternal.Element;
-        type IntrinsicElements = JSXInternal.IntrinsicElements;
-        interface ElementClass extends JSXInternal.ElementClass {}
-    }
-
-    interface HTMLElementTagNameMap extends JSXInternal.CustomElements {}
 }

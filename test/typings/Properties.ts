@@ -39,7 +39,7 @@ export class TestElement6 extends Component {
     sample?: string;
 
     @observe('sample')
-    check(oldValue: string | undefined, newValue: String) {
+    check(oldValue: string | undefined, newValue: string | undefined) {
         return `${oldValue}/${newValue}`;
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "@chialab/dna",
-  "version": "4.3.1",
+  "version": "4.4.0-beta.10",
   "description": "Progressive Web Components",
   "type": "module",
   "main": "dist/dna.js",
@@ -18,6 +18,9 @@
     "./jsx-dev-runtime": {
       "types": "./types/jsx-runtime.d.ts",
       "default": "./dist/jsx-runtime.js"
+    },
+    "./svelte": {
+      "types": "./types/svelte.d.ts"
     }
   },
   "files": [
@@ -40,43 +43,54 @@
     "build": "rimraf 'dist' 'types' && yarn types && esbuild dna=src/index.ts jsx-runtime=src/jsx-runtime.ts --splitting --outdir=dist --out-extension:.js=.js --format=esm --bundle --packages=external --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "tsc -p test/typings --noEmit",
+    "test:typings": "tsc -p test --noEmit && svelte-check --workspace test/typings",
     "test:browser": "vitest run --browser",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run",
-    "lint": "prettier --check . && eslint src test",
+    "lint": "biome check",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "prepack": "yarn build && publint"
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@chialab/quantum": "^1.0.0",
     "htm": "^3.0.3"
   },
   "devDependencies": {
     "@babel/runtime": "^7.14.0",
+    "@biomejs/biome": "^2.1.0",
     "@changesets/cli": "^2.22.0",
-    "@chialab/eslint-config": "^4.0.0",
-    "@chialab/prettier-config": "^1.2.2",
     "@chialab/vitest-provider-browserstack": "^0.19.0-beta.0",
-    "@vitest/browser": "^2.0.0",
-    "@vitest/coverage-istanbul": "^2.0.0",
-    "@vitest/ui": "^2.0.0",
-    "esbuild": "^0.23.0",
-    "eslint": "^8.0.0",
-    "eslint-plugin-jsdoc": "^48.0.0",
-    "playwright": "^1.38.1",
-    "prettier": "^3.0.3",
-    "publint": "^0.2.3",
+    "@sveltejs/vite-plugin-svelte": "^6.1.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/svelte": "^5.2.8",
+    "@testing-library/vue": "^8.1.0",
+    "@types/react": "^19.1.6",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitest/browser": "^3.0.0",
+    "@vitest/coverage-istanbul": "^3.0.0",
+    "@vitest/ui": "^3.0.0",
+    "axe-core": "^4.10.3",
+    "esbuild": "^0.25.0",
+    "ivya": "^1.6.0",
+    "lit": "^3.3.0",
+    "playwright": "^1.50.0",
+    "preact": "^10.26.6",
+    "publint": "^0.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "rimraf": "^6.0.0",
+    "svelte": "^5.33.1",
+    "svelte-check": "^4.3.1",
     "tslib": "^2.6.2",
     "typescript": "^5.0.0",
+    "uhtml": "^4.7.1",
+    "vite": "^7.0.0",
     "vitepress": "^1.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "^3.0.0",
+    "vue": "^3.5.14"
   },
   "resolutions": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.25.0"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

@@ -2,15 +2,33 @@
 
 ## Frameworks
 
-DNA composition is based on Quantum, which is [tested across different frameworks](https://github.com/chialab/quantum/tree/main/tests).
+DNA composition is tested across different frameworks.
 
-| Framwework | Update a property | Slot text | Slot elements | Named slots |
-| ---------- | :---------------: | :-------: | :-----------: | :---------: |
-| React      |        ✅         |    ✅     |      ✅       |     ✅      |
-| Lit        |        ✅         |    ✅     |      ✅       |     ✅      |
-| Vue        |        ✅         |    ✅     |      ✅       |     ✅      |
-| Angular    |        ✅         |    ✅     |      ✅       |     ✅      |
-| Svelte     |        ✅         |    ✅     |      ✅       |     ✅      |
+| Framwework | Update a property | Slot text | Slot elements | Named slots | Typings |
+| ---------- | :---------------: | :-------: | :-----------: | :---------: | :-----: |
+| React      |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
+| Lit        |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
+| Vue        |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
+| Angular    |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
+| Svelte     |        ✅         |    ✅     |      ✅       |      ✅      |    ✅   |
+
+### Svelte and SvelteKit
+
+Enable DNA components typings in Svelte by adding the following to your global declaration file:
+
+::: code-group
+
+```ts [src/app.d.ts]
+import '@chialab/dna/svelte';
+
+declare global {
+	namespace App {
+        // ...
+    }
+}
+```
+
+:::
 
 ## View libraries
 

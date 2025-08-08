@@ -1,32 +1,31 @@
-import { attachRealm, type Realm } from '@chialab/quantum';
-import { type ClassDescriptor } from './ClassDescriptor';
-import { $parse } from './directives';
+import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
 import {
+    type DelegatedEventCallback,
     defineListeners,
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
     getListeners,
-    undelegateEventListener,
-    type DelegatedEventCallback,
     type ListenerConfig,
+    undelegateEventListener,
 } from './events';
-import { defineProperty, isBrowser, setPrototypeOf } from './helpers';
-import { type HTML as HTMLNamespace } from './HTML';
-import { type Template } from './JSX';
+import type { HTML as HTMLNamespace } from './HTML';
+import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import type { Template } from './JSX';
 import {
     addObserver,
     defineProperties,
     getProperties,
     getProperty,
     getPropertyForAttribute,
-    reflectPropertyToAttribute,
-    removeObserver,
     type PropertyConfig,
     type PropertyObserver,
+    reflectPropertyToAttribute,
+    removeObserver,
 } from './property';
-import { getRootContext, internalRender, render } from './render';
+import { Realm } from './Realm';
+import { getRootContext, internalRender } from './render';
 
 /**
  * A symbol which identify components.
@@ -39,11 +38,17 @@ const COMPONENT_SYMBOL: unique symbol = Symbol();
 const INITIALIZED_SYMBOL: unique symbol = Symbol();
 
 /**
+ * A symbol which identify connected elements.
+ */
+const CONNECTED_SYMBOL: unique symbol = Symbol();
+
+/**
  * An augmented node with component flags.
  */
 type WithComponentProto<T> = T & {
     [COMPONENT_SYMBOL]?: boolean;
     [INITIALIZED_SYMBOL]?: boolean;
+    [CONNECTED_SYMBOL]?: boolean;
 };
 
 /**
@@ -56,19 +61,44 @@ export const isComponent = <T extends ComponentInstance>(node: T | Node): node i
 
 /**
  * Check if a constructor is a component constructor.
- * @param constructor The constructor to check.
+ * @param ctr The constructor to check.
  * @returns True if the constructor is a component class.
  */
-export const isComponentConstructor = <T extends ComponentConstructor>(constructor: Function | T): constructor is T =>
-    !!constructor.prototype && !!constructor.prototype[COMPONENT_SYMBOL];
+export const isComponentConstructor = (ctr: Constructor<HTMLElement>): ctr is ComponentConstructor =>
+    !!(ctr.prototype as WithComponentProto<HTMLElement>)?.[COMPONENT_SYMBOL];
+
+/**
+ * Check if a component is connected.
+ * @param element The component instance to check.
+ * @returns True if the component is connected to the DOM and initialized.
+ */
+const isConnected = <T extends ComponentInstance>(element: T): boolean =>
+    !!(element as WithComponentProto<T>)[CONNECTED_SYMBOL];
+
+/**
+ * Add connected flag to a component instance.
+ * This is used to mark the component as connected to the DOM and initialized.
+ * @param element The component instance to mark as connected.
+ */
+const connect = <T extends ComponentInstance>(element: T): void => {
+    (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = true;
+};
+
+/**
+ * Mark a component instance as disconnected.
+ * @param element The component instance to mark as disconnected.
+ */
+const disconnect = <T extends ComponentInstance>(element: T): void => {
+    (element as WithComponentProto<T>)[CONNECTED_SYMBOL] = false;
+};
 
 /**
  * Create a base Component class which extends a native constructor.
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
  */
-export const extend = <T extends HTMLElement, C extends { new (...args: any[]): T; prototype: T }>(ctor: C) =>
-    class Component extends (ctor as { new (...args: any[]): HTMLElement; prototype: HTMLElement }) {
+export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>>(ctor: C) =>
+    class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * An array containing the names of the attributes to observe.
          * @returns The list of attributes to observe.
@@ -78,7 +108,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             const attributes = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
-                if (prop && prop.attribute && !prop.state) {
+                if (prop?.attribute && !prop.state) {
                     attributes.push(prop.attribute);
                 }
             }
@@ -99,11 +129,6 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         static readonly listeners?: {
             [key: string]: ListenerConfig;
         };
-
-        /**
-         * The realm of the component.
-         */
-        readonly realm: Realm;
 
         /**
          * A flag to indicate if the component is collecting updates.
@@ -142,11 +167,15 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
         }
 
         /**
+         * The realm instance of the component.
+         */
+        readonly realm: Realm;
+
+        /**
          * A list of slot nodes.
-         * @deprecated Use `realm.childNodes` instead.
          * @returns The list of slotted nodes.
          */
-        get slotChildNodes() {
+        get slotChildNodes(): Node[] {
             return this.realm.childNodes;
         }
 
@@ -158,7 +187,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             return super.textContent;
         }
         set textContent(value) {
-            render(value, this);
+            this._resetRendering();
+            super.textContent = value;
+            if (this.isConnected) {
+                this.realm.initialize();
+            }
         }
 
         /**
@@ -169,23 +202,27 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
             return super.innerHTML;
         }
         set innerHTML(value) {
-            render($parse(value), this);
-            customElements.upgrade(this);
+            this._resetRendering();
+            super.innerHTML = value;
+            if (this.isConnected) {
+                customElements.upgrade(this);
+                this.realm.initialize();
+            }
         }
 
-        constructor(...args: any[]) {
+        constructor(node?: HTMLElement) {
             super();
             if (!isBrowser) {
                 throw new Error('Components can be used only in browser environment');
             }
 
-            const element = (args.length ? (setPrototypeOf(args[0], this), args[0]) : this) as this;
-            const realm = attachRealm(element);
-            defineProperty(element, 'realm', {
-                value: realm,
-                configurable: true,
-            });
-
+            let element: this;
+            if (node) {
+                setPrototypeOf(node, this);
+                element = node as this;
+            } else {
+                element = this;
+            }
             element._initialProps = Object.getOwnPropertyNames(element).reduce(
                 (acc, key) => {
                     acc[key as Extract<keyof this, string>] = element[key as Extract<keyof this, string>];
@@ -194,6 +231,16 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 {} as Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>
             );
 
+            const realm = new Realm(element);
+            Object.defineProperty(element, 'realm', {
+                value: realm,
+            });
+            realm.dangerouslyOpen();
+            realm.observe(() => {
+                this.childListChangedCallback();
+            });
+
+            // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
             return element;
         }
 
@@ -226,8 +273,11 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 }
             }
 
-            this.realm.observe(() => this.requestUpdate());
-            (this as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
+            flagInitialized(this);
+            if (this.isConnected) {
+                connect(this);
+                this.realm.initialize();
+            }
 
             for (const propertyKey in computedProperties) {
                 const property = computedProperties[propertyKey];
@@ -235,7 +285,16 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                     this[propertyKey] = this._initialProps[propertyKey];
                 }
             }
-            delete this._initialProps;
+            this._initialProps = undefined;
+        }
+
+        /**
+         * Get slotted nodes by slot name.
+         * @param name The name of the slot.
+         * @returns A list of nodes.
+         */
+        childNodesBySlot(name: string | null = null): Node[] {
+            return this.realm.childNodesBySlot(name);
         }
 
         /**
@@ -252,19 +311,32 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
                 this.setAttribute(':defined', '');
             }
 
-            // trigger a re-render when the Node is connected
-            this.requestUpdate();
+            if (!isConnected(this)) {
+                connect(this);
+                this.realm.initialize();
+            }
         }
 
         /**
          * Invoked each time the Component is disconnected from the document's DOM.
          */
-        disconnectedCallback() {}
+        disconnectedCallback() {
+            disconnect(this);
+            this._resetRendering();
+            this.realm.restore();
+        }
 
         /**
          * Invoked each time the component has been updated.
          */
         updatedCallback() {}
+
+        /**
+         * Invoked each time the component child list is changed.
+         */
+        childListChangedCallback() {
+            this.requestUpdate();
+        }
 
         /**
          * Invoked each time one of the Component's attributes is added, removed, or changed.
@@ -395,14 +467,15 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @param cancelable Should the event be cancelable.
          * @param composed Is the event composed.
          */
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         dispatchAsyncEvent(event: Event): Promise<any[]>;
         dispatchAsyncEvent(
             event: string,
             detail?: CustomEventInit['detail'],
             bubbles?: boolean,
             cancelable?: boolean,
-            composed?: boolean // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            composed?: boolean
+            // biome-ignore lint/suspicious/noExplicitAny: We really need to return an array of any, as the event listeners can return anything.
         ): Promise<any[]>;
         dispatchAsyncEvent(
             event: Event | string,
@@ -447,7 +520,7 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns The instances of the rendered Components and/or Nodes
          */
         render(): Template | undefined {
-            return this.realm?.childNodes;
+            return this.childNodesBySlot();
         }
 
         /**
@@ -465,6 +538,9 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * @returns True if a re-render has been triggered.
          */
         requestUpdate() {
+            if (!isConnected(this)) {
+                return false;
+            }
             if (this._collectingUpdates === 0) {
                 this.forceUpdate();
                 return true;
@@ -478,15 +554,12 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
          * Force an element to re-render.
          */
         forceUpdate() {
-            const realm = this.realm;
-            if (realm) {
-                this.collectUpdatesStart();
-                realm.requestUpdate(() => {
-                    internalRender(getRootContext(realm.root), this.render(), realm);
-                });
-                this.collectUpdatesEnd();
-                this.updatedCallback();
-            }
+            this.collectUpdatesStart();
+            this.realm.requestUpdate(() => {
+                internalRender(getRootContext(this, true), this.render());
+            });
+            this.collectUpdatesEnd();
+            this.updatedCallback();
         }
 
         /**
@@ -529,27 +602,125 @@ export const extend = <T extends HTMLElement, C extends { new (...args: any[]): 
 
             return this;
         }
+
+        /**
+         * Reset the rendering state of the component.
+         */
+        private _resetRendering() {
+            this.realm.requestUpdate(() => {
+                internalRender(getRootContext(this, true), null);
+            });
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        appendChild<T extends Node>(node: T): T {
+            if (this.realm.open) {
+                return super.appendChild(node);
+            }
+            this.realm.append(node);
+            return node;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        removeChild<T extends Node>(child: T): T {
+            if (this.realm.open) {
+                return super.removeChild(child);
+            }
+            this.realm.removeChild(child);
+            return child;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        insertBefore<T extends Node>(node: T, child: Node | null): T {
+            if (this.realm.open) {
+                return super.insertBefore(node, child);
+            }
+            this.realm.insertBefore([node], child);
+            return node;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        replaceChild<T extends Node>(node: Node, child: T): T {
+            if (this.realm.open) {
+                return super.replaceChild(node, child);
+            }
+            this.realm.replaceChild([node], child);
+            return child;
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        append(...nodes: (Node | string)[]): void {
+            if (this.realm.open) {
+                super.append(...nodes);
+                return;
+            }
+            this.realm.append(...nodes);
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        prepend(...nodes: (Node | string)[]): void {
+            if (this.realm.open) {
+                super.prepend(...nodes);
+                return;
+            }
+            this.realm.prepend(...nodes);
+        }
+
+        /**
+         * @inheritdoc
+         * @internal
+         */
+        insertAdjacentElement(where: InsertPosition, element: Element): Element | null {
+            if (this.realm.open) {
+                return super.insertAdjacentElement(where, element);
+            }
+            switch (where) {
+                case 'afterbegin':
+                    this.realm.prepend(element);
+                    return element;
+                case 'beforeend':
+                    this.realm.append(element);
+                    return element;
+                default:
+                    return super.insertAdjacentElement(where, element);
+            }
+        }
     } as unknown as BaseComponentConstructor<T>;
 
 /**
  * A collection of extended builtin HTML constructors.
  */
-export const HTML = new Proxy({} as typeof HTMLNamespace, {
+export const HTML: typeof HTMLNamespace = new Proxy({} as typeof HTMLNamespace, {
     get(target, name) {
-        const constructor = Reflect.get(target, name);
-        if (constructor) {
-            return constructor;
+        const ctr = Reflect.get(target, name);
+        if (ctr) {
+            return ctr;
         }
-        if (name === 'Element') {
-            name = 'HTMLElement';
-        } else {
-            name = `HTML${name as string}Element`;
-        }
-
-        if (name in Elements) {
-            const constructor = extend(Elements[name as keyof typeof Elements]);
-            Reflect.set(target, name, constructor);
-            return constructor;
+        const className =
+            name === 'Element' ? 'HTMLElement' : (`HTML${name as string}Element` as keyof typeof Elements);
+        if (className in Elements) {
+            // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Elements is an alias of global HTML namespace
+            const ctr = extend(Elements[className]);
+            Reflect.set(target, name, ctr);
+            return ctr;
         }
 
         return null;
@@ -562,7 +733,7 @@ export const HTML = new Proxy({} as typeof HTMLNamespace, {
  * a complete lifecycle implementation.
  * All DNA components **must** extends this class.
  */
-export const Component = HTML.Element;
+export const Component: (typeof HTMLNamespace)['Element'] = HTML.Element;
 
 /**
  * The basic DNA Component interface.
@@ -604,8 +775,7 @@ export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
      * @param node Instantiate the element using the given node instead of creating a new one.
      * @param properties A set of initial properties for the element.
      */
-    // We cannot infer component properties from the base class
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: We cannot infer component properties from the base class
     new (...args: any[]): T;
 
     prototype: T;
@@ -621,13 +791,21 @@ export type ComponentConstructor<T extends ComponentInstance = ComponentInstance
  * @param element The element to check.
  * @returns True if the element has been constructed.
  */
-export const isInitialized = (element: ComponentInstance) =>
+export const isInitialized = (element: ComponentInstance): boolean =>
     !!(element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL];
+
+/**
+ * Flag a component as initialized.
+ * @param element The component instance to flag as initialized.
+ */
+const flagInitialized = (element: ComponentInstance): void => {
+    (element as WithComponentProto<ComponentInstance>)[INITIALIZED_SYMBOL] = true;
+};
 
 /**
  * Define a component class.
  * @param name The name of the custom element.
- * @param constructor The component class to define.
+ * @param ctr The component class to define.
  * @param options The custom element options.
  * @returns The decorated component class.
  * @throws If the name has already been registered.
@@ -635,12 +813,12 @@ export const isInitialized = (element: ComponentInstance) =>
  */
 export function define<T extends ComponentInstance, C extends ComponentConstructor<T>>(
     name: string,
-    constructor: C,
+    ctr: C,
     options?: ElementDefinitionOptions
 ) {
-    class Component extends (constructor as ComponentConstructor) {
-        constructor(...args: any[]) {
-            super(...args);
+    class Component extends (ctr as ComponentConstructor) {
+        constructor(node?: HTMLElement) {
+            super(node);
             if (new.target === Component && !isInitialized(this)) {
                 this.initialize();
             }
@@ -650,17 +828,17 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
     defineProperties(Component.prototype);
     defineListeners(Component.prototype);
     try {
-        if (constructor.name) {
+        if (ctr.name) {
             defineProperty(Component, 'name', {
                 writable: false,
                 configurable: false,
-                value: constructor.name,
+                value: ctr.name,
             });
         }
         defineProperty(Component, 'tagName', {
             writable: false,
             configurable: false,
-            value: (options && options.extends) || name,
+            value: options?.extends || name,
         });
         defineProperty(Component.prototype, 'is', {
             writable: false,
@@ -688,9 +866,8 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
  */
 export const customElement =
     (name: string, options?: ElementDefinitionOptions) =>
-    // TypeScript complains about return type because we handle babel output
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor): any => {
+    // biome-ignore lint/suspicious/noExplicitAny: TypeScript complains about return type because we handle babel output
+    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor<T, unknown>): any => {
         if (typeof classOrDescriptor === 'function') {
             // typescript
             return define(name, classOrDescriptor, options);
@@ -701,8 +878,8 @@ export const customElement =
         return {
             kind,
             elements,
-            finisher(constructor: Function) {
-                return define(name, constructor as T, options);
+            finisher(ctr: T) {
+                return define(name, ctr, options);
             },
         };
     };

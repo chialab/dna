@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
+import type { EventHandler } from './events';
 
 // All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
 export interface AriaAttributes {
@@ -279,7 +279,7 @@ export interface HTMLAttributes extends AriaAttributes {
     contextMenu?: string | undefined;
     dir?: string | undefined;
     draggable?: boolean | 'true' | 'false' | undefined;
-    hidden?: boolean | undefined;
+    hidden?: 'until-found' | boolean | undefined;
     id?: string | undefined;
     lang?: string | undefined;
     placeholder?: string | undefined;
@@ -331,6 +331,152 @@ export interface HTMLAttributes extends AriaAttributes {
      * @see https://html.spec.whatwg.org/multipage/custom-elements.html#attr-is
      */
     is?: string | undefined;
+
+    // Clipboard Events
+    oncopy?: EventHandler<ClipboardEvent>;
+    oncut?: EventHandler<ClipboardEvent>;
+    onpaste?: EventHandler<ClipboardEvent>;
+
+    // Composition Events
+    oncompositionend?: EventHandler<CompositionEvent>;
+    oncompositionstart?: EventHandler<CompositionEvent>;
+    oncompositionupdate?: EventHandler<CompositionEvent>;
+
+    // Focus Events
+    onfocus?: EventHandler<FocusEvent>;
+    onfocusin?: EventHandler<FocusEvent>;
+    onfocusout?: EventHandler<FocusEvent>;
+    onblur?: EventHandler<FocusEvent>;
+
+    // Form Events
+    onchange?: EventHandler | undefined | null;
+    onbeforeinput?: EventHandler<InputEvent>;
+    // oninput can be either an InputEvent or an Event, depending on the target element (input, textarea etc).
+    oninput?: EventHandler | undefined | null;
+    onreset?: EventHandler | undefined | null;
+    onsubmit?: EventHandler<SubmitEvent>;
+    oninvalid?: EventHandler<Event>;
+    onformdata?: EventHandler<FormDataEvent>;
+
+    // Image Events
+    onload?: EventHandler | undefined | null;
+    onerror?: EventHandler | undefined | null; // also a Media Event
+
+    // Popover Events
+    onbeforetoggle?: EventHandler<ToggleEvent>;
+    ontoggle?: EventHandler<ToggleEvent>;
+
+    // Content visibility Events
+    oncontentvisibilityautostatechange?: EventHandler<ContentVisibilityAutoStateChangeEvent>;
+
+    // Keyboard Events
+    onkeydown?: EventHandler<KeyboardEvent>;
+    onkeypress?: EventHandler<KeyboardEvent>;
+    onkeyup?: EventHandler<KeyboardEvent>;
+
+    // Media Events
+    onabort?: EventHandler | undefined | null;
+    oncanplay?: EventHandler | undefined | null;
+    oncanplaythrough?: EventHandler | undefined | null;
+    oncuechange?: EventHandler | undefined | null;
+    ondurationchange?: EventHandler | undefined | null;
+    onemptied?: EventHandler | undefined | null;
+    onencrypted?: EventHandler | undefined | null;
+    onended?: EventHandler | undefined | null;
+    onloadeddata?: EventHandler | undefined | null;
+    onloadedmetadata?: EventHandler | undefined | null;
+    onloadstart?: EventHandler | undefined | null;
+    onpause?: EventHandler | undefined | null;
+    onplay?: EventHandler | undefined | null;
+    onplaying?: EventHandler | undefined | null;
+    onprogress?: EventHandler | undefined | null;
+    onratechange?: EventHandler | undefined | null;
+    onseeked?: EventHandler | undefined | null;
+    onseeking?: EventHandler | undefined | null;
+    onstalled?: EventHandler | undefined | null;
+    onsuspend?: EventHandler | undefined | null;
+    ontimeupdate?: EventHandler | undefined | null;
+    onvolumechange?: EventHandler | undefined | null;
+    onwaiting?: EventHandler | undefined | null;
+
+    // MouseEvents
+    onauxclick?: EventHandler<MouseEvent>;
+    onclick?: EventHandler<MouseEvent>;
+    oncontextmenu?: EventHandler<MouseEvent>;
+    ondblclick?: EventHandler<MouseEvent>;
+    ondrag?: EventHandler<DragEvent>;
+    ondragend?: EventHandler<DragEvent>;
+    ondragenter?: EventHandler<DragEvent>;
+    ondragexit?: EventHandler<DragEvent>;
+    ondragleave?: EventHandler<DragEvent>;
+    ondragover?: EventHandler<DragEvent>;
+    ondragstart?: EventHandler<DragEvent>;
+    ondrop?: EventHandler<DragEvent>;
+    onmousedown?: EventHandler<MouseEvent>;
+    onmouseenter?: EventHandler<MouseEvent>;
+    onmouseleave?: EventHandler<MouseEvent>;
+    onmousemove?: EventHandler<MouseEvent>;
+    onmouseout?: EventHandler<MouseEvent>;
+    onmouseover?: EventHandler<MouseEvent>;
+    onmouseup?: EventHandler<MouseEvent>;
+
+    // Selection Events
+    onselect?: EventHandler | undefined | null;
+    onselectionchange?: EventHandler | undefined | null;
+    onselectstart?: EventHandler | undefined | null;
+
+    // Touch Events
+    ontouchcancel?: EventHandler<TouchEvent>;
+    ontouchend?: EventHandler<TouchEvent>;
+    ontouchmove?: EventHandler<TouchEvent>;
+    ontouchstart?: EventHandler<TouchEvent>;
+
+    // Pointer Events
+    onpointercancel?: EventHandler<PointerEvent>;
+    onpointerdown?: EventHandler<PointerEvent>;
+    onpointerenter?: EventHandler<PointerEvent>;
+    onpointerleave?: EventHandler<PointerEvent>;
+    onpointermove?: EventHandler<PointerEvent>;
+    onpointerout?: EventHandler<PointerEvent>;
+    onpointerover?: EventHandler<PointerEvent>;
+    onpointerup?: EventHandler<PointerEvent>;
+
+    // Gamepad Events
+    ongamepadconnected?: EventHandler<GamepadEvent>;
+    ongamepaddisconnected?: EventHandler<GamepadEvent>;
+
+    // UI Events
+    onscroll?: EventHandler<UIEvent>;
+    onscrollend?: EventHandler<UIEvent>;
+    onresize?: EventHandler<UIEvent>;
+
+    // Wheel Events
+    onwheel?: EventHandler<WheelEvent>;
+
+    // Animation Events
+    onanimationstart?: EventHandler<AnimationEvent>;
+    onanimationend?: EventHandler<AnimationEvent>;
+    onanimationiteration?: EventHandler<AnimationEvent>;
+
+    // Transition Events
+    ontransitionstart?: EventHandler<TransitionEvent>;
+    ontransitionrun?: EventHandler<TransitionEvent>;
+    ontransitionend?: EventHandler<TransitionEvent>;
+    ontransitioncancel?: EventHandler<TransitionEvent>;
+
+    // Message Events
+    onmessage?: EventHandler<MessageEvent>;
+    onmessageerror?: EventHandler<MessageEvent>;
+
+    // Document Events
+    onvisibilitychange?: EventHandler | undefined | null;
+
+    // Global Events
+    onbeforematch?: EventHandler | undefined | null;
+    oncancel?: EventHandler | undefined | null;
+    onclose?: EventHandler | undefined | null;
+    onfullscreenchange?: EventHandler | undefined | null;
+    onfullscreenerror?: EventHandler | undefined | null;
 }
 
 export type HTMLAttributeReferrerPolicy =
@@ -1011,6 +1157,7 @@ export interface SVGAttributes extends AriaAttributes {
     tableValues?: number | string | undefined;
     targetX?: number | string | undefined;
     targetY?: number | string | undefined;
+    title?: string | undefined;
     textAnchor?: string | undefined;
     textDecoration?: number | string | undefined;
     textLength?: number | string | undefined;

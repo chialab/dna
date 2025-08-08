@@ -1,5 +1,75 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.10
+
+### Patch Changes
+
+- 5ae07ca: Reduce prototype polluting.
+
+## 4.4.0-beta.9
+
+### Patch Changes
+
+- 99c042d: Improve frameworks compatibility.
+
+## 4.4.0-beta.8
+
+### Patch Changes
+
+- 1d7e94a: Fix life cycle during initialization.
+
+## 4.4.0-beta.7
+
+### Patch Changes
+
+- 2db6069: Move `Realm` method to prototype level again.
+
+## 4.4.0-beta.6
+
+### Patch Changes
+
+- 6473dff: Do not proxy host element.
+
+## 4.4.0-beta.5
+
+### Patch Changes
+
+- cb1f494: Improve compatibility with other frameworks without breaking tree traversal.
+
+## 4.4.0-beta.4
+
+### Patch Changes
+
+- 13210b9: Set `is` attribute if the element is not a custom element (yet).
+
+## 4.4.0-beta.3
+
+### Patch Changes
+
+- 0bf804b: Prevent double `connectedCallback` invokation when upgrading via polyfill.
+
+## 4.4.0-beta.2
+
+### Patch Changes
+
+- f9e7289: Fix render state cleanup once disconnected.
+
+## 4.4.0-beta.1
+
+### Patch Changes
+
+- 64b6e67: Fix keyed function conmponents re-render after state changed.
+
+## 4.4.0-beta.0
+
+### Minor Changes
+
+- 26984f1: Clean up rendering state when removing a node.
+- 26984f1: Components now only render when connected.
+- c5df947: Introducing the `childListChangedCallback`.
+- 26984f1: Node slotting now works only for methods that actually mutate the tree.
+- 9efebb6: Introducing the `useEffect` hook.
+
 ## 4.3.1
 
 ### Patch Changes
