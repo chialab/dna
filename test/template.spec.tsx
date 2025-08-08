@@ -204,7 +204,7 @@ describe.runIf(IS_BROWSER)(
                 await new Promise((r) => setTimeout(r, 0));
                 expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'STYLE');
-                expect(element.childNodes[0]).toHaveProperty('textContent', '[:scope="test-template-1"] .test {}');
+                expect(element.childNodes[0]).toHaveProperty('textContent', '[\\:scope="test-template-1"] .test {  }');
             });
 
             it('html helper', async () => {
@@ -220,7 +220,7 @@ describe.runIf(IS_BROWSER)(
                 await new Promise((r) => setTimeout(r, 0));
                 expect(element.childNodes).toHaveLength(1);
                 expect(element.childNodes[0]).toHaveProperty('tagName', 'STYLE');
-                expect(element.childNodes[0]).toHaveProperty('textContent', '[:scope="test-template-2"] .test {}');
+                expect(element.childNodes[0]).toHaveProperty('textContent', '[\\:scope="test-template-2"] .test {  }');
             });
         });
 

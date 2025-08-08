@@ -634,7 +634,7 @@ const renderTemplate = (
     }
 
     const normalizedTemplate =
-        isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE'
+        isComponent(rootContext.node) && rootContext.shadow && (context.node as HTMLElement).tagName === 'STYLE'
             ? css(rootContext.node.is, String(template))
             : String(template);
 
