@@ -1,6 +1,6 @@
 <script lang="ts">
-    import '@chialab/dna/svelte';
-    import './Component';
+import '@chialab/dna/svelte';
+import './Component';
 </script>
 <div id="app">
     <details open></details>
