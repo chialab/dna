@@ -52,7 +52,7 @@ describe(
             if (actual.indexOf('default') !== -1) {
                 actual.splice(actual.indexOf('default'), 1);
             }
-            const expected = Object.keys(EXPECTED_EXPORT_MAP).sort();
+            const expected = EXPECTED_EXPORT_MAP.map((entry) => entry[1]).sort();
             expect(actual).toStrictEqual(expected);
         });
     },
