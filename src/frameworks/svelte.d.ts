@@ -1,17 +1,17 @@
-import type { JSXInternal } from './JSX';
+import type { JSXInternal } from '../JSX';
+
+export type AutonomousElements = {
+    [K in keyof JSXInternal.AutonomousElements]: JSXInternal.AutonomousElements[K] &
+        import('svelte/elements').HTMLAttributes<HTMLElement>;
+};
+
+export type CustomizedElements = {
+    [K in keyof JSXInternal.CustomizedElements]: import('svelte/elements').SvelteHTMLElements[K] &
+        (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
+};
 
 declare global {
     namespace svelteHTML {
-        type AutonomousElements = {
-            [K in keyof JSXInternal.AutonomousElements]: JSXInternal.AutonomousElements[K] &
-                import('svelte/elements').HTMLAttributes<HTMLElement>;
-        };
-
-        type CustomizedElements = {
-            [K in keyof JSXInternal.CustomizedElements]: import('svelte/elements').SvelteHTMLElements[K] &
-                (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
-        };
-
         interface IntrinsicElements extends AutonomousElements {
             a: CustomizedElements['a'];
             abbr: CustomizedElements['abbr'];

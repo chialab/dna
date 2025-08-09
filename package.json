@@ -20,7 +20,7 @@
       "default": "./dist/jsx-runtime.js"
     },
     "./svelte": {
-      "types": "./types/svelte.d.ts"
+      "types": "./types/frameworks/svelte.d.ts"
     }
   },
   "files": [
