@@ -9,7 +9,9 @@
       "!dist/**/*",
       "!docs/.vitepress/**/*",
       "!public/**/*",
-      "!coverage/**/*"
+      "!coverage/**/*",
+      "!test/**/*.svelte",
+      "!test/**/*.vue"
     ],
     "maxSize": 2097152
   },

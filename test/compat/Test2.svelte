@@ -1,8 +1,9 @@
-<script>
-/**
- * @type {string}
- */
-export let text;
+<script lang="ts">
+    let {
+        text,
+    }: {
+        text?: string;
+    } = $props();
 </script>
 
 <test-compat-1>{text} {'children'}</test-compat-1>

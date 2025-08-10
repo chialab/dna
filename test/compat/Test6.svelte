@@ -1,8 +1,9 @@
-<script>
-/**
- * @type {boolean}
- */
-export let switchValue;
+<script lang="ts">
+    let {
+        switchValue,
+    }: {
+        switchValue?: boolean;
+    } = $props();
 </script>
 
 <test-compat-4 switch={switchValue}>

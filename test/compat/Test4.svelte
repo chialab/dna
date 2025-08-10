@@ -1,8 +1,9 @@
-<script>
-/**
- * @type {boolean}
- */
-export let title;
+<script lang="ts">
+    let {
+        title,
+    }: {
+        title?: boolean;
+    } = $props();
 </script>
 
 <test-compat-2>

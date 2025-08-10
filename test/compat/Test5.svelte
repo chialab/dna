@@ -1,8 +1,9 @@
-<script>
-/**
- * @type {boolean}
- */
-export let collapsed;
+<script lang="ts">
+    let {
+        collapsed,
+    }: {
+        collapsed?: boolean;
+    } = $props();
 </script>
 
 <test-compat-3 collapsed={collapsed}>

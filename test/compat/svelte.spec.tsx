@@ -1,5 +1,5 @@
 import { render } from '@testing-library/svelte';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../helpers';
 import {
     defineTestCompat3,
@@ -7,12 +7,14 @@ import {
     type TestCompat2,
     type TestCompat3,
     type TestCompat4,
+    type TestCompat5,
+    type TestCompat6,
 } from './TestElements';
 
 describe.runIf(IS_BROWSER)('Svelte', () => {
     test('should update text content', async () => {
-        const { default: Test1 } = await import('./Test1.svelte');
-        const { container, rerender } = render(Test1, {
+        const { default: Test } = await import('./Test1.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 text: 'Text',
             },
@@ -39,8 +41,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('should update text content with multiple text nodes', async () => {
-        const { default: Test2 } = await import('./Test2.svelte');
-        const { container, rerender } = render(Test2, {
+        const { default: Test } = await import('./Test2.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 text: 'Text',
             },
@@ -69,8 +71,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('should update named slots', async () => {
-        const { default: Test3 } = await import('./Test3.svelte');
-        const { container, rerender } = render(Test3, {
+        const { default: Test } = await import('./Test3.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 title: true,
             },
@@ -95,8 +97,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('mixed slots', async () => {
-        const { default: Test7 } = await import('./Test7.svelte');
-        const { container, rerender } = render(Test7, {
+        const { default: Test } = await import('./Test7.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 title: false,
             },
@@ -128,8 +130,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('nested slot', async () => {
-        const { default: Test4 } = await import('./Test4.svelte');
-        const { container, rerender } = render(Test4, {
+        const { default: Test } = await import('./Test4.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 title: false,
             },
@@ -162,8 +164,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('slot moved across elements', async () => {
-        const { default: Test5 } = await import('./Test5.svelte');
-        const { container, rerender } = render(Test5, {
+        const { default: Test } = await import('./Test5.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 collapsed: false,
             },
@@ -200,8 +202,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
     });
 
     test('slot moved and replaced', async () => {
-        const { default: Test6 } = await import('./Test6.svelte');
-        const { container, rerender } = render(Test6, {
+        const { default: Test } = await import('./Test6.svelte');
+        const { container, rerender } = render(Test, {
             props: {
                 switchValue: false,
             },
@@ -215,5 +217,69 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
 
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
+    });
+
+    test('autonomous properties', async () => {
+        const onClick = vi.fn((event) => event.preventDefault());
+        const onStringChange = vi.fn();
+        const { default: Test } = await import('./Test8.svelte');
+        const { rerender, container } = render(Test, {
+            props: {
+                'stringProp': 'test',
+                'booleanProp': true,
+                'numericProp': 1,
+                'objectProp': { test: true },
+            },
+        });
+
+        const element = container.children[0] as TestCompat5;
+        expect(element.stringProp).toBe('test');
+        expect(element.booleanProp).toBe(true);
+        expect(element.numericProp).toBe(1);
+        expect(element.objectProp).toEqual({ test: true });
+        expect(element.defaultValue).toBe(0);
+        expect(element.getAttribute('data-attr')).toBe('test');
+        expect(onStringChange).not.toHaveBeenCalled();
+        expect(onClick).not.toHaveBeenCalled();
+        await rerender({
+            onClick: onClick,
+            onStringChange: onStringChange,
+            stringProp: 'changed',
+        });
+        expect(onStringChange).toHaveBeenCalledOnce();
+        element.click();
+        expect(onClick).toHaveBeenCalledOnce();
+    });
+
+    test('builtin properties', async () => {
+        const onClick = vi.fn((event) => event.preventDefault());
+        const onStringChange = vi.fn();
+        const { default: Test } = await import('./Test9.svelte');
+        const { rerender, container } = render(Test, {
+            props: {
+                'stringProp': 'test',
+                'booleanProp': true,
+                'numericProp': 1,
+                'objectProp': { test: true },
+            },
+        });
+
+        const element = container.children[0] as TestCompat6;
+        expect(element.stringProp).toBe('test');
+        expect(element.booleanProp).toBe(true);
+        expect(element.numericProp).toBe(1);
+        expect(element.objectProp).toEqual({ test: true });
+        expect(element.defaultValue).toBe(0);
+        expect(element.getAttribute('data-attr')).toBe('test');
+        expect(onStringChange).not.toHaveBeenCalled();
+        expect(onClick).not.toHaveBeenCalled();
+        await rerender({
+            onClick: onClick,
+            onStringChange: onStringChange,
+            stringProp: 'changed',
+        });
+        expect(onStringChange).toHaveBeenCalledOnce();
+        element.click();
+        expect(onClick).toHaveBeenCalledOnce();
     });
 });

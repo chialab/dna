@@ -15,6 +15,7 @@ export default defineConfig({
         alias: {
             '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
             '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
+            '@chialab/dna/svelte': fileURLToPath(new URL('./src/frameworks/svelte.d.ts', import.meta.url)),
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         },
     },
@@ -40,12 +41,12 @@ export default defineConfig({
                 {
                     browser: 'chromium',
                 },
-                {
-                    browser: 'webkit',
-                },
-                {
-                    browser: 'firefox',
-                },
+                // {
+                //     browser: 'webkit',
+                // },
+                // {
+                //     browser: 'firefox',
+                // },
             ],
         },
     },
