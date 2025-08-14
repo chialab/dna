@@ -210,7 +210,9 @@ export class Realm {
      */
     protected notify(): void {
         const childNodes = Array.from(this.childNodes);
-        this.callbacks.forEach((callback) => callback(childNodes));
+        this.callbacks.forEach((callback) => {
+            callback(childNodes);
+        });
     }
 
     /**

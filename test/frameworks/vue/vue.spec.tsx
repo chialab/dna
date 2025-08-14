@@ -1,5 +1,5 @@
 import { render } from '@testing-library/vue';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
@@ -7,34 +7,36 @@ import {
     type TestElement2,
     type TestElement3,
     type TestElement4,
+    type TestElement5,
+    type TestElement6,
 } from '../TestElements';
 
 describe.runIf(IS_BROWSER)('Vue compatibility', () => {
-    let wrapper: HTMLElement;
+    let container: HTMLElement;
     beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
+        container = document.createElement('div');
+        document.body.appendChild(container);
     });
 
     afterEach(() => {
-        wrapper.remove();
+        container.remove();
     });
 
     test('should update text content', async () => {
-        const { default: Test1 } = await import('./Test1.vue');
-        const { rerender } = render(Test1, {
-            container: wrapper,
+        const { default: Test } = await import('./Test1.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 text: 'Text',
             },
         });
 
-        const element = wrapper.children[0] as TestElement1;
+        const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(1);
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Text');
-        expect(wrapper.innerHTML).toBe(
+        expect(container.innerHTML).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text</span><div></div></test-frameworks-1>'
         );
 
@@ -46,26 +48,26 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Update');
-        expect(wrapper.innerHTML).toBe(
+        expect(container.innerHTML).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update</span><div></div></test-frameworks-1>'
         );
     });
 
     test('should update text content with multiple text nodes', async () => {
-        const { default: Test2 } = await import('./Test2.vue');
-        const { rerender } = render(Test2, {
-            container: wrapper,
+        const { default: Test } = await import('./Test2.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 text: 'Text',
             },
         });
 
-        const element = wrapper.children[0] as TestElement1;
+        const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(1);
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Text children');
-        expect(wrapper.innerHTML).toBe(
+        expect(container.innerHTML).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text children</span><div></div></test-frameworks-1>'
         );
 
@@ -77,25 +79,25 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Update children');
-        expect(wrapper.innerHTML).toBe(
+        expect(container.innerHTML).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update children</span><div></div></test-frameworks-1>'
         );
     });
 
     test('should update named slots', async () => {
-        const { default: Test3 } = await import('./Test3.vue');
-        const { rerender } = render(Test3, {
-            container: wrapper,
+        const { default: Test } = await import('./Test3.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 title: true,
             },
         });
 
-        const element = wrapper.children[0] as TestElement1;
+        const element = container.children[0] as TestElement1;
         const textNode = element.childNodes[0].childNodes[0];
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
-        expect(wrapper.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span> Text  end </span><div><h1 slot="children">Title</h1></div></test-frameworks-1>'
         );
 
@@ -106,21 +108,21 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(wrapper.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span> Text  end </span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>'
         );
     });
 
     test('mixed slots', async () => {
-        const { default: Test7 } = await import('./Test7.vue');
-        const { rerender } = render(Test7, {
-            container: wrapper,
+        const { default: Test } = await import('./Test7.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 title: false,
             },
         });
 
-        const element = wrapper.children[0] as TestElement1;
+        const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(7);
         expect(element.childNodesBySlot(null)).toHaveLength(3);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
@@ -150,15 +152,15 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
     });
 
     test('nested slot', async () => {
-        const { default: Test4 } = await import('./Test4.vue');
-        const { rerender } = render(Test4, {
-            container: wrapper,
+        const { default: Test } = await import('./Test4.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 title: false,
             },
         });
 
-        const element = wrapper.children[0] as TestElement2;
+        const element = container.children[0] as TestElement2;
         expect(element.childNodesBySlot(null)).toHaveLength(2);
         expect(element.childNodesBySlot('title')).toHaveLength(0);
         expect(element.children).toHaveLength(2);
@@ -187,16 +189,16 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
     });
 
     test('slot moved across elements', async () => {
-        const { default: Test5 } = await import('./Test5.vue');
-        const { rerender } = render(Test5, {
-            container: wrapper,
+        const { default: Test } = await import('./Test5.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 collapsed: false,
             },
         });
         defineTestElements();
 
-        const element = wrapper.children[0] as TestElement3;
+        const element = container.children[0] as TestElement3;
         window.customElements.upgrade(element);
         expect(element.children).toHaveLength(1);
         expect(element.children[0].children[0]).toHaveProperty('tagName', 'H1');
@@ -230,15 +232,15 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
     });
 
     test('slot moved and replaced', async () => {
-        const { default: Test6 } = await import('./Test6.vue');
-        const { rerender } = render(Test6, {
-            container: wrapper,
+        const { default: Test } = await import('./Test6.vue');
+        const { rerender } = render(Test, {
+            container,
             props: {
                 switchValue: false,
             },
         });
 
-        const element = wrapper.children[0] as TestElement4;
+        const element = container.children[0] as TestElement4;
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', ' Hello ');
 
@@ -248,5 +250,71 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', ' World ');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
+    });
+
+    test('autonomous properties', async () => {
+        const onClick = vi.fn((event) => event.preventDefault());
+        const onStringChange = vi.fn();
+        const { default: Test } = await import('./Test8.vue');
+        const { rerender } = render(Test, {
+            container,
+            props: {
+                stringProp: 'test',
+                booleanProp: true,
+                numericProp: 1,
+                objectProp: { test: true },
+            },
+        });
+
+        const element = container.children[0] as TestElement5;
+        expect(element.stringProp).toBe('test');
+        expect(element.booleanProp).toBe(true);
+        expect(element.numericProp).toBe(1);
+        expect(element.objectProp).toEqual({ test: true });
+        expect(element.defaultValue).toBe(0);
+        expect(element.getAttribute('data-attr')).toBe('test');
+        expect(onStringChange).not.toHaveBeenCalled();
+        expect(onClick).not.toHaveBeenCalled();
+        await rerender({
+            onClick,
+            onStringChange,
+            stringProp: 'changed',
+        });
+        expect(onStringChange).toHaveBeenCalledOnce();
+        element.click();
+        expect(onClick).toHaveBeenCalledOnce();
+    });
+
+    test('builtin properties', async () => {
+        const onClick = vi.fn((event) => event.preventDefault());
+        const onStringChange = vi.fn();
+        const { default: Test } = await import('./Test9.vue');
+        const { rerender } = render(Test, {
+            container,
+            props: {
+                'stringProp': 'test',
+                'booleanProp': true,
+                'numericProp': 1,
+                'objectProp': { test: true },
+            },
+        });
+
+        const element = container.children[0] as TestElement6;
+        expect(element.stringProp).toBe('test');
+        expect(element.booleanProp).toBe(true);
+        expect(element.numericProp).toBe(1);
+        expect(element.objectProp).toEqual({ test: true });
+        expect(element.defaultValue).toBe(0);
+        expect(element.getAttribute('data-attr')).toBe('test');
+        expect(onStringChange).not.toHaveBeenCalled();
+        expect(onClick).not.toHaveBeenCalled();
+        await rerender({
+            onClick,
+            onStringChange,
+            stringProp: 'changed',
+        });
+        expect(onStringChange).toHaveBeenCalledOnce();
+        element.click();
+        expect(onClick).toHaveBeenCalledOnce();
     });
 });

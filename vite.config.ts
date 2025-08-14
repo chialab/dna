@@ -46,12 +46,12 @@ export default defineConfig({
                 {
                     browser: 'chromium',
                 },
-                // {
-                //     browser: 'webkit',
-                // },
-                // {
-                //     browser: 'firefox',
-                // },
+                {
+                    browser: 'webkit',
+                },
+                {
+                    browser: 'firefox',
+                },
             ],
         },
     },

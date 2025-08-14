@@ -280,8 +280,7 @@ describe.runIf(IS_BROWSER)('Preact compatibility', () => {
         expect(onClick).toHaveBeenCalledOnce();
     });
 
-    /** @TODO https://github.com/facebook/react/issues/32135 */
-    test.skip('builtin properties', async () => {
+    test('builtin properties', async () => {
         const onClick = vi.fn((event) => event.preventDefault());
         const onStringChange = vi.fn();
         const Template = (props: {
