@@ -5,7 +5,17 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-    plugins: [vue(), svelte(), svelteTesting()],
+    plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: (tag) => tag.startsWith('test-frameworks-'),
+                },
+            },
+        }),
+        svelte(),
+        svelteTesting(),
+    ],
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],
@@ -18,6 +28,8 @@ export default defineConfig({
             '@chialab/dna/react': fileURLToPath(new URL('./src/frameworks/react.d.ts', import.meta.url)),
             '@chialab/dna/svelte': fileURLToPath(new URL('./src/frameworks/svelte.d.ts', import.meta.url)),
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+            // We need to define the cjs version of Vue to avoid issues with @testing-library/vue
+            'vue': fileURLToPath(new URL('./node_modules/vue/dist/vue.cjs.js', import.meta.url)),
         },
     },
     optimizeDeps: {
