@@ -411,7 +411,7 @@ describe.runIf(IS_BROWSER)(
             it('should update add and remove attributes', () => {
                 DNA.render(
                     <div
-                        // @ts-ignore
+                        // @ts-expect-error We are testing if the attribute is handled
                         prop1="test1"
                         prop2={2}
                     />,
@@ -422,7 +422,7 @@ describe.runIf(IS_BROWSER)(
                 expect(element.getAttribute('prop2')).toBe('2');
                 DNA.render(
                     <div
-                        // @ts-ignore
+                        // @ts-expect-error We are testing if the attribute is handled
                         prop1="test1"
                         prop3={true}
                     />,
@@ -1561,7 +1561,7 @@ describe.runIf(IS_BROWSER)(
                         <Fn />
                         <div
                             class="test"
-                            // @ts-ignore
+                            // @ts-expect-error We are testing attribute handling
                             attr={true}
                             data-ref={true}
                         />
@@ -1581,7 +1581,7 @@ describe.runIf(IS_BROWSER)(
                         <Fn />
                         <div
                             class="test"
-                            // @ts-ignore
+                            // @ts-expect-error We are testing attribute handling
                             attr={undefined}
                             data-ref={undefined}
                         />
@@ -1614,7 +1614,7 @@ describe.runIf(IS_BROWSER)(
                         <Parent />
                         <div
                             class="test"
-                            // @ts-ignore
+                            // @ts-expect-error We are testing attribute handling
                             attr={true}
                             data-ref={true}
                         />
@@ -1634,7 +1634,7 @@ describe.runIf(IS_BROWSER)(
                         <Parent />
                         <div
                             class="test"
-                            // @ts-ignore
+                            // @ts-expect-error We are testing attribute handling
                             attr={undefined}
                             data-ref={undefined}
                         />
@@ -1659,7 +1659,7 @@ describe.runIf(IS_BROWSER)(
                         <Parent />
                         <div
                             class="test"
-                            // @ts-ignore
+                            // @ts-expect-error We are testing attribute handling
                             attr={undefined}
                             data-ref={undefined}
                         />

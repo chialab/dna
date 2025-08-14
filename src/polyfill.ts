@@ -9,7 +9,9 @@ function polyfillBuiltin() {
     const tagNames: Record<string, string> = {};
     const CE_SYMBOL = Symbol();
     const CONNECTED_SYMBOL = Symbol();
+    const nativeImportNode = document.importNode.bind(document);
     const nativeCreateElement = document.createElement.bind(document);
+    const nativeCreateElementNS = document.createElementNS.bind(document);
     const builtin = Object.values(Elements);
     const customElements = window.customElements;
     const define = customElements.define.bind(customElements);
@@ -248,7 +250,7 @@ function polyfillBuiltin() {
         return true;
     };
 
-    const polyfillUpgrade = (root: Element, nested = false, filter: NodeFilter = filterBuiltinElement) => {
+    const polyfillUpgrade = (root: Node, nested = false, filter: NodeFilter = filterBuiltinElement) => {
         if (!nested) {
             upgrade(root);
         }
@@ -291,6 +293,26 @@ function polyfillBuiltin() {
         }
         return nativeCreateElement.call(document, tagName, options);
     };
+
+    document.createElementNS = ((
+        namespace: string | null,
+        qualifiedName: string,
+        options?: string | ElementCreationOptions
+    ) => {
+        if (typeof options === 'object' && options !== null && options?.is) {
+            const ctr = customElements.get(options.is);
+            if (ctr) {
+                return new ctr() as Element;
+            }
+        }
+        return nativeCreateElementNS.call(document, namespace, qualifiedName, options) as Element;
+    }) as typeof nativeCreateElementNS;
+
+    document.importNode = ((node: Node, deep?: boolean) => {
+        const result = nativeImportNode.call(document, node, deep);
+        polyfillUpgrade(result);
+        return result;
+    }) as typeof nativeImportNode;
 
     Node.prototype.cloneNode = function (deep?: boolean) {
         const clone = cloneNode.call(this, deep);

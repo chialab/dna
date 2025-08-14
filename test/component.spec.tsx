@@ -635,7 +635,6 @@ describe.runIf(IS_BROWSER)(
                             return (
                                 <button
                                     type="button"
-                                    // @ts-ignore We are not defining custom elements for TypeScript
                                     is="test-component-80">
                                     test
                                 </button>
@@ -933,7 +932,7 @@ describe.runIf(IS_BROWSER)(
 
                     @DNA.property({
                         fromAttribute(value) {
-                            return Number.parseInt(value as string) * 2;
+                            return Number.parseInt(value as string, 10) * 2;
                         },
                         toAttribute(value) {
                             return `${(value as number) / 2}`;

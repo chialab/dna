@@ -199,7 +199,6 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                // @ts-ignore We cannot define a builtin custom element type inside a test
                 const element = DNA.render(<div is="test-template-1" />, wrapper) as MyElement;
                 await new Promise((r) => setTimeout(r, 0));
                 expect(element.childNodes).toHaveLength(1);
@@ -215,7 +214,6 @@ describe.runIf(IS_BROWSER)(
                     }
                 }
 
-                // @ts-ignore We cannot define a builtin custom element type inside a test
                 const element = DNA.render(<div is="test-template-2" />, wrapper) as MyElement;
                 await new Promise((r) => setTimeout(r, 0));
                 expect(element.childNodes).toHaveLength(1);
