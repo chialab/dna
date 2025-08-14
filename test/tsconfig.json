@@ -21,6 +21,8 @@
     "paths": {
       "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
       "@chialab/dna/jsx-dev-runtime": ["../src/jsx-runtime.ts"],
+      "@chialab/dna/preact": ["../src/frameworks/preact.d.ts"],
+      "@chialab/dna/react": ["../src/frameworks/react.d.ts"],
       "@chialab/dna/svelte": ["../src/frameworks/svelte.d.ts"],
       "@chialab/dna": ["../src/index.ts"]
     }

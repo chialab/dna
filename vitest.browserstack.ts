@@ -5,8 +5,8 @@ import vitestConfig from './vite.config';
 
 export default mergeConfig(vitestConfig, {
     test: {
-        // Cannot use element locator in browserstack, so we exclude vitest.spec.tsx
-        exclude: ['./compat/vitest.spec.tsx'],
+        // Cannot use element locator in browserstack, so we exclude tools
+        exclude: ['./tools/*.tsx'],
         browser: {
             enabled: true,
             provider: '@chialab/vitest-provider-browserstack',

@@ -15,6 +15,7 @@ export default defineConfig({
         alias: {
             '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
             '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
+            '@chialab/dna/react': fileURLToPath(new URL('./src/frameworks/react.d.ts', import.meta.url)),
             '@chialab/dna/svelte': fileURLToPath(new URL('./src/frameworks/svelte.d.ts', import.meta.url)),
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
         },
@@ -25,6 +26,10 @@ export default defineConfig({
     test: {
         dir: './test',
         include: ['./**/*.spec.{js,ts,tsx}'],
+        typecheck: {
+            enabled: true,
+            tsconfig: 'test/tsconfig.json',
+        },
         fileParallelism: false,
         reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : [],
         coverage: {

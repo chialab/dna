@@ -19,6 +19,12 @@
       "types": "./types/jsx-runtime.d.ts",
       "default": "./dist/jsx-runtime.js"
     },
+    "./preact": {
+      "types": "./types/frameworks/preact.d.ts"
+    },
+    "./react": {
+      "types": "./types/frameworks/react.d.ts"
+    },
     "./svelte": {
       "types": "./types/frameworks/svelte.d.ts"
     }
@@ -43,7 +49,7 @@
     "build": "rimraf 'dist' 'types' && yarn types && esbuild dna=src/index.ts jsx-runtime=src/jsx-runtime.ts --splitting --outdir=dist --out-extension:.js=.js --format=esm --bundle --packages=external --sourcemap",
     "types": "tsc",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "tsc -p test --noEmit && svelte-check --workspace test/typings",
+    "test:typings": "svelte-check --workspace test/frameworks/svelte",
     "test:browser": "vitest run --browser",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run",
@@ -65,6 +71,7 @@
     "@testing-library/svelte": "^5.2.8",
     "@testing-library/vue": "^8.1.0",
     "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vitest/browser": "^3.0.0",
     "@vitest/coverage-istanbul": "^3.0.0",

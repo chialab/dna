@@ -4,21 +4,33 @@
 
 DNA composition is tested across different frameworks.
 
-| Framwework | Update a property | Slot text | Slot elements | Named slots | Typings |
-| ---------- | :---------------: | :-------: | :-----------: | :---------: | :-----: |
-| React      |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
-| Lit        |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
-| Vue        |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
-| Angular    |        ✅         |    ✅     |      ✅       |      ✅      |    🚧   |
-| Svelte     |        ✅         |    ✅     |      ✅       |      ✅      |    ✅   |
+| Framwework | Update a property | Slot text | Slot elements | Named slots |
+| ---------- | :---------------: | :-------: | :-----------: | :---------: |
+| Lit        |        ✅         |    ✅     |      ✅       |      ✅      |
+| Preact     |        ✅         |    ✅     |      ✅       |      ✅      |
+| React      |        ⚠️¹        |    ✅     |      ✅       |      ✅      |
+| Svelte     |        ⚠️²        |    ✅     |      ✅       |      ✅      |
+| Vue        |        ✅         |    ✅     |      ✅       |      ✅      |
 
-### Svelte and SvelteKit
 
-Enable DNA components typings in Svelte by adding the following to your global declaration file:
+* ¹ does not correctly update proeprties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
+* ² does not correctly update camel case properties for builtin custom elements. [[issue](https://github.com/sveltejs/svelte/issues/16591)]
+
+#### JSX
+
+DNA has export specifiers for JSX integration with different frameworks.
 
 ::: code-group
 
-```ts [src/app.d.ts]
+```ts [React (global.d.ts)]
+import '@chialab/dna/react';
+```
+
+```ts [Preact (global.d.ts)]
+import '@chialab/dna/preact';
+```
+
+```ts [Svelte (src/app.d.ts)]
 import '@chialab/dna/svelte';
 
 declare global {
