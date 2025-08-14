@@ -165,6 +165,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         get is(): string {
             return undefined as unknown as string;
         }
+        set is(value: string) {
+            // do nothing, the is property is read-only, but no errors will be thrown
+        }
 
         /**
          * The realm instance of the component.
@@ -841,9 +844,11 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
             value: options?.extends || name,
         });
         defineProperty(Component.prototype, 'is', {
-            writable: false,
             configurable: false,
-            value: name,
+            get: () => name,
+            set: () => {
+                // do nothing, the is property is read-only, but no errors will be thrown
+            },
         });
     } catch {
         throw new Error(

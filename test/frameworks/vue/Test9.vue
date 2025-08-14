@@ -13,26 +13,26 @@
 </template>
 
 <script lang="ts">
-export default {
-	props: {
-		stringProp: {
-            type: String,
+    export default {
+        props: {
+            stringProp: {
+                type: String,
+            },
+            booleanProp: {
+                type: Boolean,
+            },
+            numericProp: {
+                type: Number,
+            },
+            objectProp: {
+                type: Object,
+            },
+            onClick: {
+                type: Function,
+            },
+            onStringChange: {
+                type: Function,
+            },
         },
-        booleanProp: {
-            type: Boolean,
-        },
-        numericProp: {
-            type: Number,
-        },
-        objectProp: {
-            type: Object,
-        },
-        onClick: {
-            type: Function,
-        },
-        onStringChange: {
-            type: Function,
-        },
-	},
-};
+    };
 </script>

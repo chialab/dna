@@ -10,11 +10,11 @@
 </template>
 
 <script lang="ts">
-export default {
-	props: {
-		title: {
-			type: Boolean,
-		},
-	},
-};
+    export default {
+        props: {
+            title: {
+                type: Boolean,
+            },
+        },
+    };
 </script>
