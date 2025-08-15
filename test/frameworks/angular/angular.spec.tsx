@@ -6,6 +6,7 @@ import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-
 import { render } from '@testing-library/angular';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../../helpers';
+import '../../polyfills';
 import {
     defineTestElements,
     type TestElement1,
