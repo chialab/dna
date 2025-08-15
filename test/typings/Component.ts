@@ -1,4 +1,4 @@
-import { Component, customElement, fires, HTML, property, type EventHandler } from '@chialab/dna';
+import { Component, customElement, type EventHandler, fires, HTML, property } from '@chialab/dna';
 
 @customElement('x-test')
 export class TestElement extends Component {
@@ -7,33 +7,16 @@ export class TestElement extends Component {
     @property({
         type: Number,
     })
-    width: number = 2;
+    width = 2;
 
     @property({
         type: String,
     })
-    title: string = 'test';
-
-    get computed(): string {
-        return this.getInnerPropertyValue('computed');
-    }
-    set computed(value) {
-        this.setInnerPropertyValue('computed', value);
-    }
+    title = 'test';
 
     @fires()
     onselected?: EventHandler<CustomEvent<boolean>>;
 }
-
-new TestElement().focus();
-
-new TestElement().onselected = (event) => {
-    const selected: boolean = event.detail;
-    // @ts-expect-error This is a test.
-    const label: string = event.detail;
-
-    return { selected, label };
-};
 
 @customElement('x-test-builtin', { extends: 'details' })
 export class TestBuiltinElement extends HTML.Details {
@@ -41,10 +24,6 @@ export class TestBuiltinElement extends HTML.Details {
      * Active prop.
      */
     active?: boolean;
-}
-
-if (new TestBuiltinElement().open === true) {
-    new TestBuiltinElement().focus();
 }
 
 declare module '@chialab/dna' {

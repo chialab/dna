@@ -32,7 +32,7 @@ class Card extends Component {
 }
 ```
 
-The previous component will br rendered as follow:
+The previous component will be rendered as follow:
 
 ```html
 <h1>Unaffected heading</h1>
@@ -40,7 +40,7 @@ The previous component will br rendered as follow:
     is="x-card"
     title="Alan Turing">
     <style>
-        [is='x-card'] h1 {
+        [:scope='x-card'] h1 {
             color: cadetblue;
         }
     </style>
@@ -64,7 +64,7 @@ h1 {
 is transformed into
 
 ```css
-[is='x-card'] h1 {
+[:scope='x-card'] h1 {
     color: cadetblue;
 }
 ```
@@ -96,9 +96,9 @@ The `:host` selector will respect component definition also for inherited styles
 
 ## Other styling techniques
 
-Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using the SASS nesting:
+Every component node has the `is` attribute populated with the defined name of the component class. You can use an attribute selector to scope your CSS, for example using nesting:
 
-```scss
+```css
 /* CUSTOM ELEMENT */
 x-card {
     h1 {

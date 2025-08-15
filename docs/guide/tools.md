@@ -18,12 +18,10 @@ export default {
 ```
 
 ```ts [src/dna-map.ts]
-import { Component, customElement, property } from '@chialab/dna';
+import { Component, customElement, property, fires, type EventHandler } from '@chialab/dna';
 
 /**
  * A map component based on mapbox-gl.
- * @fires zoom - The map zoom level changed.
- * @fires move - The map center point changed.
  */
 @customElement('x-map')
 class MapboxMap extends Component {
@@ -36,6 +34,18 @@ class MapboxMap extends Component {
      * The longitude value for the map center.
      */
     @property() longitude: number;
+
+    /**
+     * The map zoom level changed.
+     */
+    @fires()
+    onzoom: EventHandler<CustomEvent<number>>;
+
+    /**
+     * The map center point changed.
+     */
+    @fires()
+    onmove: EventHandler<CustomEvent<{ latitude: number; longitude: number }>>
 }
 ```
 
@@ -103,35 +113,3 @@ export default {
     },
 };
 ```
-
-## Plasma
-
-Plasma is a CLI tool developed by Chialab to generate frameworks wrappers for Web&nbsp;Components. It can be used to create a React, Vue, Svelte or Angular wrapper for your DNA components.
-
-First of all, you need to [generate the Custom Elements Manifest](#custom-elements-manifest) for your components.
-
-Then, you can install Plasma using NPM:
-
-::: code-group
-
-```bash[npm]
-npm i @chialab/plasma -D
-```
-
-```bash[yarn]
-yarn add @chialab/plasma -D
-```
-
-```bash[pnpm]
-pnpm add @chialab/plasma -D
-```
-
-:::
-
-And run the `plasma` command in your project root:
-
-```bash
-plasma
-```
-
-Read more about Plasma in the [documentation](https://chialab.github.io/plasma/).
