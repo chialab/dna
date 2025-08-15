@@ -65,7 +65,7 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Update children');
         expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Update children');
-        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update children</span><div></div></test-frameworks-1>'
         );
     });
@@ -82,7 +82,7 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
         const textNode = element.childNodes[0].childNodes[0];
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
-        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text  end</span><div><h1 slot="children">Title</h1></div></test-frameworks-1>'
         );
 
@@ -91,8 +91,8 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
-            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text  end</span><div><h2 slot="children">Subitle</h2></div></test-frameworks-1>'
+        expect(container.innerHTML.replace(/\n\s*/g, ' ')).toBe(
+            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text  end</span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>'
         );
     });
 
@@ -246,6 +246,7 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
             onStringChange,
             stringProp: 'changed',
         });
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();
@@ -279,6 +280,7 @@ describe.runIf(IS_BROWSER)('Svelte', () => {
             onStringChange,
             stringProp: 'changed',
         });
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();

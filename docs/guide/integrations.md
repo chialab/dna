@@ -4,18 +4,20 @@
 
 DNA composition is tested across different frameworks.
 
-| Framwework     | Update a property | Slot text | Slot elements | Named slots |
-| -------------- | :---------------: | :-------: | :-----------: | :---------: |
-| Lit (>= 3)     |        ✅         |    ✅     |      ✅       |      ✅      |
-| Preact (>= 10) |        ✅         |    ✅     |      ✅       |      ✅      |
-| React (>= 19)  |        ⚠️¹        |    ✅     |      ✅       |      ✅      |
-| Svelte (>= 5)  |        ⚠️²        |    ✅     |      ✅       |      ✅      |
-| uhtml (>= 4)   |        ✅         |    ✅     |      ✅       |      ✅      |
-| Vue (>= 3)     |        ✅         |    ✅     |      ✅       |      ✅      |
+| Framwework      | Update a property | Slot text | Slot elements | Named slots |
+| --------------- | :---------------: | :-------: | :-----------: | :---------: |
+| Angular (>= 20) |        ⚠️¹        |    ✅     |      ✅       |      ✅      |
+| Lit (>= 3)      |        ✅         |    ✅     |      ✅       |      ✅      |
+| Preact (>= 10)  |        ✅         |    ✅     |      ✅       |      ✅      |
+| React (>= 19)   |        ⚠️²        |    ✅     |      ✅       |      ✅      |
+| Svelte (>= 5)   |        ⚠️³        |    ✅     |      ✅       |      ✅      |
+| uhtml (>= 4)    |        ✅         |    ✅     |      ✅       |      ✅      |
+| Vue (>= 3)      |        ✅         |    ✅     |      ✅       |      ✅      |
 
 
-* ¹ does not correctly update proeprties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
-* ² does not correctly update camel case properties for builtin custom elements. [[issue](https://github.com/sveltejs/svelte/issues/16591)]
+* ¹ does not create and handle builtin custom elements. [[issue](https://github.com/angular/angular/issues/63174)]
+* ² does not correctly update proeprties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
+* ³ does not correctly update camel case properties for builtin custom elements. [[issue](https://github.com/sveltejs/svelte/issues/16591)]
 
 #### JSX
 

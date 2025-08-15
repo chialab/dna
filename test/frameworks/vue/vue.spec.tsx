@@ -1,5 +1,5 @@
 import { render } from '@testing-library/vue';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
@@ -11,21 +11,10 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('Vue compatibility', () => {
-    let container: HTMLElement;
-    beforeEach(() => {
-        container = document.createElement('div');
-        document.body.appendChild(container);
-    });
-
-    afterEach(() => {
-        container.remove();
-    });
-
+describe.runIf(IS_BROWSER)('Vue', () => {
     test('should update text content', async () => {
         const { default: Test } = await import('./Test1.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 text: 'Text',
             },
@@ -55,8 +44,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
     test('should update text content with multiple text nodes', async () => {
         const { default: Test } = await import('./Test2.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 text: 'Text',
             },
@@ -86,8 +74,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
     test('should update named slots', async () => {
         const { default: Test } = await import('./Test3.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 title: true,
             },
@@ -97,7 +84,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         const textNode = element.childNodes[0].childNodes[0];
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
-        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span> Text  end </span><div><h1 slot="children">Title</h1></div></test-frameworks-1>'
         );
 
@@ -108,15 +95,14 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(container.innerHTML.replace(/\n\s+/g, ' ')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, ' ')).toBe(
             '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span> Text  end </span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>'
         );
     });
 
     test('mixed slots', async () => {
         const { default: Test } = await import('./Test7.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 title: false,
             },
@@ -153,8 +139,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
     test('nested slot', async () => {
         const { default: Test } = await import('./Test4.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 title: false,
             },
@@ -190,8 +175,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
     test('slot moved across elements', async () => {
         const { default: Test } = await import('./Test5.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 collapsed: false,
             },
@@ -233,8 +217,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
 
     test('slot moved and replaced', async () => {
         const { default: Test } = await import('./Test6.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 switchValue: false,
             },
@@ -256,8 +239,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         const onClick = vi.fn((event) => event.preventDefault());
         const onStringChange = vi.fn();
         const { default: Test } = await import('./Test8.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 stringProp: 'test',
                 booleanProp: true,
@@ -280,6 +262,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
             onStringChange,
             stringProp: 'changed',
         });
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();
@@ -289,8 +272,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
         const onClick = vi.fn((event) => event.preventDefault());
         const onStringChange = vi.fn();
         const { default: Test } = await import('./Test9.vue');
-        const { rerender } = render(Test, {
-            container,
+        const { rerender, container } = render(Test, {
             props: {
                 'stringProp': 'test',
                 'booleanProp': true,
@@ -313,6 +295,7 @@ describe.runIf(IS_BROWSER)('Vue compatibility', () => {
             onStringChange,
             stringProp: 'changed',
         });
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();

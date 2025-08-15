@@ -62,11 +62,18 @@
     "htm": "^3.0.3"
   },
   "devDependencies": {
+    "@angular/common": "^20.1.7",
+    "@angular/compiler": "^20.1.7",
+    "@angular/core": "^20.1.7",
+    "@angular/platform-browser": "^20.1.7",
+    "@angular/router": "^20.1.7",
     "@babel/runtime": "^7.14.0",
     "@biomejs/biome": "^2.1.0",
     "@changesets/cli": "^2.22.0",
     "@chialab/vitest-provider-browserstack": "^0.19.0-beta.0",
     "@sveltejs/vite-plugin-svelte": "^6.1.0",
+    "@testing-library/angular": "^18.0.0",
+    "@testing-library/preact": "^3.2.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/svelte": "^5.2.8",
     "@testing-library/vue": "^8.1.0",
@@ -86,6 +93,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "rimraf": "^6.0.0",
+    "rxjs": "^7.8.2",
     "svelte": "^5.33.1",
     "svelte-check": "^4.3.1",
     "tslib": "^2.6.2",
@@ -94,7 +102,8 @@
     "vite": "^7.0.0",
     "vitepress": "^1.0.0",
     "vitest": "^3.0.0",
-    "vue": "^3.5.14"
+    "vue": "^3.5.14",
+    "zone.js": "^0.15.1"
   },
   "resolutions": {
     "esbuild": "^0.25.0"

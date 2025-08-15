@@ -11,7 +11,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('Lit compatibility', () => {
+describe.runIf(IS_BROWSER)('Lit', () => {
     let container: HTMLElement;
     beforeEach(() => {
         container = document.createElement('div');
@@ -85,7 +85,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
         const textNode = element.childNodes[0].childNodes[0];
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
-        expect(container.innerHTML.replace(/\n\s+/g, '')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, '')).toBe(
             `<!----><test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text </span><div><h1 slot="children">Title</h1></div></test-frameworks-1>`
         );
 
@@ -94,7 +94,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(container.innerHTML.replace(/\n\s+/g, '')).toBe(
+        expect(container.innerHTML.replace(/\n\s*/g, '')).toBe(
             `<!----><test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text </span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>`
         );
     });
@@ -275,6 +275,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             }),
             container
         );
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();
@@ -328,6 +329,7 @@ describe.runIf(IS_BROWSER)('Lit compatibility', () => {
             }),
             container
         );
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { createElement } from 'react';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
@@ -12,22 +12,10 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('React compatibility', () => {
-    let container: HTMLElement;
-    beforeEach(() => {
-        container = document.createElement('div');
-        document.body.appendChild(container);
-    });
-
-    afterEach(() => {
-        container.remove();
-    });
-
+describe.runIf(IS_BROWSER)('React', () => {
     test('should update text content', () => {
         const Template = (text: string) => createElement('test-frameworks-1', null, text);
-        render(Template('Text'), {
-            container,
-        });
+        const { rerender, container } = render(Template('Text'));
 
         const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(1);
@@ -38,9 +26,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
             `<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text</span><div></div></test-frameworks-1>`
         );
 
-        render(Template('Update'), {
-            container,
-        });
+        rerender(Template('Update'));
 
         expect(element.slotChildNodes).toHaveLength(1);
         expect(element.childNodesBySlot(null)).toHaveLength(1);
@@ -53,9 +39,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
 
     test('should update text content with multiple text nodes', () => {
         const Template = (text: string) => createElement('test-frameworks-1', null, text, ' ', 'children');
-        render(Template('Text'), {
-            container,
-        });
+        const { rerender, container } = render(Template('Text'));
 
         const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(3);
@@ -68,9 +52,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
             `<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text children</span><div></div></test-frameworks-1>`
         );
 
-        render(Template('Update'), {
-            container,
-        });
+        rerender(Template('Update'));
 
         expect(element.slotChildNodes).toHaveLength(3);
         expect(element.childNodesBySlot(null)).toHaveLength(3);
@@ -94,9 +76,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                     : createElement('h2', { slot: 'children', key: 2 }, 'Subtitle'),
                 '\n'
             );
-        render(Template(true), {
-            container,
-        });
+        const { rerender, container } = render(Template(true));
 
         const element = container.children[0] as TestElement1;
         const textNode = element.childNodes[0].childNodes[0];
@@ -106,9 +86,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
             `<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text \n</span><div><h1 slot="children">Title</h1></div></test-frameworks-1>`
         );
 
-        render(Template(false), {
-            container,
-        });
+        rerender(Template(false));
 
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
@@ -129,18 +107,14 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 showTitle ? createElement('h2', { slot: 'children' }, 'Title') : null,
                 createElement('span', null, 'Test')
             );
-        render(Template(), {
-            container,
-        });
+        const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement1;
         expect(element.slotChildNodes).toHaveLength(3);
         expect(element.childNodesBySlot(null)).toHaveLength(3);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
 
-        render(Template(true), {
-            container,
-        });
+        rerender(Template(true));
 
         expect(element.slotChildNodes).toHaveLength(5);
         expect(element.childNodesBySlot(null)).toHaveLength(3);
@@ -153,9 +127,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
         expect(element.childNodes[1].childNodes[1]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[1].childNodes[1]).toHaveProperty('textContent', 'Title');
 
-        render(Template(false), {
-            container,
-        });
+        rerender(Template(false));
 
         expect(element.slotChildNodes).toHaveLength(3);
         expect(element.childNodesBySlot(null)).toHaveLength(3);
@@ -171,9 +143,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 createElement('img', { src: 'data:image/png;base64,', alt: '' }),
                 createElement('p', null, 'Body')
             );
-        render(Template(), {
-            container,
-        });
+        const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement2;
         expect(element.childNodesBySlot(null)).toHaveLength(2);
@@ -186,9 +156,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
         expect(element.children[0].children[0].children[0]).toHaveProperty('tagName', 'SPAN');
         expect(element.children[0].children[0].children[0]).toHaveProperty('textContent', 'Untitled');
 
-        render(Template(true), {
-            container,
-        });
+        rerender(Template(true));
 
         expect(element.childNodesBySlot(null)).toHaveLength(2);
         expect(element.childNodesBySlot('title')).toHaveLength(1);
@@ -212,9 +180,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 createElement('img', { src: 'data:image/png;base64,', alt: '' }),
                 createElement('p', null, 'Body')
             );
-        render(Template(), {
-            container,
-        });
+        const { rerender, container } = render(Template());
         defineTestElements();
 
         const element = container.children[0] as TestElement3;
@@ -227,9 +193,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
         expect(element.children[0].children[2]).toHaveProperty('tagName', 'P');
         expect(element.children[0].children[2]).toHaveProperty('textContent', 'Body');
 
-        render(Template(true), {
-            container,
-        });
+        rerender(Template(true));
 
         expect(element.children[0]).toHaveProperty('tagName', 'H1');
         expect(element.children[0]).toHaveProperty('textContent', 'Title');
@@ -238,9 +202,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
         expect(element.children[2]).toHaveProperty('tagName', 'P');
         expect(element.children[2]).toHaveProperty('textContent', 'Body');
 
-        render(Template(false), {
-            container,
-        });
+        rerender(Template(false));
 
         expect(element.children[0].children[0]).toHaveProperty('tagName', 'H1');
         expect(element.children[0].children[0]).toHaveProperty('textContent', 'Title');
@@ -253,17 +215,13 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
     test('slot moved and replaced', () => {
         const Template = (switchValue = false) =>
             createElement('test-frameworks-4', { switch: switchValue }, switchValue ? 'World' : 'Hello');
-        render(Template(), {
-            container,
-        });
+        const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement4;
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'Empty');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Hello');
 
-        render(Template(true), {
-            container,
-        });
+        rerender(Template(true));
 
         expect(element.querySelector('.parent-1')).toHaveProperty('textContent', 'World');
         expect(element.querySelector('.parent-2')).toHaveProperty('textContent', 'Empty');
@@ -289,16 +247,13 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 objectProp: props.objectProp,
                 'data-attr': 'test',
             });
-        const { rerender } = render(
+        const { rerender, container } = render(
             Template({
                 stringProp: 'test',
                 booleanProp: true,
                 numericProp: 1,
                 objectProp: { test: true },
-            }),
-            {
-                container,
-            }
+            })
         );
 
         const element = container.children[0] as TestElement5;
@@ -317,6 +272,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 stringProp: 'changed',
             })
         );
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();
@@ -344,16 +300,13 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 objectProp: props.objectProp,
                 'data-attr': 'test',
             });
-        const { rerender } = render(
+        const { rerender, container } = render(
             Template({
                 stringProp: 'test',
                 booleanProp: true,
                 numericProp: 1,
                 objectProp: { test: true },
-            }),
-            {
-                container,
-            }
+            })
         );
 
         const element = container.children[0] as TestElement6;
@@ -372,6 +325,7 @@ describe.runIf(IS_BROWSER)('React compatibility', () => {
                 stringProp: 'changed',
             })
         );
+        expect(element.stringProp).toBe('changed');
         expect(onStringChange).toHaveBeenCalledOnce();
         element.click();
         expect(onClick).toHaveBeenCalledOnce();
