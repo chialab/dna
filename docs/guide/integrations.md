@@ -4,15 +4,15 @@
 
 DNA composition is tested across different frameworks.
 
-| Framwework      | Update a property | Slot text | Slot elements | Named slots |
-| --------------- | :---------------: | :-------: | :-----------: | :---------: |
-| Angular (>= 20) |        ⚠️¹        |    ✅     |      ✅       |      ✅      |
-| Lit (>= 3)      |        ✅         |    ✅     |      ✅       |      ✅      |
-| Preact (>= 10)  |        ✅         |    ✅     |      ✅       |      ✅      |
-| React (>= 19)   |        ⚠️²        |    ✅     |      ✅       |      ✅      |
-| Svelte (>= 5)   |        ⚠️³        |    ✅     |      ✅       |      ✅      |
-| uhtml (>= 4)    |        ✅         |    ✅     |      ✅       |      ✅      |
-| Vue (>= 3)      |        ✅         |    ✅     |      ✅       |      ✅      |
+| Framwework      | Version | Update a property | Slot text | Slot elements | Named slots | Builtin elements |
+| --------------- | :-----: | :---------------: | :-------: | :-----------: | :---------: | :--------------: |
+| Angular         |   20    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️¹      |
+| Lit             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
+| Preact          |   10    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
+| React           |   19    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️²      |
+| Svelte          |    5    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️³      |
+| uhtml           |    4    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
+| Vue             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 
 
 * ¹ does not create and handle builtin custom elements. [[issue](https://github.com/angular/angular/issues/63174)]
