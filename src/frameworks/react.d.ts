@@ -2,6 +2,7 @@ import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
     [K in keyof JSXInternal.AutonomousElements]: import('react').HTMLAttributes<HTMLElement> &
+        import('react').ClassAttributes<HTMLElement> &
         JSXInternal.AutonomousElements[K];
 };
 

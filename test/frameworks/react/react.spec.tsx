@@ -1,5 +1,7 @@
+/** @jsxImportSource react */
+
 import { render } from '@testing-library/react';
-import { createElement } from 'react';
+import type { MouseEvent } from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { IS_BROWSER } from '../../helpers';
 import {
@@ -14,7 +16,7 @@ import {
 
 describe.runIf(IS_BROWSER)('React', () => {
     test('should update text content', () => {
-        const Template = (text: string) => createElement('test-frameworks-1', null, text);
+        const Template = (text: string) => <test-frameworks-1>{text}</test-frameworks-1>;
         const { rerender, container } = render(Template('Text'));
 
         const element = container.children[0] as TestElement1;
@@ -38,7 +40,11 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('should update text content with multiple text nodes', () => {
-        const Template = (text: string) => createElement('test-frameworks-1', null, text, ' ', 'children');
+        const Template = (text: string) => (
+            <test-frameworks-1>
+                {text} {'children'}
+            </test-frameworks-1>
+        );
         const { rerender, container } = render(Template('Text'));
 
         const element = container.children[0] as TestElement1;
@@ -66,16 +72,12 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('should update named slots', () => {
-        const Template = (title: boolean) =>
-            createElement(
-                'test-frameworks-1',
-                null,
-                'Text ',
-                title
-                    ? createElement('h1', { slot: 'children', key: 1 }, 'Title')
-                    : createElement('h2', { slot: 'children', key: 2 }, 'Subtitle'),
-                '\n'
-            );
+        const Template = (title: boolean) => (
+            <test-frameworks-1>
+                Text {title ? <h1 slot="children">Title</h1> : <h2 slot="children">Subtitle</h2>}
+                {'\n'}
+            </test-frameworks-1>
+        );
         const { rerender, container } = render(Template(true));
 
         const element = container.children[0] as TestElement1;
@@ -97,16 +99,15 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('mixed slots', () => {
-        const Template = (showTitle = false) =>
-            createElement(
-                'test-frameworks-1',
-                {},
-                createElement('span', null, 'Test'),
-                showTitle ? createElement('h1', { slot: 'children' }, 'Title') : null,
-                createElement('span', null, 'Test'),
-                showTitle ? createElement('h2', { slot: 'children' }, 'Title') : null,
-                createElement('span', null, 'Test')
-            );
+        const Template = (showTitle = false) => (
+            <test-frameworks-1>
+                <span>Test</span>
+                {showTitle && <h1 slot="children">Title</h1>}
+                <span>Test</span>
+                {showTitle && <h2 slot="children">Title</h2>}
+                <span>Test</span>
+            </test-frameworks-1>
+        );
         const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement1;
@@ -135,14 +136,16 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('nested slot', () => {
-        const Template = (showTitle = false) =>
-            createElement(
-                'test-frameworks-2',
-                { key: '1' },
-                showTitle ? createElement('h1', { slot: 'title' }, 'Title') : null,
-                createElement('img', { src: 'data:image/png;base64,', alt: '' }),
-                createElement('p', null, 'Body')
-            );
+        const Template = (showTitle = false) => (
+            <test-frameworks-2 key="1">
+                {showTitle && <h1 slot="title">Title</h1>}
+                <img
+                    src="data:image/png;base64,"
+                    alt=""
+                />
+                <p>Body</p>
+            </test-frameworks-2>
+        );
         const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement2;
@@ -172,14 +175,16 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('slot moved across elements', () => {
-        const Template = (collapsed = false) =>
-            createElement(
-                'test-frameworks-3',
-                { collapsed },
-                createElement('h1', null, 'Title'),
-                createElement('img', { src: 'data:image/png;base64,', alt: '' }),
-                createElement('p', null, 'Body')
-            );
+        const Template = (collapsed = false) => (
+            <test-frameworks-3 collapsed={collapsed}>
+                <h1>Title</h1>
+                <img
+                    src="data:image/png;base64,"
+                    alt=""
+                />
+                <p>Body</p>
+            </test-frameworks-3>
+        );
         const { rerender, container } = render(Template());
         defineTestElements();
 
@@ -213,8 +218,9 @@ describe.runIf(IS_BROWSER)('React', () => {
     });
 
     test('slot moved and replaced', () => {
-        const Template = (switchValue = false) =>
-            createElement('test-frameworks-4', { switch: switchValue }, switchValue ? 'World' : 'Hello');
+        const Template = (switchValue = false) => (
+            <test-frameworks-4 switch={switchValue}>{switchValue ? 'World' : 'Hello'}</test-frameworks-4>
+        );
         const { rerender, container } = render(Template());
 
         const element = container.children[0] as TestElement4;
@@ -237,16 +243,18 @@ describe.runIf(IS_BROWSER)('React', () => {
             objectProp?: object;
             onClick?: (event: MouseEvent) => void;
             onStringChange?: (event: CustomEvent<string>) => void;
-        }) =>
-            createElement('test-frameworks-5', {
-                onClick: props.onClick,
-                onstringchange: props.onStringChange,
-                stringProp: props.stringProp,
-                booleanProp: props.booleanProp,
-                numericProp: props.numericProp,
-                objectProp: props.objectProp,
-                'data-attr': 'test',
-            });
+        }) => (
+            // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
+            <test-frameworks-5
+                onClick={props.onClick}
+                onstringchange={props.onStringChange}
+                stringProp={props.stringProp}
+                booleanProp={props.booleanProp}
+                numericProp={props.numericProp}
+                objectProp={props.objectProp}
+                data-attr="test"
+            />
+        );
         const { rerender, container } = render(
             Template({
                 stringProp: 'test',
@@ -289,17 +297,21 @@ describe.runIf(IS_BROWSER)('React', () => {
             objectProp?: object;
             onClick?: (event: MouseEvent) => void;
             onStringChange?: (event: CustomEvent<string>) => void;
-        }) =>
-            createElement('a', {
-                is: 'test-frameworks-6',
-                onClick: props.onClick,
-                onstringchange: props.onStringChange,
-                stringProp: props.stringProp,
-                booleanProp: props.booleanProp,
-                numericProp: props.numericProp,
-                objectProp: props.objectProp,
-                'data-attr': 'test',
-            });
+        }) => (
+            // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
+            // biome-ignore lint/a11y/useAnchorContent: Assignment test
+            <a
+                is="test-frameworks-6"
+                // biome-ignore lint/a11y/useValidAnchor: Assignment test
+                onClick={props.onClick}
+                onstringchange={props.onStringChange}
+                stringProp={props.stringProp}
+                booleanProp={props.booleanProp}
+                numericProp={props.numericProp}
+                objectProp={props.objectProp}
+                data-attr="test"
+            />
+        );
         const { rerender, container } = render(
             Template({
                 stringProp: 'test',

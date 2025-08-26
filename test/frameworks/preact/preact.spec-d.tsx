@@ -43,12 +43,11 @@ render(<x-test missing={true} />, document.body);
 render(<x-test nodeType={true} />, document.body);
 // @ts-expect-error connectedCallback is a method
 render(<x-test connectedCallback={() => {}} />, document.body);
-/** @TODO https://github.com/preactjs/preact/pull/4885 */
-// render(
-//     <details
-//         is="x-test-builtin"
-//         active={true}
-//         open
-//     />,
-//     document.body
-// );
+render(
+    <details
+        is="x-test-builtin"
+        active={true}
+        open
+    />,
+    document.body
+);

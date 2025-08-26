@@ -1,12 +1,12 @@
 import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
-    [K in keyof JSXInternal.AutonomousElements]: import('preact').JSX.HTMLAttributes<HTMLElement> &
+    [K in keyof JSXInternal.AutonomousElements]: import('preact').HTMLAttributes<HTMLElement> &
         JSXInternal.AutonomousElements[K];
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements]: import('preact').JSX.IntrinsicElements[K] &
+    [K in keyof JSXInternal.CustomizedElements]: import('preact').JSX.IntrinsicHTMLElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 
