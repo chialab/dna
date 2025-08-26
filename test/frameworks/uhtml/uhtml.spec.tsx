@@ -38,9 +38,7 @@ describe('uhtml', () => {
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Text');
-        expect(container.innerHTML).toBe(
-            `<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text</span><div></div></test-frameworks-1>`
-        );
+        expect(container.innerHTML).toMatchSnapshot();
 
         render(container, () => Template('Update'));
 
@@ -48,9 +46,7 @@ describe('uhtml', () => {
         expect(element.childNodesBySlot(null)).toHaveLength(1);
         expect(element.childNodesBySlot('children')).toHaveLength(0);
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Update');
-        expect(container.innerHTML).toBe(
-            `<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update</span><div></div></test-frameworks-1>`
-        );
+        expect(container.innerHTML).toMatchSnapshot();
     });
 
     test('should update text content with multiple text nodes', () => {
@@ -64,9 +60,7 @@ describe('uhtml', () => {
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Text children');
         expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Text');
         expect(element.childNodes[0].childNodes[1]).toHaveProperty('textContent', ' children');
-        expect(container.innerHTML.replace(/\n\s*/g, '')).toBe(
-            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text children</span><div></div></test-frameworks-1>'
-        );
+        expect(container.innerHTML).toMatchSnapshot();
 
         render(container, () => Template('Update'));
 
@@ -76,9 +70,7 @@ describe('uhtml', () => {
         expect(element.childNodes[0]).toHaveProperty('textContent', 'Update children');
         expect(element.childNodes[0].childNodes[0]).toHaveProperty('textContent', 'Update');
         expect(element.childNodes[0].childNodes[1]).toHaveProperty('textContent', ' children');
-        expect(container.innerHTML).toBe(
-            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update children</span><div></div></test-frameworks-1>'
-        );
+        expect(container.innerHTML).toMatchSnapshot();
     });
 
     test('should update named slots', () => {
@@ -92,18 +84,14 @@ describe('uhtml', () => {
         const textNode = element.childNodes[0].childNodes[0];
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H1');
-        expect(container.innerHTML.replace(/\n\s*/g, '')).toBe(
-            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text </span><div><h1 slot="children">Title</h1></div></test-frameworks-1>'
-        );
+        expect(container.innerHTML).toMatchSnapshot();
 
         render(container, () => Template(false));
 
         expect(element.childNodesBySlot('children')).toHaveLength(1);
         expect(element.childNodesBySlot('children')[0]).toHaveProperty('tagName', 'H2');
         expect(element.childNodes[0].childNodes[0]).toBe(textNode);
-        expect(container.innerHTML.replace(/\n\s*/g, '')).toBe(
-            '<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text </span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>'
-        );
+        expect(container.innerHTML).toMatchSnapshot();
     });
 
     test('mixed slots', () => {

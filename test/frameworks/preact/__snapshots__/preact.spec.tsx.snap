@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Preact > should update named slots 1`] = `
+"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text 
+</span><div><h1 slot="children">Title</h1></div></test-frameworks-1>"
+`;
+
+exports[`Preact > should update named slots 2`] = `
+"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text 
+</span><div><h2 slot="children">Subtitle</h2></div></test-frameworks-1>"
+`;
+
+exports[`Preact > should update text content 1`] = `"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text</span><div></div></test-frameworks-1>"`;
+
+exports[`Preact > should update text content 2`] = `"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update</span><div></div></test-frameworks-1>"`;
+
+exports[`Preact > should update text content with multiple text nodes 1`] = `"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Text children</span><div></div></test-frameworks-1>"`;
+
+exports[`Preact > should update text content with multiple text nodes 2`] = `"<test-frameworks-1 :scope="test-frameworks-1" :defined=""><span>Update children</span><div></div></test-frameworks-1>"`;
