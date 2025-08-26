@@ -1,6 +1,5 @@
 import { html, render } from 'lit';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
     type TestElement1,
@@ -11,7 +10,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('Lit', () => {
+describe('Lit', () => {
     let container: HTMLElement;
     beforeEach(() => {
         container = document.createElement('div');

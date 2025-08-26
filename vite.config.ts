@@ -1,43 +1,20 @@
 import { fileURLToPath } from 'node:url';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { svelteTesting } from '@testing-library/svelte/vite';
-import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-    plugins: [
-        vue({
-            template: {
-                compilerOptions: {
-                    isCustomElement: (tag) => tag.startsWith('test-frameworks-'),
-                },
-            },
-        }),
-        svelte(),
-        svelteTesting(),
-    ],
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],
     },
     resolve: {
-        conditions: ['browser'],
         alias: {
             '@chialab/dna/jsx-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
             '@chialab/dna/jsx-dev-runtime': fileURLToPath(new URL('./src/jsx-runtime.ts', import.meta.url)),
-            '@chialab/dna/react': fileURLToPath(new URL('./src/frameworks/react.d.ts', import.meta.url)),
-            '@chialab/dna/svelte': fileURLToPath(new URL('./src/frameworks/svelte.d.ts', import.meta.url)),
             '@chialab/dna': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-            // We need to define the cjs version of Vue to avoid issues with @testing-library/vue
-            'vue': fileURLToPath(new URL('./node_modules/vue/dist/vue.cjs.js', import.meta.url)),
         },
-    },
-    optimizeDeps: {
-        include: ['vue'],
     },
     test: {
         dir: './test',
-        include: ['./**/*.spec.{js,ts,tsx}'],
         typecheck: {
             enabled: true,
             tsconfig: 'test/tsconfig.json',
@@ -49,22 +26,6 @@ export default defineConfig({
             provider: 'istanbul',
             include: ['src/**/*'],
             reporter: ['clover', 'html'],
-        },
-        browser: {
-            provider: 'playwright',
-            headless: true,
-            fileParallelism: false,
-            instances: [
-                {
-                    browser: 'chromium',
-                },
-                {
-                    browser: 'webkit',
-                },
-                {
-                    browser: 'firefox',
-                },
-            ],
         },
     },
 });

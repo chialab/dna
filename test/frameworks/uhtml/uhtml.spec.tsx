@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
     type TestElement1,
@@ -10,7 +9,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('uhtml', () => {
+describe('uhtml', () => {
     let container: HTMLElement;
     let html: typeof import('uhtml').html;
     let render: typeof import('uhtml').render;

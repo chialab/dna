@@ -1,8 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../helpers';
 
-describe.runIf(IS_BROWSER)('Vitest compatibility', () => {
+describe('Vitest compatibility', () => {
     let wrapper: HTMLElement;
     let userEvent: typeof import('@vitest/browser/context').userEvent;
 

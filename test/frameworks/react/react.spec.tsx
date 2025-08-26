@@ -3,7 +3,6 @@
 import { render } from '@testing-library/react';
 import type { MouseEvent } from 'react';
 import { describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
     type TestElement1,
@@ -14,7 +13,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('React', () => {
+describe('React', () => {
     test('should update text content', () => {
         const Template = (text: string) => <test-frameworks-1>{text}</test-frameworks-1>;
         const { rerender, container } = render(Template('Text'));

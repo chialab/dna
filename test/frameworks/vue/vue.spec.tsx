@@ -1,6 +1,5 @@
 import { render } from '@testing-library/vue';
 import { describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
     type TestElement1,
@@ -11,7 +10,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('Vue', () => {
+describe('Vue', () => {
     test('should update text content', async () => {
         const { default: Test } = await import('./Test1.vue');
         const { rerender, container } = render(Test, {

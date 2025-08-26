@@ -5,7 +5,6 @@ import { ɵgetCleanupHook as getCleanupHook, getTestBed } from '@angular/core/te
 import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 import { render } from '@testing-library/angular';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import '../../polyfills';
 import {
     defineTestElements,
@@ -18,7 +17,7 @@ import {
 } from '../TestElements';
 import '../TestElements';
 
-describe.runIf(IS_BROWSER)('Angular', () => {
+describe('Angular', () => {
     beforeAll(() => {
         getTestBed().resetTestEnvironment();
         getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());

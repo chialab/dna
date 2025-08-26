@@ -1,9 +1,8 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER } from './helpers';
 
-describe.runIf(IS_BROWSER)(
+describe(
     'events',
     () => {
         let wrapper: HTMLElement;

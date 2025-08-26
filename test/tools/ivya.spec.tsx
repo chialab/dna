@@ -1,9 +1,8 @@
 import * as DNA from '@chialab/dna';
 import { Ivya } from 'ivya';
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { IS_BROWSER } from '../helpers';
 
-describe.runIf(IS_BROWSER)('Ivya compatibility', () => {
+describe('Ivya compatibility', () => {
     let ivya: Ivya;
     let wrapper: HTMLElement;
     beforeAll(() => {

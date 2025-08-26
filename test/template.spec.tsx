@@ -1,8 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER } from './helpers';
 
-describe.runIf(IS_BROWSER)(
+describe(
     'template',
     () => {
         const IMG = 'data:image/png;base64,';

@@ -10,7 +10,6 @@ export default mergeConfig(vitestConfig, {
         browser: {
             enabled: true,
             provider: '@chialab/vitest-provider-browserstack',
-            slowHijackESM: false,
             api: {
                 host: '0.0.0.0',
                 port: 5176,

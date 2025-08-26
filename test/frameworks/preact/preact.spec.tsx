@@ -2,7 +2,6 @@
 
 import { render } from '@testing-library/preact';
 import { describe, expect, test, vi } from 'vitest';
-import { IS_BROWSER } from '../../helpers';
 import {
     defineTestElements,
     type TestElement1,
@@ -13,7 +12,7 @@ import {
     type TestElement6,
 } from '../TestElements';
 
-describe.runIf(IS_BROWSER)('Preact', () => {
+describe('Preact', () => {
     test('should update text content', () => {
         const Template = (text: string) => <test-frameworks-1>{text}</test-frameworks-1>;
         const { rerender, container } = render(Template('Text'));

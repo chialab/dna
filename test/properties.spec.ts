@@ -1,9 +1,8 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
 import { describe, expect, it, vi } from 'vitest';
-import { IS_BROWSER } from './helpers';
 
-describe.runIf(IS_BROWSER)(
+describe(
     'property',
     () => {
         describe('@property', () => {
