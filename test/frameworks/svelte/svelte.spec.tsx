@@ -207,7 +207,7 @@ describe('Svelte', () => {
     });
 
     test('autonomous properties', async () => {
-        const onClick = vi.fn((event) => event.preventDefault());
+        const onClick = vi.fn((event: MouseEvent) => event.preventDefault());
         const onStringChange = vi.fn();
         const { default: Test } = await import('./Test8.svelte');
         const { rerender, container } = render(Test, {
@@ -241,7 +241,7 @@ describe('Svelte', () => {
 
     /** @TODO https://github.com/sveltejs/svelte/pull/16592 */
     test.skip('builtin properties', async () => {
-        const onClick = vi.fn((event) => event.preventDefault());
+        const onClick = vi.fn((event: MouseEvent) => event.preventDefault());
         const onStringChange = vi.fn();
         const { default: Test } = await import('./Test9.svelte');
         const { rerender, container } = render(Test, {
