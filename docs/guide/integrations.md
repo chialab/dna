@@ -8,7 +8,7 @@ DNA composition is tested across different frameworks.
 | --------------- | :-----: | :---------------: | :-------: | :-----------: | :---------: | :--------------: |
 | Angular         |   20    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️¹      |
 | Lit             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
-| Preact          |   10    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
+| Preact          |   10⁴   |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 | React           |   19    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️²      |
 | Svelte          |    5    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️³      |
 | uhtml           |    4    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
@@ -16,8 +16,9 @@ DNA composition is tested across different frameworks.
 
 
 * ¹ does not create and handle builtin custom elements. [[issue](https://github.com/angular/angular/issues/63174)]
-* ² does not correctly update proeprties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
+* ² does not correctly update properties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
 * ³ does not correctly update camel case properties for builtin custom elements. [[issue](https://github.com/sveltejs/svelte/issues/16591)]
+* ⁴ for full typings support, minum required version is 11
 
 #### JSX
 
