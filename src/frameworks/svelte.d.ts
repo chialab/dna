@@ -1,12 +1,12 @@
+import type { HTMLAttributes, SvelteHTMLElements } from 'svelte/elements';
 import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
-    [K in keyof JSXInternal.AutonomousElements]: JSXInternal.AutonomousElements[K] &
-        import('svelte/elements').HTMLAttributes<HTMLElement>;
+    [K in keyof JSXInternal.AutonomousElements]: JSXInternal.AutonomousElements[K] & HTMLAttributes<HTMLElement>;
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements]: import('svelte/elements').SvelteHTMLElements[K] &
+    [K in keyof JSXInternal.CustomizedElements]: SvelteHTMLElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 

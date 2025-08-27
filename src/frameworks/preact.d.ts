@@ -1,12 +1,12 @@
+import type { HTMLAttributes, JSX } from 'preact';
 import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
-    [K in keyof JSXInternal.AutonomousElements]: import('preact').HTMLAttributes<HTMLElement> &
-        JSXInternal.AutonomousElements[K];
+    [K in keyof JSXInternal.AutonomousElements]: HTMLAttributes<HTMLElement> & JSXInternal.AutonomousElements[K];
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements]: import('preact').JSX.IntrinsicHTMLElements[K] &
+    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicHTMLElements]: JSX.IntrinsicHTMLElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 
@@ -129,7 +129,6 @@ declare global {
             var: CustomizedElements['var'];
             video: CustomizedElements['video'];
             wbr: CustomizedElements['wbr'];
-            webview: CustomizedElements['webview'];
         }
     }
 }

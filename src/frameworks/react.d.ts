@@ -1,13 +1,14 @@
+import type { ClassAttributes, JSX } from 'react';
 import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
     [K in keyof JSXInternal.AutonomousElements]: import('react').HTMLAttributes<HTMLElement> &
-        import('react').ClassAttributes<HTMLElement> &
+        ClassAttributes<HTMLElement> &
         JSXInternal.AutonomousElements[K];
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements]: import('react').JSX.IntrinsicElements[K] &
+    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicElements]: JSX.IntrinsicElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 

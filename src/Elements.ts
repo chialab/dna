@@ -90,6 +90,7 @@ export interface HTMLTagNameMap {
     s: HTMLElement;
     samp: HTMLElement;
     script: HTMLScriptElement;
+    search: HTMLElement;
     section: HTMLElement;
     select: HTMLSelectElement;
     slot: HTMLSlotElement;
@@ -122,6 +123,7 @@ export interface HTMLTagNameMap {
     keygen: HTMLElement;
     menuitem: HTMLElement;
     noindex: HTMLElement;
+    webview: HTMLElement;
 }
 
 export interface SVGTagNameMap {
