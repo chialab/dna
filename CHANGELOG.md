@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.12
+
+### Patch Changes
+
+- 2879385: Export `Members` and `Attrs` types.
+
 ## 4.4.0-beta.11
 
 ### Minor Changes
