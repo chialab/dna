@@ -1,6 +1,6 @@
 import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
-import type { BaseClass, HTMLTagNameMap, SVGTagNameMap } from './Elements';
+import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 import type { Effect } from './Hooks';
 import type { HTML } from './HTML';
 import type { Context } from './render';
@@ -74,9 +74,28 @@ type KnownKeys<T> = keyof {
 };
 
 /**
+ * Get the base class of an element.
+ */
+type BaseClass<T extends HTMLElement & { extends?: keyof HTMLTagNameMap }> = T['extends'] extends keyof HTMLTagNameMap
+    ? HTMLTagNameMap[T['extends']]
+    : HTMLElement;
+
+/**
+ * Get element attributes.
+ */
+export type Attrs<T extends HTMLElement | string = HTMLElement> = T extends HTMLElement
+    ? ElementAttributes<T>
+    : T extends keyof IntrinsicElementAttributes
+      ? IntrinsicElementAttributes[T]
+      : HTMLAttributes;
+
+/**
  * Pick defined properties of a component.
  */
-export type Props<T extends HTMLElement, InvalidKeys = ReservedKeys | KnownKeys<BaseClass<T>>> = T extends HTML.Element
+export type Members<
+    T extends HTMLElement,
+    InvalidKeys = ReservedKeys | KnownKeys<BaseClass<T>>,
+> = T extends HTML.Element
     ? {
           [K in keyof T as K extends InvalidKeys ? never : IfMethod<T, K, never, K>]?: T[K];
       }
@@ -88,6 +107,13 @@ export type Props<T extends HTMLElement, InvalidKeys = ReservedKeys | KnownKeys<
 export type Methods<T> = {
     [K in keyof T as K extends ReservedKeys ? never : IfMethod<T, K, K, never>]: T[K];
 };
+
+/**
+ * Get the properties of a component.
+ */
+export type Props<T extends HTMLElement, InvalidKeys = ReservedKeys | KnownKeys<BaseClass<T>>> = T extends HTML.Element
+    ? Attrs<T> & Members<T, InvalidKeys>
+    : EmptyObject;
 
 /**
  * A constructor alias used for JSX fragments </>.
@@ -134,14 +160,7 @@ export type ElementProperties = {
 /**
  * Get base properties for an element.
  */
-type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<
-    T extends HTMLElement
-        ? ElementAttributes<T>
-        : T extends keyof IntrinsicElementAttributes
-          ? IntrinsicElementAttributes[T]
-          : HTMLAttributes,
-    'style' | 'class'
->;
+type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs<T>, 'style' | 'class'>;
 
 /**
  * A function that returns a template.
@@ -181,7 +200,7 @@ export type VFunction<T extends FunctionComponent> = {
 /**
  * Get render properties for an element instance.
  */
-type VElementRenderProperties<T extends HTMLElement> = Props<T> &
+type VElementRenderProperties<T extends HTMLElement> = Members<T> &
     RenderAttributes<T> &
     KeyedProperties &
     TreeProperties &
@@ -229,7 +248,7 @@ type VTagBaseRenderProperties<T extends string> = RenderAttributes<T> &
  * Get full render properties for a tag.
  */
 type VTagRenderProperties<T extends string> = (T extends keyof JSXInternal.CustomElements
-    ? Props<JSXInternal.CustomElements[T]>
+    ? Members<JSXInternal.CustomElements[T]>
     : EmptyObject) &
     VTagBaseRenderProperties<T>;
 
@@ -424,14 +443,14 @@ export namespace JSXInternal {
     export type IntrinsicAttributes = KeyedProperties & EventProperties & TreeProperties & ElementProperties;
 
     export type AutonomousElements = {
-        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Props<
+        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Members<
             CustomElements[K]
         >;
     };
 
     export type CustomizedElements = {
         [K in keyof HTMLTagNameMap]: Values<{
-            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: Props<
+            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: Members<
                 CustomElements[P]
             > & { is: P };
         }>;

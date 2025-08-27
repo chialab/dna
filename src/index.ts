@@ -88,8 +88,10 @@ export {
     undelegateEventListener,
 } from './events';
 export type {
+    Attrs,
     FunctionComponent,
     JSXInternal as JSX,
+    Members,
     Props,
     Template,
     VElement,
