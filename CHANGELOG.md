@@ -1,5 +1,22 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.11
+
+### Minor Changes
+
+- 5456c52: Add support for `on:` event listeners in order to improve listeners typings.
+- d930319: Add `svelte` typings integration.
+- 03f3830: Introducing `@fires` decorator for custom events.
+- 688b198: Improve JSX typings.
+- 8d82190: Move properties hooks before observers.
+- 48de4e6: Scope CSS text using DOM api.
+
+### Patch Changes
+
+- 4ac523d: Polyfill `createElementNS` and `importNode` for custom elements support in Safari.
+- cb3a0dd: Declare DNA `IntrinsicAttributes` and `IntrinsicElements` only when using JSX runtime.
+- b281fa2: Fix JSX typings with extended elements.
+
 ## 4.4.0-beta.10
 
 ### Patch Changes
