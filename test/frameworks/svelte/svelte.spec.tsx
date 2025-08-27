@@ -239,8 +239,7 @@ describe('Svelte', () => {
         expect(onClick).toHaveBeenCalledOnce();
     });
 
-    /** @TODO https://github.com/sveltejs/svelte/pull/16592 */
-    test.skip('builtin properties', async () => {
+    test('builtin properties', async () => {
         const onClick = vi.fn((event: MouseEvent) => event.preventDefault());
         const onStringChange = vi.fn();
         const { default: Test } = await import('./Test9.svelte');

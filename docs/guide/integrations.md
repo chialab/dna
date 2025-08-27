@@ -10,15 +10,15 @@ DNA composition is tested across different frameworks.
 | Lit             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 | Preact          |   10⁴   |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 | React           |   19    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️²      |
-| Svelte          |    5    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️³      |
+| Svelte          |    5    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅³      |
 | uhtml           |    4    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 | Vue             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
 
 
 * ¹ does not create and handle builtin custom elements. [[issue](https://github.com/angular/angular/issues/63174)]
 * ² does not correctly update properties for builtin custom elements. [[issue](https://github.com/facebook/react/issues/32135)]
-* ³ does not correctly update camel case properties for builtin custom elements. [[issue](https://github.com/sveltejs/svelte/issues/16591)]
-* ⁴ for full typings support, minum required version is 11
+* ³ full support since v5.38.5
+* ⁴ full typings support from v11
 
 #### JSX
 

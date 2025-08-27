@@ -22,9 +22,9 @@
     } = $props();
 </script>
 
+{/* @ts-expect-error @TODO https://github.com/sveltejs/language-tools/pull/2824 */ null}
 <!-- svelte-ignore attribute_avoid_is -->
- <!-- @TODO https://github.com/sveltejs/language-tools/pull/2824 -->
-<!-- <a is="test-frameworks-6"
+<a is="test-frameworks-6"
     href="/#"
     stringProp={stringProp}
     booleanProp={booleanProp}
@@ -36,4 +36,4 @@
 >
     {@render icon?.()}
     {@render children?.()}
-</a> -->
+</a>
