@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.13
+
+### Patch Changes
+
+- 76209ec: Make `EventHandler` compatible with core event handlers.
+
 ## 4.4.0-beta.12
 
 ### Patch Changes
