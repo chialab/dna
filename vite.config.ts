@@ -1,7 +1,38 @@
 import { fileURLToPath } from 'node:url';
+import UnpluginIsolatedDecl from 'unplugin-isolated-decl/vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+    plugins: [
+        UnpluginIsolatedDecl(),
+        viteStaticCopy({
+            targets: [
+                {
+                    src: 'src/frameworks/*.d.ts',
+                    dest: 'frameworks',
+                },
+            ],
+        }),
+    ],
+    build: {
+        lib: {
+            entry: {
+                dna: 'src/index.ts',
+                'jsx-runtime': 'src/jsx-runtime.ts',
+            },
+            formats: ['es'],
+        },
+        rollupOptions: {
+            output: {
+                dir: 'dist',
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name]-[hash].js',
+                format: 'es',
+            },
+        },
+        sourcemap: true,
+    },
     esbuild: {
         include: /\.(m?(t|j)s|[jt]sx)$/,
         target: ['es2020'],

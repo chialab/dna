@@ -1,5 +1,5 @@
+import type { JSX as JSXInternal } from '@chialab/dna';
 import type { HTMLAttributes, SvelteHTMLElements } from 'svelte/elements';
-import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
     [K in keyof JSXInternal.AutonomousElements]: JSXInternal.AutonomousElements[K] & HTMLAttributes<HTMLElement>;

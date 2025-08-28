@@ -48,9 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DNA
-          path: |
-            dist
-            types
+          path: dist
 
   test-browser:
     name: Test Browsers

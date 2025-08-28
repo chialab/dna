@@ -3,7 +3,6 @@ npm-debug.log
 .eslintcache
 .env
 coverage
-types
 dist
 /public
 tsconfig.tsbuildinfo

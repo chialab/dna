@@ -1,5 +1,5 @@
+import type { JSX as JSXInternal } from '@chialab/dna';
 import type { ClassAttributes, JSX } from 'react';
-import type { JSXInternal } from '../JSX';
 
 export type AutonomousElements = {
     [K in keyof JSXInternal.AutonomousElements]: import('react').HTMLAttributes<HTMLElement> &

@@ -5,33 +5,32 @@
   "type": "module",
   "main": "dist/dna.js",
   "module": "dist/dna.js",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/dna.js"
     },
     "./jsx-runtime": {
-      "types": "./types/jsx-runtime.d.ts",
+      "types": "./dist/jsx-runtime.d.ts",
       "default": "./dist/jsx-runtime.js"
     },
     "./jsx-dev-runtime": {
-      "types": "./types/jsx-runtime.d.ts",
+      "types": "./dist/jsx-runtime.d.ts",
       "default": "./dist/jsx-runtime.js"
     },
     "./preact": {
-      "types": "./types/frameworks/preact.d.ts"
+      "types": "./dist/frameworks/preact.d.ts"
     },
     "./react": {
-      "types": "./types/frameworks/react.d.ts"
+      "types": "./dist/frameworks/react.d.ts"
     },
     "./svelte": {
-      "types": "./types/frameworks/svelte.d.ts"
+      "types": "./dist/frameworks/svelte.d.ts"
     }
   },
   "files": [
     "dist",
-    "types",
     "LICENSE",
     "README.md"
   ],
@@ -46,11 +45,9 @@
   "homepage": "https://chialab.github.io/dna/",
   "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
   "scripts": {
-    "build": "rimraf 'dist' 'types' && yarn build:types && yarn build:esm",
-    "build:esm": "esbuild dna=src/index.ts jsx-runtime=src/jsx-runtime.ts --splitting --outdir=dist --out-extension:.js=.js --format=esm --bundle --packages=external --sourcemap",
-    "build:types": "tsc && cp -rf src/frameworks types/",
+    "build": "rimraf dist && tsc && vite build",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
-    "test:typings": "svelte-check --workspace test/frameworks/svelte",
+    "test:typings": "tsc && svelte-check --workspace test/frameworks/svelte",
     "test:browser": "vitest run --config vitest.browser.ts",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run --config vitest.node.ts",
@@ -58,9 +55,6 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
-  },
-  "dependencies": {
-    "htm": "^3.0.3"
   },
   "devDependencies": {
     "@angular/common": "^20.1.7",
@@ -86,7 +80,7 @@
     "@vitest/coverage-istanbul": "^3.0.0",
     "@vitest/ui": "^3.0.0",
     "axe-core": "^4.10.3",
-    "esbuild": "^0.25.0",
+    "htm": "^3.0.3",
     "ivya": "^1.6.0",
     "lit": "^3.3.0",
     "playwright": "^1.50.0",
@@ -101,7 +95,9 @@
     "tslib": "^2.6.2",
     "typescript": "^5.0.0",
     "uhtml": "^4.7.1",
+    "unplugin-isolated-decl": "^0.15.1",
     "vite": "^7.0.0",
+    "vite-plugin-static-copy": "^3.1.2",
     "vitepress": "^1.0.0",
     "vitest": "^3.0.0",
     "vue": "^3.5.14",
