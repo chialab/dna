@@ -1711,14 +1711,45 @@ describe(
                 const element = new TestElement();
                 const child1 = new TestChild();
                 const child2 = new TestChild();
+                const child3 = new TestChild();
 
                 expect(connectedCallback).not.toHaveBeenCalled();
                 wrapper.appendChild(element);
                 element.appendChild(child1);
                 element.insertBefore(child2, child1);
-                expect(connectedCallback).toHaveBeenCalledTimes(2);
+                element.insertBefore(child3, child2);
+                expect(element.slotChildNodes[0]).toBe(child3);
+                expect(element.slotChildNodes[1]).toBe(child2);
+                expect(element.slotChildNodes[2]).toBe(child1);
+                expect(element.childNodes[0]).toBe(child3);
+                expect(element.childNodes[1]).toBe(child2);
+                expect(element.childNodes[2]).toBe(child1);
+                expect(connectedCallback).toHaveBeenCalledTimes(3);
+                // change nothing
                 element.insertBefore(child2, child1);
-                expect(element.slotChildNodes).toHaveLength(2);
+                expect(element.slotChildNodes[0]).toBe(child3);
+                expect(element.slotChildNodes[1]).toBe(child2);
+                expect(element.slotChildNodes[2]).toBe(child1);
+                expect(element.childNodes[0]).toBe(child3);
+                expect(element.childNodes[1]).toBe(child2);
+                expect(element.childNodes[2]).toBe(child1);
+                expect(element.slotChildNodes).toHaveLength(3);
+                // move up
+                element.insertBefore(child1, child2);
+                expect(element.slotChildNodes[0]).toBe(child3);
+                expect(element.slotChildNodes[1]).toBe(child1);
+                expect(element.slotChildNodes[2]).toBe(child2);
+                expect(element.childNodes[0]).toBe(child3);
+                expect(element.childNodes[1]).toBe(child1);
+                expect(element.childNodes[2]).toBe(child2);
+                // move up
+                element.insertBefore(child1, child3);
+                expect(element.slotChildNodes[0]).toBe(child1);
+                expect(element.slotChildNodes[1]).toBe(child3);
+                expect(element.slotChildNodes[2]).toBe(child2);
+                expect(element.childNodes[0]).toBe(child1);
+                expect(element.childNodes[1]).toBe(child3);
+                expect(element.childNodes[2]).toBe(child2);
             });
 
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {

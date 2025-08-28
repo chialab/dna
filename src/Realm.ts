@@ -23,7 +23,7 @@ const REALM_OWNER_SYMBOL: unique symbol = Symbol();
  * @param node The child node.
  * @returns The owner realm instance or null.
  */
-function getParentRealm(node: Node): Realm | null {
+export function getParentRealm(node: Node): Realm | null {
     return (node as Node & { [REALM_PARENT_SYMBOL]?: Realm | null })[REALM_PARENT_SYMBOL] ?? null;
 }
 
@@ -325,15 +325,6 @@ export class Realm {
             } else if (node.nodeType === 11 /* Node.DOCUMENT_FRAGMENT_NODE */) {
                 this.importNodes(Array.from(node.childNodes), acc);
             } else {
-                const parentRealm = getParentRealm(node);
-                if (parentRealm) {
-                    if (!parentRealm.contains(this)) {
-                        parentRealm.removeChild(node);
-                        this.adoptNode(node);
-                    }
-                } else {
-                    this.adoptNode(node);
-                }
                 acc.push(node);
             }
             return acc;
@@ -341,46 +332,24 @@ export class Realm {
     }
 
     /**
-     * Internal method to append nodes to the realm.
-     * @param nodes The nodes to append.
-     * @returns The nodes that were appended.
+     * Adopt nodes to the realm.
+     * @param nodes Nodes to adopt.
      */
-    protected appendNodes(nodes: Node[]): void {
-        this.removeNodes(nodes, false);
-        this.childNodes.push(...nodes);
-    }
-
-    /**
-     * Internal method to prepend nodes to the realm.
-     * @param nodes The nodes to prepend.
-     * @returns The nodes that were prepended.
-     */
-    protected prependNodes(nodes: Node[]): void {
-        this.removeNodes(nodes, false);
-        this.childNodes.unshift(...nodes);
-    }
-
-    /**
-     * Internal method to remove nodes to the realm.
-     * @param nodes The nodes to remove.
-     * @param strict Whether to throw an error if a node is not found in the child nodes.
-     * @returns The nodes that were removed.
-     */
-    protected removeNodes(nodes: Node[], strict = true): void {
-        nodes.forEach((child) => {
-            const io = this.childNodes.indexOf(child);
-            if (io !== -1) {
-                this.releaseNode(child);
-                this.childNodes.splice(io, 1);
-                if (this.fragment.contains(child)) {
-                    this.fragment.removeChild(child);
+    protected adoptNodes(nodes: Node[]): void {
+        for (const node of nodes) {
+            const parentRealm = getParentRealm(node);
+            if (parentRealm) {
+                if (!parentRealm.contains(this)) {
+                    parentRealm.removeChild(node);
+                    this.adoptNode(node);
+                } else if (parentRealm === this) {
+                    const io = this.childNodes.indexOf(node);
+                    this.childNodes.splice(io, 1);
                 }
-            } else if (strict) {
-                throw new Error(
-                    "Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node."
-                );
+            } else {
+                this.adoptNode(node);
             }
-        });
+        }
     }
 
     /**
@@ -391,26 +360,10 @@ export class Realm {
     protected insertNodesBefore(nodes: Node[], referenceNode: Node | null): void {
         const io = referenceNode ? this.childNodes.indexOf(referenceNode) : -1;
         if (io === -1) {
-            this.appendNodes(nodes);
+            this.childNodes.push(...nodes);
             return;
         }
-        this.removeNodes(nodes, false);
         this.childNodes.splice(io, 0, ...nodes);
-    }
-
-    /**
-     * Replace nodes in the slot child nodes array.
-     * @param nodes The nodes to replace.
-     * @param referenceNode The reference node to replace.
-     */
-    protected replaceNodes(nodes: Node[], referenceNode: Node): void {
-        const io = this.childNodes.indexOf(referenceNode);
-        if (io === -1) {
-            this.appendNodes(nodes);
-            return;
-        }
-        this.removeNodes(nodes, false);
-        this.childNodes.splice(io, 1, ...nodes);
     }
 
     /**
@@ -418,7 +371,9 @@ export class Realm {
      * @param nodes The nodes to append.
      */
     append(...nodes: (Node | string)[]): void {
-        this.appendNodes(this.importNodes(nodes));
+        const resolvedNodes = this.importNodes(nodes);
+        this.adoptNodes(resolvedNodes);
+        this.insertNodesBefore(resolvedNodes, null);
         this.notify();
     }
 
@@ -427,7 +382,9 @@ export class Realm {
      * @param nodes The nodes to prepend.
      */
     prepend(...nodes: (Node | string)[]): void {
-        this.prependNodes(this.importNodes(nodes));
+        const resolvedNodes = this.importNodes(nodes);
+        this.adoptNodes(resolvedNodes);
+        this.insertNodesBefore(resolvedNodes, this.childNodes[0]);
         this.notify();
     }
 
@@ -436,7 +393,17 @@ export class Realm {
      * @param node The node to remove.
      */
     removeChild(node: Node): void {
-        this.removeNodes([node]);
+        const io = this.childNodes.indexOf(node);
+        if (io === -1) {
+            throw new Error(
+                "Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node."
+            );
+        }
+        this.releaseNode(node);
+        this.childNodes.splice(io, 1);
+        if (this.fragment.contains(node)) {
+            this.fragment.removeChild(node);
+        }
         this.notify();
     }
 
@@ -446,7 +413,25 @@ export class Realm {
      * @param referenceNode The node to replace.
      */
     replaceChild(nodes: (string | Node)[], referenceNode: Node): void {
-        this.replaceNodes(this.importNodes(nodes), referenceNode);
+        const resolvedNodes = this.importNodes(nodes);
+        const io = this.childNodes.indexOf(referenceNode);
+        if (io === -1) {
+            throw new Error(
+                "Failed to execute 'replaceChild' on 'Node': The node to be replaced is not a child of this node."
+            );
+        }
+        let finalReferenceNode: Node | null = this.childNodes[io + 1] || null;
+        while (finalReferenceNode && resolvedNodes.includes(finalReferenceNode)) {
+            const io = this.childNodes.indexOf(finalReferenceNode);
+            finalReferenceNode = this.childNodes[io + 1] || null;
+        }
+        this.releaseNode(referenceNode);
+        this.childNodes.splice(io, 1);
+        if (this.fragment.contains(referenceNode)) {
+            this.fragment.removeChild(referenceNode);
+        }
+        this.adoptNodes(resolvedNodes);
+        this.insertNodesBefore(resolvedNodes, finalReferenceNode);
         this.notify();
     }
 
@@ -456,31 +441,24 @@ export class Realm {
      * @param referenceNode The node before which new nodes are to be inserted.
      */
     insertBefore(nodes: (string | Node)[], referenceNode: Node | null): void {
-        this.insertNodesBefore(this.importNodes(nodes), referenceNode);
+        const resolvedNodes = this.importNodes(nodes);
+        let finalReferenceNode: Node | null = null;
+        if (referenceNode) {
+            const io = this.childNodes.indexOf(referenceNode);
+            if (io === -1) {
+                throw new Error(
+                    "Failed to execute 'insertBefore' on 'Node': The node before which the new nodes are to be inserted is not a child of this node."
+                );
+            }
+            finalReferenceNode = this.childNodes[io] || null;
+            while (finalReferenceNode && resolvedNodes.includes(finalReferenceNode)) {
+                const io = this.childNodes.indexOf(finalReferenceNode);
+                finalReferenceNode = this.childNodes[io + 1] || null;
+            }
+        }
+        this.adoptNodes(resolvedNodes);
+        this.insertNodesBefore(resolvedNodes, referenceNode);
         this.notify();
-    }
-
-    /**
-     * Filter child nodes by `slot` attribute name.
-     * @param name The name of the slot. `null` for unnamed slot.
-     * @return The child nodes that match the slot name.
-     */
-    childNodesBySlot(name: string | null = null): Node[] {
-        return this.childNodes.filter((node) => {
-            if (node.nodeType === Node.COMMENT_NODE) {
-                return false;
-            }
-            if (getParentRealm(node) !== this) {
-                // collect nodes from other realms
-                return !name;
-            }
-            if (node.nodeType !== Node.ELEMENT_NODE) {
-                return !name;
-            }
-
-            const slotName = (node as HTMLElement).getAttribute('slot') || null;
-            return slotName === name;
-        });
     }
 
     /**

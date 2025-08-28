@@ -24,7 +24,7 @@ import {
     reflectPropertyToAttribute,
     removeObserver,
 } from './property';
-import { Realm } from './Realm';
+import { getParentRealm, Realm } from './Realm';
 import { getRootContext, internalRender } from './render';
 
 /**
@@ -179,7 +179,10 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @returns The list of slotted nodes.
          */
         get slotChildNodes(): Node[] {
-            return this.realm.childNodes;
+            if (isConnected(this)) {
+                return this.realm.childNodes;
+            }
+            return Array.from(this.childNodes);
         }
 
         /**
@@ -297,7 +300,21 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @returns A list of nodes.
          */
         childNodesBySlot(name: string | null = null): Node[] {
-            return this.realm.childNodesBySlot(name);
+            return this.slotChildNodes.filter((node) => {
+                if (node.nodeType === Node.COMMENT_NODE) {
+                    return false;
+                }
+                if (getParentRealm(node) !== this.realm) {
+                    // collect nodes from other realms
+                    return !name;
+                }
+                if (node.nodeType !== Node.ELEMENT_NODE) {
+                    return !name;
+                }
+
+                const slotName = (node as HTMLElement).getAttribute('slot') || null;
+                return slotName === name;
+            });
         }
 
         /**
