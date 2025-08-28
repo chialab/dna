@@ -331,7 +331,13 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
  * @param rootContext The root context.
  */
 const removeNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
-    parentContext.node.removeChild(childContext.node);
+    if (isComponent(parentContext.node) && !parentContext.shadow) {
+        if (parentContext.node.realm.childNodes.includes(childContext.node)) {
+            parentContext.node.removeChild(childContext.node);
+        }
+    } else if (childContext.node.parentNode === parentContext.node) {
+        parentContext.node.removeChild(childContext.node);
+    }
     rootContext.contexts.delete(childContext.node);
     const io = parentContext.children.indexOf(childContext);
     if (io !== -1) {

@@ -325,6 +325,31 @@ describe(
                 expect(children[1]).toBe(newChildren[1]);
             });
 
+            it('should not thrown if element has been removed by a DOM operation outside of render cycle', () => {
+                DNA.render(
+                    <ul class="list">
+                        <li>One</li>
+                        <li>Two</li>
+                        <li>Three</li>
+                        <li>Four</li>
+                    </ul>,
+                    wrapper
+                );
+                const ul = wrapper.querySelector('ul.list') as HTMLElement;
+                ul.removeChild(ul.lastChild as Node);
+                expect(() => {
+                    DNA.render(
+                        <ul class="list">
+                            <li>One</li>
+                            <li>Two</li>
+                            <li>Three</li>
+                        </ul>,
+                        wrapper
+                    );
+                }).not.toThrow();
+                expect(ul.childNodes).toHaveLength(3);
+            });
+
             it('should remove nodes inside component', () => {
                 const Parent = DNA.define(
                     'test-render-14',
