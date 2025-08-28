@@ -2,6 +2,7 @@ import {
     Component,
     customElement,
     type EventHandler,
+    type EventType,
     Fragment,
     fires,
     HTML,
@@ -156,6 +157,38 @@ describe('typings', () => {
 
         const element = new TestElement();
         expectTypeOf(element.sample).toEqualTypeOf<string | undefined>();
+    });
+
+    test('should override native event handlers', () => {
+        class TestElement extends Component {
+            @fires()
+            oncustomevent: EventHandler<CustomEvent<boolean>>;
+
+            @fires()
+            onclose: EventHandler<CustomEvent<boolean>, true>;
+
+            @fires()
+            onerror: EventHandler<CustomEvent<boolean>, true, true>;
+
+            customEventType: EventType<TestElement, 'oncustomevent'>;
+            closeEventType: EventType<TestElement, 'onclose'>;
+            errorEventType: EventType<TestElement, 'onerror'>;
+
+            customEventTypeStrict: EventType<TestElement, 'oncustomevent', true>;
+            closeEventTypeStrict: EventType<TestElement, 'onclose', true>;
+            errorEventTypeStrict: EventType<TestElement, 'onerror', true>;
+        }
+
+        const element = new TestElement();
+        expectTypeOf(element.oncustomevent).parameter(0).toEqualTypeOf<CustomEvent<boolean>>();
+        expectTypeOf(element.onclose).parameter(0).toEqualTypeOf<Event | CustomEvent<boolean>>();
+        expectTypeOf(element.onerror).parameter(0).toEqualTypeOf<Event | CustomEvent<boolean> | string>();
+        expectTypeOf(element.customEventType).toEqualTypeOf<CustomEvent<boolean>>();
+        expectTypeOf(element.closeEventType).toEqualTypeOf<Event | CustomEvent<boolean>>();
+        expectTypeOf(element.errorEventType).toEqualTypeOf<Event | CustomEvent<boolean> | string>();
+        expectTypeOf(element.customEventTypeStrict).toEqualTypeOf<CustomEvent<boolean>>();
+        expectTypeOf(element.closeEventTypeStrict).toEqualTypeOf<CustomEvent<boolean>>();
+        expectTypeOf(element.errorEventTypeStrict).toEqualTypeOf<CustomEvent<boolean>>();
     });
 
     describe('JSX', () => {

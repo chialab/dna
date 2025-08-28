@@ -541,18 +541,26 @@ export { listen };
 /**
  * A type for custom event properties.
  */
-export type EventHandler<T extends Event = Event> =
-    // We need to handle both Event and T because some event handlers must be compatibile with native ones.
-    // biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
-    ((event: Event | T) => any) | null;
+export type EventHandler<
+    T extends Event = Event,
+    OverrideNative extends boolean = false,
+    OverrideOnError extends boolean = false,
+> = // biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
+| ((event: T | (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)) => any)
+| null;
 
 /**
  * Extract event type from handler property.
  */
-export type EventType<T extends ComponentInstance, P extends keyof T> = Exclude<T[P], undefined> extends EventHandler<
-    infer E
->
-    ? E
+export type EventType<T extends ComponentInstance, P extends keyof T, Strict extends boolean = false> = Exclude<
+    T[P],
+    undefined
+> extends EventHandler<infer E, infer OverrideNative, infer OverrideOnError>
+    ?
+          | E
+          | (Strict extends false
+                ? (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)
+                : never)
     : never;
 
 /**
