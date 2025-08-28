@@ -541,9 +541,10 @@ export { listen };
 /**
  * A type for custom event properties.
  */
-
-// biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
-export type EventHandler<T extends Event = Event> = ((event: T) => any) | null;
+export type EventHandler<T extends Event = Event> =
+    // We need to handle both Event and T because some event handlers must be compatibile with native ones.
+    // biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
+    ((event: Event | T) => any) | null;
 
 /**
  * Extract event type from handler property.
