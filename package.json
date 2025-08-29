@@ -65,7 +65,7 @@
     "@babel/runtime": "^7.14.0",
     "@biomejs/biome": "^2.1.0",
     "@changesets/cli": "^2.22.0",
-    "@chialab/vitest-provider-browserstack": "^0.19.0-beta.0",
+    "@chialab/vitest-provider-browserstack": "^0.19.0",
     "@sveltejs/vite-plugin-svelte": "^6.1.0",
     "@testing-library/angular": "^18.0.0",
     "@testing-library/dom": "^10.4.1",
@@ -98,13 +98,10 @@
     "unplugin-isolated-decl": "^0.15.1",
     "vite": "^7.0.0",
     "vite-plugin-static-copy": "^3.1.2",
-    "vitepress": "^1.0.0",
+    "vitepress": "^2.0.0-alpha.0",
     "vitest": "^3.0.0",
     "vue": "^3.5.14",
     "zone.js": "^0.15.1"
-  },
-  "resolutions": {
-    "esbuild": "^0.25.0"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

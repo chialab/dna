@@ -2,20 +2,7 @@
 
 DNA components follow the Custom Element lifecycle specification, with the addition of the `propertyChangedCallback` and `render` methods. The complete list of methods is:
 
-- [initialize](#initialize)
-- [connectedCallback](#connectedcallback)
-- [disconnectedCallback](#disconnectedcallback)
-- [attributeChangedCallback](#attributechangedcallback)
-- [propertyChangedCallback](#propertychangedcallback)
-- [stateChangedCallback](#statechangedcallback)
-- [childListChangedCallback](#childlistchangedcallback)
-- [render](#render)
-- [updatedCallback](#updatedcallback)
-- [shouldUpdate](#shouldupdate)
-- [requestUpdate](#requestupdate)
-- [forceUpdate](#forceupdate)
-
-## initialize
+## `initialize`
 
 The initialize method is invoked at the end of the final constructor. It initializes inital property values and observers, as well as listeners.
 
@@ -40,7 +27,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## connectedCallback
+## `connectedCallback`
 
 From [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks):
 
@@ -60,7 +47,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## disconnectedCallback
+## `disconnectedCallback`
 
 From [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks):
 
@@ -80,7 +67,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## attributeChangedCallback
+## `attributeChangedCallback`
 
 From [MDN](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks):
 
@@ -113,21 +100,21 @@ export class MyArticle extends Component {
 }
 ```
 
-## propertyChangedCallback
+## `propertyChangedCallback`
 
 This method is very similar to `attributeChangedCallback` and it is invoked each time one of the element's property is changed.
 
 The signature is equivalent too: it receives the property name as first argument, as well as the new value and the previous value (default `undefined`).
 
-## stateChangedCallback
+## `stateChangedCallback`
 
 The same of `propertyChangedCallback`, but for state properties.
 
-## childListChangedCallback
+## `childListChangedCallback`
 
 This method is invoked each time the component's children are changed.
 
-## render
+## `render`
 
 This method is invoked each time the component should be rendered. It returns a template that will be rendered in the component's realm.
 
@@ -148,7 +135,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## updatedCallback
+## `updatedCallback`
 
 This method is invoked each time the component is updated and re-rendered.
 
@@ -164,7 +151,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## shouldUpdate
+## `shouldUpdate`
 
 This method is invoked each time a property or state property is changed. It returns a boolean value that indicates if the component should be updated or not. By default, it returns `true`.
 
@@ -185,7 +172,7 @@ export class MyArticle extends Component {
 }
 ```
 
-## requestUpdate
+## `requestUpdate`
 
 This method is invoked each time a property or state property is changed and the component needs a re-render. If a re-render is already scheduled, the method does nothing.
 
@@ -202,6 +189,6 @@ export class MyArticle extends Component {
 }
 ```
 
-## forceUpdate
+## `forceUpdate`
 
 This method is invoked each time a property or state property is changed and the component should perform a re-render.

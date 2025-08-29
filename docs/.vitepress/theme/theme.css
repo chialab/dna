@@ -10,6 +10,10 @@
     --vp-home-hero-name-background: linear-gradient(to bottom right, #ffac52 0%, #f07c00 100%);
 }
 
+html.dark {
+    --vp-code-color: #fff;
+}
+
 .custom-block.info code {
     color: var(--vp-code-color);
 }
