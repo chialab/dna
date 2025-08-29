@@ -1,5 +1,12 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.15
+
+### Patch Changes
+
+- fda24a5: Do not throw when a child is already been removed when rendering.
+- 68afc33: Handle `slotChildNodes` when component is not connected.
+
 ## 4.4.0-beta.14
 
 ### Patch Changes
