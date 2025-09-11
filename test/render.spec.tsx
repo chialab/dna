@@ -1174,6 +1174,40 @@ describe(
                 expect(cleanup).toHaveBeenCalled();
                 expect(cleanup).toHaveBeenCalledOnce();
             });
+
+            it('should generate an unique id', () => {
+                const Test: DNA.FunctionComponent = (props, { useId }) => {
+                    const id = useId(props.suffix ?? 'test');
+                    const otherId = useId('test');
+
+                    return (
+                        <>
+                            <button
+                                id={id}
+                                type="button">
+                                Click me
+                            </button>
+                            <button
+                                id={otherId}
+                                type="button">
+                                Click me
+                            </button>
+                        </>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                const button = wrapper.children[0] as HTMLButtonElement;
+                const otherButton = wrapper.children[1] as HTMLButtonElement;
+                expect(button.id).toBe('fn-test-1-1-test');
+                expect(otherButton.id).toBe('fn-test-1-2-test');
+                DNA.render(<Test />, wrapper);
+                expect(button.id).toBe('fn-test-1-1-test');
+                expect(otherButton.id).toBe('fn-test-1-2-test');
+                DNA.render(<Test suffix="changed" />, wrapper);
+                expect(button.id).toBe('fn-test-1-1-changed');
+                expect(otherButton.id).toBe('fn-test-1-2-test');
+            });
         });
 
         describe('not keyed', () => {

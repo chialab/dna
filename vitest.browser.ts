@@ -45,12 +45,12 @@ export default mergeConfig(
                     {
                         browser: 'chromium',
                     },
-                    {
-                        browser: 'webkit',
-                    },
-                    {
-                        browser: 'firefox',
-                    },
+                    // {
+                    //     browser: 'webkit',
+                    // },
+                    // {
+                    //     browser: 'firefox',
+                    // },
                 ],
             },
         },

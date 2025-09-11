@@ -385,6 +385,60 @@ function Timer({ interval }, { useState, useEffect }) {
 
 :::
 
+### The `useId` hook
+
+The `useId` hook is a function that returns a unique ID for the component instance. This can be useful for associating form fields with their labels or for generating unique IDs for other purposes.
+
+::: code-group
+
+```tsx [jsx]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return <>
+        <button aria-controls={menuId} aria-haspopup="menu">
+            Menu
+        </button>
+        <ul id={menuId} role="menu">
+            <li role="menuitem">Item 1</li>
+            <li role="menuitem">Item 2</li>
+            <li role="menuitem">Item 3</li>
+        </ul>
+    </>;
+}
+```
+
+```ts [html]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return html`<>
+        <button aria-controls=${menuId} aria-haspopup="menu">
+            Menu
+        </button>
+        <ul id=${menuId} role="menu">
+            <li role="menuitem">Item 1</li>
+            <li role="menuitem">Item 2</li>
+            <li role="menuitem">Item 3</li>
+        </ul>
+    </>`;
+}
+```
+
+```ts [vdom]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return h(Fragment, null,
+        h('button', { 'aria-controls': menuId, 'aria-haspopup': 'menu' }, 'Menu'),
+        h('ul', { id: menuId, role: 'menu' },
+            h('li', { role: 'menuitem' }, 'Item 1'),
+            h('li', { role: 'menuitem' }, 'Item 2'),
+            h('li', { role: 'menuitem' }, 'Item 3'),
+        )
+    );
+}
+```
+
+:::
+
 ### The `useRenderContext` hook
 
 The `useRenderContext` hook is a function that returns the current context of the DNA render cycle. The render context is an object that contains the informations about the virtual node as well as its position in the tree.
@@ -593,3 +647,25 @@ DNA optimizes rendering re-using elements when possible, comparing the tag name 
 ```
 
 In this example, once the last `<option>` element has been created, it never changes its DOM reference, since previous `<option>` generations always re-create the element instead of re-using the keyed one.
+
+## Use unique IDs
+
+Sometimes, you may need to generate unique IDs for your component instances, for example when associating form fields with their labels. DNA provides a `getUniqueId` utility function that can be used to generate such IDs.
+
+```tsx
+import { Component, customElement, getUniqueId, property } from '@chialab/dna';
+
+@customElement('x-menu-button')
+class MenuButton extends Component {
+    render() {
+        return <>
+            <button aria-controls={getUniqueId('menu')} aria-haspopup="menu">
+                Menu
+            </button>
+            <ul id={this.getUniqueId('menu')} role="menu">
+                <li role="menuitem">Item 1</li>
+                <li role="menuitem">Item 2</li>
+                <li role="menuitem">Item 3</li>
+            </ul>
+    }
+}

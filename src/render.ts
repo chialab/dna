@@ -495,6 +495,9 @@ const renderTemplate = (
                         useEffect(effect: Effect, deps: unknown[] = []) {
                             return hooks.useEffect(effect, deps);
                         },
+                        useId: (suffix?: string) => {
+                            return hooks.useId(renderContext.node, suffix);
+                        },
                         useRenderContext() {
                             return context;
                         },

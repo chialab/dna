@@ -268,6 +268,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Anchor extends globalThis.HTMLAnchorElement {
         /**
@@ -533,6 +540,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Area extends globalThis.HTMLAreaElement {
         /**
@@ -798,6 +812,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Audio extends globalThis.HTMLAudioElement {
         /**
@@ -1063,6 +1084,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Base extends globalThis.HTMLBaseElement {
         /**
@@ -1328,6 +1356,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Quote extends globalThis.HTMLQuoteElement {
         /**
@@ -1593,6 +1628,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Body extends globalThis.HTMLBodyElement {
         /**
@@ -1858,6 +1900,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class BR extends globalThis.HTMLBRElement {
         /**
@@ -2123,6 +2172,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Button extends globalThis.HTMLButtonElement {
         /**
@@ -2388,6 +2444,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Canvas extends globalThis.HTMLCanvasElement {
         /**
@@ -2653,6 +2716,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TableCaption extends globalThis.HTMLTableCaptionElement {
         /**
@@ -2918,6 +2988,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TableCol extends globalThis.HTMLTableColElement {
         /**
@@ -3183,6 +3260,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Data extends globalThis.HTMLDataElement {
         /**
@@ -3448,6 +3532,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class DataList extends globalThis.HTMLDataListElement {
         /**
@@ -3713,6 +3804,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Mod extends globalThis.HTMLModElement {
         /**
@@ -3978,6 +4076,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Details extends globalThis.HTMLDetailsElement {
         /**
@@ -4243,6 +4348,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Dialog extends globalThis.HTMLDialogElement {
         /**
@@ -4508,6 +4620,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Directory extends globalThis.HTMLDirectoryElement {
         /**
@@ -4773,6 +4892,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Div extends globalThis.HTMLDivElement {
         /**
@@ -5038,6 +5164,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class DList extends globalThis.HTMLDListElement {
         /**
@@ -5303,6 +5436,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Embed extends globalThis.HTMLEmbedElement {
         /**
@@ -5568,6 +5708,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class FieldSet extends globalThis.HTMLFieldSetElement {
         /**
@@ -5833,6 +5980,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Font extends globalThis.HTMLFontElement {
         /**
@@ -6098,6 +6252,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Form extends globalThis.HTMLFormElement {
         /**
@@ -6363,6 +6524,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Frame extends globalThis.HTMLFrameElement {
         /**
@@ -6628,6 +6796,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class FrameSet extends globalThis.HTMLFrameSetElement {
         /**
@@ -6893,6 +7068,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Heading extends globalThis.HTMLHeadingElement {
         /**
@@ -7158,6 +7340,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Head extends globalThis.HTMLHeadElement {
         /**
@@ -7423,6 +7612,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class HR extends globalThis.HTMLHRElement {
         /**
@@ -7688,6 +7884,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class IFrame extends globalThis.HTMLIFrameElement {
         /**
@@ -7953,6 +8156,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Image extends globalThis.HTMLImageElement {
         /**
@@ -8218,6 +8428,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Input extends globalThis.HTMLInputElement {
         /**
@@ -8483,6 +8700,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Label extends globalThis.HTMLLabelElement {
         /**
@@ -8748,6 +8972,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Legend extends globalThis.HTMLLegendElement {
         /**
@@ -9013,6 +9244,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class LI extends globalThis.HTMLLIElement {
         /**
@@ -9278,6 +9516,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Link extends globalThis.HTMLLinkElement {
         /**
@@ -9543,6 +9788,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     // biome-ignore lint/suspicious/noShadowRestrictedNames: For consistency with other elements.
     export class Map extends globalThis.HTMLMapElement {
@@ -9809,6 +10061,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Marquee extends globalThis.HTMLMarqueeElement {
         /**
@@ -10074,6 +10333,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Menu extends globalThis.HTMLMenuElement {
         /**
@@ -10339,6 +10605,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Meta extends globalThis.HTMLMetaElement {
         /**
@@ -10604,6 +10877,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Meter extends globalThis.HTMLMeterElement {
         /**
@@ -10869,6 +11149,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     // biome-ignore lint/suspicious/noShadowRestrictedNames: For consistency with other elements.
     export class Object extends globalThis.HTMLObjectElement {
@@ -11135,6 +11422,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class OList extends globalThis.HTMLOListElement {
         /**
@@ -11400,6 +11694,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class OptGroup extends globalThis.HTMLOptGroupElement {
         /**
@@ -11665,6 +11966,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Option extends globalThis.HTMLOptionElement {
         /**
@@ -11930,6 +12238,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Output extends globalThis.HTMLOutputElement {
         /**
@@ -12195,6 +12510,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Paragraph extends globalThis.HTMLParagraphElement {
         /**
@@ -12460,6 +12782,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Param extends globalThis.HTMLParamElement {
         /**
@@ -12725,6 +13054,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Picture extends globalThis.HTMLPictureElement {
         /**
@@ -12990,6 +13326,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Pre extends globalThis.HTMLPreElement {
         /**
@@ -13255,6 +13598,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Progress extends globalThis.HTMLProgressElement {
         /**
@@ -13520,6 +13870,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Script extends globalThis.HTMLScriptElement {
         /**
@@ -13785,6 +14142,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Select extends globalThis.HTMLSelectElement {
         /**
@@ -14050,6 +14414,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Slot extends globalThis.HTMLSlotElement {
         /**
@@ -14315,6 +14686,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Source extends globalThis.HTMLSourceElement {
         /**
@@ -14580,6 +14958,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Span extends globalThis.HTMLSpanElement {
         /**
@@ -14845,6 +15230,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Style extends globalThis.HTMLStyleElement {
         /**
@@ -15110,6 +15502,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Table extends globalThis.HTMLTableElement {
         /**
@@ -15375,6 +15774,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TableSection extends globalThis.HTMLTableSectionElement {
         /**
@@ -15640,6 +16046,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TableCell extends globalThis.HTMLTableCellElement {
         /**
@@ -15905,6 +16318,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Template extends globalThis.HTMLTemplateElement {
         /**
@@ -16170,6 +16590,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TextArea extends globalThis.HTMLTextAreaElement {
         /**
@@ -16435,6 +16862,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Time extends globalThis.HTMLTimeElement {
         /**
@@ -16700,6 +17134,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Title extends globalThis.HTMLTitleElement {
         /**
@@ -16965,6 +17406,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class TableRow extends globalThis.HTMLTableRowElement {
         /**
@@ -17230,6 +17678,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Track extends globalThis.HTMLTrackElement {
         /**
@@ -17495,6 +17950,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class UList extends globalThis.HTMLUListElement {
         /**
@@ -17760,6 +18222,13 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
     export class Video extends globalThis.HTMLVideoElement {
         /**
@@ -18025,5 +18494,12 @@ export declare namespace HTML {
          * @returns The component instance.
          */
         assign(props: object): this;
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string;
     }
 }

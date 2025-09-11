@@ -176,6 +176,7 @@ export type FunctionComponent<P = any> = (
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
         useEffect: (effect: Effect, deps?: unknown[]) => void;
+        useId: (suffix?: string) => string;
         useRenderContext: () => Context;
     }
 ) => Template;

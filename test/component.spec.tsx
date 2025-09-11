@@ -1978,6 +1978,39 @@ describe(
             });
         });
 
+        it('#getUniqueId', () => {
+            const TestElement = DNA.define(
+                'test-component-73',
+                class extends DNA.Component {
+                    render() {
+                        return (
+                            <div id={this.getUniqueId()}>
+                                <div id={this.getUniqueId('child')}>Test</div>
+                            </div>
+                        );
+                    }
+                }
+            );
+
+            const element = new TestElement();
+            wrapper.appendChild(element);
+
+            const parentDiv = element.childNodes[0] as HTMLDivElement;
+            const childDiv = parentDiv.childNodes[0] as HTMLDivElement;
+            expect(parentDiv.id).toBe('test-component-73-1');
+            expect(childDiv.id).toBe('test-component-73-1-child');
+            element.requestUpdate();
+            expect(parentDiv.id).toBe('test-component-73-1');
+            expect(childDiv.id).toBe('test-component-73-1-child');
+
+            const otherElement = new TestElement();
+            wrapper.appendChild(otherElement);
+            const otherParentDiv = otherElement.childNodes[0] as HTMLDivElement;
+            const otherChildDiv = otherParentDiv.childNodes[0] as HTMLDivElement;
+            expect(otherParentDiv.id).toBe('test-component-73-2');
+            expect(otherChildDiv.id).toBe('test-component-73-2-child');
+        });
+
         describe('attributes', () => {
             @DNA.customElement('test-component-72')
             class TestElement extends DNA.Component {

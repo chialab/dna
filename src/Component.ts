@@ -10,6 +10,7 @@ import {
     type ListenerConfig,
     undelegateEventListener,
 } from './events';
+import { uniqueId } from './factories';
 import type { HTML as HTMLNamespace } from './HTML';
 import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
 import type { Template } from './JSX';
@@ -621,6 +622,15 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             }
 
             return this;
+        }
+
+        /**
+         * Generate a unique ID for the component instance.
+         * @param suffixex A list of suffixes to append to the generated ID.
+         * @return A unique identifier string.
+         */
+        getUniqueId(...suffixex: string[]): string {
+            return uniqueId(this, ...suffixex);
         }
 
         /**

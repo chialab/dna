@@ -1,3 +1,5 @@
+import { uniqueId } from './factories';
+
 /**
  * The type of a hook state.
  */
@@ -147,6 +149,16 @@ export class HooksManager {
                 cleanup?.();
             });
         }, deps);
+    }
+
+    /**
+     * Generate a unique ID for the rendering context.
+     * @param fn The function component requesting the ID.
+     * @param suffix An optional suffix to append to the ID.
+     * @returns A unique ID string.
+     */
+    useId(ref: Node, suffix?: string): string {
+        return this.useMemo(() => uniqueId(ref, `${this.index}`, suffix), [this.index, suffix]);
     }
 
     /**
