@@ -1,5 +1,15 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.16
+
+### Minor Changes
+
+- cbc9280: Introducing the `useId` hook and the `getUniqueId` method.
+
+### Patch Changes
+
+- 9573913: Restore deprecated `Realm.childNodesBySlot` method.
+
 ## 4.4.0-beta.15
 
 ### Patch Changes
