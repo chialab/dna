@@ -143,6 +143,30 @@ export class Realm {
     }
 
     /**
+     * Get the child nodes assigned to a slot.
+     * @deprecated This method is now part of the component class.
+     * @param name The slot name, or null for the default slot.
+     * @returns The list of child nodes assigned to the slot.
+     */
+    childNodesBySlot(name: string | null = null): Node[] {
+        return this.childNodes.filter((node) => {
+            if (node.nodeType === Node.COMMENT_NODE) {
+                return false;
+            }
+            if (getParentRealm(node) !== this) {
+                // collect nodes from other realms
+                return !name;
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE) {
+                return !name;
+            }
+
+            const slotName = (node as HTMLElement).getAttribute('slot') || null;
+            return slotName === name;
+        });
+    }
+
+    /**
      * Add a callback to call when the realm changes.
      * @param callback The callback to invoke.
      */
