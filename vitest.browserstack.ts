@@ -10,6 +10,9 @@ export default mergeConfig(
         test: {
             // Cannot use element locator in browserstack, so we exclude tools
             exclude: ['./tools/*.tsx'],
+            typecheck: {
+                enabled: false,
+            },
             browser: {
                 enabled: true,
                 provider: '@chialab/vitest-provider-browserstack',
@@ -87,7 +90,9 @@ export default mergeConfig(
                     'safari-latest': {
                         browserName: 'Safari',
                         'bstack:options': {
-                            browserVersion: 'latest',
+                            // Safari 26 is not fully supported by vitest provider yet
+                            // browserVersion: 'latest',
+                            browserVersion: '18.4',
                         },
                     },
                     'safari-16': {
