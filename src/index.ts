@@ -79,7 +79,6 @@ export type {
     ListenerConfig,
 } from './events';
 export {
-    defineListeners,
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
@@ -103,7 +102,6 @@ export type {
 export { compile, Fragment, h, html, jsx, jsxDEV, jsxs } from './JSX';
 export type { PropertyConfig, PropertyDeclaration, PropertyObserver } from './property';
 export {
-    defineProperties,
     defineProperty,
     getProperties,
     getProperty,

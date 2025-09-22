@@ -18,7 +18,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "moduleResolution": "node",

@@ -1,15 +1,8 @@
-import type { ClassElement } from './ClassDescriptor';
-import {
-    type ComponentConstructor,
-    type ComponentInstance,
-    isComponent,
-    isComponentConstructor,
-    isInitialized,
-} from './Component';
+import { type ComponentConstructor, type ComponentInstance, isComponent, isInitialized } from './Component';
 import {
     defineProperty as _defineProperty,
+    type ClassElement,
     type Constructor,
-    createObject,
     getOwnPropertyDescriptor,
     getPrototypeOf,
     hasOwn,
@@ -25,6 +18,16 @@ const PROPERTIES_SYMBOL: unique symbol = Symbol();
  * A Symbol which contains all Property observers of a Component.
  */
 const OBSERVERS_SYMBOL: unique symbol = Symbol();
+
+/**
+ * WeakMap containing all properties metadata.
+ */
+const PROPERTIES_METADATA = new WeakMap<object, Map<string, PropertyDeclaration>>();
+
+/**
+ * WeakMap containing all observers metadata.
+ */
+const OBSERVERS_METADATA = new WeakMap<object, Set<[PropertyKey, PropertyKey | PropertyObserver]>>();
 
 /**
  * Retrieve properties declarations of a Component.
@@ -43,7 +46,7 @@ type ObserversOf<T extends ComponentInstance> = {
 /**
  * A prototype with properties.
  */
-type WithProperties<T extends ComponentInstance> = T & {
+type WithProperties<T extends ComponentInstance> = ComponentConstructor<T> & {
     [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
     [OBSERVERS_SYMBOL]?: ObserversOf<T>;
 };
@@ -255,17 +258,14 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
 /**
  * Retrieve all properties descriptors.
  * @param prototype The component prototype.
- * @param chain Should create inheritance chain of properties.
  * @returns A list of property descriptors.
  */
-export const getProperties = <T extends ComponentInstance>(prototype: T, chain = false): PropertiesOf<T> => {
-    const props = ((prototype as WithProperties<T>)[PROPERTIES_SYMBOL] || {}) as PropertiesOf<T>;
-    if (chain && !hasOwn.call(prototype, PROPERTIES_SYMBOL)) {
-        const computedProps = createObject(props) as PropertiesOf<T>;
-        (prototype as WithProperties<T>)[PROPERTIES_SYMBOL] = computedProps;
-        return computedProps;
+export const getProperties = <T extends ComponentInstance>(prototype: T): PropertiesOf<T> => {
+    const ctr = prototype.constructor as WithProperties<T>;
+    if (!hasOwn.call(ctr, PROPERTIES_SYMBOL) || !ctr[PROPERTIES_SYMBOL]) {
+        ctr[PROPERTIES_SYMBOL] = {} as PropertiesOf<T>;
     }
-    return props;
+    return ctr[PROPERTIES_SYMBOL];
 };
 
 /**
@@ -289,25 +289,22 @@ export const getProperty = <T extends ComponentInstance, P extends keyof T>(
 };
 
 /**
- * Define an observed property.
- * @param prototype The component prototype.
+ * Create a property object from a declaration.
  * @param propertyKey The name of the property.
  * @param declaration The property descriptor.
  * @param symbolKey The symbol to use to store property value.
  * @param isStatic The property definition is static.
  * @returns The final descriptor.
  */
-export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
-    prototype: T,
+const createProperty = <T extends ComponentInstance, P extends keyof T>(
     propertyKey: P,
     declaration: PropertyDeclaration<T[P]>,
-    symbolKey: symbol,
+    symbolKey?: symbol,
     isStatic = false
-): PropertyDescriptor => {
+): Property<T, P> => {
     // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
-    const symbol: unique symbol = symbolKey as any;
+    const symbol: unique symbol = (symbolKey as any) || Symbol(propertyKey as string);
     const hasAttribute = declaration.attribute || (declaration.attribute == null ? !declaration.state : false);
-    const declarations = getProperties(prototype, true);
     const attribute = hasAttribute
         ? typeof declaration.attribute === 'string'
             ? declaration.attribute
@@ -326,7 +323,8 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
     const acceptsBoolean = types.indexOf(Boolean) !== -1;
     const acceptsNumber = types.indexOf(Number) !== -1;
     const acceptsString = types.indexOf(String) !== -1;
-    const property = {
+
+    return {
         fromAttribute(newValue) {
             if (acceptsBoolean && (!newValue || newValue === attribute)) {
                 if (newValue !== 'false' && (newValue === '' || newValue === attribute)) {
@@ -379,14 +377,22 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
         update,
         static: isStatic,
     } as Property<T, P>;
-    declarations[propertyKey] = property;
+};
 
-    const { get, set, getter, setter } = property;
-
+/**
+ * Create property accessors.
+ * @param property The property declaration.
+ * @returns The property accessors.
+ */
+const createPropertyDescriptor = <T extends ComponentInstance, P extends keyof T>(
+    property: Property<T, P>
+): PropertyDescriptor => {
+    const { name, get, set, getter, setter, symbol: symbolKey, state, event, update, type, validate } = property;
+    // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
+    const symbol: unique symbol = symbolKey as any;
     type E = T & { [symbol]: E[P] };
 
-    const validate = typeof property.validate === 'function' && property.validate;
-    const finalDescriptor: PropertyDescriptor = {
+    return {
         configurable: true,
         enumerable: true,
         get(this: E) {
@@ -399,7 +405,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
             }
             return value;
         },
-        set(this: E, newValue) {
+        set(this: E, newValue: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) {
             if (!isComponent(this) || !isInitialized(this)) {
                 this[symbol] = newValue;
                 return;
@@ -423,9 +429,9 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
             // if types or custom validator has been set, check the value validity
             if (computedNewValue != null && computedNewValue !== false) {
                 let valid = true;
-                if (types.length) {
+                if (type.length) {
                     // check if the value is an instanceof of at least one constructor
-                    valid = types.some(
+                    valid = type.some(
                         (Type) => computedNewValue instanceof Type || computedNewValue.constructor === Type
                     );
                 }
@@ -434,7 +440,7 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
                 }
                 if (!valid) {
                     throw new TypeError(
-                        `Invalid \`${String(computedNewValue)}\` value for \`${String(propertyKey)}\` property`
+                        `Invalid \`${String(computedNewValue)}\` value for \`${String(name)}\` property`
                     );
                 }
             }
@@ -443,14 +449,14 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
 
             // trigger changes
             if (state) {
-                this.stateChangedCallback(propertyKey, oldValue, newValue);
+                this.stateChangedCallback(name, oldValue, newValue);
             } else {
-                this.propertyChangedCallback(propertyKey, oldValue, newValue);
+                this.propertyChangedCallback(name, oldValue, newValue);
             }
 
-            const observers = getPropertyObservers(this as T, propertyKey);
+            const observers = getPropertyObservers(this as T, name);
             for (let i = 0, len = observers.length; i < len; i++) {
-                observers[i].call(this, oldValue, computedNewValue, propertyKey as string);
+                observers[i].call(this, oldValue, computedNewValue, name as string);
             }
 
             if (event) {
@@ -460,58 +466,43 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
                 });
             }
 
-            if (update && this.shouldUpdate(propertyKey, oldValue, computedNewValue)) {
+            if (update && this.shouldUpdate(name, oldValue, computedNewValue)) {
                 this.requestUpdate();
             }
         },
     };
-
-    _defineProperty(prototype, propertyKey, finalDescriptor);
-
-    const observers = [...(declaration.observers || [])];
-    if (declaration.observe) {
-        observers.unshift(declaration.observe);
-    }
-    observers.forEach((observer) => {
-        addObserver(prototype, propertyKey, observer as PropertyObserver<T[P]>);
-    });
-
-    return finalDescriptor;
 };
 
 /**
- * Define component constructor properties.
+ * Define an observed property.
  * @param prototype The component prototype.
+ * @param propertyKey The name of the property.
+ * @param declaration The property descriptor.
+ * @param symbolKey The symbol to use to store property value.
+ * @param isStatic The property definition is static.
+ * @returns The final descriptor.
  */
-export const defineProperties = <T extends ComponentInstance>(prototype: T): void => {
-    const handled: { [key: string]: boolean } = {};
-    const ctr = prototype.constructor as ComponentConstructor;
-    let currentCtr = ctr;
-    while (isComponentConstructor(currentCtr)) {
-        const propertiesDescriptor = getOwnPropertyDescriptor(currentCtr, 'properties');
-        if (propertiesDescriptor) {
-            const descriptorProperties = (
-                propertiesDescriptor.get ? propertiesDescriptor.get.call(ctr) || {} : propertiesDescriptor.value
-            ) as {
-                [P in keyof T]: PropertyConfig<T[P]>;
-            };
-            for (const propertyKey in descriptorProperties) {
-                if (propertyKey in handled) {
-                    continue;
-                }
-                const config = descriptorProperties[propertyKey as keyof T];
-                const declaration = (
-                    typeof config === 'function' || isArray(config) ? { type: config } : config
-                ) as PropertyDeclaration<T[keyof T]>;
-                // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
-                const symbol: unique symbol = (declaration.symbol as any) || Symbol(propertyKey as string);
-                defineProperty(prototype, propertyKey as keyof T, declaration, symbol, true);
-                handled[propertyKey] = true;
-            }
-        }
+export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
+    prototype: T,
+    propertyKey: P,
+    declaration: PropertyDeclaration<T[P]>,
+    symbolKey?: symbol,
+    isStatic = false
+): PropertyDescriptor => {
+    const property = createProperty(propertyKey, declaration, symbolKey, isStatic);
+    const properties = getProperties(prototype);
+    properties[propertyKey] = property;
+    const finalDescriptor = createPropertyDescriptor(property);
+    _defineProperty(prototype, propertyKey, finalDescriptor);
 
-        currentCtr = getPrototypeOf(currentCtr);
+    if (declaration.observe) {
+        defineObserver(prototype, propertyKey, declaration.observe);
     }
+    declaration.observers?.forEach((observer) => {
+        defineObserver(prototype, propertyKey, observer);
+    });
+
+    return finalDescriptor;
 };
 
 /**
@@ -559,131 +550,112 @@ export const reflectPropertyToAttribute = <T extends ComponentInstance, P extend
 };
 
 /**
- * Populate property declaration using its field descriptor.
- * @param declaration The declaration to update.
- * @param descriptor The field descriptor.
- * @param initializer The property initializer function.
+ * Iterate over static properties declarations.
+ * @param ctr The component constructor.
+ * @yields Tuples of property key and declaration.
  */
-const assignFromDescriptor = <T extends ComponentInstance, P extends keyof T>(
-    declaration: PropertyDeclaration<T[P]>,
-    descriptor: PropertyDescriptor,
-    initializer?: () => T[P]
-) => {
-    declaration.initializer = initializer;
-    declaration.get = descriptor.get;
-    declaration.set = descriptor.set;
-    if (!descriptor.get) {
-        declaration.defaultValue = descriptor.value;
-    }
-};
-
-/**
- * Add a property to a component prototype.
- * @param targetOrClassElement The component prototype.
- * @param declaration The property declaration.
- * @param propertyKey The property name.
- * @param descriptor The native property descriptor.
- * @returns The property descriptor.
- */
-export const createProperty = <T extends ComponentInstance, P extends keyof T>(
-    targetOrClassElement: T,
-    declaration: PropertyDeclaration<T[P]>,
-    propertyKey?: P,
-    descriptor?: PropertyDeclaration<T[P]>
-): ClassElement<T, T[P]> | PropertyDescriptor => {
-    // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
-    const symbol: unique symbol = declaration.symbol || (Symbol(propertyKey as string) as any);
-    if (propertyKey !== undefined) {
-        const computedDescriptor =
-            descriptor || (getOwnPropertyDescriptor(targetOrClassElement, propertyKey) as PropertyDeclaration<T[P]>);
-        if (computedDescriptor) {
-            assignFromDescriptor(declaration, computedDescriptor, computedDescriptor.initializer);
+export function* staticPropertiesDeclarations<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[keyof T, PropertyDeclaration]> {
+    const propertiesDescriptor = getOwnPropertyDescriptor(ctr, 'properties');
+    if (propertiesDescriptor) {
+        const descriptorProperties = (
+            propertiesDescriptor.get ? propertiesDescriptor.get.call(ctr) || {} : propertiesDescriptor.value
+        ) as {
+            [P in keyof T]: PropertyConfig<T[P]>;
+        };
+        for (const propertyKey in descriptorProperties) {
+            const config = descriptorProperties[propertyKey as keyof T];
+            yield [
+                propertyKey,
+                (typeof config === 'function' || isArray(config) ? { type: config } : config) as PropertyDeclaration,
+            ];
         }
-        return defineProperty(targetOrClassElement as T, propertyKey, declaration, symbol);
     }
-
-    // spec 2
-    const element = targetOrClassElement as unknown as ClassElement<T, T[P]>;
-    const key = String(element.key) as P;
-    type E = T & {
-        [symbol]: E[P];
-    };
-
-    if (element.kind !== 'field' || element.placement !== 'own') {
-        return element;
-    }
-
-    if (element.descriptor) {
-        assignFromDescriptor(declaration, element.descriptor, element.initializer);
-    }
-
-    return {
-        kind: element.kind,
-        key: symbol,
-        placement: element.placement,
-        descriptor: {
-            configurable: false,
-            writable: true,
-            enumerable: false,
-        },
-        initializer(this: E) {
-            return this[symbol];
-        },
-        finisher(ctr: Constructor<T>) {
-            defineProperty(ctr.prototype, key, declaration, symbol);
-        },
-    };
-};
+}
 
 /**
- * Add a property observer to a component prototype.
- * @param targetOrClassElement The component prototype.
- * @param propertyKey The property name to watch.
- * @param methodKey The method name.
- * @returns The observer descriptor.
+ * Iterate over decorated properties declarations.
+ * @param ctr The component constructor.
+ * @yields Tuples of property key and declaration.
  */
-export const createObserver = <T extends ComponentInstance, P extends keyof T, M extends keyof T>(
-    targetOrClassElement: T,
-    propertyKey: P,
-    methodKey?: M
-): ClassElement<T, T[P]> | undefined => {
-    if (methodKey !== undefined) {
-        addObserver(
-            targetOrClassElement,
-            propertyKey,
-            targetOrClassElement[methodKey] as unknown as PropertyObserver<T[P]>
-        );
-        return;
+export function* decoratedPropertiesDeclarations<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[keyof T, PropertyDeclaration]> {
+    const descriptorProperties = hasOwn.call(ctr, Symbol.metadata)
+        ? PROPERTIES_METADATA.get(ctr[Symbol.metadata] as object)
+        : PROPERTIES_METADATA.get(ctr);
+    if (descriptorProperties) {
+        const prototype = ctr.prototype as T;
+        for (const propertyKey of descriptorProperties.keys()) {
+            const declaration = {
+                ...descriptorProperties.get(propertyKey),
+            } as PropertyDeclaration<T[keyof T]>;
+            const descriptor = getOwnPropertyDescriptor(getPrototypeOf(prototype), propertyKey);
+            if (descriptor) {
+                declaration.get = descriptor.get;
+                declaration.set = descriptor.set;
+                if (!descriptor.get) {
+                    declaration.defaultValue = descriptor.value;
+                }
+            }
+            yield [propertyKey as keyof T, declaration];
+        }
     }
-
-    const element = targetOrClassElement as unknown as ClassElement<T, T[P]>;
-    if (!element.descriptor) {
-        return element;
-    }
-    const observer = element.descriptor.value as PropertyObserver<T[P]>;
-    element.finisher = (ctr) => {
-        addObserver(ctr.prototype, propertyKey, observer);
-    };
-    return element;
-};
+}
 
 /**
- * Get element properties observers.
+ * Iterate over all properties declarations.
+ * @param ctr The component constructor.
+ * @yields Tuples of property key and declaration.
+ */
+export function* decoratedObservers<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[keyof T, PropertyObserver]> {
+    const observers = hasOwn.call(ctr, Symbol.metadata)
+        ? OBSERVERS_METADATA.get(ctr[Symbol.metadata] as object)
+        : OBSERVERS_METADATA.get(ctr);
+    if (observers) {
+        const prototype = ctr.prototype as T;
+        for (const [propertyKey, observer] of observers) {
+            if (typeof observer === 'function') {
+                yield [propertyKey as keyof T, observer as PropertyObserver];
+            } else {
+                yield [propertyKey as keyof T, prototype[observer as keyof T] as unknown as PropertyObserver];
+            }
+        }
+    }
+}
+
+/**
+ * Get component properties observers.
  * @param element The node.
  * @returns The map of observers.
  */
 export const getObservers = <T extends ComponentInstance>(element: T): ObserversOf<T> => {
-    const observers = ((element as WithProperties<T>)[OBSERVERS_SYMBOL] || {}) as ObserversOf<T>;
-    if (!hasOwn.call(element, OBSERVERS_SYMBOL)) {
-        const result = {} as ObserversOf<T>;
-        for (const key in observers) {
-            result[key] = observers[key].slice();
-        }
-        (element as WithProperties<T>)[OBSERVERS_SYMBOL] = result;
-        return result;
+    const ctr = element.constructor as WithProperties<T>;
+    if (!hasOwn.call(ctr, OBSERVERS_SYMBOL) || !ctr[OBSERVERS_SYMBOL]) {
+        ctr[OBSERVERS_SYMBOL] = {} as ObserversOf<T>;
     }
+    return ctr[OBSERVERS_SYMBOL];
+};
 
-    return observers;
+/**
+ * Define an observer for a property.
+ * @param element The node context.
+ * @param propertyKey The name of the property to watch.
+ * @param observer The observer function to add.
+ */
+export const defineObserver = <T extends ComponentInstance, P extends keyof T>(
+    element: T,
+    propertyKey: P,
+    observer: PropertyObserver<T[P]>
+): void => {
+    const observers = getObservers(element);
+    if (!observers[propertyKey]) {
+        observers[propertyKey] = [];
+    }
+    observers[propertyKey].push(observer);
 };
 
 /**
@@ -693,15 +665,17 @@ export const getObservers = <T extends ComponentInstance>(element: T): Observers
  * @returns A list of observers.
  * @throws If the property is not defined.
  */
-export const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(
-    element: T,
+const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(
+    element: T & { [OBSERVERS_SYMBOL]?: ObserversOf<T> },
     propertyName: P
 ): ObserversOf<T>[P] => {
-    if (!getProperty(element, propertyName)) {
-        throw new Error(`Missing property ${String(propertyName)}`);
+    getProperty(element, propertyName, true);
+
+    const observers = element[OBSERVERS_SYMBOL] || ({} as ObserversOf<T>);
+    element[OBSERVERS_SYMBOL] = observers;
+    if (!observers[propertyName]) {
+        observers[propertyName] = [];
     }
-    const observers = getObservers(element);
-    observers[propertyName] = observers[propertyName] || [];
     return observers[propertyName];
 };
 
@@ -738,6 +712,91 @@ export const removeObserver = <T extends ComponentInstance, P extends keyof T>(
 };
 
 /**
+ * Add property metadata to a context.
+ * @param key The decorator symbol context.
+ * @param propertyKey The property name.
+ * @param declaration The property declaration.
+ */
+const addPropertyMetadata = (key: object, propertyKey: PropertyKey, declaration: PropertyDeclaration) => {
+    const properties = PROPERTIES_METADATA.get(key) ?? new Map();
+    PROPERTIES_METADATA.set(key, properties);
+    if (properties.has(propertyKey)) {
+        throw new Error(`Duplicated @property decorator for ${String(propertyKey)}`);
+    }
+    properties.set(propertyKey, declaration);
+};
+
+/**
+ * Standard decorator for property definition.
+ * @param context The decorator context.
+ * @param declaration The property declaration.
+ * @returns The decorator initializer.
+ */
+const standardPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
+    context: ClassFieldDecoratorContext,
+    declaration: PropertyDeclaration<T[P]>
+) => {
+    if (
+        context.kind !== 'field' &&
+        context.kind !== 'accessor' &&
+        context.kind !== 'getter' &&
+        context.kind !== 'setter'
+    ) {
+        throw new TypeError('The @property decorator can be used only on class fields or accessors');
+    }
+
+    addPropertyMetadata(context.metadata, context.name, declaration);
+};
+
+/**
+ * Old spec 2 decorator for property definition.
+ * @param classElement The class element descriptor.
+ * @param declaration The property declaration.
+ * @returns The decorator initializer.
+ */
+const legacyPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
+    classElement: ClassElement<T, T[P]>,
+    declaration: PropertyDeclaration<T[P]>
+) => {
+    if (classElement.kind !== 'field') {
+        throw new TypeError('Only class fields can be decorated with @property');
+    }
+    if (classElement.placement !== 'own') {
+        throw new TypeError('A @property decorator can only be used on a class field');
+    }
+
+    return {
+        ...classElement,
+        finisher(ctr: Constructor<T>) {
+            addPropertyMetadata(ctr, classElement.key, {
+                ...declaration,
+                initializer: classElement.initializer,
+            });
+        },
+    };
+};
+
+/**
+ * Add a property to a component prototype.
+ * @param target The component prototype.
+ * @param declaration The property declaration.
+ * @param propertyKey The property name.
+ * @param descriptor The native property descriptor.
+ * @returns The property descriptor.
+ */
+const typescriptPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
+    target: T,
+    propertyKey: P,
+    descriptor: PropertyDeclaration<T[P]>,
+    declaration: PropertyDeclaration<T[P]>
+): PropertyDescriptor => {
+    const ctr = target.constructor as ComponentConstructor<T>;
+    addPropertyMetadata(ctr, propertyKey, declaration);
+
+    return descriptor;
+};
+
+/**
  * A decorator for property definition.
  * @param declaration The property declaration.
  * @returns The decorator initializer.
@@ -748,7 +807,28 @@ export function property(declaration: PropertyDeclaration = {}): any {
         targetOrClassElement: T,
         propertyKey: P,
         descriptor: PropertyDescriptor
-    ) => createProperty(targetOrClassElement, declaration as PropertyDeclaration<T[P]>, propertyKey, descriptor);
+    ) => {
+        if (typeof propertyKey === 'object') {
+            return standardPropertyDecorator(
+                propertyKey as ClassFieldDecoratorContext,
+                declaration as PropertyDeclaration<T[P]>
+            );
+        }
+
+        if (typeof propertyKey === 'string' || typeof propertyKey === 'symbol') {
+            return typescriptPropertyDecorator(
+                targetOrClassElement,
+                propertyKey,
+                descriptor,
+                declaration as PropertyDeclaration<T[P]>
+            );
+        }
+
+        return legacyPropertyDecorator(
+            targetOrClassElement as unknown as ClassElement<T, T[P]>,
+            declaration as PropertyDeclaration<T[P]>
+        );
+    };
 }
 
 /**
@@ -762,17 +842,45 @@ export function state(declaration: PropertyDeclaration = {}): any {
         targetOrClassElement: T,
         propertyKey: P,
         descriptor: PropertyDescriptor
-    ) =>
-        createProperty(
-            targetOrClassElement,
+    ) => {
+        if (typeof propertyKey === 'object') {
+            return standardPropertyDecorator(
+                propertyKey as ClassFieldDecoratorContext,
+                {
+                    ...declaration,
+                    state: true,
+                } as PropertyDeclaration<T[P]>
+            );
+        }
+
+        if (typeof propertyKey === 'string' || typeof propertyKey === 'symbol') {
+            return typescriptPropertyDecorator(targetOrClassElement, propertyKey, descriptor, {
+                ...declaration,
+                state: true,
+            } as PropertyDeclaration<T[P]>);
+        }
+
+        return legacyPropertyDecorator(
+            targetOrClassElement as unknown as ClassElement<T, T[P]>,
             {
                 ...declaration,
                 state: true,
-            } as PropertyDeclaration<T[P]>,
-            propertyKey,
-            descriptor
+            } as PropertyDeclaration<T[P]>
         );
+    };
 }
+
+/**
+ * Add observer metadata to a context.
+ * @param key The decorator symbol context.
+ * @param propertyKey The property name.
+ * @param observer The observer function or method name.
+ */
+const addObserverMetadata = (key: object, propertyKey: PropertyKey, observer: PropertyKey | PropertyObserver) => {
+    const observers = OBSERVERS_METADATA.get(key) ?? new Set();
+    OBSERVERS_METADATA.set(key, observers);
+    observers.add([propertyKey, observer]);
+};
 
 /**
  * A decorator for property observer.
@@ -782,6 +890,24 @@ export function state(declaration: PropertyDeclaration = {}): any {
  */
 // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
 export function observe(propertyKey: string): any {
-    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
-        createObserver(targetOrClassElement, propertyKey as keyof PropertiesOf<T>, methodKey);
+    return <T extends ComponentInstance, M extends keyof T>(targetOrClassElement: T, methodKey: M) => {
+        if (typeof methodKey === 'object') {
+            const context = methodKey as ClassMethodDecoratorContext;
+            addObserverMetadata(context.metadata, propertyKey, context.name);
+            return;
+        }
+
+        if (methodKey !== undefined) {
+            addObserverMetadata(targetOrClassElement.constructor, propertyKey, methodKey);
+            return;
+        }
+
+        const classElement = targetOrClassElement as unknown as ClassElement<T, T[M]>;
+        return {
+            ...classElement,
+            finisher(ctr: Constructor<T>) {
+                addObserverMetadata(ctr, propertyKey, classElement.key);
+            },
+        };
+    };
 }

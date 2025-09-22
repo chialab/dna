@@ -1,29 +1,46 @@
-import type { ClassDescriptor } from './ClassDescriptor';
 import * as Elements from './Elements';
 import {
     type DelegatedEventCallback,
-    defineListeners,
+    decoratedEvents,
+    decoratedListeners,
+    defineListener,
     delegateEventListener,
     dispatchAsyncEvent,
     dispatchEvent,
+    type EventHandler,
     getListeners,
     type ListenerConfig,
+    staticListeners,
     undelegateEventListener,
 } from './events';
 import { uniqueId } from './factories';
 import type { HTML as HTMLNamespace } from './HTML';
-import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import {
+    defineProperty as _defineProperty,
+    type ClassDescriptor,
+    type Constructor,
+    getPrototypeOf,
+    hasOwn,
+    isBrowser,
+    setPrototypeOf,
+} from './helpers';
 import type { Template } from './JSX';
 import {
     addObserver,
-    defineProperties,
+    decoratedObservers,
+    decoratedPropertiesDeclarations,
+    defineObserver,
+    defineProperty,
+    getObservers,
     getProperties,
     getProperty,
     getPropertyForAttribute,
     type PropertyConfig,
+    type PropertyDeclaration,
     type PropertyObserver,
     reflectPropertyToAttribute,
     removeObserver,
+    staticPropertiesDeclarations,
 } from './property';
 import { getParentRealm, Realm } from './Realm';
 import { getRootContext, internalRender } from './render';
@@ -239,7 +256,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             );
 
             const realm = new Realm(element);
-            Object.defineProperty(element, 'realm', {
+            _defineProperty(element, 'realm', {
                 value: realm,
             });
             realm.dangerouslyOpen();
@@ -264,8 +281,17 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             // setup listeners
             const computedListeners = getListeners(this);
             for (let i = 0, len = computedListeners.length; i < len; i++) {
-                const { event, selector, callback, options } = computedListeners[i];
+                const [event, selector, callback, options] = computedListeners[i];
                 this.delegateEventListener(event, selector, callback.bind(this), options);
+            }
+
+            // setup observers
+            const computedObservers = getObservers(this);
+            for (const propertyKey in computedObservers) {
+                const observers = computedObservers[propertyKey];
+                for (const observer of observers) {
+                    this.observe(propertyKey, observer.bind(this));
+                }
             }
 
             // setup properties
@@ -777,6 +803,11 @@ export type ComponentInstance = InstanceType<typeof Component>;
  */
 export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
     /**
+     * Metadata for decorators.
+     */
+    readonly [Symbol.metadata]?: object;
+
+    /**
      * The tag name of the extended builtin element.
      */
     readonly tagName?: string;
@@ -833,7 +864,7 @@ const flagInitialized = (element: ComponentInstance): void => {
 };
 
 /**
- * Define a component class.
+ * Finalize a component constructor.
  * @param name The name of the custom element.
  * @param ctr The component class to define.
  * @param options The custom element options.
@@ -841,7 +872,7 @@ const flagInitialized = (element: ComponentInstance): void => {
  * @throws If the name has already been registered.
  * @throws An error if the component is already defined.
  */
-export function define<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+function finalize<T extends ComponentInstance, C extends ComponentConstructor<T>>(
     name: string,
     ctr: C,
     options?: ElementDefinitionOptions
@@ -855,22 +886,28 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
         }
     }
 
-    defineProperties(Component.prototype);
-    defineListeners(Component.prototype);
     try {
         if (ctr.name) {
-            defineProperty(Component, 'name', {
+            _defineProperty(Component, 'name', {
                 writable: false,
                 configurable: false,
                 value: ctr.name,
             });
         }
-        defineProperty(Component, 'tagName', {
+        if (hasOwn.call(ctr, Symbol.metadata)) {
+            // ensure metadata is inherited
+            _defineProperty(Component, Symbol.metadata, {
+                writable: false,
+                configurable: true,
+                value: ctr[Symbol.metadata],
+            });
+        }
+        _defineProperty(Component, 'tagName', {
             writable: false,
             configurable: false,
             value: options?.extends || name,
         });
-        defineProperty(Component.prototype, 'is', {
+        _defineProperty(Component.prototype, 'is', {
             configurable: false,
             get: () => name,
             set: () => {
@@ -881,6 +918,85 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
         throw new Error(
             'The registry already contains an entry with the constructor (or is otherwise already defined)'
         );
+    }
+
+    return Component as C;
+}
+
+/**
+ * Define a component class.
+ * @param name The name of the custom element.
+ * @param ctr The component class to define.
+ * @param options The custom element options.
+ * @returns The decorated component class.
+ * @throws If the name has already been registered.
+ * @throws An error if the component is already defined.
+ */
+export function define<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    name: string,
+    ctr: C,
+    options?: ElementDefinitionOptions,
+    finalizeConstructor = true
+) {
+    const handled = new Set<string>();
+    const Component = finalizeConstructor ? finalize(name, ctr, options) : ctr;
+    const prototype = Component.prototype as T;
+    let currentCtr = Component;
+    while (isComponentConstructor(currentCtr)) {
+        for (const [propertyKey, declaration] of staticPropertiesDeclarations(currentCtr)) {
+            if (handled.has(propertyKey)) {
+                continue;
+            }
+            defineProperty(
+                prototype,
+                propertyKey,
+                declaration as PropertyDeclaration<T[typeof propertyKey]>,
+                undefined,
+                true
+            );
+            handled.add(propertyKey);
+        }
+
+        for (const [propertyKey, declaration] of decoratedPropertiesDeclarations(currentCtr)) {
+            if (handled.has(propertyKey)) {
+                continue;
+            }
+            defineProperty(prototype, propertyKey, declaration as PropertyDeclaration<T[typeof propertyKey]>);
+            handled.add(propertyKey);
+        }
+
+        for (const [propertyKey, eventName] of decoratedEvents(currentCtr)) {
+            const key: unique symbol = Symbol();
+            _defineProperty(prototype, propertyKey, {
+                get(this: Element & { [key]?: EventHandler }) {
+                    return this[key] ?? null;
+                },
+                set(this: Element & { [key]?: EventHandler }, value: EventHandler) {
+                    const actualListener = this[key];
+                    this[key] = value;
+                    if (actualListener) {
+                        this.removeEventListener(eventName, actualListener);
+                    }
+                    if (value) {
+                        this.addEventListener(eventName, value);
+                    }
+                },
+            });
+        }
+
+        for (const [event, selector, callback, options] of staticListeners(currentCtr)) {
+            defineListener(prototype, event, selector, callback.bind(prototype), options);
+        }
+
+        for (const [event, selector, callback, options] of decoratedListeners(currentCtr)) {
+            defineListener(prototype, event, selector, callback.bind(prototype), options);
+        }
+
+        for (const [propertyKey, observer] of decoratedObservers(currentCtr)) {
+            defineObserver(prototype, propertyKey, observer);
+        }
+
+        currentCtr = getPrototypeOf(currentCtr);
     }
 
     if (isBrowser) {
@@ -899,14 +1015,26 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
 export const customElement =
     (name: string, options?: ElementDefinitionOptions) =>
     // biome-ignore lint/suspicious/noExplicitAny: TypeScript complains about return type because we handle babel output
-    <T extends ComponentConstructor>(classOrDescriptor: T | ClassDescriptor<T, unknown>): any => {
+    <T extends ComponentConstructor>(classOrDescriptor: T, context?: ClassDecoratorContext): any => {
+        if (typeof context === 'object') {
+            // standard decorator
+            if (context.kind !== 'class') {
+                throw new TypeError('The @customElement decorator can be used only on classes');
+            }
+            const ctr = finalize(name, classOrDescriptor, options);
+            context.addInitializer(() => {
+                define(name, ctr, options, false);
+            });
+            return ctr;
+        }
+
         if (typeof classOrDescriptor === 'function') {
             // typescript
             return define(name, classOrDescriptor, options);
         }
 
         // spec 2
-        const { kind, elements } = classOrDescriptor;
+        const { kind, elements } = classOrDescriptor as ClassDescriptor<T, unknown>;
         return {
             kind,
             elements,

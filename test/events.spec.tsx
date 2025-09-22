@@ -1,5 +1,6 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
+import { __decorate } from 'tslib';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe(
@@ -582,6 +583,132 @@ describe(
             });
         });
 
+        describe('listener decorator (typescript)', () => {
+            it('should add a listener', () => {
+                const callback = vi.fn();
+
+                let TestElement = class TestElement extends DNA.Component {
+                    method(event: Event, target: HTMLElement) {
+                        event.preventDefault();
+                        callback(event.type, target.tagName);
+                    }
+                };
+                __decorate([DNA.listen('click')], TestElement.prototype, 'method', undefined);
+                TestElement = __decorate([DNA.customElement('test-events-25')], TestElement);
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                expect(callback).not.toHaveBeenCalled();
+                element.click();
+                expect(callback).toHaveBeenCalled();
+                expect(callback).toHaveBeenCalledWith('click', 'TEST-EVENTS-25');
+            });
+
+            it('should add a delegated listener', () => {
+                const callback = vi.fn();
+
+                let TestElement = class TestElement extends DNA.Component {
+                    method(event: Event, target: HTMLElement) {
+                        event.preventDefault();
+                        callback(event.type, target.tagName);
+                    }
+
+                    render() {
+                        return <button type="button">Click me</button>;
+                    }
+                };
+
+                __decorate([DNA.listen('click', 'button')], TestElement.prototype, 'method', undefined);
+                TestElement = __decorate([DNA.customElement('test-events-26')], TestElement);
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                expect(callback).not.toHaveBeenCalled();
+                element.querySelector('button')?.click();
+                expect(callback).toHaveBeenCalled();
+                expect(callback).toHaveBeenCalledWith('click', 'BUTTON');
+            });
+
+            it('should inherit listeners', () => {
+                const callback1 = vi.fn((event) => {
+                    event.preventDefault();
+                });
+                const callback2 = vi.fn();
+                const callback3 = vi.fn((event) => {
+                    event.preventDefault();
+                });
+                const callback4 = vi.fn();
+
+                let BaseElement = class BaseElement extends DNA.Component {
+                    callback1(event: Event) {
+                        event.preventDefault();
+                        callback1(event);
+                    }
+
+                    callback2(event: Event) {
+                        event.preventDefault();
+                        callback2(event);
+                    }
+
+                    render() {
+                        return <button type="button">Click me</button>;
+                    }
+                };
+
+                let TestElement1 = class TestElement1 extends BaseElement {
+                    callback3(event: Event) {
+                        event.preventDefault();
+                        callback3(event);
+                    }
+
+                    callback4(event: Event) {
+                        event.preventDefault();
+                        callback4(event);
+                    }
+                };
+
+                let TestElement2 = class TestElement2 extends BaseElement {};
+
+                __decorate([DNA.listen('click', 'button')], BaseElement.prototype, 'callback1', undefined);
+                __decorate([DNA.listen('change')], BaseElement.prototype, 'callback2', undefined);
+                BaseElement = __decorate([DNA.customElement('test-events-27')], BaseElement);
+
+                __decorate([DNA.listen('click', 'button')], TestElement1.prototype, 'callback3', undefined);
+                __decorate([DNA.listen('drop')], TestElement1.prototype, 'callback4', undefined);
+                TestElement1 = __decorate([DNA.customElement('test-events-28')], TestElement1);
+
+                TestElement2 = __decorate([DNA.customElement('test-events-29')], TestElement2);
+
+                const element1 = new TestElement1();
+                wrapper.appendChild(element1);
+                expect(callback1).not.toHaveBeenCalled();
+                expect(callback2).not.toHaveBeenCalled();
+                expect(callback3).not.toHaveBeenCalled();
+                element1.querySelector('button')?.click();
+                element1.dispatchEvent('change', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                });
+                expect(callback1).toHaveBeenCalled();
+                expect(callback2).toHaveBeenCalled();
+                expect(callback3).toHaveBeenCalled();
+
+                const element2 = new TestElement2();
+                wrapper.appendChild(element2);
+                element2.querySelector('button')?.click();
+                element2.dispatchEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                });
+                expect(callback1).toHaveBeenCalledTimes(2);
+                expect(callback2).toHaveBeenCalledOnce();
+                expect(callback3).toHaveBeenCalledOnce();
+                expect(callback4).not.toHaveBeenCalled();
+            });
+        });
+
         describe('listener decorator (babel)', () => {
             it('should add a listener', () => {
                 const callback = vi.fn();
@@ -858,7 +985,7 @@ describe(
             it('should throw when inferring event name with malformed property key', () => {
                 expect(() => {
                     @DNA.customElement('test-events-24')
-                    class TestElement extends DNA.Component {
+                    class _TestElement extends DNA.Component {
                         @DNA.fires()
                         xoncustom: DNA.EventHandler;
 

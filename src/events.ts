@@ -1,12 +1,26 @@
-import type { ClassElement } from './ClassDescriptor';
 import type { ComponentConstructor, ComponentInstance } from './Component';
 import { HTMLElement } from './Elements';
-import { type Constructor, defineProperty, getOwnPropertyDescriptor, getPrototypeOf, hasOwn } from './helpers';
+import { type ClassElement, type Constructor, getOwnPropertyDescriptor, hasOwn, isElement } from './helpers';
 
 /**
  * A Symbol which contains all Node delegation.
  */
 const EVENT_CALLBACKS_SYMBOL: unique symbol = Symbol();
+
+/**
+ * A Symbol which contains all listeners instances of a component constructor.
+ */
+const LISTENERS_SYMBOL: unique symbol = Symbol();
+
+/**
+ * WeakMap containing all listeners metadata.
+ */
+const LISTENERS_METADATA = new WeakMap<object, Set<[PropertyKey, string, string | null, AddEventListenerOptions]>>();
+
+/**
+ * WeakMap containing all events metadata.
+ */
+const EVENTS_METADATA = new WeakMap<object, Set<[PropertyKey, string]>>();
 
 /**
  * Async event interface.
@@ -41,20 +55,7 @@ type DelegationList = {
     /**
      * A list of delegation descriptors.
      */
-    descriptors: {
-        /**
-         * The name of the delegated event.
-         */
-        event: string;
-        /**
-         * The selector for the delegated event.
-         */
-        selector: string | null;
-        /**
-         * The callback for the delegated event.
-         */
-        callback?: DelegatedEventCallback;
-    }[];
+    descriptors: [string, string | null, DelegatedEventCallback?][];
 
     /**
      * The real event listener.
@@ -71,7 +72,17 @@ type WithEventDelegations = {
     };
 };
 
-const isElement = (node: unknown): node is Element => (node as Node)?.nodeType === Node.ELEMENT_NODE;
+/**
+ * An object with listeners.
+ */
+type WithListeners<T extends ComponentInstance> = ComponentConstructor<T> & {
+    [LISTENERS_SYMBOL]?: Listener[];
+};
+
+/**
+ * The listener interface.
+ */
+type Listener = [string, string | null, DelegatedEventCallback, AddEventListenerOptions?];
 
 const assertNode = (element: unknown) => {
     if (!isElement(element)) {
@@ -180,7 +191,7 @@ export const delegateEventListener = (
             // filter matched selector for the event
             const filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
             for (let i = 0; i < descriptors.length; i++) {
-                const { selector, callback } = descriptors[i];
+                const [, selector, callback] = descriptors[i];
                 let selectorTarget: Node | null = null;
                 if (selector) {
                     const path = event.composedPath();
@@ -231,7 +242,7 @@ export const delegateEventListener = (
     }
 
     // add the delegation to the list
-    descriptors.push({ event: eventName, callback, selector });
+    descriptors.push([eventName, selector, callback]);
 };
 
 /**
@@ -266,8 +277,8 @@ export const undelegateEventListener = (
     // get the list of delegations
     // find the index of the callback to remove in the list
     for (let i = 0; i < descriptors.length; i++) {
-        const descriptor = descriptors[i];
-        if (descriptor.selector === selector && descriptor.callback === callback) {
+        const [, eventSelector, eventCallback] = descriptors[i];
+        if (eventSelector === selector && eventCallback === callback) {
             descriptors.splice(i, 1);
             if (descriptors.length === 0) {
                 element.removeEventListener(eventName, listener);
@@ -365,52 +376,16 @@ export const dispatchAsyncEvent = async (
 };
 
 /**
- * A Symbol which contains all listeners instances of a component constructor.
- */
-const LISTENERS_SYMBOL: unique symbol = Symbol();
-
-/**
- * An object with listeners.
- */
-type WithListeners<T extends ComponentInstance> = T & {
-    [LISTENERS_SYMBOL]?: Listener[];
-};
-
-/**
- * The listener interface.
- */
-type Listener = {
-    event: string;
-    selector: string | null;
-    callback: DelegatedEventCallback;
-    options?: AddEventListenerOptions;
-};
-
-/**
  * Retrieve all listeners descriptors.
  * @param prototype The component prototype.
  * @returns A list of listeners.
  */
-export const getListeners = <T extends ComponentInstance>(prototype: WithListeners<T>): Listener[] => {
-    const listeners = prototype[LISTENERS_SYMBOL];
-    if (!listeners) {
-        return [];
+export const getListeners = <T extends ComponentInstance>(prototype: T): Listener[] => {
+    const ctr = prototype.constructor as WithListeners<T>;
+    if (!hasOwn.call(ctr, LISTENERS_SYMBOL) || !ctr[LISTENERS_SYMBOL]) {
+        ctr[LISTENERS_SYMBOL] = [];
     }
-
-    if (!hasOwn.call(prototype, LISTENERS_SYMBOL)) {
-        return listeners.slice(0);
-    }
-
-    return listeners;
-};
-
-/**
- * Set listeners to a prototype.
- * @param prototype The component prototype.
- * @param listeners The list of listeners to set.
- */
-export const setListeners = <T extends ComponentInstance>(prototype: WithListeners<T>, listeners: Listener[]): void => {
-    prototype[LISTENERS_SYMBOL] = listeners;
+    return ctr[LISTENERS_SYMBOL];
 };
 
 /**
@@ -421,85 +396,96 @@ export const setListeners = <T extends ComponentInstance>(prototype: WithListene
  * @param callback The event callback.
  * @param options The event listener options.
  */
-export function defineListener<T extends ComponentInstance>(
-    prototype: WithListeners<T>,
+export const defineListener = <T extends ComponentInstance>(
+    prototype: T,
     eventName: string,
     selector: string | null,
     callback: DelegatedEventCallback,
     options: AddEventListenerOptions = {}
-): void {
-    const listeners = getListeners(prototype);
-    setListeners(prototype, listeners);
-    listeners.push({
-        event: eventName,
-        selector,
-        callback,
-        options,
-    });
-}
-
-/**
- * Define component listeners.
- * @param prototype The component prototype.
- */
-export const defineListeners = <T extends ComponentInstance>(prototype: T): void => {
-    const ctr = prototype.constructor as ComponentConstructor<T>;
-    let currentCtr = ctr;
-    while (currentCtr?.prototype && currentCtr !== HTMLElement) {
-        if (hasOwn.call(currentCtr.prototype, LISTENERS_SYMBOL)) {
-            break;
-        }
-        const listenersDescriptor = getOwnPropertyDescriptor(currentCtr, 'listeners');
-        const listenersGetter = listenersDescriptor?.get;
-        if (listenersGetter) {
-            const listenerDescriptors = (listenersGetter.call(ctr) || {}) as {
-                [key: string]: ListenerConfig;
-            };
-            // register listeners
-            for (const eventPath in listenerDescriptors) {
-                const paths = eventPath.trim().split(' ');
-                const eventName = paths.shift() as string;
-                const selector = paths.length ? paths.join(' ') : null;
-                const descriptor = listenerDescriptors[eventPath];
-                const { callback, ...options } = typeof descriptor === 'object' ? descriptor : { callback: descriptor };
-                defineListener(prototype, eventName, selector, callback, options);
-            }
-        }
-        currentCtr = getPrototypeOf(currentCtr);
-    }
+): void => {
+    getListeners(prototype).push([eventName, selector, callback, options]);
 };
 
 /**
- * Add a property observer to a component prototype.
- * @param targetOrClassElement The component prototype.
- * @param eventName The name of the event.
- * @param selector The selector event target for the listener.
- * @param options Listener options.
- * @param methodKey The method name.
- * @returns The property descriptor.
+ * Retrieve all static listeners from a component constructor.
+ * @param ctr The component constructor.
+ * @yields A tuple containing event name, selector, callback and options.
  */
-export const createListener = <T extends ComponentInstance, P extends keyof T>(
-    targetOrClassElement: T,
+export function* staticListeners<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[string, string | null, DelegatedEventCallback, AddEventListenerOptions?]> {
+    const listenersDescriptor = getOwnPropertyDescriptor(ctr, 'listeners');
+    const listenersGetter = listenersDescriptor?.get;
+    if (listenersGetter) {
+        const listenerDescriptors = (listenersGetter.call(ctr) || {}) as {
+            [key: string]: ListenerConfig;
+        };
+        for (const eventPath in listenerDescriptors) {
+            const paths = eventPath.trim().split(' ');
+            const eventName = paths.shift() as string;
+            const selector = paths.length ? paths.join(' ') : null;
+            const descriptor = listenerDescriptors[eventPath];
+            const { callback, ...options } = typeof descriptor === 'object' ? descriptor : { callback: descriptor };
+            yield [eventName, selector, callback as DelegatedEventCallback, options];
+        }
+    }
+}
+
+/**
+ * Retrieve all decorated listeners from a component constructor.
+ * @param ctr The component constructor.
+ * @yields A tuple containing event name, selector, callback and options.
+ */
+export function* decoratedListeners<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[string, string | null, DelegatedEventCallback, AddEventListenerOptions]> {
+    const listenersMeta = hasOwn.call(ctr, Symbol.metadata)
+        ? LISTENERS_METADATA.get(ctr[Symbol.metadata] as object)
+        : LISTENERS_METADATA.get(ctr);
+    if (listenersMeta) {
+        const prototype = ctr.prototype as T;
+        for (const [name, event, selector, options] of listenersMeta) {
+            yield [event, selector, prototype[name as keyof T] as unknown as DelegatedEventCallback, options];
+        }
+    }
+}
+
+/**
+ * Retrieve all decorated events from a component constructor.
+ * @param ctr The component constructor.
+ * @yields A tuple containing property key and event name.
+ */
+export function* decoratedEvents<T extends ComponentInstance, C extends ComponentConstructor<T>>(
+    ctr: C
+): Iterable<[keyof T, string]> {
+    const eventsMeta = hasOwn.call(ctr, Symbol.metadata)
+        ? EVENTS_METADATA.get(ctr[Symbol.metadata] as object)
+        : EVENTS_METADATA.get(ctr);
+    if (eventsMeta) {
+        for (const [name, eventName] of eventsMeta) {
+            yield [name as keyof T, eventName];
+        }
+    }
+}
+
+/**
+ * Add event metadata to a target object.
+ * @param key The decorator symbol context.
+ * @param propertyKey The property name.
+ * @param eventName The event name.
+ * @param selector The event selector.
+ * @param options The event listener options.
+ */
+const addListenerMetadata = (
+    key: object,
+    propertyKey: PropertyKey,
     eventName: string,
     selector: string | null,
-    options: AddEventListenerOptions,
-    methodKey?: P
-): ClassElement<T, P> | undefined => {
-    if (methodKey !== undefined) {
-        const method = targetOrClassElement[methodKey] as unknown as DelegatedEventCallback;
-        defineListener(targetOrClassElement, eventName, selector, method, options);
-        return;
-    }
-
-    const element = targetOrClassElement as unknown as ClassElement<T, P>;
-    return {
-        ...element,
-        finisher(ctr: Constructor<T>) {
-            const prototype = ctr.prototype as T;
-            const method = prototype[element.key as P] as unknown as DelegatedEventCallback;
-            defineListener(prototype, eventName, selector, method, options);
-        },
-    };
+    options: AddEventListenerOptions
+) => {
+    const listeners = LISTENERS_METADATA.get(key) ?? new Set();
+    LISTENERS_METADATA.set(key, listeners);
+    listeners.add([propertyKey, eventName, selector, options]);
 };
 
 function listen(
@@ -526,14 +512,29 @@ function listen(
     options?: AddEventListenerOptions
     // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
 ): any {
-    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) =>
-        createListener(
-            targetOrClassElement,
-            eventName,
-            typeof target === 'string' ? target : null,
-            (typeof target !== 'string' ? target : options) || {},
-            methodKey
-        );
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, methodKey: P) => {
+        const selector = typeof target === 'string' ? target : null;
+        const opts = (typeof target !== 'string' ? target : options) || {};
+
+        if (typeof methodKey === 'object') {
+            const context = methodKey as ClassMethodDecoratorContext<T>;
+            addListenerMetadata(context.metadata, context.name, eventName, selector, opts);
+            return;
+        }
+
+        if (methodKey !== undefined) {
+            addListenerMetadata(targetOrClassElement.constructor, methodKey, eventName, selector, opts);
+            return;
+        }
+
+        const element = targetOrClassElement as unknown as ClassElement<T, P>;
+        return {
+            ...element,
+            finisher(ctr: Constructor<T>) {
+                addListenerMetadata(ctr, element.key, eventName, selector, opts);
+            },
+        };
+    };
 }
 
 export { listen };
@@ -579,66 +580,16 @@ const extractEventName = (propertyKey: PropertyKey): string => {
 };
 
 /**
- * Create an event property.
- * @param targetOrClassElement The component prototype or class element.
- * @param eventName The name of the event to create a property for.
- * @param propertyKey The property key of the event.
- * @param descriptor The property descriptor.
- * @returns The property descriptor for the event.
- * @throws If the property key does not start with "on" or if the event name is not a string.
+ * Add event metadata to a target object.
+ * @param key The decorator symbol context.
+ * @param propertyKey The property name.
+ * @param eventName The event name.
  */
-function createEvent<T extends ComponentInstance, P extends keyof T>(
-    targetOrClassElement: T,
-    eventName?: string,
-    propertyKey?: P,
-    descriptor?: PropertyDescriptor
-    // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
-): any {
-    const key: unique symbol = Symbol();
-
-    if (propertyKey !== undefined) {
-        const computedEventName = eventName || extractEventName(propertyKey);
-        return defineProperty(targetOrClassElement as T, propertyKey, {
-            ...descriptor,
-            get(this: T & { [key]?: EventHandler }) {
-                return this[key] ?? null;
-            },
-            set(this: T & { [key]?: EventHandler }, value: EventHandler) {
-                const actualListener = this[key];
-                this[key] = value;
-                if (actualListener) {
-                    this.removeEventListener(computedEventName, actualListener);
-                }
-                if (value) {
-                    this.addEventListener(computedEventName, value);
-                }
-            },
-        });
-    }
-
-    const element = targetOrClassElement as unknown as ClassElement<T, T[P]>;
-    const computedEventName = eventName || extractEventName(element.key);
-
-    return {
-        ...element,
-        key,
-        descriptor: {
-            get(this: T & { [key]?: EventHandler }) {
-                return this[key] ?? null;
-            },
-            set(this: T & { [key]?: EventHandler }, value: EventHandler) {
-                const actualListener = this[key];
-                this[key] = value;
-                if (actualListener) {
-                    this.removeEventListener(computedEventName, actualListener);
-                }
-                if (value) {
-                    this.addEventListener(computedEventName, value);
-                }
-            },
-        },
-    };
-}
+const addEventMetadata = (key: object, propertyKey: PropertyKey, eventName: string) => {
+    const events = EVENTS_METADATA.get(key) ?? new Set();
+    EVENTS_METADATA.set(key, events);
+    events.add([propertyKey, eventName]);
+};
 
 /**
  * Create `on{event}` properties.
@@ -647,11 +598,24 @@ function createEvent<T extends ComponentInstance, P extends keyof T>(
  */
 // biome-ignore lint/suspicious/noExplicitAny: In order to support both TS and Babel decorators, we need to allow any type here.
 export function fires(eventName?: string): any {
-    return <T extends ComponentInstance, P extends keyof T>(
-        targetOrClassElement: T,
-        propertyKey?: P,
-        descriptor?: PropertyDescriptor
-    ) => {
-        createEvent(targetOrClassElement, eventName, propertyKey, descriptor);
+    return <T extends ComponentInstance, P extends keyof T>(targetOrClassElement: T, propertyKey?: P) => {
+        if (typeof propertyKey === 'object') {
+            const context = propertyKey as ClassFieldDecoratorContext<T>;
+            addEventMetadata(context.metadata, context.name, eventName || extractEventName(context.name));
+            return;
+        }
+
+        if (propertyKey !== undefined) {
+            addEventMetadata(targetOrClassElement.constructor, propertyKey, eventName || extractEventName(propertyKey));
+            return;
+        }
+
+        const classElement = targetOrClassElement as unknown as ClassElement<T, T[P]>;
+        return {
+            ...classElement,
+            finisher(ctr: Constructor<T>) {
+                addEventMetadata(ctr, classElement.key, eventName || extractEventName(classElement.key));
+            },
+        };
     };
 }

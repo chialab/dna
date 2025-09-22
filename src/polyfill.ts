@@ -1,6 +1,6 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
 import * as Elements from './Elements';
-import { getPrototypeOf, hasOwn, isBrowser, setPrototypeOf } from './helpers';
+import { getPrototypeOf, hasOwn, isBrowser, isElement, setPrototypeOf } from './helpers';
 
 /**
  * Register a polyfill for Customized built-in elements.
@@ -190,8 +190,6 @@ function polyfillBuiltin() {
         setPrototypeOf(currentConstructor.prototype, ShimConstructor.prototype);
         currentConstructor.__shim = true;
     };
-
-    const isElement = (node: Node): node is Element => node.nodeType === Node.ELEMENT_NODE;
 
     const getIs = (node: Element): string | null => {
         if (node.hasAttribute('is')) {

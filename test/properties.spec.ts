@@ -1,5 +1,6 @@
 import _decorate from '@babel/runtime/helpers/decorate';
 import * as DNA from '@chialab/dna';
+import { __decorate } from 'tslib';
 import { describe, expect, it, vi } from 'vitest';
 
 describe(
@@ -273,6 +274,35 @@ describe(
                 element.testProp = 84;
                 expect(element).toHaveProperty('testProp', 84);
                 expect(listener2).toHaveBeenCalled();
+            });
+
+            it('should define a property with observe decorator (typescript)', () => {
+                const listener = vi.fn();
+
+                let MyElement = class MyElement extends DNA.Component {
+                    declare testProp?: number;
+
+                    constructor() {
+                        super();
+                        this.testProp = 42;
+                    }
+
+                    listener(oldValue?: number, newValue?: number, propName?: string) {
+                        listener(oldValue, newValue, propName);
+                    }
+                };
+
+                __decorate([DNA.property()], MyElement.prototype, 'testProp', undefined);
+                __decorate([DNA.observe('testProp')], MyElement.prototype, 'listener', undefined);
+                MyElement = __decorate([DNA.customElement('test-properties-36')], MyElement);
+
+                const element = new MyElement();
+                expect(element).toHaveProperty('testProp', 42);
+                expect(listener).not.toHaveBeenCalled();
+                element.testProp = 84;
+                expect(element).toHaveProperty('testProp', 84);
+                expect(listener).toHaveBeenCalled();
+                expect(listener).toHaveBeenCalledWith(42, 84, 'testProp');
             });
 
             it('should define a property with observe decorator (babel)', () => {

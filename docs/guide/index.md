@@ -23,16 +23,15 @@ pnpm add @chialab/dna
 ## Configure Typescript
 
 Advanced typechecking and decorators support are available in TypeScript, which is the recommended way to use DNA.
-Add this to your `tsconfig.json` to support DNA decorators as well as correct transpilation of class property fields.
+Add this to your `tsconfig.json` to support correct transpilation of class property fields.
 
 ::: code-group
 
 ```json [tsconfig.json]
 {
     "compilerOptions": {
-        "moduleResolution": "bundler",
+        // ...
         "useDefineForClassFields": false,
-        "experimentalDecorators": true
     }
 }
 ```
