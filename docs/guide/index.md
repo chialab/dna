@@ -22,7 +22,13 @@ pnpm add @chialab/dna
 
 ## Configure Typescript
 
-Advanced typechecking and decorators support are available in TypeScript, which is the recommended way to use DNA.
+::: tip
+
+You don't need TypeScript to use published DNA elements. This project setup is intended for developing new components.
+
+:::
+
+Advanced typechecking and decorators transpilation are available in TypeScript, which is the recommended way to develop DNA components.
 Add this to your `tsconfig.json` to support correct transpilation of class property fields.
 
 ::: code-group

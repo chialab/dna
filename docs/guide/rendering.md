@@ -653,13 +653,13 @@ In this example, once the last `<option>` element has been created, it never cha
 Sometimes, you may need to generate unique IDs for your component instances, for example when associating form fields with their labels. DNA provides a `getUniqueId` utility function that can be used to generate such IDs.
 
 ```tsx
-import { Component, customElement, getUniqueId, property } from '@chialab/dna';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-menu-button')
 class MenuButton extends Component {
     render() {
         return <>
-            <button aria-controls={getUniqueId('menu')} aria-haspopup="menu">
+            <button aria-controls={this.getUniqueId('menu')} aria-haspopup="menu">
                 Menu
             </button>
             <ul id={this.getUniqueId('menu')} role="menu">
