@@ -38,11 +38,10 @@
     <test-frameworks-5 nodeType={true}></test-frameworks-5>
     {/* @ts-expect-error connectedCallback is a method */ null}
     <test-frameworks-5 connectedCallback={() => {}}></test-frameworks-5>
-    <!-- @TODO https://github.com/sveltejs/language-tools/pull/2824 -->
     <!-- svelte-ignore attribute_avoid_is -->
-    <!-- <a
+    <a
         is="test-frameworks-6"
         href="/#"
         booleanProp={true}
-    >Test</a> -->
+    >Test</a>
 </div>

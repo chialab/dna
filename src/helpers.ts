@@ -9,6 +9,11 @@ export const isArray: (typeof Array)['isArray'] = Array.isArray;
 export const getOwnPropertyDescriptor: (typeof Object)['getOwnPropertyDescriptor'] = Object.getOwnPropertyDescriptor;
 
 /**
+ * Alias to Object.getOwnPropertyDescriptors.
+ */
+export const getOwnPropertyDescriptors: (typeof Object)['getOwnPropertyDescriptors'] = Object.getOwnPropertyDescriptors;
+
+/**
  * Like Object.getOwnPropertyDescriptor, but for all the property chain.
  * @param object The object to get the descriptor from.
  * @param propertyKey The property key.

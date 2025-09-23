@@ -1,5 +1,5 @@
 import { isComponent } from './Component';
-import { defineProperty, getOwnPropertyDescriptor } from './helpers';
+import { defineProperty, getOwnPropertyDescriptors, isBrowser } from './helpers';
 
 /**
  * A callback to call when a realm changes.
@@ -495,28 +495,31 @@ export class Realm {
     }
 }
 
-if (typeof Node !== 'undefined') {
+if (isBrowser) {
     // From here to the end of the method, we enter the realm of dark magic.
     // We're going to modify the prototype of slotted nodes to improve compatibility with other rendering frameworks.
     const NodePrototype = Node.prototype;
     const ElementPrototype = Element.prototype;
     const CharacterDataPrototype = CharacterData.prototype;
-    const getParentNodeDesc = getOwnPropertyDescriptor(NodePrototype, 'parentNode') as PropertyDescriptor;
-    const getPreviousSiblingDesc = getOwnPropertyDescriptor(NodePrototype, 'previousSibling') as PropertyDescriptor;
-    const getNextSiblingDesc = getOwnPropertyDescriptor(NodePrototype, 'nextSibling') as PropertyDescriptor;
-    const beforeDesc = getOwnPropertyDescriptor(ElementPrototype, 'before') as PropertyDescriptor;
-    const afterDesc = getOwnPropertyDescriptor(ElementPrototype, 'after') as PropertyDescriptor;
-    const replaceWithDesc = getOwnPropertyDescriptor(ElementPrototype, 'replaceWith') as PropertyDescriptor;
-    const removeDesc = getOwnPropertyDescriptor(ElementPrototype, 'remove') as PropertyDescriptor;
-    const commentBeforeDesc = getOwnPropertyDescriptor(CharacterDataPrototype, 'before') as PropertyDescriptor;
-    const commentAfterDesc = getOwnPropertyDescriptor(CharacterDataPrototype, 'after') as PropertyDescriptor;
-    const commentReplaceWithDesc = getOwnPropertyDescriptor(
-        CharacterDataPrototype,
-        'replaceWith'
-    ) as PropertyDescriptor;
-    const commentRemoveDesc = getOwnPropertyDescriptor(CharacterDataPrototype, 'remove') as PropertyDescriptor;
-    const insertBeforeDesc = getOwnPropertyDescriptor(NodePrototype, 'insertBefore') as PropertyDescriptor;
-    const removeChildDesc = getOwnPropertyDescriptor(NodePrototype, 'removeChild') as PropertyDescriptor;
+    const {
+        parentNode: getParentNodeDesc,
+        previousSibling: getPreviousSiblingDesc,
+        nextSibling: getNextSiblingDesc,
+        insertBefore: insertBeforeDesc,
+        removeChild: removeChildDesc,
+    } = getOwnPropertyDescriptors(NodePrototype);
+    const {
+        before: beforeDesc,
+        after: afterDesc,
+        replaceWith: replaceWithDesc,
+        remove: removeDesc,
+    } = getOwnPropertyDescriptors(ElementPrototype);
+    const {
+        before: commentBeforeDesc,
+        after: commentAfterDesc,
+        replaceWith: commentReplaceWithDesc,
+        remove: commentRemoveDesc,
+    } = getOwnPropertyDescriptors(CharacterDataPrototype);
 
     defineProperty(NodePrototype, 'parentNode', {
         ...getParentNodeDesc,
@@ -662,7 +665,7 @@ if (typeof Node !== 'undefined') {
         },
     });
 
-    // Some rendering engines like vue and prect uses `parentNode.insertBefore(node, referenceNode)` to insert a node,
+    // Some rendering engines like vue and preact uses `parentNode.insertBefore(node, referenceNode)` to insert a node,
     // so we need to insert the node in the owner realm when the parent node is part
     // of the internal component template.
 
@@ -671,14 +674,14 @@ if (typeof Node !== 'undefined') {
         value(node: Node, referenceNode: Node | null): Node {
             const realm = isComponent(this) ? this.realm : null;
             if (realm?.open) {
-                return insertBeforeDesc.value?.call(this, node, referenceNode);
+                return insertBeforeDesc.value?.call(this, node, referenceNode) || node;
             }
             const ownerRealm = getOwnerRealm(this);
             if (ownerRealm && !ownerRealm.open) {
                 ownerRealm.insertBefore([node], referenceNode);
                 return node;
             }
-            return insertBeforeDesc.value?.call(this, node, referenceNode);
+            return insertBeforeDesc.value?.call(this, node, referenceNode) || node;
         },
     });
 
@@ -690,7 +693,7 @@ if (typeof Node !== 'undefined') {
                 ownerRealm.removeChild(child);
                 return child;
             }
-            return removeChildDesc.value?.call(this, child);
+            return removeChildDesc.value?.call(this, child) || child;
         },
     });
 }

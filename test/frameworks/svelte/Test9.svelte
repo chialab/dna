@@ -22,7 +22,6 @@
     } = $props();
 </script>
 
-{/* @ts-expect-error @TODO https://github.com/sveltejs/language-tools/pull/2824 */ null}
 <!-- svelte-ignore attribute_avoid_is -->
 <a is="test-frameworks-6"
     href="/#"
