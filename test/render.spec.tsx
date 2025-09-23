@@ -995,6 +995,92 @@ describe(
             });
         });
 
+        describe('directives', () => {
+            it('should render parsed HTML', () => {
+                const Template = ({ html }: { html: string }) => <div>{DNA.$parse(html)}</div>;
+                DNA.render(<Template html="<span>Test</span>" />, wrapper);
+                const div = wrapper.childNodes[1];
+                expect(div.childNodes).toHaveLength(2);
+                const span = div.childNodes[1] as HTMLSpanElement;
+                expect(span).toHaveProperty('tagName', 'SPAN');
+                expect(span).toHaveProperty('textContent', 'Test');
+                DNA.render(<Template html="<span>Test</span>" />, wrapper);
+                expect(div.childNodes[1]).toBe(span);
+            });
+
+            it('should await promises', async () => {
+                const Template = ({ promise }: { promise: Promise<string> }) => <div>{DNA.$await(promise)}</div>;
+                let resolver: ((value: string) => void) | undefined;
+                const promise = new Promise<string>((resolve) => {
+                    resolver = resolve;
+                });
+                DNA.render(<Template promise={promise} />, wrapper);
+                const div = wrapper.childNodes[1];
+                expect(div.childNodes).toHaveLength(1);
+                expect(div.textContent).toBe('');
+                resolver?.('Test');
+                await vi.waitFor(() => {
+                    expect(div.childNodes).toHaveLength(2);
+                    expect(div).toHaveProperty('textContent', 'Test');
+                });
+            });
+
+            it('should handle rejected promises', async () => {
+                const Template = ({ promise }: { promise: Promise<string> }) => <div>{DNA.$await(promise)}</div>;
+                let rejecter: ((value: Error) => void) | undefined;
+                const promise = new Promise<string>((resolve, reject) => {
+                    rejecter = reject;
+                });
+                DNA.render(<Template promise={promise} />, wrapper);
+                const div = wrapper.childNodes[1];
+                expect(div.childNodes).toHaveLength(1);
+                expect(div.textContent).toBe('');
+                rejecter?.(new Error('Test'));
+                await vi.waitFor(() => {
+                    expect(div.childNodes).toHaveLength(2);
+                    expect(div).toHaveProperty('textContent', 'Error: Test');
+                });
+            });
+
+            it('should show placeholder until promise is resolved', async () => {
+                const Template = ({ promise }: { promise: Promise<string> }) => (
+                    <div>{DNA.$until(promise, 'Loading...')}</div>
+                );
+                let resolver: ((value: string) => void) | undefined;
+                const promise = new Promise<string>((resolve) => {
+                    resolver = resolve;
+                });
+                DNA.render(<Template promise={promise} />, wrapper);
+                const div = wrapper.childNodes[1];
+                expect(div.childNodes).toHaveLength(2);
+                expect(div.childNodes[1]).toHaveProperty('textContent', 'Loading...');
+                resolver?.('Test');
+                await vi.waitFor(() => {
+                    expect(div.childNodes).toHaveLength(1);
+                    expect(div).toHaveProperty('textContent', '');
+                });
+            });
+
+            it('should show placeholder until promise is rejected', async () => {
+                const Template = ({ promise }: { promise: Promise<string> }) => (
+                    <div>{DNA.$until(promise, 'Loading...')}</div>
+                );
+                let rejecter: ((value: Error) => void) | undefined;
+                const promise = new Promise<string>((resolve, reject) => {
+                    rejecter = reject;
+                });
+                DNA.render(<Template promise={promise} />, wrapper);
+                const div = wrapper.childNodes[1];
+                expect(div.childNodes).toHaveLength(2);
+                expect(div.childNodes[1]).toHaveProperty('textContent', 'Loading...');
+                rejecter?.(new Error('Test'));
+                await vi.waitFor(() => {
+                    expect(div.childNodes).toHaveLength(1);
+                    expect(div).toHaveProperty('textContent', '');
+                });
+            });
+        });
+
         describe('hooks', () => {
             it('should re-render on state change', () => {
                 const render = vi.fn();
