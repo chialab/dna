@@ -1,6 +1,6 @@
 # Rendering
 
-Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings and must be espressed using jsx or tagged template literals.
+Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings and must be expressed using jsx or tagged template literals.
 
 ::: code-group
 
@@ -193,7 +193,7 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 ## Function components
 
-Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use function components.
+Sometimes, you may want to break up a template into smaller parts without having to define new Custom Elements. In this case, you can use function components.
 
 Function components are plain functions that receive properties as first argument and modifier methods as second argument. The function must return a template to render.
 
@@ -335,6 +335,8 @@ h('table', null,
     ),
 )
 ```
+
+:::
 
 ### The `useEffect` hook
 
@@ -579,7 +581,7 @@ results
 </dialog>
 ```
 
-We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will colleced any element which does not specify a slot.
+We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will collected any element which does not specify a slot.
 
 ```diff
 class Dialog extends extend(window.HTMLDialogElement) {

@@ -4,7 +4,7 @@ DNA components follow the Custom Element lifecycle specification, with the addit
 
 ## `initialize`
 
-The initialize method is invoked at the end of the final constructor. It initializes inital property values and observers, as well as listeners.
+The initialize method is invoked at the end of the final constructor. It initializes initial property values and observers, as well as listeners.
 
 ```ts
 import { Component, customElement } from '@chialab/dna';
@@ -84,7 +84,7 @@ export class MyArticle extends Component {
         return ['tabindex', ...super.observedAttributes];
     }
 
-    attributedChangedCallback(attributeName: string, oldValue: string | null, newValue: string | null) {
+    attributeChangedCallback(attributeName: string, oldValue: string | null, newValue: string | null) {
         switch (attributeName) {
             case 'tabindex':
                 if (oldValue === '-1') {

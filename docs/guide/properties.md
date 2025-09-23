@@ -1,6 +1,6 @@
 # Reactive properties
 
-Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property had been update, it triggers the [`propertyChangedCallback`](./lifecycle#propertychangedcallback) method of the component.
+Properties are class fields that are automatically in sync with element's DOM attributes. Every property change triggers a re-render of the component. Properties can be updated imperatively via JavaScript assignments or declaratively via template attributes. Every time a property is updated, it triggers the [`propertyChangedCallback`](./lifecycle#propertychangedcallback) method of the component.
 
 State properties store component's data that can't be configured from the outside using attributes. Like properties, states changes trigger a new render cycle and they have the dedicated [`stateChangedCallback`](./lifecycle#statechangedcallback) method callback
 
@@ -98,7 +98,7 @@ class Card extends Component {
 
 ### attribute
 
-The name of the attribute bound with the property. Every time the property had been updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. If specified, it also works for `state` fields.
+The name of the attribute bound with the property. Every time the property is updated, the new value is reflected to the specified attribute name in the DOM, as well as any attribute change will be synced with the property. If specified, it also works for `state` fields.
 
 You can also customize the default converters between attributes and properties with `fromAttribute` and `toAttribute`.
 
@@ -142,7 +142,7 @@ A custom validation function for the property value. If the method returns a fal
 
 #### event
 
-The name of the event to trigger when property had been updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
+The name of the event to trigger when a property is updated. If `true`, the event name will be composed by the property name with suffix `change` (eg. for the property `age`, the event name will be `agechange`). Also, `oldValue` and `newValue` properties are passed as event detail.
 
 ```ts
 import { Component, customElement, property } from '@chialab/dna';
@@ -241,7 +241,7 @@ const Card = define(
 
 ## Observers
 
-An observer is a function invoked each time the property had been updated. It receives the new value as first argument and the previous property value as second argument:
+An observer is a function invoked each time a property is updated. It receives the new value as first argument and the previous property value as second argument:
 
 Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
 
@@ -310,7 +310,7 @@ class Card extends Component {
     @property({ type: String }) lastName: string;
     @property({ type: Date }) birthdate: Date;
 
-    @observe('fisrtName')
+    @observe('firstName')
     @observe('lastName')
     @observe('birthdate')
     private validateData() {

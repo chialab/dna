@@ -144,7 +144,7 @@ TypeScript enables type checking and hints for component properties when you reg
 ### Extending native elements
 
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
-This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
+This is very useful when you want to extend a HTML tag, preserving its semantic meaning. For example:
 
 ::: code-group
 
@@ -210,7 +210,7 @@ Extending builtin elements also preserves accessibility and usability features: 
 
 ## Render a component
 
-The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
+The `render` helper is used by DNA components to generate their template, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
 ```tsx
 import { Component, customElement, render } from '@chialab/dna';

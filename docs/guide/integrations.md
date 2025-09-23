@@ -4,7 +4,7 @@
 
 DNA composition is tested across different frameworks.
 
-| Framwework      | Version | Update a property | Slot text | Slot elements | Named slots | Builtin elements |
+| Framework       | Version | Update a property | Slot text | Slot elements | Named slots | Builtin elements |
 | --------------- | :-----: | :---------------: | :-------: | :-----------: | :---------: | :--------------: |
 | Angular         |   20    |       ✅         |    ✅     |      ✅       |      ✅      |         ⚠️¹      |
 | Lit             |    3    |       ✅         |    ✅     |      ✅       |      ✅      |         ✅       |
