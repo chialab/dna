@@ -5,10 +5,10 @@
   "type": "module",
   "main": "dist/dna.js",
   "module": "dist/dna.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/dna.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/dna.d.ts",
       "default": "./dist/dna.js"
     },
     "./jsx-runtime": {
