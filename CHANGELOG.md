@@ -1,5 +1,44 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0
+
+### Minor Changes
+
+- 5456c52: Add support for `on:` event listeners in order to improve listeners typings.
+- d930319: Add `svelte` typings integration.
+- 91eaf98: Clean up rendering state when removing a node.
+- 91eaf98: Components now only render when connected.
+- 03f3830: Introducing `@fires` decorator for custom events.
+- 688b198: Improve JSX typings.
+- 207d5b8: Introducing the `childListChangedCallback`.
+- 8d82190: Move properties hooks before observers.
+- 48de4e6: Scope CSS text using DOM api.
+- 91eaf98: Node slotting now works only for methods that actually mutate the tree.
+- cbc9280: Introducing the `useId` hook and the `getUniqueId` method.
+- 879e016: Introducing the `useEffect` hook.
+
+### Patch Changes
+
+- 4ac523d: Polyfill `createElementNS` and `importNode` for custom elements support in Safari.
+- 1bd3452: Fix life cycle during initialization.
+- cb3a0dd: Declare DNA `IntrinsicAttributes` and `IntrinsicElements` only when using JSX runtime.
+- b3563a5: Prevent double `connectedCallback` invokation when upgrading via polyfill.
+- fda24a5: Do not throw when a child is already been removed when rendering.
+- 5e11f50: Fix keyed function conmponents re-render after state changed.
+- 76209ec: Make `EventHandler` compatible with core event handlers.
+- b281fa2: Fix JSX typings with extended elements.
+- 5799e50: Fix render state cleanup once disconnected.
+- 8229dd7: Do not proxy host element.
+- 68afc33: Handle `slotChildNodes` when component is not connected.
+- 9573913: Restore deprecated `Realm.childNodesBySlot` method.
+- bd60abc: Improve compatibility with other frameworks without breaking tree traversal.
+- b0a5a9b: Add params to `EventHandler` to override core event handlers.
+- b1fc35e: Set `is` attribute if the element is not a custom element (yet).
+- a11f565: Reduce prototype polluting.
+- 918fee4: Improve frameworks compatibility.
+- 2879385: Export `Members` and `Attrs` types.
+- 57197a0: Move `Realm` method to prototype level again.
+
 ## 4.4.0-beta.16
 
 ### Minor Changes
