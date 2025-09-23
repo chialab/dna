@@ -14,7 +14,7 @@
 
 ## Features
 
-DNA aims to unleash the true power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through a declarative definition API, with builtin elements extension support and a simpler composition mechanism (yes, it does not use ShadowDOM).
+DNA aims to unleash the power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through **declarative** API, **customized built-in elements** and a **shadow-free composition**.
 
 ### Customized built-in elements
 
@@ -31,6 +31,14 @@ DNA renders slotted content via a custom light DOM engine —no Shadow DOM— en
 ### Listeners and async events
 
 Use the `@listen` decorator for delegated event handling, even for slotted content. Events can be async and dispatched from within the class.
+
+### Cross-framework compatibility
+
+Built with standard Web Components APIs, DNA works with any framework. Plasma can generate wrappers for React, Vue, Svelte, and Angular.
+
+### Storybook and documentation
+
+The DNA tools ecosystem includes a Storybook preset for Web Components, which automatically generates documentation and controls for your components.
 
 ## Get the library
 

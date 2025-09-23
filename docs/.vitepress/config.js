@@ -44,8 +44,8 @@ export default defineConfig({
                 ],
             },
             {
-                text: 'Chialab Open Source',
-                link: 'https://www.chialab.io',
+                text: 'Chialab',
+                link: 'https://www.chialab.it',
             },
         ],
 

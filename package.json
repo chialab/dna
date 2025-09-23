@@ -43,7 +43,7 @@
     "url": "https://github.com/chialab/dna/issues"
   },
   "homepage": "https://chialab.github.io/dna/",
-  "author": "Chialab <dev@chialab.io> (https://www.chialab.it)",
+  "author": "Chialab <dev@chialab.it> (https://www.chialab.it)",
   "scripts": {
     "build": "rimraf dist && tsc && vite build",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
