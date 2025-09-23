@@ -14,7 +14,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -35,7 +34,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -50,9 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DNA
-          path: |
-            dist
-            types
+          path: dist
 
   test-browser:
     name: Test Browsers
@@ -64,7 +60,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -72,11 +67,11 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
-      - name: Install chromium
-        run: yarn playwright install --with-deps chromium
+      - name: Install browsers
+        run: yarn playwright install --with-deps --only-shell
 
       - name: Run tests
-        run: yarn test:browser --coverage --coverage.provider istanbul
+        run: yarn test:browser --coverage
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4
@@ -95,7 +90,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -140,7 +134,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -149,19 +142,7 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 2
-          retry_on: error
-          command: yarn test:browserstack --browser.name browserstack:${{ matrix.browser }} --coverage
+        run: yarn test:browserstack --browser browserstack:${{ matrix.browser }}
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v4
-        if: always()
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/clover.xml

@@ -90,6 +90,7 @@ export interface HTMLTagNameMap {
     s: HTMLElement;
     samp: HTMLElement;
     script: HTMLScriptElement;
+    search: HTMLElement;
     section: HTMLElement;
     select: HTMLSelectElement;
     slot: HTMLSlotElement;
@@ -122,6 +123,7 @@ export interface HTMLTagNameMap {
     keygen: HTMLElement;
     menuitem: HTMLElement;
     noindex: HTMLElement;
+    webview: HTMLElement;
 }
 
 export interface SVGTagNameMap {
@@ -185,212 +187,77 @@ export interface SVGTagNameMap {
     view: SVGViewElement;
 }
 
-export const {
-    HTMLElement = class {} as (typeof globalThis)['HTMLElement'],
-    HTMLAnchorElement = HTMLElement as (typeof globalThis)['HTMLAnchorElement'],
-    HTMLAreaElement = HTMLElement as (typeof globalThis)['HTMLAreaElement'],
-    HTMLAudioElement = HTMLElement as (typeof globalThis)['HTMLAudioElement'],
-    HTMLBaseElement = HTMLElement as (typeof globalThis)['HTMLBaseElement'],
-    HTMLQuoteElement = HTMLElement as (typeof globalThis)['HTMLQuoteElement'],
-    HTMLBodyElement = HTMLElement as (typeof globalThis)['HTMLBodyElement'],
-    HTMLBRElement = HTMLElement as (typeof globalThis)['HTMLBRElement'],
-    HTMLButtonElement = HTMLElement as (typeof globalThis)['HTMLButtonElement'],
-    HTMLCanvasElement = HTMLElement as (typeof globalThis)['HTMLCanvasElement'],
-    HTMLTableCaptionElement = HTMLElement as (typeof globalThis)['HTMLTableCaptionElement'],
-    HTMLTableColElement = HTMLElement as (typeof globalThis)['HTMLTableColElement'],
-    HTMLDataElement = HTMLElement as (typeof globalThis)['HTMLDataElement'],
-    HTMLDataListElement = HTMLElement as (typeof globalThis)['HTMLDataListElement'],
-    HTMLModElement = HTMLElement as (typeof globalThis)['HTMLModElement'],
-    HTMLDetailsElement = HTMLElement as (typeof globalThis)['HTMLDetailsElement'],
-    HTMLDialogElement = HTMLElement as (typeof globalThis)['HTMLDialogElement'],
-    HTMLDirectoryElement = HTMLElement as (typeof globalThis)['HTMLDirectoryElement'],
-    HTMLDivElement = HTMLElement as (typeof globalThis)['HTMLDivElement'],
-    HTMLDListElement = HTMLElement as (typeof globalThis)['HTMLDListElement'],
-    HTMLEmbedElement = HTMLElement as (typeof globalThis)['HTMLEmbedElement'],
-    HTMLFieldSetElement = HTMLElement as (typeof globalThis)['HTMLFieldSetElement'],
-    HTMLFontElement = HTMLElement as (typeof globalThis)['HTMLFontElement'],
-    HTMLFormElement = HTMLElement as (typeof globalThis)['HTMLFormElement'],
-    HTMLFrameElement = HTMLElement as (typeof globalThis)['HTMLFrameElement'],
-    HTMLFrameSetElement = HTMLElement as (typeof globalThis)['HTMLFrameSetElement'],
-    HTMLHeadingElement = HTMLElement as (typeof globalThis)['HTMLHeadingElement'],
-    HTMLHeadElement = HTMLElement as (typeof globalThis)['HTMLHeadElement'],
-    HTMLHRElement = HTMLElement as (typeof globalThis)['HTMLHRElement'],
-    HTMLIFrameElement = HTMLElement as (typeof globalThis)['HTMLIFrameElement'],
-    HTMLImageElement = HTMLElement as (typeof globalThis)['HTMLImageElement'],
-    HTMLInputElement = HTMLElement as (typeof globalThis)['HTMLInputElement'],
-    HTMLLabelElement = HTMLElement as (typeof globalThis)['HTMLLabelElement'],
-    HTMLLegendElement = HTMLElement as (typeof globalThis)['HTMLLegendElement'],
-    HTMLLIElement = HTMLElement as (typeof globalThis)['HTMLLIElement'],
-    HTMLLinkElement = HTMLElement as (typeof globalThis)['HTMLLinkElement'],
-    HTMLMapElement = HTMLElement as (typeof globalThis)['HTMLMapElement'],
-    HTMLMarqueeElement = HTMLElement as (typeof globalThis)['HTMLMarqueeElement'],
-    HTMLMenuElement = HTMLElement as (typeof globalThis)['HTMLMenuElement'],
-    HTMLMetaElement = HTMLElement as (typeof globalThis)['HTMLMetaElement'],
-    HTMLMeterElement = HTMLElement as (typeof globalThis)['HTMLMeterElement'],
-    HTMLObjectElement = HTMLElement as (typeof globalThis)['HTMLObjectElement'],
-    HTMLOListElement = HTMLElement as (typeof globalThis)['HTMLOListElement'],
-    HTMLOptGroupElement = HTMLElement as (typeof globalThis)['HTMLOptGroupElement'],
-    HTMLOptionElement = HTMLElement as (typeof globalThis)['HTMLOptionElement'],
-    HTMLOutputElement = HTMLElement as (typeof globalThis)['HTMLOutputElement'],
-    HTMLParagraphElement = HTMLElement as (typeof globalThis)['HTMLParagraphElement'],
-    HTMLParamElement = HTMLElement as (typeof globalThis)['HTMLParamElement'],
-    HTMLPictureElement = HTMLElement as (typeof globalThis)['HTMLPictureElement'],
-    HTMLPreElement = HTMLElement as (typeof globalThis)['HTMLPreElement'],
-    HTMLProgressElement = HTMLElement as (typeof globalThis)['HTMLProgressElement'],
-    HTMLScriptElement = HTMLElement as (typeof globalThis)['HTMLScriptElement'],
-    HTMLSelectElement = HTMLElement as (typeof globalThis)['HTMLSelectElement'],
-    HTMLSlotElement = HTMLElement as (typeof globalThis)['HTMLSlotElement'],
-    HTMLSourceElement = HTMLElement as (typeof globalThis)['HTMLSourceElement'],
-    HTMLSpanElement = HTMLElement as (typeof globalThis)['HTMLSpanElement'],
-    HTMLStyleElement = HTMLElement as (typeof globalThis)['HTMLStyleElement'],
-    HTMLTableElement = HTMLElement as (typeof globalThis)['HTMLTableElement'],
-    HTMLTableSectionElement = HTMLElement as (typeof globalThis)['HTMLTableSectionElement'],
-    HTMLTableCellElement = HTMLElement as (typeof globalThis)['HTMLTableCellElement'],
-    HTMLTemplateElement = HTMLElement as (typeof globalThis)['HTMLTemplateElement'],
-    HTMLTextAreaElement = HTMLElement as (typeof globalThis)['HTMLTextAreaElement'],
-    HTMLTimeElement = HTMLElement as (typeof globalThis)['HTMLTimeElement'],
-    HTMLTitleElement = HTMLElement as (typeof globalThis)['HTMLTitleElement'],
-    HTMLTableRowElement = HTMLElement as (typeof globalThis)['HTMLTableRowElement'],
-    HTMLTrackElement = HTMLElement as (typeof globalThis)['HTMLTrackElement'],
-    HTMLUListElement = HTMLElement as (typeof globalThis)['HTMLUListElement'],
-    HTMLVideoElement = HTMLElement as (typeof globalThis)['HTMLVideoElement'],
-} = (isBrowser ? window : {}) as unknown as typeof window;
+const global = (isBrowser ? window : {}) as unknown as typeof window;
 
-/**
- * Extract the base class from a given element type.
- */
-export type BaseClass<T extends HTMLElement> = T extends HTMLAnchorElement
-    ? HTMLAnchorElement
-    : T extends HTMLAreaElement
-      ? HTMLAreaElement
-      : T extends HTMLAudioElement
-        ? HTMLAudioElement
-        : T extends HTMLBaseElement
-          ? HTMLBaseElement
-          : T extends HTMLQuoteElement
-            ? HTMLQuoteElement
-            : T extends HTMLBodyElement
-              ? HTMLBodyElement
-              : T extends HTMLBRElement
-                ? HTMLBRElement
-                : T extends HTMLButtonElement
-                  ? HTMLButtonElement
-                  : T extends HTMLCanvasElement
-                    ? HTMLCanvasElement
-                    : T extends HTMLTableCaptionElement
-                      ? HTMLTableCaptionElement
-                      : T extends HTMLTableColElement
-                        ? HTMLTableColElement
-                        : T extends HTMLDataElement
-                          ? HTMLDataElement
-                          : T extends HTMLDataListElement
-                            ? HTMLDataListElement
-                            : T extends HTMLModElement
-                              ? HTMLModElement
-                              : T extends HTMLDetailsElement
-                                ? HTMLDetailsElement
-                                : T extends HTMLDialogElement
-                                  ? HTMLDialogElement
-                                  : T extends HTMLDirectoryElement
-                                    ? HTMLDirectoryElement
-                                    : T extends HTMLDivElement
-                                      ? HTMLDivElement
-                                      : T extends HTMLDListElement
-                                        ? HTMLDListElement
-                                        : T extends HTMLEmbedElement
-                                          ? HTMLEmbedElement
-                                          : T extends HTMLFieldSetElement
-                                            ? HTMLFieldSetElement
-                                            : T extends HTMLFontElement
-                                              ? HTMLFontElement
-                                              : T extends HTMLFormElement
-                                                ? HTMLFormElement
-                                                : T extends HTMLFrameElement
-                                                  ? HTMLFrameElement
-                                                  : T extends HTMLFrameSetElement
-                                                    ? HTMLFrameSetElement
-                                                    : T extends HTMLHeadingElement
-                                                      ? HTMLHeadingElement
-                                                      : T extends HTMLHeadElement
-                                                        ? HTMLHeadElement
-                                                        : T extends HTMLHRElement
-                                                          ? HTMLHRElement
-                                                          : T extends HTMLIFrameElement
-                                                            ? HTMLIFrameElement
-                                                            : T extends HTMLImageElement
-                                                              ? HTMLImageElement
-                                                              : T extends HTMLInputElement
-                                                                ? HTMLInputElement
-                                                                : T extends HTMLLabelElement
-                                                                  ? HTMLLabelElement
-                                                                  : T extends HTMLLegendElement
-                                                                    ? HTMLLegendElement
-                                                                    : T extends HTMLLIElement
-                                                                      ? HTMLLIElement
-                                                                      : T extends HTMLLinkElement
-                                                                        ? HTMLLinkElement
-                                                                        : T extends HTMLMapElement
-                                                                          ? HTMLMapElement
-                                                                          : T extends HTMLMarqueeElement
-                                                                            ? HTMLMarqueeElement
-                                                                            : T extends HTMLMenuElement
-                                                                              ? HTMLMenuElement
-                                                                              : T extends HTMLMetaElement
-                                                                                ? HTMLMetaElement
-                                                                                : T extends HTMLMeterElement
-                                                                                  ? HTMLMeterElement
-                                                                                  : T extends HTMLObjectElement
-                                                                                    ? HTMLObjectElement
-                                                                                    : T extends HTMLOListElement
-                                                                                      ? HTMLOListElement
-                                                                                      : T extends HTMLOptGroupElement
-                                                                                        ? HTMLOptGroupElement
-                                                                                        : T extends HTMLOptionElement
-                                                                                          ? HTMLOptionElement
-                                                                                          : T extends HTMLOutputElement
-                                                                                            ? HTMLOutputElement
-                                                                                            : T extends HTMLParagraphElement
-                                                                                              ? HTMLParagraphElement
-                                                                                              : T extends HTMLParamElement
-                                                                                                ? HTMLParamElement
-                                                                                                : T extends HTMLPictureElement
-                                                                                                  ? HTMLPictureElement
-                                                                                                  : T extends HTMLPreElement
-                                                                                                    ? HTMLPreElement
-                                                                                                    : T extends HTMLProgressElement
-                                                                                                      ? HTMLProgressElement
-                                                                                                      : T extends HTMLScriptElement
-                                                                                                        ? HTMLScriptElement
-                                                                                                        : T extends HTMLSelectElement
-                                                                                                          ? HTMLSelectElement
-                                                                                                          : T extends HTMLSlotElement
-                                                                                                            ? HTMLSlotElement
-                                                                                                            : T extends HTMLSourceElement
-                                                                                                              ? HTMLSourceElement
-                                                                                                              : T extends HTMLSpanElement
-                                                                                                                ? HTMLSpanElement
-                                                                                                                : T extends HTMLStyleElement
-                                                                                                                  ? HTMLStyleElement
-                                                                                                                  : T extends HTMLTableElement
-                                                                                                                    ? HTMLTableElement
-                                                                                                                    : T extends HTMLTableSectionElement
-                                                                                                                      ? HTMLTableSectionElement
-                                                                                                                      : T extends HTMLTableCellElement
-                                                                                                                        ? HTMLTableCellElement
-                                                                                                                        : T extends HTMLTemplateElement
-                                                                                                                          ? HTMLTemplateElement
-                                                                                                                          : T extends HTMLTextAreaElement
-                                                                                                                            ? HTMLTextAreaElement
-                                                                                                                            : T extends HTMLTimeElement
-                                                                                                                              ? HTMLTimeElement
-                                                                                                                              : T extends HTMLTitleElement
-                                                                                                                                ? HTMLTitleElement
-                                                                                                                                : T extends HTMLTableRowElement
-                                                                                                                                  ? HTMLTableRowElement
-                                                                                                                                  : T extends HTMLTrackElement
-                                                                                                                                    ? HTMLTrackElement
-                                                                                                                                    : T extends HTMLUListElement
-                                                                                                                                      ? HTMLUListElement
-                                                                                                                                      : T extends HTMLVideoElement
-                                                                                                                                        ? HTMLVideoElement
-                                                                                                                                        : HTMLElement;
+type GlobalThis = typeof globalThis;
+
+export const HTMLElement: GlobalThis['HTMLElement'] = global.HTMLElement ?? class {};
+export const HTMLAnchorElement: GlobalThis['HTMLAnchorElement'] = global.HTMLAnchorElement ?? HTMLElement;
+export const HTMLAreaElement: GlobalThis['HTMLAreaElement'] = global.HTMLAreaElement ?? HTMLElement;
+export const HTMLAudioElement: GlobalThis['HTMLAudioElement'] = global.HTMLAudioElement ?? HTMLElement;
+export const HTMLBaseElement: GlobalThis['HTMLBaseElement'] = global.HTMLBaseElement ?? HTMLElement;
+export const HTMLQuoteElement: GlobalThis['HTMLQuoteElement'] = global.HTMLQuoteElement ?? HTMLElement;
+export const HTMLBodyElement: GlobalThis['HTMLBodyElement'] = global.HTMLBodyElement ?? HTMLElement;
+export const HTMLBRElement: GlobalThis['HTMLBRElement'] = global.HTMLBRElement ?? HTMLElement;
+export const HTMLButtonElement: GlobalThis['HTMLButtonElement'] = global.HTMLButtonElement ?? HTMLElement;
+export const HTMLCanvasElement: GlobalThis['HTMLCanvasElement'] = global.HTMLCanvasElement ?? HTMLElement;
+export const HTMLTableCaptionElement: GlobalThis['HTMLTableCaptionElement'] =
+    global.HTMLTableCaptionElement ?? HTMLElement;
+export const HTMLTableColElement: GlobalThis['HTMLTableColElement'] = global.HTMLTableColElement ?? HTMLElement;
+export const HTMLDataElement: GlobalThis['HTMLDataElement'] = global.HTMLDataElement ?? HTMLElement;
+export const HTMLDataListElement: GlobalThis['HTMLDataListElement'] = global.HTMLDataListElement ?? HTMLElement;
+export const HTMLModElement: GlobalThis['HTMLModElement'] = global.HTMLModElement ?? HTMLElement;
+export const HTMLDetailsElement: GlobalThis['HTMLDetailsElement'] = global.HTMLDetailsElement ?? HTMLElement;
+export const HTMLDialogElement: GlobalThis['HTMLDialogElement'] = global.HTMLDialogElement ?? HTMLElement;
+export const HTMLDirectoryElement: GlobalThis['HTMLDirectoryElement'] = global.HTMLDirectoryElement ?? HTMLElement;
+export const HTMLDivElement: GlobalThis['HTMLDivElement'] = global.HTMLDivElement ?? HTMLElement;
+export const HTMLDListElement: GlobalThis['HTMLDListElement'] = global.HTMLDListElement ?? HTMLElement;
+export const HTMLEmbedElement: GlobalThis['HTMLEmbedElement'] = global.HTMLEmbedElement ?? HTMLElement;
+export const HTMLFieldSetElement: GlobalThis['HTMLFieldSetElement'] = global.HTMLFieldSetElement ?? HTMLElement;
+export const HTMLFontElement: GlobalThis['HTMLFontElement'] = global.HTMLFontElement ?? HTMLElement;
+export const HTMLFormElement: GlobalThis['HTMLFormElement'] = global.HTMLFormElement ?? HTMLElement;
+export const HTMLFrameElement: GlobalThis['HTMLFrameElement'] = global.HTMLFrameElement ?? HTMLElement;
+export const HTMLFrameSetElement: GlobalThis['HTMLFrameSetElement'] = global.HTMLFrameSetElement ?? HTMLElement;
+export const HTMLHeadingElement: GlobalThis['HTMLHeadingElement'] = global.HTMLHeadingElement ?? HTMLElement;
+export const HTMLHeadElement: GlobalThis['HTMLHeadElement'] = global.HTMLHeadElement ?? HTMLElement;
+export const HTMLHRElement: GlobalThis['HTMLHRElement'] = global.HTMLHRElement ?? HTMLElement;
+export const HTMLIFrameElement: GlobalThis['HTMLIFrameElement'] = global.HTMLIFrameElement ?? HTMLElement;
+export const HTMLImageElement: GlobalThis['HTMLImageElement'] = global.HTMLImageElement ?? HTMLElement;
+export const HTMLInputElement: GlobalThis['HTMLInputElement'] = global.HTMLInputElement ?? HTMLElement;
+export const HTMLLabelElement: GlobalThis['HTMLLabelElement'] = global.HTMLLabelElement ?? HTMLElement;
+export const HTMLLegendElement: GlobalThis['HTMLLegendElement'] = global.HTMLLegendElement ?? HTMLElement;
+export const HTMLLIElement: GlobalThis['HTMLLIElement'] = global.HTMLLIElement ?? HTMLElement;
+export const HTMLLinkElement: GlobalThis['HTMLLinkElement'] = global.HTMLLinkElement ?? HTMLElement;
+export const HTMLMapElement: GlobalThis['HTMLMapElement'] = global.HTMLMapElement ?? HTMLElement;
+export const HTMLMarqueeElement: GlobalThis['HTMLMarqueeElement'] = global.HTMLMarqueeElement ?? HTMLElement;
+export const HTMLMenuElement: GlobalThis['HTMLMenuElement'] = global.HTMLMenuElement ?? HTMLElement;
+export const HTMLMetaElement: GlobalThis['HTMLMetaElement'] = global.HTMLMetaElement ?? HTMLElement;
+export const HTMLMeterElement: GlobalThis['HTMLMeterElement'] = global.HTMLMeterElement ?? HTMLElement;
+export const HTMLObjectElement: GlobalThis['HTMLObjectElement'] = global.HTMLObjectElement ?? HTMLElement;
+export const HTMLOListElement: GlobalThis['HTMLOListElement'] = global.HTMLOListElement ?? HTMLElement;
+export const HTMLOptGroupElement: GlobalThis['HTMLOptGroupElement'] = global.HTMLOptGroupElement ?? HTMLElement;
+export const HTMLOptionElement: GlobalThis['HTMLOptionElement'] = global.HTMLOptionElement ?? HTMLElement;
+export const HTMLOutputElement: GlobalThis['HTMLOutputElement'] = global.HTMLOutputElement ?? HTMLElement;
+export const HTMLParagraphElement: GlobalThis['HTMLParagraphElement'] = global.HTMLParagraphElement ?? HTMLElement;
+export const HTMLParamElement: GlobalThis['HTMLParamElement'] = global.HTMLParamElement ?? HTMLElement;
+export const HTMLPictureElement: GlobalThis['HTMLPictureElement'] = global.HTMLPictureElement ?? HTMLElement;
+export const HTMLPreElement: GlobalThis['HTMLPreElement'] = global.HTMLPreElement ?? HTMLElement;
+export const HTMLProgressElement: GlobalThis['HTMLProgressElement'] = global.HTMLProgressElement ?? HTMLElement;
+export const HTMLScriptElement: GlobalThis['HTMLScriptElement'] = global.HTMLScriptElement ?? HTMLElement;
+export const HTMLSelectElement: GlobalThis['HTMLSelectElement'] = global.HTMLSelectElement ?? HTMLElement;
+export const HTMLSlotElement: GlobalThis['HTMLSlotElement'] = global.HTMLSlotElement ?? HTMLElement;
+export const HTMLSourceElement: GlobalThis['HTMLSourceElement'] = global.HTMLSourceElement ?? HTMLElement;
+export const HTMLSpanElement: GlobalThis['HTMLSpanElement'] = global.HTMLSpanElement ?? HTMLElement;
+export const HTMLStyleElement: GlobalThis['HTMLStyleElement'] = global.HTMLStyleElement ?? HTMLElement;
+export const HTMLTableElement: GlobalThis['HTMLTableElement'] = global.HTMLTableElement ?? HTMLElement;
+export const HTMLTableSectionElement: GlobalThis['HTMLTableSectionElement'] =
+    global.HTMLTableSectionElement ?? HTMLElement;
+export const HTMLTableCellElement: GlobalThis['HTMLTableCellElement'] = global.HTMLTableCellElement ?? HTMLElement;
+export const HTMLTemplateElement: GlobalThis['HTMLTemplateElement'] = global.HTMLTemplateElement ?? HTMLElement;
+export const HTMLTextAreaElement: GlobalThis['HTMLTextAreaElement'] = global.HTMLTextAreaElement ?? HTMLElement;
+export const HTMLTimeElement: GlobalThis['HTMLTimeElement'] = global.HTMLTimeElement ?? HTMLElement;
+export const HTMLTitleElement: GlobalThis['HTMLTitleElement'] = global.HTMLTitleElement ?? HTMLElement;
+export const HTMLTableRowElement: GlobalThis['HTMLTableRowElement'] = global.HTMLTableRowElement ?? HTMLElement;
+export const HTMLTrackElement: GlobalThis['HTMLTrackElement'] = global.HTMLTrackElement ?? HTMLElement;
+export const HTMLUListElement: GlobalThis['HTMLUListElement'] = global.HTMLUListElement ?? HTMLElement;
+export const HTMLVideoElement: GlobalThis['HTMLVideoElement'] = global.HTMLVideoElement ?? HTMLElement;

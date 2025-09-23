@@ -1,0 +1,94 @@
+import * as DNA from '@chialab/dna';
+import { Ivya } from 'ivya';
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+
+describe('Ivya compatibility', () => {
+    let ivya: Ivya;
+    let wrapper: HTMLElement;
+    beforeAll(() => {
+        ivya = Ivya.create({
+            browser: 'chromium',
+            testIdAttribute: 'data-test-id',
+        });
+    });
+
+    beforeEach(() => {
+        wrapper = document.createElement('div');
+        document.body.appendChild(wrapper);
+    });
+
+    afterEach(() => {
+        wrapper.remove();
+    });
+
+    test('should correctly create locator selector for simple component', () => {
+        const Component = DNA.define(
+            'test-ivya-1',
+            class extends DNA.Component {
+                render() {
+                    return 'Internal';
+                }
+            }
+        );
+        const element = new Component();
+        wrapper.appendChild(element);
+        element.textContent = 'Text';
+
+        const selector = ivya.generateSelectorSimple(element);
+        expect(selector).toBe('internal:text="Internal"i');
+        expect(ivya.queryLocatorSelector(selector)).toBe(element);
+    });
+
+    test('should correctly create locator selector for simple component with slot', () => {
+        const Component = DNA.define(
+            'test-ivya-2',
+            class extends DNA.Component {
+                render() {
+                    return (
+                        <>
+                            Internal
+                            <slot />
+                        </>
+                    );
+                }
+            }
+        );
+        const element = new Component();
+        wrapper.appendChild(element);
+        element.textContent = 'Text';
+
+        const selector = ivya.generateSelectorSimple(element);
+        expect(selector).toBe('internal:text="InternalText"i');
+        expect(ivya.queryLocatorSelector(selector)).toBe(element);
+    });
+
+    test('should correctly create locator selector for more complex slots', () => {
+        const Component = DNA.define(
+            'test-ivya-3',
+            class extends DNA.Component {
+                render() {
+                    return (
+                        <>
+                            Test
+                            <slot name="title" />
+                            Test
+                            <slot />
+                            Test
+                        </>
+                    );
+                }
+            }
+        );
+        const element = new Component();
+        wrapper.appendChild(element);
+        element.innerHTML = '<span slot="title">Title</span> Text';
+
+        const title = element.querySelector('span') as HTMLSpanElement;
+        const selector = ivya.generateSelectorSimple(element);
+        expect(selector).toBe('internal:text="TestTitleTest TextTest"i');
+        expect(ivya.queryLocatorSelector(selector)).toBe(element);
+        const titleSelector = ivya.generateSelectorSimple(title);
+        expect(titleSelector).toBe('internal:text="Title"i');
+        expect(ivya.queryLocatorSelector(titleSelector)).toBe(title);
+    });
+});

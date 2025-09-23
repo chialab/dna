@@ -1,5 +1,127 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.0-beta.16
+
+### Minor Changes
+
+- cbc9280: Introducing the `useId` hook and the `getUniqueId` method.
+
+### Patch Changes
+
+- 9573913: Restore deprecated `Realm.childNodesBySlot` method.
+
+## 4.4.0-beta.15
+
+### Patch Changes
+
+- fda24a5: Do not throw when a child is already been removed when rendering.
+- 68afc33: Handle `slotChildNodes` when component is not connected.
+
+## 4.4.0-beta.14
+
+### Patch Changes
+
+- b0a5a9b: Add params to `EventHandler` to override core event handlers.
+
+## 4.4.0-beta.13
+
+### Patch Changes
+
+- 76209ec: Make `EventHandler` compatible with core event handlers.
+
+## 4.4.0-beta.12
+
+### Patch Changes
+
+- 2879385: Export `Members` and `Attrs` types.
+
+## 4.4.0-beta.11
+
+### Minor Changes
+
+- 5456c52: Add support for `on:` event listeners in order to improve listeners typings.
+- d930319: Add `svelte` typings integration.
+- 03f3830: Introducing `@fires` decorator for custom events.
+- 688b198: Improve JSX typings.
+- 8d82190: Move properties hooks before observers.
+- 48de4e6: Scope CSS text using DOM api.
+
+### Patch Changes
+
+- 4ac523d: Polyfill `createElementNS` and `importNode` for custom elements support in Safari.
+- cb3a0dd: Declare DNA `IntrinsicAttributes` and `IntrinsicElements` only when using JSX runtime.
+- b281fa2: Fix JSX typings with extended elements.
+
+## 4.4.0-beta.10
+
+### Patch Changes
+
+- 5ae07ca: Reduce prototype polluting.
+
+## 4.4.0-beta.9
+
+### Patch Changes
+
+- 99c042d: Improve frameworks compatibility.
+
+## 4.4.0-beta.8
+
+### Patch Changes
+
+- 1d7e94a: Fix life cycle during initialization.
+
+## 4.4.0-beta.7
+
+### Patch Changes
+
+- 2db6069: Move `Realm` method to prototype level again.
+
+## 4.4.0-beta.6
+
+### Patch Changes
+
+- 6473dff: Do not proxy host element.
+
+## 4.4.0-beta.5
+
+### Patch Changes
+
+- cb1f494: Improve compatibility with other frameworks without breaking tree traversal.
+
+## 4.4.0-beta.4
+
+### Patch Changes
+
+- 13210b9: Set `is` attribute if the element is not a custom element (yet).
+
+## 4.4.0-beta.3
+
+### Patch Changes
+
+- 0bf804b: Prevent double `connectedCallback` invokation when upgrading via polyfill.
+
+## 4.4.0-beta.2
+
+### Patch Changes
+
+- f9e7289: Fix render state cleanup once disconnected.
+
+## 4.4.0-beta.1
+
+### Patch Changes
+
+- 64b6e67: Fix keyed function conmponents re-render after state changed.
+
+## 4.4.0-beta.0
+
+### Minor Changes
+
+- 26984f1: Clean up rendering state when removing a node.
+- 26984f1: Components now only render when connected.
+- c5df947: Introducing the `childListChangedCallback`.
+- 26984f1: Node slotting now works only for methods that actually mutate the tree.
+- 9efebb6: Introducing the `useEffect` hook.
+
 ## 4.3.1
 
 ### Patch Changes

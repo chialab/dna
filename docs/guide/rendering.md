@@ -1,6 +1,6 @@
 # Rendering
 
-Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings and must be espressed using jsx or tagged template literals.
+Templates are the main part of a component definition because they are used to render the state as well as instantiate and update child elements. During a render cycle, DNA uses an in-place DOM diffing algorithm to check which nodes are to update, create or remove. In order to efficiently compare DOM nodes, templates cannot be plain HTML strings and must be expressed using jsx or tagged template literals.
 
 ::: code-group
 
@@ -193,7 +193,7 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 ## Function components
 
-Sometimes, you may want to break up templates in smaller parts without having to define new Custom Elements. In this cases, you can use function components.
+Sometimes, you may want to break up a template into smaller parts without having to define new Custom Elements. In this case, you can use function components.
 
 Function components are plain functions that receive properties as first argument and modifier methods as second argument. The function must return a template to render.
 
@@ -338,13 +338,116 @@ h('table', null,
 
 :::
 
+### The `useEffect` hook
+
+The `useEffect` hook is a function that allows you to run side effects in your function component. The first argument is a function that will be called after the component has been rendered. The second argument is an array of dependencies. When the dependencies change, the effect is re-run.
+
+It can also return a cleanup function that will be called before the effect is re-run or when the component is unmounted.
+
+::: code-group
+
+```tsx [jsx]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return <span>{time} seconds</span>;
+}
+```
+
+```ts [html]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return html`<span>${time} seconds</span>`;
+}
+```
+
+```ts [vdom]
+function Timer({ interval }, { useState, useEffect }) {
+    const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        const id = setInterval(() => setTime((t) => t + 1), interval);
+        return () => clearInterval(id);
+    }, [interval]);
+
+    return h('span', null, time, ' seconds');
+}
+```
+
+:::
+
+### The `useId` hook
+
+The `useId` hook is a function that returns a unique ID for the component instance. This can be useful for associating form fields with their labels or for generating unique IDs for other purposes.
+
+::: code-group
+
+```tsx [jsx]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return <>
+        <button aria-controls={menuId} aria-haspopup="menu">
+            Menu
+        </button>
+        <ul id={menuId} role="menu">
+            <li role="menuitem">Item 1</li>
+            <li role="menuitem">Item 2</li>
+            <li role="menuitem">Item 3</li>
+        </ul>
+    </>;
+}
+```
+
+```ts [html]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return html`<>
+        <button aria-controls=${menuId} aria-haspopup="menu">
+            Menu
+        </button>
+        <ul id=${menuId} role="menu">
+            <li role="menuitem">Item 1</li>
+            <li role="menuitem">Item 2</li>
+            <li role="menuitem">Item 3</li>
+        </ul>
+    </>`;
+}
+```
+
+```ts [vdom]
+function MenuButton({}, { useId }) {
+    const menuId = useId('menu');
+    return h(Fragment, null,
+        h('button', { 'aria-controls': menuId, 'aria-haspopup': 'menu' }, 'Menu'),
+        h('ul', { id: menuId, role: 'menu' },
+            h('li', { role: 'menuitem' }, 'Item 1'),
+            h('li', { role: 'menuitem' }, 'Item 2'),
+            h('li', { role: 'menuitem' }, 'Item 3'),
+        )
+    );
+}
+```
+
+:::
+
 ### The `useRenderContext` hook
 
 The `useRenderContext` hook is a function that returns the current context of the DNA render cycle. The render context is an object that contains the informations about the virtual node as well as its position in the tree.
 
 ::: warning
 
-It is highly discouraged to use the `useRenderContext` hook in function components. Also, please note that this hook will be deprecated once `useRef` and `useEffect` hooks will be available.
+It is highly discouraged to use the `useRenderContext` hook in function components.
 
 :::
 
@@ -478,7 +581,7 @@ results
 </dialog>
 ```
 
-We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will colleced any element which does not specify a slot.
+We can also define multiple `<slot>` using a `name`, and reference them in the "soft" DOM using the `slot="name"` attribute, in order to handle more complex templates. The "unnamed" `<slot>` will collected any element which does not specify a slot.
 
 ```diff
 class Dialog extends extend(window.HTMLDialogElement) {
@@ -546,3 +649,25 @@ DNA optimizes rendering re-using elements when possible, comparing the tag name 
 ```
 
 In this example, once the last `<option>` element has been created, it never changes its DOM reference, since previous `<option>` generations always re-create the element instead of re-using the keyed one.
+
+## Use unique IDs
+
+Sometimes, you may need to generate unique IDs for your component instances, for example when associating form fields with their labels. DNA provides a `getUniqueId` utility function that can be used to generate such IDs.
+
+```tsx
+import { Component, customElement, property } from '@chialab/dna';
+
+@customElement('x-menu-button')
+class MenuButton extends Component {
+    render() {
+        return <>
+            <button aria-controls={this.getUniqueId('menu')} aria-haspopup="menu">
+                Menu
+            </button>
+            <ul id={this.getUniqueId('menu')} role="menu">
+                <li role="menuitem">Item 1</li>
+                <li role="menuitem">Item 2</li>
+                <li role="menuitem">Item 3</li>
+            </ul>
+    }
+}

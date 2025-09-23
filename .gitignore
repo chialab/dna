@@ -3,10 +3,10 @@ npm-debug.log
 .eslintcache
 .env
 coverage
-types
 dist
 /public
 tsconfig.tsbuildinfo
 docs/.vitepress/dist
 docs/.vitepress/cache
+test/**/__screenshots__
 local.log

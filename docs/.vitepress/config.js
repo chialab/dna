@@ -39,15 +39,13 @@ export default defineConfig({
             {
                 text: 'Ecosystem',
                 items: [
-                    { text: 'Quantum', link: 'https://chialab.github.io/quantum/' },
-                    { text: 'Plasma', link: 'https://chialab.github.io/plasma/' },
                     { text: 'Loock', link: 'https://chialab.github.io/loock/' },
                     { text: 'Synapse', link: 'https://github.com/chialab/synapse/' },
                 ],
             },
             {
-                text: 'Chialab Open Source',
-                link: 'https://www.chialab.io',
+                text: 'Chialab',
+                link: 'https://www.chialab.it',
             },
         ],
 
@@ -55,6 +53,7 @@ export default defineConfig({
             {
                 text: 'Guide',
                 items: [
+                    { text: 'Why DNA', link: '/guide/why-dna' },
                     {
                         text: 'Get started',
                         link: '/guide/',
@@ -100,7 +99,7 @@ export default defineConfig({
 
         footer: {
             message: 'Released under the MIT License.',
-            copyright: 'Copyright © 2023 - DNA project - Chialab',
+            copyright: 'Copyright © 2017-present Chialab',
         },
     },
     lastUpdated: true,

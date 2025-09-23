@@ -2,7 +2,7 @@
 
 ## Install
 
-DNA is published to the NPM registry
+DNA is published to the NPM registry and can be installed using your favorite package manager.
 
 ::: code-group
 
@@ -22,23 +22,29 @@ pnpm add @chialab/dna
 
 ## Configure Typescript
 
-This enables support for DNA decorators as well as correct transpilation of class property fields.
+::: tip
+
+You don't need TypeScript to use published DNA elements. This project setup is intended for developing new components.
+
+:::
+
+Advanced typechecking and decorators transpilation are available in TypeScript, which is the recommended way to develop DNA components.
+Add this to your `tsconfig.json` to support correct transpilation of class property fields.
 
 ::: code-group
 
 ```json [tsconfig.json]
 {
     "compilerOptions": {
-        "moduleResolution": "bundler",
+        // ...
         "useDefineForClassFields": false,
-        "experimentalDecorators": true
     }
 }
 ```
 
 :::
 
-## Configure JSX
+## Configure JSX / TSX
 
 ### Typescript
 
@@ -138,7 +144,7 @@ TypeScript enables type checking and hints for component properties when you reg
 ### Extending native elements
 
 Custom Element specification allows to define an element using the `is` attribute instead of the tag.  
-This is very useful when you want to extend a HTML tag, preserving its semanthic meaning. For example:
+This is very useful when you want to extend a HTML tag, preserving its semantic meaning. For example:
 
 ::: code-group
 
@@ -204,7 +210,7 @@ Extending builtin elements also preserves accessibility and usability features: 
 
 ## Render a component
 
-The `render` helper is used by DNA components to generate their templates, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
+The `render` helper is used by DNA components to generate their template, but it can be used to add a component or a template in a specific point of the DOM tree, for example to instantiate the root component of your application:
 
 ```tsx
 import { Component, customElement, render } from '@chialab/dna';

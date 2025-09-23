@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "sourceMap": false,
+    "inlineSources": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@chialab/dna",
+    "baseUrl": ".",
+    "rootDir": "..",
+    "paths": {
+      "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
+      "@chialab/dna/jsx-dev-runtime": ["../src/jsx-runtime.ts"],
+      "@chialab/dna/preact": ["../src/frameworks/preact.d.ts"],
+      "@chialab/dna/react": ["../src/frameworks/react.d.ts"],
+      "@chialab/dna/svelte": ["../src/frameworks/svelte.d.ts"],
+      "@chialab/dna": ["../src/index.ts"]
+    }
+  }
+}

@@ -14,23 +14,31 @@
 
 ## Features
 
-DNA aims to unleash the true power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through a declarative definition API, with builtin elements extension support and a simpler composition mechanism (yes, it does not use ShadowDOM).
+DNA aims to unleash the power of [Custom Elements](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) through **declarative** API, **customized built-in elements** and a **shadow-free composition**.
 
 ### Customized built-in elements
 
-DNA simplifies and encourages the use of customized built-in elements, which inherit methods and properties from standard HTML, preserving usability and accessibility features.
+DNA makes it easy to create customized built-in elements that inherit HTML behavior, preserving usability and accessibility.
 
 ### Properties, states and attributes
 
-DNA offers `@property` and `@state` decorators for adding reactivity to a component's class fields, ensuring that any changes are reflected in the component's template. These properties and states can be monitored, synchronized with attributes, and trigger change events.
-
-### Listeners and async events
-
-DNA uses event delegation for listening to events from a component's elements or slotted contents, offering the `@listen` decorator to streamline the process. Events can be asynchronous and dispatched from the component's class.
+With `@property` and `@state` decorators, DNA adds reactivity to class fields, syncing with attributes and triggering updates on change.
 
 ### Slots
 
-DNA uses [**Quantum**](https://chialab.github.io/quantum/) instead of ShadowDOM to render slotted children, simplifying the usage of custom elements inside forms and providing a more flexible management of slotted contents. Unlike ShadowDOM, Quantum also works for built-in elements, allowing you to use <slot> even inside buttons.
+DNA renders slotted content via a custom light DOM engine —no Shadow DOM— ensuring form compatibility and allowing `<slot>` inside built-in elements like `<button>`.
+
+### Listeners and async events
+
+Use the `@listen` decorator for delegated event handling, even for slotted content. Events can be async and dispatched from within the class.
+
+### Cross-framework compatibility
+
+Built with standard Web Components APIs, DNA works with any framework. Plasma can generate wrappers for React, Vue, Svelte, and Angular.
+
+### Storybook and documentation
+
+The DNA tools ecosystem includes a Storybook preset for Web Components, which automatically generates documentation and controls for your components.
 
 ## Get the library
 
