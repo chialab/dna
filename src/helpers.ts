@@ -77,7 +77,7 @@ if (!hasOwn.call(Symbol, 'metadata')) {
  * Constructor type helper.
  */
 export interface Constructor<T> {
-    readonly [Symbol.metadata]?: object;
+    readonly [Symbol.metadata]?: DecoratorMetadataObject | null;
 
     // biome-ignore lint/suspicious/noExplicitAny: This is a generic type definition.
     new (...args: any[]): T;

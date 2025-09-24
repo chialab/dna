@@ -805,7 +805,7 @@ export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
     /**
      * Metadata for decorators.
      */
-    readonly [Symbol.metadata]?: object;
+    readonly [Symbol.metadata]?: DecoratorMetadataObject | null;
 
     /**
      * The tag name of the extended builtin element.
