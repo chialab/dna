@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.2
+
+### Patch Changes
+
+- 63eff35: Bind decorated properties to prototype.
+
 ## 4.4.1
 
 ### Patch Changes
