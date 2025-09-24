@@ -8,9 +8,9 @@ import { type ClassElement, type Constructor, getOwnPropertyDescriptor, hasOwn, 
 const EVENT_CALLBACKS_SYMBOL: unique symbol = Symbol();
 
 /**
- * A Symbol which contains all listeners instances of a component constructor.
+ * A map of all listeners of a Component.
  */
-const LISTENERS_SYMBOL: unique symbol = Symbol();
+const LISTENERS_REGISTRY: Map<string, Listener[]> = new Map();
 
 /**
  * WeakMap containing all listeners metadata.
@@ -60,13 +60,6 @@ type WithEventDelegations = {
     [EVENT_CALLBACKS_SYMBOL]?: {
         [key: string]: DelegationList;
     };
-};
-
-/**
- * An object with listeners.
- */
-type WithListeners<T extends ComponentInstance> = ComponentConstructor<T> & {
-    [LISTENERS_SYMBOL]?: Listener[];
 };
 
 /**
@@ -370,11 +363,13 @@ export const dispatchAsyncEvent = async (
  * @returns A list of listeners.
  */
 export const getListeners = <T extends ComponentInstance>(prototype: T): Listener[] => {
-    const ctr = prototype.constructor as WithListeners<T>;
-    if (!hasOwn.call(ctr, LISTENERS_SYMBOL) || !ctr[LISTENERS_SYMBOL]) {
-        ctr[LISTENERS_SYMBOL] = [];
+    if (!prototype.is) {
+        throw new Error('Component is not defined');
     }
-    return ctr[LISTENERS_SYMBOL];
+    if (!LISTENERS_REGISTRY.has(prototype.is)) {
+        LISTENERS_REGISTRY.set(prototype.is, []);
+    }
+    return LISTENERS_REGISTRY.get(prototype.is) as Listener[];
 };
 
 /**

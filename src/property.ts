@@ -10,14 +10,19 @@ import {
 } from './helpers';
 
 /**
- * A Symbol which contains all Property instances of a Component.
+ * A map of all properties of a Component.
  */
-const PROPERTIES_SYMBOL: unique symbol = Symbol();
+const PROPERTIES_REGISTRY: Map<string, PropertiesOf<ComponentInstance>> = new Map();
 
 /**
- * A Symbol which contains all Property observers of a Component.
+ * A map of all observers of a Component.
  */
-const OBSERVERS_SYMBOL: unique symbol = Symbol();
+const OBSERVERS_REGISTRY: Map<string, ObserversOf<ComponentInstance>> = new Map();
+
+/**
+ * WeakMap containing all observers for each component instance.
+ */
+const OBSERVERS: WeakMap<ComponentInstance, ObserversOf<ComponentInstance>> = new WeakMap();
 
 /**
  * WeakMap containing all properties metadata.
@@ -41,14 +46,6 @@ type PropertiesOf<T extends ComponentInstance> = {
  */
 type ObserversOf<T extends ComponentInstance> = {
     [P in keyof T]: PropertyObserver<T[P]>[];
-};
-
-/**
- * A prototype with properties.
- */
-type WithProperties<T extends ComponentInstance> = ComponentConstructor<T> & {
-    [PROPERTIES_SYMBOL]?: PropertiesOf<T>;
-    [OBSERVERS_SYMBOL]?: ObserversOf<T>;
 };
 
 /**
@@ -261,11 +258,13 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
  * @returns A list of property descriptors.
  */
 export const getProperties = <T extends ComponentInstance>(prototype: T): PropertiesOf<T> => {
-    const ctr = prototype.constructor as WithProperties<T>;
-    if (!hasOwn.call(ctr, PROPERTIES_SYMBOL) || !ctr[PROPERTIES_SYMBOL]) {
-        ctr[PROPERTIES_SYMBOL] = {} as PropertiesOf<T>;
+    if (!prototype.is) {
+        throw new Error('Component is not defined');
     }
-    return ctr[PROPERTIES_SYMBOL];
+    if (!PROPERTIES_REGISTRY.has(prototype.is)) {
+        PROPERTIES_REGISTRY.set(prototype.is, {} as PropertiesOf<ComponentInstance>);
+    }
+    return PROPERTIES_REGISTRY.get(prototype.is) as PropertiesOf<T>;
 };
 
 /**
@@ -629,15 +628,17 @@ export function* decoratedObservers<T extends ComponentInstance, C extends Compo
 
 /**
  * Get component properties observers.
- * @param element The node.
+ * @param prototype The component prototype.
  * @returns The map of observers.
  */
-export const getObservers = <T extends ComponentInstance>(element: T): ObserversOf<T> => {
-    const ctr = element.constructor as WithProperties<T>;
-    if (!hasOwn.call(ctr, OBSERVERS_SYMBOL) || !ctr[OBSERVERS_SYMBOL]) {
-        ctr[OBSERVERS_SYMBOL] = {} as ObserversOf<T>;
+export const getObservers = <T extends ComponentInstance>(prototype: T): ObserversOf<T> => {
+    if (!prototype.is) {
+        throw new Error('Component is not defined');
     }
-    return ctr[OBSERVERS_SYMBOL];
+    if (!OBSERVERS_REGISTRY.has(prototype.is)) {
+        OBSERVERS_REGISTRY.set(prototype.is, {} as ObserversOf<ComponentInstance>);
+    }
+    return OBSERVERS_REGISTRY.get(prototype.is) as ObserversOf<T>;
 };
 
 /**
@@ -666,13 +667,15 @@ export const defineObserver = <T extends ComponentInstance, P extends keyof T>(
  * @throws If the property is not defined.
  */
 const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(
-    element: T & { [OBSERVERS_SYMBOL]?: ObserversOf<T> },
+    element: T,
     propertyName: P
 ): ObserversOf<T>[P] => {
     getProperty(element, propertyName, true);
 
-    const observers = element[OBSERVERS_SYMBOL] || ({} as ObserversOf<T>);
-    element[OBSERVERS_SYMBOL] = observers;
+    if (!OBSERVERS.has(element)) {
+        OBSERVERS.set(element, {} as ObserversOf<ComponentInstance>);
+    }
+    const observers = OBSERVERS.get(element) as ObserversOf<T>;
     if (!observers[propertyName]) {
         observers[propertyName] = [];
     }
