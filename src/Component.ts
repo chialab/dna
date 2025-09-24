@@ -985,11 +985,11 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
         }
 
         for (const [event, selector, callback, options] of staticListeners(currentCtr)) {
-            defineListener(prototype, event, selector, callback.bind(prototype), options);
+            defineListener(prototype, event, selector, callback, options);
         }
 
         for (const [event, selector, callback, options] of decoratedListeners(currentCtr)) {
-            defineListener(prototype, event, selector, callback.bind(prototype), options);
+            defineListener(prototype, event, selector, callback, options);
         }
 
         for (const [propertyKey, observer] of decoratedObservers(currentCtr)) {
