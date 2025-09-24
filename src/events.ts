@@ -426,7 +426,7 @@ export function* decoratedListeners<T extends ComponentInstance, C extends Compo
 ): Iterable<[string, string | null, DelegatedEventCallback, AddEventListenerOptions]> {
     const listenersMeta = hasOwn.call(ctr, Symbol.metadata)
         ? LISTENERS_METADATA.get(ctr[Symbol.metadata] as object)
-        : LISTENERS_METADATA.get(ctr);
+        : LISTENERS_METADATA.get(ctr.prototype);
     if (listenersMeta) {
         const prototype = ctr.prototype as T;
         for (const [name, event, selector, options] of listenersMeta) {
@@ -445,7 +445,7 @@ export function* decoratedEvents<T extends ComponentInstance, C extends Componen
 ): Iterable<[keyof T, string]> {
     const eventsMeta = hasOwn.call(ctr, Symbol.metadata)
         ? EVENTS_METADATA.get(ctr[Symbol.metadata] as object)
-        : EVENTS_METADATA.get(ctr);
+        : EVENTS_METADATA.get(ctr.prototype);
     if (eventsMeta) {
         for (const [name, eventName] of eventsMeta) {
             yield [name as keyof T, eventName];
@@ -508,7 +508,7 @@ function listen(
         }
 
         if (methodKey !== undefined) {
-            addListenerMetadata(targetOrClassElement.constructor, methodKey, eventName, selector, opts);
+            addListenerMetadata(targetOrClassElement, methodKey, eventName, selector, opts);
             return;
         }
 
@@ -516,7 +516,7 @@ function listen(
         return {
             ...element,
             finisher(ctr: Constructor<T>) {
-                addListenerMetadata(ctr, element.key, eventName, selector, opts);
+                addListenerMetadata(ctr.prototype, element.key, eventName, selector, opts);
             },
         };
     };
@@ -591,7 +591,7 @@ export function fires(eventName?: string): any {
         }
 
         if (propertyKey !== undefined) {
-            addEventMetadata(targetOrClassElement.constructor, propertyKey, eventName || extractEventName(propertyKey));
+            addEventMetadata(targetOrClassElement, propertyKey, eventName || extractEventName(propertyKey));
             return;
         }
 
@@ -599,7 +599,7 @@ export function fires(eventName?: string): any {
         return {
             ...classElement,
             finisher(ctr: Constructor<T>) {
-                addEventMetadata(ctr, classElement.key, eventName || extractEventName(classElement.key));
+                addEventMetadata(ctr.prototype, classElement.key, eventName || extractEventName(classElement.key));
             },
         };
     };

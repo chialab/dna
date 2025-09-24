@@ -582,16 +582,20 @@ export function* staticPropertiesDeclarations<T extends ComponentInstance, C ext
 export function* decoratedPropertiesDeclarations<T extends ComponentInstance, C extends ComponentConstructor<T>>(
     ctr: C
 ): Iterable<[keyof T, PropertyDeclaration]> {
-    const descriptorProperties = hasOwn.call(ctr, Symbol.metadata)
+    const hasMetadata = hasOwn.call(ctr, Symbol.metadata);
+    const descriptorProperties = hasMetadata
         ? PROPERTIES_METADATA.get(ctr[Symbol.metadata] as object)
-        : PROPERTIES_METADATA.get(ctr);
+        : PROPERTIES_METADATA.get(ctr.prototype);
     if (descriptorProperties) {
         const prototype = ctr.prototype as T;
         for (const propertyKey of descriptorProperties.keys()) {
             const declaration = {
                 ...descriptorProperties.get(propertyKey),
             } as PropertyDeclaration<T[keyof T]>;
-            const descriptor = getOwnPropertyDescriptor(getPrototypeOf(prototype), propertyKey);
+            const descriptor = getOwnPropertyDescriptor(
+                hasMetadata ? getPrototypeOf(prototype) : prototype,
+                propertyKey
+            );
             if (descriptor) {
                 declaration.get = descriptor.get;
                 declaration.set = descriptor.set;
@@ -614,7 +618,7 @@ export function* decoratedObservers<T extends ComponentInstance, C extends Compo
 ): Iterable<[keyof T, PropertyObserver]> {
     const observers = hasOwn.call(ctr, Symbol.metadata)
         ? OBSERVERS_METADATA.get(ctr[Symbol.metadata] as object)
-        : OBSERVERS_METADATA.get(ctr);
+        : OBSERVERS_METADATA.get(ctr.prototype);
     if (observers) {
         const prototype = ctr.prototype as T;
         for (const [propertyKey, observer] of observers) {
@@ -732,76 +736,6 @@ const addPropertyMetadata = (key: object, propertyKey: PropertyKey, declaration:
 };
 
 /**
- * Standard decorator for property definition.
- * @param context The decorator context.
- * @param declaration The property declaration.
- * @returns The decorator initializer.
- */
-const standardPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
-    context: ClassFieldDecoratorContext,
-    declaration: PropertyDeclaration<T[P]>
-) => {
-    if (
-        context.kind !== 'field' &&
-        context.kind !== 'accessor' &&
-        context.kind !== 'getter' &&
-        context.kind !== 'setter'
-    ) {
-        throw new TypeError('The @property decorator can be used only on class fields or accessors');
-    }
-
-    addPropertyMetadata(context.metadata, context.name, declaration);
-};
-
-/**
- * Old spec 2 decorator for property definition.
- * @param classElement The class element descriptor.
- * @param declaration The property declaration.
- * @returns The decorator initializer.
- */
-const legacyPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
-    classElement: ClassElement<T, T[P]>,
-    declaration: PropertyDeclaration<T[P]>
-) => {
-    if (classElement.kind !== 'field') {
-        throw new TypeError('Only class fields can be decorated with @property');
-    }
-    if (classElement.placement !== 'own') {
-        throw new TypeError('A @property decorator can only be used on a class field');
-    }
-
-    return {
-        ...classElement,
-        finisher(ctr: Constructor<T>) {
-            addPropertyMetadata(ctr, classElement.key, {
-                ...declaration,
-                initializer: classElement.initializer,
-            });
-        },
-    };
-};
-
-/**
- * Add a property to a component prototype.
- * @param target The component prototype.
- * @param declaration The property declaration.
- * @param propertyKey The property name.
- * @param descriptor The native property descriptor.
- * @returns The property descriptor.
- */
-const typescriptPropertyDecorator = <T extends ComponentInstance, P extends keyof T>(
-    target: T,
-    propertyKey: P,
-    descriptor: PropertyDeclaration<T[P]>,
-    declaration: PropertyDeclaration<T[P]>
-): PropertyDescriptor => {
-    const ctr = target.constructor as ComponentConstructor<T>;
-    addPropertyMetadata(ctr, propertyKey, declaration);
-
-    return descriptor;
-};
-
-/**
  * A decorator for property definition.
  * @param declaration The property declaration.
  * @returns The decorator initializer.
@@ -814,25 +748,38 @@ export function property(declaration: PropertyDeclaration = {}): any {
         descriptor: PropertyDescriptor
     ) => {
         if (typeof propertyKey === 'object') {
-            return standardPropertyDecorator(
-                propertyKey as ClassFieldDecoratorContext,
-                declaration as PropertyDeclaration<T[P]>
-            );
+            const context = propertyKey as ClassFieldDecoratorContext;
+            if (
+                context.kind !== 'field' &&
+                context.kind !== 'accessor' &&
+                context.kind !== 'getter' &&
+                context.kind !== 'setter'
+            ) {
+                throw new TypeError('The @property decorator can be used only on class fields or accessors');
+            }
+            addPropertyMetadata(context.metadata, context.name, declaration);
+            return;
         }
 
         if (typeof propertyKey === 'string' || typeof propertyKey === 'symbol') {
-            return typescriptPropertyDecorator(
-                targetOrClassElement,
-                propertyKey,
-                descriptor,
-                declaration as PropertyDeclaration<T[P]>
-            );
+            addPropertyMetadata(targetOrClassElement, propertyKey, declaration);
+            return descriptor;
         }
 
-        return legacyPropertyDecorator(
-            targetOrClassElement as unknown as ClassElement<T, T[P]>,
-            declaration as PropertyDeclaration<T[P]>
-        );
+        const classElement = targetOrClassElement as unknown as ClassElement<T, T[P]>;
+        if (classElement.kind !== 'field' || classElement.placement !== 'own') {
+            throw new TypeError('The @property decorator can be used only on class fields or accessors');
+        }
+
+        return {
+            ...classElement,
+            finisher(ctr: Constructor<T>) {
+                addPropertyMetadata(ctr.prototype, classElement.key, {
+                    ...declaration,
+                    initializer: classElement.initializer,
+                });
+            },
+        };
     };
 }
 
@@ -849,29 +796,45 @@ export function state(declaration: PropertyDeclaration = {}): any {
         descriptor: PropertyDescriptor
     ) => {
         if (typeof propertyKey === 'object') {
-            return standardPropertyDecorator(
-                propertyKey as ClassFieldDecoratorContext,
-                {
-                    ...declaration,
-                    state: true,
-                } as PropertyDeclaration<T[P]>
-            );
+            const context = propertyKey as ClassFieldDecoratorContext;
+            if (
+                context.kind !== 'field' &&
+                context.kind !== 'accessor' &&
+                context.kind !== 'getter' &&
+                context.kind !== 'setter'
+            ) {
+                throw new TypeError('The @property decorator can be used only on class fields or accessors');
+            }
+            addPropertyMetadata(context.metadata, context.name, {
+                ...declaration,
+                state: true,
+            });
+            return;
         }
 
         if (typeof propertyKey === 'string' || typeof propertyKey === 'symbol') {
-            return typescriptPropertyDecorator(targetOrClassElement, propertyKey, descriptor, {
+            addPropertyMetadata(targetOrClassElement, propertyKey, {
                 ...declaration,
                 state: true,
             } as PropertyDeclaration<T[P]>);
+            return descriptor;
         }
 
-        return legacyPropertyDecorator(
-            targetOrClassElement as unknown as ClassElement<T, T[P]>,
-            {
-                ...declaration,
-                state: true,
-            } as PropertyDeclaration<T[P]>
-        );
+        const classElement = targetOrClassElement as unknown as ClassElement<T, T[P]>;
+        if (classElement.kind !== 'field' || classElement.placement !== 'own') {
+            throw new TypeError('The @property decorator can be used only on class fields or accessors');
+        }
+
+        return {
+            ...classElement,
+            finisher(ctr: Constructor<T>) {
+                addPropertyMetadata(ctr.prototype, classElement.key, {
+                    ...declaration,
+                    state: true,
+                    initializer: classElement.initializer,
+                });
+            },
+        };
     };
 }
 
@@ -903,7 +866,7 @@ export function observe(propertyKey: string): any {
         }
 
         if (methodKey !== undefined) {
-            addObserverMetadata(targetOrClassElement.constructor, propertyKey, methodKey);
+            addObserverMetadata(targetOrClassElement, propertyKey, methodKey);
             return;
         }
 
@@ -911,7 +874,7 @@ export function observe(propertyKey: string): any {
         return {
             ...classElement,
             finisher(ctr: Constructor<T>) {
-                addObserverMetadata(ctr, propertyKey, classElement.key);
+                addObserverMetadata(ctr.prototype, propertyKey, classElement.key);
             },
         };
     };
