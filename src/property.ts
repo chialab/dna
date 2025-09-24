@@ -256,10 +256,11 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
  * Retrieve all properties descriptors.
  * @param prototype The component prototype.
  * @returns A list of property descriptors.
+ * @throws If the component has not been finalized.
  */
 export const getProperties = <T extends ComponentInstance>(prototype: T): PropertiesOf<T> => {
     if (!prototype.is) {
-        throw new Error('Component is not defined');
+        throw new Error('Component has not been finalized');
     }
     if (!PROPERTIES_REGISTRY.has(prototype.is)) {
         PROPERTIES_REGISTRY.set(prototype.is, {} as PropertiesOf<ComponentInstance>);
@@ -630,10 +631,11 @@ export function* decoratedObservers<T extends ComponentInstance, C extends Compo
  * Get component properties observers.
  * @param prototype The component prototype.
  * @returns The map of observers.
+ * @throws If the component has not been finalized.
  */
 export const getObservers = <T extends ComponentInstance>(prototype: T): ObserversOf<T> => {
     if (!prototype.is) {
-        throw new Error('Component is not defined');
+        throw new Error('Component has not been finalized');
     }
     if (!OBSERVERS_REGISTRY.has(prototype.is)) {
         OBSERVERS_REGISTRY.set(prototype.is, {} as ObserversOf<ComponentInstance>);

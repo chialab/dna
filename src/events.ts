@@ -361,10 +361,11 @@ export const dispatchAsyncEvent = async (
  * Retrieve all listeners descriptors.
  * @param prototype The component prototype.
  * @returns A list of listeners.
+ * @throws If the component has not been finalized.
  */
 export const getListeners = <T extends ComponentInstance>(prototype: T): Listener[] => {
     if (!prototype.is) {
-        throw new Error('Component is not defined');
+        throw new Error('Component has not been finalized');
     }
     if (!LISTENERS_REGISTRY.has(prototype.is)) {
         LISTENERS_REGISTRY.set(prototype.is, []);
