@@ -197,7 +197,34 @@ describe(
                 expect(element).toHaveProperty('testProp', 4);
             });
 
-            it('should define a property with a single observer', () => {
+            it('should define a property with decorated accessor', () => {
+                @DNA.customElement('test-properties-37')
+                class MyElement extends DNA.Component {
+                    @DNA.property()
+                    get testProp(): number {
+                        return this.getInnerPropertyValue('testProp') * 2;
+                    }
+                    set testProp(value) {
+                        this.setInnerPropertyValue('testProp', value);
+                    }
+
+                    constructor(node?: HTMLElement) {
+                        super(node);
+                        this.testProp = 42;
+                    }
+                }
+
+                @DNA.customElement('test-properties-38')
+                class MyElement2 extends MyElement {}
+
+                const element = new MyElement2();
+                expect(element).toHaveProperty('testProp', 84);
+
+                element.testProp = 2;
+                expect(element).toHaveProperty('testProp', 4);
+            });
+
+            it('should inherit a property with a single observer', () => {
                 const listener = vi.fn();
 
                 @DNA.customElement('test-properties-11')
