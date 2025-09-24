@@ -51,17 +51,7 @@ export type ListenerConfig = DelegatedEventCallback | DelegatedEventDescriptor;
 /**
  * A collector for event delegations.
  */
-type DelegationList = {
-    /**
-     * A list of delegation descriptors.
-     */
-    descriptors: [string, string | null, DelegatedEventCallback?][];
-
-    /**
-     * The real event listener.
-     */
-    listener: EventListenerOrEventListenerObject;
-};
+type DelegationList = [[string, string | null, DelegatedEventCallback?][], EventListenerOrEventListenerObject | null];
 
 /**
  * An object with event delegations.
@@ -159,15 +149,13 @@ export const delegateEventListener = (
     const delegations = delegatedElement[EVENT_CALLBACKS_SYMBOL] || {};
     delegatedElement[EVENT_CALLBACKS_SYMBOL] = delegations;
     // initialize the delegation list
-    const callbacks: DelegationList = delegations[eventName] || {
-        descriptors: [],
-    };
+    const callbacks: DelegationList = delegations[eventName] || [[], null];
     delegations[eventName] = callbacks;
-    const descriptors = callbacks.descriptors;
+    const [descriptors, listener] = callbacks;
     // check if the event has already been delegated
-    if (!callbacks.listener) {
+    if (!listener) {
         // setup the listener
-        callbacks.listener = (event) => {
+        const listener = (event: Event) => {
             if (!event.target) {
                 return;
             }
@@ -238,7 +226,8 @@ export const delegateEventListener = (
                 });
         };
 
-        element.addEventListener(eventName, callbacks.listener, options);
+        callbacks[1] = listener;
+        element.addEventListener(eventName, listener, options);
     }
 
     // add the delegation to the list
@@ -273,14 +262,14 @@ export const undelegateEventListener = (
     if (!(eventName in delegations)) {
         return;
     }
-    const { descriptors, listener } = delegations[eventName];
+    const [descriptors, listener] = delegations[eventName];
     // get the list of delegations
     // find the index of the callback to remove in the list
     for (let i = 0; i < descriptors.length; i++) {
         const [, eventSelector, eventCallback] = descriptors[i];
         if (eventSelector === selector && eventCallback === callback) {
             descriptors.splice(i, 1);
-            if (descriptors.length === 0) {
+            if (descriptors.length === 0 && listener) {
                 element.removeEventListener(eventName, listener);
             }
         }
