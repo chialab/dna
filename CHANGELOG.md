@@ -1,5 +1,13 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.1
+
+### Patch Changes
+
+- ca80679: Collect properties, observers and listeners by component name.
+- bce3dd9: Fix `Symbol.metadata` typings.
+- 16b139f: Fix listeners bound reference.
+
 ## 4.4.0
 
 ### Minor Changes
