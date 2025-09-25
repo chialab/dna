@@ -261,7 +261,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             });
             realm.dangerouslyOpen();
             realm.observe(() => {
-                this.childListChangedCallback();
+                element.childListChangedCallback();
             });
 
             // biome-ignore lint/correctness/noConstructorReturn: We need to return the element instance for the CE polyfill.
