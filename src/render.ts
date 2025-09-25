@@ -332,7 +332,7 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
  */
 const removeNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
     if (isComponent(parentContext.node) && !parentContext.shadow) {
-        if (parentContext.node.realm.childNodes.includes(childContext.node)) {
+        if (parentContext.node.slotChildNodes.includes(childContext.node)) {
             parentContext.node.removeChild(childContext.node);
         }
     } else if (childContext.node.parentNode === parentContext.node) {
@@ -479,7 +479,7 @@ const renderTemplate = (
                                     if (!currentChildren.includes(renderContext)) {
                                         return;
                                     }
-                                    if (isComponent(rootContext.node)) {
+                                    if (isComponent(rootContext.node) && rootContext.shadow) {
                                         rootContext.node.realm.requestUpdate(() => {
                                             internalRender(context, template, rootContext, namespace, renderContext);
                                         });

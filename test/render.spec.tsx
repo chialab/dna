@@ -993,6 +993,28 @@ describe(
                 expect(unknownElement).not.toHaveProperty('is');
                 expect(unknownElement.getAttribute('is')).toBe('unknown-element');
             });
+
+            it('should correctly handle not initialized realms (CE polyfill)', () => {
+                @DNA.customElement('test-render-16', {
+                    extends: 'div',
+                })
+                class TestElement extends DNA.HTML.Div {}
+
+                const Template = (toggle: boolean) => (
+                    <div is="test-render-16">{toggle ? <span>Test2</span> : 'Test'}</div>
+                );
+                const element = DNA.render(Template(false), wrapper) as TestElement;
+                expect(element).toHaveProperty('tagName', 'DIV');
+                expect(element).toHaveProperty('is', 'test-render-16');
+                expect(element).toBeInstanceOf(TestElement);
+                expect(element.slotChildNodes).toHaveLength(1);
+                expect(element.slotChildNodes[0]).toBeInstanceOf(Text);
+                expect(element).toHaveProperty('textContent', 'Test');
+                DNA.render(Template(true), wrapper) as TestElement;
+                expect(element.slotChildNodes).toHaveLength(1);
+                expect(element.slotChildNodes[0]).toBeInstanceOf(HTMLSpanElement);
+                expect(element).toHaveProperty('textContent', 'Test2');
+            });
         });
 
         describe('directives', () => {
