@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.3
+
+### Patch Changes
+
+- 9f94ba6: Fix polyfilled component scope on Realm changes.
+
 ## 4.4.2
 
 ### Patch Changes
