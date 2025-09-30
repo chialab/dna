@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.5
+
+### Patch Changes
+
+- 3e7ff72: Add support for frameworks that run hydration.
+
 ## 4.4.4
 
 ### Patch Changes
