@@ -33,6 +33,7 @@ describe(
             [DNA.isComponent, 'isComponent', 'function'],
             [DNA.isComponentConstructor, 'isComponentConstructor', 'function'],
             [DNA.Component, 'Component', 'function'],
+            [DNA.isHydrating, 'isHydrating', 'function'],
             [DNA.$parse, '$parse', 'function'],
             [DNA.$await, '$await', 'function'],
             [DNA.$until, '$until', 'function'],

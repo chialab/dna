@@ -92,9 +92,14 @@ export class Realm {
     protected virtualCurrentNode: Node | null = null;
 
     /**
+     * Whether the realm is initialized.
+     */
+    protected _active = false;
+
+    /**
      * Whether the realm is open.
      */
-    protected _open = false;
+    protected _open = true;
 
     /**
      * Setup the realm.
@@ -103,6 +108,13 @@ export class Realm {
     constructor(node: HTMLElement) {
         this.node = node;
         this.fragment = node.ownerDocument.createDocumentFragment();
+    }
+
+    /**
+     * Whether the realm is initialized.
+     */
+    get active(): boolean {
+        return this._active;
     }
 
     /**
@@ -116,6 +128,10 @@ export class Realm {
      * Initialize the realm.
      */
     initialize(): void {
+        if (this._active) {
+            return;
+        }
+        this._active = true;
         this.dangerouslyOpen();
         this.childNodes.splice(0, this.childNodes.length, ...[].slice.call(this.node.childNodes));
         this.childNodes.forEach((node) => {
@@ -134,6 +150,10 @@ export class Realm {
      * Restore the slot child nodes.
      */
     restore(): void {
+        if (!this._active) {
+            return;
+        }
+        this._active = false;
         this.dangerouslyOpen();
         this.childNodes.forEach((node) => {
             this.releaseNode(node);
@@ -534,12 +554,7 @@ if (isBrowser) {
                 // We return the root component as the parent node.
                 return parentRealm.node;
             }
-            const parentNode = getParentNodeDesc.get?.call(this);
-            if (!parentNode) {
-                return null;
-            }
-
-            return parentNode;
+            return getParentNodeDesc.get?.call(this) ?? null;
         },
     });
 

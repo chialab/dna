@@ -46,6 +46,33 @@ declare global {
 
 :::
 
+#### Hydration
+
+Many frameworks support hydration of server-rendered HTML. DNA elements rendering starts once the node is connected, so it may interfere with the hydration process. To avoid this, you can delay DNA rendering until the framework is ready. For example, in Svelte
+
+::: code-group
+
+```ts [hooks.client.ts]
+import { isHydrating } from '@chialab/dna';
+
+export const init = () => {
+	isHydrating(true);
+};
+```
+
+```svelte [+layout.svelte]
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { isHydrating } from '@chialab/dna';
+
+	onMount(() => {
+		isHydrating(false);
+	});
+</script>
+```
+
+:::
+
 ## View libraries
 
 Sometimes you need to encapsulate in DNA another UI library, like [Mapbox](https://github.com/mapbox/mapbox-gl-js) or [Pickr](https://github.com/Simonwep/pickr). Since DNA components are DOM nodes, the integration is possible using the element context as library param:

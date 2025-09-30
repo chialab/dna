@@ -60,14 +60,16 @@ export type {
 export type { ComponentConstructor, ComponentInstance } from './Component';
 export {
     Component,
-    customElement,
-    define,
     extend,
     HTML,
     isComponent,
     isComponentConstructor,
 } from './Component';
 export { css } from './css';
+export {
+    customElement,
+    define,
+} from './define';
 export { $await, $parse, $until } from './directives';
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
@@ -86,6 +88,7 @@ export {
     listen,
     undelegateEventListener,
 } from './events';
+export { isHydrating } from './hydration';
 export type {
     Attrs,
     FunctionComponent,
