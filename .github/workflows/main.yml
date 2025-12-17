@@ -18,6 +18,10 @@ jobs:
     timeout-minutes: 10
     needs:
       - lint-build-test
+    permissions:
+      id-token: write # Required for OIDC
+      contents: write # Required to create the release
+      pull-requests: write # Required to create the release PR
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
@@ -45,4 +49,4 @@ jobs:
           publish: yarn changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ""
