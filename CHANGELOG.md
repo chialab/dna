@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.4.6
+
+### Patch Changes
+
+- 521922c: Add inert global attribute to the list.
+
 ## 4.4.5
 
 ### Patch Changes
