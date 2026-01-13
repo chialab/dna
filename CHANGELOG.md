@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.5.0
+
+### Minor Changes
+
+- 246d231: Add support for importing `globalStyles`.
+
 ## 4.4.6
 
 ### Patch Changes
