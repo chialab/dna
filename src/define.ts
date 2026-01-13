@@ -147,6 +147,22 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
     }
 
     if (isBrowser) {
+        if (Component.globalStyles) {
+            const entries = Array.isArray(Component.globalStyles) ? Component.globalStyles : [Component.globalStyles];
+            for (const entry of entries) {
+                if (typeof entry === 'string') {
+                    const style = document.createElement('style');
+                    style.textContent = entry;
+                    document.head.appendChild(style);
+                } else if (!document.adoptedStyleSheets.includes(entry)) {
+                    if (Object.isExtensible(document.adoptedStyleSheets)) {
+                        document.adoptedStyleSheets.push(entry);
+                    } else {
+                        document.adoptedStyleSheets = [...document.adoptedStyleSheets, entry];
+                    }
+                }
+            }
+        }
         customElements.define(name, Component, options);
     }
 

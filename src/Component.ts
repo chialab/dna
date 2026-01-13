@@ -117,6 +117,11 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         }
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -800,6 +805,11 @@ export interface BaseComponentConstructor<T extends HTMLElement = HTMLElement> {
      * An array containing the names of the attributes to observe.
      */
     readonly observedAttributes?: string[];
+
+    /**
+     * Component stylesheets.
+     */
+    readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
     /**
      * Define component properties.

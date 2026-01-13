@@ -15,6 +15,12 @@ describe(
             if (wrapper.parentNode) {
                 document.body.removeChild(wrapper);
             }
+            if (document.adoptedStyleSheets) {
+                document.adoptedStyleSheets = [];
+            }
+            document.head.querySelectorAll('style').forEach((style) => {
+                style.remove();
+            });
         });
 
         describe('#new', () => {
@@ -2095,6 +2101,77 @@ describe(
                     expect(element.age).toBeNull();
                 });
             });
+        });
+
+        describe('globalStyles', () => {
+            it.skipIf(typeof CSSStyleSheet === 'undefined' || !CSSStyleSheet.prototype.replaceSync)(
+                'should apply global CSSStyleSheet on define',
+                () => {
+                    const sheet = new CSSStyleSheet();
+                    sheet.replaceSync('test-component-82 { color: red; }');
+
+                    @DNA.customElement('test-component-82')
+                    class TestElement extends DNA.Component {
+                        static globalStyles = sheet;
+                    }
+
+                    const element = new TestElement();
+                    wrapper.appendChild(element);
+
+                    const styles = getComputedStyle(element);
+                    expect(styles.color).toBeOneOf(['red', 'rgb(255, 0, 0)']);
+                }
+            );
+
+            it('should apply global CSS string on define', () => {
+                @DNA.customElement('test-component-83')
+                class TestElement extends DNA.Component {
+                    static globalStyles = 'test-component-83 { color: red; }';
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                const styles = getComputedStyle(element);
+                expect(styles.color).toBeOneOf(['red', 'rgb(255, 0, 0)']);
+            });
+
+            it('should apply multiple global styles on define', () => {
+                @DNA.customElement('test-component-84')
+                class TestElement extends DNA.Component {
+                    static globalStyles = [
+                        'test-component-84 { color: red; }',
+                        'test-component-84 { display: block; }',
+                    ];
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                const styles = getComputedStyle(element);
+                expect(styles.color).toBeOneOf(['red', 'rgb(255, 0, 0)']);
+                expect(styles.display).toBe('block');
+            });
+
+            it.skipIf(typeof CSSStyleSheet === 'undefined' || !CSSStyleSheet.prototype.replaceSync)(
+                'should apply global CSSStyleSheet only once',
+                () => {
+                    const sheet = new CSSStyleSheet();
+                    sheet.replaceSync('test-component-85, test-component-86 { color: red; }');
+
+                    @DNA.customElement('test-component-85')
+                    class TestElement extends DNA.Component {
+                        static globalStyles = sheet;
+                    }
+
+                    @DNA.customElement('test-component-86')
+                    class TestElement2 extends DNA.Component {
+                        static globalStyles = sheet;
+                    }
+
+                    expect(document.adoptedStyleSheets).toHaveLength(1);
+                }
+            );
         });
     },
     10 * 1000
