@@ -155,7 +155,11 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
                     style.textContent = entry;
                     document.head.appendChild(style);
                 } else if (!document.adoptedStyleSheets.includes(entry)) {
-                    document.adoptedStyleSheets.push(entry);
+                    if (Object.isExtensible(document.adoptedStyleSheets)) {
+                        document.adoptedStyleSheets.push(entry);
+                    } else {
+                        document.adoptedStyleSheets = [...document.adoptedStyleSheets, entry];
+                    }
                 }
             }
         }
