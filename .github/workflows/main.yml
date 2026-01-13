@@ -42,6 +42,9 @@ jobs:
       - name: Lint package
         run: yarn publint --pack npm
 
+      - name: Update NPM to latest version
+        run: npm install -g npm@latest
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
