@@ -1,4 +1,46 @@
-# Styles
+# Styling
+
+## Global styles
+
+You can define global styles for your components using the static `globalStyles` property. This property can be a string, an array of strings or a `CSSStyleSheet` instance.
+
+::: warning
+
+Be careful when using global styles, as they will affect the entire document and may lead to unexpected results if not managed properly.
+Always use a [style technique](#other-styling-techniques) that scopes your CSS rules to avoid collisions.
+
+:::
+
+When a component is defined, its global styles are injected into the document `<head>` inside a `<style>` tag (or adopted if a `CSSStyleSheet` is used).
+
+```tsx
+import { Component, customElement } from '@chialab/dna';
+
+@customElement('x-card')
+class Card extends Component {
+    static globalStyles = `
+        x-card {
+            display: block;
+        }
+    `;
+}
+```
+
+### Importing CSS modules
+
+You can also import CSS as `CSSStyleSheet` instances if your bundler supports it.
+
+```tsx
+import { Component, customElement } from '@chialab/dna';
+import styles from './x-card.css' with { type: 'css' };
+
+@customElement('x-card')
+class Card extends Component {
+    static globalStyles = styles;
+}
+```
+
+## Scoped styles
 
 DNA can render plain `<style>` tags in a template, but what about style encapsulation?
 
@@ -9,8 +51,6 @@ Since components can be extended and stylesheets inherited, we need to be able t
 You may don't need to use DNA's scoped style if you are already using a styling strategy to build and distribuite your CSS files. Other good options are CSS-in-JS, CSS Modules and BEM with lazy loading styles.
 
 :::
-
-## Scoped styles
 
 Every `<style>` tag rendered to a component is scoped.
 

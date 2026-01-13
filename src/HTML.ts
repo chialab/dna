@@ -16,6 +16,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -286,6 +291,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -560,6 +570,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -830,6 +845,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -1104,6 +1124,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -1374,6 +1399,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -1648,6 +1678,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -1918,6 +1953,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -2192,6 +2232,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -2462,6 +2507,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -2736,6 +2786,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -3006,6 +3061,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -3280,6 +3340,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -3550,6 +3615,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -3824,6 +3894,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -4094,6 +4169,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -4368,6 +4448,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -4638,6 +4723,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -4912,6 +5002,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -5182,6 +5277,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -5456,6 +5556,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -5726,6 +5831,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -6000,6 +6110,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -6270,6 +6385,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -6544,6 +6664,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -6814,6 +6939,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -7088,6 +7218,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -7358,6 +7493,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -7632,6 +7772,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -7902,6 +8047,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -8176,6 +8326,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -8446,6 +8601,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -8720,6 +8880,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -8990,6 +9155,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -9264,6 +9434,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -9534,6 +9709,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -9809,6 +9989,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -10079,6 +10264,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -10353,6 +10543,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -10625,6 +10820,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -10895,6 +11095,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -11170,6 +11375,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -11440,6 +11650,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -11714,6 +11929,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -11984,6 +12204,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -12258,6 +12483,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -12528,6 +12758,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -12802,6 +13037,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -13072,6 +13312,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -13346,6 +13591,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -13616,6 +13866,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -13890,6 +14145,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -14160,6 +14420,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -14434,6 +14699,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -14704,6 +14974,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -14978,6 +15253,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -15248,6 +15528,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -15522,6 +15807,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -15792,6 +16082,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -16066,6 +16361,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -16336,6 +16636,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -16610,6 +16915,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -16880,6 +17190,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -17154,6 +17469,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -17424,6 +17744,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
@@ -17698,6 +18023,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -17970,6 +18300,11 @@ export declare namespace HTML {
         static readonly observedAttributes?: string[];
 
         /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
+
+        /**
          * Define component properties.
          */
         static readonly properties?: {
@@ -18240,6 +18575,11 @@ export declare namespace HTML {
          * An array containing the names of the attributes to observe.
          */
         static readonly observedAttributes?: string[];
+
+        /**
+         * Component global stylesheets.
+         */
+        static readonly globalStyles?: string | CSSStyleSheet | (CSSStyleSheet | string)[];
 
         /**
          * Define component properties.
