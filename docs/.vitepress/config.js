@@ -40,6 +40,8 @@ export default defineConfig({
                 text: 'Ecosystem',
                 items: [
                     { text: 'Loock', link: 'https://chialab.github.io/loock/' },
+                    { text: 'RNA', link: 'https://chialab.github.io/rna/' },
+                    { text: 'Catalog', link: 'https://catalog.chialab.io/' },
                     { text: 'Synapse', link: 'https://github.com/chialab/synapse/' },
                 ],
             },
