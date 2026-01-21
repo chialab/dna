@@ -12,7 +12,7 @@
     "useDefineForClassFields": false,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "jsxImportSource": "@chialab/dna",
     "baseUrl": ".",

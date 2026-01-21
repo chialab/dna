@@ -3,10 +3,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vi
 
 describe('Vitest compatibility', () => {
     let wrapper: HTMLElement;
-    let userEvent: typeof import('@vitest/browser/context').userEvent;
+    let userEvent: import('vitest/browser').UserEvent;
 
     beforeAll(async () => {
-        const context = await import('@vitest/browser/context');
+        const context = await import('vitest/browser');
         userEvent = context.userEvent;
     });
 
