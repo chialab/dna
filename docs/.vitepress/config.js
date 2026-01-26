@@ -81,6 +81,10 @@ export default defineConfig({
                         link: '/guide/styling',
                     },
                     {
+                        text: 'Testing',
+                        link: '/guide/testing',
+                    },
+                    {
                         text: 'Integrations',
                         link: '/guide/integrations',
                     },
