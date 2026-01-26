@@ -165,7 +165,7 @@ const Dialog = define(
 You can also use `delegateEventListener` and `undelegateEventListener` methods:
 
 ```ts
-import { HTML, customElement } from '@chialab/idom';
+import { HTML, customElement } from '@chialab/dna';
 
 @customElement('x-dialog', {
     extends: 'dialog',

@@ -669,6 +669,7 @@ class MenuButton extends Component {
                 <li role="menuitem">Item 2</li>
                 <li role="menuitem">Item 3</li>
             </ul>
+        </>;
     }
 }
 ```

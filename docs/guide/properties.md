@@ -246,7 +246,7 @@ An observer is a function invoked each time a property is updated. It receives t
 Components have two methods to dynamically add and remove property observers: `observe` and `unobserve`. This methods can be used in the class context (`this.observe(...)`) or externally (`element.observe()`):
 
 ```ts
-import { Component, customElement, property } from '@chialab/idom';
+import { Component, customElement, property } from '@chialab/dna';
 
 @customElement('x-card')
 class Card extends Component {
