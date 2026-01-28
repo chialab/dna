@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import llmstxt from 'vitepress-plugin-llms';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -6,6 +7,10 @@ export default defineConfig({
     description: 'Progressive Web Components',
     base: '/dna/',
     outDir: '../public',
+
+    vite: {
+        plugins: [llmstxt()]
+    },
 
     head: [['link', { rel: 'icon', href: '/dna/favicon.png' }]],
 

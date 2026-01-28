@@ -102,7 +102,9 @@ pnpm add @chialab/storybook-dna-vite -D
 
 And load it in the **main.js** config file:
 
-```ts
+::: code-group
+
+```ts [.storybook/main.js]
 export default {
     framework: {
         name: '@chialab/storybook-dna-vite',
@@ -113,3 +115,5 @@ export default {
     },
 };
 ```
+
+:::
