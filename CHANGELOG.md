@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 3.22.8
+
+### Patch Changes
+
+- Ensure the custom element constructor is a DNA component when creating the vnode.
+
 ## 3.22.7
 
 ### Patch Changes

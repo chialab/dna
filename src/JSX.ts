@@ -272,9 +272,15 @@ function h<T extends typeof Fragment | FunctionComponent | ComponentConstructor 
     }
 
     if (is) {
-        tagOrComponent = customElements.get(is) as T || tagOrComponent;
+        const customElement = customElements.get(is);
+        if (customElement && isComponentConstructor(customElement)) {
+            tagOrComponent = customElement as T;
+        }
     } else if (typeof tagOrComponent === 'string') {
-        tagOrComponent = customElements.get(tagOrComponent) as T || tagOrComponent;
+        const customElement = customElements.get(tagOrComponent);
+        if (customElement && isComponentConstructor(customElement)) {
+            tagOrComponent = customElement as T;
+        }
     }
 
     const vnode = {
