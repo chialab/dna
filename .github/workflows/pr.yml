@@ -19,18 +19,18 @@ jobs:
       max-parallel: 2
       matrix:
         browser:
-          - 'chrome-latest'
-          - 'chrome-latest-1'
-          - 'chrome-latest-2'
-          - 'chrome-87'
-          - 'firefox-latest'
-          - 'firefox-latest-1'
-          - 'firefox-latest-2'
-          - 'firefox-90'
-          - 'safari-latest'
-          - 'safari-16'
-          - 'safari-15'
-          - 'edge-latest'
+          - "chrome-latest"
+          - "chrome-latest-1"
+          - "chrome-latest-2"
+          - "chrome-87"
+          - "firefox-latest"
+          - "firefox-latest-1"
+          - "firefox-latest-2"
+          - "firefox-90"
+          - "safari-latest"
+          - "safari-16"
+          - "safari-15"
+          - "edge-latest"
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: latest
           cache: yarn
 
       - name: Install project dependencies

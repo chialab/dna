@@ -2160,16 +2160,16 @@ describe(
                     sheet.replaceSync('test-component-85, test-component-86 { color: red; }');
 
                     @DNA.customElement('test-component-85')
-                    class TestElement extends DNA.Component {
+                    class _TestElement extends DNA.Component {
                         static globalStyles = sheet;
                     }
 
                     @DNA.customElement('test-component-86')
-                    class TestElement2 extends DNA.Component {
+                    class _TestElement2 extends DNA.Component {
                         static globalStyles = sheet;
                     }
 
-                    expect(document.adoptedStyleSheets).toHaveLength(1);
+                    expect(document.head.querySelectorAll('style')).toHaveLength(1);
                 }
             );
         });

@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -35,7 +35,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -77,11 +77,11 @@ jobs:
         run: yarn test:browser --coverage
 
       - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/clover.xml
+          files: coverage/clover.xml
 
   test-node:
     name: Test Node
@@ -93,7 +93,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: latest
           cache: yarn
 
       - name: Install project dependencies
@@ -105,8 +105,8 @@ jobs:
         run: yarn test:node --coverage
 
       - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/clover.xml
+          files: coverage/clover.xml
