@@ -78,7 +78,7 @@ let stylePosition: Comment | null = null;
 /**
  * A set of references to global stylesheets that have been adopted.
  */
-const adoptedStyles = new Set<string | CSSStyleSheet>();
+const adoptedStyles = new Map<string | CSSStyleSheet, HTMLStyleElement>();
 
 /**
  * Define a component class.
@@ -164,10 +164,15 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
             }
             const entries = Array.isArray(Component.globalStyles) ? Component.globalStyles : [Component.globalStyles];
             for (const entry of entries) {
-                if (adoptedStyles.has(entry)) {
+                let style = adoptedStyles.get(entry);
+                if (style) {
+                    if (!style.isConnected) {
+                        document.head.insertBefore(style, stylePosition);
+                    }
                     continue;
                 }
-                const style = document.createElement('style');
+                style = document.createElement('style');
+                adoptedStyles.set(entry, style);
                 if (typeof entry === 'string') {
                     style.textContent = entry;
                 } else {
