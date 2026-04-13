@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.5.1
+
+### Patch Changes
+
+- 4dfacf1: Move `globalStyles` to the top of the `<head>` element.
+
 ## 4.5.0
 
 ### Minor Changes
