@@ -71,6 +71,11 @@ function finalize<T extends ComponentInstance, C extends ComponentConstructor<T>
 }
 
 /**
+ * The position of the global styles in the document head.
+ */
+let stylePosition: Comment | null = null;
+
+/**
  * Define a component class.
  * @param name The name of the custom element.
  * @param ctr The component class to define.
@@ -148,19 +153,21 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
 
     if (isBrowser) {
         if (Component.globalStyles) {
+            if (!stylePosition) {
+                stylePosition = document.createComment('dna');
+                document.head.prepend(stylePosition);
+            }
             const entries = Array.isArray(Component.globalStyles) ? Component.globalStyles : [Component.globalStyles];
             for (const entry of entries) {
+                const style = document.createElement('style');
                 if (typeof entry === 'string') {
-                    const style = document.createElement('style');
                     style.textContent = entry;
-                    document.head.appendChild(style);
-                } else if (!document.adoptedStyleSheets.includes(entry)) {
-                    if (Object.isExtensible(document.adoptedStyleSheets)) {
-                        document.adoptedStyleSheets.push(entry);
-                    } else {
-                        document.adoptedStyleSheets = [...document.adoptedStyleSheets, entry];
-                    }
+                } else {
+                    style.textContent = Array.from(entry.cssRules ?? [])
+                        .map((rule) => rule.cssText)
+                        .join('\n');
                 }
+                document.head.insertBefore(style, stylePosition);
             }
         }
         customElements.define(name, Component, options);
