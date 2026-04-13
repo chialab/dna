@@ -76,6 +76,11 @@ function finalize<T extends ComponentInstance, C extends ComponentConstructor<T>
 let stylePosition: Comment | null = null;
 
 /**
+ * A set of references to global stylesheets that have been adopted.
+ */
+const adoptedStyles = new Set<string | CSSStyleSheet>();
+
+/**
  * Define a component class.
  * @param name The name of the custom element.
  * @param ctr The component class to define.
@@ -159,6 +164,9 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
             }
             const entries = Array.isArray(Component.globalStyles) ? Component.globalStyles : [Component.globalStyles];
             for (const entry of entries) {
+                if (adoptedStyles.has(entry)) {
+                    continue;
+                }
                 const style = document.createElement('style');
                 if (typeof entry === 'string') {
                     style.textContent = entry;
