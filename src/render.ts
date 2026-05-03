@@ -627,7 +627,7 @@ const renderTemplate = (
 
         insertNode(context, templateContext, rootContext);
 
-        if ((templateContext && children && children.length) || templateContext.root === rootContext) {
+        if ((templateContext && children?.length) || templateContext.root === rootContext) {
             internalRender(templateContext, children, rootContext, namespaceURI, undefined);
         }
         return;

@@ -242,7 +242,7 @@ describe(
                 }
 
                 @DNA.customElement('test-template-4')
-                class MyTitle extends DNA.Component {
+                class _MyTitle extends DNA.Component {
                     render() {
                         return (
                             <span class="title">
@@ -308,7 +308,7 @@ describe(
                 }
 
                 @DNA.customElement('test-template-6')
-                class MyTitle extends DNA.Component {
+                class _MyTitle extends DNA.Component {
                     render() {
                         return (
                             <span class="title">
@@ -460,7 +460,7 @@ describe(
                 ) as MyElement;
 
                 @DNA.customElement('test-template-10')
-                class MyCard extends DNA.Component {
+                class _MyCard extends DNA.Component {
                     render() {
                         return <slot />;
                     }
@@ -522,7 +522,7 @@ describe(
                 ) as MyElement;
 
                 @DNA.customElement('test-template-12')
-                class MyCard extends DNA.Component {
+                class _MyCard extends DNA.Component {
                     render() {
                         return DNA.html`<slot />`;
                     }

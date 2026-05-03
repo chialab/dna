@@ -531,23 +531,24 @@ export type EventHandler<
     T extends Event = Event,
     OverrideNative extends boolean = false,
     OverrideOnError extends boolean = false,
-> = // biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
-| ((event: T | (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)) => any)
-| null;
+> =
+    | ((
+          event: T | (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)
+          // biome-ignore lint/suspicious/noExplicitAny: Event handlers can return any type.
+      ) => any)
+    | null;
 
 /**
  * Extract event type from handler property.
  */
-export type EventType<T extends ComponentInstance, P extends keyof T, Strict extends boolean = false> = Exclude<
-    T[P],
-    undefined
-> extends EventHandler<infer E, infer OverrideNative, infer OverrideOnError>
-    ?
-          | E
-          | (Strict extends false
-                ? (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)
-                : never)
-    : never;
+export type EventType<T extends ComponentInstance, P extends keyof T, Strict extends boolean = false> =
+    Exclude<T[P], undefined> extends EventHandler<infer E, infer OverrideNative, infer OverrideOnError>
+        ?
+              | E
+              | (Strict extends false
+                    ? (OverrideNative extends true ? Event : never) | (OverrideOnError extends true ? string : never)
+                    : never)
+        : never;
 
 /**
  * Extract the event name from a property key.

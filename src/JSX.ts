@@ -406,7 +406,7 @@ function jsx<T extends FunctionComponent | HTMLElement | 'slot' | string>(
 const jsxs: typeof jsx = jsx;
 const jsxDEV: typeof jsx = jsx;
 
-export { h, jsx, jsxs, jsxDEV };
+export { h, jsx, jsxDEV, jsxs };
 
 /**
  * Compile a template string into virtual DOM template.
