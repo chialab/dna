@@ -1,6 +1,6 @@
 import { type ComponentConstructor, type ComponentInstance, isComponentConstructor, isInitialized } from './Component';
 import { decoratedEvents, decoratedListeners, defineListener, type EventHandler, staticListeners } from './events';
-import { defineProperty as _defineProperty, type ClassDescriptor, getPrototypeOf, hasOwn, isBrowser } from './helpers';
+import { defineProperty as _defineProperty, type ClassDescriptor, getPrototypeOf, hasOwn } from './helpers';
 import {
     decoratedObservers,
     decoratedPropertiesDeclarations,
@@ -156,7 +156,7 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
         currentCtr = getPrototypeOf(currentCtr);
     }
 
-    if (isBrowser) {
+    if (typeof document !== 'undefined') {
         if (Component.globalStyles) {
             if (!stylePosition) {
                 stylePosition = document.createComment('dna');
@@ -183,6 +183,8 @@ export function define<T extends ComponentInstance, C extends ComponentConstruct
                 document.head.insertBefore(style, stylePosition);
             }
         }
+    }
+    if (typeof customElements !== 'undefined') {
         customElements.define(name, Component, options);
     }
 

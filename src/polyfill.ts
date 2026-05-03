@@ -1,6 +1,6 @@
 import type { CustomElement, CustomElementConstructor } from './CustomElement';
 import * as Elements from './Elements';
-import { getPrototypeOf, hasOwn, isBrowser, isElement, setPrototypeOf } from './helpers';
+import { getPrototypeOf, hasOwn, isElement, setPrototypeOf } from './helpers';
 
 /**
  * Register a polyfill for Customized built-in elements.
@@ -344,6 +344,6 @@ function checkBuiltin() {
     return document.createElement('br', { is: name }) instanceof Constructor;
 }
 
-if (isBrowser && !checkBuiltin()) {
+if (typeof window !== 'undefined' && !checkBuiltin()) {
     polyfillBuiltin();
 }

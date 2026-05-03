@@ -53,11 +53,6 @@ export const defineProperty: (typeof Object)['defineProperty'] = Object.definePr
  */
 export const isElement = (node: unknown): node is Element => (node as Node)?.nodeType === Node.ELEMENT_NODE;
 
-/**
- * Check if runtime has DOM specs.
- */
-export const isBrowser: boolean = typeof HTMLElement !== 'undefined';
-
 declare global {
     interface SymbolConstructor {
         readonly metadata: unique symbol;

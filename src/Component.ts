@@ -10,7 +10,7 @@ import {
 } from './events';
 import { uniqueId } from './factories';
 import type { HTML as HTMLNamespace } from './HTML';
-import { type Constructor, defineProperty, isBrowser, setPrototypeOf } from './helpers';
+import { type Constructor, defineProperty, setPrototypeOf } from './helpers';
 import { afterHydration } from './hydration';
 import type { Template } from './JSX';
 import {
@@ -222,10 +222,11 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         }
 
         constructor(node?: HTMLElement) {
-            super();
-            if (!isBrowser) {
+            if (typeof HTMLElement === 'undefined') {
                 throw new Error('Components can be used only in browser environment');
             }
+
+            super();
 
             let element: this;
             if (node) {

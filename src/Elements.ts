@@ -1,5 +1,3 @@
-import { isBrowser } from './helpers';
-
 export interface HTMLTagNameMap {
     a: HTMLAnchorElement;
     abbr: HTMLElement;
@@ -187,7 +185,7 @@ export interface SVGTagNameMap {
     view: SVGViewElement;
 }
 
-const global = (isBrowser ? window : {}) as unknown as typeof window;
+const global = (typeof window !== 'undefined' ? window : {}) as unknown as typeof window;
 
 type GlobalThis = typeof globalThis;
 

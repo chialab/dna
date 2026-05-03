@@ -1,5 +1,5 @@
 import { isComponent } from './Component';
-import { defineProperty, getOwnPropertyDescriptors, isBrowser } from './helpers';
+import { defineProperty, getOwnPropertyDescriptors } from './helpers';
 
 /**
  * A callback to call when a realm changes.
@@ -515,7 +515,7 @@ export class Realm {
     }
 }
 
-if (isBrowser) {
+if (typeof Node !== 'undefined' && typeof Element !== 'undefined' && typeof CharacterData !== 'undefined') {
     // From here to the end of the method, we enter the realm of dark magic.
     // We're going to modify the prototype of slotted nodes to improve compatibility with other rendering frameworks.
     const NodePrototype = Node.prototype;
