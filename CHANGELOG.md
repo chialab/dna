@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.5.2
+
+### Patch Changes
+
+- eea8b78: Use specific feature detection for browser apis.
+
 ## 4.5.1
 
 ### Patch Changes
