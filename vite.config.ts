@@ -53,7 +53,6 @@ export default defineConfig({
         fileParallelism: false,
         reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : [],
         coverage: {
-            all: false,
             provider: 'istanbul',
             include: ['src/**/*'],
             reporter: ['clover', 'html'],

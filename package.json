@@ -3,9 +3,6 @@
   "version": "4.5.2",
   "description": "Progressive Web Components",
   "type": "module",
-  "main": "dist/dna.js",
-  "module": "dist/dna.js",
-  "types": "dist/dna.d.ts",
   "exports": {
     ".": {
       "types": "./dist/dna.d.ts",
@@ -57,17 +54,17 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
-    "@angular/common": "^20.1.7",
-    "@angular/compiler": "^20.1.7",
-    "@angular/core": "^20.1.7",
-    "@angular/platform-browser": "^20.1.7",
-    "@angular/router": "^20.1.7",
+    "@angular/common": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/router": "^21.0.0",
     "@babel/runtime": "^7.14.0",
     "@biomejs/biome": "^2.1.0",
     "@changesets/cli": "^2.22.0",
     "@chialab/vitest-provider-browserstack": "^4.0.0",
-    "@sveltejs/vite-plugin-svelte": "^6.1.0",
-    "@testing-library/angular": "^18.0.0",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@testing-library/angular": "^19.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/preact": "^3.2.4",
     "@testing-library/react": "^16.3.0",
@@ -95,16 +92,16 @@
     "svelte": "^5.33.1",
     "svelte-check": "^4.3.1",
     "tslib": "^2.6.2",
-    "typescript": "^5.0.0",
+    "typescript": "^6.0.0",
     "uhtml": "^4.7.1",
-    "unplugin-isolated-decl": "^0.15.1",
-    "vite": "^7.0.0",
+    "unplugin-isolated-decl": "^0.16.0",
+    "vite": "^8.0.0",
     "vite-plugin-static-copy": "^3.1.2",
     "vitepress": "^2.0.0-alpha.0",
     "vitepress-plugin-llms": "^1.10.0",
     "vitest": "^4.0.0",
     "vue": "^3.5.14",
-    "zone.js": "^0.15.1"
+    "zone.js": "^0.16.0"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2022", "dom"],
     "sourceMap": false,
     "inlineSources": false,
     "strict": true,
     "noImplicitAny": true,
+    "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,
@@ -15,8 +16,6 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "jsxImportSource": "@chialab/dna",
-    "baseUrl": ".",
-    "rootDir": "..",
     "paths": {
       "@chialab/dna/jsx-runtime": ["../src/jsx-runtime.ts"],
       "@chialab/dna/jsx-dev-runtime": ["../src/jsx-runtime.ts"],
