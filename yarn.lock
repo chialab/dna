@@ -10,9 +10,9 @@
     tslib "^2.3.0"
 
 "@angular/compiler@^21.0.0":
-  version "21.2.12"
-  resolved "https://registry.npmjs.org/@angular/compiler/-/compiler-21.2.12.tgz#70072632f6247e4975f3fe5236c7dd05d6502cc9"
-  integrity sha512-246iBwMAVGzrYPqu/Wwzb9L/kt+dkT12Hllr/dYZu6aHeIxaHPRZoPBKSweAgOPXeOl+q+nlPtK34glsMb1CRw==
+  version "21.2.17"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-21.2.17.tgz#581c32d5b2788fced368b32793702043295a562a"
+  integrity sha512-p+NdjYiwAz9Zmu2yul0LlMXaFjMISVVa24+/MVMoKFeQeI82QE8jDywPlnOSHQHvdCcQVpS7saeEriZzX3JuBQ==
   dependencies:
     tslib "^2.3.0"
 
