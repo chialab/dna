@@ -387,6 +387,50 @@ function Timer({ interval }, { useState, useEffect }) {
 
 :::
 
+### The `useElement` hook
+
+The `useElement` hook accepts the same arguments of `document.createElement` and returns a memoized element: the node is created once and preserved across renders, unless the tag name (or the `is` option) changes. It is useful for elements that own an internal state that must survive re-renders, like a `<canvas>` or a `<video>`.
+
+::: code-group
+
+```tsx [jsx]
+function Chart({ data }, { useElement, useEffect }) {
+    const canvas = useElement('canvas');
+
+    useEffect(() => {
+        draw(canvas.getContext('2d'), data);
+    }, [data]);
+
+    return canvas;
+}
+```
+
+```ts [html]
+function Chart({ data }, { useElement, useEffect }) {
+    const canvas = useElement('canvas');
+
+    useEffect(() => {
+        draw(canvas.getContext('2d'), data);
+    }, [data]);
+
+    return html`${canvas}`;
+}
+```
+
+```ts [vdom]
+function Chart({ data }, { useElement, useEffect }) {
+    const canvas = useElement('canvas');
+
+    useEffect(() => {
+        draw(canvas.getContext('2d'), data);
+    }, [data]);
+
+    return canvas;
+}
+```
+
+:::
+
 ### The `useId` hook
 
 The `useId` hook is a function that returns a unique ID for the component instance. This can be useful for associating form fields with their labels or for generating unique IDs for other purposes.

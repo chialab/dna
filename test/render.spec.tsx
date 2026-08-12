@@ -1176,6 +1176,38 @@ describe(
                 expect(factory).toHaveBeenCalledTimes(2);
             });
 
+            it('should memo a created element', () => {
+                const Test: DNA.FunctionComponent = (props, { useElement }) => {
+                    const element = useElement('canvas');
+                    element.setAttribute('data-count', `${+(element.getAttribute('data-count') ?? 0) + 1}`);
+
+                    return element;
+                };
+
+                DNA.render(<Test />, wrapper);
+                const canvas = wrapper.children[0];
+                expect(canvas).toBeInstanceOf(HTMLCanvasElement);
+                expect(canvas).toHaveProperty('dataset.count', '1');
+
+                DNA.render(<Test />, wrapper);
+                expect(wrapper.children[0]).toBe(canvas);
+                expect(canvas).toHaveProperty('dataset.count', '2');
+            });
+
+            it('should re-create an element when tag name changes', () => {
+                let tagName = 'canvas';
+                const Test: DNA.FunctionComponent = (props, { useElement }) => useElement(tagName);
+
+                DNA.render(<Test />, wrapper);
+                const canvas = wrapper.children[0];
+                expect(canvas).toBeInstanceOf(HTMLCanvasElement);
+
+                tagName = 'video';
+                DNA.render(<Test />, wrapper);
+                expect(wrapper.children[0]).not.toBe(canvas);
+                expect(wrapper.children[0]).toBeInstanceOf(HTMLVideoElement);
+            });
+
             it('should run an effect on render', () => {
                 const effect = vi.fn(() => wrapper.querySelector('button'));
                 const Test: DNA.FunctionComponent = (props, { useEffect }) => {

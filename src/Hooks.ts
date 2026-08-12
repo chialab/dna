@@ -1,3 +1,4 @@
+import type { HTMLTagNameMap } from './Elements';
 import { uniqueId } from './factories';
 
 /**
@@ -149,6 +150,18 @@ export class HooksManager {
                 cleanup?.();
             });
         }, deps);
+    }
+
+    /**
+     * Create a memoized element.
+     * @param tagName The tag name of the element to create.
+     * @param options The element creation options.
+     * @returns The memoized element.
+     */
+    useElement<K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+    useElement<T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+    useElement(tagName: string, options?: ElementCreationOptions): HTMLElement {
+        return this.useMemo(() => document.createElement(tagName, options), [tagName, options?.is]);
     }
 
     /**

@@ -176,6 +176,10 @@ export type FunctionComponent<P = any> = (
         useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
         useEffect: (effect: Effect, deps?: unknown[]) => void;
+        useElement: {
+            <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+            <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+        };
         useId: (suffix?: string) => string;
         useRenderContext: () => Context;
     }
