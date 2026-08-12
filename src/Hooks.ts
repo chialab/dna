@@ -18,6 +18,19 @@ export type HooksState = HookState[];
 type Cleanup = () => void;
 
 /**
+ * The value passed to a state setter.
+ * It can be the new value itself or a function that receives the current value and returns the new one.
+ */
+export type StateAction<T> = T | ((currentValue: T) => T);
+
+/**
+ * The type of a mutable reference.
+ */
+export type Ref<T = unknown> = {
+    current: T;
+};
+
+/**
  * The type of an effect function.
  */
 // biome-ignore lint/suspicious/noConfusingVoidType: This is a valid use case for an effect.
@@ -101,25 +114,40 @@ export class HooksManager {
 
     /**
      * Create a state value and its setter.
+     * The setter accepts the new value or a function that receives the current value and returns the new one.
      * @param initialValue The initial value of the state.
      * @returns The state value and its setter.
      */
-    useState<T = unknown>(initialValue: T): [T, (newValue: T) => boolean] {
+    useState<T = unknown>(initialValue: T): [T, (newValue: StateAction<T>) => boolean] {
         const state = this.nextState(
             typeof initialValue === 'function' ? (initialValue as () => T) : () => initialValue
         );
 
         return [
             state[0],
-            (newValue: T) => {
-                if (Object.is(newValue, state[0])) {
+            (newValue: StateAction<T>) => {
+                const value =
+                    typeof newValue === 'function' ? (newValue as (currentValue: T) => T)(state[0]) : newValue;
+                if (Object.is(value, state[0])) {
                     return false;
                 }
 
-                state[0] = newValue;
+                state[0] = value;
                 return true;
             },
         ] as const;
+    }
+
+    /**
+     * Create a mutable reference that is preserved across renders.
+     * Updating the `current` property does not trigger a new render.
+     * @param initialValue The initial value of the reference.
+     * @returns The reference object.
+     */
+    useRef<T>(initialValue: T): Ref<T>;
+    useRef<T = undefined>(): Ref<T | undefined>;
+    useRef<T>(initialValue?: T): Ref<T | undefined> {
+        return this.useMemo(() => ({ current: initialValue }));
     }
 
     /**
@@ -130,6 +158,17 @@ export class HooksManager {
      */
     useMemo<T = unknown>(factory: () => T, deps: unknown[] = []): T {
         return this.nextState(factory, deps)[0];
+    }
+
+    /**
+     * Create a memoized callback.
+     * @param callback The callback to memoize.
+     * @param deps The dependencies of the callback.
+     * @returns The memoized callback.
+     */
+    // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+    useCallback<T extends (...args: any[]) => any>(callback: T, deps: unknown[] = []): T {
+        return this.useMemo(() => callback, deps);
     }
 
     /**

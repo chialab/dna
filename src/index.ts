@@ -88,6 +88,7 @@ export {
     listen,
     undelegateEventListener,
 } from './events';
+export type { Effect, Ref, StateAction } from './Hooks';
 export { isHydrating } from './hydration';
 export type {
     Attrs,

@@ -4,13 +4,16 @@ import {
     type EventHandler,
     type EventType,
     Fragment,
+    type FunctionComponent,
     fires,
     HTML,
     h,
     listen,
     observe,
     property,
+    type Ref,
     render,
+    type StateAction,
 } from '@chialab/dna';
 import { describe, expectTypeOf, test } from 'vitest';
 
@@ -316,6 +319,64 @@ describe('typings', () => {
                     open
                 />
             );
+        });
+    });
+
+    describe('hooks', () => {
+        test('should have correct type for the useState hook', () => {
+            const Test: FunctionComponent = (props, { useState }) => {
+                const [count, setCount] = useState(0);
+                expectTypeOf(count).toEqualTypeOf<number>();
+                expectTypeOf(setCount).parameter(0).toEqualTypeOf<StateAction<number>>();
+                setCount(1);
+                setCount((current) => {
+                    expectTypeOf(current).toEqualTypeOf<number>();
+                    return current + 1;
+                });
+                // @ts-expect-error The state accepts only numbers
+                setCount('1');
+
+                return count;
+            };
+
+            render(<Test />);
+        });
+
+        test('should have correct type for the useRef hook', () => {
+            const Test: FunctionComponent = (props, { useRef }) => {
+                expectTypeOf(useRef(0).current).toEqualTypeOf<number>();
+                expectTypeOf(useRef<number>().current).toEqualTypeOf<number | undefined>();
+                expectTypeOf(useRef().current).toEqualTypeOf<undefined>();
+
+                const timer: Ref<number | undefined> = useRef<number>();
+                expectTypeOf(timer).toEqualTypeOf<Ref<number | undefined>>();
+
+                return null;
+            };
+
+            render(<Test />);
+        });
+
+        test('should have correct type for the useCallback hook', () => {
+            const Test: FunctionComponent = (props, { useCallback }) => {
+                const callback = useCallback((value: string) => value.length, []);
+                expectTypeOf(callback).toEqualTypeOf<(value: string) => number>();
+
+                return null;
+            };
+
+            render(<Test />);
+        });
+
+        test('should have correct type for the useElement hook', () => {
+            const Test: FunctionComponent = (props, { useElement }) => {
+                expectTypeOf(useElement('canvas')).toEqualTypeOf<HTMLCanvasElement>();
+                expectTypeOf(useElement('x-unknown')).toEqualTypeOf<HTMLElement>();
+
+                return useElement('div');
+            };
+
+            render(<Test />);
         });
     });
 });

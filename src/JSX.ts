@@ -1,7 +1,7 @@
 import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
 import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
-import type { Effect } from './Hooks';
+import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
 import type { Context } from './render';
 
@@ -173,8 +173,14 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs
 export type FunctionComponent<P = any> = (
     props: P & KeyedProperties & TreeProperties,
     hooks: {
-        useState: <T = unknown>(initialValue: T) => [T, (value: T) => void];
+        useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>) => void];
+        useRef: {
+            <T>(initialValue: T): Ref<T>;
+            <T = undefined>(): Ref<T | undefined>;
+        };
         useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+        // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+        useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
         useEffect: (effect: Effect, deps?: unknown[]) => void;
         useElement: {
             <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];

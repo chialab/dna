@@ -201,6 +201,13 @@ Function components are plain functions that receive properties as first argumen
 
 The `useState` hook is a function that returns a tuple with the current state and a function to update it. The first argument is the initial state. When the state is updated, the function component is re-rendered.
 
+The setter also accepts a function that receives the current state and returns the new one. Since it always reads the up-to-date value, this is the safest way to update a state that depends on its previous value:
+
+```ts
+const [count, setCount] = useState(0);
+const increment = () => setCount((current) => current + 1);
+```
+
 ::: code-group
 
 ```tsx [jsx]
@@ -285,6 +292,29 @@ h(
 
 :::
 
+### The `useRef` hook
+
+The `useRef` hook returns a mutable object with a `current` property, preserved across renders. Unlike a state, updating `current` does **not** trigger a new render, so it is the right place for values that must survive a render without being part of the output: timer handles, previous values, instances of external libraries.
+
+```ts
+function Timer({}, { useRef, useEffect }) {
+    const timer = useRef<number>();
+
+    useEffect(() => {
+        timer.current = setInterval(tick, 1000);
+        return () => clearInterval(timer.current);
+    }, []);
+
+    return html`<button onclick=${() => clearInterval(timer.current)}>Stop</button>`;
+}
+```
+
+::: tip
+
+To keep a reference to a DOM element created by the component itself, prefer the [`useElement`](#the-useelement-hook) hook: it creates and memoizes the node in one step.
+
+:::
+
 ### The `useMemo` hook
 
 The `useMemo` hook is a function that returns a memoized value. The first argument is a function that returns the value to memoize. The second argument is an array of dependencies. When the dependencies change, the memoized value is re-computed.
@@ -335,6 +365,24 @@ h('table', null,
     ),
 )
 ```
+
+:::
+
+### The `useCallback` hook
+
+The `useCallback` hook returns a memoized function: the same reference is returned across renders until one of the dependencies changes. It is the equivalent of `useMemo(() => callback, deps)`.
+
+```ts
+function Search({ onSearch }, { useCallback }) {
+    const onInput = useCallback((event) => onSearch(event.target.value), [onSearch]);
+
+    return html`<input type="search" oninput=${onInput} />`;
+}
+```
+
+::: tip
+
+DNA patches the real DOM and does not skip renders based on referential equality, so `useCallback` is not needed to "optimize" child components. Use it when the identity of the function matters: as a dependency of a `useEffect`, or to be able to remove a listener added manually.
 
 :::
 

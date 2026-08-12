@@ -1136,6 +1136,76 @@ describe(
                 expect(button).toHaveProperty('textContent', '1');
             });
 
+            it('should update state using a function', () => {
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => {
+                                setCount((current) => current + 1);
+                                setCount((current) => current + 1);
+                            }}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                const button = wrapper.children[0] as HTMLButtonElement;
+                expect(button).toHaveProperty('textContent', '0');
+
+                button.click();
+                expect(wrapper).toHaveProperty('textContent', '2');
+            });
+
+            it('should keep a mutable reference across renders', () => {
+                const Test: DNA.FunctionComponent = (props, { useState, useRef }) => {
+                    const [count, setCount] = useState(0);
+                    const renders = useRef(0);
+                    renders.current++;
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => {
+                                setCount(count + 1);
+                            }}>
+                            {`${count}:${renders.current}`}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                const button = wrapper.children[0] as HTMLButtonElement;
+                expect(button).toHaveProperty('textContent', '0:1');
+
+                button.click();
+                expect(wrapper).toHaveProperty('textContent', '1:2');
+            });
+
+            it('should memo a callback', () => {
+                let dep = 1;
+                const callbacks: (() => number)[] = [];
+                const Test: DNA.FunctionComponent = (props, { useCallback }) => {
+                    callbacks.push(useCallback(() => dep, [dep]));
+
+                    return <button type="button">{dep}</button>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                DNA.render(<Test />, wrapper);
+                expect(callbacks).toHaveLength(2);
+                expect(callbacks[1]).toBe(callbacks[0]);
+
+                dep = 2;
+                DNA.render(<Test />, wrapper);
+                expect(callbacks).toHaveLength(3);
+                expect(callbacks[2]).not.toBe(callbacks[0]);
+                expect(callbacks[2]()).toBe(2);
+            });
+
             it('should memo calculated value', () => {
                 const factory = vi.fn(() => 1);
                 const Test: DNA.FunctionComponent = (props, { useMemo }) => {

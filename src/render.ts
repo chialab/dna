@@ -1,6 +1,6 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
-import { type Effect, HooksManager, type HooksState } from './Hooks';
+import { type Effect, HooksManager, type HooksState, type StateAction } from './Hooks';
 import { getPropertyDescriptor, isArray } from './helpers';
 import {
     type ElementProperties,
@@ -469,7 +469,7 @@ const renderTemplate = (
 
                             return [
                                 value,
-                                (newValue: typeof initialValue, requestUpdate?: boolean) => {
+                                (newValue: StateAction<typeof initialValue>, requestUpdate?: boolean) => {
                                     if (!setInternal(newValue)) {
                                         return;
                                     }
@@ -489,8 +489,12 @@ const renderTemplate = (
                                 },
                             ];
                         },
+                        useRef: hooks.useRef.bind(hooks),
                         useMemo(factory, deps = []) {
                             return hooks.useMemo(factory, deps);
+                        },
+                        useCallback(callback, deps = []) {
+                            return hooks.useCallback(callback, deps);
                         },
                         useEffect(effect: Effect, deps: unknown[] = []) {
                             return hooks.useEffect(effect, deps);
