@@ -70,7 +70,7 @@ export {
     customElement,
     define,
 } from './define';
-export { $await, $parse, $until } from './directives';
+export { $await, $parse, $signal, $until } from './directives';
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
     AsyncEvent,
@@ -115,3 +115,12 @@ export {
 } from './property';
 export type { Context } from './render';
 export { render } from './render';
+export type {
+    SignalComputed,
+    SignalLike,
+    SignalNamespace,
+    SignalOptions,
+    SignalState,
+    SignalWatcher,
+} from './signals';
+export { configureSignals, effect, hasSignals, isSignal, untrack } from './signals';

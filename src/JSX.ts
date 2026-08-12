@@ -4,6 +4,7 @@ import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
 import type { Context } from './render';
+import type { SignalLike } from './signals';
 
 /**
  * Identify virtual dom objects.
@@ -125,6 +126,14 @@ export const Fragment: FunctionComponent<{
 }> = (props) => props.children;
 
 /**
+ * Accept a signal in place of the value of each property.
+ * Signals interpolated in a template are unwrapped and kept up to date by the renderer.
+ */
+export type WithSignals<T> = {
+    [K in keyof T]: T[K] | SignalLike<T[K]>;
+};
+
+/**
  * Get render properties for keyed nodes.
  */
 export type KeyedProperties = {
@@ -211,12 +220,11 @@ export type VFunction<T extends FunctionComponent> = {
 /**
  * Get render properties for an element instance.
  */
-type VElementRenderProperties<T extends HTMLElement> = Members<T> &
-    RenderAttributes<T> &
+type VElementRenderProperties<T extends HTMLElement> = WithSignals<
+    Members<T> & RenderAttributes<T> & EventProperties & ElementProperties
+> &
     KeyedProperties &
-    TreeProperties &
-    EventProperties &
-    ElementProperties;
+    TreeProperties;
 
 /**
  * The interface of an HTML node used as JSX tag.
@@ -233,7 +241,11 @@ export type VElement<T extends HTMLElement = HTMLElement> = {
 /**
  * Get render properties for a slot tag.
  */
-type VSlotRenderProperties = RenderAttributes<'slot'> & KeyedProperties & TreeProperties & EventProperties;
+type VSlotRenderProperties = WithSignals<Omit<RenderAttributes<'slot'>, 'name'> & EventProperties> &
+    // the slot name selects which light DOM children to render: it is structural, not a bound property
+    Pick<RenderAttributes<'slot'>, 'name'> &
+    KeyedProperties &
+    TreeProperties;
 
 /**
  * The interface of slot element.
@@ -249,17 +261,17 @@ export type VSlot = {
 /**
  * Get base render properties for a tag.
  */
-type VTagBaseRenderProperties<T extends string> = RenderAttributes<T> &
+type VTagBaseRenderProperties<T extends string> = WithSignals<
+    RenderAttributes<T> & EventProperties & ElementProperties
+> &
     KeyedProperties &
-    TreeProperties &
-    EventProperties &
-    ElementProperties;
+    TreeProperties;
 
 /**
  * Get full render properties for a tag.
  */
 type VTagRenderProperties<T extends string> = (T extends keyof JSXInternal.CustomElements
-    ? Members<JSXInternal.CustomElements[T]>
+    ? WithSignals<Members<JSXInternal.CustomElements[T]>>
     : EmptyObject) &
     VTagBaseRenderProperties<T>;
 
@@ -454,15 +466,15 @@ export namespace JSXInternal {
     export type IntrinsicAttributes = KeyedProperties & EventProperties & TreeProperties & ElementProperties;
 
     export type AutonomousElements = {
-        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Members<
-            CustomElements[K]
+        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: WithSignals<
+            Members<CustomElements[K]>
         >;
     };
 
     export type CustomizedElements = {
         [K in keyof HTMLTagNameMap]: Values<{
-            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: Members<
-                CustomElements[P]
+            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: WithSignals<
+                Members<CustomElements[P]>
             > & { is: P };
         }>;
     };

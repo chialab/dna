@@ -1,5 +1,6 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
+import { $signal } from './directives';
 import { type Effect, HooksManager, type HooksState, type StateAction } from './Hooks';
 import { getPropertyDescriptor, isArray } from './helpers';
 import {
@@ -17,6 +18,7 @@ import {
     type TreeProperties,
 } from './JSX';
 import { getProperty } from './property';
+import { effect, isSignal, type SignalLike, untrack } from './signals';
 
 /**
  * A symbol for node render context.
@@ -36,6 +38,24 @@ const ContextKind = {
 type ContextKind = (typeof ContextKind)[keyof typeof ContextKind];
 
 /**
+ * A signal bound to a node property.
+ */
+type SignalBinding = {
+    /**
+     * The bound signal.
+     */
+    signal: SignalLike<unknown>;
+    /**
+     * Stop the binding.
+     */
+    dispose(): void;
+    /**
+     * The last value applied to the node.
+     */
+    value: unknown;
+};
+
+/**
  * The node context interface.
  */
 export type Context = {
@@ -49,6 +69,7 @@ export type Context = {
     contexts: WeakMap<Node, Context>;
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
     state?: HooksState;
+    bindings?: Map<string, SignalBinding>;
     end?: Context;
     key?: unknown;
     keys?: Map<unknown, Context>;
@@ -325,6 +346,132 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
 };
 
 /**
+ * Set a property value to a node, binding it to the render context when it is a signal.
+ * @param context The context of the node.
+ * @param node The node to update.
+ * @param propertyKey The property key to update.
+ * @param value The new value.
+ * @param oldValue The old value.
+ * @param ctr The constructor of the node.
+ */
+const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
+    context: Context,
+    node: T,
+    propertyKey: P,
+    value: T[P] | undefined,
+    oldValue?: T[P],
+    ctr?: ComponentConstructor
+) => {
+    let previousValue = oldValue;
+
+    const binding = context.bindings?.get(propertyKey);
+    if (binding) {
+        if (binding.signal === value) {
+            // still bound to the same signal: the effect already keeps the node up to date
+            return;
+        }
+        // a signal was bound to this property: the old value is the last one it applied,
+        // not the signal object stored in the previous properties
+        binding.dispose();
+        context.bindings?.delete(propertyKey);
+        previousValue = binding.value as T[P];
+    }
+
+    if (!isSignal(value)) {
+        setProperty(node, propertyKey, value, previousValue, ctr);
+        return;
+    }
+
+    const signal = value as SignalLike<T[P]>;
+    const newBinding: SignalBinding = {
+        signal,
+        value: previousValue,
+        dispose: () => {},
+    };
+    newBinding.dispose = effect(() => {
+        const newValue = signal.get();
+        // the node update must not become a dependency of this effect
+        untrack(() => {
+            setProperty(node, propertyKey, newValue, newBinding.value as T[P], ctr);
+            newBinding.value = newValue;
+        });
+    });
+
+    context.bindings = (context.bindings || new Map()).set(propertyKey, newBinding);
+};
+
+/**
+ * Stop all the signal bindings of a context.
+ * @param context The context to release.
+ */
+const disposeBindings = (context: Context) => {
+    if (!context.bindings) {
+        return;
+    }
+    for (const binding of context.bindings.values()) {
+        binding.dispose();
+    }
+    context.bindings = undefined;
+};
+
+/**
+ * Release the resources held by a context and its subtree: signal bindings, hooks and effects.
+ * It does not touch the DOM, so a detached node keeps its own content.
+ * It is idempotent, since a context can be released both inline and by the deferred pass.
+ * @param context The context to release.
+ */
+const releaseContext = (context: Context) => {
+    disposeBindings(context);
+    if (context.state) {
+        new HooksManager(context.state).cleanup();
+    }
+    const children = context.children;
+    for (let i = 0, len = children.length; i < len; i++) {
+        releaseContext(children[i]);
+    }
+};
+
+/**
+ * Contexts detached during the current render, paired with their root context.
+ * A detached context cannot be released right away: keyed nodes are removed from their
+ * parent before being re-inserted at another position, so a context is known to be gone
+ * only once the whole render has settled.
+ */
+const detachedContexts: [Context, Context][] = [];
+
+/**
+ * The nesting level of the current render.
+ */
+let renderDepth = 0;
+
+/**
+ * Whether detached contexts are being released.
+ */
+let releasing = false;
+
+/**
+ * Release the contexts that have been detached and never re-attached during the render.
+ */
+const releaseDetachedContexts = () => {
+    if (releasing) {
+        return;
+    }
+    releasing = true;
+    try {
+        while (detachedContexts.length) {
+            const [context, rootContext] = detachedContexts.shift() as [Context, Context];
+            if (rootContext.contexts.get(context.node) === context) {
+                // the context has been re-attached during the render
+                continue;
+            }
+            releaseContext(context);
+        }
+    } finally {
+        releasing = false;
+    }
+};
+
+/**
  * Remove a node from the render tree.
  * @param parentContext The parent context.
  * @param childContext The child context to remove.
@@ -343,6 +490,7 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
     if (io !== -1) {
         parentContext.children.splice(io, 1);
     }
+    detachedContexts.push([childContext, rootContext]);
 };
 
 /**
@@ -415,6 +563,13 @@ const renderTemplate = (
         return;
     }
 
+    if (isSignal(template)) {
+        // render the signal through a function component, in order to reuse
+        // the fragment update and the hooks cleanup of the render context
+        renderTemplate(context, rootContext, $signal(template), namespace, keys, refs, fragment);
+        return;
+    }
+
     const document = context.node.ownerDocument as Document;
     const currentChildren = context.children;
 
@@ -426,22 +581,22 @@ const renderTemplate = (
             }
             const { type: Fn, key, properties, children } = template;
 
-            let rootNode: Node | undefined;
+            let functionContext: Context | undefined;
             const currentContext = currentChildren[context._pos];
             if (key) {
-                rootNode = keys?.get(key)?.node;
+                functionContext = keys?.get(key);
             } else if (currentContext && currentContext.type === Fn && currentContext.key == null) {
-                rootNode = currentContext.node;
+                functionContext = currentContext;
             }
 
-            renderTemplate(
+            // the context is inserted as is, rather than being looked up again from its node:
+            // while reordering it may have been detached from the parent children already,
+            // and recreating it would drop the hooks state the key is meant to preserve
+            insertNode(
                 context,
-                rootContext,
-                rootNode || document.createComment(Fn.name),
-                namespace,
-                keys,
-                refs,
-                fragment
+                functionContext ||
+                    createContext(ContextKind.REF, null, document.createComment(Fn.name), false, rootContext),
+                rootContext
             );
 
             const renderContext = currentChildren[context._pos - 1];
@@ -605,7 +760,8 @@ const renderTemplate = (
         if (oldProperties) {
             for (const propertyKey in oldProperties) {
                 if (!(propertyKey in properties) && !shouldIgnoreProperty(node, propertyKey)) {
-                    setProperty(
+                    updateProperty(
+                        templateContext,
                         node,
                         propertyKey as keyof Node,
                         undefined,
@@ -618,7 +774,8 @@ const renderTemplate = (
 
         for (const propertyKey in properties) {
             if (!shouldIgnoreProperty(node, propertyKey)) {
-                setProperty(
+                updateProperty(
+                    templateContext,
                     node,
                     propertyKey as keyof Node,
                     properties[propertyKey as keyof typeof properties] as Node[keyof Node],
@@ -699,47 +856,59 @@ export const internalRender = (
 ): Context[] => {
     const contextChildren = context.children;
 
-    let endContext: Context | undefined;
-    let currentKeys: Map<unknown, Context> | undefined;
-    let currentRefs: Map<Node, Context> | undefined;
-    if (fragment) {
-        context._pos = contextChildren.indexOf(fragment);
-        endContext = fragment.end as Context;
-        currentKeys = fragment.keys;
-        currentRefs = fragment.refs;
-        fragment.keys = undefined;
-    } else {
-        context._pos = 0;
-        currentKeys = context.keys;
-        currentRefs = context.refs;
-        context.keys = undefined;
-    }
-
-    renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
-
-    // all children of the root have been handled,
-    // we can start to cleanup the tree
-    // remove all Nodes that are outside the result range
-    const currentIndex = context._pos;
-    let end: number;
-    if (endContext) {
-        end = contextChildren.indexOf(endContext) + 1;
-    } else {
-        end = contextChildren.length;
-    }
-
-    while (currentIndex <= --end) {
-        const [child] = contextChildren.splice(end, 1);
-        removeNode(context, child, rootContext);
-        if (child.state) {
-            new HooksManager(child.state).cleanup();
+    renderDepth++;
+    try {
+        let endContext: Context | undefined;
+        let currentKeys: Map<unknown, Context> | undefined;
+        let currentRefs: Map<Node, Context> | undefined;
+        if (fragment) {
+            context._pos = contextChildren.indexOf(fragment);
+            endContext = fragment.end as Context;
+            currentKeys = fragment.keys;
+            currentRefs = fragment.refs;
+            fragment.keys = undefined;
+        } else {
+            context._pos = 0;
+            currentKeys = context.keys;
+            currentRefs = context.refs;
+            context.keys = undefined;
         }
-        if (child.children.length) {
-            internalRender(child, null, rootContext, namespace);
+
+        renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
+
+        // all children of the root have been handled,
+        // we can start to cleanup the tree
+        // remove all Nodes that are outside the result range
+        const currentIndex = context._pos;
+        let end: number;
+        if (endContext) {
+            end = contextChildren.indexOf(endContext) + 1;
+        } else {
+            end = contextChildren.length;
+        }
+
+        while (currentIndex <= --end) {
+            const [child] = contextChildren.splice(end, 1);
+            removeNode(context, child, rootContext);
+            disposeBindings(child);
+            if (child.state) {
+                new HooksManager(child.state).cleanup();
+            }
+            if (child.children.length) {
+                // a node removed from the template is emptied as well
+                internalRender(child, null, rootContext, namespace);
+            }
+        }
+
+        return contextChildren;
+    } finally {
+        renderDepth--;
+        if (renderDepth === 0) {
+            // the render has settled: contexts detached while reordering keyed nodes
+            // and never re-attached can now be released
+            releaseDetachedContexts();
         }
     }
-
-    return contextChildren;
 };
 
 /**

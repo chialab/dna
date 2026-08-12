@@ -191,6 +191,107 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 :::
 
+## Signals
+
+DNA templates can interpolate [TC39 Signals](https://github.com/tc39/proposal-signals). When a signal changes, DNA updates **only the nodes bound to it**, without re-rendering the component that owns the template.
+
+### Setup
+
+Signals are not implemented by any engine yet and DNA does not bundle a polyfill, in order to keep its runtime dependency-free. Register an implementation once, before defining your components:
+
+```ts
+import { configureSignals } from '@chialab/dna';
+import { Signal } from 'signal-polyfill';
+
+configureSignals(Signal);
+```
+
+When a native `globalThis.Signal` is available it is picked up automatically and this call is not needed. Only one implementation can be active at a time: mixing two of them would build two reactive graphs unable to observe each other.
+
+Without an implementation, signals are rendered as plain objects and nothing else changes.
+
+### Content
+
+A signal interpolated as content is unwrapped and kept up to date:
+
+::: code-group
+
+```tsx [jsx]
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+render(
+    <p>
+        {count} doubled is {double}
+    </p>,
+    document.body
+);
+
+count.set(21); // renders "21 doubled is 42"
+```
+
+```ts [html]
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+render(html`<p>${count} doubled is ${double}</p>`, document.body);
+
+count.set(21); // renders "21 doubled is 42"
+```
+
+:::
+
+The `$signal` directive does the same thing explicitly, which is useful when a value may or may not be a signal.
+
+### Attributes and properties
+
+A signal can also be bound to an attribute, a property or an event listener. Only that attribute is updated on change: the node is never recreated.
+
+```tsx
+const label = new Signal.State('Save');
+const disabled = new Signal.State(false);
+
+<button
+    disabled={disabled}
+    aria-label={label}>
+    {label}
+</button>;
+```
+
+### Updates are asynchronous
+
+Signal updates are applied on a **microtask**, because the notification callback of a `Watcher` cannot read signals. Read the DOM after awaiting:
+
+```ts
+count.set(1);
+// the DOM has not been updated yet
+await Promise.resolve();
+// now it has
+```
+
+This does not change how components behave: assigning a component property still renders **synchronously**, as it always has.
+
+```ts
+element.title = 'Hello';
+element.innerHTML; // already up to date
+```
+
+### Effects
+
+The `effect` function runs a callback whenever one of the signals it reads changes. It runs once immediately, then asynchronously. It returns a function that stops it, and the callback may return its own cleanup:
+
+```ts
+import { effect } from '@chialab/dna';
+
+const dispose = effect(() => {
+    document.title = `${count.get()} items`;
+});
+
+dispose();
+```
+
+Use `untrack` to read a signal without subscribing to it.
+
 ## Function components
 
 Sometimes, you may want to break up a template into smaller parts without having to define new Custom Elements. In this case, you can use function components.
