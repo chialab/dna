@@ -1,4 +1,5 @@
 import { type FunctionComponent, h, type Template } from './JSX';
+import { effect, type SignalLike, untrack } from './signals';
 import { getThenableState } from './Thenable';
 
 /**
@@ -23,6 +24,42 @@ const ParseFunction: FunctionComponent<{ source: string }> = (props, { useMemo }
  * @returns The virtual DOM template function.
  */
 export const $parse = (string: string): Template => h(ParseFunction, { source: string });
+
+/**
+ * The signal renderer.
+ * It subscribes to the signal and re-renders its own fragment (and only that) on change.
+ * @param props The properties of the component.
+ * @param props.signal The signal to render.
+ * @param hooks The hooks.
+ * @param hooks.useState The hook to create a state value.
+ * @param hooks.useEffect The hook to run an effect.
+ * @returns The current value of the signal.
+ */
+const SignalFunction: FunctionComponent<{ signal: SignalLike }> = ({ signal }, { useState, useEffect }) => {
+    // the initial value is read as a factory, so that signals holding functions are not
+    // mistaken for lazy initializers by `useState`
+    const [value, setValue] = useState<Template>(() => untrack(() => signal.get()));
+
+    useEffect(
+        () =>
+            effect(() => {
+                const newValue = signal.get() as Template;
+                // wrapped in an updater for the same reason as above
+                setValue(() => newValue);
+            }),
+        [signal]
+    );
+
+    return value;
+};
+
+/**
+ * Render the value of a signal and keep it up to date.
+ * Signals interpolated in a template are wrapped by this directive automatically.
+ * @param signal The signal to render.
+ * @returns The virtual DOM template function.
+ */
+export const $signal = (signal: SignalLike): Template => h(SignalFunction, { signal });
 
 /**
  * Render a promise when it is resolved.

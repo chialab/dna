@@ -1387,6 +1387,70 @@ describe(
                 expect(cleanup).toHaveBeenCalledOnce();
             });
 
+            it('should run cleanup if a keyed node is dropped while reordering', () => {
+                const cleanups: string[] = [];
+                const Test: DNA.FunctionComponent<{ name: string }> = ({ name }, { useEffect }) => {
+                    useEffect(
+                        () => () => {
+                            cleanups.push(name);
+                        },
+                        []
+                    );
+
+                    return <span>{name}</span>;
+                };
+                const template = (names: string[]) => (
+                    <div>
+                        {names.map((name) => (
+                            <Test
+                                key={name}
+                                name={name}
+                            />
+                        ))}
+                    </div>
+                );
+
+                DNA.render(template(['a', 'b', 'c']), wrapper);
+                expect(cleanups).toEqual([]);
+
+                // "c" moves to the front and "b" is dropped: both "a" and "b" are detached
+                // while reordering, so they never go through the trailing cleanup.
+                // Only "b" is really gone, "a" is re-attached at another position.
+                DNA.render(template(['c', 'a']), wrapper);
+                expect(cleanups).toEqual(['b']);
+            });
+
+            it('should preserve the state of a keyed function component while reordering', () => {
+                const Test: DNA.FunctionComponent<{ name: string }> = ({ name }, { useState }) => {
+                    const [count, setCount] = useState(0);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {name}:{count}
+                        </button>
+                    );
+                };
+                const template = (names: string[]) => (
+                    <div>
+                        {names.map((name) => (
+                            <Test
+                                key={name}
+                                name={name}
+                            />
+                        ))}
+                    </div>
+                );
+
+                DNA.render(template(['a', 'b']), wrapper);
+                (wrapper.querySelectorAll('button')[0] as HTMLButtonElement).click();
+                expect(wrapper.textContent).toBe('a:1b:0');
+
+                DNA.render(template(['b', 'a']), wrapper);
+                expect(wrapper.textContent).toBe('b:0a:1');
+            });
+
             it('should generate an unique id', () => {
                 const Test: DNA.FunctionComponent = (props, { useId }) => {
                     const id = useId(props.suffix ?? 'test');
