@@ -644,6 +644,49 @@ describe(
                 expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
             });
 
+            it('should remove the classes of the previous render when switching notation', () => {
+                const element = DNA.render(<div class="test1" />, wrapper) as HTMLDivElement;
+                expect(element.getAttribute('class')).toBe('test1');
+                DNA.render(
+                    <div
+                        class={{
+                            test2: true,
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(element.getAttribute('class')).toBe('test2');
+            });
+
+            it('should remove the styles of the previous render when switching notation', () => {
+                const element = DNA.render(<div style="color: red;" />, wrapper) as HTMLDivElement;
+                expect(['rgb(255, 0, 0)', 'red']).toContain(window.getComputedStyle(element).color);
+                DNA.render(
+                    <div
+                        style={{
+                            backgroundColor: 'blue',
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(element).backgroundColor);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
+            });
+
+            it('should handle repeated whitespace in a class list', () => {
+                const element = DNA.render(<div class="test1  test2" />, wrapper) as HTMLDivElement;
+                element.classList.add('test3');
+                DNA.render(
+                    <div
+                        class={{
+                            test4: true,
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(element.getAttribute('class')).toBe('test3 test4');
+            });
+
             it('should render svgs', () => {
                 DNA.render(
                     <div>
