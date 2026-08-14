@@ -1,5 +1,5 @@
 import { type FunctionComponent, h, type Template } from './JSX';
-import { effect, type SignalLike, untrack } from './signals';
+import { effect, get, type SignalLike, untrack } from './signals';
 import { getThenableState } from './Thenable';
 
 /**
@@ -38,12 +38,12 @@ export const $parse = (string: string): Template => h(ParseFunction, { source: s
 const SignalFunction: FunctionComponent<{ signal: SignalLike }> = ({ signal }, { useState, useEffect }) => {
     // the initial value is read as a factory, so that signals holding functions are not
     // mistaken for lazy initializers by `useState`
-    const [value, setValue] = useState<Template>(() => untrack(() => signal.get()));
+    const [value, setValue] = useState<Template>(() => untrack(() => get(signal)));
 
     useEffect(
         () =>
             effect(() => {
-                const newValue = signal.get() as Template;
+                const newValue = get(signal) as Template;
                 // wrapped in an updater for the same reason as above
                 setValue(() => newValue);
             }),

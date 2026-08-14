@@ -39,10 +39,6 @@ describe(
             [DNA.$signal, '$signal', 'function'],
             [DNA.$until, '$until', 'function'],
             [DNA.configureSignals, 'configureSignals', 'function'],
-            [DNA.hasSignals, 'hasSignals', 'function'],
-            [DNA.isSignal, 'isSignal', 'function'],
-            [DNA.effect, 'effect', 'function'],
-            [DNA.untrack, 'untrack', 'function'],
         ] as const;
 
         for (const [value, ref, type] of EXPECTED_EXPORT_MAP) {

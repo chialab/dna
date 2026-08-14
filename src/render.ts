@@ -18,7 +18,7 @@ import {
     type TreeProperties,
 } from './JSX';
 import { getProperty } from './property';
-import { effect, isSignal, type SignalLike, untrack } from './signals';
+import { effect, get, isSignal, type SignalLike, untrack } from './signals';
 
 /**
  * A symbol for node render context.
@@ -389,7 +389,7 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
         dispose: () => {},
     };
     newBinding.dispose = effect(() => {
-        const newValue = signal.get();
+        const newValue = get(signal);
         // the node update must not become a dependency of this effect
         untrack(() => {
             setProperty(node, propertyKey, newValue, newBinding.value as T[P], ctr);

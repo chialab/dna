@@ -210,6 +210,24 @@ When a native `globalThis.Signal` is available it is picked up automatically and
 
 Without an implementation, signals are rendered as plain objects and nothing else changes.
 
+### Other implementations
+
+DNA is not tied to the shape of the proposal. It only needs four operations from a signals library: recognise one of its signals, read one, react to one and read one without reacting. Pass an object with those four methods to `configureSignals` and any library will do — here is the whole integration with [Preact signals](https://preactjs.com/guide/v10/signals/), whose value is a property rather than a method:
+
+```ts
+import { configureSignals } from '@chialab/dna';
+import { effect, Signal, untracked } from '@preact/signals-core';
+
+configureSignals({
+    isSignal: (value) => value instanceof Signal,
+    get: (signal) => signal.value,
+    effect,
+    untrack: untracked,
+});
+```
+
+Everything else in this page then works unchanged. How soon the DOM is patched follows the implementation: an implementation of the proposal defers to a microtask (see below), while Preact signals push synchronously, so the DOM is already up to date when the assignment returns.
+
 ### Content
 
 A signal interpolated as content is unwrapped and kept up to date:
@@ -258,9 +276,9 @@ const disabled = new Signal.State(false);
 </button>;
 ```
 
-### Updates are asynchronous
+### Updates of a proposal implementation are asynchronous
 
-Signal updates are applied on a **microtask**, because the notification callback of a `Watcher` cannot read signals. Read the DOM after awaiting:
+With an implementation of the TC39 proposal, signal updates are applied on a **microtask**, because the notification callback of a `Watcher` cannot read signals. Read the DOM after awaiting:
 
 ```ts
 count.set(1);
@@ -278,19 +296,17 @@ element.innerHTML; // already up to date
 
 ### Effects
 
-The `effect` function runs a callback whenever one of the signals it reads changes. It runs once immediately, then asynchronously. It returns a function that stops it, and the callback may return its own cleanup:
+DNA does not wrap the reactive primitives of the implementation you registered: to run a side effect, or to read a signal without subscribing to it, use the ones your library already provides.
 
 ```ts
-import { effect } from '@chialab/dna';
+import { effect, untracked } from '@preact/signals-core';
 
 const dispose = effect(() => {
-    document.title = `${count.get()} items`;
+    document.title = `${count.value} items`;
 });
 
 dispose();
 ```
-
-Use `untrack` to read a signal without subscribing to it.
 
 ## Function components
 
