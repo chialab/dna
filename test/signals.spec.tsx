@@ -1,6 +1,8 @@
 import * as DNA from '@chialab/dna';
 import { Signal } from 'signal-polyfill';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+// not part of the public API: the module is aliased to the same instance the package uses
+import { effect, hasSignals, isSignal, untrack } from '../src/signals';
 
 /**
  * Wait for the signal effects to be flushed.
@@ -26,12 +28,12 @@ describe(
         // behavior of a project that never registers an implementation.
         describe('without an implementation', () => {
             it('should not detect signals', () => {
-                expect(DNA.hasSignals()).toBe(false);
-                expect(DNA.isSignal(new Signal.State(1))).toBe(false);
+                expect(hasSignals()).toBe(false);
+                expect(isSignal(new Signal.State(1))).toBe(false);
             });
 
             it('should run untracked callbacks', () => {
-                expect(DNA.untrack(() => 42)).toBe(42);
+                expect(untrack(() => 42)).toBe(42);
             });
 
             it('should render a signal as a plain value', () => {
@@ -47,12 +49,12 @@ describe(
 
             describe('configuration', () => {
                 it('should detect signals', () => {
-                    expect(DNA.hasSignals()).toBe(true);
-                    expect(DNA.isSignal(new Signal.State(1))).toBe(true);
-                    expect(DNA.isSignal(new Signal.Computed(() => 1))).toBe(true);
-                    expect(DNA.isSignal(1)).toBe(false);
-                    expect(DNA.isSignal(null)).toBe(false);
-                    expect(DNA.isSignal({ get: () => 1 })).toBe(false);
+                    expect(hasSignals()).toBe(true);
+                    expect(isSignal(new Signal.State(1))).toBe(true);
+                    expect(isSignal(new Signal.Computed(() => 1))).toBe(true);
+                    expect(isSignal(1)).toBe(false);
+                    expect(isSignal(null)).toBe(false);
+                    expect(isSignal({ get: () => 1 })).toBe(false);
                 });
 
                 it('should accept the same implementation twice', () => {
@@ -70,7 +72,7 @@ describe(
                 it('should run immediately and on change', async () => {
                     const signal = new Signal.State(1);
                     const spy = vi.fn();
-                    const dispose = DNA.effect(() => spy(signal.get()));
+                    const dispose = effect(() => spy(signal.get()));
 
                     expect(spy).toHaveBeenCalledTimes(1);
                     expect(spy).toHaveBeenLastCalledWith(1);
@@ -92,7 +94,7 @@ describe(
                 it('should run the cleanup before each re-run and on dispose', async () => {
                     const signal = new Signal.State(1);
                     const cleanup = vi.fn();
-                    const dispose = DNA.effect(() => {
+                    const dispose = effect(() => {
                         signal.get();
                         return cleanup;
                     });
@@ -110,7 +112,7 @@ describe(
                 it('should keep running after multiple changes', async () => {
                     const signal = new Signal.State(0);
                     const spy = vi.fn();
-                    DNA.effect(() => spy(signal.get()));
+                    effect(() => spy(signal.get()));
 
                     for (let i = 1; i <= 3; i++) {
                         signal.set(i);
@@ -125,7 +127,7 @@ describe(
                 it('should not run when the value does not change', async () => {
                     const signal = new Signal.State(1);
                     const spy = vi.fn();
-                    DNA.effect(() => spy(signal.get()));
+                    effect(() => spy(signal.get()));
 
                     signal.set(1);
                     await flushSignals();

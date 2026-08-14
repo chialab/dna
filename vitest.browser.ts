@@ -22,7 +22,7 @@ export default mergeConfig(
             svelteTesting(),
         ],
         optimizeDeps: {
-            include: ['react/jsx-dev-runtime', 'preact/jsx-dev-runtime', 'vue'],
+            include: ['react/jsx-dev-runtime', 'preact/jsx-dev-runtime', '@preact/signals-core', 'vue'],
         },
         resolve: {
             conditions: ['browser'],
