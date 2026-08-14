@@ -76,6 +76,7 @@ export type Context = {
     refs?: Map<Node, Context>;
     shadow: boolean;
     _pos: number;
+    _moved: number;
 };
 
 /**
@@ -104,6 +105,7 @@ export const createContext = (
     contexts: new WeakMap(),
     shadow,
     _pos: 0,
+    _moved: 0,
 });
 
 /**
@@ -192,7 +194,7 @@ const convertStyles = (value: string | Record<string, string | undefined> | null
  * @returns `true` if the property should be ignored.
  */
 const shouldIgnoreProperty = (node: Node, propertyKey: string) => {
-    if (['children', 'key', 'xmlns'].includes(propertyKey)) {
+    if (propertyKey === 'children' || propertyKey === 'key' || propertyKey === 'xmlns') {
         return true;
     }
     if (propertyKey === 'is') {
@@ -416,18 +418,31 @@ const disposeBindings = (context: Context) => {
 
 /**
  * Release the resources held by a context and its subtree: signal bindings, hooks and effects.
- * It does not touch the DOM, so a detached node keeps its own content.
+ * It does not touch the DOM, so a detached node keeps its own content: the subtree is
+ * discarded as a whole, and emptying it node by node would be visible work with no effect.
  * It is idempotent, since a context can be released both inline and by the deferred pass.
  * @param context The context to release.
+ * @param rootContext The root context the subtree belonged to.
  */
-const releaseContext = (context: Context) => {
+const releaseContext = (context: Context, rootContext: Context) => {
     disposeBindings(context);
     if (context.state) {
         new HooksManager(context.state).cleanup();
     }
     const children = context.children;
+    const owned = context.kind === ContextKind.REF;
     for (let i = 0, len = children.length; i < len; i++) {
-        releaseContext(children[i]);
+        const child = children[i];
+        if (rootContext.contexts.get(child.node) === child) {
+            rootContext.contexts.delete(child.node);
+        }
+        if (owned && child.node.parentNode === context.node) {
+            context.node.removeChild(child.node);
+        }
+        releaseContext(child, rootContext);
+    }
+    if (owned) {
+        context.children = [];
     }
 };
 
@@ -464,7 +479,7 @@ const releaseDetachedContexts = () => {
                 // the context has been re-attached during the render
                 continue;
             }
-            releaseContext(context);
+            releaseContext(context, rootContext);
         }
     } finally {
         releasing = false;
@@ -494,6 +509,101 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
 };
 
 /**
+ * Compute the longest increasing subsequence of a list of positions.
+ * Entries equal to `-1` mark nodes without a previous position and never take part in it.
+ * @param positions The previous position of each node, in the order the template wants them.
+ * @returns The indexes of `positions` that form the subsequence, ascending.
+ */
+const getSequence = (positions: number[]): number[] => {
+    const len = positions.length;
+    const previous = new Array<number>(len);
+    const tails: number[] = [];
+    for (let i = 0; i < len; i++) {
+        const position = positions[i];
+        if (position === -1) {
+            continue;
+        }
+        const last = tails[tails.length - 1];
+        if (!tails.length || positions[last] < position) {
+            previous[i] = tails.length ? last : -1;
+            tails.push(i);
+            continue;
+        }
+
+        let low = 0;
+        let high = tails.length - 1;
+        while (low < high) {
+            const middle = (low + high) >> 1;
+            if (positions[tails[middle]] < position) {
+                low = middle + 1;
+            } else {
+                high = middle;
+            }
+        }
+        if (position < positions[tails[low]]) {
+            previous[i] = low > 0 ? tails[low - 1] : -1;
+            tails[low] = i;
+        }
+    }
+
+    let cursor = tails.length;
+    let index = tails[cursor - 1];
+    while (cursor-- > 0) {
+        tails[cursor] = index;
+        index = previous[index];
+    }
+    return tails;
+};
+
+/**
+ * Move the nodes of a range of children so that the document matches the context list.
+ * The nodes that already appear in a growing order are left alone: they are the longest
+ * increasing subsequence of the current arrangement, and moving anything else around
+ * them is the smallest number of insertions that can produce the requested order.
+ *
+ * Where every node sits is read from the document rather than from a copy of the list
+ * taken before the render: a nested render of the same parent, which an effect can start
+ * while this one is still walking, would leave such a copy describing an order that is
+ * no longer the one on screen.
+ * @param parentContext The parent context.
+ * @param start The first index of the rendered range.
+ * @param end The index after the last one of the rendered range.
+ */
+const reconcileNodes = (parentContext: Context, start: number, end: number) => {
+    const parentNode = parentContext.node;
+    const currentChildren = parentContext.children;
+    const count = end - start;
+    if (count <= 0) {
+        return;
+    }
+
+    const currentPositions = new Map<Node, number>();
+    const childNodes = parentNode.childNodes;
+    for (let i = 0, len = childNodes.length; i < len; i++) {
+        currentPositions.set(childNodes[i], i);
+    }
+
+    const positions = new Array<number>(count);
+    for (let i = 0; i < count; i++) {
+        const currentPosition = currentPositions.get(currentChildren[start + i].node);
+        positions[i] = currentPosition === undefined ? -1 : currentPosition;
+    }
+
+    const sequence = getSequence(positions);
+    let cursor = sequence.length - 1;
+    let anchor = currentChildren[end]?.node ?? null;
+    for (let i = count - 1; i >= 0; i--) {
+        const childContext = currentChildren[start + i];
+        if (cursor >= 0 && sequence[cursor] === i) {
+            cursor--;
+        } else {
+            parentNode.insertBefore(childContext.node, anchor);
+        }
+        anchor = childContext.node;
+    }
+};
+
+/**
  * Insert a node into the render tree.
  * @param parentContext The parent context.
  * @param childContext The child context.
@@ -502,9 +612,18 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
 const insertNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
     const { node: parentNode, _pos: pos } = parentContext;
     const currentChildren = parentContext.children;
-    if (currentChildren.includes(childContext)) {
-        // the node is already in the child list
-        // remove nodes until the correct instance
+    if (currentChildren[pos] === childContext) {
+        parentContext._pos++;
+        return;
+    }
+    const from = currentChildren.indexOf(childContext);
+    if (from > pos) {
+        const endContext = childContext.end;
+        const to = endContext && endContext !== childContext ? currentChildren.indexOf(endContext) : from;
+        const range = currentChildren.splice(from, (to > from ? to : from) - from + 1);
+        currentChildren.splice(pos, 0, ...range);
+        parentContext._moved += range.length;
+    } else if (from !== -1) {
         let currentContext = currentChildren[pos];
         while (currentContext && childContext !== currentContext) {
             removeNode(parentContext, currentContext, rootContext);
@@ -570,7 +689,6 @@ const renderTemplate = (
         return;
     }
 
-    const document = context.node.ownerDocument as Document;
     const currentChildren = context.children;
 
     if (isVObject(template)) {
@@ -597,7 +715,13 @@ const renderTemplate = (
             insertNode(
                 context,
                 functionContext ||
-                    createContext(ContextKind.REF, null, document.createComment(Fn.name), false, rootContext),
+                    createContext(
+                        ContextKind.REF,
+                        null,
+                        (context.node.ownerDocument as Document).createComment(Fn.name),
+                        false,
+                        rootContext
+                    ),
                 rootContext
             );
 
@@ -725,7 +849,9 @@ const renderTemplate = (
                 fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
             } else {
                 const ctr = customElements?.get(properties?.is ?? template.type);
-                const node = ctr ? new ctr() : document.createElementNS(namespaceURI, template.type);
+                const node = ctr
+                    ? new ctr()
+                    : (context.node.ownerDocument as Document).createElementNS(namespaceURI, template.type);
                 templateContext = createContext(
                     ContextKind.VNODE,
                     template.type,
@@ -832,7 +958,7 @@ const renderTemplate = (
         createContext(
             ContextKind.LITERAL,
             normalizedTemplate,
-            document.createTextNode(normalizedTemplate),
+            (context.node.ownerDocument as Document).createTextNode(normalizedTemplate),
             false,
             rootContext,
             rootContext
@@ -863,12 +989,16 @@ export const internalRender = (
 
     renderDepth++;
     try {
-        let endContext: Context | undefined;
+        let previousRange: Set<Context> | undefined;
         let currentKeys: Map<unknown, Context> | undefined;
         let currentRefs: Map<Node, Context> | undefined;
         if (fragment) {
             context._pos = contextChildren.indexOf(fragment);
-            endContext = fragment.end as Context;
+            const endContext = fragment.end as Context | undefined;
+            const endIndex = endContext ? contextChildren.indexOf(endContext) : -1;
+            if (endIndex >= context._pos) {
+                previousRange = new Set(contextChildren.slice(context._pos, endIndex + 1));
+            }
         } else {
             context._pos = 0;
             currentKeys = context.keys;
@@ -876,38 +1006,35 @@ export const internalRender = (
             context.keys = undefined;
         }
 
+        const start = context._pos;
+        const previousMoved = context._moved;
+        context._moved = 0;
+
         renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
 
-        // all children of the root have been handled,
-        // we can start to cleanup the tree
-        // remove all Nodes that are outside the result range
         const currentIndex = context._pos;
-        let end: number;
-        if (endContext) {
-            end = contextChildren.indexOf(endContext) + 1;
-        } else {
-            end = contextChildren.length;
-        }
-
-        while (currentIndex <= --end) {
-            const [child] = contextChildren.splice(end, 1);
+        for (let i = contextChildren.length - 1; i >= currentIndex; i--) {
+            const child = contextChildren[i];
+            if (previousRange && !previousRange.has(child)) {
+                continue;
+            }
+            contextChildren.splice(i, 1);
             removeNode(context, child, rootContext);
             disposeBindings(child);
             if (child.state) {
                 new HooksManager(child.state).cleanup();
             }
-            if (child.children.length) {
-                // a node removed from the template is emptied as well
-                internalRender(child, null, rootContext, namespace);
-            }
         }
+
+        if (context._moved) {
+            reconcileNodes(context, start, currentIndex);
+        }
+        context._moved = previousMoved;
 
         return contextChildren;
     } finally {
         renderDepth--;
         if (renderDepth === 0) {
-            // the render has settled: contexts detached while reordering keyed nodes
-            // and never re-attached can now be released
             releaseDetachedContexts();
         }
     }

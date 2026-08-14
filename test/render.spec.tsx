@@ -2047,6 +2047,264 @@ describe(
                 expect(comment2).toBe(comment6);
             });
         });
+
+        /**
+         * The render reorders the child list first and moves the nodes once, at the end, so
+         * that a reorder costs the minimum number of insertions instead of one per displaced
+         * sibling. These tests pin the cost down: they count the operations the document
+         * receives, because a regression here keeps producing the right tree, only slower.
+         */
+        describe('reconcile', () => {
+            type Counters = {
+                insertBefore: number;
+                removeChild: number;
+                /** operations addressed to a node that is not in the document any more */
+                detached: number;
+            };
+
+            /**
+             * Count the operations the document receives while running a render.
+             * @param run The function to measure.
+             * @returns The collected counters.
+             */
+            const count = (run: () => void): Counters => {
+                const counters: Counters = { insertBefore: 0, removeChild: 0, detached: 0 };
+                const proto = Node.prototype as unknown as {
+                    insertBefore: (node: Node, ref: Node | null) => Node;
+                    removeChild: (node: Node) => Node;
+                    appendChild: (node: Node) => Node;
+                };
+                const insertBefore = proto.insertBefore;
+                const removeChild = proto.removeChild;
+                const appendChild = proto.appendChild;
+
+                proto.insertBefore = function (this: Node, node: Node, ref: Node | null) {
+                    counters.insertBefore++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return insertBefore.call(this, node, ref);
+                };
+                proto.removeChild = function (this: Node, node: Node) {
+                    counters.removeChild++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return removeChild.call(this, node);
+                };
+                proto.appendChild = function (this: Node, node: Node) {
+                    counters.insertBefore++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return appendChild.call(this, node);
+                };
+
+                try {
+                    run();
+                } finally {
+                    proto.insertBefore = insertBefore;
+                    proto.removeChild = removeChild;
+                    proto.appendChild = appendChild;
+                }
+
+                return counters;
+            };
+
+            describe('keyed reorder', () => {
+                const SIZE = 100;
+                // a row that did not exist before is built out of two nodes, the item and
+                // its text, so its own construction is what the counters account for
+                const NODES_PER_ROW = 2;
+
+                const list = (ids: number[]) => ids.map((id) => <li key={id}>{id}</li>);
+
+                let ids: number[];
+
+                beforeEach(() => {
+                    ids = Array.from({ length: SIZE }, (_, index) => index);
+                    DNA.render(list(ids), wrapper);
+                });
+
+                /**
+                 * Render the given order and return what it cost.
+                 * @param next The identifiers to render, in order.
+                 * @returns The collected counters.
+                 */
+                const reorder = (next: number[]) => {
+                    const nodes = new Map(
+                        Array.from(wrapper.children).map((node, index) => [ids[index], node] as const)
+                    );
+                    const counters = count(() => DNA.render(list(next), wrapper));
+
+                    expect(Array.from(wrapper.children).map((node) => node.textContent)).toEqual(
+                        next.map((id) => `${id}`)
+                    );
+                    // the nodes of the keys that survived are moved, never rebuilt
+                    for (const id of next) {
+                        const previous = nodes.get(id);
+                        if (previous) {
+                            expect(wrapper.children[next.indexOf(id)]).toBe(previous);
+                        }
+                    }
+                    return counters;
+                };
+
+                it('should swap two rows with two insertions', () => {
+                    const next = [...ids];
+                    next[1] = ids[SIZE - 2];
+                    next[SIZE - 2] = ids[1];
+
+                    expect(reorder(next)).toEqual({ insertBefore: 2, removeChild: 0, detached: 0 });
+                });
+
+                it('should move the last row to the front with a single insertion', () => {
+                    const next = [...ids];
+                    next.unshift(next.pop() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 0, detached: 0 });
+                });
+
+                it('should move the first row to the back with a single insertion', () => {
+                    const next = [...ids];
+                    next.push(next.shift() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 0, detached: 0 });
+                });
+
+                it('should reverse the list moving every row but one', () => {
+                    expect(reorder([...ids].reverse())).toEqual({
+                        insertBefore: SIZE - 1,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should rotate the list moving the smaller side only', () => {
+                    const next = [...ids.slice(3), ...ids.slice(0, 3)];
+
+                    expect(reorder(next)).toEqual({ insertBefore: 3, removeChild: 0, detached: 0 });
+                });
+
+                it('should remove a row in the middle without touching the others', () => {
+                    expect(reorder(ids.filter((id) => id !== 50))).toEqual({
+                        insertBefore: 0,
+                        removeChild: 1,
+                        detached: 0,
+                    });
+                });
+
+                it('should insert a row in the middle without touching the others', () => {
+                    const next = [...ids];
+                    next.splice(50, 0, 1000);
+
+                    expect(reorder(next)).toEqual({
+                        insertBefore: NODES_PER_ROW,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should append rows without touching the others', () => {
+                    expect(reorder([...ids, 1000, 1001, 1002])).toEqual({
+                        insertBefore: 3 * NODES_PER_ROW,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should leave the document alone when the order does not change', () => {
+                    expect(reorder([...ids])).toEqual({ insertBefore: 0, removeChild: 0, detached: 0 });
+                });
+
+                it('should move a row and drop another one at the same time', () => {
+                    const next = ids.filter((id) => id !== 10);
+                    next.unshift(next.pop() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 1, detached: 0 });
+                });
+
+                it('should move the whole content of a keyed function component', () => {
+                    const Item: DNA.FunctionComponent<{ name: string }> = ({ name }) => (
+                        <>
+                            <span>{name}</span>
+                            <i>{name}</i>
+                        </>
+                    );
+                    const template = (names: string[]) =>
+                        names.map((name) => (
+                            <Item
+                                key={name}
+                                name={name}
+                            />
+                        ));
+
+                    DNA.render(template(['a', 'b', 'c']), wrapper);
+                    expect(wrapper.textContent).toBe('aabbcc');
+                    const [spanA, spanB, spanC] = Array.from(wrapper.querySelectorAll('span'));
+
+                    DNA.render(template(['c', 'a', 'b']), wrapper);
+                    expect(wrapper.textContent).toBe('ccaabb');
+                    expect(Array.from(wrapper.querySelectorAll('span'))).toEqual([spanC, spanA, spanB]);
+
+                    DNA.render(template(['b', 'c']), wrapper);
+                    expect(wrapper.textContent).toBe('bbcc');
+                    expect(Array.from(wrapper.querySelectorAll('span'))).toEqual([spanB, spanC]);
+                });
+            });
+
+            describe('teardown', () => {
+                it('should not empty the subtree of a removed node', () => {
+                    const rows = Array.from({ length: 20 }, (_, index) => index);
+                    const template = (list: number[]) =>
+                        list.map((id) => (
+                            <p key={id}>
+                                <span>
+                                    <b>{id}</b>
+                                </span>
+                            </p>
+                        ));
+
+                    DNA.render(template(rows), wrapper);
+                    expect(wrapper.querySelectorAll('b')).toHaveLength(20);
+
+                    // one operation per row: the content of a detached row is never seen
+                    // again, so taking it apart node by node would have no observable effect
+                    const counters = count(() => DNA.render(template([]), wrapper));
+
+                    expect(counters).toEqual({ insertBefore: 0, removeChild: 20, detached: 0 });
+                    expect(wrapper.childNodes).toHaveLength(0);
+                });
+
+                it('should empty a node the template did not create', () => {
+                    // the code that owns the node keeps a reference to it, so it must not be
+                    // handed back with the children of a render that no longer exists
+                    const list = document.createElement('ul');
+                    const template = (show: boolean) =>
+                        show ? (
+                            <div>
+                                <ul ref={list}>
+                                    {['a', 'b', 'c'].map((item) => (
+                                        <li key={item}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : null;
+
+                    DNA.render(template(true), wrapper);
+                    expect(list.childNodes).toHaveLength(3);
+
+                    DNA.render(template(false), wrapper);
+                    expect(list.childNodes).toHaveLength(0);
+
+                    DNA.render(template(true), wrapper);
+                    expect(list.childNodes).toHaveLength(3);
+                });
+
+                // the bindings of a removed subtree are covered by `signals.spec.tsx`, which
+                // reaches the polyfill this build is configured with
+            });
+        });
     },
     10 * 1000
 );
