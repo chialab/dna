@@ -1451,6 +1451,48 @@ describe(
                 expect(wrapper.textContent).toBe('b:0a:1');
             });
 
+            it('should reorder the keyed children of a function component that re-renders alone', () => {
+                let setNames: (names: string[]) => void = () => {};
+                const List: DNA.FunctionComponent<{ names: string[] }> = ({ names }, { useState }) => {
+                    const [current, setCurrent] = useState(names);
+                    setNames = setCurrent;
+
+                    return current.map((name) => <li key={name}>{name}</li>);
+                };
+
+                DNA.render(
+                    <ul>
+                        <List names={['a', 'b', 'c']} />
+                    </ul>,
+                    wrapper
+                );
+
+                const list = wrapper.querySelector('ul') as HTMLUListElement;
+                const [itemA, itemB, itemC] = Array.from(list.querySelectorAll('li'));
+                expect(list.textContent).toBe('abc');
+
+                // the function component patches its own fragment: the keyed items must be
+                // moved around, not created again
+                setNames(['c', 'a', 'b']);
+                expect(list.textContent).toBe('cab');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemC, itemA, itemB]);
+
+                // dropping a key removes its node, the others are still the same
+                setNames(['b', 'c']);
+                expect(list.textContent).toBe('bc');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemB, itemC]);
+
+                // and a render of the whole tree finds them again as well
+                DNA.render(
+                    <ul>
+                        <List names={['c', 'b']} />
+                    </ul>,
+                    wrapper
+                );
+                expect(list.textContent).toBe('bc');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemB, itemC]);
+            });
+
             it('should generate an unique id', () => {
                 const Test: DNA.FunctionComponent = (props, { useId }) => {
                     const id = useId(props.suffix ?? 'test');

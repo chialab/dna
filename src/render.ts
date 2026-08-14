@@ -583,10 +583,12 @@ const renderTemplate = (
 
             let functionContext: Context | undefined;
             const currentContext = currentChildren[context._pos];
-            if (key) {
-                functionContext = keys?.get(key);
-            } else if (currentContext && currentContext.type === Fn && currentContext.key == null) {
+            if (currentContext && currentContext.type === Fn && currentContext.key === key) {
+                // the same function with the same key is already in this position:
+                // this is also how a fragment finds itself again when it re-renders alone
                 functionContext = currentContext;
+            } else if (key != null) {
+                functionContext = keys?.get(key);
             }
 
             // the context is inserted as is, rather than being looked up again from its node:
@@ -601,14 +603,16 @@ const renderTemplate = (
 
             const renderContext = currentChildren[context._pos - 1];
             renderContext.type = Fn;
+            renderContext.key = key;
             renderContext.state = renderContext.state || [];
             const hooks = new HooksManager(renderContext.state);
-            if (key != null) {
-                renderContext.keys = (renderContext.keys || new Map()).set(key, renderContext);
-                if (renderContext !== fragment) {
-                    fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
-                }
+            if (key != null && renderContext !== fragment) {
+                fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
             }
+
+            const childKeys = renderContext.keys;
+            const childRefs = renderContext.refs;
+            renderContext.keys = undefined;
 
             renderTemplate(
                 context,
@@ -666,8 +670,9 @@ const renderTemplate = (
                     }
                 ),
                 namespace,
-                keys,
-                refs
+                childKeys,
+                childRefs,
+                renderContext
             );
 
             renderContext.end = currentChildren[context._pos - 1];
@@ -864,9 +869,6 @@ export const internalRender = (
         if (fragment) {
             context._pos = contextChildren.indexOf(fragment);
             endContext = fragment.end as Context;
-            currentKeys = fragment.keys;
-            currentRefs = fragment.refs;
-            fragment.keys = undefined;
         } else {
             context._pos = 0;
             currentKeys = context.keys;
