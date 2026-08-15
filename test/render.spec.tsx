@@ -624,6 +624,16 @@ describe(
                 expect(element.getAttribute('class')).toBe(null);
             });
 
+            it('should split a class string on any whitespace when diffing it', () => {
+                DNA.render(<div class={{ test1: true }} />, wrapper);
+                const element = wrapper.children[0];
+                DNA.render(<div class={'test2\n\ttest3  test4'} />, wrapper);
+                expect(element.classList.contains('test1')).toBe(false);
+                expect(element.classList.contains('test2')).toBe(true);
+                expect(element.classList.contains('test3')).toBe(true);
+                expect(element.classList.contains('test4')).toBe(true);
+            });
+
             it('should update add and remove styles', () => {
                 const element = DNA.render(<div style="color: red;" />, wrapper) as HTMLDivElement;
                 element.style.fontFamily = 'sans-serif';
@@ -671,6 +681,21 @@ describe(
                 );
                 expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(element).backgroundColor);
                 expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
+            });
+
+            it('should preserve the case of a custom property', () => {
+                const element = DNA.render(
+                    <div
+                        style={{
+                            '--fooBar': 'red',
+                        }}
+                    />,
+                    wrapper
+                ) as HTMLDivElement;
+                expect(element.style.getPropertyValue('--fooBar')).toBe('red');
+                expect(element.style.getPropertyValue('--foo-bar')).toBe('');
+                DNA.render(<div style={{}} />, wrapper);
+                expect(element.style.getPropertyValue('--fooBar')).toBe('');
             });
 
             it('should handle repeated whitespace in a class list', () => {
@@ -1386,6 +1411,96 @@ describe(
 
                 expect(effect).toHaveBeenCalled();
                 expect(effect).toHaveBeenCalledTimes(2);
+            });
+
+            it('should run an effect once when it renders its own fragment again', () => {
+                const runs: string[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
+                    const [count, setCount] = useState(0);
+                    useEffect(() => {
+                        runs.push(`first:${count}`);
+                        if (count === 0) {
+                            setCount(1);
+                        }
+                    }, [count]);
+                    useEffect(() => {
+                        runs.push(`second:${count}`);
+                    }, [count]);
+
+                    return <span>{count}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+
+                // the first effect renders the fragment again, and that render runs its own
+                // effects right away: the ones of this pass are picked up again afterwards,
+                // where they left off, and never a second time
+                expect(runs).toEqual(['first:0', 'first:1', 'second:1', 'second:0']);
+                expect(wrapper.textContent).toBe('1');
+            });
+
+            it('should keep the hooks aligned when the fragment renders again while it is rendering', () => {
+                const factory = vi.fn(() => 'id');
+                const Test: DNA.FunctionComponent = (props, { useState, useMemo }) => {
+                    const [ready, setReady] = useState(false);
+                    if (!ready) {
+                        setReady(true);
+                    }
+                    const id = useMemo(factory, []);
+
+                    return <span>{`${ready}:${id}`}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+
+                // the render started by the setter walked the very same hooks: the ones that
+                // come after it must still find the state of this pass, and not a slot of
+                // their own past the end of it
+                expect(factory).toHaveBeenCalledOnce();
+
+                DNA.render(<Test />, wrapper);
+                expect(factory).toHaveBeenCalledOnce();
+                expect(wrapper.textContent).toBe('true:id');
+            });
+
+            it('should hand the same hooks to every render of a fragment', () => {
+                const received: unknown[] = [];
+                const Test: DNA.FunctionComponent = (props, hooks) => {
+                    received.push(hooks);
+
+                    return <span>Test</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                DNA.render(<Test />, wrapper);
+
+                expect(received).toHaveLength(2);
+                expect(received[0]).toBe(received[1]);
+            });
+
+            it('should keep the identity of a state setter across renders', () => {
+                const setters: unknown[] = [];
+                const values: number[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+                    setters.push(setCount);
+                    values.push(count);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                (wrapper.children[0] as HTMLButtonElement).click();
+
+                expect(values).toEqual([0, 1]);
+                expect(setters).toHaveLength(2);
+                expect(setters[0]).toBe(setters[1]);
             });
 
             it('should run cleanup if dep changed', () => {
@@ -2309,11 +2424,13 @@ describe(
                     DNA.render(template(rows), wrapper);
                     expect(wrapper.querySelectorAll('b')).toHaveLength(20);
 
-                    // one operation per row: the content of a detached row is never seen
-                    // again, so taking it apart node by node would have no observable effect
+                    // the content of a detached row is never seen again, so taking it apart
+                    // node by node would have no observable effect; and since the render
+                    // dropped every row, the parent is emptied in a single operation instead
+                    // of being asked to remove them one at a time
                     const counters = count(() => DNA.render(template([]), wrapper));
 
-                    expect(counters).toEqual({ insertBefore: 0, removeChild: 20, detached: 0 });
+                    expect(counters).toEqual({ insertBefore: 0, removeChild: 0, detached: 0 });
                     expect(wrapper.childNodes).toHaveLength(0);
                 });
 

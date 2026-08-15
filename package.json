@@ -48,6 +48,7 @@
     "test:browser": "vitest run --config vitest.browser.ts",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
     "test:node": "vitest run --config vitest.node.ts",
+    "bench": "vitest bench --config vitest.bench.ts",
     "lint": "biome check",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
