@@ -1,8 +1,15 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
 import { $signal } from './directives';
-import { type Effect, HooksManager, type HooksState, type StateAction } from './Hooks';
-import { getOwnPropertyDescriptor, getPropertyDescriptor, getPrototypeOf, isArray } from './helpers';
+import { Hooks } from './Hooks';
+import {
+    getOwnPropertyDescriptor,
+    getPropertyDescriptor,
+    getPrototypeOf,
+    hasOwn,
+    isArray,
+    plainObject,
+} from './helpers';
 import {
     type ElementProperties,
     type EventProperties,
@@ -76,18 +83,35 @@ export type Context = {
     root?: Context;
     owner?: Context;
     parent?: Context;
-    children: Context[];
-    contexts: WeakMap<Node, Context>;
+    children?: Context[];
+    contexts?: WeakMap<Node, Context>;
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
-    state?: HooksState;
+    hooks?: Hooks;
     bindings?: Map<string, SignalBinding>;
     end?: Context;
     key?: unknown;
     keys?: Map<unknown, Context>;
     refs?: Map<Node, Context>;
-    shadow: boolean;
-    _pos: number;
-    _moved: number;
+    shadow?: boolean;
+    _index: number;
+    _cursor?: number;
+    _shift?: number;
+    _release?: boolean;
+    /**
+     * The contexts detached during the current render.
+     * A detached context cannot be released right away: keyed nodes are removed from their
+     * parent before being re-inserted at another position, so a context is known to be gone
+     * only once the whole render has settled.
+     */
+    _detached?: Context[];
+    /**
+     * The nesting level of the current render.
+     */
+    _depth?: number;
+    /**
+     * Whether detached contexts are being released.
+     */
+    _releasing?: boolean;
 };
 
 /**
@@ -113,14 +137,39 @@ export const createContext = (
     type,
     root,
     owner,
-    children: [],
-    // the node -> context map belongs to the render root and is shared with the whole tree:
-    // a map of its own for each context would mean an allocation for every rendered node,
-    // while only the one of the root is ever read
-    contexts: root ? root.contexts : new WeakMap(),
+    // the fields a render fills in later are declared here even though they hold nothing yet:
+    // adding one to an object that does not have it changes its shape and moves its properties
+    // to a store of their own, and every node of a template is given a parent and a set of
+    // properties right after having been created
+    parent: undefined,
+    properties: undefined,
+    hooks: undefined,
+    bindings: undefined,
+    end: undefined,
+    key: undefined,
+    keys: undefined,
+    refs: undefined,
+    // a text node is a leaf: nothing is ever rendered into it, and the list it would be given
+    // is the same empty one for all of them
+    children: undefined,
+    // the node -> context map belongs to the render root, which is the only context it is ever
+    // read from: it is created by the first context that has to be found again from its node,
+    // and a render that never places one does not allocate it at all
+    contexts: undefined,
     shadow,
-    _pos: 0,
-    _moved: 0,
+    _cursor: 0,
+    _shift: 0,
+    // no position yet: any slot of the children list would be a miss, which is what the
+    // lookup expects of a context it has never placed
+    _index: -1,
+    // a node the renderer does not own has to be emptied when it is dropped, and it is the
+    // only kind that holds something to release from the moment it is created
+    _release: kind === ContextKind.REF,
+    // the state of a render belongs to the root of the tree it walks, which is the only
+    // context it is ever read from: every other one leaves the field empty
+    _detached: root ? undefined : [],
+    _depth: root ? undefined : 0,
+    _releasing: root ? undefined : false,
 });
 
 /**
@@ -174,7 +223,26 @@ type StyleValue = string | Record<string, string | undefined> | null | undefined
  * Style maps are usually written in camel case and are converted again on every update,
  * so the result of the replacement is memoized instead of being computed over and over.
  */
-const hyphenatedProperties = new Map<string, string>();
+const hyphenatedProperties = plainObject<Record<string, string>>();
+
+/**
+ * A regular expression literal is a new object on every evaluation: the ones of a hot path
+ * are created once and reused, instead of being allocated at each call of their function.
+ */
+const UPPERCASE_REGEX = /[A-Z]/g;
+
+/**
+ * The pattern that separates two class names.
+ */
+const WHITESPACE_REGEX = /\s+/;
+
+/**
+ * The result of converting an empty `class` or `style` value.
+ * Both conversions are read but never written by their callers, so the empty case is a shared
+ * object rather than one allocated at each call: a `class` update converts twice, and most of
+ * the elements of a template declare no style at all.
+ */
+const EMPTY = plainObject<Record<string, never>>();
 
 /**
  * Convert a camel case style property name to its hyphenated form.
@@ -182,10 +250,22 @@ const hyphenatedProperties = new Map<string, string>();
  * @returns The hyphenated property name.
  */
 const hyphenate = (propertyKey: string) => {
-    let hyphenated = hyphenatedProperties.get(propertyKey);
+    let hyphenated = hyphenatedProperties[propertyKey];
     if (hyphenated === undefined) {
-        hyphenated = propertyKey.replace(/[A-Z]/g, (match: string) => `-${match.toLowerCase()}`);
-        hyphenatedProperties.set(propertyKey, hyphenated);
+        if (propertyKey.startsWith('-')) {
+            // a custom property is declared as it is written, and two names that differ only by
+            // case — `--fooBar` and `--foobar` — are two distinct properties: a name that already
+            // begins with a dash, be it a custom property or a vendor prefixed one, is left alone
+            hyphenated = propertyKey;
+        } else {
+            hyphenated = propertyKey.replace(UPPERCASE_REGEX, (match: string) => `-${match.toLowerCase()}`);
+            if (hyphenated.startsWith('ms-')) {
+                // `-ms-` is the one vendor prefix whose camel case form begins in lower case:
+                // unlike `WebkitTransform`, `msTransform` has no capital to turn into a leading dash
+                hyphenated = `-${hyphenated}`;
+            }
+        }
+        hyphenatedProperties[propertyKey] = hyphenated;
     }
     return hyphenated;
 };
@@ -197,16 +277,19 @@ const hyphenate = (propertyKey: string) => {
  */
 const convertClasses = (value: ClassValue): Record<string, boolean | undefined> => {
     if (!value) {
-        return {};
+        return EMPTY;
     }
     if (typeof value === 'object') {
         return value;
     }
 
-    const classes: Record<string, boolean | undefined> = {};
+    // a map with no prototype, so that a class named after one of its members — `constructor`
+    // is a valid class name — is not found on it. The literal notation is the one an engine
+    // can keep in its fast representation, unlike `Object.create(null)`
+    const classes = plainObject<Record<string, boolean | undefined>>();
     // any run of whitespace separates two class names, and empty tokens are dropped
     // because `classList` refuses them
-    for (const className of value.split(/\s+/)) {
+    for (const className of value.split(WHITESPACE_REGEX)) {
         if (className) {
             classes[className] = true;
         }
@@ -221,11 +304,11 @@ const convertClasses = (value: ClassValue): Record<string, boolean | undefined> 
  * @returns A set of styles.
  */
 const convertStyles = (value: StyleValue): Record<string, string> => {
-    const styles: Record<string, string> = {};
     if (!value) {
-        return styles;
+        return EMPTY;
     }
 
+    const styles = plainObject<Record<string, string>>();
     if (typeof value === 'object') {
         for (const propertyKey in value) {
             const propertyValue = value[propertyKey];
@@ -259,21 +342,23 @@ const convertStyles = (value: StyleValue): Record<string, string> => {
  * @param node The node to update.
  * @param value The new value.
  * @param oldValue The value the renderer applied last.
+ * @param isNew If the node has just been created, and has no class of its own to preserve.
  */
-const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue) => {
+const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, isNew?: boolean) => {
     if (value == null) {
-        node.removeAttribute('class');
+        if (!isNew) {
+            node.removeAttribute('class');
+        }
         return;
     }
-    if (typeof value === 'string' && node.className === (oldValue || '')) {
+    if (typeof value === 'string' && (isNew || node.className === (oldValue || ''))) {
         node.className = value;
         return;
     }
 
     const classes = convertClasses(value);
-    const oldClasses = convertClasses(oldValue);
     const classList = node.classList;
-    for (const className in oldClasses) {
+    for (const className in convertClasses(oldValue)) {
         if (!classes[className]) {
             classList.remove(className);
         }
@@ -292,21 +377,23 @@ const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue) 
  * @param node The node to update.
  * @param value The new value.
  * @param oldValue The value the renderer applied last.
+ * @param isNew If the node has just been created, and has no style of its own to preserve.
  */
-const setStyle = (node: HTMLElement, value: StyleValue, oldValue: StyleValue) => {
+const setStyle = (node: HTMLElement, value: StyleValue, oldValue: StyleValue, isNew?: boolean) => {
     if (value == null) {
-        node.removeAttribute('style');
+        if (!isNew) {
+            node.removeAttribute('style');
+        }
         return;
     }
-    if (typeof value === 'string' && node.getAttribute('style') === oldValue) {
+    if (typeof value === 'string' && (isNew || node.getAttribute('style') === oldValue)) {
         node.setAttribute('style', value);
         return;
     }
 
     const styles = convertStyles(value);
-    const oldStyles = convertStyles(oldValue);
     const style = node.style;
-    for (const propertyKey in oldStyles) {
+    for (const propertyKey in convertStyles(oldValue)) {
         if (!(propertyKey in styles)) {
             style.removeProperty(propertyKey);
         }
@@ -352,9 +439,11 @@ const writableProperties = new WeakMap<object, Map<string, boolean>>();
  * @returns True if writable, false otherwise.
  */
 const isWritableProperty = (element: Node, propertyKey: string) => {
-    // an own property shadows the whole chain, so it is always looked up
-    const ownDescriptor = getOwnPropertyDescriptor(element, propertyKey);
-    if (ownDescriptor) {
+    // an own property shadows the whole chain, so it is always looked up. Asking whether there
+    // is one comes first, because reading the descriptor allocates an object to describe it and
+    // a node whose properties all come from its class — which is most of them — has none
+    if (hasOwn.call(element, propertyKey)) {
+        const ownDescriptor = getOwnPropertyDescriptor(element, propertyKey) as PropertyDescriptor;
         return !ownDescriptor.get || !!ownDescriptor.set;
     }
 
@@ -385,13 +474,17 @@ const isWritableProperty = (element: Node, propertyKey: string) => {
  * @param value The new value.
  * @param oldValue The old value.
  * @param ctr The constructor of the node.
+ * @param isNew If the node has just been created by this render, and therefore holds no
+ * attribute of its own: what the template declares is written without being compared first,
+ * and what it does not declare has nothing to remove.
  */
 const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     node: T,
     propertyKey: P,
     value: T[P] | undefined,
     oldValue?: T[P],
-    ctr?: ComponentConstructor
+    ctr?: ComponentConstructor,
+    isNew?: boolean
 ) => {
     // the state of a form field belongs to the user as much as to the template: it is written
     // again even when the template did not change, in order to restore what it declares
@@ -405,25 +498,28 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
 
     // `class` and `style` accept both a string and a map, and are merged rather than replaced
     if (propertyKey === 'class') {
-        setClasses(node as HTMLElement, value as ClassValue, oldValue as ClassValue);
+        setClasses(node as HTMLElement, value as ClassValue, oldValue as ClassValue, isNew);
         return;
     }
     if (propertyKey === 'style') {
-        setStyle(node as HTMLElement, value as StyleValue, oldValue as StyleValue);
+        setStyle(node as HTMLElement, value as StyleValue, oldValue as StyleValue, isNew);
         return;
     }
 
     // `onclick` and friends are real properties of the node and are assigned as such, while
     // `onClick` and `on:click` exist only in the template and become event listeners
-    if (propertyKey[0] === 'o' && propertyKey[1] === 'n' && !(propertyKey in node.constructor.prototype)) {
-        const eventName = propertyKey[2] === ':' ? propertyKey.substring(3) : propertyKey.substring(2);
-        if (oldValue) {
-            (node as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
+    if (propertyKey[0] === 'o' && propertyKey[1] === 'n') {
+        const eventName =
+            propertyKey in node ? null : propertyKey[2] === ':' ? propertyKey.substring(3) : propertyKey.substring(2);
+        if (eventName !== null) {
+            if (oldValue) {
+                (node as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
+            }
+            if (value) {
+                (node as HTMLElement).addEventListener(eventName, value as EventListener);
+            }
+            return;
         }
-        if (value) {
-            (node as HTMLElement).addEventListener(eventName, value as EventListener);
-        }
-        return;
     }
 
     const type = typeof value;
@@ -458,16 +554,18 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
 
-    // an empty value removes the attribute, while `true` renders it as a boolean attribute
+    // an empty value removes the attribute, while `true` renders it as a boolean attribute.
+    // Removing an attribute the node does not have is a no-op, and is left to the DOM rather
+    // than being asked about first
     if (value == null || value === false) {
-        if ((node as HTMLElement).hasAttribute(propertyKey)) {
+        if (!isNew) {
             (node as HTMLElement).removeAttribute(propertyKey);
         }
         return;
     }
 
     const attrValue = value === true ? '' : (value as string).toString();
-    if ((node as HTMLElement).getAttribute(propertyKey) !== attrValue) {
+    if (isNew || (node as HTMLElement).getAttribute(propertyKey) !== attrValue) {
         (node as HTMLElement).setAttribute(propertyKey, attrValue);
     }
 };
@@ -484,6 +582,7 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
  * @param value The new value.
  * @param oldValue The old value.
  * @param ctr The constructor of the node.
+ * @param isNew If the node has just been created by this render.
  */
 const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     context: Context,
@@ -491,7 +590,8 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
     propertyKey: P,
     value: T[P] | undefined,
     oldValue?: T[P],
-    ctr?: ComponentConstructor
+    ctr?: ComponentConstructor,
+    isNew?: boolean
 ) => {
     let previousValue = oldValue;
 
@@ -509,7 +609,7 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
     }
 
     if (!isSignal(value)) {
-        setProperty(node, propertyKey, value, previousValue, ctr);
+        setProperty(node, propertyKey, value, previousValue, ctr, isNew);
         return;
     }
 
@@ -529,6 +629,26 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
     });
 
     context.bindings = (context.bindings || new Map()).set(propertyKey, newBinding);
+    // the binding has to be stopped when the node is dropped, so the subtree that holds it
+    // can no longer be thrown away without being walked
+    markRelease(context);
+};
+
+/**
+ * Mark a context, and the chain of the ones that contain it, as holding something to release.
+ * The flag is what lets a dropped subtree be walked only when walking it has an effect: most of
+ * what a template renders is plain elements with nothing attached, and a list of them is thrown
+ * away as a whole instead of node by node.
+ * @param context The context to mark.
+ */
+const markRelease = (context: Context | undefined) => {
+    // the chain above an already marked context is marked too, so the walk stops at the first
+    // context that knows about it
+    let current = context;
+    while (current && !current._release) {
+        current._release = true;
+        current = current.parent;
+    }
 };
 
 /**
@@ -555,25 +675,38 @@ const disposeBindings = (context: Context) => {
  * that put it there; a node the renderer created keeps its own content instead, since the
  * subtree is discarded as a whole and emptying it node by node would be visible work with no
  * effect.
+ *
+ * A child that holds nothing to release is skipped along with everything below it: dropping a
+ * list of plain elements is then a single step instead of one per node of it. What is left
+ * behind is the entry of those nodes in the node -> context map, which is weak and dies with
+ * the nodes themselves; the map is only ever asked about a node a template names again, and a
+ * node that is named again is taken out of the subtree it used to belong to, entry included.
+ *
  * It is idempotent, since a context can be released both inline and by the deferred pass.
  * @param context The context to release.
  * @param rootContext The root context the subtree belonged to.
  */
 const releaseContext = (context: Context, rootContext: Context) => {
     disposeBindings(context);
-    if (context.state) {
-        new HooksManager(context.state).cleanup();
-    }
+    // the hooks are left in place: they are the state of a fragment that is gone, and
+    // emptying them is enough
+    context.hooks?.cleanup();
 
     const children = context.children;
+    if (!children) {
+        return;
+    }
+
     const owned = context.kind === ContextKind.REF;
-    for (let i = 0, len = children.length; i < len; i++) {
-        const child = children[i];
-        if (rootContext.contexts.get(child.node) === child) {
-            rootContext.contexts.delete(child.node);
-        }
+    for (const child of children) {
         if (owned && child.node.parentNode === context.node) {
             context.node.removeChild(child.node);
+        }
+        if (!child._release) {
+            continue;
+        }
+        if (rootContext.contexts?.get(child.node) === child) {
+            rootContext.contexts.delete(child.node);
         }
         releaseContext(child, rootContext);
     }
@@ -583,52 +716,58 @@ const releaseContext = (context: Context, rootContext: Context) => {
 };
 
 /**
- * Contexts detached during the current render, paired with their root context.
- * A detached context cannot be released right away: keyed nodes are removed from their
- * parent before being re-inserted at another position, so a context is known to be gone
- * only once the whole render has settled.
- */
-const detachedContexts: [Context, Context][] = [];
-
-/**
- * The nesting level of the current render.
- */
-let renderDepth = 0;
-
-/**
- * Whether detached contexts are being released.
- */
-let releasing = false;
-
-/**
  * Release the contexts that have been detached and never re-attached during the render.
+ * @param rootContext The root context of the render that has settled.
  */
-const releaseDetachedContexts = () => {
-    if (releasing) {
+const releaseDetachedContexts = (rootContext: Context) => {
+    if (rootContext._releasing) {
         return;
     }
-    releasing = true;
+    rootContext._releasing = true;
     try {
         // releasing a context runs user code — disconnected callbacks, effect cleanups — which
         // can detach further contexts: the queue is walked with a cursor rather than drained
         // from its head, so that what is appended while it runs is picked up by the same pass
-        for (let i = 0; i < detachedContexts.length; i++) {
-            const [context, rootContext] = detachedContexts[i];
-            if (rootContext.contexts.get(context.node) === context) {
-                // the context has been re-attached during the render
-                continue;
+        const detached = rootContext._detached;
+        if (detached) {
+            for (const context of detached) {
+                if (!context._release) {
+                    // the subtree holds nothing to release: it is dropped with its node
+                    continue;
+                }
+                if (rootContext.contexts?.get(context.node) === context) {
+                    // the context has been re-attached during the render
+                    continue;
+                }
+                releaseContext(context, rootContext);
             }
-            releaseContext(context, rootContext);
         }
-        detachedContexts.length = 0;
+        rootContext._detached = undefined;
     } finally {
-        releasing = false;
+        rootContext._releasing = false;
     }
 };
 
 /* -------------------------------------------------------------------------------------------------
  * Children list
  * ---------------------------------------------------------------------------------------------- */
+
+/**
+ * Check whether a context can be reached from anywhere but the list of its parent.
+ *
+ * A keyed context is looked up by its key, and one the renderer does not own by its node:
+ * both can be handed to another parent, or be re-inserted after having been detached, so
+ * the node they hold has to lead back to them. Anything else — the elements and the texts
+ * a template declares without a key — is only ever reached through the cursor walking the
+ * children of its parent, and once it leaves that list nothing can name it again.
+ *
+ * The map they would go into is weak, and an entry in it costs the collector far more than
+ * an ordinary one: keeping the nodes that no one can look up out of it is what stops a
+ * render from making the whole tree expensive to collect.
+ * @param context The context to check.
+ * @returns `true` when the node of the context has to lead back to it.
+ */
+const isFindable = (context: Context) => context.key != null || context.kind === ContextKind.REF;
 
 /**
  * Detach the node of a context from the document and queue the context for release.
@@ -651,8 +790,48 @@ const detachNode = (parentContext: Context, childContext: Context, rootContext: 
     } else if (childNode.parentNode === parentNode) {
         parentNode.removeChild(childNode);
     }
-    rootContext.contexts.delete(childNode);
-    detachedContexts.push([childContext, rootContext]);
+    if (isFindable(childContext)) {
+        // the entry is what tells a context re-inserted later in this same render from one
+        // that is gone: only the contexts that have one are asked to drop it
+        rootContext.contexts?.delete(childNode);
+    }
+    // the render state belongs to the root of the tree being walked, and a context is only
+    // ever detached while that tree is being rendered
+    rootContext._detached ??= [];
+    rootContext._detached.push(childContext);
+};
+
+/**
+ * Check whether a children list holds a node the renderer does not own.
+ * Such a node may be a light child a component handed to one of its slots, and the realm that
+ * holds it keeps its own account of where it went: it has to be taken out of its parent one node
+ * at a time, through the removal the realm watches, rather than by emptying the parent at once.
+ * @param children The children list to check.
+ * @returns `true` when at least one of them is a node the renderer was given.
+ */
+const holdsForeignNode = (children: Context[]) => {
+    for (const child of children) {
+        if (child.kind === ContextKind.REF) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
+ * Find a context in a children list.
+ * The position the context was last placed at is remembered on the context itself and is
+ * checked before searching: a list is walked looking for contexts that mostly still are
+ * where the previous render left them, and scanning for each of them would turn a reorder
+ * into quadratic work. The slot is compared by identity, so a remembered position that has
+ * gone stale — every insertion or removal shifts the ones that follow it — is a miss and
+ * nothing more.
+ * @param children The children list to search.
+ * @param context The context to look for.
+ * @returns The index of the context, or `-1` when the list does not hold it.
+ */
+const indexOfContext = (children: Context[], context: Context) => {
+    return children[context._index] === context ? context._index : children.indexOf(context);
 };
 
 /**
@@ -663,9 +842,11 @@ const detachNode = (parentContext: Context, childContext: Context, rootContext: 
  */
 const removeNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
     detachNode(parentContext, childContext, rootContext);
-    const io = parentContext.children.indexOf(childContext);
-    if (io !== -1) {
-        parentContext.children.splice(io, 1);
+    if (parentContext.children) {
+        const io = indexOfContext(parentContext.children, childContext);
+        if (io !== -1) {
+            parentContext.children.splice(io, 1);
+        }
     }
 };
 
@@ -676,48 +857,95 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
  * @param rootContext The root context.
  */
 const insertNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
-    const { node: parentNode, _pos: pos } = parentContext;
-    const currentChildren = parentContext.children;
+    const pos = parentContext._cursor ?? 0;
+
+    parentContext.children ??= [];
 
     // already where the template wants it: this is the common case of an update that did
-    // not reorder anything, and it costs a single comparison
-    if (currentChildren[pos] === childContext) {
-        parentContext._pos++;
+    // not reorder anything, and it costs a single comparison. Nothing else is read here,
+    // because this runs for every node of every render
+    if (parentContext.children[pos] === childContext) {
+        childContext._index = pos;
+        parentContext._cursor = pos + 1;
         return;
     }
 
-    const from = currentChildren.indexOf(childContext);
+    // only the children of this parent can be found in its list, and the parent a context
+    // belongs to is remembered on it: without this check every node a render creates — which
+    // belongs to no parent yet — would scan the whole list to learn what is already known,
+    // and building a list of n nodes would cost n²/2 comparisons
+    const from = childContext.parent === parentContext ? indexOfContext(parentContext.children, childContext) : -1;
     if (from > pos) {
         // the context is further down the list: move it up to the cursor, together with the
         // range of a fragment, which is contiguous and ends at `end`. The document is left
         // alone here and rearranged once by `reconcileNodes`, which needs the whole picture
         // to move the smallest possible number of nodes
         const endContext = childContext.end;
-        const to = endContext && endContext !== childContext ? currentChildren.indexOf(endContext) : from;
-        const range = currentChildren.splice(from, (to > from ? to : from) - from + 1);
-        currentChildren.splice(pos, 0, ...range);
-        parentContext._moved += range.length;
+        const to =
+            endContext && endContext !== childContext ? indexOfContext(parentContext.children, endContext) : from;
+        if (to <= from) {
+            // a single child: exchange it with the one at the cursor, instead of shifting
+            // everything in between. The displaced context lands on a slot the walk has not
+            // reached yet, where it is still found — by key, or by the cursor itself once it
+            // gets there. Shifting would cost one copy per sibling, and a list where every
+            // row is displaced, as in a swap, would be quadratic in the number of rows
+            const displaced = parentContext.children[pos];
+            parentContext.children[from] = displaced;
+            parentContext.children[pos] = childContext;
+            displaced._index = from;
+            childContext._index = pos;
+            parentContext._shift = (parentContext._shift ?? 0) + 1;
+        } else {
+            // a function component owns the contiguous range up to `end` and moves whole
+            const range = parentContext.children.splice(from, to - from + 1);
+            parentContext.children.splice(pos, 0, ...range);
+            // only the contexts between the cursor and the end of the range changed place
+            for (let i = pos; i <= to; i++) {
+                parentContext.children[i]._index = i;
+            }
+            parentContext._shift = (parentContext._shift ?? 0) + range.length;
+        }
     } else if (from !== -1) {
         // the context is the one at the cursor, once the contexts in between are dropped:
         // they are stale children that the template did not render again
-        let currentContext = currentChildren[pos];
+        let currentContext = parentContext.children[pos];
         while (currentContext && childContext !== currentContext) {
             removeNode(parentContext, currentContext, rootContext);
-            currentContext = currentChildren[pos];
+            currentContext = parentContext.children[pos];
         }
     } else {
         // brand new to this parent: it may still belong to another one, when a keyed node
-        // moves across parents, and has to be removed from it first
-        const currentChildContext = rootContext.contexts.get(childContext.node);
-        if (currentChildContext?.parent && currentChildContext.parent !== parentContext) {
-            removeNode(currentChildContext.parent, currentChildContext, rootContext);
+        // moves across parents, and has to be removed from it first. A node this render has
+        // just created cannot: it is reachable from nowhere else, and the lookup — one per
+        // node of a first render — would always miss
+        if (childContext.parent !== undefined || childContext.kind === ContextKind.REF) {
+            const currentChildContext = rootContext.contexts?.get(childContext.node);
+            if (currentChildContext?.parent && currentChildContext.parent !== parentContext) {
+                removeNode(currentChildContext.parent, currentChildContext, rootContext);
+            }
         }
-        parentNode.insertBefore(childContext.node, currentChildren[pos]?.node);
-        currentChildren.splice(pos, 0, childContext);
+        if (pos === parentContext.children.length) {
+            // building a list appends every one of its nodes: the document is asked to append,
+            // which is the same operation without the anchor to convert, and a splice at the end
+            // of an array still builds the array of what it removed — an empty one, for each node
+            parentContext.node.appendChild(childContext.node);
+            parentContext.children.push(childContext);
+        } else {
+            parentContext.node.insertBefore(childContext.node, parentContext.children[pos].node);
+            parentContext.children.splice(pos, 0, childContext);
+        }
+        childContext._index = pos;
         childContext.parent = parentContext;
-        rootContext.contexts.set(childContext.node, childContext);
+        if (isFindable(childContext)) {
+            rootContext.contexts ??= new WeakMap();
+            rootContext.contexts.set(childContext.node, childContext);
+        }
+        if (childContext._release) {
+            // whatever the child holds has to be found again from the list it now belongs to
+            markRelease(parentContext);
+        }
     }
-    parentContext._pos++;
+    parentContext._cursor = pos + 1;
 };
 
 /**
@@ -726,11 +954,13 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
  * @param positions The previous position of each node, in the order the template wants them.
  * @returns The indexes of `positions` that form the subsequence, ascending.
  */
-const getSequence = (positions: number[]): number[] => {
+const getSequence = (positions: Int32Array): number[] => {
     const len = positions.length;
     // `previous[i]` is the index that comes before `i` in the subsequence ending at `i`, while
-    // `tails[l]` is the index that ends the subsequence of length `l + 1` with the smallest tail
-    const previous = new Array<number>(len);
+    // `tails[l]` is the index that ends the subsequence of length `l + 1` with the smallest tail.
+    // Both hold nothing but indexes: a typed array is half the memory of the array of holes that
+    // sizing an ordinary one produces, and is not slowed down by them
+    const previous = new Int32Array(len);
     const tails: number[] = [];
     for (let i = 0; i < len; i++) {
         const position = positions[i];
@@ -793,6 +1023,10 @@ const getSequence = (positions: number[]): number[] => {
 const reconcileNodes = (parentContext: Context, start: number, end: number) => {
     const parentNode = parentContext.node;
     const currentChildren = parentContext.children;
+    if (!currentChildren) {
+        return;
+    }
+
     const count = end - start;
     if (count <= 0) {
         return;
@@ -806,7 +1040,7 @@ const reconcileNodes = (parentContext: Context, start: number, end: number) => {
 
     // where each rendered node currently sits, in the order the template wants them:
     // a node that is not in the document yet has no position worth keeping
-    const positions = new Array<number>(count);
+    const positions = new Int32Array(count);
     for (let i = 0; i < count; i++) {
         const currentPosition = currentPositions.get(currentChildren[start + i].node);
         positions[i] = currentPosition === undefined ? -1 : currentPosition;
@@ -828,16 +1062,53 @@ const reconcileNodes = (parentContext: Context, start: number, end: number) => {
     }
 };
 
-/* -------------------------------------------------------------------------------------------------
- * Template rendering
- * ---------------------------------------------------------------------------------------------- */
-
 /**
  * The properties of a template that declares none.
  * It is shared and never written to, so that an element without properties does not pay for
  * an object of its own on each and every render.
  */
 const EMPTY_PROPERTIES: KeyedProperties & TreeProperties & EventProperties & ElementProperties = {};
+
+/**
+ * The namespace of an HTML document, which is the one a render starts in.
+ */
+const HTML_NAMESPACE: string = 'http://www.w3.org/1999/xhtml';
+
+/* -------------------------------------------------------------------------------------------------
+ * Fragment hooks
+ * ---------------------------------------------------------------------------------------------- */
+
+/**
+ * Render again the fragment of a function component, after one of its hooks changed its state.
+ * It is the way back into the renderer the hooks are given, and the one thing they cannot do
+ * on their own.
+ *
+ * Where the fragment stands is read when the render is requested, not when the setter that
+ * requests it was handed out: a setter outlives the render it comes from, and the fragment may
+ * have been rendered into another place since.
+ * @param hooks The hooks of the fragment.
+ */
+const requestFragmentRender = (hooks: Hooks) => {
+    const { renderContext, context, rootContext } = hooks;
+    if (!context.children?.includes(renderContext)) {
+        // the fragment is gone: rendering it again would bring back a subtree nobody
+        // references anymore
+        return;
+    }
+
+    // only this fragment is rendered again, where it stands
+    if (isComponent(rootContext.node) && rootContext.shadow) {
+        rootContext.node.realm.requestUpdate(() => {
+            internalRender(hooks.context, hooks.template, hooks.rootContext, hooks.namespace, renderContext);
+        });
+        return;
+    }
+    internalRender(context, hooks.template, rootContext, hooks.namespace, renderContext);
+};
+
+/* -------------------------------------------------------------------------------------------------
+ * Template rendering
+ * ---------------------------------------------------------------------------------------------- */
 
 /**
  * Render a a template into the root.
@@ -880,7 +1151,7 @@ const renderTemplate = (
         return;
     }
 
-    const currentChildren = context.children;
+    context.children ??= [];
 
     if (isVObject(template)) {
         /* ----- function components ----- */
@@ -894,7 +1165,7 @@ const renderTemplate = (
             const { type: Fn, key, properties, children } = template;
 
             let functionContext: Context | undefined;
-            const currentContext = currentChildren[context._pos];
+            const currentContext = context.children[context._cursor ?? 0];
             if (currentContext && currentContext.type === Fn && currentContext.key === key) {
                 // the same function with the same key is already in this position:
                 // this is also how a fragment finds itself again when it re-renders alone
@@ -922,14 +1193,19 @@ const renderTemplate = (
             // the comment marks where the fragment begins: what the function renders is not
             // nested into it but appended as its siblings, in this very same list, and the
             // last of them is remembered as `end` so that the range can be found again
-            const renderContext = currentChildren[context._pos - 1];
+            const renderContext = context.children[(context._cursor ?? 0) - 1];
             renderContext.type = Fn;
             renderContext.key = key;
-            renderContext.state = renderContext.state || [];
-            const hooks = new HooksManager(renderContext.state);
             if (key != null && renderContext !== fragment) {
-                fragment.keys = (fragment.keys || new Map()).set(key, renderContext);
+                fragment.keys ??= new Map();
+                fragment.keys.set(key, renderContext);
             }
+
+            // the hooks belong to the fragment and outlive its renders, together with the state
+            // they hold: a fragment that renders again does not build them — nor the closures
+            // they are made of — a second time, and it renders again on every state change
+            const hooks = renderContext.hooks || new Hooks(renderContext, requestFragmentRender);
+            renderContext.hooks = hooks;
 
             // the keys of the fragment are collected again by this render, while the refs are
             // kept: a node passed in a template has to be found again even when a render that
@@ -938,71 +1214,19 @@ const renderTemplate = (
             const childRefs = renderContext.refs;
             renderContext.keys = undefined;
 
-            renderTemplate(
-                context,
-                rootContext,
-                Fn(
-                    {
-                        children,
-                        ...properties,
-                    },
-                    {
-                        useState(initialValue) {
-                            const [value, setInternal] = hooks.useState(initialValue);
-
-                            return [
-                                value,
-                                (newValue: StateAction<typeof initialValue>, requestUpdate?: boolean) => {
-                                    if (!setInternal(newValue)) {
-                                        return;
-                                    }
-                                    if (requestUpdate === false) {
-                                        return;
-                                    }
-                                    if (!currentChildren.includes(renderContext)) {
-                                        // the fragment is gone: rendering it again would
-                                        // bring back a subtree nobody references anymore
-                                        return;
-                                    }
-                                    // only this fragment is rendered again, where it stands
-                                    if (isComponent(rootContext.node) && rootContext.shadow) {
-                                        rootContext.node.realm.requestUpdate(() => {
-                                            internalRender(context, template, rootContext, namespace, renderContext);
-                                        });
-                                    } else {
-                                        internalRender(context, template, rootContext, namespace, renderContext);
-                                    }
-                                },
-                            ];
-                        },
-                        useRef: hooks.useRef.bind(hooks),
-                        useMemo(factory, deps) {
-                            return hooks.useMemo(factory, deps);
-                        },
-                        useCallback(callback, deps) {
-                            return hooks.useCallback(callback, deps);
-                        },
-                        useEffect(effect: Effect, deps?: unknown[]) {
-                            return hooks.useEffect(effect, deps);
-                        },
-                        useElement(tagName: string, options?: ElementCreationOptions) {
-                            return hooks.useElement(tagName, options);
-                        },
-                        useId: (suffix?: string) => {
-                            return hooks.useId(renderContext.node, suffix);
-                        },
-                        useRenderContext() {
-                            return context;
-                        },
-                    }
-                ),
-                namespace,
-                childKeys,
-                childRefs,
-                renderContext
+            const previousIndex = hooks.beginRender(context, rootContext, namespace, template);
+            const result = Fn(
+                {
+                    children,
+                    ...properties,
+                },
+                hooks.api
             );
+            hooks.endRender(previousIndex);
 
-            renderContext.end = currentChildren[context._pos - 1];
+            renderTemplate(context, rootContext, result, namespace, childKeys, childRefs, renderContext);
+
+            renderContext.end = context.children[(context._cursor ?? 0) - 1];
             // the effects run once the fragment is in the document, and may render again
             hooks.runEffects();
             return;
@@ -1036,7 +1260,7 @@ const renderTemplate = (
         // an existing node is reused when the key says so, or when the one at the cursor was
         // generated by this same render out of a compatible tag
         let templateContext: Context | undefined;
-        const currentContext = currentChildren[context._pos];
+        const currentContext = context.children[context._cursor ?? 0];
         if (key != null) {
             templateContext = keys?.get(key);
         } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
@@ -1051,6 +1275,7 @@ const renderTemplate = (
         }
 
         // a node rendered inside a component belongs to its realm, which has to adopt it
+        let isNew = false;
         if (!templateContext) {
             if (isVNode(template)) {
                 // the template carries a node instance: it keeps the context it was given the
@@ -1059,8 +1284,11 @@ const renderTemplate = (
                 templateContext = refs?.get(node) || createContext(ContextKind.REF, null, node, false, rootContext);
                 fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
                 if (
-                    isComponent(rootContext.node) &&
+                    // whether the render is a shadow one is a flag of the context, and is read
+                    // before asking the node what it is: a render that is not one — every render
+                    // that does not come from a component — stops here
                     rootContext.shadow &&
+                    isComponent(rootContext.node) &&
                     // unless it is one of the light children of the component, which the
                     // realm already holds on behalf of whoever passed it
                     !rootContext.node.slotChildNodes.includes(node)
@@ -1068,10 +1296,19 @@ const renderTemplate = (
                     rootContext.node.realm.own(node);
                 }
             } else {
-                const ctr = customElements?.get(properties?.is ?? template.type);
+                const definition = properties.is ?? template.type;
+                // the name of a custom element always contains a hyphen: a plain tag can never
+                // have been registered as one, and the registry — which every element of every
+                // render would otherwise be looked up into — does not need to be asked
+                const ctr = definition.indexOf('-') === -1 ? undefined : customElements?.get(definition);
+                const document = context.node.ownerDocument as Document;
                 const node = ctr
                     ? new ctr()
-                    : (context.node.ownerDocument as Document).createElementNS(namespaceURI, template.type);
+                    : // `createElementNS` is the slower of the two and is only needed to leave the
+                      // document tree for another one, as an `<svg>` subtree does
+                      namespaceURI === HTML_NAMESPACE
+                      ? document.createElement(template.type)
+                      : document.createElementNS(namespaceURI, template.type);
                 templateContext = createContext(
                     ContextKind.VNODE,
                     template.type,
@@ -1080,7 +1317,11 @@ const renderTemplate = (
                     rootContext,
                     rootContext
                 );
-                if (isComponent(rootContext.node) && rootContext.shadow) {
+                // the element comes out of the document with no attribute of its own: what the
+                // template declares can be written straight away, without asking the node what
+                // it holds and without removing what it never had
+                isNew = true;
+                if (rootContext.shadow && isComponent(rootContext.node)) {
                     // the node has just been created, so it cannot be a light child already
                     // and there is no list to search it into
                     rootContext.node.realm.own(node);
@@ -1133,7 +1374,8 @@ const renderTemplate = (
                     propertyKey as keyof Node,
                     properties[propertyKey as keyof typeof properties] as Node[keyof Node],
                     oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                    ctr
+                    ctr,
+                    isNew
                 );
             }
         }
@@ -1160,10 +1402,18 @@ const renderTemplate = (
     }
 
     if (template instanceof Node) {
+        // the list is searched with a plain loop, so that looking for the node does not allocate
+        // the closure that would capture it
+        let nodeContext: Context | undefined;
+        for (const childContext of context.children) {
+            if (childContext.node === template) {
+                nodeContext = childContext;
+                break;
+            }
+        }
         insertNode(
             context,
-            currentChildren.find((child) => child.node === template) ||
-                createContext(ContextKind.REF, null, template, false, rootContext),
+            nodeContext || createContext(ContextKind.REF, null, template, false, rootContext),
             rootContext
         );
         return;
@@ -1172,12 +1422,12 @@ const renderTemplate = (
     /* ----- text ----- */
     // the content of a style element rendered by a component is scoped to its definition
     const normalizedTemplate =
-        isComponent(rootContext.node) && rootContext.shadow && (context.node as HTMLElement).tagName === 'STYLE'
+        rootContext.shadow && isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE'
             ? css(rootContext.node.is, String(template))
             : String(template);
 
     // a text node already in this position is updated in place rather than replaced
-    const currentContext = currentChildren[context._pos];
+    const currentContext = context.children[context._cursor ?? 0];
     if (currentContext?.kind === ContextKind.LITERAL && currentContext.owner === rootContext) {
         if (currentContext.type !== normalizedTemplate) {
             currentContext.type = normalizedTemplate;
@@ -1221,12 +1471,15 @@ export const internalRender = (
     context: Context,
     template: Template,
     rootContext: Context = context,
-    namespace = 'http://www.w3.org/1999/xhtml',
+    namespace: string = HTML_NAMESPACE,
     fragment?: Context
 ): Context[] => {
-    const contextChildren = context.children;
+    context.children ??= [];
 
-    renderDepth++;
+    // the render this one belongs to is the one of its root: a nested render of another tree —
+    // a component rendering while its properties are assigned — is a render of its own, and
+    // settles on its own
+    rootContext._depth = (rootContext._depth ?? 0) + 1;
     try {
         let previousRange: Set<Context> | undefined;
         let currentKeys: Map<unknown, Context> | undefined;
@@ -1235,28 +1488,33 @@ export const internalRender = (
             // only one fragment is rendered again: the cursor starts at its marker, and the
             // contexts it owned are remembered, because everything around them belongs to
             // other fragments and has to come out of this render untouched
-            context._pos = contextChildren.indexOf(fragment);
+            context._cursor = indexOfContext(context.children, fragment);
             const endContext = fragment.end as Context | undefined;
             // the range of a fragment never begins before its own marker, so the search for
             // its end can start from there instead of walking the whole list of siblings
-            const endIndex = endContext ? contextChildren.indexOf(endContext, Math.max(context._pos, 0)) : -1;
-            if (endIndex >= context._pos) {
+            const endHint = endContext?._index ?? -1;
+            const endIndex = !endContext
+                ? -1
+                : context.children[endHint] === endContext
+                  ? endHint
+                  : context.children.indexOf(endContext, Math.max(context._cursor, 0));
+            if (endIndex >= context._cursor) {
                 previousRange = new Set();
-                for (let i = context._pos; i <= endIndex; i++) {
-                    previousRange.add(contextChildren[i]);
+                for (let i = context._cursor; i <= endIndex; i++) {
+                    previousRange.add(context.children[i]);
                 }
             }
         } else {
-            context._pos = 0;
+            context._cursor = 0;
             currentKeys = context.keys;
             currentRefs = context.refs;
             context.keys = undefined;
         }
 
-        const start = context._pos;
+        const start = context._cursor;
         // a nested render of this same context must not be taken for a move of this one
-        const previousMoved = context._moved;
-        context._moved = 0;
+        const previousShift = context._shift;
+        context._shift = 0;
 
         renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
 
@@ -1264,27 +1522,53 @@ export const internalRender = (
         // out of the document right away, while their contexts are released only once the
         // render has settled: a keyed node may still be re-inserted somewhere else before it
         // ends, and releasing it here would throw away the state its key is meant to preserve
-        const currentIndex = context._pos;
-        for (let i = contextChildren.length - 1; i >= currentIndex; i--) {
-            const child = contextChildren[i];
-            if (previousRange && !previousRange.has(child)) {
-                continue;
+        const currentIndex = context._cursor;
+        // a render that emptied the whole list takes the nodes out in one step: the parent holds
+        // exactly what is being dropped, so it can be emptied instead of being asked to remove
+        // its children one by one. `detachNode` then finds them already out of it and only has
+        // the contexts left to deal with
+        if (
+            // the count of what is being dropped comes first: it is zero for most of the nodes
+            // of most renders, and this runs for every one of them
+            context.children.length - currentIndex > 1 &&
+            currentIndex === 0 &&
+            !previousRange &&
+            !isComponent(context.node) &&
+            context.node.childNodes.length === context.children.length &&
+            !holdsForeignNode(context.children)
+        ) {
+            context.node.textContent = '';
+        }
+        if (previousRange) {
+            // only the contexts of the fragment are dropped, so the ones of the others are
+            // stepped over and the list has to be cut around them
+            for (let i = context.children.length - 1; i >= currentIndex; i--) {
+                const child = context.children[i];
+                if (!previousRange.has(child)) {
+                    continue;
+                }
+                context.children.splice(i, 1);
+                detachNode(context, child, rootContext);
             }
-            contextChildren.splice(i, 1);
-            detachNode(context, child, rootContext);
+        } else {
+            // the whole tail belongs to this render, so every step drops the last context:
+            // popping it leaves the list in the same state a splice would, without building
+            // the array of removed items that a splice returns for each of them
+            for (let i = context.children.length - 1; i >= currentIndex; i--) {
+                detachNode(context, context.children.pop() as Context, rootContext);
+            }
         }
 
         // the document is rearranged once, and only if something actually moved
-        if (context._moved) {
+        if (context._shift) {
             reconcileNodes(context, start, currentIndex);
         }
-        context._moved = previousMoved;
+        context._shift = previousShift;
 
-        return contextChildren;
+        return context.children;
     } finally {
-        renderDepth--;
-        if (renderDepth === 0) {
-            releaseDetachedContexts();
+        if (--rootContext._depth === 0) {
+            releaseDetachedContexts(rootContext);
         }
     }
 };
@@ -1307,10 +1591,5 @@ export const render = (input: Template, root: Node = document.createDocumentFrag
         return contexts[0]?.node;
     }
 
-    const len = contexts.length;
-    const childNodes = new Array<Node>(len);
-    for (let i = 0; i < len; i++) {
-        childNodes[i] = contexts[i].node;
-    }
-    return childNodes;
+    return contexts.map((context) => context.node);
 };

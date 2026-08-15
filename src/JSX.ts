@@ -172,6 +172,29 @@ export type ElementProperties = {
 type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs<T>, 'style' | 'class'>;
 
 /**
+ * The hooks a function component is handed on every render.
+ * The object is built once per fragment and handed over again by each of its renders, so that
+ * a component that destructures it always gets the same methods.
+ */
+export type FunctionComponentHooks = {
+    useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>, requestUpdate?: boolean) => void];
+    useRef: {
+        <T>(initialValue: T): Ref<T>;
+        <T = undefined>(): Ref<T | undefined>;
+    };
+    useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+    // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+    useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
+    useEffect: (effect: Effect, deps?: unknown[]) => void;
+    useElement: {
+        <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+        <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+    };
+    useId: (suffix?: string) => string;
+    useRenderContext: () => Context;
+};
+
+/**
  * A function that returns a template.
  *
  * @param props A set of properties with children.
@@ -181,23 +204,7 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs
 // biome-ignore lint/suspicious/noExplicitAny: Function components can have any properties.
 export type FunctionComponent<P = any> = (
     props: P & KeyedProperties & TreeProperties,
-    hooks: {
-        useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>) => void];
-        useRef: {
-            <T>(initialValue: T): Ref<T>;
-            <T = undefined>(): Ref<T | undefined>;
-        };
-        useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
-        // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
-        useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
-        useEffect: (effect: Effect, deps?: unknown[]) => void;
-        useElement: {
-            <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
-            <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
-        };
-        useId: (suffix?: string) => string;
-        useRenderContext: () => Context;
-    }
+    hooks: FunctionComponentHooks
 ) => Template;
 
 /**

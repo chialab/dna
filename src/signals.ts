@@ -258,7 +258,11 @@ const getAdapter = (): SignalAdapter => {
  * @param value The value to check.
  * @returns True if the value is a signal of the registered implementation.
  */
-export const isSignal = <T = unknown>(value: unknown): value is SignalLike<T> => !!adapter && adapter.isSignal(value);
+export const isSignal = <T = unknown>(value: unknown): value is SignalLike<T> =>
+    !!adapter &&
+    value !== null &&
+    (typeof value === 'object' || typeof value === 'function') &&
+    adapter.isSignal(value);
 
 /**
  * Read the current value of a signal, whatever shape the implementation gives it.
