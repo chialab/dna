@@ -120,6 +120,7 @@ export type {
     SignalAdapter,
     SignalComputed,
     SignalGetter,
+    SignalHandle,
     SignalLike,
     SignalNamespace,
     SignalOptions,

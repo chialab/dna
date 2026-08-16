@@ -6,8 +6,8 @@ import { effect as dnaEffect, hasSignals } from '../src/signals';
 
 /**
  * Preact signals do not follow the TC39 proposal: the value is a property rather than
- * a method, and there is no watcher to arm. The whole integration is the four operations
- * of a `SignalAdapter`.
+ * a method, and there is no watcher to arm. Rendering them is the four operations of a
+ * `SignalAdapter`; the two factories are what lets the hooks create signals as well.
  */
 const preactSignals: DNA.SignalAdapter = {
     isSignal: (value) => value instanceof Signal,
@@ -16,6 +16,17 @@ const preactSignals: DNA.SignalAdapter = {
     },
     effect,
     untrack: untracked,
+    state: (initialValue) => {
+        const target = signal(initialValue);
+        return [
+            target,
+            (newValue) => {
+                target.value = newValue;
+            },
+        ];
+    },
+    // the options of the proposal have no counterpart here
+    computed: (computation) => computed(computation),
 };
 
 describe(

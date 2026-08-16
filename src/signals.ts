@@ -1,4 +1,4 @@
-import type { Effect } from './Hooks';
+import type { Effect, StateAction } from './Hooks';
 
 /**
  * A signal that exposes its value through a method, like the TC39 proposal.
@@ -58,6 +58,15 @@ export type SignalState<T = unknown> = SignalGetter<T> & {
 export type SignalComputed<T = unknown> = SignalGetter<T>;
 
 /**
+ * A signal created through DNA, paired with the way to write it.
+ *
+ * The signal is the one the implementation makes, not a wrapper around it: it is recognised
+ * by the renderer, can be interpolated in a template and takes part in the graph like any
+ * other. Writing it is what differs between implementations, so that comes alongside.
+ */
+export type SignalHandle<T = unknown> = [signal: SignalLike<T>, set: (newValue: StateAction<T>) => void];
+
+/**
  * A signal watcher.
  */
 export type SignalWatcher = {
@@ -94,9 +103,13 @@ export type SignalNamespace = {
 };
 
 /**
- * The whole contract between DNA and a signals implementation: recognise a signal,
- * read it, react to it and read it without reacting. Any library that can do these
- * four things can drive DNA templates, whatever shape its signals have.
+ * The contract between DNA and a signals implementation: recognise a signal, read it,
+ * react to it and read it without reacting. Any library that can do these four things
+ * can drive DNA templates, whatever shape its signals have.
+ *
+ * Creating signals is a separate, optional matter: an implementation that also provides
+ * `state` and `computed` can be used by the `useSignal` and `useComputed` hooks, and one
+ * that does not still renders everything it is handed.
  */
 export type SignalAdapter = {
     /**
@@ -125,6 +138,20 @@ export type SignalAdapter = {
      * @returns The result of the callback.
      */
     untrack<T>(callback: () => T): T;
+    /**
+     * Create a writable signal, and the way to write it.
+     * @param initialValue The initial value of the signal.
+     * @param options The signal options.
+     * @returns The signal and a function that writes it.
+     */
+    state?<T>(initialValue: T, options?: SignalOptions<T>): [SignalLike<T>, (newValue: T) => void];
+    /**
+     * Create a signal derived from the ones its computation reads.
+     * @param computation The computation of the signal.
+     * @param options The signal options.
+     * @returns The signal.
+     */
+    computed?<T>(computation: () => T, options?: SignalOptions<T>): SignalLike<T>;
 };
 
 /**
@@ -171,6 +198,11 @@ const createNamespaceAdapter = (Signal: SignalNamespace): SignalAdapter => {
         isSignal: (value) => value instanceof Signal.State || value instanceof Signal.Computed,
         get: <T>(signal: SignalLike<T>) => (signal as SignalGetter<T>).get(),
         untrack: (callback) => Signal.subtle.untrack(callback),
+        state: (initialValue, options) => {
+            const target = new Signal.State(initialValue, options);
+            return [target, (newValue) => target.set(newValue)];
+        },
+        computed: (computation, options) => new Signal.Computed(computation, options),
         effect(callback) {
             const currentWatcher = getWatcher();
 
@@ -279,6 +311,57 @@ export const get = <T = unknown>(signal: SignalLike<T>): T => getAdapter().get(s
  * @returns The result of the callback.
  */
 export const untrack = <T>(callback: () => T): T => (adapter ? adapter.untrack(callback) : callback());
+
+/**
+ * Get the adapter in use, when it can create signals.
+ * @param method The name of the factory that is needed.
+ * @returns The adapter.
+ * @throws If no implementation has been registered, or it cannot create signals.
+ */
+const getFactory = <M extends 'state' | 'computed'>(method: M): SignalAdapter & Required<Pick<SignalAdapter, M>> => {
+    const currentAdapter = getAdapter();
+    if (!currentAdapter[method]) {
+        throw new Error(
+            `The registered Signal implementation cannot create signals: it has no \`${method}\`. Create them with your own library instead.`
+        );
+    }
+    return currentAdapter as SignalAdapter & Required<Pick<SignalAdapter, M>>;
+};
+
+/**
+ * Create a writable signal with the registered implementation.
+ * The setter also takes a function that receives the current value and returns the new one,
+ * which is how the signal is updated from its own value without subscribing to it.
+ * @param initialValue The initial value of the signal.
+ * @param options The signal options.
+ * @returns The signal and a function that writes it.
+ * @throws If the implementation cannot create signals.
+ */
+export const createState = <T>(initialValue: T, options?: SignalOptions<T>): SignalHandle<T> => {
+    const currentAdapter = getFactory('state');
+    const [signal, set] = currentAdapter.state(initialValue, options);
+
+    return [
+        signal,
+        (newValue: StateAction<T>) => {
+            set(
+                typeof newValue === 'function'
+                    ? (newValue as (currentValue: T) => T)(currentAdapter.untrack(() => currentAdapter.get(signal)))
+                    : newValue
+            );
+        },
+    ];
+};
+
+/**
+ * Create a derived signal with the registered implementation.
+ * @param computation The computation of the signal.
+ * @param options The signal options.
+ * @returns The signal.
+ * @throws If the implementation cannot create signals.
+ */
+export const createComputed = <T>(computation: () => T, options?: SignalOptions<T>): SignalLike<T> =>
+    getFactory('computed').computed(computation, options);
 
 /**
  * Run a callback whenever one of the signals it reads changes.

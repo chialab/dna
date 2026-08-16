@@ -228,6 +228,23 @@ configureSignals({
 
 Everything else in this page then works unchanged. How soon the DOM is patched follows the implementation: an implementation of the proposal defers to a microtask (see below), while Preact signals push synchronously, so the DOM is already up to date when the assignment returns.
 
+Those four operations are all rendering needs. Two more are optional, and let the [`useSignal`](#the-usesignal-hook) and [`useComputed`](#the-usecomputed-hook) hooks build signals with your library as well. `state` returns the signal together with a function that writes it, because writing is what differs the most between implementations:
+
+```ts
+import { computed, signal } from '@preact/signals-core';
+
+configureSignals({
+    // ...the four operations above
+    state: (initialValue) => {
+        const target = signal(initialValue);
+        return [target, (newValue) => (target.value = newValue)];
+    },
+    computed: (computation) => computed(computation),
+});
+```
+
+Leave them out and everything still renders: only the two hooks that create signals throw, telling you to create them with your own library instead.
+
 ### Content
 
 A signal interpolated as content is unwrapped and kept up to date:
@@ -547,6 +564,134 @@ function Timer({ interval }, { useState, useEffect }) {
     }, [interval]);
 
     return h('span', null, time, ' seconds');
+}
+```
+
+:::
+
+### The `useSignal` hook
+
+The `useSignal` hook creates a [signal](#signals) that is preserved across renders, and returns it together with a function that writes it.
+
+The signal is the one your implementation makes, so it can be interpolated in the template and passed to other components like any other. The setter is what stays the same whatever library you registered, and it also accepts a function that receives the current value — the way to update a signal from its own value without subscribing to it.
+
+Writing it does not render the function component by itself: what follows it is whatever reads it. This is what makes it different from `useState`, whose value belongs to that fragment alone and always re-renders it.
+
+::: code-group
+
+```tsx [jsx]
+function Counter(props, { useSignal }) {
+    const [count, setCount] = useSignal(0);
+
+    return (
+        <button
+            type="button"
+            on:click={() => setCount((current) => current + 1)}>
+            clicked {count} times
+        </button>
+    );
+}
+```
+
+```ts [html]
+function Counter(props, { useSignal }) {
+    const [count, setCount] = useSignal(0);
+
+    return html`<button
+        type="button"
+        @click=${() => setCount((current) => current + 1)}>
+        clicked ${count} times
+    </button>`;
+}
+```
+
+:::
+
+Here `count` is interpolated, so only the text node is patched when it changes. Use [`useSignalValue`](#the-usesignalvalue-hook) instead when you need the value itself.
+
+### The `useComputed` hook
+
+The `useComputed` hook creates a [signal](#signals) derived from the ones its computation reads, preserved across renders.
+
+The computation receives a function that reads a signal whatever shape it has, so a component can be written without knowing which implementation the application registered. Reading the signals directly works just as well when you do know.
+
+Like `useMemo`, the computation is captured once: a computation that reads the props of the function component needs them in its dependency list. The signals it reads are tracked on their own and do not belong there.
+
+::: code-group
+
+```tsx [jsx]
+function Total({ items, taxRate }, { useComputed }) {
+    const total = useComputed((read) => read(items).length * taxRate, [taxRate]);
+
+    return <span>{total}</span>;
+}
+```
+
+```ts [html]
+function Total({ items, taxRate }, { useComputed }) {
+    const total = useComputed((read) => read(items).length * taxRate, [taxRate]);
+
+    return html`<span>${total}</span>`;
+}
+```
+
+:::
+
+### The `useSignalValue` hook
+
+The `useSignalValue` hook reads a [signal](#signals) and re-renders the function component whenever it changes.
+
+Interpolating a signal already keeps a template up to date, but it only fills a hole in it. A signal read directly in the body is just a value: the function does not run inside a computation, so nothing notices it changing. `useSignalValue` gives you the value **and** the subscription, which is what a condition or a computation needs.
+
+::: code-group
+
+```tsx [jsx]
+function Status({ connection }, { useSignalValue }) {
+    const online = useSignalValue(connection);
+
+    return online ? <span class="on">Connected</span> : <button type="button">Reconnect</button>;
+}
+```
+
+```ts [html]
+function Status({ connection }, { useSignalValue }) {
+    const online = useSignalValue(connection);
+
+    return online
+        ? html`<span class="on">Connected</span>`
+        : html`<button type="button">Reconnect</button>`;
+}
+```
+
+:::
+
+Only the fragment of the function component is re-rendered, not the component that contains it.
+
+### The `useSignalEffect` hook
+
+The `useSignalEffect` hook runs a callback whenever one of the [signals](#signals) it reads changes, for as long as the fragment lives. It runs once immediately, and the callback may return its own cleanup function.
+
+It is the lifecycle-aware counterpart of the `effect` function of your signals library: the subscription is stopped when the function component is unmounted, so you do not have to dispose of it yourself. The second argument is the usual list of dependencies, which tells when the effect has to be created again — the signals it reads are tracked automatically and do not belong there.
+
+::: code-group
+
+```tsx [jsx]
+function Title({ prefix, count }, { useSignalEffect }) {
+    useSignalEffect(() => {
+        document.title = `${prefix}: ${count.value} items`;
+    }, [prefix]);
+
+    return null;
+}
+```
+
+```ts [html]
+function Title({ prefix, count }, { useSignalEffect }) {
+    useSignalEffect(() => {
+        document.title = `${prefix}: ${count.value} items`;
+    }, [prefix]);
+
+    return null;
 }
 ```
 
