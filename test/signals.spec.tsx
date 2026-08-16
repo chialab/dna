@@ -555,6 +555,325 @@ describe(
                 });
             });
 
+            describe('useSignal', () => {
+                it('should create a signal preserved across renders', async () => {
+                    const seen: unknown[] = [];
+                    const Test: DNA.FunctionComponent<{ tag: string }> = ({ tag }, { useSignal, useSignalValue }) => {
+                        const [count, setCount] = useSignal(0);
+                        seen.push(count);
+
+                        return (
+                            <button
+                                type="button"
+                                on:click={() => setCount((current) => current + 1)}>
+                                {tag}:{useSignalValue(count)}
+                            </button>
+                        );
+                    };
+
+                    DNA.render(<Test tag="a" />, wrapper);
+                    const node = wrapper.querySelector('button') as HTMLButtonElement;
+                    expect(node.textContent).toBe('a:0');
+
+                    node.click();
+                    await flushSignals();
+                    expect(node.textContent).toBe('a:1');
+
+                    // a render driven from the outside keeps the very same signal
+                    DNA.render(<Test tag="b" />, wrapper);
+                    expect(node.textContent).toBe('b:1');
+                    expect(new Set(seen).size).toBe(1);
+                });
+
+                it('should honour the signal options', async () => {
+                    let handle: DNA.SignalHandle<{ id: number }> | undefined;
+                    const Test: DNA.FunctionComponent = (props, { useSignal }) => {
+                        handle = useSignal({ id: 0 }, { equals: (a, b) => a.id === b.id });
+
+                        return null;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    const [created, setCreated] = handle as DNA.SignalHandle<{ id: number }>;
+                    const spy = vi.fn();
+                    const dispose = effect(() => spy((created as DNA.SignalGetter<{ id: number }>).get()));
+                    expect(spy).toHaveBeenCalledTimes(1);
+
+                    // a different object with the same id counts as unchanged
+                    setCreated({ id: 0 });
+                    await flushSignals();
+                    expect(spy).toHaveBeenCalledTimes(1);
+
+                    setCreated({ id: 1 });
+                    await flushSignals();
+                    expect(spy).toHaveBeenCalledTimes(2);
+                    dispose();
+                });
+            });
+
+            describe('useComputed', () => {
+                it('should derive from the signals it reads', async () => {
+                    const count = new Signal.State(2);
+                    const Test: DNA.FunctionComponent = (props, { useComputed }) => {
+                        const double = useComputed(() => count.get() * 2);
+
+                        return <span>{double}</span>;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    expect(wrapper.textContent).toBe('4');
+
+                    count.set(5);
+                    await flushSignals();
+                    expect(wrapper.textContent).toBe('10');
+                });
+
+                it('should read signals of any shape through the given reader', async () => {
+                    const count = new Signal.State(3);
+                    const Test: DNA.FunctionComponent = (props, { useComputed }) => {
+                        // `read` works whatever shape the registered implementation gives signals
+                        const double = useComputed((read) => read(count) * 2);
+
+                        return <span>{double}</span>;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    expect(wrapper.textContent).toBe('6');
+
+                    count.set(4);
+                    await flushSignals();
+                    expect(wrapper.textContent).toBe('8');
+                });
+
+                it('should be recreated when the dependencies change', async () => {
+                    const count = new Signal.State(2);
+                    const Test: DNA.FunctionComponent<{ factor: number }> = ({ factor }, { useComputed }) => {
+                        const scaled = useComputed(() => count.get() * factor, [factor]);
+
+                        return <span>{scaled}</span>;
+                    };
+
+                    DNA.render(<Test factor={2} />, wrapper);
+                    expect(wrapper.textContent).toBe('4');
+
+                    DNA.render(<Test factor={10} />, wrapper);
+                    expect(wrapper.textContent).toBe('20');
+
+                    count.set(3);
+                    await flushSignals();
+                    expect(wrapper.textContent).toBe('30');
+                });
+
+                it('should keep the same signal across renders', () => {
+                    const seen: unknown[] = [];
+                    const Test: DNA.FunctionComponent<{ tag: string }> = ({ tag }, { useComputed }) => {
+                        seen.push(useComputed(() => tag));
+
+                        return null;
+                    };
+
+                    DNA.render(<Test tag="a" />, wrapper);
+                    DNA.render(<Test tag="b" />, wrapper);
+                    expect(seen.length).toBe(2);
+                    expect(new Set(seen).size).toBe(1);
+                });
+            });
+
+            describe('useSignalValue', () => {
+                it('should read a signal and follow it', async () => {
+                    const signal = new Signal.State('hello');
+                    const Test: DNA.FunctionComponent = (props, { useSignalValue }) => (
+                        <span>{useSignalValue(signal)}</span>
+                    );
+
+                    DNA.render(<Test />, wrapper);
+                    const node = wrapper.querySelector('span');
+                    expect(node?.textContent).toBe('hello');
+
+                    signal.set('world');
+                    await flushSignals();
+                    expect(wrapper.querySelector('span')).toBe(node);
+                    expect(node?.textContent).toBe('world');
+                });
+
+                it('should render a different template on change', async () => {
+                    // the value is in hand, so it can drive the shape of the template and not
+                    // just fill a hole in it
+                    const flag = new Signal.State(true);
+                    const Test: DNA.FunctionComponent = (props, { useSignalValue }) =>
+                        useSignalValue(flag) ? <em>yes</em> : <strong>no</strong>;
+
+                    DNA.render(<Test />, wrapper);
+                    expect(wrapper.querySelector('em')?.textContent).toBe('yes');
+
+                    flag.set(false);
+                    await flushSignals();
+                    expect(wrapper.querySelector('em')).toBeNull();
+                    expect(wrapper.querySelector('strong')?.textContent).toBe('no');
+                });
+
+                it('should not re-render the whole component', async () => {
+                    const signal = new Signal.State(0);
+                    const updated = vi.fn();
+                    const Test: DNA.FunctionComponent = (props, { useSignalValue }) => (
+                        <span>{useSignalValue(signal)}</span>
+                    );
+
+                    @DNA.customElement('test-signals-hooks-1')
+                    class TestElement extends DNA.Component {
+                        render() {
+                            return <Test />;
+                        }
+
+                        updatedCallback() {
+                            updated();
+                        }
+                    }
+
+                    const element = new TestElement();
+                    wrapper.appendChild(element);
+                    const renders = updated.mock.calls.length;
+
+                    signal.set(1);
+                    await flushSignals();
+                    expect(element.textContent).toBe('1');
+                    expect(updated.mock.calls.length).toBe(renders);
+                });
+
+                it('should read a signal holding a function', async () => {
+                    const fn = () => 'fn';
+                    const signal = new Signal.State<unknown>(fn);
+                    const read: unknown[] = [];
+                    const Test: DNA.FunctionComponent = (props, { useSignalValue }) => {
+                        read.push(useSignalValue(signal));
+                        return null;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    expect(read).toEqual([fn]);
+
+                    signal.set('plain');
+                    await flushSignals();
+                    expect(read).toEqual([fn, 'plain']);
+                });
+
+                it('should follow a different signal when the one it reads changes', async () => {
+                    const first = new Signal.State('first');
+                    const second = new Signal.State('second');
+                    const Test: DNA.FunctionComponent<{ signal: DNA.SignalLike<string> }> = (
+                        { signal },
+                        { useSignalValue }
+                    ) => <span>{useSignalValue(signal)}</span>;
+
+                    DNA.render(<Test signal={first} />, wrapper);
+                    expect(wrapper.textContent).toBe('first');
+
+                    DNA.render(<Test signal={second} />, wrapper);
+                    expect(wrapper.textContent).toBe('second');
+
+                    second.set('updated');
+                    await flushSignals();
+                    expect(wrapper.textContent).toBe('updated');
+
+                    // the previous signal is no longer followed
+                    first.set('ignored');
+                    await flushSignals();
+                    expect(wrapper.textContent).toBe('updated');
+                });
+
+                it('should stop following once unmounted', async () => {
+                    const signal = new Signal.State('in');
+                    const reads = vi.fn();
+                    // a computed only recomputes while something watches it: the spy tells
+                    // whether the subscription is still alive
+                    const watched = new Signal.Computed(() => {
+                        reads();
+                        return signal.get();
+                    });
+                    const Test: DNA.FunctionComponent = (props, { useSignalValue }) => (
+                        <span>{useSignalValue(watched)}</span>
+                    );
+
+                    DNA.render(<Test />, wrapper);
+                    expect(reads).toHaveBeenCalledTimes(1);
+
+                    signal.set('still');
+                    await flushSignals();
+                    expect(reads).toHaveBeenCalledTimes(2);
+
+                    DNA.render(null, wrapper);
+                    signal.set('out');
+                    await flushSignals();
+                    expect(reads).toHaveBeenCalledTimes(2);
+                });
+            });
+
+            describe('useSignalEffect', () => {
+                it('should run immediately and on change', async () => {
+                    const signal = new Signal.State(1);
+                    const spy = vi.fn();
+                    const Test: DNA.FunctionComponent = (props, { useSignalEffect }) => {
+                        useSignalEffect(() => spy(signal.get()));
+                        return null;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    expect(spy).toHaveBeenCalledTimes(1);
+                    expect(spy).toHaveBeenLastCalledWith(1);
+
+                    signal.set(2);
+                    await flushSignals();
+                    expect(spy).toHaveBeenCalledTimes(2);
+                    expect(spy).toHaveBeenLastCalledWith(2);
+                });
+
+                it('should run the cleanup and stop once unmounted', async () => {
+                    const signal = new Signal.State(1);
+                    const spy = vi.fn();
+                    const cleanup = vi.fn();
+                    const Test: DNA.FunctionComponent = (props, { useSignalEffect }) => {
+                        useSignalEffect(() => {
+                            spy(signal.get());
+                            return cleanup;
+                        });
+                        return null;
+                    };
+
+                    DNA.render(<Test />, wrapper);
+                    signal.set(2);
+                    await flushSignals();
+                    expect(cleanup).toHaveBeenCalledTimes(1);
+
+                    DNA.render(null, wrapper);
+                    expect(cleanup).toHaveBeenCalledTimes(2);
+
+                    signal.set(3);
+                    await flushSignals();
+                    expect(spy).toHaveBeenCalledTimes(2);
+                });
+
+                it('should be recreated when the dependencies change', async () => {
+                    const signal = new Signal.State('a');
+                    const spy = vi.fn();
+                    const Test: DNA.FunctionComponent<{ tag: string }> = ({ tag }, { useSignalEffect }) => {
+                        useSignalEffect(() => spy(tag, signal.get()), [tag]);
+                        return null;
+                    };
+
+                    DNA.render(<Test tag="one" />, wrapper);
+                    expect(spy).toHaveBeenLastCalledWith('one', 'a');
+
+                    DNA.render(<Test tag="two" />, wrapper);
+                    expect(spy).toHaveBeenLastCalledWith('two', 'a');
+
+                    signal.set('b');
+                    await flushSignals();
+                    // only the effect of the last render is alive
+                    expect(spy).toHaveBeenCalledTimes(3);
+                    expect(spy).toHaveBeenLastCalledWith('two', 'b');
+                });
+            });
+
             describe('$signal', () => {
                 it('should render a signal explicitly', async () => {
                     const signal = new Signal.State('explicit');

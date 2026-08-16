@@ -1,5 +1,5 @@
 import { type FunctionComponent, h, type Template } from './JSX';
-import { effect, get, type SignalLike, untrack } from './signals';
+import type { SignalLike } from './signals';
 import { getThenableState } from './Thenable';
 
 /**
@@ -29,29 +29,10 @@ export const $parse = (string: string): Template => h(ParseFunction, { source: s
  * The signal renderer.
  * It subscribes to the signal and re-renders its own fragment (and only that) on change.
  * @param props The properties of the component.
- * @param props.signal The signal to render.
- * @param hooks The hooks.
- * @param hooks.useState The hook to create a state value.
- * @param hooks.useEffect The hook to run an effect.
  * @returns The current value of the signal.
  */
-const SignalFunction: FunctionComponent<{ signal: SignalLike }> = ({ signal }, { useState, useEffect }) => {
-    // the initial value is read as a factory, so that signals holding functions are not
-    // mistaken for lazy initializers by `useState`
-    const [value, setValue] = useState<Template>(() => untrack(() => get(signal)));
-
-    useEffect(
-        () =>
-            effect(() => {
-                const newValue = get(signal) as Template;
-                // wrapped in an updater for the same reason as above
-                setValue(() => newValue);
-            }),
-        [signal]
-    );
-
-    return value;
-};
+const SignalFunction: FunctionComponent<{ signal: SignalLike }> = ({ signal }, { useSignalValue }) =>
+    useSignalValue(signal) as Template;
 
 /**
  * Render the value of a signal and keep it up to date.

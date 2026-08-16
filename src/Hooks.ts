@@ -2,6 +2,16 @@ import type { HTMLTagNameMap } from './Elements';
 import { uniqueId } from './factories';
 import type { FunctionComponentHooks, Template } from './JSX';
 import type { Context } from './render';
+import {
+    createComputed,
+    effect as createEffect,
+    createState,
+    get,
+    type SignalHandle,
+    type SignalLike,
+    type SignalOptions,
+    untrack,
+} from './signals';
 
 /**
  * The type of a hook state.
@@ -142,6 +152,10 @@ export class Hooks {
             useMemo: this.useMemo.bind(this),
             useCallback: this.useCallback.bind(this),
             useEffect: this.useEffect.bind(this),
+            useSignal: this.useSignal.bind(this),
+            useComputed: this.useComputed.bind(this),
+            useSignalValue: this.useSignalValue.bind(this),
+            useSignalEffect: this.useSignalEffect.bind(this),
             useElement: (tagName: string, options?: ElementCreationOptions) => this.useElement(tagName, options),
             useId: (suffix?: string) => this.useId(suffix),
             useRenderContext: () => this.context,
@@ -291,6 +305,90 @@ export class Hooks {
                 cleanup?.();
             });
         }, deps);
+    }
+
+    /**
+     * Create a writable signal, preserved across renders, and the way to write it.
+     *
+     * The signal is the one the registered implementation makes, so it can be interpolated in the
+     * template and passed around like any other. Writing it goes through the returned function,
+     * which is the same whatever shape the implementation gives its signals — and which also takes
+     * a function that receives the current value, the way to update a signal from its own value
+     * without subscribing to it.
+     *
+     * Writing it does not render the fragment by itself: what follows it is whatever reads it — an
+     * interpolation in the template, a {@link useSignalValue}, a computation elsewhere in the
+     * graph. This is what makes it different from {@link useState}, whose value belongs to this
+     * fragment alone and always renders it again.
+     * @param initialValue The initial value of the signal.
+     * @param options The signal options.
+     * @returns The signal and a function that writes it.
+     * @throws If the registered implementation cannot create signals.
+     */
+    useSignal<T>(initialValue: T, options?: SignalOptions<T>): SignalHandle<T> {
+        return this.useMemo(() => createState(initialValue, options));
+    }
+
+    /**
+     * Create a signal derived from the ones its computation reads, preserved across renders.
+     *
+     * The computation is handed a way to read a signal whatever shape it has, so that a component
+     * can be written without knowing which implementation the application registered.
+     *
+     * It is memoized like {@link useMemo}: the computation is captured once, so a computation that
+     * reads the props of the function component needs them in its dependency list. The signals it
+     * reads are tracked on their own and do not belong there.
+     * @param computation The computation of the signal.
+     * @param deps The dependencies of the computation.
+     * @param options The signal options.
+     * @returns The signal, created by the registered implementation.
+     * @throws If the registered implementation cannot create signals.
+     */
+    useComputed<T>(
+        computation: (read: <V>(signal: SignalLike<V>) => V) => T,
+        deps: unknown[] = [],
+        options?: SignalOptions<T>
+    ): SignalLike<T> {
+        return this.useMemo(() => createComputed(() => computation(get), options), deps);
+    }
+
+    /**
+     * Read the value of a signal and render the fragment again whenever it changes.
+     *
+     * A signal read directly, outside of this hook, is only a value: the function component does
+     * not run inside a computation, so nothing would notice it changing. This is what turns a
+     * signal into state the fragment follows, and it is the same thing an interpolated signal
+     * gets — with the value in hand, which is what a condition or a computation needs.
+     * @param signal The signal to read.
+     * @returns The current value of the signal.
+     */
+    useSignalValue<T>(signal: SignalLike<T>): T {
+        // the value is read through a factory and written through an updater: `useState` takes a
+        // function for a lazy initializer and its setter takes one for an updater, so a signal
+        // holding a function goes through unchanged
+        const [value, setValue] = this.useState<T>((() => untrack(() => get(signal))) as unknown as T);
+
+        this.useEffect(
+            () =>
+                createEffect(() => {
+                    const newValue = get(signal);
+                    setValue(() => newValue);
+                }),
+            [signal]
+        );
+
+        return value;
+    }
+
+    /**
+     * Run a callback whenever one of the signals it reads changes, for as long as the fragment
+     * lives. The callback runs immediately once, then on a microtask, and it may return its own
+     * cleanup function.
+     * @param effect The effect function to run.
+     * @param deps The dependencies of the effect.
+     */
+    useSignalEffect(effect: Effect, deps: unknown[] = []): void {
+        this.useEffect(() => createEffect(effect), deps);
     }
 
     /**
