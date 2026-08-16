@@ -42,7 +42,7 @@
   "homepage": "https://chialab.github.io/dna/",
   "author": "Chialab <dev@chialab.it> (https://www.chialab.it)",
   "scripts": {
-    "build": "rimraf dist && tsc && vite build",
+    "build": "vite build",
     "test": "yarn test:typings && yarn test:browser && yarn test:node",
     "test:typings": "tsc && svelte-check --workspace test/frameworks/svelte",
     "test:browser": "vitest run --config vitest.browser.ts",
@@ -89,7 +89,6 @@
     "publint": "^0.3.0",
     "react": "~19.1.0",
     "react-dom": "~19.1.0",
-    "rimraf": "^6.0.0",
     "rxjs": "^7.8.2",
     "signal-polyfill": "^0.2.2",
     "svelte": "^5.33.1",
