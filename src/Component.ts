@@ -629,7 +629,15 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             this._renderedValues = undefined;
 
             if (this._render) {
-                this._render.run();
+                // also hold subsequent runs in a batch: a component that writes a property from
+                // inside `render` would otherwise have that write flushed while the template is
+                // still being computed, triggering a second render before the first one finishes
+                beginBatch();
+                try {
+                    this._render.run();
+                } finally {
+                    endBatch();
+                }
                 return;
             }
 
@@ -680,8 +688,13 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             const properties = getProperties(this);
             const previous = this._renderedValues;
             const current: Map<string, unknown> = new Map();
-            let refused = false;
-            let changed = false;
+            let acceptedChange = false;
+            let refusedChange = false;
+            const gate = this.shouldUpdate as (
+                propertyName: string,
+                oldValue: unknown,
+                newValue: unknown
+            ) => boolean;
             for (const propertyKey in properties) {
                 if (properties[propertyKey as keyof this].compute) {
                     // a derived value is not a change of its own
@@ -692,20 +705,17 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                 if (!previous || previous.get(propertyKey) === value) {
                     continue;
                 }
-                changed = true;
-                const gate = this.shouldUpdate as (
-                    propertyName: string,
-                    oldValue: unknown,
-                    newValue: unknown
-                ) => boolean;
-                if (!gate.call(this, propertyKey, previous.get(propertyKey), value)) {
-                    refused = true;
+                if (gate.call(this, propertyKey, previous.get(propertyKey), value)) {
+                    acceptedChange = true;
+                } else {
+                    refusedChange = true;
                 }
             }
 
             // a render no property caused — an external signal, a slotted child, one that was
-            // asked for — has nothing to refuse
-            if (changed && refused) {
+            // asked for — has nothing to refuse; only block when every changed property was
+            // refused and at least one changed
+            if (refusedChange && !acceptedChange) {
                 return false;
             }
             this._renderedValues = current;
