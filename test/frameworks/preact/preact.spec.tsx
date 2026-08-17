@@ -230,7 +230,6 @@ describe('Preact', () => {
             onClick?: (event: MouseEvent) => void;
             onStringChange?: (event: CustomEvent<string>) => void;
         }) => (
-            // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
             <test-frameworks-5
                 onClick={props.onClick}
                 onstringchange={props.onStringChange}
@@ -285,6 +284,7 @@ describe('Preact', () => {
         }) => (
             // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
             // biome-ignore lint/a11y/useAnchorContent: Assignment test
+            // biome-ignore lint/a11y/useKeyWithClickEvents: Assignment test
             <a
                 is="test-frameworks-6"
                 // biome-ignore lint/a11y/useValidAnchor: Assignment test

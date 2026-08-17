@@ -10,7 +10,6 @@ root.render(<details open />);
 // @ts-expect-error Active is not a known property of the core details element
 root.render(<details active={true} />);
 root.render(
-    // biome-ignore lint/a11y/noStaticElementInteractions: This is a typings interaction test
     <x-test
         className="test"
         style={{

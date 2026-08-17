@@ -2,16 +2,7 @@ import type { HTMLTagNameMap } from './Elements';
 import { uniqueId } from './factories';
 import type { FunctionComponentHooks, Template } from './JSX';
 import type { Context } from './render';
-import {
-    createComputed,
-    effect as createEffect,
-    createState,
-    get,
-    type SignalHandle,
-    type SignalLike,
-    type SignalOptions,
-    untrack,
-} from './signals';
+import { Computed, effect as createEffect, type Options, type ReadonlySignal, State, untrack } from './Signal';
 
 /**
  * The type of a hook state.
@@ -308,13 +299,7 @@ export class Hooks {
     }
 
     /**
-     * Create a writable signal, preserved across renders, and the way to write it.
-     *
-     * The signal is the one the registered implementation makes, so it can be interpolated in the
-     * template and passed around like any other. Writing it goes through the returned function,
-     * which is the same whatever shape the implementation gives its signals — and which also takes
-     * a function that receives the current value, the way to update a signal from its own value
-     * without subscribing to it.
+     * Create a writable signal, preserved across renders.
      *
      * Writing it does not render the fragment by itself: what follows it is whatever reads it — an
      * interpolation in the template, a {@link useSignalValue}, a computation elsewhere in the
@@ -322,18 +307,14 @@ export class Hooks {
      * fragment alone and always renders it again.
      * @param initialValue The initial value of the signal.
      * @param options The signal options.
-     * @returns The signal and a function that writes it.
-     * @throws If the registered implementation cannot create signals.
+     * @returns The signal.
      */
-    useSignal<T>(initialValue: T, options?: SignalOptions<T>): SignalHandle<T> {
-        return this.useMemo(() => createState(initialValue, options));
+    useSignal<T>(initialValue: T, options?: Options<T>): State<T> {
+        return this.useMemo(() => new State(initialValue, options));
     }
 
     /**
      * Create a signal derived from the ones its computation reads, preserved across renders.
-     *
-     * The computation is handed a way to read a signal whatever shape it has, so that a component
-     * can be written without knowing which implementation the application registered.
      *
      * It is memoized like {@link useMemo}: the computation is captured once, so a computation that
      * reads the props of the function component needs them in its dependency list. The signals it
@@ -341,15 +322,10 @@ export class Hooks {
      * @param computation The computation of the signal.
      * @param deps The dependencies of the computation.
      * @param options The signal options.
-     * @returns The signal, created by the registered implementation.
-     * @throws If the registered implementation cannot create signals.
+     * @returns The signal.
      */
-    useComputed<T>(
-        computation: (read: <V>(signal: SignalLike<V>) => V) => T,
-        deps: unknown[] = [],
-        options?: SignalOptions<T>
-    ): SignalLike<T> {
-        return this.useMemo(() => createComputed(() => computation(get), options), deps);
+    useComputed<T>(computation: () => T, deps: unknown[] = [], options?: Options<T>): Computed<T> {
+        return this.useMemo(() => new Computed(computation, options), deps);
     }
 
     /**
@@ -362,16 +338,16 @@ export class Hooks {
      * @param signal The signal to read.
      * @returns The current value of the signal.
      */
-    useSignalValue<T>(signal: SignalLike<T>): T {
+    useSignalValue<T>(signal: ReadonlySignal<T>): T {
         // the value is read through a factory and written through an updater: `useState` takes a
         // function for a lazy initializer and its setter takes one for an updater, so a signal
         // holding a function goes through unchanged
-        const [value, setValue] = this.useState<T>((() => untrack(() => get(signal))) as unknown as T);
+        const [value, setValue] = this.useState<T>((() => untrack(() => signal.get())) as unknown as T);
 
         this.useEffect(
             () =>
                 createEffect(() => {
-                    const newValue = get(signal);
+                    const newValue = signal.get();
                     setValue(() => newValue);
                 }),
             [signal]

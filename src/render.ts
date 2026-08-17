@@ -25,7 +25,7 @@ import {
     type TreeProperties,
 } from './JSX';
 import { getProperty } from './property';
-import { effect, get, isSignal, type SignalLike, untrack } from './signals';
+import { effect, isSignal, type ReadonlySignal, untrack } from './Signal';
 
 /* -------------------------------------------------------------------------------------------------
  * Render contexts
@@ -62,7 +62,7 @@ type SignalBinding = {
     /**
      * The bound signal.
      */
-    signal: SignalLike<unknown>;
+    signal: ReadonlySignal<unknown>;
     /**
      * Stop the binding.
      */
@@ -613,14 +613,14 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
         return;
     }
 
-    const signal = value as SignalLike<T[P]>;
+    const signal = value as ReadonlySignal<T[P]>;
     const newBinding: SignalBinding = {
         signal,
         value: previousValue,
         dispose: () => {},
     };
     newBinding.dispose = effect(() => {
-        const newValue = get(signal);
+        const newValue = signal.get();
         // the node update must not become a dependency of this effect
         untrack(() => {
             setProperty(node, propertyKey, newValue, newBinding.value as T[P], ctr);

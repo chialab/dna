@@ -4,7 +4,7 @@ import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
 import type { Context } from './render';
-import type { SignalHandle, SignalLike, SignalOptions } from './signals';
+import type { Computed, ReadonlySignal, Options as SignalOptions, State } from './Signal';
 
 /**
  * Identify virtual dom objects.
@@ -130,7 +130,7 @@ export const Fragment: FunctionComponent<{
  * Signals interpolated in a template are unwrapped and kept up to date by the renderer.
  */
 export type WithSignals<T> = {
-    [K in keyof T]: T[K] | SignalLike<T[K]>;
+    [K in keyof T]: T[K] | ReadonlySignal<T[K]>;
 };
 
 /**
@@ -186,13 +186,9 @@ export type FunctionComponentHooks = {
     // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
     useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
     useEffect: (effect: Effect, deps?: unknown[]) => void;
-    useSignal: <T>(initialValue: T, options?: SignalOptions<T>) => SignalHandle<T>;
-    useComputed: <T>(
-        computation: (read: <V>(signal: SignalLike<V>) => V) => T,
-        deps?: unknown[],
-        options?: SignalOptions<T>
-    ) => SignalLike<T>;
-    useSignalValue: <T>(signal: SignalLike<T>) => T;
+    useSignal: <T>(initialValue: T, options?: SignalOptions<T>) => State<T>;
+    useComputed: <T>(computation: () => T, deps?: unknown[], options?: SignalOptions<T>) => Computed<T>;
+    useSignalValue: <T>(signal: ReadonlySignal<T>) => T;
     useSignalEffect: (effect: Effect, deps?: unknown[]) => void;
     useElement: {
         <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];

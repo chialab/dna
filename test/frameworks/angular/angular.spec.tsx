@@ -283,6 +283,15 @@ describe('Angular', () => {
                     'booleanProp': true,
                     'numericProp': 1,
                     'objectProp': { test: true },
+                    'onClick': undefined,
+                    'onStringChange': undefined,
+                } as {
+                    stringProp: string;
+                    booleanProp: boolean;
+                    numericProp: number;
+                    objectProp: Record<string, unknown>;
+                    onClick?: (event: Event) => void;
+                    onStringChange?: (event: CustomEvent<string>) => void;
                 },
             }
         );
@@ -330,6 +339,15 @@ describe('Angular', () => {
                     'booleanProp': true,
                     'numericProp': 1,
                     'objectProp': { test: true },
+                    'onClick': undefined,
+                    'onStringChange': undefined,
+                } as {
+                    stringProp: string;
+                    booleanProp: boolean;
+                    numericProp: number;
+                    objectProp: Record<string, unknown>;
+                    onClick?: (event: Event) => void;
+                    onStringChange?: (event: CustomEvent<string>) => void;
                 },
             }
         );

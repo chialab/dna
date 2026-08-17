@@ -116,16 +116,4 @@ export {
 } from './property';
 export type { Context } from './render';
 export { render } from './render';
-export type {
-    SignalAdapter,
-    SignalComputed,
-    SignalGetter,
-    SignalHandle,
-    SignalLike,
-    SignalNamespace,
-    SignalOptions,
-    SignalState,
-    SignalValue,
-    SignalWatcher,
-} from './signals';
-export { configureSignals } from './signals';
+export * as Signal from './Signal';

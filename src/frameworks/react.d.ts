@@ -1,19 +1,19 @@
 import type { JSX as JSXInternal } from '@chialab/dna';
-import type { ClassAttributes, JSX } from 'react';
+import type { ClassAttributes, HTMLAttributes, JSX } from 'react';
 
 export type AutonomousElements = {
-    [K in keyof JSXInternal.AutonomousElements]: import('react').HTMLAttributes<HTMLElement> &
+    [K in keyof JSXInternal.AutonomousElements]: HTMLAttributes<HTMLElement> &
         ClassAttributes<HTMLElement> &
         JSXInternal.AutonomousElements[K];
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicElements]: JSX.IntrinsicElements[K] &
+    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicHTMLElements]: JSX.IntrinsicHTMLElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 
-declare module 'react/jsx-runtime' {
-    namespace JSX {
+declare global {
+    namespace React.JSX {
         interface IntrinsicElements extends AutonomousElements {
             a: CustomizedElements['a'];
             abbr: CustomizedElements['abbr'];
