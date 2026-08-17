@@ -1165,6 +1165,58 @@ describe(
                 dispose();
             });
 
+            it('should assign the property when written', () => {
+                const observer = vi.fn();
+
+                @DNA.customElement('test-signals-write')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: String, attribute: 'label' })
+                    label = 'a';
+
+                    render() {
+                        return <span>{this.label}</span>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                element.observe('label', observer);
+
+                // the signal is the property, so writing it is assigning it: it used to be a way
+                // past the pipeline, leaving the property, the attribute and the DOM disagreeing
+                (element.signals.label as State<string>).set('written');
+
+                expect(element.label).toBe('written');
+                expect(element.getAttribute('label')).toBe('written');
+                expect(element.textContent).toBe('written');
+                expect(observer).toHaveBeenCalledWith('a', 'written', 'label');
+            });
+
+            it('should cover a property declared after the first read', () => {
+                @DNA.customElement('test-signals-late')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: String })
+                    first = 'a';
+                }
+
+                const element = new TestElement();
+                expect(Object.keys(element.signals)).toEqual(['first']);
+
+                DNA.defineProperty(
+                    TestElement.prototype as unknown as TestElement,
+                    'second' as never,
+                    {
+                        type: String,
+                    } as never
+                );
+
+                // the set used to be frozen at the first access of `signals`
+                expect((element.signals as Record<string, unknown>).second).toBeDefined();
+                expect(Object.keys(element.signals)).toEqual(['first', 'second']);
+                // and the signal of a property is still the same object at every read
+                expect(element.signals.first).toBe(element.signals.first);
+            });
+
             it('should not be shared by the instances after a read on the prototype', () => {
                 @DNA.customElement('test-signals-prototype')
                 class TestElement extends DNA.Component {
@@ -1285,6 +1337,37 @@ describe(
                 // the template never listed it among the reasons to run again
                 expect(rendered.mock.calls.length).toBe(renders);
                 expect(element.textContent).toBe('a');
+            });
+
+            it('should keep a stale DOM for an `update: false` property read through a custom `get`', () => {
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-no-update-get')
+                class TestElement extends DNA.Component {
+                    @DNA.property({
+                        update: false,
+                        // the idiomatic body of a custom getter reaches the value through the
+                        // slot, which used to track the property and depend on it after all
+                        get(this: TestElement) {
+                            return this.getInnerPropertyValue('title') as string;
+                        },
+                    })
+                    title = 'a';
+
+                    render() {
+                        rendered();
+                        return <h1>{this.title}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const renders = rendered.mock.calls.length;
+
+                element.title = 'b';
+                expect(rendered.mock.calls.length).toBe(renders);
+                expect(element.textContent).toBe('a');
+                expect(element.title).toBe('b');
             });
 
             it('should not ask `shouldUpdate` about a render no property caused', () => {
@@ -1492,6 +1575,31 @@ describe(
                 element.title = 'b';
                 expect(element.textContent).toBe('b');
                 expect(getter).not.toHaveBeenCalled();
+            });
+
+            it('should report whether closing a collection rendered', () => {
+                @DNA.customElement('test-render-collect')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    title = 'a';
+
+                    render() {
+                        return <span>{this.title}</span>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+
+                // the render is what closing the batch runs, and nothing asks for it any more:
+                // the flag the return value used to be read from is never set
+                element.collectUpdatesStart();
+                element.title = 'b';
+                expect(element.collectUpdatesEnd()).toBe(true);
+                expect(element.textContent).toBe('b');
+
+                element.collectUpdatesStart();
+                expect(element.collectUpdatesEnd()).toBe(false);
             });
 
             it('should leave the page reactive when a render throws', () => {
@@ -1756,6 +1864,74 @@ describe(
                         }
                     )
                 ).toThrow('The `value` property is computed and cannot declare `attribute`');
+            });
+
+            it('should refuse a declaration that takes part in producing the value', () => {
+                // these used to be dropped without a word, so the property answered with
+                // something other than what the declaration asked for
+                for (const key of ['get', 'getter', 'type', 'fromAttribute', 'toAttribute'] as const) {
+                    expect(() =>
+                        DNA.define(
+                            `test-computed-conflict-${key.toLowerCase()}`,
+                            class extends DNA.Component {
+                                static get properties() {
+                                    return {
+                                        value: {
+                                            [key]: () => 'ignored',
+                                            compute: () => 1,
+                                        },
+                                    };
+                                }
+                            }
+                        )
+                    ).toThrow(`The \`value\` property is computed and cannot declare \`${key}\``);
+                }
+            });
+
+            it('should refuse an observer added at runtime', () => {
+                @DNA.customElement('test-computed-observe')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: Number })
+                    count = 2;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.count * 2;
+                        },
+                    })
+                    declare readonly double: number;
+                }
+
+                const element = new TestElement();
+                // the declaration-time check never saw this one, and an observer of a property
+                // that is never assigned would simply never run
+                expect(() => element.observe('double' as never, vi.fn() as never)).toThrow(
+                    'The `double` property is computed and cannot be observed'
+                );
+            });
+
+            it('should be read-only through the inner value helpers too', () => {
+                @DNA.customElement('test-computed-inner')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: Number })
+                    count = 1;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.count * 2;
+                        },
+                    })
+                    declare readonly double: number;
+                }
+
+                const element = new TestElement();
+                // the slot of a computed property is the derived value, so what reaches it
+                // through the symbol sees the same property the public accessor does
+                expect(element.getInnerPropertyValue('double')).toBe(2);
+                expect(() => element.setInnerPropertyValue('double', 9)).toThrow(
+                    'The `double` property is computed and cannot be assigned'
+                );
+                expect(element.double).toBe(2);
             });
 
             it('should compute again after the computation threw', () => {

@@ -149,6 +149,13 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         private _updateScheduled = false;
 
         /**
+         * How many times the template has been put in the DOM.
+         * It is what tells a caller that held the updates back whether closing the batch ran the
+         * render it was waiting for, which nothing else reports any more.
+         */
+        private _renders = 0;
+
+        /**
          * The property that changed.
          */
         private _changedProperty: keyof this | null = null;
@@ -668,6 +675,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                         } finally {
                             this.collectUpdatesEnd();
                         }
+                        this._renders++;
                         this.updatedCallback();
                     });
                 });
@@ -740,14 +748,22 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         collectUpdatesEnd() {
             this._collectingUpdates--;
+            // the render is what closing the batch runs, so whether one happened is counted
+            // rather than assumed: the writes of the caller no longer ask for it themselves
+            const renders = this._renders;
             endBatch();
+            let rendered = this._renders !== renders;
 
             if (this._updateScheduled && this._collectingUpdates === 0) {
                 this._updateScheduled = false;
-                this.requestUpdate();
-                return true;
+                // a render asked for while the updates were held is already the one the batch
+                // just ran, unless the batch ran none
+                if (!rendered) {
+                    this.requestUpdate();
+                    rendered = true;
+                }
             }
-            return false;
+            return rendered;
         }
 
         /**

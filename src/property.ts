@@ -43,11 +43,54 @@ export type PropertySignals<T> = {
 };
 
 /**
+ * The signal that holds the value of a property.
+ *
+ * Writing it is assigning the property, and not a shortcut past it: the value is validated, the
+ * attribute is reflected, the observers run, the event fires and the component renders, in that
+ * order, exactly as they do for `element.prop = value`. Anything else would let the property, the
+ * attribute and the DOM disagree, since the signal is handed out by `signals`.
+ *
+ * The accessor of the property writes through {@link PropertyState.write}, which is the raw write
+ * the pipeline ends in.
+ */
+class PropertyState<T> extends State<T> {
+    private readonly element: object;
+    private readonly propertyKey: PropertyKey;
+
+    /**
+     * Create the signal of a property.
+     * @param element The component instance the property belongs to.
+     * @param propertyKey The name of the property.
+     */
+    constructor(element: object, propertyKey: PropertyKey) {
+        // `===` is how a property has always decided whether it changed
+        super(undefined as T, { equals: (previousValue, newValue) => previousValue === newValue });
+        this.element = element;
+        this.propertyKey = propertyKey;
+    }
+
+    /**
+     * Assign the property this signal holds.
+     * @param newValue The value to assign.
+     */
+    set(newValue: T): void {
+        (this.element as Record<PropertyKey, unknown>)[this.propertyKey] = newValue;
+    }
+
+    /**
+     * Write the value the assignment settled on, without going through it again.
+     * @param newValue The value to write.
+     */
+    write(newValue: T): void {
+        super.set(newValue);
+    }
+}
+
+/**
  * Get (or create) the signal a property keeps at its own symbol slot on the instance.
  *
  * The signal is the property: the accessor reads and writes it, so reading the property inside
- * a computation depends on it, and assigning the property runs what depends on it. The value is
- * compared with `===`, which is how a property has always decided whether it changed.
+ * a computation depends on it, and assigning the property runs what depends on it.
  *
  * The slot is a symbol on the instance rather than an entry of a map on the side, the same way
  * the value used to be kept: a property is read and written more than anything else in a
@@ -57,16 +100,14 @@ export type PropertySignals<T> = {
  * @param signalSymbol The symbol of the slot.
  * @returns The signal of the property.
  */
-const signalAt = <T>(element: object, signalSymbol: symbol): State<T> => {
+const signalAt = <T>(element: object, signalSymbol: symbol, propertyKey: PropertyKey): PropertyState<T> => {
     const target = element as WithSignalSlots;
     // the slot is looked for on the instance alone: an ordinary read would walk the prototype
     // chain, and one made with the prototype as the target — a probe of the class, a feature
     // detection — would install the slot there and have every instance share a single signal
-    let signal = (hasOwn.call(target, signalSymbol) ? target[signalSymbol] : undefined) as State<T> | undefined;
+    let signal = (hasOwn.call(target, signalSymbol) ? target[signalSymbol] : undefined) as PropertyState<T> | undefined;
     if (!signal) {
-        signal = new State<T>(undefined as T, {
-            equals: (previousValue, newValue) => previousValue === newValue,
-        });
+        signal = new PropertyState<T>(element, propertyKey);
         target[signalSymbol] = signal;
     }
 
@@ -106,7 +147,7 @@ const propertySignal = <T extends ComponentInstance, P extends keyof T>(
 ): ReadonlySignal<T[P]> =>
     property.compute
         ? computedAt<T[P]>(element, property.signalSymbol, property.compute)
-        : signalAt<T[P]>(element, property.signalSymbol);
+        : signalAt<T[P]>(element, property.signalSymbol, property.name);
 
 /**
  * Get the signal that holds the value of a property.
@@ -130,15 +171,27 @@ export const getPropertySignals = <T extends ComponentInstance>(element: T): Pro
     const target = element as T & WithSignalsAccessor<T>;
     let accessor = target[SIGNALS_SYMBOL];
     if (!accessor) {
-        accessor = {} as PropertySignals<T>;
-        const properties = getProperties(element);
-        for (const propertyKey in properties) {
-            const property = properties[propertyKey as keyof T];
-            _defineProperty(accessor, propertyKey, {
-                enumerable: true,
-                get: () => propertySignal(element, property),
-            });
-        }
+        // the declarations are read at each access rather than copied once: a property defined
+        // after the first read of `signals` — `defineProperty` on the class, a mixin applied
+        // late — is reachable too, instead of being missing from a set frozen at that moment
+        accessor = new Proxy({} as PropertySignals<T>, {
+            get: (_target, propertyKey) => {
+                const property = getProperties(element)[propertyKey as keyof T];
+                return property ? propertySignal(element, property) : undefined;
+            },
+            has: (_target, propertyKey) => !!getProperties(element)[propertyKey as keyof T],
+            ownKeys: () => Object.keys(getProperties(element)),
+            getOwnPropertyDescriptor: (_target, propertyKey) => {
+                const property = getProperties(element)[propertyKey as keyof T];
+                return property
+                    ? { enumerable: true, configurable: true, value: propertySignal(element, property) }
+                    : undefined;
+            },
+            // the slot is the property itself: the signal is what it holds, and swapping it
+            // would leave the accessor of the property reading another one
+            set: () => false,
+            deleteProperty: () => false,
+        });
         target[SIGNALS_SYMBOL] = accessor;
     }
 
@@ -568,7 +621,7 @@ const createPropertyDescriptor = <T extends ComponentInstance, P extends keyof T
             // a property declared `update: false` says that changing it drives nothing, so
             // reading it does not depend on it. Its signal is still there for whoever wants
             // to follow it on purpose, through `signals`.
-            let value = update === false ? signalAt<E[P]>(this, signalSymbol).peek() : this[symbol];
+            let value = update === false ? signalAt<E[P]>(this, signalSymbol, name).peek() : this[symbol];
             if (get) {
                 value = get.call(this);
             }
@@ -668,10 +721,26 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
 ): PropertyDescriptor => {
     let finalDeclaration = declaration;
     if (declaration.compute) {
-        // everything below needs a write to hang off: a computed property has none, and giving
-        // it one would mean keeping an effect alive for a value nobody may ever read
+        // everything below needs a write to hang off, which a computed property has none of, or
+        // takes part in producing the value, which its computation is the whole of. Declaring one
+        // is refused rather than dropped without a word: the property would answer with something
+        // other than what was asked for
         const conflict = (
-            ['attribute', 'event', 'observe', 'observers', 'defaultValue', 'setter', 'set', 'validate'] as const
+            [
+                'attribute',
+                'event',
+                'observe',
+                'observers',
+                'defaultValue',
+                'setter',
+                'set',
+                'validate',
+                'get',
+                'getter',
+                'type',
+                'fromAttribute',
+                'toAttribute',
+            ] as const
         ).find((key) => declaration[key] != null && declaration[key] !== false);
         if (conflict) {
             throw new TypeError(
@@ -692,15 +761,36 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
     // setter, `getInnerPropertyValue` — goes through the signal without knowing it.
     // The symbol of the slot is closed over, so neither reading nor writing a property looks
     // its declaration up.
-    if (!property.compute) {
-        const { signalSymbol } = property;
+    const { signalSymbol } = property;
+    if (property.compute) {
+        // the slot of a computed property is the derived value, so that what reaches the value
+        // through the symbol — `getInnerPropertyValue`, `setInnerPropertyValue` — sees the same
+        // property the public accessor does, and is refused the same write
+        const { compute } = property;
         _defineProperty(prototype, property.symbol, {
             configurable: true,
             get(this: T) {
-                return signalAt<T[P]>(this, signalSymbol).get();
+                return computedAt<T[P]>(this, signalSymbol, compute).get();
+            },
+            set() {
+                throw new TypeError(`The \`${String(propertyKey)}\` property is computed and cannot be assigned`);
+            },
+        });
+    } else {
+        const update = finalDeclaration.update;
+        _defineProperty(prototype, property.symbol, {
+            configurable: true,
+            get(this: T) {
+                // a property declared `update: false` drives nothing, so nothing that reads it
+                // depends on it — not even through the slot, which is what a custom `get` and
+                // `getInnerPropertyValue` reach it by
+                const signal = signalAt<T[P]>(this, signalSymbol, propertyKey);
+                return update === false ? signal.peek() : signal.get();
             },
             set(this: T, value: T[P]) {
-                signalAt<T[P]>(this, signalSymbol).set(value);
+                // the raw write: the pipeline of the assignment ends here, and going through it
+                // again is what a write of the signal handed out by `signals` does
+                signalAt<T[P]>(this, signalSymbol, propertyKey).write(value);
             },
         });
     }
@@ -886,7 +976,11 @@ const getPropertyObservers = <T extends ComponentInstance, P extends keyof T>(
     element: T,
     propertyName: P
 ): ObserversOf<T>[P] => {
-    getProperty(element, propertyName, true);
+    // an observer is run by the assignment, which a computed property has none of: one added at
+    // runtime would never be called, and saying so is better than never calling it
+    if (getProperty(element, propertyName, true).compute) {
+        throw new TypeError(`The \`${String(propertyName)}\` property is computed and cannot be observed`);
+    }
 
     if (!OBSERVERS.has(element)) {
         OBSERVERS.set(element, {} as ObserversOf<ComponentInstance>);
