@@ -8,12 +8,12 @@ export type AutonomousElements = {
 };
 
 export type CustomizedElements = {
-    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicHTMLElements]: JSX.IntrinsicHTMLElements[K] &
+    [K in keyof JSXInternal.CustomizedElements & keyof JSX.IntrinsicElements]: JSX.IntrinsicElements[K] &
         (JSXInternal.BuiltinElements[K] | JSXInternal.CustomizedElements[K]);
 };
 
-declare global {
-    namespace React.JSX {
+declare module 'react/jsx-runtime' {
+    namespace JSX {
         interface IntrinsicElements extends AutonomousElements {
             a: CustomizedElements['a'];
             abbr: CustomizedElements['abbr'];
