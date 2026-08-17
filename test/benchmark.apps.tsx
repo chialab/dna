@@ -1,8 +1,7 @@
 import * as DNA from '@chialab/dna';
-import { computed, effect, Signal, signal, untracked } from '@preact/signals-core';
 
 export type Row = { id: number; label: string };
-export type SignalRow = { id: number; label: Signal<string>; className: Signal<string> };
+export type SignalRow = { id: number; label: DNA.Signal.State<string>; className: DNA.Signal.State<string> };
 export type App = {
     name: string;
     host: HTMLElement;
@@ -455,11 +454,11 @@ const dnaNonKeyed = (): App => {
 const dnaSignals = (): App => {
     const host = createHost();
 
-    const rows = signal<SignalRow[]>([]);
+    const rows = DNA.Signal.state<SignalRow[]>([]);
     let selected: SignalRow | undefined;
 
-    const view = computed(() =>
-        rows.value.map((item) => (
+    const view = DNA.Signal.computed(() =>
+        rows.get().map((item) => (
             <tr
                 key={item.id}
                 class={item.className}>
@@ -491,7 +490,7 @@ const dnaSignals = (): App => {
 
     const unselect = () => {
         if (selected) {
-            selected.className.value = '';
+            selected.className.set('');
             selected = undefined;
         }
     };
@@ -499,7 +498,7 @@ const dnaSignals = (): App => {
     const buildSignalData = (count: number): SignalRow[] => {
         const data = new Array<SignalRow>(count);
         for (let i = 0; i < count; i++) {
-            data[i] = { id: nextId++, label: signal(buildLabel()), className: signal('') };
+            data[i] = { id: nextId++, label: DNA.Signal.state(buildLabel()), className: DNA.Signal.state('') };
         }
         return data;
     };
@@ -516,57 +515,48 @@ const dnaSignals = (): App => {
         host,
         run() {
             unselect();
-            rows.value = buildSignalData(1000);
+            rows.set(buildSignalData(1000));
         },
         runLots() {
             unselect();
-            rows.value = buildSignalData(10000);
+            rows.set(buildSignalData(10000));
         },
         add() {
-            rows.value = rows.value.concat(buildSignalData(1000));
+            rows.set(rows.peek().concat(buildSignalData(1000)));
         },
         update() {
-            const current = rows.value;
+            const current = rows.peek();
             for (let i = 0, len = current.length; i < len; i += 10) {
                 const label = current[i].label;
-                label.value = `${label.value} !!!`;
+                label.set(`${label.peek()} !!!`);
             }
         },
         clear() {
             unselect();
-            rows.value = [];
+            rows.set([]);
         },
         swapRows() {
-            const current = rows.value;
+            const current = rows.peek();
             if (current.length > 998) {
                 const next = current.slice();
                 next[1] = current[998];
                 next[998] = current[1];
-                rows.value = next;
+                rows.set(next);
             }
         },
         selectRow() {
             unselect();
-            selected = rows.value[1];
-            selected.className.value = 'danger';
+            selected = rows.peek()[1];
+            selected.className.set('danger');
         },
         removeRow() {
-            const current = rows.value;
+            const current = rows.peek();
             const next = current.slice();
             next.splice(1, 1);
-            rows.value = next;
+            rows.set(next);
         },
     };
 };
-
-DNA.configureSignals({
-    isSignal: (value) => value instanceof Signal,
-    get<T>(target: DNA.SignalLike<T>) {
-        return (target as DNA.SignalValue<T>).value;
-    },
-    effect,
-    untrack: untracked,
-} satisfies DNA.SignalAdapter);
 
 export const apps: App[] = [vanilla(), dnaKeyed(), dnaNonKeyed(), dnaSignals()];
 export const isolate = (app: App) => {

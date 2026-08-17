@@ -64,7 +64,6 @@
     "@biomejs/biome": "^2.1.0",
     "@changesets/cli": "^2.22.0",
     "@chialab/vitest-provider-browserstack": "^4.0.0",
-    "@preact/signals-core": "^1.14.2",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@testing-library/angular": "^19.0.0",
     "@testing-library/dom": "^10.4.1",
@@ -90,7 +89,6 @@
     "react": "~19.1.0",
     "react-dom": "~19.1.0",
     "rxjs": "^7.8.2",
-    "signal-polyfill": "^0.2.2",
     "svelte": "^5.33.1",
     "svelte-check": "^4.3.1",
     "tslib": "^2.6.2",
@@ -104,6 +102,9 @@
     "vitest": "^4.0.0",
     "vue": "^3.5.14",
     "zone.js": "^0.16.0"
+  },
+  "resolutions": {
+    "@types/react": "19.2.17"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

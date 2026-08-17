@@ -195,55 +195,27 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 DNA templates can interpolate [TC39 Signals](https://github.com/tc39/proposal-signals). When a signal changes, DNA updates **only the nodes bound to it**, without re-rendering the component that owns the template.
 
-### Setup
+### The built-in implementation
 
-Signals are not implemented by any engine yet and DNA does not bundle a polyfill, in order to keep its runtime dependency-free. Register an implementation once, before defining your components:
-
-```ts
-import { configureSignals } from '@chialab/dna';
-import { Signal } from 'signal-polyfill';
-
-configureSignals(Signal);
-```
-
-When a native `globalThis.Signal` is available it is picked up automatically and this call is not needed. Only one implementation can be active at a time: mixing two of them would build two reactive graphs unable to observe each other.
-
-Without an implementation, signals are rendered as plain objects and nothing else changes.
-
-### Other implementations
-
-DNA is not tied to the shape of the proposal. It only needs four operations from a signals library: recognise one of its signals, read one, react to one and read one without reacting. Pass an object with those four methods to `configureSignals` and any library will do — here is the whole integration with [Preact signals](https://preactjs.com/guide/v10/signals/), whose value is a property rather than a method:
+DNA carries its own signals, so there is nothing to install and nothing to configure:
 
 ```ts
-import { configureSignals } from '@chialab/dna';
-import { effect, Signal, untracked } from '@preact/signals-core';
+import { Signal } from '@chialab/dna';
 
-configureSignals({
-    isSignal: (value) => value instanceof Signal,
-    get: (signal) => signal.value,
-    effect,
-    untrack: untracked,
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+const dispose = Signal.effect(() => {
+    document.title = `${count.get()} items`;
 });
 ```
 
-Everything else in this page then works unchanged. How soon the DOM is patched follows the implementation: an implementation of the proposal defers to a microtask (see below), while Preact signals push synchronously, so the DOM is already up to date when the assignment returns.
+`Signal.State` and `Signal.Computed` follow the shape of the [TC39 proposal](https://github.com/tc39/proposal-signals) — a value is read with `get()` and written with `set()` — with one difference that matters here: **changes are delivered synchronously**. The DOM is patched before the assignment that caused it returns, which is the same guarantee a component property gives.
 
-Those four operations are all rendering needs. Two more are optional, and let the [`useSignal`](#the-usesignal-hook) and [`useComputed`](#the-usecomputed-hook) hooks build signals with your library as well. `state` returns the signal together with a function that writes it, because writing is what differs the most between implementations:
+`Signal.effect` runs a callback whenever one of the signals it reads changes, and returns a function that stops it. `Signal.untrack` reads without subscribing, `peek()` does the same for a single signal, and `Signal.batch` holds the effects back until a group of writes is done, so they settle once.
 
-```ts
-import { computed, signal } from '@preact/signals-core';
+A derived value is computed only when something reads it, and an effect below it does not run when the computation returns the same result as before.
 
-configureSignals({
-    // ...the four operations above
-    state: (initialValue) => {
-        const target = signal(initialValue);
-        return [target, (newValue) => (target.value = newValue)];
-    },
-    computed: (computation) => computed(computation),
-});
-```
-
-Leave them out and everything still renders: only the two hooks that create signals throw, telling you to create them with your own library instead.
 
 ### Content
 
@@ -293,36 +265,24 @@ const disabled = new Signal.State(false);
 </button>;
 ```
 
-### Updates of a proposal implementation are asynchronous
+### Updates are synchronous
 
-With an implementation of the TC39 proposal, signal updates are applied on a **microtask**, because the notification callback of a `Watcher` cannot read signals. Read the DOM after awaiting:
+A signal is written and the DOM is patched before the assignment returns, the same way a component property behaves:
 
 ```ts
 count.set(1);
-// the DOM has not been updated yet
-await Promise.resolve();
-// now it has
+element.textContent; // already up to date
 ```
 
-This does not change how components behave: assigning a component property still renders **synchronously**, as it always has.
+Use `Signal.batch` when a group of writes belongs together, so that what depends on them runs once instead of once per write:
 
 ```ts
-element.title = 'Hello';
-element.innerHTML; // already up to date
-```
+import { Signal } from '@chialab/dna';
 
-### Effects
-
-DNA does not wrap the reactive primitives of the implementation you registered: to run a side effect, or to read a signal without subscribing to it, use the ones your library already provides.
-
-```ts
-import { effect, untracked } from '@preact/signals-core';
-
-const dispose = effect(() => {
-    document.title = `${count.value} items`;
+Signal.batch(() => {
+    firstName.set('Ada');
+    lastName.set('Lovelace');
 });
-
-dispose();
 ```
 
 ## Function components
@@ -571,9 +531,7 @@ function Timer({ interval }, { useState, useEffect }) {
 
 ### The `useSignal` hook
 
-The `useSignal` hook creates a [signal](#signals) that is preserved across renders, and returns it together with a function that writes it.
-
-The signal is the one your implementation makes, so it can be interpolated in the template and passed to other components like any other. The setter is what stays the same whatever library you registered, and it also accepts a function that receives the current value — the way to update a signal from its own value without subscribing to it.
+The `useSignal` hook creates a [signal](#signals) that is preserved across renders.
 
 Writing it does not render the function component by itself: what follows it is whatever reads it. This is what makes it different from `useState`, whose value belongs to that fragment alone and always re-renders it.
 
@@ -581,12 +539,12 @@ Writing it does not render the function component by itself: what follows it is 
 
 ```tsx [jsx]
 function Counter(props, { useSignal }) {
-    const [count, setCount] = useSignal(0);
+    const count = useSignal(0);
 
     return (
         <button
             type="button"
-            on:click={() => setCount((current) => current + 1)}>
+            on:click={() => count.set(count.peek() + 1)}>
             clicked {count} times
         </button>
     );
@@ -595,11 +553,11 @@ function Counter(props, { useSignal }) {
 
 ```ts [html]
 function Counter(props, { useSignal }) {
-    const [count, setCount] = useSignal(0);
+    const count = useSignal(0);
 
     return html`<button
         type="button"
-        @click=${() => setCount((current) => current + 1)}>
+        @click=${() => count.set(count.peek() + 1)}>
         clicked ${count} times
     </button>`;
 }
@@ -607,13 +565,11 @@ function Counter(props, { useSignal }) {
 
 :::
 
-Here `count` is interpolated, so only the text node is patched when it changes. Use [`useSignalValue`](#the-usesignalvalue-hook) instead when you need the value itself.
+Here `count` is interpolated, so only the text node is patched when it changes, and the handler reads it with `peek()` so that the component does not subscribe to it. Use [`useSignalValue`](#the-usesignalvalue-hook) when you need the value itself.
 
 ### The `useComputed` hook
 
 The `useComputed` hook creates a [signal](#signals) derived from the ones its computation reads, preserved across renders.
-
-The computation receives a function that reads a signal whatever shape it has, so a component can be written without knowing which implementation the application registered. Reading the signals directly works just as well when you do know.
 
 Like `useMemo`, the computation is captured once: a computation that reads the props of the function component needs them in its dependency list. The signals it reads are tracked on their own and do not belong there.
 
@@ -621,7 +577,7 @@ Like `useMemo`, the computation is captured once: a computation that reads the p
 
 ```tsx [jsx]
 function Total({ items, taxRate }, { useComputed }) {
-    const total = useComputed((read) => read(items).length * taxRate, [taxRate]);
+    const total = useComputed(() => items.get().length * taxRate, [taxRate]);
 
     return <span>{total}</span>;
 }
@@ -629,7 +585,7 @@ function Total({ items, taxRate }, { useComputed }) {
 
 ```ts [html]
 function Total({ items, taxRate }, { useComputed }) {
-    const total = useComputed((read) => read(items).length * taxRate, [taxRate]);
+    const total = useComputed(() => items.get().length * taxRate, [taxRate]);
 
     return html`<span>${total}</span>`;
 }
@@ -671,14 +627,14 @@ Only the fragment of the function component is re-rendered, not the component th
 
 The `useSignalEffect` hook runs a callback whenever one of the [signals](#signals) it reads changes, for as long as the fragment lives. It runs once immediately, and the callback may return its own cleanup function.
 
-It is the lifecycle-aware counterpart of the `effect` function of your signals library: the subscription is stopped when the function component is unmounted, so you do not have to dispose of it yourself. The second argument is the usual list of dependencies, which tells when the effect has to be created again — the signals it reads are tracked automatically and do not belong there.
+It is the lifecycle-aware counterpart of `Signal.effect`: the subscription is stopped when the function component is unmounted, so you do not have to dispose of it yourself. The second argument is the usual list of dependencies, which tells when the effect has to be created again — the signals it reads are tracked automatically and do not belong there.
 
 ::: code-group
 
 ```tsx [jsx]
 function Title({ prefix, count }, { useSignalEffect }) {
     useSignalEffect(() => {
-        document.title = `${prefix}: ${count.value} items`;
+        document.title = `${prefix}: ${count.get()} items`;
     }, [prefix]);
 
     return null;
@@ -688,7 +644,7 @@ function Title({ prefix, count }, { useSignalEffect }) {
 ```ts [html]
 function Title({ prefix, count }, { useSignalEffect }) {
     useSignalEffect(() => {
-        document.title = `${prefix}: ${count.value} items`;
+        document.title = `${prefix}: ${count.get()} items`;
     }, [prefix]);
 
     return null;

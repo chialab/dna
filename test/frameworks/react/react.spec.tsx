@@ -285,6 +285,7 @@ describe('React', () => {
             onStringChange?: (event: CustomEvent<string>) => void;
         }) => (
             // biome-ignore lint/a11y/useAnchorContent: Assignment test
+            // biome-ignore lint/a11y/useKeyWithClickEvents: Assignment test
             <a
                 is="test-frameworks-6"
                 href="https://chialab.github.io/dna"
