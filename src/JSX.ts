@@ -36,6 +36,7 @@ type Values<T> = T[keyof T] extends never ? EmptyObject : T[keyof T];
 type ReservedKeys =
     | 'extends'
     | 'realm'
+    | 'signals'
     | 'collectingUpdates'
     | 'updateScheduled'
     | 'is'

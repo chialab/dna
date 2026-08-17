@@ -173,6 +173,30 @@ describe(
                 expect(element).toHaveProperty('testProp', 1);
             });
 
+            it('should reflect and observe the value the setter returned', () => {
+                const observer = vi.fn();
+
+                @DNA.customElement('test-properties-9b')
+                class MyElement extends DNA.Component {
+                    @DNA.property({
+                        attribute: 'test-prop',
+                        observe: observer,
+                        setter(value) {
+                            return (value as number) / 2;
+                        },
+                    })
+                    testProp = 42;
+                }
+
+                const element = new MyElement();
+                element.testProp = 4;
+
+                // what the setter returned, not what was assigned
+                expect(element.testProp).toBe(2);
+                expect(element.getAttribute('test-prop')).toBe('2');
+                expect(observer).toHaveBeenLastCalledWith(42, 2, 'testProp');
+            });
+
             it('should define a property with decorated accessor', () => {
                 @DNA.customElement('test-properties-10')
                 class MyElement extends DNA.Component {

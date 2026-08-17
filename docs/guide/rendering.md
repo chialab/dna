@@ -193,7 +193,7 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 ## Signals
 
-DNA templates can interpolate [TC39 Signals](https://github.com/tc39/proposal-signals). When a signal changes, DNA updates **only the nodes bound to it**, without re-rendering the component that owns the template.
+DNA templates can interpolate signals. When a signal changes, DNA updates **only the nodes bound to it**, without re-rendering the component that owns the template.
 
 ### The built-in implementation
 
@@ -264,6 +264,81 @@ const disabled = new Signal.State(false);
     {label}
 </button>;
 ```
+
+### The signals of a property
+
+Every declared property is held by a signal, and a component reaches it through `signals`:
+
+```tsx
+@customElement('user-card')
+class UserCard extends Component {
+    @property() first = '';
+    @property() last = '';
+
+    // built once, and it follows both properties from then on
+    private readonly full = new Signal.Computed(() => `${this.signals.first.get()} ${this.signals.last.get()}`);
+
+    render() {
+        return <h1>{this.full}</h1>;
+    }
+}
+```
+
+It is the property itself rather than a copy of it, so a derived value stays in step without an observer, and only the nodes bound to it are patched when it changes.
+
+Reading a property the usual way inside a computation depends on it just the same — `new Signal.Computed(() => this.title.toUpperCase())` follows `title` — so `signals` is what you reach for when you need the signal as a value: to hand it to a template, to a child component, or to `Signal.effect`.
+
+Assignment is unchanged: `this.title = 'x'` still validates the value, reflects the attribute, runs the observers and fires the event. Signals are read there, not written.
+
+### What a render depends on
+
+A component computes its template inside a computation, so it renders again when one of the signals it read has changed — the properties it touched, and any other signal it read along the way:
+
+```tsx
+const theme = new Signal.State('light');
+
+@customElement('themed-box')
+class ThemedBox extends Component {
+    render() {
+        return <div class={theme.get()} />;
+    }
+}
+```
+
+A property the template never reads no longer renders the component, and a group of writes made together — through `assign`, or between `collectUpdatesStart` and `collectUpdatesEnd` — renders it once.
+
+`requestUpdate` and `forceUpdate` are unchanged: they ask for a render that no change caused.
+
+Two declarations stop a render, as they always have. A property declared `update: false` says that changing it drives nothing, so reading it never depends on it and changing it leaves the DOM as it was — its signal is still there through [`signals`](#the-signals-of-a-property) for whoever wants to follow it on purpose. And `shouldUpdate` refusing a change leaves the DOM alone for the render that change would have caused.
+
+### Computed properties
+
+A property declared with `compute` derives its value from the signals its computation reads, instead of holding one:
+
+```tsx
+@customElement('user-card')
+class UserCard extends Component {
+    @property() first = '';
+    @property() last = '';
+
+    @property({
+        compute(this: UserCard) {
+            return `${this.first} ${this.last}`.trim();
+        },
+    })
+    readonly full!: string;
+
+    render() {
+        return <h1>{this.signals.full}</h1>;
+    }
+}
+```
+
+The computation runs with the component as its `this`, so it reads the other properties the way the component would. It runs only when something reads the property, and only when one of the values it read has changed — reading `full` twice in a row computes it once.
+
+The property is read-only: assigning it throws. It also cannot declare `attribute`, `event`, `observe`, `observers`, `defaultValue`, `setter`, `set` or `validate`, since each of those needs a write to hang off, and a computed property has none.
+
+It replaces the pattern of a getter recomputed on every read paired with an observer that keeps something in sync: the value is memoized, and what it depends on is worked out on its own.
 
 ### Updates are synchronous
 
