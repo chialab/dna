@@ -468,6 +468,21 @@ const isWritableProperty = (element: Node, propertyKey: string) => {
 };
 
 /**
+ * The name of the event a property key stands for, when it stands for one.
+ * `onclick` and friends are real properties of the node and are assigned as such, while `onClick`
+ * and `on:click` exist only in the template and become event listeners.
+ * @param node The node the property is set on.
+ * @param propertyKey The property key.
+ * @returns The event name, or `null` when the key is not a listener.
+ */
+const eventNameOf = (node: Node, propertyKey: string): string | null => {
+    if (propertyKey[0] !== 'o' || propertyKey[1] !== 'n' || propertyKey in node) {
+        return null;
+    }
+    return propertyKey[2] === ':' ? propertyKey.substring(3) : propertyKey.substring(2);
+};
+
+/**
  * Set property value to a node.
  * @param node The node to update.
  * @param propertyKey The property key to update.
@@ -506,20 +521,15 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
 
-    // `onclick` and friends are real properties of the node and are assigned as such, while
-    // `onClick` and `on:click` exist only in the template and become event listeners
-    if (propertyKey[0] === 'o' && propertyKey[1] === 'n') {
-        const eventName =
-            propertyKey in node ? null : propertyKey[2] === ':' ? propertyKey.substring(3) : propertyKey.substring(2);
-        if (eventName !== null) {
-            if (oldValue) {
-                (node as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
-            }
-            if (value) {
-                (node as HTMLElement).addEventListener(eventName, value as EventListener);
-            }
-            return;
+    const eventName = eventNameOf(node, propertyKey as string);
+    if (eventName !== null) {
+        if (oldValue) {
+            (node as HTMLElement).removeEventListener(eventName, oldValue as EventListener);
         }
+        if (value) {
+            (node as HTMLElement).addEventListener(eventName, value as EventListener);
+        }
+        return;
     }
 
     const type = typeof value;
@@ -593,7 +603,9 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
     ctr?: ComponentConstructor,
     isNew?: boolean
 ) => {
-    let previousValue = oldValue;
+    // a signal the previous render bound is not a value the node was ever set to: what it
+    // applied is kept by the binding, and once that is gone there is nothing to diff against
+    let previousValue = isSignal(oldValue) ? undefined : oldValue;
 
     const binding = context.bindings?.get(propertyKey);
     if (binding) {
@@ -619,7 +631,7 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
         value: previousValue,
         dispose: () => {},
     };
-    newBinding.dispose = effect(() => {
+    const stop = effect(() => {
         const newValue = signal.get();
         // the node update must not become a dependency of this effect
         untrack(() => {
@@ -627,6 +639,22 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
             newBinding.value = newValue;
         });
     });
+
+    const eventName = eventNameOf(node, propertyKey as string);
+    newBinding.dispose =
+        eventName === null
+            ? stop
+            : () => {
+                  stop();
+                  // a listener lives on the node rather than in the render tree: stopping the
+                  // effect leaves it attached, and a node the template was given outlives the
+                  // subtree that bound it, so it would go on firing once that subtree is gone
+                  const applied = newBinding.value as EventListener | undefined;
+                  if (applied) {
+                      (node as HTMLElement).removeEventListener(eventName, applied);
+                      newBinding.value = undefined;
+                  }
+              };
 
     context.bindings = (context.bindings || new Map()).set(propertyKey, newBinding);
     // the binding has to be stopped when the node is dropped, so the subtree that holds it
@@ -1027,7 +1055,11 @@ const reconcileNodes = (parentContext: Context, start: number, end: number) => {
         return;
     }
 
-    const count = end - start;
+    // the walk reports where it stopped, which a nested render of this same parent may have left
+    // beyond the list it stopped in: the range is cut to what the list actually holds, so that a
+    // reorder reads contexts rather than the holes past its end
+    const last = end < currentChildren.length ? end : currentChildren.length;
+    const count = last - start;
     if (count <= 0) {
         return;
     }
@@ -1050,7 +1082,7 @@ const reconcileNodes = (parentContext: Context, start: number, end: number) => {
     // already in its final position and can be used as the anchor of the insertion
     const sequence = getSequence(positions);
     let cursor = sequence.length - 1;
-    let anchor = currentChildren[end]?.node ?? null;
+    let anchor = currentChildren[last]?.node ?? null;
     for (let i = count - 1; i >= 0; i--) {
         const childContext = currentChildren[start + i];
         if (cursor >= 0 && sequence[cursor] === i) {
@@ -1171,7 +1203,19 @@ const renderTemplate = (
                 // this is also how a fragment finds itself again when it re-renders alone
                 functionContext = currentContext;
             } else if (key != null) {
-                functionContext = keys?.get(key);
+                const keyed = keys?.get(key);
+                // the key may name a node that is not a fragment of this function at all — an
+                // element that shares it, or another function's fragment, whose hooks are not
+                // the ones this function asks for in the order it asks for them
+                if (keyed && keyed.type === Fn && keyed.kind === ContextKind.REF) {
+                    functionContext = keyed;
+                }
+            }
+            if (functionContext && key != null) {
+                // the key is spent by whoever claimed it: a key the template declares twice
+                // cannot name the same node twice, and the second of them is given a context of
+                // its own rather than the one this very pass has already placed elsewhere
+                keys?.delete(key);
             }
 
             // the context is inserted as is, rather than being looked up again from its node:
@@ -1261,15 +1305,24 @@ const renderTemplate = (
         // generated by this same render out of a compatible tag
         let templateContext: Context | undefined;
         const currentContext = context.children[context._cursor ?? 0];
+        const fitsTemplate = (candidate: Context) =>
+            isVTag(template) &&
+            candidate.kind === ContextKind.VNODE &&
+            candidate.type === template.type &&
+            candidate.properties?.is === properties?.is;
         if (key != null) {
-            templateContext = keys?.get(key);
+            const keyed = keys?.get(key);
+            // a key names one node, and the one it named is not always the node the template
+            // declares now: the marker of a function component that shares the key, or an
+            // element of another tag. One that does not fit is left where it is — for a
+            // sibling that shares the key and does fit — and this element gets one of its own
+            if (keyed && fitsTemplate(keyed)) {
+                templateContext = keyed;
+                // spent by whoever claimed it, for the reason given for a function component
+                keys?.delete(key);
+            }
         } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
-            if (
-                isVTag(template) &&
-                currentContext.kind === ContextKind.VNODE &&
-                currentContext.type === template.type &&
-                currentContext.properties?.is === properties?.is
-            ) {
+            if (fitsTemplate(currentContext)) {
                 templateContext = currentContext;
             }
         }
@@ -1349,39 +1402,44 @@ const renderTemplate = (
             node.collectUpdatesStart();
         }
 
-        // the properties the previous render had set and this one does not are unset first,
-        // so that a property that replaces another one does not find a stale value in place
-        if (oldProperties) {
-            for (const propertyKey in oldProperties) {
-                if (!(propertyKey in properties) && !shouldIgnoreProperty(node, propertyKey)) {
+        // the collection has to be closed even by a property that refuses its value: it counts a
+        // batch depth that belongs to the whole page, and one left open holds back every write
+        // that follows it, everywhere, for good
+        try {
+            // the properties the previous render had set and this one does not are unset first,
+            // so that a property that replaces another one does not find a stale value in place
+            if (oldProperties) {
+                for (const propertyKey in oldProperties) {
+                    if (!(propertyKey in properties) && !shouldIgnoreProperty(node, propertyKey)) {
+                        updateProperty(
+                            templateContext,
+                            node,
+                            propertyKey as keyof Node,
+                            undefined,
+                            oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
+                            ctr
+                        );
+                    }
+                }
+            }
+
+            for (const propertyKey in properties) {
+                if (!shouldIgnoreProperty(node, propertyKey)) {
                     updateProperty(
                         templateContext,
                         node,
                         propertyKey as keyof Node,
-                        undefined,
-                        oldProperties[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                        ctr
+                        properties[propertyKey as keyof typeof properties] as Node[keyof Node],
+                        oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
+                        ctr,
+                        isNew
                     );
                 }
             }
-        }
-
-        for (const propertyKey in properties) {
-            if (!shouldIgnoreProperty(node, propertyKey)) {
-                updateProperty(
-                    templateContext,
-                    node,
-                    propertyKey as keyof Node,
-                    properties[propertyKey as keyof typeof properties] as Node[keyof Node],
-                    oldProperties?.[propertyKey as keyof typeof oldProperties] as Node[keyof Node],
-                    ctr,
-                    isNew
-                );
+        } finally {
+            if (ctr) {
+                (node as ComponentInstance).collectUpdatesEnd();
             }
-        }
-
-        if (ctr) {
-            (node as ComponentInstance).collectUpdatesEnd();
         }
 
         insertNode(context, templateContext, rootContext);
@@ -1479,6 +1537,13 @@ export const internalRender = (
     // the render this one belongs to is the one of its root: a nested render of another tree —
     // a component rendering while its properties are assigned — is a render of its own, and
     // settles on its own
+    // where the walk is and what it moved belong to the pass that is running, not to the context:
+    // a nested render of this same context — a fragment that a signal write rendered again while
+    // this walk was suspended — has to leave both the way it found them
+    const previousCursor = context._cursor;
+    const previousShift = context._shift;
+    const previousLength = context.children.length;
+
     rootContext._depth = (rootContext._depth ?? 0) + 1;
     try {
         let previousRange: Set<Context> | undefined;
@@ -1513,7 +1578,6 @@ export const internalRender = (
 
         const start = context._cursor;
         // a nested render of this same context must not be taken for a move of this one
-        const previousShift = context._shift;
         context._shift = 0;
 
         renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
@@ -1563,10 +1627,15 @@ export const internalRender = (
         if (context._shift) {
             reconcileNodes(context, start, currentIndex);
         }
-        context._shift = previousShift;
 
         return context.children;
     } finally {
+        // the walk this one interrupted resumes where it was, moved by as much as this render
+        // grew or shrank the list before it: the contexts it dropped or inserted all sit in the
+        // range it owns, which the interrupted walk has already stepped over
+        context._cursor =
+            previousCursor === undefined ? undefined : previousCursor + (context.children.length - previousLength);
+        context._shift = previousShift;
         if (--rootContext._depth === 0) {
             releaseDetachedContexts(rootContext);
         }

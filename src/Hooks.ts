@@ -325,7 +325,13 @@ export class Hooks {
      * @returns The signal.
      */
     useComputed<T>(computation: () => T, deps: unknown[] = [], options?: Options<T>): Computed<T> {
-        return this.useMemo(() => new Computed(computation, options), deps);
+        const signal = this.useMemo(() => new Computed(computation, options), deps);
+        // the derived value is detached when the dependencies change and when the fragment is
+        // unmounted: one that stays linked is walked by every write of the signals it read, for
+        // as long as they live, and holds on to whatever its computation captured
+        this.nextState(() => createCleanup(() => signal.dispose()), [signal]);
+
+        return signal;
     }
 
     /**
@@ -358,8 +364,8 @@ export class Hooks {
 
     /**
      * Run a callback whenever one of the signals it reads changes, for as long as the fragment
-     * lives. The callback runs immediately once, then on a microtask, and it may return its own
-     * cleanup function.
+     * lives. The callback runs once after the render that registered it, and then before the
+     * write that changed one of its signals returns. It may return its own cleanup function.
      * @param effect The effect function to run.
      * @param deps The dependencies of the effect.
      */

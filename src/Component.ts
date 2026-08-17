@@ -657,11 +657,17 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                             return;
                         }
 
+                        // the batch the collection opens has to be closed even by a render that
+                        // throws: the depth it counts belongs to the whole page, and one left
+                        // open holds back every write that follows it, everywhere, for good
                         this.collectUpdatesStart();
-                        this.realm.requestUpdate(() => {
-                            internalRender(getRootContext(this, true), template);
-                        });
-                        this.collectUpdatesEnd();
+                        try {
+                            this.realm.requestUpdate(() => {
+                                internalRender(getRootContext(this, true), template);
+                            });
+                        } finally {
+                            this.collectUpdatesEnd();
+                        }
                         this.updatedCallback();
                     });
                 });
@@ -681,7 +687,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * @returns True if the template should be put in the DOM.
          */
         private _shouldApply(): boolean {
-            if (this.shouldUpdate === defaultShouldUpdate) {
+            if (defaultShouldUpdate.has(this.shouldUpdate)) {
                 return true;
             }
 
@@ -690,11 +696,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             const current: Map<string, unknown> = new Map();
             let acceptedChange = false;
             let refusedChange = false;
-            const gate = this.shouldUpdate as (
-                propertyName: string,
-                oldValue: unknown,
-                newValue: unknown
-            ) => boolean;
+            const gate = this.shouldUpdate as (propertyName: string, oldValue: unknown, newValue: unknown) => boolean;
             for (const propertyKey in properties) {
                 if (properties[propertyKey as keyof this].compute) {
                     // a derived value is not a change of its own
@@ -886,16 +888,21 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
     // the gate below is the one a component has not touched: knowing it by identity is what
     // lets a component that never refuses a change pay nothing for the question
-    defaultShouldUpdate = Component.prototype.shouldUpdate;
+    defaultShouldUpdate.add(Component.prototype.shouldUpdate);
 
     return Component as unknown as BaseComponentConstructor<T>;
 };
 
 /**
- * The `shouldUpdate` a component inherits, kept to tell it from one that overrides it.
+ * The `shouldUpdate` implementations a component inherits without overriding any.
+ *
+ * There is one per extended base rather than one altogether: every call of {@link extend} builds
+ * a class of its own, so the gate of the last builtin that was extended is not the gate of the
+ * components that extend the others. Holding a single one of them would take every component of
+ * every other base for one that overrides its gate, and ask it about changes it never refuses.
  */
 // biome-ignore lint/suspicious/noExplicitAny: the gate of any component class.
-let defaultShouldUpdate: ((...args: any[]) => boolean) | undefined;
+const defaultShouldUpdate = new WeakSet<(...args: any[]) => boolean>();
 
 /**
  * A collection of extended builtin HTML constructors.

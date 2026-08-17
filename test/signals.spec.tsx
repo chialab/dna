@@ -1,7 +1,7 @@
 import * as DNA from '@chialab/dna';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // not part of the public API: the module is aliased to the same instance the package uses
-import { batch, Computed, effect, isSignal, State, untrack } from '../src/Signal';
+import { batch, Computed, effect, endBatch, isSignal, State, untrack } from '../src/Signal';
 
 describe(
     'signals',
@@ -162,6 +162,63 @@ describe(
                 const cycle: Computed<any> = new Computed(() => cycle.get());
                 expect(() => cycle.get()).toThrow('Signal computation depends on itself');
             });
+
+            it('should run the computation again after it threw', () => {
+                let fail = true;
+                const computation = vi.fn(() => {
+                    if (fail) {
+                        throw new Error('nope');
+                    }
+                    return 'value';
+                });
+                const derived = new Computed(computation);
+
+                expect(() => derived.get()).toThrow('nope');
+                // the failure is reported again rather than being swallowed, and the computation
+                // that never finished did not leave a value behind
+                expect(() => derived.get()).toThrow('nope');
+                expect(computation).toHaveBeenCalledTimes(2);
+
+                fail = false;
+                expect(derived.get()).toBe('value');
+            });
+
+            it('should throw again when a computation that had a value throws', () => {
+                const count = new State(1);
+                const derived = new Computed(() => {
+                    const value = count.get();
+                    if (value === 2) {
+                        throw new Error('nope');
+                    }
+                    return value * 10;
+                });
+                expect(derived.get()).toBe(10);
+
+                count.set(2);
+                expect(() => derived.get()).toThrow('nope');
+                // the value of a run that never finished is not handed out in its place
+                expect(() => derived.get()).toThrow('nope');
+
+                count.set(3);
+                expect(derived.get()).toBe(30);
+            });
+
+            it('should detach from its sources when disposed', () => {
+                const count = new State(1);
+                const computation = vi.fn(() => count.get() * 2);
+                const derived = new Computed(computation);
+                expect(derived.get()).toBe(2);
+
+                derived.dispose();
+                count.set(3);
+                // nothing is walked on a write any more
+                expect(computation).toHaveBeenCalledTimes(1);
+
+                // and reading it again brings it back into the graph
+                expect(derived.get()).toBe(6);
+                count.set(4);
+                expect(derived.get()).toBe(8);
+            });
         });
 
         describe('effect', () => {
@@ -280,10 +337,10 @@ describe(
                 ).toThrow('Signal effects did not settle');
             });
 
-            it('should still run effects queued after a throwing effect', () => {
-                // regression: when an effect throws mid-flush the remaining effects in the same
-                // flush round kept `queued=true`, so `mark()` would skip re-queuing them on any
-                // subsequent write, silently killing them forever.
+            it('should run the effects that follow one that threw', () => {
+                // an effect that throws used to abort the whole flush: the effects queued with it
+                // never ran, and the DOM they hold was left describing a value that was already
+                // gone. They run now, and the failure is reported once the queue has drained
                 const trigger1 = new State(0);
                 const trigger2 = new State(0);
                 const before = vi.fn();
@@ -291,9 +348,9 @@ describe(
 
                 // A reads trigger1 and throws when it is > 0
                 effect(() => {
-                    const v = trigger1.get();
-                    before(v);
-                    if (v > 0) {
+                    const value = trigger1.get();
+                    before(value);
+                    if (value > 0) {
                         throw new Error('boom');
                     }
                 });
@@ -303,22 +360,39 @@ describe(
                 expect(before).toHaveBeenCalledTimes(1);
                 expect(after).toHaveBeenCalledTimes(1);
 
-                // queue both effects together in a batch, then A throws during the flush,
-                // dropping B from this round; B's `queued` flag must be cleared by the fix
+                // both are queued together, and A throws while the queue is being drained
                 expect(() =>
                     batch(() => {
                         trigger1.set(1);
                         trigger2.set(1);
                     })
                 ).toThrow('boom');
-                // B was dropped from the aborted flush (it has not run yet for value 1)
-                expect(after).toHaveBeenCalledTimes(1);
-
-                // without the fix `after.queued` is still true here, so `mark()` on the next
-                // write would skip it and B would be permanently dead
-                trigger2.set(2);
                 expect(after).toHaveBeenCalledTimes(2);
+                expect(after).toHaveBeenLastCalledWith(1);
+
+                // and the throw left nothing behind that would keep them from running again
+                trigger2.set(2);
+                expect(after).toHaveBeenCalledTimes(3);
                 expect(after).toHaveBeenLastCalledWith(2);
+            });
+
+            it('should report only the first of many failures', () => {
+                const trigger = new State(0);
+                const second = vi.fn();
+                effect(() => {
+                    if (trigger.get() > 0) {
+                        throw new Error('first');
+                    }
+                });
+                effect(() => {
+                    second(trigger.get());
+                    if (trigger.get() > 0) {
+                        throw new Error('second');
+                    }
+                });
+
+                expect(() => trigger.set(1)).toThrow('first');
+                expect(second).toHaveBeenCalledTimes(2);
             });
         });
 
@@ -369,6 +443,26 @@ describe(
                     expect(spy).toHaveBeenCalledTimes(1);
                 });
                 expect(spy).toHaveBeenCalledTimes(2);
+                expect(spy).toHaveBeenLastCalledWith(3);
+            });
+
+            it('should ignore a batch that was never opened', () => {
+                const count = new State(1);
+                const spy = vi.fn();
+                effect(() => spy(count.get()));
+
+                // a depth that goes below zero is one no `beginBatch` can bring back to zero:
+                // every write that followed would be held back for the rest of the page's life
+                endBatch();
+                count.set(2);
+                expect(spy).toHaveBeenCalledTimes(2);
+                expect(spy).toHaveBeenLastCalledWith(2);
+
+                // and a batch opened afterwards still holds its writes back
+                batch(() => {
+                    count.set(3);
+                    expect(spy).toHaveBeenCalledTimes(2);
+                });
                 expect(spy).toHaveBeenLastCalledWith(3);
             });
         });
@@ -551,6 +645,51 @@ describe(
 
                 signal.set('changed');
                 expect(wrapper.textContent).toBe('out');
+            });
+
+            it('should keep the siblings of a fragment a render wrote a signal to', () => {
+                const signal = new State('x');
+                const Reader: DNA.FunctionComponent = (_props, { useSignalValue }) => (
+                    <span>{useSignalValue(signal)}</span>
+                );
+                const Writer: DNA.FunctionComponent = (_props, { useEffect }) => {
+                    useEffect(() => {
+                        signal.set('y');
+                    }, []);
+
+                    return <b>written</b>;
+                };
+
+                // the write renders the reader again while the walk that placed it is suspended:
+                // the cursor of the interrupted walk used to be left where the nested one ended,
+                // and whatever followed was taken for a node the template did not render again
+                DNA.render([<Reader key="reader" />, <Writer key="writer" />, <u>tail</u>], wrapper);
+
+                expect(wrapper.querySelector('span')?.textContent).toBe('y');
+                expect(wrapper.querySelector('b')?.textContent).toBe('written');
+                expect(wrapper.querySelector('u')?.textContent).toBe('tail');
+            });
+
+            it('should not duplicate a fragment a later render wrote a signal to', () => {
+                const signal = new State(0);
+                const Writer: DNA.FunctionComponent<{ value: number }> = ({ value }, { useEffect }) => {
+                    useEffect(() => {
+                        signal.set(value);
+                    }, [value]);
+
+                    return <b>w</b>;
+                };
+                const Reader: DNA.FunctionComponent = (_props, { useSignalValue }) => (
+                    <span>{useSignalValue(signal)}</span>
+                );
+                const template = (value: number) => [<Writer value={value} />, <Reader />];
+
+                DNA.render(template(1), wrapper);
+                DNA.render(template(2), wrapper);
+
+                expect(wrapper.querySelectorAll('b').length).toBe(1);
+                expect(wrapper.querySelectorAll('span').length).toBe(1);
+                expect(wrapper.querySelector('span')?.textContent).toBe('2');
             });
         });
 
@@ -735,6 +874,43 @@ describe(
 
                 signal.set('changed');
                 expect(node.getAttribute('id')).toBe('bound');
+            });
+
+            it('should detach a bound listener when the node is dropped', () => {
+                const calls: string[] = [];
+                const first = () => calls.push('first');
+                const signal = new State<EventListener>(first);
+                const button = document.createElement('button');
+                const template = (show: boolean) => <div>{show ? DNA.h(button, { 'on:click': signal }) : null}</div>;
+
+                DNA.render(template(true), wrapper);
+                button.click();
+                expect(calls).toEqual(['first']);
+
+                // a node the template was given outlives the subtree that bound it: the listener
+                // lives on the node, and stopping the effect alone would leave it firing
+                DNA.render(template(false), wrapper);
+                button.click();
+                expect(calls).toEqual(['first']);
+            });
+
+            it('should not stack the listeners of a bound node across renders', () => {
+                const calls: string[] = [];
+                const first = () => calls.push('first');
+                const second = () => calls.push('second');
+                const signal = new State<EventListener>(first);
+                const button = document.createElement('button');
+                const template = (show: boolean) => <div>{show ? DNA.h(button, { 'on:click': signal }) : null}</div>;
+
+                DNA.render(template(true), wrapper);
+                DNA.render(template(false), wrapper);
+                signal.set(second);
+                DNA.render(template(true), wrapper);
+
+                button.click();
+                // the re-bind used to diff against the signal object rather than the listener it
+                // had applied, so the old one was never removed and the two fired together
+                expect(calls).toEqual(['second']);
             });
         });
 
@@ -986,6 +1162,25 @@ describe(
                 source.set(2);
                 expect(element.count).toBe(2);
                 dispose();
+            });
+
+            it('should not be shared by the instances after a read on the prototype', () => {
+                @DNA.customElement('test-signals-prototype')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    title = 'default';
+                }
+
+                // a probe of the class — a framework adapter, a feature detection — used to
+                // install the slot on the prototype, where every instance would then find it
+                void (TestElement.prototype as unknown as TestElement).title;
+
+                const first = new TestElement();
+                const second = new TestElement();
+                first.title = 'first';
+
+                expect(first.title).toBe('first');
+                expect(second.title).toBe('default');
             });
         });
 
@@ -1267,6 +1462,116 @@ describe(
                 expect(element.title).toBe('b');
                 expect(element.textContent).toBe('b-1');
             });
+
+            it('should not ask a component that never overrode `shouldUpdate` about its properties', () => {
+                // the inherited gate is known by identity, and there is one per extended base:
+                // holding a single one of them took every component of every other base for one
+                // that overrides its gate, and read each of its properties on every render
+                void DNA.HTML.Div;
+
+                const getter = vi.fn((value: unknown) => value);
+
+                @DNA.customElement('test-render-default-gate')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ getter })
+                    config: unknown = {};
+
+                    @DNA.property()
+                    title = 'a';
+
+                    render() {
+                        return <span>{this.title}</span>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                getter.mockClear();
+
+                element.title = 'b';
+                expect(element.textContent).toBe('b');
+                expect(getter).not.toHaveBeenCalled();
+            });
+
+            it('should leave the page reactive when a render throws', () => {
+                @DNA.customElement('test-render-throwing')
+                class Throwing extends DNA.Component {
+                    @DNA.property()
+                    title = '';
+
+                    render() {
+                        if (this.title) {
+                            throw new Error('nope');
+                        }
+                        return <span>ok</span>;
+                    }
+                }
+
+                @DNA.customElement('test-render-bystander')
+                class Bystander extends DNA.Component {
+                    @DNA.property()
+                    title = 'a';
+
+                    render() {
+                        return <span>{this.title}</span>;
+                    }
+                }
+
+                const throwing = new Throwing();
+                wrapper.appendChild(throwing);
+                const bystander = new Bystander();
+                wrapper.appendChild(bystander);
+
+                expect(() => {
+                    throwing.title = 'boom';
+                }).toThrow('nope');
+
+                // the batch a render opens counts a depth that belongs to the whole page: one
+                // left open by a throw used to hold back every write that followed, everywhere
+                const external = new State('first');
+                const spy = vi.fn();
+                effect(() => spy(external.get()));
+                external.set('second');
+                expect(spy).toHaveBeenCalledTimes(2);
+
+                bystander.title = 'b';
+                expect(bystander.textContent).toBe('b');
+            });
+
+            it('should leave the page reactive when a child refuses a value', () => {
+                @DNA.customElement('test-render-strict-child')
+                class Child extends DNA.Component {
+                    @DNA.property({ type: Number })
+                    count = 0;
+                }
+
+                @DNA.customElement('test-render-strict-parent')
+                class Parent extends DNA.Component {
+                    @DNA.property()
+                    title = '';
+
+                    render() {
+                        // the wrong type reaches the child while the template is being applied,
+                        // which is the most ordinary way for a render to throw
+                        return <test-render-strict-child count={(this.title ? 'nope' : 0) as unknown as number} />;
+                    }
+                }
+
+                const parent = new Parent();
+                wrapper.appendChild(parent);
+
+                expect(parent.children[0]).toBeInstanceOf(Child);
+                expect(() => {
+                    parent.title = 'boom';
+                }).toThrow('Invalid `nope` value for `count` property');
+
+                const external = new State('first');
+                const spy = vi.fn();
+                effect(() => spy(external.get()));
+                external.set('second');
+                expect(spy).toHaveBeenCalledTimes(2);
+                expect(spy).toHaveBeenLastCalledWith('second');
+            });
         });
 
         describe('computed properties', () => {
@@ -1451,6 +1756,37 @@ describe(
                     )
                 ).toThrow('The `value` property is computed and cannot declare `attribute`');
             });
+
+            it('should compute again after the computation threw', () => {
+                let fail = true;
+
+                @DNA.customElement('test-computed-throwing')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ type: Number })
+                    base = 1;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            if (fail) {
+                                throw new Error('nope');
+                            }
+                            return this.base * 2;
+                        },
+                    })
+                    declare readonly double: number;
+                }
+
+                const element = new TestElement();
+                expect(() => element.double).toThrow('nope');
+
+                // a computation that threw before reading anything depends on nothing, so
+                // nothing would ever invalidate it: it used to answer `undefined` for good
+                fail = false;
+                expect(element.double).toBe(2);
+
+                element.base = 5;
+                expect(element.double).toBe(10);
+            });
         });
 
         describe('useSignal', () => {
@@ -1552,6 +1888,48 @@ describe(
                 DNA.render(<Test tag="b" />, wrapper);
                 expect(seen.length).toBe(2);
                 expect(new Set(seen).size).toBe(1);
+            });
+
+            it('should detach the derived value when the fragment is unmounted', () => {
+                const shared = new State(0);
+                const Test: DNA.FunctionComponent = (_props, { useComputed, useSignalValue }) => {
+                    const double = useComputed(() => shared.get() * 2, []);
+
+                    return <span>{useSignalValue(double)}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                expect(wrapper.textContent).toBe('0');
+
+                shared.set(2);
+                expect(wrapper.textContent).toBe('4');
+
+                DNA.render(null, wrapper);
+                // a derived value nobody reads any more would otherwise stay in the graph of a
+                // signal that outlives the fragment, and be walked by every one of its writes
+                expect(shared.sinks.size).toBe(0);
+            });
+
+            it('should detach the previous derived value when the dependencies change', () => {
+                const shared = new State(0);
+                const Test: DNA.FunctionComponent<{ factor: number }> = (
+                    { factor },
+                    { useComputed, useSignalValue }
+                ) => {
+                    const scaled = useComputed(() => shared.get() * factor, [factor]);
+
+                    return <span>{useSignalValue(scaled)}</span>;
+                };
+
+                DNA.render(<Test factor={2} />, wrapper);
+                shared.set(3);
+                expect(wrapper.textContent).toBe('6');
+
+                DNA.render(<Test factor={10} />, wrapper);
+                shared.set(4);
+                expect(wrapper.textContent).toBe('40');
+                // the one the previous dependencies built is gone, not kept beside the new one
+                expect(shared.sinks.size).toBe(1);
             });
         });
 

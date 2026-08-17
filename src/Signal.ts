@@ -202,7 +202,8 @@ const mark = (source: Source<unknown>) => {
 
 /**
  * Run the queued effects, and the ones they queue in turn.
- * @throws If the effects keep queueing themselves.
+ * @throws The first error an effect threw, once the queue has drained, or if the effects keep
+ * queueing themselves.
  */
 const flush = () => {
     // an effect writing a signal starts a flush of its own: the one already running owns the
@@ -211,8 +212,8 @@ const flush = () => {
         return;
     }
     flushing = true;
-    let currentEffects: Effect[] | null = null;
-    let currentIndex = 0;
+    let failure: unknown;
+    let failed = false;
     try {
         let rounds = 0;
         while (pending) {
@@ -221,36 +222,40 @@ const flush = () => {
             }
             const effects = pending;
             pending = null;
-            currentEffects = effects;
             for (let i = 0, len = effects.length; i < len; i++) {
-                currentIndex = i;
                 const effect = effects[i];
                 effect.queued = false;
                 // the effect was reached through a derived value: it runs only if that value
                 // really changed, so a computation returning the same result stops here
-                if (!effect.disposed && hasChanged(effect)) {
+                if (effect.disposed || !hasChanged(effect)) {
+                    continue;
+                }
+                // one effect that throws does not keep its siblings from running: they hold the
+                // rest of the DOM, which would otherwise be left describing a value that is no
+                // longer there. The first failure is the one reported, once the queue is empty
+                try {
                     effect.run();
+                } catch (error) {
+                    if (!failed) {
+                        failed = true;
+                        failure = error;
+                    }
                 }
             }
-            currentEffects = null;
         }
     } finally {
         flushing = false;
-        // an effect that threw leaves the rest of the current-round queue with queued=true;
-        // clear those flags so that a later write can re-queue them normally
-        if (currentEffects) {
-            for (let i = currentIndex + 1, len = currentEffects.length; i < len; i++) {
-                currentEffects[i].queued = false;
-            }
-            currentEffects = null;
-        }
-        // effects queued by the throwing effect (next-round queue) are also dropped
+        // the queue is empty by now unless the effects never settled: such a queue is dropped
+        // rather than inherited by the next write, and the flags go with it
         if (pending) {
             for (let i = 0, len = pending.length; i < len; i++) {
                 pending[i].queued = false;
             }
             pending = null;
         }
+    }
+    if (failed) {
+        throw failure;
     }
 };
 
@@ -364,9 +369,30 @@ export class Computed<T> extends Source<T> {
                 this.version++;
             }
             this.computed = true;
+        } catch (error) {
+            // a computation that threw leaves no value to stand behind: the staleness is taken
+            // back so that the next read runs it again and throws again, rather than handing out
+            // the value of a run that never finished — `undefined`, or the one from before —
+            // for as long as nothing happens to invalidate it. A computation that threw before
+            // reading anything has no source left to be invalidated by, and would never run again
+            this.stale = true;
+            this.computed = false;
+            throw error;
         } finally {
             this.computing = false;
         }
+    }
+
+    /**
+     * Detach the computation from its sources.
+     * A derived value nobody reads any more would otherwise be kept — and walked by every write
+     * of the values it read — for as long as they live. Reading it again recomputes it, and
+     * links it back to whatever it reads.
+     */
+    dispose(): void {
+        unlink(this);
+        this.stale = true;
+        this.computed = false;
     }
 
     /**
@@ -488,8 +514,15 @@ export const beginBatch = (): void => {
 /**
  * Close a batch opened by {@link beginBatch}, running the effects it held back when the
  * outermost one closes.
+ *
+ * A call that closes a batch nobody opened is ignored rather than taken for what it says: a
+ * negative depth is one no {@link beginBatch} can bring back to zero, and every write that
+ * followed would be held back for the rest of the life of the page.
  */
 export const endBatch = (): void => {
+    if (batchDepth === 0) {
+        return;
+    }
     if (--batchDepth === 0) {
         flush();
     }

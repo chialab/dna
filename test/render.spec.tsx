@@ -2204,6 +2204,52 @@ describe(
                 expect(comment1).toBe(comment5);
                 expect(comment2).toBe(comment6);
             });
+
+            it('should render a list that declares the same key twice', () => {
+                const template = () => [<li key="dup">first</li>, <li key="dup">second</li>];
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+
+                // a key cannot name the same node twice: the second of them is given a node of
+                // its own, rather than the one the pass has already placed for the first
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+            });
+
+            it('should render a key shared by an element and a function component', () => {
+                const Fn: DNA.FunctionComponent = () => <b>fn</b>;
+                const template = () => [<div key="dup" />, <Fn key="dup" />];
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.querySelectorAll('div').length).toBe(1);
+                expect(wrapper.querySelectorAll('b').length).toBe(1);
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.querySelectorAll('div').length).toBe(1);
+                expect(wrapper.querySelectorAll('b').length).toBe(1);
+            });
+
+            it('should render a list that declares the same key twice among other keys', () => {
+                const template = () => [
+                    <li key="a">a</li>,
+                    <li key="dup">first</li>,
+                    <li key="dup">second</li>,
+                    <li key="b">b</li>,
+                ];
+
+                DNA.render(template(), wrapper);
+                DNA.render(template(), wrapper);
+
+                expect(wrapper.children.length).toBe(4);
+                expect(wrapper.textContent).toBe('afirstsecondb');
+            });
         });
 
         /**

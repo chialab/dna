@@ -59,7 +59,10 @@ export type PropertySignals<T> = {
  */
 const signalAt = <T>(element: object, signalSymbol: symbol): State<T> => {
     const target = element as WithSignalSlots;
-    let signal = target[signalSymbol] as State<T> | undefined;
+    // the slot is looked for on the instance alone: an ordinary read would walk the prototype
+    // chain, and one made with the prototype as the target — a probe of the class, a feature
+    // detection — would install the slot there and have every instance share a single signal
+    let signal = (hasOwn.call(target, signalSymbol) ? target[signalSymbol] : undefined) as State<T> | undefined;
     if (!signal) {
         signal = new State<T>(undefined as T, {
             equals: (previousValue, newValue) => previousValue === newValue,
@@ -81,7 +84,8 @@ const signalAt = <T>(element: object, signalSymbol: symbol): State<T> => {
  */
 const computedAt = <T>(element: object, signalSymbol: symbol, compute: () => T): Computed<T> => {
     const target = element as WithSignalSlots;
-    let signal = target[signalSymbol] as Computed<T> | undefined;
+    // read from the instance alone, for the reason given in `signalAt`
+    let signal = (hasOwn.call(target, signalSymbol) ? target[signalSymbol] : undefined) as Computed<T> | undefined;
     if (!signal) {
         signal = new Computed<T>(() => compute.call(element));
         target[signalSymbol] = signal;
