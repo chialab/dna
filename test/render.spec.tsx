@@ -552,6 +552,52 @@ describe(
                 expect(svg.getAttribute('width')).toBe('12');
             });
 
+            it('should leave nothing behind when a property is no longer declared', () => {
+                DNA.render(
+                    <p
+                        title="t"
+                        hidden
+                    />,
+                    wrapper
+                );
+                const paragraph = wrapper.querySelector('p') as HTMLElement;
+                expect(paragraph.getAttribute('title')).toBe('t');
+
+                DNA.render(<p />, wrapper);
+                // the property used to be written the value it no longer has, and a property that
+                // holds a string showed it: `title="undefined"`
+                expect(paragraph.getAttribute('title')).toBeNull();
+                expect(paragraph.title).toBe('');
+                expect(paragraph.hidden).toBe(false);
+            });
+
+            it('should clear the live value of a form field the template stops declaring', () => {
+                DNA.render(<input value="x" />, wrapper);
+                const input = wrapper.querySelector('input') as HTMLInputElement;
+                expect(input.value).toBe('x');
+
+                DNA.render(<input />, wrapper);
+                // the field holds what the user sees, and `"undefined"` is not it
+                expect(input.value).toBe('');
+                expect(input.getAttribute('value')).toBeNull();
+            });
+
+            it('should keep writing an enumerated attribute the template declares false', () => {
+                DNA.render(
+                    <img
+                        src=""
+                        alt=""
+                        draggable={false}
+                    />,
+                    wrapper
+                );
+                const image = wrapper.querySelector('img') as HTMLImageElement;
+                // `false` is one of the values `draggable` takes: taking the attribute away would
+                // leave `auto`, which an image reads as draggable
+                expect(image.getAttribute('draggable')).toBe('false');
+                expect(image.draggable).toBe(false);
+            });
+
             it('should convert observed attributes', () => {
                 @DNA.customElement('test-render-3')
                 class TestElement extends DNA.Component {
@@ -1607,6 +1653,38 @@ describe(
 
                 DNA.render(template(['b', 'a']), wrapper);
                 expect(wrapper.textContent).toBe('b:0a:1');
+            });
+
+            it('should preserve the state of a function component displaced by a keyed sibling', () => {
+                const mounted: string[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
+                    const [count, setCount] = useState(0);
+                    useEffect(() => {
+                        mounted.push('mount');
+                    }, []);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render([<Test />, <div key="a" />], wrapper);
+                (wrapper.querySelector('button') as HTMLButtonElement).click();
+                expect(wrapper.textContent).toBe('1');
+                expect(mounted).toEqual(['mount']);
+
+                // the keyed element moves up to the cursor, and the fragment is the one displaced:
+                // exchanging the two slots would send its marker away from the nodes the function
+                // rendered, and the walk would build a marker and a set of hooks of its own
+                DNA.render([<div key="a" />, <Test />], wrapper);
+                expect(wrapper.textContent).toBe('1');
+                expect(mounted).toEqual(['mount']);
+                expect(wrapper.children[0].tagName).toBe('DIV');
+                expect(wrapper.children[1].tagName).toBe('BUTTON');
             });
 
             it('should reorder the keyed children of a function component that re-renders alone', () => {

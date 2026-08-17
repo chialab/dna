@@ -546,6 +546,26 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
     // this is what tells `<input value="x" />` from `<x-item count={2} />`
     let shouldSetAttribute = type === 'string' || !(propertyKey in node && isWritableProperty(node, propertyKey));
 
+    // no value at all is the template saying it does not declare this any more, so the node is
+    // left as it would have been had it never been declared: the attribute goes, and a property
+    // that backs it is emptied first. `false` is not the same thing — for `draggable` it is one of
+    // the values the attribute takes, and taking it away would mean `auto` — so it goes on being
+    // written like any other, and only removes an attribute that has no property behind it
+    if (value == null) {
+        if (!shouldSetAttribute) {
+            // the empty value of what the property holds: assigning `undefined` to a property
+            // that holds a string is the string `"undefined"`, which the DOM shows as it is
+            const current = (node as unknown as Record<string, unknown>)[propertyKey];
+            (node as unknown as Record<string, unknown>)[propertyKey] = typeof current === 'string' ? '' : value;
+        }
+        // removing an attribute the node does not have is a no-op, and is left to the DOM rather
+        // than being asked about first
+        if (!isNew) {
+            (node as HTMLElement).removeAttribute(propertyKey);
+        }
+        return;
+    }
+
     if ((oldValue && wasType === 'object') || wasType === 'function' || isInputValue || !shouldSetAttribute) {
         (node as unknown as Record<string, unknown>)[propertyKey] = value;
     } else if (type === 'string' && ctr) {
@@ -564,10 +584,9 @@ const setProperty = <T extends Node | HTMLElement, P extends string & keyof T>(
         return;
     }
 
-    // an empty value removes the attribute, while `true` renders it as a boolean attribute.
-    // Removing an attribute the node does not have is a no-op, and is left to the DOM rather
-    // than being asked about first
-    if (value == null || value === false) {
+    // an attribute with no property behind it is removed by `false`, which is how a template says
+    // a boolean attribute is not there, while `true` renders it as one
+    if (value === false) {
         if (!isNew) {
             (node as HTMLElement).removeAttribute(propertyKey);
         }
@@ -911,20 +930,26 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
         const endContext = childContext.end;
         const to =
             endContext && endContext !== childContext ? indexOfContext(parentContext.children, endContext) : from;
-        if (to <= from) {
+        const displaced = parentContext.children[pos];
+        // the exchange moves one slot, so it is only good for a context that occupies one: the
+        // range of a fragment is contiguous and has to stay so, and sending its marker away from
+        // the nodes the function rendered would leave the walk unable to find it — it would build
+        // a marker and a set of hooks of its own, dropping the state the fragment was keeping
+        if (to <= from && !(displaced.end && displaced.end !== displaced)) {
             // a single child: exchange it with the one at the cursor, instead of shifting
             // everything in between. The displaced context lands on a slot the walk has not
             // reached yet, where it is still found — by key, or by the cursor itself once it
             // gets there. Shifting would cost one copy per sibling, and a list where every
             // row is displaced, as in a swap, would be quadratic in the number of rows
-            const displaced = parentContext.children[pos];
             parentContext.children[from] = displaced;
             parentContext.children[pos] = childContext;
             displaced._index = from;
             childContext._index = pos;
             parentContext._shift = (parentContext._shift ?? 0) + 1;
         } else {
-            // a function component owns the contiguous range up to `end` and moves whole
+            // a function component owns the contiguous range up to `end` and moves whole. This is
+            // also the way a single child moves past a fragment, since nothing else can be
+            // displaced onto the slot it leaves without being taken apart
             const range = parentContext.children.splice(from, to - from + 1);
             parentContext.children.splice(pos, 0, ...range);
             // only the contexts between the cursor and the end of the range changed place
