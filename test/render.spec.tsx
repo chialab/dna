@@ -1610,7 +1610,7 @@ describe(
             });
 
             it('should reorder the keyed children of a function component that re-renders alone', () => {
-                let setNames: (names: string[]) => void = () => {};
+                let setNames: (names: string[]) => void = () => undefined;
                 const List: DNA.FunctionComponent<{ names: string[] }> = ({ names }, { useState }) => {
                     const [current, setCurrent] = useState(names);
                     setNames = setCurrent;

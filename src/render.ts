@@ -629,7 +629,7 @@ const updateProperty = <T extends Node | HTMLElement, P extends string & keyof T
     const newBinding: SignalBinding = {
         signal,
         value: previousValue,
-        dispose: () => {},
+        dispose: () => undefined,
     };
     const stop = effect(() => {
         const newValue = signal.get();

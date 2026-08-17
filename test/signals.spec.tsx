@@ -540,6 +540,7 @@ describe(
             it('should link a source read twice only once', () => {
                 const count = new State(1);
                 effect(() => {
+                    // biome-ignore lint/suspicious/noUnusedExpressions: Testing signal expressions
                     count.get() + count.get();
                 });
                 expect(count.sinks.size).toBe(1);
