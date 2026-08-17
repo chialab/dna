@@ -45,7 +45,13 @@ export type Options<T> = {
  *
  * It is the shape rather than the classes, so that a signal of a narrower type goes where a
  * wider one is expected — a `State<string>` into an attribute typed `string | undefined`,
- * which the classes would refuse, holding a writer of their own value type.
+ * which the classes would refuse, holding a writer of their own value type. The mark is what
+ * keeps that from accepting any object with a `get` method: reading such an object is all the
+ * renderer could do with it, since following a value means being told when it changes, and only
+ * a signal of this graph tells. It used to be taken and rendered once, as an object.
+ *
+ * A value that comes from somewhere else — a store, a signal of another library — is followed by
+ * keeping a {@link State} of this graph and writing it from there.
  */
 export type ReadonlySignal<T = unknown> = {
     /**
@@ -53,6 +59,11 @@ export type ReadonlySignal<T = unknown> = {
      * @returns The current value.
      */
     get(): T;
+    /**
+     * The mark of a signal of this graph. It is declared and never written: nothing is emitted
+     * for it, and it is here so that the type asks for a signal rather than for a `get` method.
+     */
+    readonly isSignal: true;
 };
 
 /**
@@ -91,6 +102,11 @@ const RUNAWAY_LIMIT = 1000;
  * A value other computations can read and depend upon.
  */
 abstract class Source<T> {
+    /**
+     * @inheritdoc
+     */
+    declare readonly isSignal: true;
+
     /**
      * Bumped whenever the value actually changes.
      * Sinks record it as they read, and compare it to know whether they have work to do.
@@ -546,6 +562,8 @@ export const batch = <T>(callback: () => T): T => {
 
 /**
  * Check if a value is one of these signals.
+ * The class is the check, and {@link ReadonlySignal} asks for the same thing: an object shaped
+ * like a signal is not one, because nothing would tell the renderer when its value changed.
  * @param value The value to check.
  * @returns True if the value is a signal.
  */
