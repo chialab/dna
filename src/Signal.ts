@@ -4,7 +4,9 @@
  * It is built around three constraints that come from what the renderer does with it.
  *
  * Changes travel **synchronously**: assigning a property renders a component before the
- * assignment returns, and that contract has to survive a value coming from a signal.
+ * assignment returns, and that contract has to survive a value coming from a signal. What is
+ * written inside an open batch waits for it to close rather than for a task of its own, so a
+ * write made while another one is still settling lands with it instead of after it.
  *
  * Linking and unlinking a computation to its sources is **O(1)**, because a template holds one
  * effect per binding: mounting a list of a thousand rows creates a thousand effects that live
