@@ -378,8 +378,12 @@ export class Computed<T> extends Source<T> {
 
 /**
  * A computation that runs for its side effects.
+ *
+ * It is the object form of {@link effect}, for a caller that has to hold on to it: running it
+ * again is how work that depends on something the graph cannot see — the DOM, a field that is
+ * not a signal — is redone on demand, without a signal invented to invalidate.
  */
-class Effect {
+export class Effect {
     readonly sources: Source<unknown>[] = [];
     readonly versions: number[] = [];
 
@@ -407,6 +411,15 @@ class Effect {
         // returns whatever its body evaluates to, which is usually not one
         const result = track(this, this.callback);
         this.cleanup = typeof result === 'function' ? (result as Cleanup) : undefined;
+
+        // a source written while this was still running was marked when nothing was listening
+        // yet — the link to it is made as it is read, so a write that comes before that finds
+        // no one to notify. Asking again now that every source is linked is what catches it.
+        if (!this.queued && !this.disposed && hasChanged(this)) {
+            this.queued = true;
+            pending = pending || [];
+            pending.push(this);
+        }
     }
 
     /**
@@ -452,18 +465,35 @@ export const untrack = <T>(callback: () => T): T => {
 };
 
 /**
+ * Hold the effects back until the matching {@link endBatch}.
+ * The scoped {@link batch} is the way to use this; the pair is for a caller that opens and
+ * closes around work it does not own, and it must be balanced.
+ */
+export const beginBatch = (): void => {
+    batchDepth++;
+};
+
+/**
+ * Close a batch opened by {@link beginBatch}, running the effects it held back when the
+ * outermost one closes.
+ */
+export const endBatch = (): void => {
+    if (--batchDepth === 0) {
+        flush();
+    }
+};
+
+/**
  * Run a callback and hold the effects back until it returns, so that many writes settle once.
  * @param callback The callback to run.
  * @returns The result of the callback.
  */
 export const batch = <T>(callback: () => T): T => {
-    batchDepth++;
+    beginBatch();
     try {
         return callback();
     } finally {
-        if (--batchDepth === 0) {
-            flush();
-        }
+        endBatch();
     }
 };
 

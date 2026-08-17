@@ -8,6 +8,138 @@ import {
     hasOwn,
     isArray,
 } from './helpers';
+import { batch, Computed, type ReadonlySignal, State, untrack } from './Signal';
+
+/**
+ * The symbol that holds the object handed out by the `signals` accessor.
+ */
+const SIGNALS_SYMBOL: unique symbol = Symbol();
+
+/**
+ * An instance seen as the signal slots of its properties.
+ */
+type WithSignalSlots = {
+    // biome-ignore lint/suspicious/noExplicitAny: a slot holds the signal of any property.
+    [key: symbol]: State<any> | Computed<any> | undefined;
+};
+
+/**
+ * An instance seen as the object that hands out its signals.
+ */
+type WithSignalsAccessor<T> = {
+    [SIGNALS_SYMBOL]?: PropertySignals<T>;
+};
+
+/**
+ * The signals that hold the properties of a component, one per declared property.
+ * A property that is not declared has no signal, and reading it here gives `undefined`.
+ */
+export type PropertySignals<T> = {
+    // the accessor itself is left out, since mapping it would recur into itself. Nothing else
+    // is filtered: telling a method from a property means resolving `T[K]`, which defers the
+    // whole type when `T` is the `this` of a component — and reading `this.signals.PROP` from
+    // inside the component is what this is for.
+    readonly [K in Exclude<keyof T, 'signals'>]: ReadonlySignal<T[K]>;
+};
+
+/**
+ * Get (or create) the signal a property keeps at its own symbol slot on the instance.
+ *
+ * The signal is the property: the accessor reads and writes it, so reading the property inside
+ * a computation depends on it, and assigning the property runs what depends on it. The value is
+ * compared with `===`, which is how a property has always decided whether it changed.
+ *
+ * The slot is a symbol on the instance rather than an entry of a map on the side, the same way
+ * the value used to be kept: a property is read and written more than anything else in a
+ * component, and this is one lookup instead of two. It also dies with the element, with nothing
+ * else holding on to it.
+ * @param element The component instance.
+ * @param signalSymbol The symbol of the slot.
+ * @returns The signal of the property.
+ */
+const signalAt = <T>(element: object, signalSymbol: symbol): State<T> => {
+    const target = element as WithSignalSlots;
+    let signal = target[signalSymbol] as State<T> | undefined;
+    if (!signal) {
+        signal = new State<T>(undefined as T, {
+            equals: (previousValue, newValue) => previousValue === newValue,
+        });
+        target[signalSymbol] = signal;
+    }
+
+    return signal;
+};
+
+/**
+ * Get (or create) the derived signal of a computed property.
+ * The computation runs with the element as its `this`, so it reads the other properties the
+ * way the component would, and depends on the ones it touches.
+ * @param element The component instance.
+ * @param signalSymbol The symbol of the slot.
+ * @param compute The computation of the property.
+ * @returns The signal of the property.
+ */
+const computedAt = <T>(element: object, signalSymbol: symbol, compute: () => T): Computed<T> => {
+    const target = element as WithSignalSlots;
+    let signal = target[signalSymbol] as Computed<T> | undefined;
+    if (!signal) {
+        signal = new Computed<T>(() => compute.call(element));
+        target[signalSymbol] = signal;
+    }
+
+    return signal;
+};
+
+/**
+ * Get the signal of a property, derived when the property is computed.
+ * @param element The component instance.
+ * @param property The property declaration.
+ * @returns The signal of the property.
+ */
+const propertySignal = <T extends ComponentInstance, P extends keyof T>(
+    element: T,
+    property: Property<T, P>
+): ReadonlySignal<T[P]> =>
+    property.compute
+        ? computedAt<T[P]>(element, property.signalSymbol, property.compute)
+        : signalAt<T[P]>(element, property.signalSymbol);
+
+/**
+ * Get the signal that holds the value of a property.
+ * @param element The component instance.
+ * @param propertyKey The name of the property.
+ * @returns The signal of the property.
+ * @throws If the property is not defined.
+ */
+export const getPropertySignal = <T extends ComponentInstance, P extends keyof T>(
+    element: T,
+    propertyKey: P
+): ReadonlySignal<T[P]> => propertySignal(element, getProperty(element, propertyKey, true));
+
+/**
+ * Get the signals of the properties of a component instance.
+ * @param element The component instance.
+ * @returns An object with a signal for each declared property.
+ * @throws If the component has not been finalized.
+ */
+export const getPropertySignals = <T extends ComponentInstance>(element: T): PropertySignals<T> => {
+    const target = element as T & WithSignalsAccessor<T>;
+    let accessor = target[SIGNALS_SYMBOL];
+    if (!accessor) {
+        accessor = {} as PropertySignals<T>;
+        const properties = getProperties(element);
+        for (const propertyKey in properties) {
+            const property = properties[propertyKey as keyof T];
+            _defineProperty(accessor, propertyKey, {
+                enumerable: true,
+                get: () => propertySignal(element, property),
+            });
+        }
+        target[SIGNALS_SYMBOL] = accessor;
+    }
+
+    return accessor;
+};
 
 /**
  * A map of all properties of a Component.
@@ -157,6 +289,12 @@ export type PropertyDeclaration<T = any> = PropertyDescriptor & {
      */
     setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T;
     /**
+     * Derive the value from the other signals the computation reads, instead of holding one.
+     * The computation runs with the component as its `this`, is memoized, and runs again only
+     * when one of the properties or signals it read has changed. The property is read-only.
+     */
+    compute?: () => T;
+    /**
      * The initializer function.
      */
     initializer?: () => T;
@@ -184,6 +322,10 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
      * The property private symbol.
      */
     symbol: symbol;
+    /**
+     * The symbol of the slot where the instance keeps the signal of the property.
+     */
+    signalSymbol: symbol;
     /**
      * Flag state properties.
      */
@@ -246,6 +388,10 @@ export type Property<T extends ComponentInstance, P extends keyof T> = PropertyD
      * @param newValue The value to set.
      */
     setter?: (newValue?: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) => T[P];
+    /**
+     * Derive the value from the other signals the computation reads, instead of holding one.
+     */
+    compute?: () => T[P];
     /**
      * The initializer function.
      */
@@ -370,6 +516,7 @@ const createProperty = <T extends ComponentInstance, P extends keyof T>(
         ...declaration,
         name: propertyKey,
         symbol,
+        signalSymbol: Symbol(`${String(propertyKey)} signal`),
         state,
         type: types,
         attribute,
@@ -388,15 +535,36 @@ const createPropertyDescriptor = <T extends ComponentInstance, P extends keyof T
     property: Property<T, P>
 ): PropertyDescriptor => {
     const { name, get, set, getter, setter, symbol: symbolKey, state, event, update, type, validate } = property;
+
+    if (property.compute) {
+        const { signalSymbol, compute } = property;
+
+        return {
+            configurable: true,
+            enumerable: true,
+            get(this: T) {
+                return computedAt<T[P]>(this, signalSymbol, compute).get();
+            },
+            set() {
+                throw new TypeError(`The \`${String(name)}\` property is computed and cannot be assigned`);
+            },
+        };
+    }
+
     // biome-ignore lint/suspicious/noExplicitAny: We need any to convert the symbol to a unique symbol.
     const symbol: unique symbol = symbolKey as any;
     type E = T & { [symbol]: E[P] };
+
+    const { signalSymbol } = property;
 
     return {
         configurable: true,
         enumerable: true,
         get(this: E) {
-            let value = this[symbol];
+            // a property declared `update: false` says that changing it drives nothing, so
+            // reading it does not depend on it. Its signal is still there for whoever wants
+            // to follow it on purpose, through `signals`.
+            let value = update === false ? signalAt<E[P]>(this, signalSymbol).peek() : this[symbol];
             if (get) {
                 value = get.call(this);
             }
@@ -406,69 +574,74 @@ const createPropertyDescriptor = <T extends ComponentInstance, P extends keyof T
             return value;
         },
         set(this: E, newValue: Parameters<NonNullable<PropertyDescriptor['set']>>[0]) {
-            if (!isComponent(this) || !isInitialized(this)) {
-                this[symbol] = newValue;
-                return;
-            }
+            // the assignment is untracked: it reads the current value to compare it, and a
+            // computation that writes a property would otherwise end up depending on the very
+            // value it is about to change. It is also batched, so that the render the write
+            // causes lands after the callbacks, the observers and the event, where it has
+            // always been.
+            untrack(() =>
+                batch(() => {
+                    if (!isComponent(this) || !isInitialized(this)) {
+                        this[symbol] = newValue;
+                        return;
+                    }
 
-            const oldValue = this[symbol];
-            let computedNewValue = newValue;
-            if (setter) {
-                computedNewValue = setter.call(this, computedNewValue);
-            }
-            if (set) {
-                set.call(this, computedNewValue);
-                computedNewValue = this[symbol];
-            }
+                    const oldValue = this[symbol];
+                    let computedNewValue = newValue;
+                    if (setter) {
+                        computedNewValue = setter.call(this, computedNewValue);
+                    }
+                    if (set) {
+                        set.call(this, computedNewValue);
+                        computedNewValue = this[symbol];
+                    }
 
-            if (oldValue === computedNewValue) {
-                // no changes
-                return;
-            }
+                    if (oldValue === computedNewValue) {
+                        // no changes
+                        return;
+                    }
 
-            // if types or custom validator has been set, check the value validity
-            if (computedNewValue != null && computedNewValue !== false) {
-                let valid = true;
-                if (type.length) {
-                    // check if the value is an instanceof of at least one constructor
-                    valid = type.some(
-                        (Type) => computedNewValue instanceof Type || computedNewValue.constructor === Type
-                    );
-                }
-                if (valid && validate) {
-                    valid = validate.call(this, computedNewValue);
-                }
-                if (!valid) {
-                    throw new TypeError(
-                        `Invalid \`${String(computedNewValue)}\` value for \`${String(name)}\` property`
-                    );
-                }
-            }
+                    // if types or custom validator has been set, check the value validity
+                    if (computedNewValue != null && computedNewValue !== false) {
+                        let valid = true;
+                        if (type.length) {
+                            // check if the value is an instanceof of at least one constructor
+                            valid = type.some(
+                                (Type) => computedNewValue instanceof Type || computedNewValue.constructor === Type
+                            );
+                        }
+                        if (valid && validate) {
+                            valid = validate.call(this, computedNewValue);
+                        }
+                        if (!valid) {
+                            throw new TypeError(
+                                `Invalid \`${String(computedNewValue)}\` value for \`${String(name)}\` property`
+                            );
+                        }
+                    }
 
-            this[symbol] = computedNewValue;
+                    this[symbol] = computedNewValue;
 
-            // trigger changes
-            if (state) {
-                this.stateChangedCallback(name, oldValue, newValue);
-            } else {
-                this.propertyChangedCallback(name, oldValue, newValue);
-            }
+                    // trigger changes
+                    if (state) {
+                        this.stateChangedCallback(name, oldValue, computedNewValue);
+                    } else {
+                        this.propertyChangedCallback(name, oldValue, computedNewValue);
+                    }
 
-            const observers = getPropertyObservers(this as T, name);
-            for (let i = 0, len = observers.length; i < len; i++) {
-                observers[i].call(this, oldValue, computedNewValue, name as string);
-            }
+                    const observers = getPropertyObservers(this as T, name);
+                    for (let i = 0, len = observers.length; i < len; i++) {
+                        observers[i].call(this, oldValue, computedNewValue, name as string);
+                    }
 
-            if (event) {
-                this.dispatchEvent(event, {
-                    newValue: computedNewValue,
-                    oldValue,
-                });
-            }
-
-            if (update && this.shouldUpdate(name, oldValue, computedNewValue)) {
-                this.requestUpdate();
-            }
+                    if (event) {
+                        this.dispatchEvent(event, {
+                            newValue: computedNewValue,
+                            oldValue,
+                        });
+                    }
+                })
+            );
         },
     };
 };
@@ -489,16 +662,49 @@ export const defineProperty = <T extends ComponentInstance, P extends keyof T>(
     symbolKey?: symbol,
     isStatic = false
 ): PropertyDescriptor => {
-    const property = createProperty(propertyKey, declaration, symbolKey, isStatic);
+    let finalDeclaration = declaration;
+    if (declaration.compute) {
+        // everything below needs a write to hang off: a computed property has none, and giving
+        // it one would mean keeping an effect alive for a value nobody may ever read
+        const conflict = (
+            ['attribute', 'event', 'observe', 'observers', 'defaultValue', 'setter', 'set', 'validate'] as const
+        ).find((key) => declaration[key] != null && declaration[key] !== false);
+        if (conflict) {
+            throw new TypeError(
+                `The \`${String(propertyKey)}\` property is computed and cannot declare \`${conflict}\``
+            );
+        }
+        finalDeclaration = { ...declaration, attribute: false, update: false };
+    }
+
+    const property = createProperty(propertyKey, finalDeclaration, symbolKey, isStatic);
     const properties = getProperties(prototype);
     properties[propertyKey] = property;
     const finalDescriptor = createPropertyDescriptor(property);
     _defineProperty(prototype, propertyKey, finalDescriptor);
 
-    if (declaration.observe) {
-        defineObserver(prototype, propertyKey, declaration.observe);
+    // the slot the accessor reads and writes is the signal of the property. Everything that
+    // used to reach the value through the symbol — the accessor itself, a custom getter or
+    // setter, `getInnerPropertyValue` — goes through the signal without knowing it.
+    // The symbol of the slot is closed over, so neither reading nor writing a property looks
+    // its declaration up.
+    if (!property.compute) {
+        const { signalSymbol } = property;
+        _defineProperty(prototype, property.symbol, {
+            configurable: true,
+            get(this: T) {
+                return signalAt<T[P]>(this, signalSymbol).get();
+            },
+            set(this: T, value: T[P]) {
+                signalAt<T[P]>(this, signalSymbol).set(value);
+            },
+        });
     }
-    declaration.observers?.forEach((observer) => {
+
+    if (finalDeclaration.observe) {
+        defineObserver(prototype, propertyKey, finalDeclaration.observe);
+    }
+    finalDeclaration.observers?.forEach((observer) => {
         defineObserver(prototype, propertyKey, observer);
     });
 

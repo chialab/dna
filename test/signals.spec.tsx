@@ -806,6 +806,540 @@ describe(
             });
         });
 
+        describe('property signals', () => {
+            @DNA.customElement('test-signals-props')
+            class PropsElement extends DNA.Component {
+                @DNA.property()
+                title = '';
+
+                @DNA.property({ type: Number })
+                count = 0;
+
+                @DNA.state()
+                hidden = false;
+            }
+
+            it('should be reachable as `this.signals.PROP` from the component', () => {
+                @DNA.customElement('test-signals-props-2')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    first = 'Ada';
+
+                    @DNA.property()
+                    last = 'Lovelace';
+
+                    // built once, and it follows both properties from then on
+                    private readonly full = new Computed(
+                        () => `${this.signals.first.get()} ${this.signals.last.get()}`
+                    );
+
+                    render() {
+                        return <h1>{this.full}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const heading = element.querySelector('h1') as HTMLElement;
+                expect(heading.textContent).toBe('Ada Lovelace');
+
+                element.last = 'Byron';
+                expect(element.querySelector('h1')).toBe(heading);
+                expect(heading.textContent).toBe('Ada Byron');
+            });
+
+            it('should hold the value of the property', () => {
+                const element = new PropsElement();
+                expect(element.signals.title.get()).toBe('');
+
+                element.title = 'hello';
+                expect(element.signals.title.get()).toBe('hello');
+            });
+
+            it('should be the property itself, not a copy of it', () => {
+                const element = new PropsElement();
+                const spy = vi.fn();
+                const dispose = effect(() => spy(element.signals.count.get()));
+                expect(spy).toHaveBeenLastCalledWith(0);
+
+                element.count = 42;
+                // synchronously, before the assignment returns
+                expect(spy).toHaveBeenCalledTimes(2);
+                expect(spy).toHaveBeenLastCalledWith(42);
+                dispose();
+            });
+
+            it('should hand out the same signal every time', () => {
+                const element = new PropsElement();
+                expect(element.signals.title).toBe(element.signals.title);
+            });
+
+            it('should give each instance its own signal', () => {
+                const first = new PropsElement();
+                const second = new PropsElement();
+                first.title = 'first';
+                second.title = 'second';
+
+                expect(first.signals.title.get()).toBe('first');
+                expect(second.signals.title.get()).toBe('second');
+            });
+
+            it('should cover state properties too', () => {
+                const element = new PropsElement();
+                const spy = vi.fn();
+                const dispose = effect(() => spy(element.signals.hidden.get()));
+
+                element.hidden = true;
+                expect(spy).toHaveBeenLastCalledWith(true);
+                dispose();
+            });
+
+            it('should derive a computed that follows the property', () => {
+                const element = new PropsElement();
+                const shout = new Computed(() => element.signals.title.get().toUpperCase());
+                element.title = 'hello';
+                expect(shout.get()).toBe('HELLO');
+
+                element.title = 'world';
+                expect(shout.get()).toBe('WORLD');
+            });
+
+            it('should track a property read inside a computation', () => {
+                const element = new PropsElement();
+                // the property is read through the accessor, not through the signal
+                const shout = new Computed(() => element.title.toUpperCase());
+                element.title = 'hello';
+                expect(shout.get()).toBe('HELLO');
+
+                element.title = 'world';
+                expect(shout.get()).toBe('WORLD');
+            });
+
+            it('should leave the assignment pipeline untouched', () => {
+                const element = new PropsElement();
+                const observer = vi.fn();
+                element.observe('title', observer);
+                wrapper.appendChild(element);
+
+                element.title = 'reflected';
+                // the attribute is still reflected, and the observer still runs
+                expect(element.getAttribute('title')).toBe('reflected');
+                expect(observer).toHaveBeenCalledWith('', 'reflected', 'title');
+
+                // and the type check still throws
+                expect(() => {
+                    (element as unknown as { count: unknown }).count = 'nope';
+                }).toThrow(TypeError);
+            });
+
+            it('should not depend on the property it assigns', () => {
+                const element = new PropsElement();
+                const source = new State(1);
+                // without untracking the assignment, reading the old value to compare it would
+                // make the effect depend on what it writes, and it would never settle
+                const dispose = effect(() => {
+                    element.count = source.get();
+                });
+                expect(element.count).toBe(1);
+
+                source.set(2);
+                expect(element.count).toBe(2);
+                dispose();
+            });
+        });
+
+        describe('the render of a component', () => {
+            it('should follow an external signal it reads', () => {
+                const external = new State('hello');
+
+                @DNA.customElement('test-render-1')
+                class TestElement extends DNA.Component {
+                    render() {
+                        // read, not interpolated: the template depends on it all the same
+                        return <h1>{external.get().toUpperCase()}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                expect(element.textContent).toBe('HELLO');
+
+                external.set('world');
+                expect(element.textContent).toBe('WORLD');
+            });
+
+            it('should not render for a property the template does not read', () => {
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-2')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    shown = 'a';
+
+                    @DNA.property()
+                    unread = 0;
+
+                    render() {
+                        rendered();
+                        return <h1>{this.shown}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const renders = rendered.mock.calls.length;
+
+                element.unread = 42;
+                expect(rendered.mock.calls.length).toBe(renders);
+
+                element.shown = 'b';
+                expect(rendered.mock.calls.length).toBe(renders + 1);
+                expect(element.textContent).toBe('b');
+            });
+
+            it('should leave the DOM alone when `shouldUpdate` refuses', () => {
+                @DNA.customElement('test-render-3')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    title = 'a';
+
+                    shouldUpdate<P extends keyof this>(propertyName: P) {
+                        return propertyName !== 'title';
+                    }
+
+                    render() {
+                        return <h1>{this.title}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                expect(element.textContent).toBe('a');
+
+                element.title = 'b';
+                // the property changed, the DOM did not
+                expect(element.title).toBe('b');
+                expect(element.textContent).toBe('a');
+
+                // and the next render that is not refused catches up
+                element.forceUpdate();
+                expect(element.textContent).toBe('b');
+            });
+
+            it('should keep a stale DOM for a property declared `update: false`', () => {
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-4')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ update: false })
+                    title = 'a';
+
+                    render() {
+                        rendered();
+                        return <h1>{this.title}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const renders = rendered.mock.calls.length;
+
+                element.title = 'b';
+                // the template never listed it among the reasons to run again
+                expect(rendered.mock.calls.length).toBe(renders);
+                expect(element.textContent).toBe('a');
+            });
+
+            it('should not ask `shouldUpdate` about a render no property caused', () => {
+                const external = new State('a');
+                const asked: unknown[] = [];
+
+                @DNA.customElement('test-render-8')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    unrelated = 0;
+
+                    shouldUpdate<P extends keyof this>(propertyName?: P) {
+                        asked.push(propertyName);
+                        return true;
+                    }
+
+                    render() {
+                        return <h1>{external.get()}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                asked.length = 0;
+
+                external.set('b');
+                expect(element.textContent).toBe('b');
+                // nothing of the component changed, so there was nothing to ask about
+                expect(asked).toEqual([]);
+            });
+
+            it('should let an `update: false` property be followed on purpose', () => {
+                @DNA.customElement('test-render-5')
+                class TestElement extends DNA.Component {
+                    @DNA.property({ update: false })
+                    title = 'a';
+                }
+
+                const element = new TestElement();
+                const read = vi.fn();
+                const followed = vi.fn();
+                // reading it does not depend on it, wherever the read happens
+                const stopReading = effect(() => read(element.title));
+                // its signal is still there for whoever wants to follow it
+                const stopFollowing = effect(() => followed(element.signals.title.get()));
+                expect(read).toHaveBeenLastCalledWith('a');
+                expect(followed).toHaveBeenLastCalledWith('a');
+
+                element.title = 'b';
+                expect(read).toHaveBeenCalledTimes(1);
+                expect(followed).toHaveBeenLastCalledWith('b');
+
+                stopReading();
+                stopFollowing();
+            });
+
+            it('should render once for a batch of writes', () => {
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-6')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    first = '';
+
+                    @DNA.property()
+                    last = '';
+
+                    render() {
+                        rendered();
+                        return (
+                            <h1>
+                                {this.first} {this.last}
+                            </h1>
+                        );
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const renders = rendered.mock.calls.length;
+
+                element.assign({ first: 'Ada', last: 'Lovelace' });
+                expect(rendered.mock.calls.length).toBe(renders + 1);
+                expect(element.textContent).toBe('Ada Lovelace');
+            });
+
+            it('should stop following the template once disconnected', () => {
+                const external = new State('in');
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-7')
+                class TestElement extends DNA.Component {
+                    render() {
+                        rendered();
+                        return <h1>{external.get()}</h1>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const renders = rendered.mock.calls.length;
+
+                wrapper.removeChild(element);
+                external.set('out');
+                expect(rendered.mock.calls.length).toBe(renders);
+            });
+        });
+
+        describe('computed properties', () => {
+            it('should derive from the properties it reads', () => {
+                @DNA.customElement('test-computed-1')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    first = 'Ada';
+
+                    @DNA.property()
+                    last = 'Lovelace';
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return `${this.first} ${this.last}`;
+                        },
+                    })
+                    readonly full!: string;
+                }
+
+                const element = new TestElement();
+                expect(element.full).toBe('Ada Lovelace');
+
+                element.last = 'Byron';
+                expect(element.full).toBe('Ada Byron');
+            });
+
+            it('should run only when a source changed, and only once', () => {
+                const computation = vi.fn();
+
+                @DNA.customElement('test-computed-2')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    count = 1;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            computation();
+                            return this.count * 2;
+                        },
+                    })
+                    readonly double!: number;
+                }
+
+                const element = new TestElement();
+                expect(computation).not.toHaveBeenCalled();
+
+                expect(element.double).toBe(2);
+                expect(element.double).toBe(2);
+                expect(computation).toHaveBeenCalledTimes(1);
+
+                element.count = 5;
+                expect(element.double).toBe(10);
+                expect(computation).toHaveBeenCalledTimes(2);
+            });
+
+            it('should be read-only', () => {
+                @DNA.customElement('test-computed-3')
+                class TestElement extends DNA.Component {
+                    @DNA.property({
+                        compute() {
+                            return 1;
+                        },
+                    })
+                    readonly value!: number;
+                }
+
+                const element = new TestElement();
+                expect(() => {
+                    (element as unknown as { value: number }).value = 2;
+                }).toThrow('The `value` property is computed and cannot be assigned');
+            });
+
+            it('should be a signal of the component', () => {
+                @DNA.customElement('test-computed-4')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    count = 1;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.count * 2;
+                        },
+                    })
+                    readonly double!: number;
+
+                    render() {
+                        return <span>{this.signals.double}</span>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const node = element.querySelector('span') as HTMLElement;
+                expect(node.textContent).toBe('2');
+
+                element.count = 21;
+                // the bound text node is patched, and it is the same node
+                expect(element.querySelector('span')).toBe(node);
+                expect(node.textContent).toBe('42');
+            });
+
+            it('should chain with another computed property', () => {
+                @DNA.customElement('test-computed-5')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    count = 1;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.count * 2;
+                        },
+                    })
+                    readonly double!: number;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.double * 2;
+                        },
+                    })
+                    readonly quadruple!: number;
+                }
+
+                const element = new TestElement();
+                expect(element.quadruple).toBe(4);
+
+                element.count = 3;
+                expect(element.quadruple).toBe(12);
+            });
+
+            it('should not be observed as an attribute', () => {
+                @DNA.customElement('test-computed-6')
+                class TestElement extends DNA.Component {
+                    @DNA.property({
+                        compute() {
+                            return 'derived';
+                        },
+                    })
+                    readonly value!: string;
+                }
+
+                expect(TestElement.observedAttributes).toEqual([]);
+            });
+
+            it('should give each instance its own value', () => {
+                @DNA.customElement('test-computed-7')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    count = 0;
+
+                    @DNA.property({
+                        compute(this: TestElement) {
+                            return this.count * 2;
+                        },
+                    })
+                    readonly double!: number;
+                }
+
+                const first = new TestElement();
+                const second = new TestElement();
+                first.count = 1;
+                second.count = 10;
+
+                expect(first.double).toBe(2);
+                expect(second.double).toBe(20);
+            });
+
+            it('should refuse a declaration that needs a write', () => {
+                expect(() =>
+                    DNA.define(
+                        'test-computed-8',
+                        class extends DNA.Component {
+                            static get properties() {
+                                return {
+                                    value: {
+                                        attribute: 'value',
+                                        compute: () => 1,
+                                    },
+                                };
+                            }
+                        }
+                    )
+                ).toThrow('The `value` property is computed and cannot declare `attribute`');
+            });
+        });
+
         describe('useSignal', () => {
             it('should create a signal preserved across renders', () => {
                 const seen: unknown[] = [];

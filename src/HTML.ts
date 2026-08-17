@@ -1,6 +1,6 @@
 import type { DelegatedEventCallback, ListenerConfig } from './events';
 import type { Template as JSXTemplate } from './JSX';
-import type { PropertyConfig, PropertyObserver } from './property';
+import type { PropertyConfig, PropertyObserver, PropertySignals } from './property';
 import type { Realm } from './Realm';
 
 export declare namespace HTML {
@@ -49,6 +49,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -328,6 +337,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -603,6 +621,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -882,6 +909,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -1157,6 +1193,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -1436,6 +1481,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -1711,6 +1765,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -1990,6 +2053,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -2265,6 +2337,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -2544,6 +2625,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -2819,6 +2909,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -3098,6 +3197,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -3373,6 +3481,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -3652,6 +3769,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -3927,6 +4053,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -4206,6 +4341,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -4481,6 +4625,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -4760,6 +4913,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -5035,6 +5197,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -5314,6 +5485,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -5589,6 +5769,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -5868,6 +6057,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -6143,6 +6341,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -6422,6 +6629,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -6697,6 +6913,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -6976,6 +7201,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -7251,6 +7485,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -7530,6 +7773,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -7805,6 +8057,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -8084,6 +8345,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -8359,6 +8629,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -8638,6 +8917,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -8913,6 +9201,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -9192,6 +9489,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -9469,6 +9775,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -9744,6 +10059,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -10024,6 +10348,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -10299,6 +10632,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -10578,6 +10920,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -10855,6 +11206,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -11130,6 +11490,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -11410,6 +11779,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -11685,6 +12063,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -11964,6 +12351,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -12239,6 +12635,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -12518,6 +12923,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -12793,6 +13207,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -13072,6 +13495,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -13347,6 +13779,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -13626,6 +14067,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -13901,6 +14351,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -14180,6 +14639,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -14455,6 +14923,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -14734,6 +15211,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -15009,6 +15495,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -15288,6 +15783,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -15563,6 +16067,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -15842,6 +16355,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -16117,6 +16639,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -16396,6 +16927,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -16671,6 +17211,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -16950,6 +17499,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -17225,6 +17783,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -17504,6 +18071,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -17779,6 +18355,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
@@ -18058,6 +18643,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -18335,6 +18929,15 @@ export declare namespace HTML {
         readonly realm: Realm;
 
         /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
+
+        /**
          * Create a new Component instance.
          * @param node Instantiate the element using the given node instead of creating a new one.
          * @param properties A set of initial properties for the element.
@@ -18610,6 +19213,15 @@ export declare namespace HTML {
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         */
+        readonly signals: PropertySignals<this>;
 
         /**
          * Create a new Component instance.
