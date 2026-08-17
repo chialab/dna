@@ -279,6 +279,47 @@ describe(
                     })
                 ).toThrow('Signal effects did not settle');
             });
+
+            it('should still run effects queued after a throwing effect', () => {
+                // regression: when an effect throws mid-flush the remaining effects in the same
+                // flush round kept `queued=true`, so `mark()` would skip re-queuing them on any
+                // subsequent write, silently killing them forever.
+                const trigger1 = new State(0);
+                const trigger2 = new State(0);
+                const before = vi.fn();
+                const after = vi.fn();
+
+                // A reads trigger1 and throws when it is > 0
+                effect(() => {
+                    const v = trigger1.get();
+                    before(v);
+                    if (v > 0) {
+                        throw new Error('boom');
+                    }
+                });
+                // B reads trigger2 only — fully independent of A
+                effect(() => after(trigger2.get()));
+
+                expect(before).toHaveBeenCalledTimes(1);
+                expect(after).toHaveBeenCalledTimes(1);
+
+                // queue both effects together in a batch, then A throws during the flush,
+                // dropping B from this round; B's `queued` flag must be cleared by the fix
+                expect(() =>
+                    batch(() => {
+                        trigger1.set(1);
+                        trigger2.set(1);
+                    })
+                ).toThrow('boom');
+                // B was dropped from the aborted flush (it has not run yet for value 1)
+                expect(after).toHaveBeenCalledTimes(1);
+
+                // without the fix `after.queued` is still true here, so `mark()` on the next
+                // write would skip it and B would be permanently dead
+                trigger2.set(2);
+                expect(after).toHaveBeenCalledTimes(2);
+                expect(after).toHaveBeenLastCalledWith(2);
+            });
         });
 
         describe('batch', () => {
@@ -1153,6 +1194,78 @@ describe(
                 wrapper.removeChild(element);
                 external.set('out');
                 expect(rendered.mock.calls.length).toBe(renders);
+            });
+
+            it('should not render twice when `render()` writes a property via `forceUpdate`', () => {
+                // regression: `forceUpdate()` did not hold re-runs in a batch, so a property
+                // write inside `render()` would flush synchronously, causing a second render
+                // (and a second `updatedCallback()`) before the first one finished.
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-9')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    count = 0;
+
+                    render() {
+                        rendered();
+                        return <span>{this.count}</span>;
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const baseRenders = rendered.mock.calls.length;
+
+                // trigger a forceUpdate while the element is already rendered (i.e. _render exists)
+                element.forceUpdate();
+                // must be exactly one additional render, not two
+                expect(rendered.mock.calls.length).toBe(baseRenders + 1);
+            });
+
+            it('should render when an accepted property changes alongside a refused one', () => {
+                // regression: _shouldApply set a single `refused` flag and blocked the whole
+                // render when *any* property was refused, even if another changed property was
+                // accepted. The accepted change was silently dropped.
+                const rendered = vi.fn();
+
+                @DNA.customElement('test-render-10')
+                class TestElement extends DNA.Component {
+                    @DNA.property()
+                    title = 'a';
+
+                    @DNA.property()
+                    count = 0;
+
+                    shouldUpdate<P extends keyof this>(propertyName: P) {
+                        // refuse changes to `title`, accept everything else
+                        return propertyName !== 'title';
+                    }
+
+                    render() {
+                        rendered();
+                        return (
+                            <span>
+                                {this.title}-{this.count}
+                            </span>
+                        );
+                    }
+                }
+
+                const element = new TestElement();
+                wrapper.appendChild(element);
+                const baseRenders = rendered.mock.calls.length;
+                expect(element.textContent).toBe('a-0');
+
+                // change both at once: title is refused, count is accepted
+                element.assign({ title: 'b', count: 1 });
+
+                // the render must have run because `count` was accepted
+                expect(rendered.mock.calls.length).toBe(baseRenders + 1);
+                // count updated in the DOM; title kept its old DOM value but the property changed
+                expect(element.count).toBe(1);
+                expect(element.title).toBe('b');
+                expect(element.textContent).toBe('b-1');
             });
         });
 

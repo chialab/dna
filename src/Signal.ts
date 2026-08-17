@@ -211,6 +211,8 @@ const flush = () => {
         return;
     }
     flushing = true;
+    let currentEffects: Effect[] | null = null;
+    let currentIndex = 0;
     try {
         let rounds = 0;
         while (pending) {
@@ -219,7 +221,9 @@ const flush = () => {
             }
             const effects = pending;
             pending = null;
+            currentEffects = effects;
             for (let i = 0, len = effects.length; i < len; i++) {
+                currentIndex = i;
                 const effect = effects[i];
                 effect.queued = false;
                 // the effect was reached through a derived value: it runs only if that value
@@ -228,11 +232,19 @@ const flush = () => {
                     effect.run();
                 }
             }
+            currentEffects = null;
         }
     } finally {
         flushing = false;
-        // an effect that threw leaves the rest of the queue behind: it is dropped, so that a
-        // later write starts clean instead of running the work of a change already gone by
+        // an effect that threw leaves the rest of the current-round queue with queued=true;
+        // clear those flags so that a later write can re-queue them normally
+        if (currentEffects) {
+            for (let i = currentIndex + 1, len = currentEffects.length; i < len; i++) {
+                currentEffects[i].queued = false;
+            }
+            currentEffects = null;
+        }
+        // effects queued by the throwing effect (next-round queue) are also dropped
         if (pending) {
             for (let i = 0, len = pending.length; i < len; i++) {
                 pending[i].queued = false;
