@@ -376,7 +376,10 @@ const dnaNonKeyed = (): App => {
             <table class="table table-hover table-striped test-data">
                 <tbody>
                     {data.map((item) => (
-                        <tr class={item.id === selected ? 'danger' : ''}>
+                        <tr
+                            class={{
+                                danger: item.id === selected,
+                            }}>
                             <td class="col-md-1">{item.id}</td>
                             <td class="col-md-4">
                                 {/* biome-ignore lint/a11y/useValidAnchor: the markup of the benchmark */}
