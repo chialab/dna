@@ -2584,6 +2584,76 @@ describe(
                 });
             });
 
+            /**
+             * Where a context sits among its siblings is remembered on the context itself, so that
+             * finding it again costs a comparison rather than a walk of the list. One scan per node
+             * is the shape a quadratic render takes, and it does not show in the operations the
+             * document receives — the tree comes out right, only the renderer took longer to get
+             * there. These count the scans instead, which is a number a machine cannot make up.
+             */
+            describe('list scans', () => {
+                /**
+                 * Count the list searches a render performs, and how many slots they walked.
+                 * @param run The function to measure.
+                 * @returns The number of searches and the slots they visited.
+                 */
+                const countScans = (run: () => void) => {
+                    const proto = Array.prototype as unknown as { indexOf: (...args: unknown[]) => number };
+                    const original = proto.indexOf;
+                    let searches = 0;
+                    let visited = 0;
+
+                    proto.indexOf = function (this: unknown[], ...args: unknown[]) {
+                        searches++;
+                        visited += this.length;
+                        return original.apply(this, args);
+                    };
+                    try {
+                        run();
+                    } finally {
+                        proto.indexOf = original;
+                    }
+
+                    return { searches, visited };
+                };
+
+                const rows = (list: number[]) => list.map((id) => <li key={id}>{id}</li>);
+
+                for (const size of [1000, 4000]) {
+                    describe(`a list of ${size} rows`, () => {
+                        const ids = Array.from({ length: size }, (_, index) => index);
+
+                        it('should render again without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            expect(countScans(() => DNA.render(rows(ids), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+
+                        it('should reverse without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            const reversed = [...ids].reverse();
+
+                            expect(countScans(() => DNA.render(rows(reversed), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+
+                        it('should append without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            const appended = [...ids, ...Array.from({ length: 100 }, (_, index) => size + index)];
+
+                            expect(countScans(() => DNA.render(rows(appended), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+                    });
+                }
+            });
+
             describe('teardown', () => {
                 it('should not empty the subtree of a removed node', () => {
                     const rows = Array.from({ length: 20 }, (_, index) => index);
