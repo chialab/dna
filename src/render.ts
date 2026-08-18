@@ -55,6 +55,11 @@ type ContextKind = (typeof ContextKind)[keyof typeof ContextKind];
 
 /**
  * The node context interface.
+ *
+ * What the renderer keeps about a node while it walks. It is what `useRenderContext` returns, and
+ * it is exported for that reason alone: the fields are the bookkeeping of the walk and change with
+ * it, so nothing outside the renderer should read them or count on them being there.
+ * @internal
  */
 export type Context = {
     node: Node;

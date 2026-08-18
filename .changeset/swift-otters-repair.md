@@ -8,4 +8,4 @@ A render no longer pays for what it does not use: the children list of a context
 
 The hooks of a function component are built once and belong to the fragment, so the `useState` setter now keeps its identity across renders: a `useCallback` or a `useEffect` that lists it among its dependencies is no longer invalidated by every render.
 
-The state a render keeps while it walks — how deep it is, the contexts it detached — belongs to the root it started from rather than being shared by every render root of the page. As a consequence the `Context` type, which `useRenderContext` returns, declares `children`, `contexts` and `shadow` as optional and replaces `state` with `hooks`.
+The state a render keeps while it walks — how deep it is, the contexts it detached — belongs to the root it started from rather than being shared by every render root of the page.
