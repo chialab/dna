@@ -301,29 +301,20 @@ const dnaKeyed = (): App => {
 
     DNA.render(<Benchmark />, host);
 
-    const app = () => {
-        if (!actions) {
-            throw new Error('the keyed app did not publish its actions');
-        }
-        return actions;
-    };
-
     return {
         name: 'dna keyed',
         host,
-        run: () => app().run(),
-        runLots: () => app().runLots(),
-        add: () => app().add(),
-        update: () => app().update(),
-        clear: () => app().clear(),
-        swapRows: () => app().swapRows(),
+        run: () => actions?.run(),
+        runLots: () => actions?.runLots(),
+        add: () => actions?.add(),
+        update: () => actions?.update(),
+        clear: () => actions?.clear(),
+        swapRows: () => actions?.swapRows(),
         selectRow: () => {
-            const { select, data } = app();
-            select(data[1].id);
+            actions?.select(actions.data[1].id);
         },
         removeRow: () => {
-            const { remove, data } = app();
-            remove(data[1].id);
+            actions?.remove(actions.data[1].id);
         },
     };
 };
@@ -417,29 +408,20 @@ const dnaNonKeyed = (): App => {
 
     DNA.render(<Benchmark />, host);
 
-    const app = () => {
-        if (!actions) {
-            throw new Error('the non-keyed app did not publish its actions');
-        }
-        return actions;
-    };
-
     return {
         name: 'dna non-keyed',
         host,
-        run: () => app().run(),
-        runLots: () => app().runLots(),
-        add: () => app().add(),
-        update: () => app().update(),
-        clear: () => app().clear(),
-        swapRows: () => app().swapRows(),
+        run: () => actions?.run(),
+        runLots: () => actions?.runLots(),
+        add: () => actions?.add(),
+        update: () => actions?.update(),
+        clear: () => actions?.clear(),
+        swapRows: () => actions?.swapRows(),
         selectRow: () => {
-            const { select, data } = app();
-            select(data[1].id);
+            actions?.select(actions.data[1].id);
         },
         removeRow: () => {
-            const { remove, data } = app();
-            remove(data[1].id);
+            actions?.remove(actions.data[1].id);
         },
     };
 };
