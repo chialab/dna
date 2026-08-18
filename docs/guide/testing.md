@@ -21,7 +21,7 @@ Your project comes pre-configured with Vitest 4 for browser testing. The relevan
 ```
 
 ```ts [vitest.config.ts]
-import viteConfig from './vite.config.ts'
+import viteConfig from './vite.config.ts';
 import { defineConfig, mergeConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
