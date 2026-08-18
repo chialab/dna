@@ -334,8 +334,11 @@ const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, 
         }
         return;
     }
-    if (typeof value === 'string' && (isNew || node.className === (oldValue || ''))) {
-        node.className = value;
+    // written and read through the attribute, the way the style is: outside the HTML namespace
+    // `className` is a read-only `SVGAnimatedString`, so assigning it throws and reading it never
+    // matches the string the last render applied — while the attribute is the same one everywhere
+    if (typeof value === 'string' && (isNew || (node.getAttribute('class') ?? '') === (oldValue || ''))) {
+        node.setAttribute('class', value);
         return;
     }
 

@@ -826,6 +826,72 @@ describe(
                 expect(line.getAttribute('y2')).toBe('200');
             });
 
+            it('should set the class of an svg', () => {
+                // outside the HTML namespace `className` is a read-only `SVGAnimatedString`:
+                // writing the class through the property throws, and reading it back never
+                // matches the string the previous render applied
+                expect(() =>
+                    DNA.render(
+                        <svg
+                            aria-hidden="true"
+                            class="first">
+                            <rect class="child" />
+                        </svg>,
+                        wrapper
+                    )
+                ).not.throw();
+
+                const svg = wrapper.querySelector('svg') as SVGSVGElement;
+                const rect = svg.querySelector('rect') as SVGRectElement;
+                expect(svg.getAttribute('class')).toBe('first');
+                expect(rect.getAttribute('class')).toBe('child');
+
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="second"
+                    />,
+                    wrapper
+                );
+                expect(svg.getAttribute('class')).toBe('second');
+
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class={{ third: true, second: false }}
+                    />,
+                    wrapper
+                );
+                expect(svg.getAttribute('class')).toBe('third');
+
+                DNA.render(<svg aria-hidden="true" />, wrapper);
+                expect(svg.hasAttribute('class')).toBe(false);
+            });
+
+            it('should preserve a class an svg was given outside the template', () => {
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="from-template"
+                    />,
+                    wrapper
+                );
+                const svg = wrapper.querySelector('svg') as SVGSVGElement;
+
+                svg.classList.add('from-elsewhere');
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="from-template updated"
+                    />,
+                    wrapper
+                );
+
+                // the renderer is no longer the only writer, so it diffs instead of overwriting
+                expect(svg.classList.contains('from-elsewhere')).toBe(true);
+                expect(svg.classList.contains('updated')).toBe(true);
+            });
+
             it('should not empty nodes when no slotted children has been passed', () => {
                 DNA.render(<div />, wrapper);
                 const element = wrapper.children[0];
