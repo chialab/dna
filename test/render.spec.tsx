@@ -2813,6 +2813,80 @@ describe(
                 });
             });
 
+            /**
+             * A key is a way of finding a node again when it has moved. Most updates move nothing —
+             * a class, a label, a selection — and the node the key names is the one the walk is
+             * already looking at. Finding it there costs a comparison; looking the key up costs a
+             * search of the map, once per keyed node, on every render.
+             */
+            describe('key lookups', () => {
+                /**
+                 * Count the key searches a render performs. A render reads two maps: the keys of a
+                 * fragment, searched by the key a template declares, and the positions of the nodes
+                 * of a parent, searched by node — so what is not a node is a key.
+                 * @param run The function to measure.
+                 * @returns The number of keys searched for.
+                 */
+                const countLookups = (run: () => void) => {
+                    const proto = Map.prototype as unknown as { get: (...args: unknown[]) => unknown };
+                    const original = proto.get;
+                    let searches = 0;
+
+                    proto.get = function (this: Map<unknown, unknown>, ...args: unknown[]) {
+                        if (!(args[0] instanceof Node)) {
+                            searches++;
+                        }
+                        return original.apply(this, args);
+                    };
+                    try {
+                        run();
+                    } finally {
+                        proto.get = original;
+                    }
+
+                    return searches;
+                };
+
+                const ids = Array.from({ length: 200 }, (_, index) => index);
+                const rows = (list: number[], highlighted: number) =>
+                    list.map((id) => (
+                        <li
+                            key={id}
+                            class={{ highlighted: id === highlighted }}
+                        />
+                    ));
+
+                it('should look up no key when the order does not change', () => {
+                    DNA.render(rows(ids, -1), wrapper);
+
+                    // the node each key names is the one the cursor is already on
+                    expect(countLookups(() => DNA.render(rows(ids, 7), wrapper))).toBe(0);
+                });
+
+                it('should look up only the keys of the rows that moved', () => {
+                    DNA.render(rows(ids, -1), wrapper);
+                    const swapped = [...ids];
+                    swapped[1] = ids[198];
+                    swapped[198] = ids[1];
+
+                    // the rows that moved, and nothing for the ones that did not
+                    expect(countLookups(() => DNA.render(rows(swapped, -1), wrapper))).toBeLessThan(4);
+                    expect(wrapper.children.length).toBe(ids.length);
+                });
+
+                it('should give a context of its own to a key declared twice', () => {
+                    const template = () => [<li key="dup">first</li>, <li key="dup">second</li>];
+
+                    DNA.render(template(), wrapper);
+                    DNA.render(template(), wrapper);
+                    DNA.render(template(), wrapper);
+
+                    // the pass that placed the first one cannot place it again for the second
+                    expect(wrapper.children.length).toBe(2);
+                    expect(wrapper.textContent).toBe('firstsecond');
+                });
+            });
+
             describe('teardown', () => {
                 it('should not empty the subtree of a removed node', () => {
                     const rows = Array.from({ length: 20 }, (_, index) => index);

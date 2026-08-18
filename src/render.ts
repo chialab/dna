@@ -93,6 +93,13 @@ export type Context = {
      */
     _depth?: number;
     /**
+     * Which render pass this context was last claimed by, and — on a render root — which pass is
+     * running. A key names one node, so a context claimed by the pass that is walking cannot be
+     * claimed again by it: this is what tells a key the template declares twice from a key that
+     * simply did not move.
+     */
+    _pass?: number;
+    /**
      * Whether detached contexts are being released.
      */
     _releasing?: boolean;
@@ -152,6 +159,7 @@ export const createContext = (
     // context it is ever read from: every other one leaves the field empty
     _detached: root ? undefined : [],
     _depth: root ? undefined : 0,
+    _pass: root ? undefined : 0,
     _releasing: root ? undefined : false,
 });
 
@@ -1114,6 +1122,7 @@ const renderTemplate = (
             }
             const { type: Fn, key, properties, children } = template;
 
+            const pass = rootContext._pass;
             let functionContext: Context | undefined;
             const currentContext = context.children[context._cursor ?? 0];
             if (currentContext && currentContext.type === Fn && currentContext.key === key) {
@@ -1129,11 +1138,14 @@ const renderTemplate = (
                     functionContext = keyed;
                 }
             }
+            // a context this pass has already placed is not the one a second declaration of the
+            // same key names: that one is given a context of its own
             if (functionContext && key != null) {
-                // the key is spent by whoever claimed it: a key the template declares twice
-                // cannot name the same node twice, and the second of them is given a context of
-                // its own rather than the one this very pass has already placed elsewhere
-                keys?.delete(key);
+                if (functionContext._pass === pass) {
+                    functionContext = undefined;
+                } else {
+                    functionContext._pass = pass;
+                }
             }
 
             // the context is inserted as is, rather than being looked up again from its node:
@@ -1229,15 +1241,31 @@ const renderTemplate = (
             candidate.type === template.type &&
             candidate.properties?.is === properties?.is;
         if (key != null) {
-            const keyed = keys?.get(key);
-            // a key names one node, and the one it named is not always the node the template
-            // declares now: the marker of a function component that shares the key, or an
-            // element of another tag. One that does not fit is left where it is — for a
-            // sibling that shares the key and does fit — and this element gets one of its own
-            if (keyed && fitsTemplate(keyed)) {
-                templateContext = keyed;
-                // spent by whoever claimed it, for the reason given for a function component
-                keys?.delete(key);
+            const pass = rootContext._pass;
+            // the node is where the previous render left it, which is what an update that
+            // reordered nothing looks like — and is most of them: the key does not have to be
+            // looked up at all. The one at the cursor carries the key, so it is the node the key
+            // names, unless this very pass has already placed it
+            if (
+                currentContext &&
+                currentContext.key === key &&
+                currentContext._pass !== pass &&
+                fitsTemplate(currentContext)
+            ) {
+                templateContext = currentContext;
+            } else {
+                const keyed = keys?.get(key);
+                // a key names one node, and the one it named is not always the node the template
+                // declares now: the marker of a function component that shares the key, or an
+                // element of another tag. One that does not fit is left where it is — for a
+                // sibling that shares the key and does fit — and this element gets one of its own
+                if (keyed && keyed._pass !== pass && fitsTemplate(keyed)) {
+                    templateContext = keyed;
+                }
+            }
+            if (templateContext) {
+                // claimed: a second declaration of the same key gets a context of its own
+                templateContext._pass = pass;
             }
         } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
             if (fitsTemplate(currentContext)) {
@@ -1454,6 +1482,11 @@ export const internalRender = (
     const previousLength = context.children.length;
 
     rootContext._depth = (rootContext._depth ?? 0) + 1;
+    if (rootContext._depth === 1) {
+        // a walk that starts from outside opens a pass of its own; the ones it nests share it,
+        // since a context is claimed once by whoever is walking
+        rootContext._pass = (rootContext._pass ?? 0) + 1;
+    }
     try {
         let previousRange: Set<Context> | undefined;
         let currentKeys: Map<unknown, Context> | undefined;
