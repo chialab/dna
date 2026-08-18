@@ -1551,6 +1551,55 @@ describe(
                 expect(setters[0]).toBe(setters[1]);
             });
 
+            it('should report from a state setter whether the value changed', () => {
+                const results: boolean[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => {
+                                results.push(setCount(count));
+                                results.push(setCount(count + 1));
+                            }}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                (wrapper.children[0] as HTMLButtonElement).click();
+
+                // writing the value it already holds changes nothing and says so
+                expect(results).toEqual([false, true]);
+                expect(wrapper.textContent).toBe('1');
+            });
+
+            it('should not render for a state written with the update refused', () => {
+                const rendered: number[] = [];
+                let write: (value: number, requestUpdate?: boolean) => boolean = () => false;
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+                    write = setCount;
+                    rendered.push(count);
+
+                    return <span>{count}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                expect(rendered).toEqual([0]);
+
+                // the value is kept, the DOM is left alone until something else renders
+                expect(write(1, false)).toBe(true);
+                expect(rendered).toEqual([0]);
+                expect(wrapper.textContent).toBe('0');
+
+                expect(write(2)).toBe(true);
+                expect(rendered).toEqual([0, 2]);
+                expect(wrapper.textContent).toBe('2');
+            });
+
             it('should run cleanup if dep changed', () => {
                 const cleanup = vi.fn();
                 const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
