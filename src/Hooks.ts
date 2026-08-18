@@ -63,6 +63,25 @@ const isCleanup = (fn: unknown): fn is Cleanup => {
 };
 
 /**
+ * Render a fragment again after a state change.
+ *
+ * Rendering belongs to the renderer, which fills this in when it loads: the hooks cannot import it
+ * without the two modules importing each other, and the same function served every fragment, so
+ * every one of them held a field for it.
+ */
+let requestRender: (hooks: Hooks) => void = () => {
+    throw new Error('The renderer has not been loaded');
+};
+
+/**
+ * Tell the hooks how to render a fragment again.
+ * @param render The function that renders the fragment of the given hooks.
+ */
+export const setRequestRender = (render: (hooks: Hooks) => void): void => {
+    requestRender = render;
+};
+
+/**
  * The hooks of the fragment that is rendering, if any.
  *
  * A hook is called from inside a function component, so the fragment it belongs to is the one the
@@ -124,24 +143,12 @@ export class Hooks {
 
     /**
      * The context of the fragment, whose node marks where the fragment begins.
+     *
+     * It is also where the rest of the scope is read from: the context the fragment is rendered
+     * into is the one holding the marker — `parent`, which the renderer assigns before building
+     * these hooks — and the root of the render is the `root` the marker was created with.
      */
     readonly renderContext: Context;
-
-    /**
-     * Render the fragment again after a state change.
-     * Rendering belongs to the renderer, which hands the manager the way back into it.
-     */
-    private readonly requestRender: (hooks: Hooks) => void;
-
-    /**
-     * The context the fragment is rendered into.
-     */
-    context: Context;
-
-    /**
-     * The root context of the render.
-     */
-    rootContext: Context;
 
     /**
      * The namespace uri of the render.
@@ -156,15 +163,11 @@ export class Hooks {
     /**
      * Create the hooks of a function component.
      * @param renderContext The context of the fragment they belong to.
-     * @param requestRender The function that renders the fragment again.
      */
-    constructor(renderContext: Context, requestRender: (hooks: Hooks) => void) {
+    constructor(renderContext: Context) {
         this.renderContext = renderContext;
-        this.requestRender = requestRender;
-        // the scope of a render, which is written again by each of them before the function
-        // runs: it is declared here so that the manager holds every field it will ever have
-        this.context = renderContext;
-        this.rootContext = renderContext;
+        // written again by every render before the function runs: it is declared here so that the
+        // hooks hold every field they will ever have
         this.namespace = '';
     }
 
@@ -175,15 +178,11 @@ export class Hooks {
      * The index of the pass this one interrupts is returned rather than dropped: a render can
      * start another one of the same fragment — a state setter called while the function is
      * still running — and the one underneath has to walk the very same hooks it was up to.
-     * @param context The context the fragment is rendered into.
-     * @param rootContext The root context of the render.
      * @param namespace The namespace uri of the render.
      * @param template The virtual node of the fragment.
      * @returns The index the manager was at.
      */
-    beginRender(context: Context, rootContext: Context, namespace: string, template: Template): number {
-        this.context = context;
-        this.rootContext = rootContext;
+    beginRender(namespace: string, template: Template): number {
         this.namespace = namespace;
         this.template = template;
 
@@ -251,7 +250,7 @@ export class Hooks {
 
                     state[0] = value;
                     if (requestUpdate !== false) {
-                        this.requestRender(this);
+                        requestRender(this);
                     }
 
                     return true;
@@ -468,7 +467,7 @@ export const useId = (suffix?: string): string => requireHooks('useId').useId(su
  * @returns The render context.
  * @throws If no function component is rendering.
  */
-export const useRenderContext = (): Context => requireHooks('useRenderContext').context;
+export const useRenderContext = (): Context => requireHooks('useRenderContext').renderContext.parent as Context;
 
 /**
  * The hooks a function component is handed as its second argument.

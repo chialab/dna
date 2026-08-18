@@ -1,6 +1,6 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
-import { Hooks, hooks as hooksApi, setCurrentHooks } from './Hooks';
+import { Hooks, hooks as hooksApi, setCurrentHooks, setRequestRender } from './Hooks';
 import {
     getOwnPropertyDescriptor,
     getPropertyDescriptor,
@@ -1100,7 +1100,9 @@ const HTML_NAMESPACE: string = 'http://www.w3.org/1999/xhtml';
  * @param hooks The hooks of the fragment.
  */
 const requestFragmentRender = (hooks: Hooks) => {
-    const { renderContext, context, rootContext } = hooks;
+    const { renderContext } = hooks;
+    const context = renderContext.parent as Context;
+    const rootContext = renderContext.root as Context;
     if (!context.children?.includes(renderContext)) {
         // the fragment is gone: rendering it again would bring back a subtree nobody
         // references anymore
@@ -1110,12 +1112,16 @@ const requestFragmentRender = (hooks: Hooks) => {
     // only this fragment is rendered again, where it stands
     if (isComponent(rootContext.node) && rootContext.shadow) {
         rootContext.node.realm.requestUpdate(() => {
-            internalRender(hooks.context, hooks.template, hooks.rootContext, hooks.namespace, renderContext);
+            internalRender(context, hooks.template, rootContext, hooks.namespace, renderContext);
         });
         return;
     }
     internalRender(context, hooks.template, rootContext, hooks.namespace, renderContext);
 };
+
+// the hooks render a fragment again through the renderer, which they cannot import without the two
+// modules importing each other: it hands them the way back in when it loads
+setRequestRender(requestFragmentRender);
 
 /* -------------------------------------------------------------------------------------------------
  * Template rendering
@@ -1231,7 +1237,7 @@ const renderTemplate = (
             // the hooks belong to the fragment and outlive its renders, together with the state
             // they hold: a fragment that renders again does not build them — nor the closures
             // they are made of — a second time, and it renders again on every state change
-            const hooks = renderContext.hooks || new Hooks(renderContext, requestFragmentRender);
+            const hooks = renderContext.hooks || new Hooks(renderContext);
             renderContext.hooks = hooks;
 
             // the keys of the fragment are collected again by this render, while the refs are
@@ -1245,7 +1251,7 @@ const renderTemplate = (
             // calls finds them without being handed them, and put back afterwards even if the
             // function throws — a pointer left behind would hand the next fragment these hooks
             const previousHooks = setCurrentHooks(hooks);
-            const previousIndex = hooks.beginRender(context, rootContext, namespace, template);
+            const previousIndex = hooks.beginRender(namespace, template);
             let result: Template;
             try {
                 result = Fn(
