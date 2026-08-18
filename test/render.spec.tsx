@@ -2720,6 +2720,99 @@ describe(
                 }
             });
 
+            /**
+             * The `class` and the `style` of a template are written as a map as often as they are
+             * written as a string, and a map is a new object on every render — so the comparison
+             * that stops an unchanged property never fires for them, and what the renderer writes
+             * is decided one class and one declaration at a time. These count those writes: they
+             * are the ones a list pays on every render, and they do not show in the tree.
+             */
+            describe('class and style writes', () => {
+                /**
+                 * Count what a render writes to the class list and to the style of a node.
+                 * @param run The function to measure.
+                 * @returns The collected counters.
+                 */
+                const countWrites = (run: () => void) => {
+                    const tokens = DOMTokenList.prototype as unknown as Record<string, () => unknown>;
+                    const declaration = CSSStyleDeclaration.prototype as unknown as Record<string, () => unknown>;
+                    const originals: Record<string, () => unknown> = {};
+                    const counters = { add: 0, remove: 0, setProperty: 0, removeProperty: 0 };
+
+                    for (const [proto, keys] of [
+                        [tokens, ['add', 'remove']],
+                        [declaration, ['setProperty', 'removeProperty']],
+                    ] as [Record<string, () => unknown>, string[]][]) {
+                        for (const key of keys) {
+                            const original = proto[key];
+                            originals[key] = original;
+                            proto[key] = function (this: unknown, ...args: unknown[]) {
+                                counters[key as keyof typeof counters]++;
+                                return (original as (...a: unknown[]) => unknown).apply(this, args);
+                            } as () => unknown;
+                        }
+                    }
+                    try {
+                        run();
+                    } finally {
+                        tokens.add = originals.add;
+                        tokens.remove = originals.remove;
+                        declaration.setProperty = originals.setProperty;
+                        declaration.removeProperty = originals.removeProperty;
+                    }
+
+                    return counters;
+                };
+
+                const rows = (count: number, highlighted: number) =>
+                    Array.from({ length: count }, (_, position) => position).map((index) => (
+                        <li
+                            key={index}
+                            class={{ highlighted: index === highlighted }}
+                            style={{
+                                color: 'red',
+                                marginTop: '2px',
+                                fontWeight: index === highlighted ? 'bold' : 'normal',
+                            }}
+                        />
+                    ));
+
+                it('should write nothing when a render changes neither', () => {
+                    DNA.render(rows(200, -1), wrapper);
+
+                    expect(countWrites(() => DNA.render(rows(200, -1), wrapper))).toEqual({
+                        add: 0,
+                        remove: 0,
+                        setProperty: 0,
+                        removeProperty: 0,
+                    });
+                });
+
+                it('should write only what changed when one row changes', () => {
+                    DNA.render(rows(200, -1), wrapper);
+
+                    // the class the row gains, and the one declaration of its style that differs
+                    expect(countWrites(() => DNA.render(rows(200, 7), wrapper))).toEqual({
+                        add: 1,
+                        remove: 0,
+                        setProperty: 1,
+                        removeProperty: 0,
+                    });
+                });
+
+                it('should take back only what it had given', () => {
+                    DNA.render(rows(200, 7), wrapper);
+
+                    // the highlighted row loses its class, and its bold weight goes back to normal
+                    expect(countWrites(() => DNA.render(rows(200, -1), wrapper))).toEqual({
+                        add: 0,
+                        remove: 1,
+                        setProperty: 1,
+                        removeProperty: 0,
+                    });
+                });
+            });
+
             describe('teardown', () => {
                 it('should not empty the subtree of a removed node', () => {
                     const rows = Array.from({ length: 20 }, (_, index) => index);

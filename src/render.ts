@@ -343,9 +343,10 @@ const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, 
     }
 
     const classes = convertClasses(value);
+    const oldClasses = convertClasses(oldValue);
     const classList = node.classList;
-    for (const className in convertClasses(oldValue)) {
-        if (!classes[className]) {
+    for (const className in oldClasses) {
+        if (oldClasses[className] && !classes[className]) {
             classList.remove(className);
         }
     }
@@ -385,7 +386,10 @@ const setStyle = (node: HTMLElement, value: StyleValue, oldValue: StyleValue, is
         }
     }
     for (const propertyKey in styles) {
-        style.setProperty(propertyKey, styles[propertyKey]);
+        const declaration = styles[propertyKey];
+        if (style.getPropertyValue(propertyKey) !== declaration) {
+            style.setProperty(propertyKey, declaration);
+        }
     }
 };
 
