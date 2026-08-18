@@ -538,7 +538,7 @@ export interface ButtonHTMLAttributes extends HTMLAttributes {
     formTarget?: string | undefined;
     name?: string | undefined;
     type?: 'submit' | 'reset' | 'button' | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface CanvasHTMLAttributes extends HTMLAttributes {
@@ -556,7 +556,7 @@ export interface ColgroupHTMLAttributes extends HTMLAttributes {
 }
 
 export interface DataHTMLAttributes extends HTMLAttributes {
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface DetailsHTMLAttributes extends HTMLAttributes {
@@ -668,7 +668,7 @@ export interface InputHTMLAttributes extends HTMLAttributes {
     src?: string | undefined;
     step?: number | string | undefined;
     type?: string | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
     width?: number | string | undefined;
 }
 
@@ -693,7 +693,7 @@ export interface LabelHTMLAttributes extends HTMLAttributes {
 }
 
 export interface LiHTMLAttributes extends HTMLAttributes {
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface LinkHTMLAttributes extends HTMLAttributes {
@@ -746,7 +746,7 @@ export interface MeterHTMLAttributes extends HTMLAttributes {
     max?: number | string | undefined;
     min?: number | string | undefined;
     optimum?: number | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface QuoteHTMLAttributes extends HTMLAttributes {
@@ -780,7 +780,7 @@ export interface OptionHTMLAttributes extends HTMLAttributes {
     disabled?: boolean | undefined;
     label?: string | undefined;
     selected?: boolean | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface OutputHTMLAttributes extends HTMLAttributes {
@@ -791,12 +791,12 @@ export interface OutputHTMLAttributes extends HTMLAttributes {
 
 export interface ParamHTMLAttributes extends HTMLAttributes {
     name?: string | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface ProgressHTMLAttributes extends HTMLAttributes {
     max?: number | string | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface SlotHTMLAttributes extends HTMLAttributes {
@@ -826,7 +826,7 @@ export interface SelectHTMLAttributes extends HTMLAttributes {
     name?: string | undefined;
     required?: boolean | undefined;
     size?: number | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
 }
 
 export interface SourceHTMLAttributes extends HTMLAttributes {
@@ -867,7 +867,7 @@ export interface TextareaHTMLAttributes extends HTMLAttributes {
     readOnly?: boolean | undefined;
     required?: boolean | undefined;
     rows?: number | undefined;
-    value?: string | ReadonlyArray<string> | number | undefined;
+    value?: string | readonly string[] | number | undefined;
     wrap?: string | undefined;
 }
 

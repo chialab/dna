@@ -106,7 +106,7 @@ describe(
                                     kind: 'get',
                                     static: true,
                                     key: 'properties',
-                                    value: function properties() {
+                                    value() {
                                         return {
                                             myCustomProp1: {
                                                 attribute: 'custom-prop',
@@ -210,7 +210,7 @@ describe(
                     }
                 }
 
-                const _forceUpdate = vi.fn(() => {});
+                const _forceUpdate = vi.fn(() => undefined);
 
                 @DNA.customElement('test-component-8')
                 class TestElement extends BaseElement {

@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import { playwright } from '@vitest/browser-playwright';
 import type { UserConfig } from 'vite';
 import { defineConfig, mergeConfig } from 'vitest/config';
-import vitestConfig from './vite.config';
+import vitestConfig from './vite.config.ts';
 
 export default mergeConfig(
     vitestConfig as UserConfig,

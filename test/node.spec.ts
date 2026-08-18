@@ -27,7 +27,7 @@ describe(
             expect(() => {
                 const TestElement = DNA.define('test-component-3-node', class TestElement extends DNA.Component {});
 
-                new TestElement();
+                expect(new TestElement()).toBeDefined();
             }).toThrow();
         });
     },

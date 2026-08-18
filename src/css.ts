@@ -87,8 +87,8 @@ export const css = (name: string, cssText: string): string => {
     }
 
     const chunks: string[] = [];
-    for (let i = 0; i < sheet.cssRules.length; i++) {
-        chunks.push(convertRule(sheet.cssRules[i], scope));
+    for (const rule of sheet.cssRules) {
+        chunks.push(convertRule(rule, scope));
     }
     const converted = chunks.join('\n');
     CACHE.set(id, converted);

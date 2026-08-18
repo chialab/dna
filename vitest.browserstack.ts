@@ -1,7 +1,7 @@
 import { createBrowserStackProvider } from '@chialab/vitest-provider-browserstack';
 import { defineConfig, type UserConfig } from 'vite';
 import { mergeConfig } from 'vitest/config';
-import vitestConfig from './vitest.browser';
+import vitestConfig from './vitest.browser.ts';
 
 const browserstack = createBrowserStackProvider();
 

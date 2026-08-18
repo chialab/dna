@@ -230,7 +230,6 @@ describe('Preact', () => {
             onClick?: (event: MouseEvent) => void;
             onStringChange?: (event: CustomEvent<string>) => void;
         }) => (
-            // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
             <test-frameworks-5
                 onClick={props.onClick}
                 onstringchange={props.onStringChange}
@@ -283,11 +282,10 @@ describe('Preact', () => {
             onClick?: (event: MouseEvent) => void;
             onStringChange?: (event: CustomEvent<string>) => void;
         }) => (
-            // biome-ignore lint/a11y/noStaticElementInteractions: Assignment test
             // biome-ignore lint/a11y/useAnchorContent: Assignment test
             <a
                 is="test-frameworks-6"
-                // biome-ignore lint/a11y/useValidAnchor: Assignment test
+                href="https://chialab.github.io/dna"
                 onClick={props.onClick}
                 onstringchange={props.onStringChange}
                 stringProp={props.stringProp}

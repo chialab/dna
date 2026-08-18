@@ -459,6 +459,8 @@ describe(
 
             it('should add and remove native listeners', () => {
                 const listener = vi.fn();
+                // biome-ignore lint/a11y/noNoninteractiveElementInteractions: Testing listeners
+                // biome-ignore lint/a11y/noStaticElementInteractions: Testing listeners
                 DNA.render(<div onclick={listener} />, wrapper);
                 const element = wrapper.children[0] as HTMLElement;
                 expect(listener).not.toHaveBeenCalled();

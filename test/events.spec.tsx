@@ -265,7 +265,7 @@ describe(
                     event.preventDefault();
                 });
                 expect(() => {
-                    DNA.undelegateEventListener(button, 'missing', null, () => {});
+                    DNA.undelegateEventListener(button, 'missing', null, () => undefined);
                 }).not.toThrow();
             });
 
@@ -731,7 +731,7 @@ describe(
                                     kind: 'method',
                                     decorators: [DNA.listen('click')],
                                     key: 'method',
-                                    value: function method(event: Event, target?: Node) {
+                                    value(event: Event, target?: Node) {
                                         event.preventDefault();
                                         callback(event.type, (target as HTMLElement).tagName);
                                     },
@@ -771,7 +771,7 @@ describe(
                                     kind: 'method',
                                     decorators: [DNA.listen('click', 'button')],
                                     key: 'method',
-                                    value: function method(event: Event, target?: Node) {
+                                    value(event: Event, target?: Node) {
                                         event.preventDefault();
                                         callback(event.type, (target as HTMLElement).tagName);
                                     },
@@ -779,7 +779,7 @@ describe(
                                 {
                                     kind: 'method',
                                     key: 'render',
-                                    value: function render() {
+                                    value() {
                                         return <button type="button">Click me</button>;
                                     },
                                 },
@@ -836,7 +836,7 @@ describe(
                                 {
                                     kind: 'method',
                                     key: 'render',
-                                    value: function render() {
+                                    value() {
                                         return <button type="button">Click me</button>;
                                     },
                                 },

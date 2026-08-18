@@ -105,7 +105,7 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         static get observedAttributes(): string[] {
             const propertiesDescriptor = getProperties(this.prototype as ComponentInstance);
-            const attributes = [];
+            const attributes: string[] = [];
             for (const key in propertiesDescriptor) {
                 const prop = propertiesDescriptor[key as keyof typeof propertiesDescriptor];
                 if (prop?.attribute && !prop.state) {
@@ -362,7 +362,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         /**
          * Invoked each time the component has been updated.
          */
-        updatedCallback() {}
+        updatedCallback() {
+            //
+        }
 
         /**
          * Invoked each time the component child list is changed.

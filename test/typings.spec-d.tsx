@@ -47,13 +47,19 @@ describe('typings', () => {
             private privateSymbol = 1;
 
             @listen('click')
-            handleClick(event: MouseEvent) {}
+            handleClick(event: MouseEvent) {
+                //
+            }
 
             @listen('click')
-            protected handleClick2(event: MouseEvent) {}
+            protected handleClick2(event: MouseEvent) {
+                //
+            }
 
             @listen('click')
-            private handleClick3(event: MouseEvent) {}
+            private handleClick3(event: MouseEvent) {
+                //
+            }
         }
 
         const element = new TestElement();
@@ -154,7 +160,7 @@ describe('typings', () => {
 
             connectedCallback(): void {
                 super.connectedCallback();
-                this.observe('sample', () => {});
+                this.observe('sample', () => undefined);
             }
         }
 
@@ -198,7 +204,7 @@ describe('typings', () => {
         test('should accept DNA render properties', () => {
             render(<details ref={document.createElement('details')} />);
             render(<div key={{}} />);
-            render(<div on:event={(event) => {}} />);
+            render(<div on:event={(event) => undefined} />);
             render(h('details', { ref: document.createElement('details') }));
             render(h('div', { key: {} }));
             render(h(Fragment));
@@ -286,7 +292,7 @@ describe('typings', () => {
             render(
                 <x-test
                     // @ts-expect-error connectedCallback is a method
-                    connectedCallback={() => {}}
+                    connectedCallback={() => undefined}
                 />
             );
             render(

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
     "includes": [
       "**",
@@ -22,56 +22,94 @@
     "useEditorconfig": true
   },
   "linter": {
+    "domains": {
+      "project": "recommended",
+      "test": "recommended"
+    },
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
+        "noNoninteractiveElementInteractions": "warn",
         "noRedundantAlt": "warn",
         "useButtonType": "warn",
         "useSemanticElements": "off"
       },
       "complexity": {
-        "noForEach": "off",
         "noThisInStatic": "off",
+        "noDivRegex": "warn",
+        "noExcessiveNestedTestSuites": "warn",
+        "noRedundantDefaultExport": "warn",
+        "noUselessCatchBinding": "warn",
+        "noUselessReturn": "warn",
+        "noUselessStringConcat": "warn",
         "noUselessSwitchCase": "warn",
         "noUselessThisAlias": "warn",
+        "noUselessUndefined": "warn",
         "useArrowFunction": "warn",
         "useFlatMap": "warn",
-        "useLiteralKeys": "off",
-        "useOptionalChain": "warn"
+        "useOptionalChain": "warn",
+        "useWhile": "warn"
       },
       "correctness": {
         "useJsxKeyInIterable": "off",
-        "useUniqueElementIds": "off",
-        "noSwitchDeclarations": "off",
         "noUnusedFunctionParameters": "off",
-        "noUnusedPrivateClassMembers": "off"
+        "noUnusedPrivateClassMembers": "off",
+        "noGlobalDirnameFilename": "warn",
+        "useSingleJsDocAsterisk": "warn",
+        "noUndeclaredDependencies": "error",
+        "noUndeclaredVariables": "error",
+        "noUnusedInstantiation": "error"
       },
       "performance": {
         "noAccumulatingSpread": "warn",
         "noDelete": "warn"
       },
       "style": {
+        "noExportedImports": "off",
         "noInferrableTypes": "warn",
         "noParameterAssign": "warn",
-        "noNamespace": "off",
+        "noUselessElse": "warn",
+        "noYodaExpression": "warn",
+        "useConsistentArrayType": "warn",
+        "useConsistentBuiltinInstantiation": "warn",
+        "useConsistentObjectDefinitions": "warn",
         "useConst": "warn",
         "useExponentiationOperator": "warn",
+        "useForOf": "warn",
+        "useGroupedAccessorPairs": "warn",
         "useImportType": "warn",
+        "useObjectSpread": "warn",
         "useSelfClosingElements": "warn",
         "useSingleVarDeclarator": "warn",
+        "useSpreadOverApply": "warn",
         "useTemplate": "warn",
-        "noUselessElse": "warn",
+        "useThrowNewError": "warn",
+        "useTrimStartEnd": "warn",
+        "useUnifiedTypeSignatures": "warn",
+        "noCommonJs": "error",
+        "noUnusedTemplateLiteral": "error",
         "useAsConstAssertion": "error",
         "useDefaultParameterLast": "error",
         "useEnumInitializers": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error"
+        "useNumberNamespace": "error",
+        "useThrowOnlyError": "error"
       },
       "suspicious": {
         "noAssignInExpressions": "warn",
-        "noClassAssign": "off",
         "noConfusingLabels": "warn",
+        "noDuplicateDependencies": "warn",
+        "noEmptyBlockStatements": "warn",
+        "noEmptySource": "warn",
+        "noEvolvingTypes": "warn",
         "noExplicitAny": "warn",
+        "noUnassignedVariables": "warn",
+        "noUnusedExpressions": "warn",
+        "useDeprecatedDate": "warn",
+        "useErrorMessage": "warn",
+        "useNumberToFixedDigitsArgument": "warn",
+        "noConstantBinaryExpressions": "error",
+        "noReturnAssign": "error",
+        "noVar": "error",
         "noConsole": {
           "level": "warn",
           "options": { "allow": ["error", "warn"] }

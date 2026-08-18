@@ -23,7 +23,7 @@ export default defineConfig({
             },
             formats: ['es'],
         },
-        rollupOptions: {
+        rolldownOptions: {
             output: {
                 dir: 'dist',
                 entryFileNames: '[name].js',
@@ -32,10 +32,6 @@ export default defineConfig({
             },
         },
         sourcemap: true,
-    },
-    esbuild: {
-        include: /\.(m?(t|j)s|[jt]sx)$/,
-        target: ['es2020'],
     },
     resolve: {
         alias: {

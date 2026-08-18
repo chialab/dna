@@ -19,6 +19,7 @@
     "noImplicitThis": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleResolution": "bundler",
     "paths": {

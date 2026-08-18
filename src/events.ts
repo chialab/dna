@@ -171,8 +171,7 @@ export const delegateEventListener = (
 
             // filter matched selector for the event
             const filtered: { target: Node; callback: DelegatedEventCallback }[] = [];
-            for (let i = 0; i < descriptors.length; i++) {
-                const [, selector, callback] = descriptors[i];
+            for (const [, selector, callback] of descriptors) {
                 let selectorTarget: Node | null = null;
                 if (selector) {
                     const path = event.composedPath();

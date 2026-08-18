@@ -8,7 +8,6 @@ render(<details open />, document.body);
 // @ts-expect-error Active is not a known property of the core details element
 render(<details active={true} />, document.body);
 render(
-    // biome-ignore lint/a11y/noStaticElementInteractions: This is a typings interaction test
     <x-test
         className="test"
         style={{
@@ -42,7 +41,7 @@ render(<x-test missing={true} />, document.body);
 // @ts-expect-error nodeType is an inherited read-only property
 render(<x-test nodeType={true} />, document.body);
 // @ts-expect-error connectedCallback is a method
-render(<x-test connectedCallback={() => {}} />, document.body);
+render(<x-test connectedCallback={() => undefined} />, document.body);
 render(
     <details
         is="x-test-builtin"

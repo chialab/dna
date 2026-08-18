@@ -37,7 +37,7 @@
     {/* @ts-expect-error nodeType is an inherited read-only property */ null}
     <test-frameworks-5 nodeType={true}></test-frameworks-5>
     {/* @ts-expect-error connectedCallback is a method */ null}
-    <test-frameworks-5 connectedCallback={() => {}}></test-frameworks-5>
+    <test-frameworks-5 connectedCallback={() => undefined}></test-frameworks-5>
     <!-- svelte-ignore attribute_avoid_is -->
     <a
         is="test-frameworks-6"
