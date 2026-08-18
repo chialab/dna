@@ -93,6 +93,7 @@ export { isHydrating } from './hydration';
 export type {
     Attrs,
     FunctionComponent,
+    FunctionComponentHooks,
     JSXInternal as JSX,
     Members,
     Props,

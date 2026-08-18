@@ -1,5 +1,7 @@
 import type { HTMLTagNameMap } from './Elements';
 import { uniqueId } from './factories';
+import type { FunctionComponentHooks, Template } from './JSX';
+import type { Context } from './render';
 
 /**
  * The type of a hook state.
@@ -61,13 +63,19 @@ const isCleanup = (fn: unknown): fn is Cleanup => {
 };
 
 /**
- * The hooks manager.
+ * The hooks of a function component.
+ *
+ * They belong to the context of the fragment and outlive its renders: the state they keep, the
+ * object handed to the function and the closures it is made of are built once for the whole life
+ * of the fragment, and a fragment renders again every time its state changes. What each render
+ * brings with it — the contexts it walks, the virtual node it starts from — is written here by
+ * the render itself and read from here by the hooks, rather than being captured by them.
  */
-export class HooksManager {
+export class Hooks {
     /**
      * The internal state of hooks.
      */
-    private state: HooksState;
+    private state: HooksState = [];
 
     /**
      * The index of current hook.
@@ -75,16 +83,101 @@ export class HooksManager {
     private index = 0;
 
     /**
-     * The queue of effects to run.
+     * The queue of effects to run, created only for the hooks that register one.
      */
-    private effects: Set<Effect> = new Set();
+    private effects?: Effect[];
 
     /**
-     * Create a new hooks manager.
-     * @param state The initial state of hooks.
+     * The context of the fragment, whose node marks where the fragment begins.
      */
-    constructor(state: HooksState = []) {
-        this.state = state;
+    readonly renderContext: Context;
+
+    /**
+     * Render the fragment again after a state change.
+     * Rendering belongs to the renderer, which hands the manager the way back into it.
+     */
+    private readonly requestRender: (hooks: Hooks) => void;
+
+    /**
+     * The hooks handed to the function component on every render.
+     */
+    readonly api: FunctionComponentHooks;
+
+    /**
+     * The context the fragment is rendered into.
+     */
+    context: Context;
+
+    /**
+     * The root context of the render.
+     */
+    rootContext: Context;
+
+    /**
+     * The namespace uri of the render.
+     */
+    namespace: string;
+
+    /**
+     * The virtual node of the fragment, which is what rendering it again starts from.
+     */
+    template?: Template;
+
+    /**
+     * Create the hooks of a function component.
+     * @param renderContext The context of the fragment they belong to.
+     * @param requestRender The function that renders the fragment again.
+     */
+    constructor(renderContext: Context, requestRender: (hooks: Hooks) => void) {
+        this.renderContext = renderContext;
+        this.requestRender = requestRender;
+        // the scope of a render, which is written again by each of them before the function
+        // runs: it is declared here so that the manager holds every field it will ever have
+        this.context = renderContext;
+        this.rootContext = renderContext;
+        this.namespace = '';
+        this.api = {
+            useState: this.useState.bind(this),
+            useRef: this.useRef.bind(this),
+            useMemo: this.useMemo.bind(this),
+            useCallback: this.useCallback.bind(this),
+            useEffect: this.useEffect.bind(this),
+            useElement: (tagName: string, options?: ElementCreationOptions) => this.useElement(tagName, options),
+            useId: (suffix?: string) => this.useId(suffix),
+            useRenderContext: () => this.context,
+        };
+    }
+
+    /**
+     * Start a render pass: the scope of the render is taken in, and hooks are matched to their
+     * state by the order they are called in, so the walk starts over from the first of them.
+     *
+     * The index of the pass this one interrupts is returned rather than dropped: a render can
+     * start another one of the same fragment — a state setter called while the function is
+     * still running — and the one underneath has to walk the very same hooks it was up to.
+     * @param context The context the fragment is rendered into.
+     * @param rootContext The root context of the render.
+     * @param namespace The namespace uri of the render.
+     * @param template The virtual node of the fragment.
+     * @returns The index the manager was at.
+     */
+    beginRender(context: Context, rootContext: Context, namespace: string, template: Template): number {
+        this.context = context;
+        this.rootContext = rootContext;
+        this.namespace = namespace;
+        this.template = template;
+
+        const previousIndex = this.index;
+        this.index = 0;
+        return previousIndex;
+    }
+
+    /**
+     * End a render pass and restore the one it interrupted.
+     * @param previousIndex The index returned by {@link beginRender}.
+     */
+    endRender(previousIndex: number): void {
+        this.index = previousIndex;
     }
 
     /**
@@ -114,28 +207,38 @@ export class HooksManager {
 
     /**
      * Create a state value and its setter.
-     * The setter accepts the new value or a function that receives the current value and returns the new one.
+     * The setter accepts the new value or a function that receives the current value and returns
+     * the new one, and renders the fragment again unless it is asked not to.
+     *
+     * The pair is the state of the hook, and is handed out again by every render rather than
+     * being built anew: the value it holds is the one the last setter call wrote, and the setter
+     * keeps the identity it was created with — what a dependency list of another hook needs of
+     * it. Nothing is allocated once the fragment has rendered a first time.
      * @param initialValue The initial value of the state.
      * @returns The state value and its setter.
      */
-    useState<T = unknown>(initialValue: T): [T, (newValue: StateAction<T>) => boolean] {
-        const state = this.nextState(
-            typeof initialValue === 'function' ? (initialValue as () => T) : () => initialValue
-        );
+    useState<T = unknown>(initialValue: T): [T, (newValue: StateAction<T>, requestUpdate?: boolean) => boolean] {
+        return this.nextState<[T, (newValue: StateAction<T>, requestUpdate?: boolean) => boolean]>(() => {
+            const state: [T, (newValue: StateAction<T>, requestUpdate?: boolean) => boolean] = [
+                // a function is taken for a lazy initializer, as the setter takes it for an updater
+                typeof initialValue === 'function' ? (initialValue as () => T)() : initialValue,
+                (newValue: StateAction<T>, requestUpdate?: boolean) => {
+                    const value =
+                        typeof newValue === 'function' ? (newValue as (currentValue: T) => T)(state[0]) : newValue;
+                    if (Object.is(value, state[0])) {
+                        return false;
+                    }
 
-        return [
-            state[0],
-            (newValue: StateAction<T>) => {
-                const value =
-                    typeof newValue === 'function' ? (newValue as (currentValue: T) => T)(state[0]) : newValue;
-                if (Object.is(value, state[0])) {
-                    return false;
-                }
+                    state[0] = value;
+                    if (requestUpdate !== false) {
+                        this.requestRender(this);
+                    }
 
-                state[0] = value;
-                return true;
-            },
-        ] as const;
+                    return true;
+                },
+            ];
+            return state;
+        })[0];
     }
 
     /**
@@ -180,7 +283,8 @@ export class HooksManager {
     useEffect(effect: Effect, deps: unknown[] = []): void {
         this.nextState(() => {
             let cleanup: ReturnType<Effect>;
-            this.effects.add(() => {
+            this.effects ??= [];
+            this.effects.push(() => {
                 cleanup = effect();
                 return cleanup;
             });
@@ -205,23 +309,31 @@ export class HooksManager {
 
     /**
      * Generate a unique ID for the rendering context.
-     * @param fn The function component requesting the ID.
      * @param suffix An optional suffix to append to the ID.
      * @returns A unique ID string.
      */
-    useId(ref: Node, suffix?: string): string {
+    useId(suffix?: string): string {
+        const ref = this.renderContext.node;
         return this.useMemo(() => uniqueId(ref, `${this.index}`, suffix), [this.index, suffix]);
     }
 
     /**
      * Run all effects that were created since the last call.
-     * @returns An array of effects to run.
+     *
+     * The queue is taken out of the manager before being walked: an effect can render its own
+     * fragment again, and the effects that render registers belong to the pass that follows it,
+     * not to this one. Were they left in place they would be run twice — once by the nested
+     * pass, once more by this walk.
      */
     runEffects(): void {
-        for (const effect of this.effects) {
-            effect();
+        const effects = this.effects;
+        if (!effects) {
+            return;
         }
-        this.effects.clear();
+        this.effects = undefined;
+        for (let i = 0, len = effects.length; i < len; i++) {
+            effects[i]();
+        }
     }
 
     /**
@@ -229,11 +341,14 @@ export class HooksManager {
      * This method should be called when the component is unmounted or no longer needed.
      */
     cleanup(): void {
+        // an effect queued by a render that never settled belongs to a fragment that is gone
+        this.effects = undefined;
         for (const state of this.state) {
             if (isCleanup(state[0])) {
                 state[0]();
             }
         }
         this.state.splice(0, this.state.length);
+        this.index = 0;
     }
 }
