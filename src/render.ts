@@ -1,6 +1,6 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
-import { Hooks } from './Hooks';
+import { Hooks, hooks as hooksApi, setCurrentHooks } from './Hooks';
 import {
     getOwnPropertyDescriptor,
     getPropertyDescriptor,
@@ -69,7 +69,6 @@ export type Context = {
     owner?: Context;
     parent?: Context;
     children?: Context[];
-    contexts?: WeakMap<Node, Context>;
     properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
     hooks?: Hooks;
     end?: Context;
@@ -78,31 +77,13 @@ export type Context = {
     refs?: Map<Node, Context>;
     shadow?: boolean;
     _index: number;
-    _cursor?: number;
-    _shift?: number;
     _release?: boolean;
     /**
-     * The contexts detached during the current render.
-     * A detached context cannot be released right away: keyed nodes are removed from their
-     * parent before being re-inserted at another position, so a context is known to be gone
-     * only once the whole render has settled.
+     * Which render pass claimed this context by its key. A key names one node, so a context the
+     * running pass has already claimed cannot be claimed again by it: this is what tells a key the
+     * template declares twice from a key that simply did not move.
      */
-    _detached?: Context[];
-    /**
-     * The nesting level of the current render.
-     */
-    _depth?: number;
-    /**
-     * Which render pass this context was last claimed by, and — on a render root — which pass is
-     * running. A key names one node, so a context claimed by the pass that is walking cannot be
-     * claimed again by it: this is what tells a key the template declares twice from a key that
-     * simply did not move.
-     */
-    _pass?: number;
-    /**
-     * Whether detached contexts are being released.
-     */
-    _releasing?: boolean;
+    _claimed?: number;
 };
 
 /**
@@ -142,26 +123,98 @@ export const createContext = (
     // a text node is a leaf: nothing is ever rendered into it, and the list it would be given
     // is the same empty one for all of them
     children: undefined,
-    // the node -> context map belongs to the render root, which is the only context it is ever
-    // read from: it is created by the first context that has to be found again from its node,
-    // and a render that never places one does not allocate it at all
-    contexts: undefined,
     shadow,
-    _cursor: 0,
-    _shift: 0,
     // no position yet: any slot of the children list would be a miss, which is what the
     // lookup expects of a context it has never placed
     _index: -1,
     // a node the renderer does not own has to be emptied when it is dropped, and it is the
     // only kind that holds something to release from the moment it is created
     _release: kind === ContextKind.REF,
-    // the state of a render belongs to the root of the tree it walks, which is the only
-    // context it is ever read from: every other one leaves the field empty
-    _detached: root ? undefined : [],
-    _depth: root ? undefined : 0,
-    _pass: root ? undefined : 0,
-    _releasing: root ? undefined : false,
+    // no pass has claimed it yet
+    _claimed: 0,
 });
+
+/**
+ * What a render keeps while it walks.
+ *
+ * None of it belongs to a context: how deep the walk is, where it is among the children of the
+ * parent it is in, what it moved and what it detached are true of the render, not of the nodes it
+ * visits — and a context carrying them holds a slot for each on every one of the thousands a list
+ * makes. The two that outlive a render, the pass counter and the registry of the nodes placed, are
+ * kept here as well, so that a root has one object beside it instead of six fields inside it.
+ */
+type RenderState = {
+    /**
+     * The root the walk started from, so that a render nested inside another one — a component
+     * rendering while its properties are assigned — is told apart and settles on its own.
+     */
+    root: Context | null;
+    /**
+     * How deep the walk is. The outermost level releases what the whole render detached.
+     */
+    depth: number;
+    /**
+     * Which pass is running, for a key to be claimed once by it.
+     */
+    pass: number;
+    /**
+     * The context whose children the walk is in, so that a render of that same context — a
+     * fragment a state setter rendered again while this walk was suspended — is told from a
+     * render of one of its children.
+     */
+    parent: Context | null;
+    /**
+     * Where the walk is among the children of the parent it is in.
+     */
+    cursor: number;
+    /**
+     * How many contexts the walk moved, so that the document is rearranged only if one did.
+     */
+    shift: number;
+    /**
+     * Whether the detached contexts are being released.
+     */
+    releasing: boolean;
+    /**
+     * The contexts the walk detached. A keyed node is removed from its parent before being
+     * re-inserted somewhere else, so a context is known to be gone only once the render settled.
+     */
+    detached?: Context[];
+    /**
+     * The context of a node, so that one placed by an earlier render is found again — which is
+     * what lets a keyed node move from one parent to another.
+     */
+    contexts?: WeakMap<Node, Context>;
+};
+
+/**
+ * The state of each render root, which outlives the renders that walk from it.
+ */
+const renderStates: WeakMap<Context, RenderState> = new WeakMap();
+
+/**
+ * The state of no render, so that reading the current one never has to be guarded.
+ */
+const IDLE: RenderState = { root: null, depth: 0, pass: 0, parent: null, cursor: 0, shift: 0, releasing: false };
+
+/**
+ * The state of the render that is walking.
+ */
+let currentRender: RenderState = IDLE;
+
+/**
+ * Get (or create) the state of a render root.
+ * @param root The root context.
+ * @returns Its state.
+ */
+const renderStateOf = (root: Context): RenderState => {
+    let state = renderStates.get(root);
+    if (!state) {
+        state = { root, depth: 0, pass: 0, parent: null, cursor: 0, shift: 0, releasing: false };
+        renderStates.set(root, state);
+    }
+    return state;
+};
 
 /**
  * Get (or create) the root context attached to a node.
@@ -653,8 +706,8 @@ const releaseContext = (context: Context, rootContext: Context) => {
         if (!child._release) {
             continue;
         }
-        if (rootContext.contexts?.get(child.node) === child) {
-            rootContext.contexts.delete(child.node);
+        if (currentRender.contexts?.get(child.node) === child) {
+            currentRender.contexts.delete(child.node);
         }
         releaseContext(child, rootContext);
     }
@@ -668,31 +721,31 @@ const releaseContext = (context: Context, rootContext: Context) => {
  * @param rootContext The root context of the render that has settled.
  */
 const releaseDetachedContexts = (rootContext: Context) => {
-    if (rootContext._releasing) {
+    if (currentRender.releasing) {
         return;
     }
-    rootContext._releasing = true;
+    currentRender.releasing = true;
     try {
         // releasing a context runs user code — disconnected callbacks, effect cleanups — which
         // can detach further contexts: the queue is walked with a cursor rather than drained
         // from its head, so that what is appended while it runs is picked up by the same pass
-        const detached = rootContext._detached;
+        const detached = currentRender.detached;
         if (detached) {
             for (const context of detached) {
                 if (!context._release) {
                     // the subtree holds nothing to release: it is dropped with its node
                     continue;
                 }
-                if (rootContext.contexts?.get(context.node) === context) {
+                if (currentRender.contexts?.get(context.node) === context) {
                     // the context has been re-attached during the render
                     continue;
                 }
                 releaseContext(context, rootContext);
             }
         }
-        rootContext._detached = undefined;
+        currentRender.detached = undefined;
     } finally {
-        rootContext._releasing = false;
+        currentRender.releasing = false;
     }
 };
 
@@ -741,12 +794,12 @@ const detachNode = (parentContext: Context, childContext: Context, rootContext: 
     if (isFindable(childContext)) {
         // the entry is what tells a context re-inserted later in this same render from one
         // that is gone: only the contexts that have one are asked to drop it
-        rootContext.contexts?.delete(childNode);
+        currentRender.contexts?.delete(childNode);
     }
     // the render state belongs to the root of the tree being walked, and a context is only
     // ever detached while that tree is being rendered
-    rootContext._detached ??= [];
-    rootContext._detached.push(childContext);
+    currentRender.detached ??= [];
+    currentRender.detached.push(childContext);
 };
 
 /**
@@ -805,7 +858,7 @@ const removeNode = (parentContext: Context, childContext: Context, rootContext: 
  * @param rootContext The root context.
  */
 const insertNode = (parentContext: Context, childContext: Context, rootContext: Context) => {
-    const pos = parentContext._cursor ?? 0;
+    const pos = currentRender.cursor;
 
     parentContext.children ??= [];
 
@@ -814,7 +867,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
     // because this runs for every node of every render
     if (parentContext.children[pos] === childContext) {
         childContext._index = pos;
-        parentContext._cursor = pos + 1;
+        currentRender.cursor = pos + 1;
         return;
     }
 
@@ -846,7 +899,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
             parentContext.children[pos] = childContext;
             displaced._index = from;
             childContext._index = pos;
-            parentContext._shift = (parentContext._shift ?? 0) + 1;
+            currentRender.shift++;
         } else {
             // a function component owns the contiguous range up to `end` and moves whole. This is
             // also the way a single child moves past a fragment, since nothing else can be
@@ -857,7 +910,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
             for (let i = pos; i <= to; i++) {
                 parentContext.children[i]._index = i;
             }
-            parentContext._shift = (parentContext._shift ?? 0) + range.length;
+            currentRender.shift += range.length;
         }
     } else if (from !== -1) {
         // the context is the one at the cursor, once the contexts in between are dropped:
@@ -873,7 +926,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
         // just created cannot: it is reachable from nowhere else, and the lookup — one per
         // node of a first render — would always miss
         if (childContext.parent !== undefined || childContext.kind === ContextKind.REF) {
-            const currentChildContext = rootContext.contexts?.get(childContext.node);
+            const currentChildContext = currentRender.contexts?.get(childContext.node);
             if (currentChildContext?.parent && currentChildContext.parent !== parentContext) {
                 removeNode(currentChildContext.parent, currentChildContext, rootContext);
             }
@@ -891,15 +944,15 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
         childContext._index = pos;
         childContext.parent = parentContext;
         if (isFindable(childContext)) {
-            rootContext.contexts ??= new WeakMap();
-            rootContext.contexts.set(childContext.node, childContext);
+            currentRender.contexts ??= new WeakMap();
+            currentRender.contexts.set(childContext.node, childContext);
         }
         if (childContext._release) {
             // whatever the child holds has to be found again from the list it now belongs to
             markRelease(parentContext);
         }
     }
-    parentContext._cursor = pos + 1;
+    currentRender.cursor = pos + 1;
 };
 
 /**
@@ -1122,9 +1175,9 @@ const renderTemplate = (
             }
             const { type: Fn, key, properties, children } = template;
 
-            const pass = rootContext._pass;
+            const pass = currentRender.pass;
             let functionContext: Context | undefined;
-            const currentContext = context.children[context._cursor ?? 0];
+            const currentContext = context.children[currentRender.cursor];
             if (currentContext && currentContext.type === Fn && currentContext.key === key) {
                 // the same function with the same key is already in this position:
                 // this is also how a fragment finds itself again when it re-renders alone
@@ -1141,10 +1194,10 @@ const renderTemplate = (
             // a context this pass has already placed is not the one a second declaration of the
             // same key names: that one is given a context of its own
             if (functionContext && key != null) {
-                if (functionContext._pass === pass) {
+                if (functionContext._claimed === pass) {
                     functionContext = undefined;
                 } else {
-                    functionContext._pass = pass;
+                    functionContext._claimed = pass;
                 }
             }
 
@@ -1167,7 +1220,7 @@ const renderTemplate = (
             // the comment marks where the fragment begins: what the function renders is not
             // nested into it but appended as its siblings, in this very same list, and the
             // last of them is remembered as `end` so that the range can be found again
-            const renderContext = context.children[(context._cursor ?? 0) - 1];
+            const renderContext = context.children[currentRender.cursor - 1];
             renderContext.type = Fn;
             renderContext.key = key;
             if (key != null && renderContext !== fragment) {
@@ -1188,19 +1241,28 @@ const renderTemplate = (
             const childRefs = renderContext.refs;
             renderContext.keys = undefined;
 
+            // the hooks of the fragment are pointed at while the function runs, so that a hook it
+            // calls finds them without being handed them, and put back afterwards even if the
+            // function throws — a pointer left behind would hand the next fragment these hooks
+            const previousHooks = setCurrentHooks(hooks);
             const previousIndex = hooks.beginRender(context, rootContext, namespace, template);
-            const result = Fn(
-                {
-                    children,
-                    ...properties,
-                },
-                hooks.api
-            );
-            hooks.endRender(previousIndex);
+            let result: Template;
+            try {
+                result = Fn(
+                    {
+                        children,
+                        ...properties,
+                    },
+                    hooksApi
+                );
+            } finally {
+                hooks.endRender(previousIndex);
+                setCurrentHooks(previousHooks);
+            }
 
             renderTemplate(context, rootContext, result, namespace, childKeys, childRefs, renderContext);
 
-            renderContext.end = context.children[(context._cursor ?? 0) - 1];
+            renderContext.end = context.children[currentRender.cursor - 1];
             // the effects run once the fragment is in the document, and may render again
             hooks.runEffects();
             return;
@@ -1234,14 +1296,14 @@ const renderTemplate = (
         // an existing node is reused when the key says so, or when the one at the cursor was
         // generated by this same render out of a compatible tag
         let templateContext: Context | undefined;
-        const currentContext = context.children[context._cursor ?? 0];
+        const currentContext = context.children[currentRender.cursor];
         const fitsTemplate = (candidate: Context) =>
             isVTag(template) &&
             candidate.kind === ContextKind.VNODE &&
             candidate.type === template.type &&
             candidate.properties?.is === properties?.is;
         if (key != null) {
-            const pass = rootContext._pass;
+            const pass = currentRender.pass;
             // the node is where the previous render left it, which is what an update that
             // reordered nothing looks like — and is most of them: the key does not have to be
             // looked up at all. The one at the cursor carries the key, so it is the node the key
@@ -1249,7 +1311,7 @@ const renderTemplate = (
             if (
                 currentContext &&
                 currentContext.key === key &&
-                currentContext._pass !== pass &&
+                currentContext._claimed !== pass &&
                 fitsTemplate(currentContext)
             ) {
                 templateContext = currentContext;
@@ -1259,13 +1321,13 @@ const renderTemplate = (
                 // declares now: the marker of a function component that shares the key, or an
                 // element of another tag. One that does not fit is left where it is — for a
                 // sibling that shares the key and does fit — and this element gets one of its own
-                if (keyed && keyed._pass !== pass && fitsTemplate(keyed)) {
+                if (keyed && keyed._claimed !== pass && fitsTemplate(keyed)) {
                     templateContext = keyed;
                 }
             }
             if (templateContext) {
                 // claimed: a second declaration of the same key gets a context of its own
-                templateContext._pass = pass;
+                templateContext._claimed = pass;
             }
         } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
             if (fitsTemplate(currentContext)) {
@@ -1422,7 +1484,7 @@ const renderTemplate = (
             : String(template);
 
     // a text node already in this position is updated in place rather than replaced
-    const currentContext = context.children[context._cursor ?? 0];
+    const currentContext = context.children[currentRender.cursor];
     if (currentContext?.kind === ContextKind.LITERAL && currentContext.owner === rootContext) {
         if (currentContext.type !== normalizedTemplate) {
             currentContext.type = normalizedTemplate;
@@ -1473,19 +1535,25 @@ export const internalRender = (
 
     // the render this one belongs to is the one of its root: a nested render of another tree —
     // a component rendering while its properties are assigned — is a render of its own, and
-    // settles on its own
-    // where the walk is and what it moved belong to the pass that is running, not to the context:
-    // a nested render of this same context — a fragment a state setter rendered again while
-    // this walk was suspended — has to leave both the way it found them
-    const previousCursor = context._cursor;
-    const previousShift = context._shift;
-    const previousLength = context.children.length;
+    // settles on its own, so it takes the state of its own root rather than sharing this one
+    const previousRender = currentRender;
+    const render = previousRender.root === rootContext ? previousRender : renderStateOf(rootContext);
+    currentRender = render;
 
-    rootContext._depth = (rootContext._depth ?? 0) + 1;
-    if (rootContext._depth === 1) {
+    // where the walk is and what it moved belong to the walk, not to the context it is in: a
+    // nested render — of another tree, or of a fragment a state setter rendered again while this
+    // walk was suspended — has to leave both the way it found them
+    const previousParent = render.parent;
+    const previousCursor = render.cursor;
+    const previousShift = render.shift;
+    const previousLength = context.children.length;
+    render.parent = context;
+
+    render.depth++;
+    if (render.depth === 1) {
         // a walk that starts from outside opens a pass of its own; the ones it nests share it,
         // since a context is claimed once by whoever is walking
-        rootContext._pass = (rootContext._pass ?? 0) + 1;
+        render.pass++;
     }
     try {
         let previousRange: Set<Context> | undefined;
@@ -1495,7 +1563,7 @@ export const internalRender = (
             // only one fragment is rendered again: the cursor starts at its marker, and the
             // contexts it owned are remembered, because everything around them belongs to
             // other fragments and has to come out of this render untouched
-            context._cursor = indexOfContext(context.children, fragment);
+            currentRender.cursor = indexOfContext(context.children, fragment);
             const endContext = fragment.end as Context | undefined;
             // the range of a fragment never begins before its own marker, so the search for
             // its end can start from there instead of walking the whole list of siblings
@@ -1504,23 +1572,23 @@ export const internalRender = (
                 ? -1
                 : context.children[endHint] === endContext
                   ? endHint
-                  : context.children.indexOf(endContext, Math.max(context._cursor, 0));
-            if (endIndex >= context._cursor) {
+                  : context.children.indexOf(endContext, Math.max(currentRender.cursor, 0));
+            if (endIndex >= currentRender.cursor) {
                 previousRange = new Set();
-                for (let i = context._cursor; i <= endIndex; i++) {
+                for (let i = currentRender.cursor; i <= endIndex; i++) {
                     previousRange.add(context.children[i]);
                 }
             }
         } else {
-            context._cursor = 0;
+            currentRender.cursor = 0;
             currentKeys = context.keys;
             currentRefs = context.refs;
             context.keys = undefined;
         }
 
-        const start = context._cursor;
+        const start = currentRender.cursor;
         // a nested render of this same context must not be taken for a move of this one
-        context._shift = 0;
+        currentRender.shift = 0;
 
         renderTemplate(context, rootContext, template, namespace, currentKeys, currentRefs, fragment);
 
@@ -1528,7 +1596,7 @@ export const internalRender = (
         // out of the document right away, while their contexts are released only once the
         // render has settled: a keyed node may still be re-inserted somewhere else before it
         // ends, and releasing it here would throw away the state its key is meant to preserve
-        const currentIndex = context._cursor;
+        const currentIndex = currentRender.cursor;
         // a render that emptied the whole list takes the nodes out in one step: the parent holds
         // exactly what is being dropped, so it can be emptied instead of being asked to remove
         // its children one by one. `detachNode` then finds them already out of it and only has
@@ -1566,21 +1634,24 @@ export const internalRender = (
         }
 
         // the document is rearranged once, and only if something actually moved
-        if (context._shift) {
+        if (currentRender.shift) {
             reconcileNodes(context, start, currentIndex);
         }
 
         return context.children;
     } finally {
-        // the walk this one interrupted resumes where it was, moved by as much as this render
-        // grew or shrank the list before it: the contexts it dropped or inserted all sit in the
-        // range it owns, which the interrupted walk has already stepped over
-        context._cursor =
-            previousCursor === undefined ? undefined : previousCursor + (context.children.length - previousLength);
-        context._shift = previousShift;
-        if (--rootContext._depth === 0) {
+        // the walk this one interrupted resumes where it was. When it was walking this very
+        // context — a fragment rendered again while the walk of its parent was suspended — the
+        // contexts this render dropped or inserted sit in a range that walk has already stepped
+        // over, so it resumes that much further along; a render of a child moved nothing of its
+        render.cursor =
+            previousParent === context ? previousCursor + (context.children.length - previousLength) : previousCursor;
+        render.parent = previousParent;
+        render.shift = previousShift;
+        if (--render.depth === 0) {
             releaseDetachedContexts(rootContext);
         }
+        currentRender = previousRender;
     }
 };
 

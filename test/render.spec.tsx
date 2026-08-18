@@ -1286,6 +1286,85 @@ describe(
         });
 
         describe('hooks', () => {
+            it('should be reachable by importing them', () => {
+                const effects: string[] = [];
+                const Counter: DNA.FunctionComponent = () => {
+                    // no second argument: the hooks find the fragment that is rendering
+                    const [count, setCount] = DNA.useState(0);
+                    const doubled = DNA.useMemo(() => count * 2, [count]);
+                    const seen = DNA.useRef(0);
+                    seen.current = count;
+                    DNA.useEffect(() => {
+                        effects.push(`ran:${count}`);
+                    }, [count]);
+
+                    return (
+                        <button
+                            type="button"
+                            id={DNA.useId('counter')}
+                            onclick={() => setCount(count + 1)}>
+                            {count}/{doubled}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Counter />, wrapper);
+                const button = wrapper.querySelector('button') as HTMLButtonElement;
+                expect(wrapper.textContent).toBe('0/0');
+                expect(button.id).not.toBe('');
+
+                button.click();
+                expect(wrapper.textContent).toBe('1/2');
+                expect(effects).toEqual(['ran:0', 'ran:1']);
+                // the same fragment, so the same identifier
+                expect(wrapper.querySelector('button')?.id).toBe(button.id);
+            });
+
+            it('should hand every function component the same hooks object', () => {
+                const received: unknown[] = [];
+                const Test: DNA.FunctionComponent = (props, hooks) => {
+                    received.push(hooks);
+
+                    return <i />;
+                };
+
+                DNA.render([<Test />, <Test />, <Test />], wrapper);
+
+                // one object for the whole page rather than one per fragment
+                expect(received).toHaveLength(3);
+                expect(new Set(received).size).toBe(1);
+            });
+
+            it('should refuse a hook called outside a render', () => {
+                expect(() => DNA.useState(0)).toThrow(
+                    '`useState` can only be called while a function component renders'
+                );
+                expect(() => DNA.useRenderContext()).toThrow(
+                    '`useRenderContext` can only be called while a function component renders'
+                );
+            });
+
+            it('should keep the hooks of a fragment rendering inside another one', () => {
+                const Inner: DNA.FunctionComponent = () => {
+                    const [value] = DNA.useState('inner');
+
+                    return <b>{value}</b>;
+                };
+                const Outer: DNA.FunctionComponent = () => {
+                    const [value] = DNA.useState('outer');
+
+                    return (
+                        <span>
+                            {value}
+                            <Inner />
+                        </span>
+                    );
+                };
+
+                DNA.render(<Outer />, wrapper);
+                expect(wrapper.textContent).toBe('outerinner');
+            });
+
             it('should re-render on state change', () => {
                 const render = vi.fn();
                 const Test: DNA.FunctionComponent = (props, { useState }) => {
@@ -2884,6 +2963,44 @@ describe(
                     // the pass that placed the first one cannot place it again for the second
                     expect(wrapper.children.length).toBe(2);
                     expect(wrapper.textContent).toBe('firstsecond');
+                });
+            });
+
+            /**
+             * A context is allocated once per node a template renders, so a list of a thousand
+             * rows makes thousands of them. What a render keeps while it walks — how deep it is,
+             * where it is among the children of a parent, what it moved, what it detached — is
+             * true of the render and not of the nodes it visits, and a field for each of those on
+             * every context is a slot held empty thousands of times over. This says which fields
+             * a context carries, so that adding one is a decision and not an accident.
+             */
+            describe('what a context carries', () => {
+                it('should hold no field belonging to the render', () => {
+                    DNA.render(
+                        <ul>
+                            <li key="a">
+                                <span>a</span>
+                            </li>
+                        </ul>,
+                        wrapper
+                    );
+
+                    // the context of a node the renderer created lives in the children of its
+                    // parent; only a render root keeps one on the node itself
+                    const root = Object.getOwnPropertySymbols(wrapper)
+                        .map((symbol) => (wrapper as unknown as Record<symbol, unknown>)[symbol])
+                        .find(
+                            (candidate): candidate is { children: Record<string, unknown>[] } =>
+                                !!candidate && typeof candidate === 'object' && 'children' in candidate
+                        );
+
+                    expect(root).toBeDefined();
+                    const context = (root as { children: Record<string, unknown>[] }).children[0];
+                    const fields = Object.keys(context);
+                    for (const field of ['contexts', '_cursor', '_shift', '_detached', '_depth', '_releasing']) {
+                        expect(fields).not.toContain(field);
+                    }
+                    expect(fields).toHaveLength(17);
                 });
             });
 

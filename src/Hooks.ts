@@ -63,6 +63,41 @@ const isCleanup = (fn: unknown): fn is Cleanup => {
 };
 
 /**
+ * The hooks of the fragment that is rendering, if any.
+ *
+ * A hook is called from inside a function component, so the fragment it belongs to is the one the
+ * renderer is walking: it does not have to be handed over, and a hook can be imported and called
+ * like the function it is. The pointer is set around the call of the function component and put
+ * back the way it was found, so that a fragment rendering inside another one — a state setter
+ * called while the function is still running — leaves the one underneath where it was.
+ */
+let currentHooks: Hooks | null = null;
+
+/**
+ * Point the hooks at the fragment that is about to render, and answer with the one they pointed at.
+ * @param hooks The hooks of the fragment, or `null` outside a render.
+ * @returns The hooks that were current.
+ */
+export const setCurrentHooks = (hooks: Hooks | null): Hooks | null => {
+    const previous = currentHooks;
+    currentHooks = hooks;
+    return previous;
+};
+
+/**
+ * The hooks of the fragment that is rendering.
+ * @param name The name of the hook asking, for the error.
+ * @returns The current hooks.
+ * @throws If no function component is rendering.
+ */
+const requireHooks = (name: string): Hooks => {
+    if (!currentHooks) {
+        throw new Error(`\`${name}\` can only be called while a function component renders`);
+    }
+    return currentHooks;
+};
+
+/**
  * The hooks of a function component.
  *
  * They belong to the context of the fragment and outlive its renders: the state they keep, the
@@ -99,11 +134,6 @@ export class Hooks {
     private readonly requestRender: (hooks: Hooks) => void;
 
     /**
-     * The hooks handed to the function component on every render.
-     */
-    readonly api: FunctionComponentHooks;
-
-    /**
      * The context the fragment is rendered into.
      */
     context: Context;
@@ -136,16 +166,6 @@ export class Hooks {
         this.context = renderContext;
         this.rootContext = renderContext;
         this.namespace = '';
-        this.api = {
-            useState: this.useState.bind(this),
-            useRef: this.useRef.bind(this),
-            useMemo: this.useMemo.bind(this),
-            useCallback: this.useCallback.bind(this),
-            useEffect: this.useEffect.bind(this),
-            useElement: (tagName: string, options?: ElementCreationOptions) => this.useElement(tagName, options),
-            useId: (suffix?: string) => this.useId(suffix),
-            useRenderContext: () => this.context,
-        };
     }
 
     /**
@@ -352,3 +372,118 @@ export class Hooks {
         this.index = 0;
     }
 }
+
+/* -------------------------------------------------------------------------------------------------
+ * The hooks
+ * ---------------------------------------------------------------------------------------------- */
+
+/**
+ * Keep a value across the renders of a function component, and render it again when it changes.
+ * The setter accepts the value or a function that receives the current one and returns the next,
+ * and keeps its identity for the whole life of the fragment. It answers whether the value changed,
+ * and takes a second argument to write without asking for a render.
+ * @param initialValue The initial value, or a function that produces it.
+ * @returns The value and its setter.
+ * @throws If no function component is rendering.
+ */
+export const useState = <T = unknown>(
+    initialValue: T
+): [T, (newValue: StateAction<T>, requestUpdate?: boolean) => boolean] =>
+    requireHooks('useState').useState(initialValue);
+
+/**
+ * Keep a mutable reference across the renders of a function component.
+ * Writing its `current` does not render anything.
+ * @param initialValue The initial value of the reference.
+ * @returns The reference.
+ * @throws If no function component is rendering.
+ */
+export function useRef<T>(initialValue: T): Ref<T>;
+export function useRef<T = undefined>(): Ref<T | undefined>;
+export function useRef<T>(initialValue?: T): Ref<T | undefined> {
+    return requireHooks('useRef').useRef(initialValue);
+}
+
+/**
+ * Keep the result of a computation across the renders of a function component, and compute it
+ * again when one of the dependencies changes.
+ * @param factory The computation.
+ * @param deps The dependencies it is computed again for.
+ * @returns The memoized result.
+ * @throws If no function component is rendering.
+ */
+export const useMemo = <T = unknown>(factory: () => T, deps?: unknown[]): T =>
+    requireHooks('useMemo').useMemo(factory, deps);
+
+/**
+ * Keep a callback across the renders of a function component, and build it again when one of the
+ * dependencies changes.
+ * @param callback The callback.
+ * @param deps The dependencies it is built again for.
+ * @returns The memoized callback.
+ * @throws If no function component is rendering.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+export const useCallback = <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]): T =>
+    requireHooks('useCallback').useCallback(callback, deps);
+
+/**
+ * Run a callback once the fragment is in the document, and again when one of the dependencies
+ * changes. It may return a cleanup, which runs before the next call and when the fragment is gone.
+ * @param effect The callback.
+ * @param deps The dependencies it runs again for.
+ * @throws If no function component is rendering.
+ */
+export const useEffect = (effect: Effect, deps?: unknown[]): void => {
+    requireHooks('useEffect').useEffect(effect, deps);
+};
+
+/**
+ * Keep an element across the renders of a function component, for a template to place.
+ * @param tagName The tag name of the element.
+ * @param options The element creation options.
+ * @returns The element.
+ * @throws If no function component is rendering.
+ */
+export function useElement<K extends keyof HTMLTagNameMap>(
+    tagName: K,
+    options?: ElementCreationOptions
+): HTMLTagNameMap[K];
+export function useElement<T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+export function useElement(tagName: string, options?: ElementCreationOptions): HTMLElement {
+    return requireHooks('useElement').useElement(tagName, options);
+}
+
+/**
+ * Generate an identifier unique to the fragment, for a label to point at a field with.
+ * @param suffix A suffix to tell two identifiers of the same fragment apart.
+ * @returns The identifier.
+ * @throws If no function component is rendering.
+ */
+export const useId = (suffix?: string): string => requireHooks('useId').useId(suffix);
+
+/**
+ * The context the fragment is being rendered into.
+ * It is the bookkeeping of the renderer: reaching for it from a function component is discouraged.
+ * @returns The render context.
+ * @throws If no function component is rendering.
+ */
+export const useRenderContext = (): Context => requireHooks('useRenderContext').context;
+
+/**
+ * The hooks a function component is handed as its second argument.
+ *
+ * One object for the whole page rather than one per fragment: the hooks read the fragment that is
+ * rendering off the renderer, so there is nothing to bind and nothing to keep. It is here for the
+ * components that take it — importing the hooks is the way to reach them now.
+ */
+export const hooks: FunctionComponentHooks = {
+    useState,
+    useRef,
+    useMemo,
+    useCallback,
+    useEffect,
+    useElement,
+    useId,
+    useRenderContext,
+};
