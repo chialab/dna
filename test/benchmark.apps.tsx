@@ -100,6 +100,115 @@ const createHost = () => {
 };
 
 /**
+ * The floor every other implementation is read against: no framework, rows cloned from a
+ * template and patched by hand.
+ * @returns The implementation.
+ */
+const vanilla = (): App => {
+    const host = createHost();
+    const table = document.createElement('table');
+    table.className = 'table table-hover table-striped test-data';
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    host.appendChild(table);
+
+    const template = document.createElement('tr');
+    template.innerHTML =
+        "<td class='col-md-1'> </td><td class='col-md-4'><a> </a></td>" +
+        "<td class='col-md-1'><a><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td>" +
+        "<td class='col-md-6'></td>";
+
+    let data: Row[] = [];
+    let nodes: HTMLTableRowElement[] = [];
+    let selectedNode: HTMLTableRowElement | undefined;
+
+    const createRow = (row: Row) => {
+        const tr = template.cloneNode(true) as HTMLTableRowElement;
+        const first = tr.firstChild as HTMLElement;
+        const anchor = (first.nextSibling as HTMLElement).firstChild as HTMLElement;
+        (first.firstChild as Text).nodeValue = String(row.id);
+        (anchor.firstChild as Text).nodeValue = row.label;
+        return tr;
+    };
+
+    // only the rows the store gained are built, which is what makes an append an append
+    const appendRows = () => {
+        for (let i = nodes.length, len = data.length; i < len; i++) {
+            const tr = createRow(data[i]);
+            nodes[i] = tr;
+            tbody.appendChild(tr);
+        }
+    };
+
+    const removeAllRows = () => {
+        tbody.textContent = '';
+        nodes = [];
+    };
+
+    const unselect = () => {
+        if (selectedNode) {
+            selectedNode.className = '';
+            selectedNode = undefined;
+        }
+    };
+
+    return {
+        name: 'vanilla',
+        host,
+        run() {
+            removeAllRows();
+            data = buildData(1000);
+            appendRows();
+            unselect();
+        },
+        runLots() {
+            removeAllRows();
+            data = buildData(10000);
+            appendRows();
+            unselect();
+        },
+        add() {
+            data = data.concat(buildData(1000));
+            appendRows();
+        },
+        update() {
+            for (let i = 0, len = data.length; i < len; i += 10) {
+                data[i].label += ' !!!';
+                (nodes[i].childNodes[1].childNodes[0].firstChild as Text).nodeValue = data[i].label;
+            }
+        },
+        clear() {
+            data = [];
+            removeAllRows();
+            unselect();
+        },
+        swapRows() {
+            if (data.length > 998) {
+                const row = data[1];
+                data[1] = data[998];
+                data[998] = row;
+                tbody.insertBefore(nodes[998], nodes[2]);
+                tbody.insertBefore(nodes[1], nodes[999]);
+                const node = nodes[998];
+                nodes[998] = nodes[1];
+                nodes[1] = node;
+            }
+        },
+        selectRow() {
+            unselect();
+            selectedNode = nodes[1];
+            selectedNode.className = 'danger';
+        },
+        removeRow() {
+            nodes[1].remove();
+            nodes.splice(1, 1);
+            data.splice(1, 1);
+            unselect();
+        },
+    };
+};
+
+/**
  * The implementation that gives every row a key, so that the renderer moves the nodes of
  * a reorder instead of rewriting them.
  * @returns The implementation.
@@ -335,7 +444,7 @@ const dnaNonKeyed = (): App => {
     };
 };
 
-export const apps: App[] = [dnaKeyed(), dnaNonKeyed()];
+export const apps: App[] = [vanilla(), dnaKeyed(), dnaNonKeyed()];
 export const isolate = (app: App) => {
     for (const other of apps) {
         if (other !== app) {
