@@ -390,7 +390,7 @@ const convertStyles = (value: StyleValue): Record<string, string> => {
  */
 const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, isNew?: boolean) => {
     if (value == null) {
-        if (!isNew) {
+        if (!isNew && oldValue != null) {
             node.removeAttribute('class');
         }
         return;
@@ -398,7 +398,7 @@ const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, 
     // written and read through the attribute, the way the style is: outside the HTML namespace
     // `className` is a read-only `SVGAnimatedString`, so assigning it throws and reading it never
     // matches the string the last render applied — while the attribute is the same one everywhere
-    if (typeof value === 'string' && (isNew || (node.getAttribute('class') ?? '') === (oldValue || ''))) {
+    if (typeof value === 'string' && (isNew || value === oldValue)) {
         node.setAttribute('class', value);
         return;
     }
@@ -429,12 +429,12 @@ const setClasses = (node: HTMLElement, value: ClassValue, oldValue: ClassValue, 
  */
 const setStyle = (node: HTMLElement, value: StyleValue, oldValue: StyleValue, isNew?: boolean) => {
     if (value == null) {
-        if (!isNew) {
+        if (!isNew && oldValue != null) {
             node.removeAttribute('style');
         }
         return;
     }
-    if (typeof value === 'string' && (isNew || node.getAttribute('style') === oldValue)) {
+    if (typeof value === 'string' && (isNew || value === oldValue)) {
         node.setAttribute('style', value);
         return;
     }
