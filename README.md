@@ -109,7 +109,9 @@ This will generate the bundles in the `dist` folder, as well as the declaration 
 
 ### Test the project
 
-[![Tested with BrowserStack](https://img.shields.io/badge/Tested%20with-BrowserStack-orange?logo=browserstack&logoColor=white)](https://www.browserstack.com/)
+[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=REPLACE_WITH_BROWSERSTACK_BADGE_KEY)](https://automate.browserstack.com/public-build/REPLACE_WITH_BROWSERSTACK_BADGE_KEY)
+
+This project is tested with BrowserStack.
 
 Run the `test` script:
 
