@@ -109,10 +109,18 @@ This will generate the bundles in the `dist` folder, as well as the declaration 
 
 ### Test the project
 
+[![Tested with BrowserStack](https://img.shields.io/badge/Tested%20with-BrowserStack-orange?logo=browserstack&logoColor=white)](https://www.browserstack.com/)
+
 Run the `test` script:
 
 ```
 yarn test
+```
+
+Cross-browser tests run on real devices and browsers thanks to [BrowserStack](https://www.browserstack.com/). To run them locally:
+
+```
+yarn test:browserstack
 ```
 
 ---
