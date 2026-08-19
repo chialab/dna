@@ -109,10 +109,20 @@ This will generate the bundles in the `dist` folder, as well as the declaration 
 
 ### Test the project
 
+[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=REPLACE_WITH_BROWSERSTACK_BADGE_KEY)](https://automate.browserstack.com/public-build/REPLACE_WITH_BROWSERSTACK_BADGE_KEY)
+
+This project is tested with BrowserStack.
+
 Run the `test` script:
 
 ```
 yarn test
+```
+
+Cross-browser tests run on real devices and browsers thanks to [BrowserStack](https://www.browserstack.com/). To run them locally:
+
+```
+yarn test:browserstack
 ```
 
 ---
