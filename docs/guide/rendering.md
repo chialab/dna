@@ -191,6 +191,175 @@ Injecting uncontrolled HTML content may exposes your application to XSS vulnerab
 
 :::
 
+## Signals
+
+DNA templates can interpolate signals. When a signal changes, DNA updates **only the nodes bound to it**, without re-rendering the component that owns the template.
+
+### The built-in implementation
+
+DNA carries its own signals, so there is nothing to install and nothing to configure:
+
+```ts
+import { Signal } from '@chialab/dna';
+
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+const dispose = Signal.effect(() => {
+    document.title = `${count.get()} items`;
+});
+```
+
+`Signal.State` and `Signal.Computed` follow the shape of the [TC39 proposal](https://github.com/tc39/proposal-signals) — a value is read with `get()` and written with `set()` — with one difference that matters here: **changes are delivered synchronously**. The DOM is patched before the assignment that caused it returns, which is the same guarantee a component property gives.
+
+`Signal.effect` runs a callback whenever one of the signals it reads changes, and returns a function that stops it. `Signal.untrack` reads without subscribing, `peek()` does the same for a single signal, and `Signal.batch` holds the effects back until a group of writes is done, so they settle once.
+
+A derived value is computed only when something reads it, and an effect below it does not run when the computation returns the same result as before.
+
+
+### Content
+
+A signal interpolated as content is unwrapped and kept up to date:
+
+::: code-group
+
+```tsx [jsx]
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+render(
+    <p>
+        {count} doubled is {double}
+    </p>,
+    document.body
+);
+
+count.set(21); // renders "21 doubled is 42"
+```
+
+```ts [html]
+const count = new Signal.State(0);
+const double = new Signal.Computed(() => count.get() * 2);
+
+render(html`<p>${count} doubled is ${double}</p>`, document.body);
+
+count.set(21); // renders "21 doubled is 42"
+```
+
+:::
+
+The `$signal` directive does the same thing explicitly, which is useful when a value may or may not be a signal.
+
+### Attributes and properties
+
+A signal can also be bound to an attribute, a property or an event listener. Only that attribute is updated on change: the node is never recreated.
+
+```tsx
+const label = new Signal.State('Save');
+const disabled = new Signal.State(false);
+
+<button
+    disabled={disabled}
+    aria-label={label}>
+    {label}
+</button>;
+```
+
+### The signals of a property
+
+Every declared property is held by a signal, and a component reaches it through `signals`:
+
+```tsx
+@customElement('user-card')
+class UserCard extends Component {
+    @property() first = '';
+    @property() last = '';
+
+    // built once, and it follows both properties from then on
+    private readonly full = new Signal.Computed(() => `${this.signals.first.get()} ${this.signals.last.get()}`);
+
+    render() {
+        return <h1>{this.full}</h1>;
+    }
+}
+```
+
+It is the property itself rather than a copy of it, so a derived value stays in step without an observer, and only the nodes bound to it are patched when it changes.
+
+Reading a property the usual way inside a computation depends on it just the same — `new Signal.Computed(() => this.title.toUpperCase())` follows `title` — so `signals` is what you reach for when you need the signal as a value: to hand it to a template, to a child component, or to `Signal.effect`.
+
+Assignment is unchanged: `this.title = 'x'` still validates the value, reflects the attribute, runs the observers and fires the event. Signals are read there, not written.
+
+### What a render depends on
+
+A component computes its template inside a computation, so it renders again when one of the signals it read has changed — the properties it touched, and any other signal it read along the way:
+
+```tsx
+const theme = new Signal.State('light');
+
+@customElement('themed-box')
+class ThemedBox extends Component {
+    render() {
+        return <div class={theme.get()} />;
+    }
+}
+```
+
+A property the template never reads no longer renders the component, and a group of writes made together — through `assign`, or between `collectUpdatesStart` and `collectUpdatesEnd` — renders it once.
+
+`requestUpdate` and `forceUpdate` are unchanged: they ask for a render that no change caused.
+
+Two declarations stop a render, as they always have. A property declared `update: false` says that changing it drives nothing, so reading it never depends on it and changing it leaves the DOM as it was — its signal is still there through [`signals`](#the-signals-of-a-property) for whoever wants to follow it on purpose. And `shouldUpdate` refusing a change leaves the DOM alone for the render that change would have caused.
+
+### Computed properties
+
+A property declared with `compute` derives its value from the signals its computation reads, instead of holding one:
+
+```tsx
+@customElement('user-card')
+class UserCard extends Component {
+    @property() first = '';
+    @property() last = '';
+
+    @property({
+        compute(this: UserCard) {
+            return `${this.first} ${this.last}`.trim();
+        },
+    })
+    readonly full!: string;
+
+    render() {
+        return <h1>{this.signals.full}</h1>;
+    }
+}
+```
+
+The computation runs with the component as its `this`, so it reads the other properties the way the component would. It runs only when something reads the property, and only when one of the values it read has changed — reading `full` twice in a row computes it once.
+
+The property is read-only: assigning it throws. It also cannot declare `attribute`, `event`, `observe`, `observers`, `defaultValue`, `setter`, `set` or `validate`, since each of those needs a write to hang off, and a computed property has none.
+
+It replaces the pattern of a getter recomputed on every read paired with an observer that keeps something in sync: the value is memoized, and what it depends on is worked out on its own.
+
+### Updates are synchronous
+
+A signal is written and the DOM is patched before the assignment returns, the same way a component property behaves:
+
+```ts
+count.set(1);
+element.textContent; // already up to date
+```
+
+Use `Signal.batch` when a group of writes belongs together, so that what depends on them runs once instead of once per write:
+
+```ts
+import { Signal } from '@chialab/dna';
+
+Signal.batch(() => {
+    firstName.set('Ada');
+    lastName.set('Lovelace');
+});
+```
+
 ## Function components
 
 Sometimes, you may want to break up a template into smaller parts without having to define new Custom Elements. In this case, you can use function components.
@@ -430,6 +599,130 @@ function Timer({ interval }, { useState, useEffect }) {
     }, [interval]);
 
     return h('span', null, time, ' seconds');
+}
+```
+
+:::
+
+### The `useSignal` hook
+
+The `useSignal` hook creates a [signal](#signals) that is preserved across renders.
+
+Writing it does not render the function component by itself: what follows it is whatever reads it. This is what makes it different from `useState`, whose value belongs to that fragment alone and always re-renders it.
+
+::: code-group
+
+```tsx [jsx]
+function Counter(props, { useSignal }) {
+    const count = useSignal(0);
+
+    return (
+        <button
+            type="button"
+            on:click={() => count.set(count.peek() + 1)}>
+            clicked {count} times
+        </button>
+    );
+}
+```
+
+```ts [html]
+function Counter(props, { useSignal }) {
+    const count = useSignal(0);
+
+    return html`<button
+        type="button"
+        @click=${() => count.set(count.peek() + 1)}>
+        clicked ${count} times
+    </button>`;
+}
+```
+
+:::
+
+Here `count` is interpolated, so only the text node is patched when it changes, and the handler reads it with `peek()` so that the component does not subscribe to it. Use [`useSignalValue`](#the-usesignalvalue-hook) when you need the value itself.
+
+### The `useComputed` hook
+
+The `useComputed` hook creates a [signal](#signals) derived from the ones its computation reads, preserved across renders.
+
+Like `useMemo`, the computation is captured once: a computation that reads the props of the function component needs them in its dependency list. The signals it reads are tracked on their own and do not belong there.
+
+::: code-group
+
+```tsx [jsx]
+function Total({ items, taxRate }, { useComputed }) {
+    const total = useComputed(() => items.get().length * taxRate, [taxRate]);
+
+    return <span>{total}</span>;
+}
+```
+
+```ts [html]
+function Total({ items, taxRate }, { useComputed }) {
+    const total = useComputed(() => items.get().length * taxRate, [taxRate]);
+
+    return html`<span>${total}</span>`;
+}
+```
+
+:::
+
+### The `useSignalValue` hook
+
+The `useSignalValue` hook reads a [signal](#signals) and re-renders the function component whenever it changes.
+
+Interpolating a signal already keeps a template up to date, but it only fills a hole in it. A signal read directly in the body is just a value: the function does not run inside a computation, so nothing notices it changing. `useSignalValue` gives you the value **and** the subscription, which is what a condition or a computation needs.
+
+::: code-group
+
+```tsx [jsx]
+function Status({ connection }, { useSignalValue }) {
+    const online = useSignalValue(connection);
+
+    return online ? <span class="on">Connected</span> : <button type="button">Reconnect</button>;
+}
+```
+
+```ts [html]
+function Status({ connection }, { useSignalValue }) {
+    const online = useSignalValue(connection);
+
+    return online
+        ? html`<span class="on">Connected</span>`
+        : html`<button type="button">Reconnect</button>`;
+}
+```
+
+:::
+
+Only the fragment of the function component is re-rendered, not the component that contains it.
+
+### The `useSignalEffect` hook
+
+The `useSignalEffect` hook runs a callback whenever one of the [signals](#signals) it reads changes, for as long as the fragment lives. It runs once immediately, and the callback may return its own cleanup function.
+
+It is the lifecycle-aware counterpart of `Signal.effect`: the subscription is stopped when the function component is unmounted, so you do not have to dispose of it yourself. The second argument is the usual list of dependencies, which tells when the effect has to be created again — the signals it reads are tracked automatically and do not belong there.
+
+::: code-group
+
+```tsx [jsx]
+function Title({ prefix, count }, { useSignalEffect }) {
+    useSignalEffect(() => {
+        document.title = `${prefix}: ${count.get()} items`;
+    }, [prefix]);
+
+    return null;
+}
+```
+
+```ts [html]
+function Title({ prefix, count }, { useSignalEffect }) {
+    useSignalEffect(() => {
+        document.title = `${prefix}: ${count.get()} items`;
+    }, [prefix]);
+
+    return null;
 }
 ```
 

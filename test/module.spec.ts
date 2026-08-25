@@ -36,7 +36,9 @@ describe(
             [DNA.isHydrating, 'isHydrating', 'function'],
             [DNA.$parse, '$parse', 'function'],
             [DNA.$await, '$await', 'function'],
+            [DNA.$signal, '$signal', 'function'],
             [DNA.$until, '$until', 'function'],
+            [DNA.Signal, 'Signal', 'object'],
         ] as const;
 
         for (const [value, ref, type] of EXPECTED_EXPORT_MAP) {

@@ -1,4 +1,5 @@
 import { type FunctionComponent, h, type Template } from './JSX';
+import type { ReadonlySignal } from './Signal';
 import { getThenableState } from './Thenable';
 
 /**
@@ -23,6 +24,23 @@ const ParseFunction: FunctionComponent<{ source: string }> = (props, { useMemo }
  * @returns The virtual DOM template function.
  */
 export const $parse = (string: string): Template => h(ParseFunction, { source: string });
+
+/**
+ * The signal renderer.
+ * It subscribes to the signal and re-renders its own fragment (and only that) on change.
+ * @param props The properties of the component.
+ * @returns The current value of the signal.
+ */
+const SignalFunction: FunctionComponent<{ signal: ReadonlySignal }> = ({ signal }, { useSignalValue }) =>
+    useSignalValue(signal) as Template;
+
+/**
+ * Render the value of a signal and keep it up to date.
+ * Signals interpolated in a template are wrapped by this directive automatically.
+ * @param signal The signal to render.
+ * @returns The virtual DOM template function.
+ */
+export const $signal = (signal: ReadonlySignal): Template => h(SignalFunction, { signal });
 
 /**
  * Render a promise when it is resolved.

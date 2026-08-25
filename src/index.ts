@@ -70,7 +70,7 @@ export {
     customElement,
     define,
 } from './define';
-export { $await, $parse, $until } from './directives';
+export { $await, $parse, $signal, $until } from './directives';
 export type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 export type {
     AsyncEvent,
@@ -93,6 +93,7 @@ export { isHydrating } from './hydration';
 export type {
     Attrs,
     FunctionComponent,
+    FunctionComponentHooks,
     JSXInternal as JSX,
     Members,
     Props,
@@ -115,3 +116,4 @@ export {
 } from './property';
 export type { Context } from './render';
 export { render } from './render';
+export * as Signal from './Signal';

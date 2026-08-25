@@ -4,6 +4,7 @@ import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
 import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
 import type { Context } from './render';
+import type { Computed, ReadonlySignal, Options as SignalOptions, State } from './Signal';
 
 /**
  * Identify virtual dom objects.
@@ -35,6 +36,7 @@ type Values<T> = T[keyof T] extends never ? EmptyObject : T[keyof T];
 type ReservedKeys =
     | 'extends'
     | 'realm'
+    | 'signals'
     | 'collectingUpdates'
     | 'updateScheduled'
     | 'is'
@@ -125,6 +127,14 @@ export const Fragment: FunctionComponent<{
 }> = (props) => props.children;
 
 /**
+ * Accept a signal in place of the value of each property.
+ * Signals interpolated in a template are unwrapped and kept up to date by the renderer.
+ */
+export type WithSignals<T> = {
+    [K in keyof T]: T[K] | ReadonlySignal<T[K]>;
+};
+
+/**
  * Get render properties for keyed nodes.
  */
 export type KeyedProperties = {
@@ -163,6 +173,33 @@ export type ElementProperties = {
 type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs<T>, 'style' | 'class'>;
 
 /**
+ * The hooks a function component is handed on every render.
+ * The object is built once per fragment and handed over again by each of its renders, so that
+ * a component that destructures it always gets the same methods.
+ */
+export type FunctionComponentHooks = {
+    useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>, requestUpdate?: boolean) => void];
+    useRef: {
+        <T>(initialValue: T): Ref<T>;
+        <T = undefined>(): Ref<T | undefined>;
+    };
+    useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+    // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+    useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
+    useEffect: (effect: Effect, deps?: unknown[]) => void;
+    useSignal: <T>(initialValue: T, options?: SignalOptions<T>) => State<T>;
+    useComputed: <T>(computation: () => T, deps?: unknown[], options?: SignalOptions<T>) => Computed<T>;
+    useSignalValue: <T>(signal: ReadonlySignal<T>) => T;
+    useSignalEffect: (effect: Effect, deps?: unknown[]) => void;
+    useElement: {
+        <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+        <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+    };
+    useId: (suffix?: string) => string;
+    useRenderContext: () => Context;
+};
+
+/**
  * A function that returns a template.
  *
  * @param props A set of properties with children.
@@ -172,23 +209,7 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs
 // biome-ignore lint/suspicious/noExplicitAny: Function components can have any properties.
 export type FunctionComponent<P = any> = (
     props: P & KeyedProperties & TreeProperties,
-    hooks: {
-        useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>) => void];
-        useRef: {
-            <T>(initialValue: T): Ref<T>;
-            <T = undefined>(): Ref<T | undefined>;
-        };
-        useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
-        // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
-        useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
-        useEffect: (effect: Effect, deps?: unknown[]) => void;
-        useElement: {
-            <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
-            <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
-        };
-        useId: (suffix?: string) => string;
-        useRenderContext: () => Context;
-    }
+    hooks: FunctionComponentHooks
 ) => Template;
 
 /**
@@ -211,12 +232,11 @@ export type VFunction<T extends FunctionComponent> = {
 /**
  * Get render properties for an element instance.
  */
-type VElementRenderProperties<T extends HTMLElement> = Members<T> &
-    RenderAttributes<T> &
+type VElementRenderProperties<T extends HTMLElement> = WithSignals<
+    Members<T> & RenderAttributes<T> & EventProperties & ElementProperties
+> &
     KeyedProperties &
-    TreeProperties &
-    EventProperties &
-    ElementProperties;
+    TreeProperties;
 
 /**
  * The interface of an HTML node used as JSX tag.
@@ -233,7 +253,11 @@ export type VElement<T extends HTMLElement = HTMLElement> = {
 /**
  * Get render properties for a slot tag.
  */
-type VSlotRenderProperties = RenderAttributes<'slot'> & KeyedProperties & TreeProperties & EventProperties;
+type VSlotRenderProperties = WithSignals<Omit<RenderAttributes<'slot'>, 'name'> & EventProperties> &
+    // the slot name selects which light DOM children to render: it is structural, not a bound property
+    Pick<RenderAttributes<'slot'>, 'name'> &
+    KeyedProperties &
+    TreeProperties;
 
 /**
  * The interface of slot element.
@@ -249,17 +273,17 @@ export type VSlot = {
 /**
  * Get base render properties for a tag.
  */
-type VTagBaseRenderProperties<T extends string> = RenderAttributes<T> &
+type VTagBaseRenderProperties<T extends string> = WithSignals<
+    RenderAttributes<T> & EventProperties & ElementProperties
+> &
     KeyedProperties &
-    TreeProperties &
-    EventProperties &
-    ElementProperties;
+    TreeProperties;
 
 /**
  * Get full render properties for a tag.
  */
 type VTagRenderProperties<T extends string> = (T extends keyof JSXInternal.CustomElements
-    ? Members<JSXInternal.CustomElements[T]>
+    ? WithSignals<Members<JSXInternal.CustomElements[T]>>
     : EmptyObject) &
     VTagBaseRenderProperties<T>;
 
@@ -454,15 +478,15 @@ export namespace JSXInternal {
     export type IntrinsicAttributes = KeyedProperties & EventProperties & TreeProperties & ElementProperties;
 
     export type AutonomousElements = {
-        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: Members<
-            CustomElements[K]
+        [K in keyof CustomElements as CustomElements[K] extends { extends: string } ? never : K]: WithSignals<
+            Members<CustomElements[K]>
         >;
     };
 
     export type CustomizedElements = {
         [K in keyof HTMLTagNameMap]: Values<{
-            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: Members<
-                CustomElements[P]
+            [P in keyof CustomElements as CustomElements[P] extends { extends: K } ? P : never]: WithSignals<
+                Members<CustomElements[P]>
             > & { is: P };
         }>;
     };

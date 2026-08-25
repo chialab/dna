@@ -42,6 +42,12 @@ export const setPrototypeOf: (typeof Object)['setPrototypeOf'] = Object.setProto
 export const hasOwn: (typeof Object)['hasOwnProperty'] = Object.prototype.hasOwnProperty;
 
 /**
+ * Creates a plain object with no prototype.
+ * @returns A plain object.
+ */
+export const plainObject = <T = Record<string, unknown>>(): T => ({ __proto__: null }) as unknown as T;
+
+/**
  * Alias to Object.defineProperty.
  */
 export const defineProperty: (typeof Object)['defineProperty'] = Object.defineProperty;

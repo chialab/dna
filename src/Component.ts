@@ -19,13 +19,16 @@ import {
     getProperties,
     getProperty,
     getPropertyForAttribute,
+    getPropertySignals,
     type PropertyConfig,
     type PropertyObserver,
+    type PropertySignals,
     reflectPropertyToAttribute,
     removeObserver,
 } from './property';
 import { getParentRealm, Realm } from './Realm';
 import { getRootContext, internalRender } from './render';
+import { beginBatch, Effect, endBatch, untrack } from './Signal';
 
 /**
  * A symbol which identify components.
@@ -97,7 +100,7 @@ const disconnect = <T extends ComponentInstance>(element: T): void => {
  * @param ctor The base HTMLElement constructor to extend.
  * @returns The extend class.
  */
-export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>>(ctor: C) =>
+export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>>(ctor: C) => {
     class Component extends (ctor as Constructor<HTMLElement>) {
         /**
          * An array containing the names of the attributes to observe.
@@ -146,6 +149,13 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
         private _updateScheduled = false;
 
         /**
+         * How many times the template has been put in the DOM.
+         * It is what tells a caller that held the updates back whether closing the batch ran the
+         * render it was waiting for, which nothing else reports any more.
+         */
+        private _renders = 0;
+
+        /**
          * The property that changed.
          */
         private _changedProperty: keyof this | null = null;
@@ -154,6 +164,19 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * The initial properties of the component.
          */
         private _initialProps?: Record<Extract<keyof this, string>, this[Extract<keyof this, string>]>;
+
+        /**
+         * The render of the component: it computes the template and puts it in the DOM, and it
+         * runs again whenever one of the signals the template read has changed.
+         */
+        private _render?: Effect;
+
+        /**
+         * The value each property held when the template was last put in the DOM.
+         * Kept only by a component that overrides `shouldUpdate`, which is the only one that
+         * has to be told which properties changed since then.
+         */
+        private _renderedValues?: Map<string, unknown>;
 
         /**
          * A flag to indicate component instances.
@@ -178,6 +201,18 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * The realm instance of the component.
          */
         readonly realm: Realm;
+
+        /**
+         * The signals that hold the properties of the component.
+         *
+         * Reading one inside a computation depends on the property, and assigning the property
+         * runs what depends on it. It is the property itself, not a copy of it, so a derived
+         * value stays in step with it without an observer.
+         * @returns An object with a signal for each declared property.
+         */
+        get signals(): PropertySignals<this> {
+            return getPropertySignals(this);
+        }
 
         /**
          * A list of slot nodes.
@@ -286,6 +321,10 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
             for (const propertyKey in computedProperties) {
                 delete this[propertyKey];
                 const property = computedProperties[propertyKey];
+                if (property.compute) {
+                    // a computed property holds nothing of its own to initialize
+                    continue;
+                }
                 if (typeof property.initializer === 'function') {
                     this[propertyKey] = property.initializer.call(this);
                 } else if (typeof property.defaultValue !== 'undefined') {
@@ -301,6 +340,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
 
             for (const propertyKey in computedProperties) {
                 const property = computedProperties[propertyKey];
+                if (property.compute) {
+                    continue;
+                }
                 if (this._initialProps?.[propertyKey] !== undefined && (!property.get || property.set)) {
                     this[propertyKey] = this._initialProps[propertyKey];
                 }
@@ -589,12 +631,105 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Force an element to re-render.
          */
         forceUpdate() {
-            this.collectUpdatesStart();
-            this.realm.requestUpdate(() => {
-                internalRender(getRootContext(this, true), this.render());
-            });
-            this.collectUpdatesEnd();
-            this.updatedCallback();
+            // a render asked for is not a change to refuse: forgetting what the last one was
+            // made of is what tells `shouldUpdate` there is nothing to be asked about
+            this._renderedValues = undefined;
+
+            if (this._render) {
+                // also hold subsequent runs in a batch: a component that writes a property from
+                // inside `render` would otherwise have that write flushed while the template is
+                // still being computed, triggering a second render before the first one finishes
+                beginBatch();
+                try {
+                    this._render.run();
+                } finally {
+                    endBatch();
+                }
+                return;
+            }
+
+            // the first run is held in a batch of its own: a component that writes a property
+            // from inside `render` would otherwise have that write flushed while the template
+            // is still being computed
+            beginBatch();
+            try {
+                this._render = new Effect(() => {
+                    // the template is computed here, so that what it reads is what the render
+                    // depends on
+                    const template = this.render();
+                    // putting the template in the DOM reads and writes the properties of the
+                    // children, and none of that belongs to what the template depends on
+                    untrack(() => {
+                        if (!this._shouldApply()) {
+                            return;
+                        }
+
+                        // the batch the collection opens has to be closed even by a render that
+                        // throws: the depth it counts belongs to the whole page, and one left
+                        // open holds back every write that follows it, everywhere, for good
+                        this.collectUpdatesStart();
+                        try {
+                            this.realm.requestUpdate(() => {
+                                internalRender(getRootContext(this, true), template);
+                            });
+                        } finally {
+                            this.collectUpdatesEnd();
+                        }
+                        this._renders++;
+                        this.updatedCallback();
+                    });
+                });
+                this._render.run();
+            } finally {
+                endBatch();
+            }
+        }
+
+        /**
+         * Ask `shouldUpdate` about the changes that led here.
+         *
+         * The effect knows that the template is out of date, not what made it so, so the
+         * properties that changed since the last render are worked out by comparing them with
+         * what they held back then. A component that never refuses a change is not asked, and
+         * keeps nothing to be asked with.
+         * @returns True if the template should be put in the DOM.
+         */
+        private _shouldApply(): boolean {
+            if (defaultShouldUpdate.has(this.shouldUpdate)) {
+                return true;
+            }
+
+            const properties = getProperties(this);
+            const previous = this._renderedValues;
+            const current: Map<string, unknown> = new Map();
+            let acceptedChange = false;
+            let refusedChange = false;
+            const gate = this.shouldUpdate as (propertyName: string, oldValue: unknown, newValue: unknown) => boolean;
+            for (const propertyKey in properties) {
+                if (properties[propertyKey as keyof this].compute) {
+                    // a derived value is not a change of its own
+                    continue;
+                }
+                const value = this[propertyKey as keyof this];
+                current.set(propertyKey, value);
+                if (!previous || previous.get(propertyKey) === value) {
+                    continue;
+                }
+                if (gate.call(this, propertyKey, previous.get(propertyKey), value)) {
+                    acceptedChange = true;
+                } else {
+                    refusedChange = true;
+                }
+            }
+
+            // a render no property caused — an external signal, a slotted child, one that was
+            // asked for — has nothing to refuse; only block when every changed property was
+            // refused and at least one changed
+            if (refusedChange && !acceptedChange) {
+                return false;
+            }
+            this._renderedValues = current;
+            return true;
         }
 
         /**
@@ -602,6 +737,9 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         collectUpdatesStart() {
             this._collectingUpdates++;
+            // the writes of the caller are held back, so that what they change together
+            // renders once rather than once each
+            beginBatch();
         }
 
         /**
@@ -610,13 +748,22 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          */
         collectUpdatesEnd() {
             this._collectingUpdates--;
+            // the render is what closing the batch runs, so whether one happened is counted
+            // rather than assumed: the writes of the caller no longer ask for it themselves
+            const renders = this._renders;
+            endBatch();
+            let rendered = this._renders !== renders;
 
             if (this._updateScheduled && this._collectingUpdates === 0) {
                 this._updateScheduled = false;
-                this.requestUpdate();
-                return true;
+                // a render asked for while the updates were held is already the one the batch
+                // just ran, unless the batch ran none
+                if (!rendered) {
+                    this.requestUpdate();
+                    rendered = true;
+                }
             }
-            return false;
+            return rendered;
         }
 
         /**
@@ -651,6 +798,8 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
          * Reset the rendering state of the component.
          */
         private _resetRendering() {
+            this._render?.dispose();
+            this._render = undefined;
             if (!this.realm.active) {
                 return;
             }
@@ -751,7 +900,25 @@ export const extend = <T extends HTMLElement, C extends Constructor<HTMLElement>
                     return super.insertAdjacentElement(where, element);
             }
         }
-    } as unknown as BaseComponentConstructor<T>;
+    }
+
+    // the gate below is the one a component has not touched: knowing it by identity is what
+    // lets a component that never refuses a change pay nothing for the question
+    defaultShouldUpdate.add(Component.prototype.shouldUpdate);
+
+    return Component as unknown as BaseComponentConstructor<T>;
+};
+
+/**
+ * The `shouldUpdate` implementations a component inherits without overriding any.
+ *
+ * There is one per extended base rather than one altogether: every call of {@link extend} builds
+ * a class of its own, so the gate of the last builtin that was extended is not the gate of the
+ * components that extend the others. Holding a single one of them would take every component of
+ * every other base for one that overrides its gate, and ask it about changes it never refuses.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: the gate of any component class.
+const defaultShouldUpdate = new WeakSet<(...args: any[]) => boolean>();
 
 /**
  * A collection of extended builtin HTML constructors.

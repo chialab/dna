@@ -13,6 +13,7 @@ import {
     property,
     type Ref,
     render,
+    Signal,
     type StateAction,
 } from '@chialab/dna';
 import { describe, expectTypeOf, test } from 'vitest';
@@ -383,6 +384,35 @@ describe('typings', () => {
             };
 
             render(<Test />);
+        });
+    });
+
+    describe('signals', () => {
+        test('should accept a signal of a narrower type where a wider one is expected', () => {
+            const narrow = new Signal.State<string>('x');
+            const wide: Signal.ReadonlySignal<string | undefined> = narrow;
+            expectTypeOf(wide.get()).toEqualTypeOf<string | undefined>();
+
+            const derived: Signal.ReadonlySignal<number> = new Signal.Computed(() => 1);
+            expectTypeOf(derived.get()).toEqualTypeOf<number>();
+        });
+
+        test('should refuse an object that is merely shaped like a signal', () => {
+            // reading it is all the renderer could do with it: following a value means being told
+            // when it changes, and only a signal of this graph tells. It used to be accepted here
+            // and rendered once, as an object
+            // @ts-expect-error an object with a `get` method is not a signal
+            const foreign: Signal.ReadonlySignal<string> = { get: () => 'x' };
+            void foreign;
+
+            // @ts-expect-error not even as the value of a property in a template
+            render(<div title={{ get: () => 'x' }} />);
+        });
+
+        test('should accept a plain value or a signal in a template', () => {
+            render(<div title="plain" />);
+            render(<div title={new Signal.State('signal')} />);
+            render(<div title={new Signal.Computed(() => 'derived')} />);
         });
     });
 });
