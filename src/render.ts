@@ -1676,7 +1676,6 @@ const renderTemplate = (
     const isObject = typeof template === 'object';
 
     if (isObject && isVObject(template)) {
-        /* ----- function components ----- */
         if (isVFunction(template)) {
             if (template.type === Fragment) {
                 // a fragment has no identity of its own: its children belong to the context
@@ -1775,7 +1774,6 @@ const renderTemplate = (
             return;
         }
 
-        /* ----- slots ----- */
         if (isVSlot(template)) {
             if (!isComponent(rootContext.node)) {
                 return;
@@ -1793,7 +1791,6 @@ const renderTemplate = (
             return;
         }
 
-        /* ----- elements ----- */
         const { key, children, namespace: namespaceURI = namespace } = template;
         const properties = (template.properties || EMPTY_PROPERTIES) as KeyedProperties &
             TreeProperties &
