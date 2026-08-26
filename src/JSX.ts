@@ -1,9 +1,8 @@
 import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
 import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
-import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
-import type { Context } from './render';
+import type { Context, Effect, Ref, Setter } from './render';
 
 /**
  * Identify virtual dom objects.
@@ -169,26 +168,36 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs
  * @param hooks Hooks methods.
  * @returns A template.
  */
+/**
+ * The hooks a function component is handed on every render.
+ * The object is built once per fragment and handed over again by each of its renders, so that
+ * a component that destructures it always gets the same methods.
+ */
+export type FunctionComponentHooks = {
+    useState: <T = unknown>(initialValue: T) => [T, (value: Setter<T>, requestUpdate?: boolean) => boolean];
+    useRef: {
+        <T>(initialValue: T): Ref<T>;
+        <T = undefined>(): Ref<T | undefined>;
+    };
+    useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
+    // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+    useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
+    useEffect: (effect: Effect, deps?: unknown[]) => void;
+    useElement: {
+        <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+        <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+    };
+    useId: (suffix?: string) => string;
+    useRenderContext: () => Context;
+};
+
+/**
+ * The interface of a functional component.
+ */
 // biome-ignore lint/suspicious/noExplicitAny: Function components can have any properties.
 export type FunctionComponent<P = any> = (
     props: P & KeyedProperties & TreeProperties,
-    hooks: {
-        useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>) => void];
-        useRef: {
-            <T>(initialValue: T): Ref<T>;
-            <T = undefined>(): Ref<T | undefined>;
-        };
-        useMemo: <T = unknown>(factory: () => T, deps?: unknown[]) => T;
-        // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
-        useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]) => T;
-        useEffect: (effect: Effect, deps?: unknown[]) => void;
-        useElement: {
-            <K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
-            <T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
-        };
-        useId: (suffix?: string) => string;
-        useRenderContext: () => Context;
-    }
+    hooks: FunctionComponentHooks
 ) => Template;
 
 /**

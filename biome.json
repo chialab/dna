@@ -110,6 +110,7 @@
         "noConstantBinaryExpressions": "error",
         "noReturnAssign": "error",
         "noVar": "error",
+        "noConfusingVoidType": "off",
         "noConsole": {
           "level": "warn",
           "options": { "allow": ["error", "warn"] }

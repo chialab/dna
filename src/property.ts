@@ -449,9 +449,9 @@ const createPropertyDescriptor = <T extends ComponentInstance, P extends keyof T
 
             // trigger changes
             if (state) {
-                this.stateChangedCallback(name, oldValue, newValue);
+                this.stateChangedCallback(name, oldValue, computedNewValue);
             } else {
-                this.propertyChangedCallback(name, oldValue, newValue);
+                this.propertyChangedCallback(name, oldValue, computedNewValue);
             }
 
             const observers = getPropertyObservers(this as T, name);

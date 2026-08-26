@@ -552,6 +552,52 @@ describe(
                 expect(svg.getAttribute('width')).toBe('12');
             });
 
+            it('should leave nothing behind when a property is no longer declared', () => {
+                DNA.render(
+                    <p
+                        title="t"
+                        hidden
+                    />,
+                    wrapper
+                );
+                const paragraph = wrapper.querySelector('p') as HTMLElement;
+                expect(paragraph.getAttribute('title')).toBe('t');
+
+                DNA.render(<p />, wrapper);
+                // the property used to be written the value it no longer has, and a property that
+                // holds a string showed it: `title="undefined"`
+                expect(paragraph.getAttribute('title')).toBeNull();
+                expect(paragraph.title).toBe('');
+                expect(paragraph.hidden).toBe(false);
+            });
+
+            it('should clear the live value of a form field the template stops declaring', () => {
+                DNA.render(<input value="x" />, wrapper);
+                const input = wrapper.querySelector('input') as HTMLInputElement;
+                expect(input.value).toBe('x');
+
+                DNA.render(<input />, wrapper);
+                // the field holds what the user sees, and `"undefined"` is not it
+                expect(input.value).toBe('');
+                expect(input.getAttribute('value')).toBeNull();
+            });
+
+            it('should keep writing an enumerated attribute the template declares false', () => {
+                DNA.render(
+                    <img
+                        src=""
+                        alt=""
+                        draggable={false}
+                    />,
+                    wrapper
+                );
+                const image = wrapper.querySelector('img') as HTMLImageElement;
+                // `false` is one of the values `draggable` takes: taking the attribute away would
+                // leave `auto`, which an image reads as draggable
+                expect(image.getAttribute('draggable')).toBe('false');
+                expect(image.draggable).toBe(false);
+            });
+
             it('should convert observed attributes', () => {
                 @DNA.customElement('test-render-3')
                 class TestElement extends DNA.Component {
@@ -626,6 +672,16 @@ describe(
                 expect(element.getAttribute('class')).toBe(null);
             });
 
+            it('should split a class string on any whitespace when diffing it', () => {
+                DNA.render(<div class={{ test1: true }} />, wrapper);
+                const element = wrapper.children[0];
+                DNA.render(<div class={'test2\n\ttest3  test4'} />, wrapper);
+                expect(element.classList.contains('test1')).toBe(false);
+                expect(element.classList.contains('test2')).toBe(true);
+                expect(element.classList.contains('test3')).toBe(true);
+                expect(element.classList.contains('test4')).toBe(true);
+            });
+
             it('should update add and remove styles', () => {
                 const element = DNA.render(<div style="color: red;" />, wrapper) as HTMLDivElement;
                 element.style.fontFamily = 'sans-serif';
@@ -644,6 +700,64 @@ describe(
                 expect(['sans-serif']).toContain(window.getComputedStyle(element).fontFamily);
                 DNA.render(<div />, wrapper);
                 expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
+            });
+
+            it('should remove the classes of the previous render when switching notation', () => {
+                const element = DNA.render(<div class="test1" />, wrapper) as HTMLDivElement;
+                expect(element.getAttribute('class')).toBe('test1');
+                DNA.render(
+                    <div
+                        class={{
+                            test2: true,
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(element.getAttribute('class')).toBe('test2');
+            });
+
+            it('should remove the styles of the previous render when switching notation', () => {
+                const element = DNA.render(<div style="color: red;" />, wrapper) as HTMLDivElement;
+                expect(['rgb(255, 0, 0)', 'red']).toContain(window.getComputedStyle(element).color);
+                DNA.render(
+                    <div
+                        style={{
+                            backgroundColor: 'blue',
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(['rgb(0, 0, 255)', 'blue']).toContain(window.getComputedStyle(element).backgroundColor);
+                expect(['rgb(0, 0, 0)', '']).toContain(window.getComputedStyle(element).color);
+            });
+
+            it('should preserve the case of a custom property', () => {
+                const element = DNA.render(
+                    <div
+                        style={{
+                            '--fooBar': 'red',
+                        }}
+                    />,
+                    wrapper
+                ) as HTMLDivElement;
+                expect(element.style.getPropertyValue('--fooBar')).toBe('red');
+                expect(element.style.getPropertyValue('--foo-bar')).toBe('');
+                DNA.render(<div style={{}} />, wrapper);
+                expect(element.style.getPropertyValue('--fooBar')).toBe('');
+            });
+
+            it('should handle repeated whitespace in a class list', () => {
+                const element = DNA.render(<div class="test1  test2" />, wrapper) as HTMLDivElement;
+                element.classList.add('test3');
+                DNA.render(
+                    <div
+                        class={{
+                            test4: true,
+                        }}
+                    />,
+                    wrapper
+                );
+                expect(element.getAttribute('class')).toBe('test3 test4');
             });
 
             it('should render svgs', () => {
@@ -710,6 +824,72 @@ describe(
                 expect(line.getAttribute('y1')).toBe('100');
                 expect(line.getAttribute('x2')).toBe('100');
                 expect(line.getAttribute('y2')).toBe('200');
+            });
+
+            it('should set the class of an svg', () => {
+                // outside the HTML namespace `className` is a read-only `SVGAnimatedString`:
+                // writing the class through the property throws, and reading it back never
+                // matches the string the previous render applied
+                expect(() =>
+                    DNA.render(
+                        <svg
+                            aria-hidden="true"
+                            class="first">
+                            <rect class="child" />
+                        </svg>,
+                        wrapper
+                    )
+                ).not.throw();
+
+                const svg = wrapper.querySelector('svg') as SVGSVGElement;
+                const rect = svg.querySelector('rect') as SVGRectElement;
+                expect(svg.getAttribute('class')).toBe('first');
+                expect(rect.getAttribute('class')).toBe('child');
+
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="second"
+                    />,
+                    wrapper
+                );
+                expect(svg.getAttribute('class')).toBe('second');
+
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class={{ third: true, second: false }}
+                    />,
+                    wrapper
+                );
+                expect(svg.getAttribute('class')).toBe('third');
+
+                DNA.render(<svg aria-hidden="true" />, wrapper);
+                expect(svg.hasAttribute('class')).toBe(false);
+            });
+
+            it('should preserve a class an svg was given outside the template', () => {
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="from-template"
+                    />,
+                    wrapper
+                );
+                const svg = wrapper.querySelector('svg') as SVGSVGElement;
+
+                svg.classList.add('from-elsewhere');
+                DNA.render(
+                    <svg
+                        aria-hidden="true"
+                        class="from-template updated"
+                    />,
+                    wrapper
+                );
+
+                // the renderer is no longer the only writer, so it diffs instead of overwriting
+                expect(svg.classList.contains('from-elsewhere')).toBe(true);
+                expect(svg.classList.contains('updated')).toBe(true);
             });
 
             it('should not empty nodes when no slotted children has been passed', () => {
@@ -1106,6 +1286,85 @@ describe(
         });
 
         describe('hooks', () => {
+            it('should be reachable by importing them', () => {
+                const effects: string[] = [];
+                const Counter: DNA.FunctionComponent = () => {
+                    // no second argument: the hooks find the fragment that is rendering
+                    const [count, setCount] = DNA.useState(0);
+                    const doubled = DNA.useMemo(() => count * 2, [count]);
+                    const seen = DNA.useRef(0);
+                    seen.current = count;
+                    DNA.useEffect(() => {
+                        effects.push(`ran:${count}`);
+                    }, [count]);
+
+                    return (
+                        <button
+                            type="button"
+                            id={DNA.useId('counter')}
+                            onclick={() => setCount(count + 1)}>
+                            {count}/{doubled}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Counter />, wrapper);
+                const button = wrapper.querySelector('button') as HTMLButtonElement;
+                expect(wrapper.textContent).toBe('0/0');
+                expect(button.id).not.toBe('');
+
+                button.click();
+                expect(wrapper.textContent).toBe('1/2');
+                expect(effects).toEqual(['ran:0', 'ran:1']);
+                // the same fragment, so the same identifier
+                expect(wrapper.querySelector('button')?.id).toBe(button.id);
+            });
+
+            it('should hand every function component the same hooks object', () => {
+                const received: unknown[] = [];
+                const Test: DNA.FunctionComponent = (props, hooks) => {
+                    received.push(hooks);
+
+                    return <i />;
+                };
+
+                DNA.render([<Test />, <Test />, <Test />], wrapper);
+
+                // one object for the whole page rather than one per fragment
+                expect(received).toHaveLength(3);
+                expect(new Set(received).size).toBe(1);
+            });
+
+            it('should refuse a hook called outside a render', () => {
+                expect(() => DNA.useState(0)).toThrow(
+                    '`useState` can only be called while a function component renders'
+                );
+                expect(() => DNA.useRenderContext()).toThrow(
+                    '`useRenderContext` can only be called while a function component renders'
+                );
+            });
+
+            it('should keep the hooks of a fragment rendering inside another one', () => {
+                const Inner: DNA.FunctionComponent = () => {
+                    const [value] = DNA.useState('inner');
+
+                    return <b>{value}</b>;
+                };
+                const Outer: DNA.FunctionComponent = () => {
+                    const [value] = DNA.useState('outer');
+
+                    return (
+                        <span>
+                            {value}
+                            <Inner />
+                        </span>
+                    );
+                };
+
+                DNA.render(<Outer />, wrapper);
+                expect(wrapper.textContent).toBe('outerinner');
+            });
+
             it('should re-render on state change', () => {
                 const render = vi.fn();
                 const Test: DNA.FunctionComponent = (props, { useState }) => {
@@ -1347,6 +1606,145 @@ describe(
                 expect(effect).toHaveBeenCalledTimes(2);
             });
 
+            it('should run an effect once when it renders its own fragment again', () => {
+                const runs: string[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
+                    const [count, setCount] = useState(0);
+                    useEffect(() => {
+                        runs.push(`first:${count}`);
+                        if (count === 0) {
+                            setCount(1);
+                        }
+                    }, [count]);
+                    useEffect(() => {
+                        runs.push(`second:${count}`);
+                    }, [count]);
+
+                    return <span>{count}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+
+                // the first effect renders the fragment again, and that render runs its own
+                // effects right away: the ones of this pass are picked up again afterwards,
+                // where they left off, and never a second time
+                expect(runs).toEqual(['first:0', 'first:1', 'second:1', 'second:0']);
+                expect(wrapper.textContent).toBe('1');
+            });
+
+            it('should keep the hooks aligned when the fragment renders again while it is rendering', () => {
+                const factory = vi.fn(() => 'id');
+                const Test: DNA.FunctionComponent = (props, { useState, useMemo }) => {
+                    const [ready, setReady] = useState(false);
+                    if (!ready) {
+                        setReady(true);
+                    }
+                    const id = useMemo(factory, []);
+
+                    return <span>{`${ready}:${id}`}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+
+                // the render started by the setter walked the very same hooks: the ones that
+                // come after it must still find the state of this pass, and not a slot of
+                // their own past the end of it
+                expect(factory).toHaveBeenCalledOnce();
+
+                DNA.render(<Test />, wrapper);
+                expect(factory).toHaveBeenCalledOnce();
+                expect(wrapper.textContent).toBe('true:id');
+            });
+
+            it('should hand the same hooks to every render of a fragment', () => {
+                const received: unknown[] = [];
+                const Test: DNA.FunctionComponent = (props, hooks) => {
+                    received.push(hooks);
+
+                    return <span>Test</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                DNA.render(<Test />, wrapper);
+
+                expect(received).toHaveLength(2);
+                expect(received[0]).toBe(received[1]);
+            });
+
+            it('should keep the identity of a state setter across renders', () => {
+                const setters: unknown[] = [];
+                const values: number[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+                    setters.push(setCount);
+                    values.push(count);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                (wrapper.children[0] as HTMLButtonElement).click();
+
+                expect(values).toEqual([0, 1]);
+                expect(setters).toHaveLength(2);
+                expect(setters[0]).toBe(setters[1]);
+            });
+
+            it('should report from a state setter whether the value changed', () => {
+                const results: boolean[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => {
+                                results.push(setCount(count));
+                                results.push(setCount(count + 1));
+                            }}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render(<Test />, wrapper);
+                (wrapper.children[0] as HTMLButtonElement).click();
+
+                // writing the value it already holds changes nothing and says so
+                expect(results).toEqual([false, true]);
+                expect(wrapper.textContent).toBe('1');
+            });
+
+            it('should not render for a state written with the update refused', () => {
+                const rendered: number[] = [];
+                let write: (value: number, requestUpdate?: boolean) => boolean = () => false;
+                const Test: DNA.FunctionComponent = (props, { useState }) => {
+                    const [count, setCount] = useState(0);
+                    write = setCount;
+                    rendered.push(count);
+
+                    return <span>{count}</span>;
+                };
+
+                DNA.render(<Test />, wrapper);
+                expect(rendered).toEqual([0]);
+
+                // the value is kept, the DOM is left alone until something else renders
+                expect(write(1, false)).toBe(true);
+                expect(rendered).toEqual([0]);
+                expect(wrapper.textContent).toBe('0');
+
+                expect(write(2)).toBe(true);
+                expect(rendered).toEqual([0, 2]);
+                expect(wrapper.textContent).toBe('2');
+            });
+
             it('should run cleanup if dep changed', () => {
                 const cleanup = vi.fn();
                 const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
@@ -1385,6 +1783,144 @@ describe(
                 DNA.render(null, wrapper);
                 expect(cleanup).toHaveBeenCalled();
                 expect(cleanup).toHaveBeenCalledOnce();
+            });
+
+            it('should run cleanup if a keyed node is dropped while reordering', () => {
+                const cleanups: string[] = [];
+                const Test: DNA.FunctionComponent<{ name: string }> = ({ name }, { useEffect }) => {
+                    useEffect(
+                        () => () => {
+                            cleanups.push(name);
+                        },
+                        []
+                    );
+
+                    return <span>{name}</span>;
+                };
+                const template = (names: string[]) => (
+                    <div>
+                        {names.map((name) => (
+                            <Test
+                                key={name}
+                                name={name}
+                            />
+                        ))}
+                    </div>
+                );
+
+                DNA.render(template(['a', 'b', 'c']), wrapper);
+                expect(cleanups).toEqual([]);
+
+                // "c" moves to the front and "b" is dropped: both "a" and "b" are detached
+                // while reordering, so they never go through the trailing cleanup.
+                // Only "b" is really gone, "a" is re-attached at another position.
+                DNA.render(template(['c', 'a']), wrapper);
+                expect(cleanups).toEqual(['b']);
+            });
+
+            it('should preserve the state of a keyed function component while reordering', () => {
+                const Test: DNA.FunctionComponent<{ name: string }> = ({ name }, { useState }) => {
+                    const [count, setCount] = useState(0);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {name}:{count}
+                        </button>
+                    );
+                };
+                const template = (names: string[]) => (
+                    <div>
+                        {names.map((name) => (
+                            <Test
+                                key={name}
+                                name={name}
+                            />
+                        ))}
+                    </div>
+                );
+
+                DNA.render(template(['a', 'b']), wrapper);
+                (wrapper.querySelectorAll('button')[0] as HTMLButtonElement).click();
+                expect(wrapper.textContent).toBe('a:1b:0');
+
+                DNA.render(template(['b', 'a']), wrapper);
+                expect(wrapper.textContent).toBe('b:0a:1');
+            });
+
+            it('should preserve the state of a function component displaced by a keyed sibling', () => {
+                const mounted: string[] = [];
+                const Test: DNA.FunctionComponent = (props, { useState, useEffect }) => {
+                    const [count, setCount] = useState(0);
+                    useEffect(() => {
+                        mounted.push('mount');
+                    }, []);
+
+                    return (
+                        <button
+                            type="button"
+                            onclick={() => setCount(count + 1)}>
+                            {count}
+                        </button>
+                    );
+                };
+
+                DNA.render([<Test />, <div key="a" />], wrapper);
+                (wrapper.querySelector('button') as HTMLButtonElement).click();
+                expect(wrapper.textContent).toBe('1');
+                expect(mounted).toEqual(['mount']);
+
+                // the keyed element moves up to the cursor, and the fragment is the one displaced:
+                // exchanging the two slots would send its marker away from the nodes the function
+                // rendered, and the walk would build a marker and a set of hooks of its own
+                DNA.render([<div key="a" />, <Test />], wrapper);
+                expect(wrapper.textContent).toBe('1');
+                expect(mounted).toEqual(['mount']);
+                expect(wrapper.children[0].tagName).toBe('DIV');
+                expect(wrapper.children[1].tagName).toBe('BUTTON');
+            });
+
+            it('should reorder the keyed children of a function component that re-renders alone', () => {
+                let setNames: (names: string[]) => void = () => undefined;
+                const List: DNA.FunctionComponent<{ names: string[] }> = ({ names }, { useState }) => {
+                    const [current, setCurrent] = useState(names);
+                    setNames = setCurrent;
+
+                    return current.map((name) => <li key={name}>{name}</li>);
+                };
+
+                DNA.render(
+                    <ul>
+                        <List names={['a', 'b', 'c']} />
+                    </ul>,
+                    wrapper
+                );
+
+                const list = wrapper.querySelector('ul') as HTMLUListElement;
+                const [itemA, itemB, itemC] = Array.from(list.querySelectorAll('li'));
+                expect(list.textContent).toBe('abc');
+
+                // the function component patches its own fragment: the keyed items must be
+                // moved around, not created again
+                setNames(['c', 'a', 'b']);
+                expect(list.textContent).toBe('cab');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemC, itemA, itemB]);
+
+                // dropping a key removes its node, the others are still the same
+                setNames(['b', 'c']);
+                expect(list.textContent).toBe('bc');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemB, itemC]);
+
+                // and a render of the whole tree finds them again as well
+                DNA.render(
+                    <ul>
+                        <List names={['c', 'b']} />
+                    </ul>,
+                    wrapper
+                );
+                expect(list.textContent).toBe('bc');
+                expect(Array.from(list.querySelectorAll('li'))).toEqual([itemB, itemC]);
             });
 
             it('should generate an unique id', () => {
@@ -1939,6 +2475,591 @@ describe(
 
                 expect(comment1).toBe(comment5);
                 expect(comment2).toBe(comment6);
+            });
+
+            it('should render a list that declares the same key twice', () => {
+                const template = () => [<li key="dup">first</li>, <li key="dup">second</li>];
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+
+                // a key cannot name the same node twice: the second of them is given a node of
+                // its own, rather than the one the pass has already placed for the first
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.children.length).toBe(2);
+                expect(wrapper.textContent).toBe('firstsecond');
+            });
+
+            it('should render a key shared by an element and a function component', () => {
+                const Fn: DNA.FunctionComponent = () => <b>fn</b>;
+                const template = () => [<div key="dup" />, <Fn key="dup" />];
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.querySelectorAll('div').length).toBe(1);
+                expect(wrapper.querySelectorAll('b').length).toBe(1);
+
+                DNA.render(template(), wrapper);
+                expect(wrapper.querySelectorAll('div').length).toBe(1);
+                expect(wrapper.querySelectorAll('b').length).toBe(1);
+            });
+
+            it('should render a list that declares the same key twice among other keys', () => {
+                const template = () => [
+                    <li key="a">a</li>,
+                    <li key="dup">first</li>,
+                    <li key="dup">second</li>,
+                    <li key="b">b</li>,
+                ];
+
+                DNA.render(template(), wrapper);
+                DNA.render(template(), wrapper);
+
+                expect(wrapper.children.length).toBe(4);
+                expect(wrapper.textContent).toBe('afirstsecondb');
+            });
+        });
+
+        /**
+         * The render reorders the child list first and moves the nodes once, at the end, so
+         * that a reorder costs the minimum number of insertions instead of one per displaced
+         * sibling. These tests pin the cost down: they count the operations the document
+         * receives, because a regression here keeps producing the right tree, only slower.
+         */
+        describe('reconcile', () => {
+            type Counters = {
+                insertBefore: number;
+                removeChild: number;
+                /** operations addressed to a node that is not in the document any more */
+                detached: number;
+            };
+
+            /**
+             * Count the operations the document receives while running a render.
+             * @param run The function to measure.
+             * @returns The collected counters.
+             */
+            const count = (run: () => void): Counters => {
+                const counters: Counters = { insertBefore: 0, removeChild: 0, detached: 0 };
+                const proto = Node.prototype as unknown as {
+                    insertBefore: (node: Node, ref: Node | null) => Node;
+                    removeChild: (node: Node) => Node;
+                    appendChild: (node: Node) => Node;
+                };
+                const insertBefore = proto.insertBefore;
+                const removeChild = proto.removeChild;
+                const appendChild = proto.appendChild;
+
+                proto.insertBefore = function (this: Node, node: Node, ref: Node | null) {
+                    counters.insertBefore++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return insertBefore.call(this, node, ref);
+                };
+                proto.removeChild = function (this: Node, node: Node) {
+                    counters.removeChild++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return removeChild.call(this, node);
+                };
+                proto.appendChild = function (this: Node, node: Node) {
+                    counters.insertBefore++;
+                    if (!this.isConnected) {
+                        counters.detached++;
+                    }
+                    return appendChild.call(this, node);
+                };
+
+                try {
+                    run();
+                } finally {
+                    proto.insertBefore = insertBefore;
+                    proto.removeChild = removeChild;
+                    proto.appendChild = appendChild;
+                }
+
+                return counters;
+            };
+
+            describe('keyed reorder', () => {
+                const SIZE = 100;
+                // a row that did not exist before is built out of two nodes, the item and
+                // its text, so its own construction is what the counters account for
+                const NODES_PER_ROW = 2;
+
+                const list = (ids: number[]) => ids.map((id) => <li key={id}>{id}</li>);
+
+                let ids: number[];
+
+                beforeEach(() => {
+                    ids = Array.from({ length: SIZE }, (_, index) => index);
+                    DNA.render(list(ids), wrapper);
+                });
+
+                /**
+                 * Render the given order and return what it cost.
+                 * @param next The identifiers to render, in order.
+                 * @returns The collected counters.
+                 */
+                const reorder = (next: number[]) => {
+                    const nodes = new Map(
+                        Array.from(wrapper.children).map((node, index) => [ids[index], node] as const)
+                    );
+                    const counters = count(() => DNA.render(list(next), wrapper));
+
+                    expect(Array.from(wrapper.children).map((node) => node.textContent)).toEqual(
+                        next.map((id) => `${id}`)
+                    );
+                    // the nodes of the keys that survived are moved, never rebuilt
+                    for (const id of next) {
+                        const previous = nodes.get(id);
+                        if (previous) {
+                            expect(wrapper.children[next.indexOf(id)]).toBe(previous);
+                        }
+                    }
+                    return counters;
+                };
+
+                it('should swap two rows with two insertions', () => {
+                    const next = [...ids];
+                    next[1] = ids[SIZE - 2];
+                    next[SIZE - 2] = ids[1];
+
+                    expect(reorder(next)).toEqual({ insertBefore: 2, removeChild: 0, detached: 0 });
+                });
+
+                it('should move the last row to the front with a single insertion', () => {
+                    const next = [...ids];
+                    next.unshift(next.pop() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 0, detached: 0 });
+                });
+
+                it('should move the first row to the back with a single insertion', () => {
+                    const next = [...ids];
+                    next.push(next.shift() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 0, detached: 0 });
+                });
+
+                it('should reverse the list moving every row but one', () => {
+                    expect(reorder([...ids].reverse())).toEqual({
+                        insertBefore: SIZE - 1,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should rotate the list moving the smaller side only', () => {
+                    const next = [...ids.slice(3), ...ids.slice(0, 3)];
+
+                    expect(reorder(next)).toEqual({ insertBefore: 3, removeChild: 0, detached: 0 });
+                });
+
+                it('should remove a row in the middle without touching the others', () => {
+                    expect(reorder(ids.filter((id) => id !== 50))).toEqual({
+                        insertBefore: 0,
+                        removeChild: 1,
+                        detached: 0,
+                    });
+                });
+
+                it('should insert a row in the middle without touching the others', () => {
+                    const next = [...ids];
+                    next.splice(50, 0, 1000);
+
+                    expect(reorder(next)).toEqual({
+                        insertBefore: NODES_PER_ROW,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should append rows without touching the others', () => {
+                    expect(reorder([...ids, 1000, 1001, 1002])).toEqual({
+                        insertBefore: 3 * NODES_PER_ROW,
+                        removeChild: 0,
+                        detached: 0,
+                    });
+                });
+
+                it('should leave the document alone when the order does not change', () => {
+                    expect(reorder([...ids])).toEqual({ insertBefore: 0, removeChild: 0, detached: 0 });
+                });
+
+                it('should move a row and drop another one at the same time', () => {
+                    const next = ids.filter((id) => id !== 10);
+                    next.unshift(next.pop() as number);
+
+                    expect(reorder(next)).toEqual({ insertBefore: 1, removeChild: 1, detached: 0 });
+                });
+
+                it('should move the whole content of a keyed function component', () => {
+                    const Item: DNA.FunctionComponent<{ name: string }> = ({ name }) => (
+                        <>
+                            <span>{name}</span>
+                            <i>{name}</i>
+                        </>
+                    );
+                    const template = (names: string[]) =>
+                        names.map((name) => (
+                            <Item
+                                key={name}
+                                name={name}
+                            />
+                        ));
+
+                    DNA.render(template(['a', 'b', 'c']), wrapper);
+                    expect(wrapper.textContent).toBe('aabbcc');
+                    const [spanA, spanB, spanC] = Array.from(wrapper.querySelectorAll('span'));
+
+                    DNA.render(template(['c', 'a', 'b']), wrapper);
+                    expect(wrapper.textContent).toBe('ccaabb');
+                    expect(Array.from(wrapper.querySelectorAll('span'))).toEqual([spanC, spanA, spanB]);
+
+                    DNA.render(template(['b', 'c']), wrapper);
+                    expect(wrapper.textContent).toBe('bbcc');
+                    expect(Array.from(wrapper.querySelectorAll('span'))).toEqual([spanB, spanC]);
+                });
+            });
+
+            /**
+             * Where a context sits among its siblings is remembered on the context itself, so that
+             * finding it again costs a comparison rather than a walk of the list. One scan per node
+             * is the shape a quadratic render takes, and it does not show in the operations the
+             * document receives — the tree comes out right, only the renderer took longer to get
+             * there. These count the scans instead, which is a number a machine cannot make up.
+             */
+            describe('list scans', () => {
+                /**
+                 * Count the list searches a render performs, and how many slots they walked.
+                 * @param run The function to measure.
+                 * @returns The number of searches and the slots they visited.
+                 */
+                const countScans = (run: () => void) => {
+                    const proto = Array.prototype as unknown as { indexOf: (...args: unknown[]) => number };
+                    const original = proto.indexOf;
+                    let searches = 0;
+                    let visited = 0;
+
+                    proto.indexOf = function (this: unknown[], ...args: unknown[]) {
+                        searches++;
+                        visited += this.length;
+                        return original.apply(this, args);
+                    };
+                    try {
+                        run();
+                    } finally {
+                        proto.indexOf = original;
+                    }
+
+                    return { searches, visited };
+                };
+
+                const rows = (list: number[]) => list.map((id) => <li key={id}>{id}</li>);
+
+                for (const size of [1000, 4000]) {
+                    describe(`a list of ${size} rows`, () => {
+                        const ids = Array.from({ length: size }, (_, index) => index);
+
+                        it('should render again without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            expect(countScans(() => DNA.render(rows(ids), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+
+                        it('should reverse without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            const reversed = [...ids].reverse();
+
+                            expect(countScans(() => DNA.render(rows(reversed), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+
+                        it('should append without searching the list', () => {
+                            DNA.render(rows(ids), wrapper);
+                            const appended = [...ids, ...Array.from({ length: 100 }, (_, index) => size + index)];
+
+                            expect(countScans(() => DNA.render(rows(appended), wrapper))).toEqual({
+                                searches: 0,
+                                visited: 0,
+                            });
+                        });
+                    });
+                }
+            });
+
+            /**
+             * The `class` and the `style` of a template are written as a map as often as they are
+             * written as a string, and a map is a new object on every render — so the comparison
+             * that stops an unchanged property never fires for them, and what the renderer writes
+             * is decided one class and one declaration at a time. These count those writes: they
+             * are the ones a list pays on every render, and they do not show in the tree.
+             */
+            describe('class and style writes', () => {
+                /**
+                 * Count what a render writes to the class list and to the style of a node.
+                 * @param run The function to measure.
+                 * @returns The collected counters.
+                 */
+                const countWrites = (run: () => void) => {
+                    const tokens = DOMTokenList.prototype as unknown as Record<string, () => unknown>;
+                    const declaration = CSSStyleDeclaration.prototype as unknown as Record<string, () => unknown>;
+                    const originals: Record<string, () => unknown> = {};
+                    const counters = { add: 0, remove: 0, setProperty: 0, removeProperty: 0 };
+
+                    for (const [proto, keys] of [
+                        [tokens, ['add', 'remove']],
+                        [declaration, ['setProperty', 'removeProperty']],
+                    ] as [Record<string, () => unknown>, string[]][]) {
+                        for (const key of keys) {
+                            const original = proto[key];
+                            originals[key] = original;
+                            proto[key] = function (this: unknown, ...args: unknown[]) {
+                                counters[key as keyof typeof counters]++;
+                                return (original as (...a: unknown[]) => unknown).apply(this, args);
+                            } as () => unknown;
+                        }
+                    }
+                    try {
+                        run();
+                    } finally {
+                        tokens.add = originals.add;
+                        tokens.remove = originals.remove;
+                        declaration.setProperty = originals.setProperty;
+                        declaration.removeProperty = originals.removeProperty;
+                    }
+
+                    return counters;
+                };
+
+                const rows = (count: number, highlighted: number) =>
+                    Array.from({ length: count }, (_, position) => position).map((index) => (
+                        <li
+                            key={index}
+                            class={{ highlighted: index === highlighted }}
+                            style={{
+                                color: 'red',
+                                marginTop: '2px',
+                                fontWeight: index === highlighted ? 'bold' : 'normal',
+                            }}
+                        />
+                    ));
+
+                it('should write nothing when a render changes neither', () => {
+                    DNA.render(rows(200, -1), wrapper);
+
+                    expect(countWrites(() => DNA.render(rows(200, -1), wrapper))).toEqual({
+                        add: 0,
+                        remove: 0,
+                        setProperty: 0,
+                        removeProperty: 0,
+                    });
+                });
+
+                it('should write only what changed when one row changes', () => {
+                    DNA.render(rows(200, -1), wrapper);
+
+                    // the class the row gains, and the one declaration of its style that differs
+                    expect(countWrites(() => DNA.render(rows(200, 7), wrapper))).toEqual({
+                        add: 1,
+                        remove: 0,
+                        setProperty: 1,
+                        removeProperty: 0,
+                    });
+                });
+
+                it('should take back only what it had given', () => {
+                    DNA.render(rows(200, 7), wrapper);
+
+                    // the highlighted row loses its class, and its bold weight goes back to normal
+                    expect(countWrites(() => DNA.render(rows(200, -1), wrapper))).toEqual({
+                        add: 0,
+                        remove: 1,
+                        setProperty: 1,
+                        removeProperty: 0,
+                    });
+                });
+            });
+
+            /**
+             * A key is a way of finding a node again when it has moved. Most updates move nothing —
+             * a class, a label, a selection — and the node the key names is the one the walk is
+             * already looking at. Finding it there costs a comparison; looking the key up costs a
+             * search of the map, once per keyed node, on every render.
+             */
+            describe('key lookups', () => {
+                /**
+                 * Count the key searches a render performs. A render reads two maps: the keys of a
+                 * fragment, searched by the key a template declares, and the positions of the nodes
+                 * of a parent, searched by node — so what is not a node is a key.
+                 * @param run The function to measure.
+                 * @returns The number of keys searched for.
+                 */
+                const countLookups = (run: () => void) => {
+                    const proto = Map.prototype as unknown as { get: (...args: unknown[]) => unknown };
+                    const original = proto.get;
+                    let searches = 0;
+
+                    proto.get = function (this: Map<unknown, unknown>, ...args: unknown[]) {
+                        if (!(args[0] instanceof Node)) {
+                            searches++;
+                        }
+                        return original.apply(this, args);
+                    };
+                    try {
+                        run();
+                    } finally {
+                        proto.get = original;
+                    }
+
+                    return searches;
+                };
+
+                const ids = Array.from({ length: 200 }, (_, index) => index);
+                const rows = (list: number[], highlighted: number) =>
+                    list.map((id) => (
+                        <li
+                            key={id}
+                            class={{ highlighted: id === highlighted }}
+                        />
+                    ));
+
+                it('should look up no key when the order does not change', () => {
+                    DNA.render(rows(ids, -1), wrapper);
+
+                    // the node each key names is the one the cursor is already on
+                    expect(countLookups(() => DNA.render(rows(ids, 7), wrapper))).toBe(0);
+                });
+
+                it('should look up only the keys of the rows that moved', () => {
+                    DNA.render(rows(ids, -1), wrapper);
+                    const swapped = [...ids];
+                    swapped[1] = ids[198];
+                    swapped[198] = ids[1];
+
+                    // the rows that moved, and nothing for the ones that did not
+                    expect(countLookups(() => DNA.render(rows(swapped, -1), wrapper))).toBeLessThan(4);
+                    expect(wrapper.children.length).toBe(ids.length);
+                });
+
+                it('should give a context of its own to a key declared twice', () => {
+                    const template = () => [<li key="dup">first</li>, <li key="dup">second</li>];
+
+                    DNA.render(template(), wrapper);
+                    DNA.render(template(), wrapper);
+                    DNA.render(template(), wrapper);
+
+                    // the pass that placed the first one cannot place it again for the second
+                    expect(wrapper.children.length).toBe(2);
+                    expect(wrapper.textContent).toBe('firstsecond');
+                });
+            });
+
+            /**
+             * A context is allocated once per node a template renders, so a list of a thousand
+             * rows makes thousands of them. What a render keeps while it walks — how deep it is,
+             * where it is among the children of a parent, what it moved, what it detached — is
+             * true of the render and not of the nodes it visits, and a field for each of those on
+             * every context is a slot held empty thousands of times over. This says which fields
+             * a context carries, so that adding one is a decision and not an accident.
+             *
+             * Four of them are the state of the hooks, which a context holds since it became the
+             * one object a fragment is: only the marker of a function component ever fills them,
+             * and the rest of the nodes carry them empty — the price of not allocating a second
+             * object, and a pointer each way, for every fragment that renders.
+             */
+            describe('what a context carries', () => {
+                it('should hold no field belonging to the render', () => {
+                    DNA.render(
+                        <ul>
+                            <li key="a">
+                                <span>a</span>
+                            </li>
+                        </ul>,
+                        wrapper
+                    );
+
+                    // the context of a node the renderer created lives in the children of its
+                    // parent; only a render root keeps one on the node itself
+                    const root = Object.getOwnPropertySymbols(wrapper)
+                        .map((symbol) => (wrapper as unknown as Record<symbol, unknown>)[symbol])
+                        .find(
+                            (candidate): candidate is { children: Record<string, unknown>[] } =>
+                                !!candidate && typeof candidate === 'object' && 'children' in candidate
+                        );
+
+                    expect(root).toBeDefined();
+                    const context = (root as { children: Record<string, unknown>[] }).children[0];
+                    const fields = Object.keys(context);
+                    for (const field of ['contexts', '_cursor', '_shift', '_detached', '_depth', '_releasing']) {
+                        expect(fields).not.toContain(field);
+                    }
+                    expect(fields).toHaveLength(21);
+                });
+            });
+
+            describe('teardown', () => {
+                it('should not empty the subtree of a removed node', () => {
+                    const rows = Array.from({ length: 20 }, (_, index) => index);
+                    const template = (list: number[]) =>
+                        list.map((id) => (
+                            <p key={id}>
+                                <span>
+                                    <b>{id}</b>
+                                </span>
+                            </p>
+                        ));
+
+                    DNA.render(template(rows), wrapper);
+                    expect(wrapper.querySelectorAll('b')).toHaveLength(20);
+
+                    // the content of a detached row is never seen again, so taking it apart
+                    // node by node would have no observable effect; and since the render
+                    // dropped every row, the parent is emptied in a single operation instead
+                    // of being asked to remove them one at a time
+                    const counters = count(() => DNA.render(template([]), wrapper));
+
+                    expect(counters).toEqual({ insertBefore: 0, removeChild: 0, detached: 0 });
+                    expect(wrapper.childNodes).toHaveLength(0);
+                });
+
+                it('should empty a node the template did not create', () => {
+                    // the code that owns the node keeps a reference to it, so it must not be
+                    // handed back with the children of a render that no longer exists
+                    const list = document.createElement('ul');
+                    const template = (show: boolean) =>
+                        show ? (
+                            <div>
+                                <ul ref={list}>
+                                    {['a', 'b', 'c'].map((item) => (
+                                        <li key={item}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : null;
+
+                    DNA.render(template(true), wrapper);
+                    expect(list.childNodes).toHaveLength(3);
+
+                    DNA.render(template(false), wrapper);
+                    expect(list.childNodes).toHaveLength(0);
+
+                    DNA.render(template(true), wrapper);
+                    expect(list.childNodes).toHaveLength(3);
+                });
+
+                // a context that holds nothing to release is dropped without being walked
             });
         });
     },
