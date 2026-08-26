@@ -1,6 +1,7 @@
 import { type ComponentConstructor, type ComponentInstance, isComponent } from './Component';
 import { css } from './css';
-import { Hooks, hooks as hooksApi, setCurrentHooks, setRequestRender } from './Hooks';
+import type { HTMLTagNameMap } from './Elements';
+import { uniqueId } from './factories';
 import {
     getOwnPropertyDescriptor,
     getPropertyDescriptor,
@@ -14,6 +15,7 @@ import {
     type EventProperties,
     Fragment,
     type FunctionComponent,
+    type FunctionComponentHooks,
     isVFunction,
     isVNode,
     isVObject,
@@ -25,9 +27,612 @@ import {
 } from './JSX';
 import { getProperty } from './property';
 
-/* -------------------------------------------------------------------------------------------------
- * Render contexts
- * ---------------------------------------------------------------------------------------------- */
+/**
+ * The type of a hook state.
+ */
+type State<T = unknown> = [T, unknown[]];
+
+/**
+ * The value passed to a state setter.
+ * It can be the new value itself or a function that receives the current value and returns the new one.
+ */
+export type Setter<T> = T | ((currentValue: T) => T);
+
+/**
+ * The type of a mutable reference.
+ */
+export type Ref<T = unknown> = {
+    current: T;
+};
+
+/**
+ * The type of a cleanup function.
+ * It is called when the effect is no longer needed.
+ */
+type Cleanup = () => void;
+
+/**
+ * The type of an effect function.
+ */
+export type Effect = () => Cleanup | undefined | void;
+
+/**
+ * The symbol used to mark cleanup functions.
+ */
+const CLEANUP_SYMBOL: unique symbol = Symbol();
+
+/**
+ * Create a cleanup function.
+ * @param fn The cleanup function to create.
+ * @returns The cleanup function with a special symbol to mark it as a cleanup.
+ */
+const createCleanup = <T extends Cleanup>(fn: T): T => {
+    (fn as T & { [CLEANUP_SYMBOL]?: boolean })[CLEANUP_SYMBOL] = true;
+    return fn;
+};
+
+/**
+ * Check if a function is a cleanup function.
+ * @param fn The function to check.
+ * @returns True if the function is a cleanup function, false otherwise.
+ */
+const isCleanup = (fn: unknown): fn is Cleanup => {
+    return typeof fn === 'function' && (fn as Cleanup & { [CLEANUP_SYMBOL]?: boolean })[CLEANUP_SYMBOL] === true;
+};
+
+/**
+ * The context of the fragment that is rendering, if any.
+ *
+ * A hook is called from inside a function component, so the fragment it belongs to is the one the
+ * renderer is walking: it does not have to be handed over, and a hook can be imported and called
+ * like the function it is. The pointer is set around the call of the function component and put
+ * back the way it was found, so that a fragment rendering inside another one — a state setter
+ * called while the function is still running — leaves the one underneath where it was.
+ */
+let currentContext: Context | null = null;
+
+/**
+ * Point the hooks at the fragment that is about to render, and answer with the one they pointed at.
+ * @param context The context of the fragment, or `null` outside a render.
+ * @returns The context that was current.
+ */
+export const setCurrentContext = (context: Context | null): Context | null => {
+    const previous = currentContext;
+    currentContext = context;
+    return previous;
+};
+
+/**
+ * The context of the fragment that is rendering.
+ * @param name The name of the hook asking, for the error.
+ * @returns The current context.
+ * @throws If no function component is rendering.
+ */
+export const requireContext = (name: string): Context => {
+    if (!currentContext) {
+        throw new Error(`\`${name}\` can only be called while a function component renders`);
+    }
+    return currentContext;
+};
+
+/**
+ * The kind of node a context describes.
+ * - `LITERAL` is a text node generated from an interpolated value.
+ * - `VNODE` is an element the renderer created from a virtual node, and owns entirely.
+ * - `REF` is a node the renderer does not own: a render root, a node passed in the template
+ *   or the comment that marks the position of a function component.
+ */
+export const ContextKind: {
+    LITERAL: 0;
+    VNODE: 1;
+    REF: 2;
+} = {
+    LITERAL: 0,
+    VNODE: 1,
+    REF: 2,
+};
+export type ContextKind = (typeof ContextKind)[keyof typeof ContextKind];
+
+/**
+ * What the renderer keeps about a node while it walks, and — when the node is the marker of a
+ * function component — the state of the hooks that function calls.
+ *
+ * The two used to be an object and a class pointing at each other: a fragment is a context whose
+ * hooks are the only thing that tells it apart from the comment it is anchored to, and holding
+ * them beside it cost an allocation, a field on every context to reach them and a field on them to
+ * come back. They are one object now: the hooks read the fragment they belong to as `this`, and
+ * the renderer hands a function component the very context it is rendering into.
+ *
+ * The hooks outlive the renders of the fragment: the state they keep and the closures they are
+ * made of are built once for the whole life of the context, and a fragment renders again every
+ * time its state changes. What each render brings with it — the namespace it walks in, the virtual
+ * node it starts from — is written here by the render itself and read from here by the hooks.
+ *
+ * It is exported for `useRenderContext` alone: the fields are the bookkeeping of the walk and
+ * change with it, so nothing outside the renderer should read them or count on them being there.
+ * @internal
+ */
+export class Context {
+    /**
+     * The node the context describes.
+     */
+    node: Node;
+
+    /**
+     * What kind of node it is, and how much of it the renderer owns.
+     */
+    kind: ContextKind;
+
+    /**
+     * The function of a fragment, the tag name of an element, the text of a literal.
+     */
+    type: FunctionComponent | string | null;
+
+    /**
+     * The context the render started from.
+     */
+    root?: Context;
+
+    /**
+     * The context of the render that created the node.
+     */
+    owner?: Context;
+
+    /**
+     * The context whose children list holds this one.
+     */
+    parent?: Context;
+
+    /**
+     * The contexts of the nodes rendered into this one, in document order.
+     */
+    children?: Context[];
+
+    /**
+     * The properties the last render wrote on the node.
+     */
+    properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
+
+    /**
+     * The last context of the range a fragment rendered, its marker included.
+     */
+    end?: Context;
+
+    /**
+     * The key the template named the node with.
+     */
+    key?: unknown;
+
+    /**
+     * The keyed contexts rendered by this fragment, by key.
+     */
+    keys?: Map<unknown, Context>;
+
+    /**
+     * The contexts of the nodes this fragment received in a template, by node.
+     */
+    refs?: Map<Node, Context>;
+
+    /**
+     * Whether the context renders the shadow content of a component.
+     */
+    shadow: boolean;
+
+    /**
+     * The position of the context among the children of its parent.
+     */
+    index: number;
+
+    /**
+     * Whether the subtree holds anything to release.
+     */
+    release: boolean;
+
+    /**
+     * Which render pass claimed this context by its key. A key names one node, so a context the
+     * running pass has already claimed cannot be claimed again by it: this is what tells a key the
+     * template declares twice from a key that simply did not move.
+     */
+    claimed: number;
+
+    /**
+     * The state of each hook the function component called, in the order it called them. It is
+     * created by the first hook of the first render: most contexts are plain nodes and never
+     * grow one.
+     */
+    private states?: State[];
+
+    /**
+     * The index of the hook the current render is at.
+     */
+    private hookIndex: number;
+
+    /**
+     * The queue of effects to run, created only for the hooks that register one.
+     */
+    private effects?: Effect[];
+
+    /**
+     * The namespace uri of the render, which rendering the fragment again walks in.
+     */
+    namespace: string;
+
+    /**
+     * The virtual node of the fragment, which is what rendering it again starts from.
+     */
+    template?: Template;
+
+    /**
+     * Create a node context.
+     * @param kind The kind of the context.
+     * @param type The type of the context.
+     * @param node The node scope of the context.
+     * @param shadow If the context renders the shadow content of a component.
+     * @param root The render root context.
+     * @param owner The render owner context.
+     */
+    constructor(
+        kind: ContextKind,
+        type: FunctionComponent | string | null,
+        node: Node,
+        shadow = false,
+        root?: Context,
+        owner?: Context
+    ) {
+        this.node = node;
+        this.kind = kind;
+        this.type = type;
+        this.root = root;
+        this.owner = owner;
+        // the fields a render fills in later are assigned here even though they hold nothing yet:
+        // adding one to an object that does not have it changes its shape and moves its properties
+        // to a store of their own, and every node of a template is given a parent and a set of
+        // properties right after having been created
+        this.parent = undefined;
+        this.properties = undefined;
+        this.end = undefined;
+        this.key = undefined;
+        this.keys = undefined;
+        this.refs = undefined;
+        // a text node is a leaf: nothing is ever rendered into it, and the list it would be given
+        // is the same empty one for all of them
+        this.children = undefined;
+        this.shadow = shadow;
+        // no position yet: any slot of the children list would be a miss, which is what the
+        // lookup expects of a context it has never placed
+        this.index = -1;
+        // a node the renderer does not own has to be emptied when it is dropped, and it is the
+        // only kind that holds something to release from the moment it is created
+        this.release = kind === ContextKind.REF;
+        // no pass has claimed it yet
+        this.claimed = 0;
+        // only the marker of a function component ever calls a hook, and it is the first one it
+        // calls that gives it a state: the rest of the contexts carry the fields empty
+        this.states = undefined;
+        this.hookIndex = 0;
+        this.effects = undefined;
+        this.namespace = '';
+        this.template = undefined;
+    }
+
+    /**
+     * Start a render pass: the scope of the render is taken in, and hooks are matched to their
+     * state by the order they are called in, so the walk starts over from the first of them.
+     *
+     * The index of the pass this one interrupts is returned rather than dropped: a render can
+     * start another one of the same fragment — a state setter called while the function is
+     * still running — and the one underneath has to walk the very same hooks it was up to.
+     * @param namespace The namespace uri of the render.
+     * @param template The virtual node of the fragment.
+     * @returns The index the context was at.
+     */
+    beginRender(namespace: string, template: Template): number {
+        this.namespace = namespace;
+        this.template = template;
+
+        const previousIndex = this.hookIndex;
+        this.hookIndex = 0;
+        return previousIndex;
+    }
+
+    /**
+     * End a render pass and restore the one it interrupted.
+     * @param previousIndex The index returned by {@link beginRender}.
+     */
+    endRender(previousIndex: number): void {
+        this.hookIndex = previousIndex;
+    }
+
+    /**
+     * Get the next state of a hook.
+     * If the dependencies are changed, the value of the state will be updated.
+     * @param factory The state value factory.
+     * @param deps The dependencies of the state.
+     * @returns The state value and its dependencies.
+     */
+    private nextState<T = unknown>(factory: () => T, deps: unknown[] = []): State<T> {
+        this.states ??= [];
+        const hooks = this.states;
+        const index = this.hookIndex++;
+        const state = hooks[index];
+        if (!state) {
+            const newState = [factory(), deps] as [T, unknown[]];
+            hooks[index] = newState;
+            return newState;
+        }
+        if (state[1].length !== deps.length || state[1].some((dep, i) => !Object.is(dep, deps[i]))) {
+            if (isCleanup(state[0])) {
+                state[0]();
+            }
+            state[0] = factory();
+            state[1] = deps;
+        }
+        return state as [T, unknown[]];
+    }
+
+    /**
+     * Create a state value and its setter.
+     * The setter accepts the new value or a function that receives the current value and returns
+     * the new one, and renders the fragment again unless it is asked not to.
+     *
+     * The pair is the state of the hook, and is handed out again by every render rather than
+     * being built anew: the value it holds is the one the last setter call wrote, and the setter
+     * keeps the identity it was created with — what a dependency list of another hook needs of
+     * it. Nothing is allocated once the fragment has rendered a first time.
+     * @param initialValue The initial value of the state.
+     * @returns The state value and its setter.
+     */
+    useState<T = unknown>(initialValue: T): [T, (newValue: Setter<T>, requestUpdate?: boolean) => boolean] {
+        return this.nextState<[T, (newValue: Setter<T>, requestUpdate?: boolean) => boolean]>(() => {
+            const state: [T, (newValue: Setter<T>, requestUpdate?: boolean) => boolean] = [
+                // a function is taken for a lazy initializer, as the setter takes it for an updater
+                typeof initialValue === 'function' ? (initialValue as () => T)() : initialValue,
+                (newValue: Setter<T>, requestUpdate?: boolean) => {
+                    const value =
+                        typeof newValue === 'function' ? (newValue as (currentValue: T) => T)(state[0]) : newValue;
+                    if (Object.is(value, state[0])) {
+                        return false;
+                    }
+
+                    state[0] = value;
+                    if (requestUpdate !== false) {
+                        requestFragmentRender(this);
+                    }
+
+                    return true;
+                },
+            ];
+            return state;
+        })[0];
+    }
+
+    /**
+     * Create a mutable reference that is preserved across renders.
+     * Updating the `current` property does not trigger a new render.
+     * @param initialValue The initial value of the reference.
+     * @returns The reference object.
+     */
+    useRef<T>(initialValue: T): Ref<T>;
+    useRef<T = undefined>(): Ref<T | undefined>;
+    useRef<T>(initialValue?: T): Ref<T | undefined> {
+        return this.useMemo(() => ({ current: initialValue }));
+    }
+
+    /**
+     * Create a memoized value.
+     * @param factory The state value factory.
+     * @param deps The dependencies of the state.
+     * @returns The memoized value.
+     */
+    useMemo<T = unknown>(factory: () => T, deps: unknown[] = []): T {
+        return this.nextState(factory, deps)[0];
+    }
+
+    /**
+     * Create a memoized callback.
+     * @param callback The callback to memoize.
+     * @param deps The dependencies of the callback.
+     * @returns The memoized callback.
+     */
+    // biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+    useCallback<T extends (...args: any[]) => any>(callback: T, deps: unknown[] = []): T {
+        return this.useMemo(() => callback, deps);
+    }
+
+    /**
+     * Create an effect that runs after the render.
+     * @param effect The effect function to run.
+     * @param deps The dependencies of the effect.
+     * @returns A cleanup function to run when the effect is no longer needed.
+     */
+    useEffect(effect: Effect, deps: unknown[] = []): void {
+        this.nextState(() => {
+            let cleanup: ReturnType<Effect>;
+            this.effects ??= [];
+            this.effects.push(() => {
+                cleanup = effect();
+                return cleanup;
+            });
+
+            return createCleanup(() => {
+                cleanup?.();
+            });
+        }, deps);
+    }
+
+    /**
+     * Create a memoized element.
+     * @param tagName The tag name of the element to create.
+     * @param options The element creation options.
+     * @returns The memoized element.
+     */
+    useElement<K extends keyof HTMLTagNameMap>(tagName: K, options?: ElementCreationOptions): HTMLTagNameMap[K];
+    useElement<T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+    useElement(tagName: string, options?: ElementCreationOptions): HTMLElement {
+        return this.useMemo(() => document.createElement(tagName, options), [tagName, options?.is]);
+    }
+
+    /**
+     * Generate a unique ID for the rendering context.
+     * @param suffix An optional suffix to append to the ID.
+     * @returns A unique ID string.
+     */
+    useId(suffix?: string): string {
+        const ref = this.node;
+        return this.useMemo(() => uniqueId(ref, `${this.hookIndex}`, suffix), [this.hookIndex, suffix]);
+    }
+
+    /**
+     * Run all effects that were created since the last call.
+     *
+     * The queue is taken out of the context before being walked: an effect can render its own
+     * fragment again, and the effects that render registers belong to the pass that follows it,
+     * not to this one. Were they left in place they would be run twice — once by the nested
+     * pass, once more by this walk.
+     */
+    runEffects(): void {
+        const effects = this.effects;
+        if (!effects) {
+            return;
+        }
+        this.effects = undefined;
+        for (let i = 0, len = effects.length; i < len; i++) {
+            effects[i]();
+        }
+    }
+
+    /**
+     * Cleanup all effects and states.
+     * This method should be called when the context is released or no longer needed.
+     */
+    cleanup(): void {
+        const hooks = this.states;
+        if (!hooks) {
+            // the context is a plain node: it never called a hook, and there is nothing of a
+            // fragment to take apart. Most of what a render walks ends here
+            return;
+        }
+        // an effect queued by a render that never settled belongs to a fragment that is gone
+        this.effects = undefined;
+        for (const state of hooks) {
+            if (isCleanup(state[0])) {
+                state[0]();
+            }
+        }
+        hooks.splice(0, hooks.length);
+        this.hookIndex = 0;
+    }
+}
+
+/**
+ * Keep a value across the renders of a function component, and render it again when it changes.
+ * The setter accepts the value or a function that receives the current one and returns the next,
+ * and keeps its identity for the whole life of the fragment. It answers whether the value changed,
+ * and takes a second argument to write without asking for a render.
+ * @param initialValue The initial value, or a function that produces it.
+ * @returns The value and its setter.
+ * @throws If no function component is rendering.
+ */
+export const useState = <T = unknown>(
+    initialValue: T
+): [T, (newValue: Setter<T>, requestUpdate?: boolean) => boolean] => requireContext('useState').useState(initialValue);
+
+/**
+ * Keep a mutable reference across the renders of a function component.
+ * Writing its `current` does not render anything.
+ * @param initialValue The initial value of the reference.
+ * @returns The reference.
+ * @throws If no function component is rendering.
+ */
+export function useRef<T>(initialValue: T): Ref<T>;
+export function useRef<T = undefined>(): Ref<T | undefined>;
+export function useRef<T>(initialValue?: T): Ref<T | undefined> {
+    return requireContext('useRef').useRef(initialValue);
+}
+
+/**
+ * Keep the result of a computation across the renders of a function component, and compute it
+ * again when one of the dependencies changes.
+ * @param factory The computation.
+ * @param deps The dependencies it is computed again for.
+ * @returns The memoized result.
+ * @throws If no function component is rendering.
+ */
+export const useMemo = <T = unknown>(factory: () => T, deps?: unknown[]): T =>
+    requireContext('useMemo').useMemo(factory, deps);
+
+/**
+ * Keep a callback across the renders of a function component, and build it again when one of the
+ * dependencies changes.
+ * @param callback The callback.
+ * @param deps The dependencies it is built again for.
+ * @returns The memoized callback.
+ * @throws If no function component is rendering.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: Callbacks can accept and return anything.
+export const useCallback = <T extends (...args: any[]) => any>(callback: T, deps?: unknown[]): T =>
+    requireContext('useCallback').useCallback(callback, deps);
+
+/**
+ * Run a callback once the fragment is in the document, and again when one of the dependencies
+ * changes. It may return a cleanup, which runs before the next call and when the fragment is gone.
+ * @param effect The callback.
+ * @param deps The dependencies it runs again for.
+ * @throws If no function component is rendering.
+ */
+export const useEffect = (effect: Effect, deps?: unknown[]): void => {
+    requireContext('useEffect').useEffect(effect, deps);
+};
+
+/**
+ * Keep an element across the renders of a function component, for a template to place.
+ * @param tagName The tag name of the element.
+ * @param options The element creation options.
+ * @returns The element.
+ * @throws If no function component is rendering.
+ */
+export function useElement<K extends keyof HTMLTagNameMap>(
+    tagName: K,
+    options?: ElementCreationOptions
+): HTMLTagNameMap[K];
+export function useElement<T extends HTMLElement = HTMLElement>(tagName: string, options?: ElementCreationOptions): T;
+export function useElement(tagName: string, options?: ElementCreationOptions): HTMLElement {
+    return requireContext('useElement').useElement(tagName, options);
+}
+
+/**
+ * Generate an identifier unique to the fragment, for a label to point at a field with.
+ * @param suffix A suffix to tell two identifiers of the same fragment apart.
+ * @returns The identifier.
+ * @throws If no function component is rendering.
+ */
+export const useId = (suffix?: string): string => requireContext('useId').useId(suffix);
+
+/**
+ * The context the fragment is being rendered into.
+ * It is the bookkeeping of the renderer: reaching for it from a function component is discouraged.
+ * @returns The render context.
+ * @throws If no function component is rendering.
+ */
+export const useRenderContext = (): Context => requireContext('useRenderContext').parent as Context;
+
+/**
+ * The hooks a function component is handed as its second argument.
+ *
+ * One object for the whole page rather than one per fragment: the hooks read the fragment that is
+ * rendering off the renderer, so there is nothing to bind and nothing to keep. It is here for the
+ * components that take it — importing the hooks is the way to reach them now.
+ */
+const hooks: FunctionComponentHooks = {
+    useState,
+    useRef,
+    useMemo,
+    useCallback,
+    useEffect,
+    useElement,
+    useId,
+    useRenderContext,
+};
 
 /**
  * A symbol for node render context.
@@ -38,101 +643,6 @@ const CONTEXT_SYMBOL: unique symbol = Symbol();
  * A symbol for shadow context.
  */
 const SHADOW_CONTEXT_SYMBOL: unique symbol = Symbol();
-
-/**
- * The kind of node a context describes.
- * - `LITERAL` is a text node generated from an interpolated value.
- * - `VNODE` is an element the renderer created from a virtual node, and owns entirely.
- * - `REF` is a node the renderer does not own: a render root, a node passed in the template
- *   or the comment that marks the position of a function component.
- */
-const ContextKind = {
-    LITERAL: 0,
-    VNODE: 1,
-    REF: 2,
-};
-type ContextKind = (typeof ContextKind)[keyof typeof ContextKind];
-
-/**
- * The node context interface.
- *
- * What the renderer keeps about a node while it walks. It is what `useRenderContext` returns, and
- * it is exported for that reason alone: the fields are the bookkeeping of the walk and change with
- * it, so nothing outside the renderer should read them or count on them being there.
- * @internal
- */
-export type Context = {
-    node: Node;
-    kind: ContextKind;
-    type: FunctionComponent | string | null;
-    root?: Context;
-    owner?: Context;
-    parent?: Context;
-    children?: Context[];
-    properties?: KeyedProperties & TreeProperties & Record<string, unknown>;
-    hooks?: Hooks;
-    end?: Context;
-    key?: unknown;
-    keys?: Map<unknown, Context>;
-    refs?: Map<Node, Context>;
-    shadow?: boolean;
-    _index: number;
-    _release?: boolean;
-    /**
-     * Which render pass claimed this context by its key. A key names one node, so a context the
-     * running pass has already claimed cannot be claimed again by it: this is what tells a key the
-     * template declares twice from a key that simply did not move.
-     */
-    _claimed?: number;
-};
-
-/**
- * Create a node context.
- * @param kind The kind of the context.
- * @param type The type of the context.
- * @param node The node scope of the context.
- * @param shadow If the context renders the shadow content of a component.
- * @param root The render root context.
- * @param owner The render owner context.
- * @returns A context object for the node.
- */
-export const createContext = (
-    kind: ContextKind,
-    type: Context['type'],
-    node: Node,
-    shadow = false,
-    root?: Context,
-    owner?: Context
-): Context => ({
-    node,
-    kind,
-    type,
-    root,
-    owner,
-    // the fields a render fills in later are declared here even though they hold nothing yet:
-    // adding one to an object that does not have it changes its shape and moves its properties
-    // to a store of their own, and every node of a template is given a parent and a set of
-    // properties right after having been created
-    parent: undefined,
-    properties: undefined,
-    hooks: undefined,
-    end: undefined,
-    key: undefined,
-    keys: undefined,
-    refs: undefined,
-    // a text node is a leaf: nothing is ever rendered into it, and the list it would be given
-    // is the same empty one for all of them
-    children: undefined,
-    shadow,
-    // no position yet: any slot of the children list would be a miss, which is what the
-    // lookup expects of a context it has never placed
-    _index: -1,
-    // a node the renderer does not own has to be emptied when it is dropped, and it is the
-    // only kind that holds something to release from the moment it is created
-    _release: kind === ContextKind.REF,
-    // no pass has claimed it yet
-    _claimed: 0,
-});
 
 /**
  * What a render keeps while it walks.
@@ -234,7 +744,7 @@ export const getRootContext = <T extends Node>(
     if (shadowRoot) {
         let context = node[SHADOW_CONTEXT_SYMBOL];
         if (!context) {
-            context = createContext(ContextKind.REF, null, node, true);
+            context = new Context(ContextKind.REF, null, node, true);
             node[SHADOW_CONTEXT_SYMBOL] = context;
         }
         return context;
@@ -242,15 +752,11 @@ export const getRootContext = <T extends Node>(
 
     let context = node[CONTEXT_SYMBOL];
     if (!context) {
-        context = createContext(ContextKind.REF, null, node, false);
+        context = new Context(ContextKind.REF, null, node, false);
         node[CONTEXT_SYMBOL] = context;
     }
     return context;
 };
-
-/* -------------------------------------------------------------------------------------------------
- * Class and style values
- * ---------------------------------------------------------------------------------------------- */
 
 /**
  * The notations accepted by the `class` property of a template.
@@ -453,10 +959,6 @@ const setStyle = (node: HTMLElement, value: StyleValue, oldValue: StyleValue, is
         }
     }
 };
-
-/* -------------------------------------------------------------------------------------------------
- * Node properties
- * ---------------------------------------------------------------------------------------------- */
 
 /**
  * Check if a property should be ignored.
@@ -661,15 +1163,11 @@ const markRelease = (context: Context | undefined) => {
     // the chain above an already marked context is marked too, so the walk stops at the first
     // context that knows about it
     let current = context;
-    while (current && !current._release) {
-        current._release = true;
+    while (current && !current.release) {
+        current.release = true;
         current = current.parent;
     }
 };
-
-/* -------------------------------------------------------------------------------------------------
- * Context lifecycle
- * ---------------------------------------------------------------------------------------------- */
 
 /**
  * Release the resources held by a context and its subtree: hooks and effects.
@@ -691,7 +1189,7 @@ const markRelease = (context: Context | undefined) => {
 const releaseContext = (context: Context, rootContext: Context) => {
     // the hooks are left in place: they are the state of a fragment that is gone, and
     // emptying them is enough
-    context.hooks?.cleanup();
+    context.cleanup();
 
     const children = context.children;
     if (!children) {
@@ -703,7 +1201,7 @@ const releaseContext = (context: Context, rootContext: Context) => {
         if (owned && child.node.parentNode === context.node) {
             context.node.removeChild(child.node);
         }
-        if (!child._release) {
+        if (!child.release) {
             continue;
         }
         if (currentRender.contexts?.get(child.node) === child) {
@@ -732,7 +1230,7 @@ const releaseDetachedContexts = (rootContext: Context) => {
         const detached = currentRender.detached;
         if (detached) {
             for (const context of detached) {
-                if (!context._release) {
+                if (!context.release) {
                     // the subtree holds nothing to release: it is dropped with its node
                     continue;
                 }
@@ -748,10 +1246,6 @@ const releaseDetachedContexts = (rootContext: Context) => {
         currentRender.releasing = false;
     }
 };
-
-/* -------------------------------------------------------------------------------------------------
- * Children list
- * ---------------------------------------------------------------------------------------------- */
 
 /**
  * Check whether a context can be reached from anywhere but the list of its parent.
@@ -832,7 +1326,7 @@ const holdsForeignNode = (children: Context[]) => {
  * @returns The index of the context, or `-1` when the list does not hold it.
  */
 const indexOfContext = (children: Context[], context: Context) => {
-    return children[context._index] === context ? context._index : children.indexOf(context);
+    return children[context.index] === context ? context.index : children.indexOf(context);
 };
 
 /**
@@ -866,7 +1360,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
     // not reorder anything, and it costs a single comparison. Nothing else is read here,
     // because this runs for every node of every render
     if (parentContext.children[pos] === childContext) {
-        childContext._index = pos;
+        childContext.index = pos;
         currentRender.cursor = pos + 1;
         return;
     }
@@ -897,8 +1391,8 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
             // row is displaced, as in a swap, would be quadratic in the number of rows
             parentContext.children[from] = displaced;
             parentContext.children[pos] = childContext;
-            displaced._index = from;
-            childContext._index = pos;
+            displaced.index = from;
+            childContext.index = pos;
             currentRender.shift++;
         } else {
             // a function component owns the contiguous range up to `end` and moves whole. This is
@@ -908,7 +1402,7 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
             parentContext.children.splice(pos, 0, ...range);
             // only the contexts between the cursor and the end of the range changed place
             for (let i = pos; i <= to; i++) {
-                parentContext.children[i]._index = i;
+                parentContext.children[i].index = i;
             }
             currentRender.shift += range.length;
         }
@@ -941,13 +1435,13 @@ const insertNode = (parentContext: Context, childContext: Context, rootContext: 
             parentContext.node.insertBefore(childContext.node, parentContext.children[pos].node);
             parentContext.children.splice(pos, 0, childContext);
         }
-        childContext._index = pos;
+        childContext.index = pos;
         childContext.parent = parentContext;
         if (isFindable(childContext)) {
             currentRender.contexts ??= new WeakMap();
             currentRender.contexts.set(childContext.node, childContext);
         }
-        if (childContext._release) {
+        if (childContext.release) {
             // whatever the child holds has to be found again from the list it now belongs to
             markRelease(parentContext);
         }
@@ -1097,13 +1591,12 @@ const HTML_NAMESPACE: string = 'http://www.w3.org/1999/xhtml';
  * Where the fragment stands is read when the render is requested, not when the setter that
  * requests it was handed out: a setter outlives the render it comes from, and the fragment may
  * have been rendered into another place since.
- * @param hooks The hooks of the fragment.
+ * @param fragment The context of the fragment, which is also where its hooks keep their state.
  */
-const requestFragmentRender = (hooks: Hooks) => {
-    const { renderContext } = hooks;
-    const context = renderContext.parent as Context;
-    const rootContext = renderContext.root as Context;
-    if (!context.children?.includes(renderContext)) {
+const requestFragmentRender = (fragment: Context) => {
+    const context = fragment.parent as Context;
+    const rootContext = fragment.root as Context;
+    if (!context.children?.includes(fragment)) {
         // the fragment is gone: rendering it again would bring back a subtree nobody
         // references anymore
         return;
@@ -1112,20 +1605,26 @@ const requestFragmentRender = (hooks: Hooks) => {
     // only this fragment is rendered again, where it stands
     if (isComponent(rootContext.node) && rootContext.shadow) {
         rootContext.node.realm.requestUpdate(() => {
-            internalRender(context, hooks.template, rootContext, hooks.namespace, renderContext);
+            internalRender(context, fragment.template, rootContext, fragment.namespace, fragment);
         });
         return;
     }
-    internalRender(context, hooks.template, rootContext, hooks.namespace, renderContext);
+    internalRender(context, fragment.template, rootContext, fragment.namespace, fragment);
 };
 
-// the hooks render a fragment again through the renderer, which they cannot import without the two
-// modules importing each other: it hands them the way back in when it loads
-setRequestRender(requestFragmentRender);
-
-/* -------------------------------------------------------------------------------------------------
- * Template rendering
- * ---------------------------------------------------------------------------------------------- */
+/**
+ * Check whether a context can take the place of the element a template declares.
+ *
+ * It is a function of its own rather than a closure over the template: it is asked for every
+ * element of every render, and a closure would be one allocation per node — thousands of them
+ * for a list, all of them dead by the end of the walk.
+ * @param candidate The context already in this position, or the one the key names.
+ * @param type The tag name the template declares.
+ * @param is The builtin the template extends, if any.
+ * @returns True if the context describes a node the template can be rendered into.
+ */
+const fitsTemplate = (candidate: Context, type: string, is: string | undefined) =>
+    candidate.kind === ContextKind.VNODE && candidate.type === type && candidate.properties?.is === is;
 
 /**
  * Render a a template into the root.
@@ -1170,7 +1669,13 @@ const renderTemplate = (
 
     context.children ??= [];
 
-    if (isVObject(template)) {
+    // what a template is, is asked of its type before anything is read off it: a virtual node
+    // and a node answer to a lookup, a string and a number do not, and a lookup that is handed
+    // both is the slow kind for every node of every render — including the thousands that are
+    // virtual nodes and would have answered on the first try
+    const isObject = typeof template === 'object';
+
+    if (isObject && isVObject(template)) {
         /* ----- function components ----- */
         if (isVFunction(template)) {
             if (template.type === Fragment) {
@@ -1200,10 +1705,10 @@ const renderTemplate = (
             // a context this pass has already placed is not the one a second declaration of the
             // same key names: that one is given a context of its own
             if (functionContext && key != null) {
-                if (functionContext._claimed === pass) {
+                if (functionContext.claimed === pass) {
                     functionContext = undefined;
                 } else {
-                    functionContext._claimed = pass;
+                    functionContext.claimed = pass;
                 }
             }
 
@@ -1213,7 +1718,7 @@ const renderTemplate = (
             insertNode(
                 context,
                 functionContext ||
-                    createContext(
+                    new Context(
                         ContextKind.REF,
                         null,
                         (context.node.ownerDocument as Document).createComment(Fn.name),
@@ -1234,12 +1739,6 @@ const renderTemplate = (
                 fragment.keys.set(key, renderContext);
             }
 
-            // the hooks belong to the fragment and outlive its renders, together with the state
-            // they hold: a fragment that renders again does not build them — nor the closures
-            // they are made of — a second time, and it renders again on every state change
-            const hooks = renderContext.hooks || new Hooks(renderContext);
-            renderContext.hooks = hooks;
-
             // the keys of the fragment are collected again by this render, while the refs are
             // kept: a node passed in a template has to be found again even when a render that
             // did not use it has run in between
@@ -1247,11 +1746,13 @@ const renderTemplate = (
             const childRefs = renderContext.refs;
             renderContext.keys = undefined;
 
-            // the hooks of the fragment are pointed at while the function runs, so that a hook it
-            // calls finds them without being handed them, and put back afterwards even if the
-            // function throws — a pointer left behind would hand the next fragment these hooks
-            const previousHooks = setCurrentHooks(hooks);
-            const previousIndex = hooks.beginRender(namespace, template);
+            // the context of the fragment is pointed at while the function runs, so that a hook it
+            // calls finds the state it belongs to without being handed it, and put back afterwards
+            // even if the function throws — a pointer left behind would hand the next fragment
+            // this state. The state itself outlives the render, together with the closures it is
+            // made of: a fragment that renders again does not build them a second time
+            const previousContext = setCurrentContext(renderContext);
+            const previousIndex = renderContext.beginRender(namespace, template);
             let result: Template;
             try {
                 result = Fn(
@@ -1259,18 +1760,18 @@ const renderTemplate = (
                         children,
                         ...properties,
                     },
-                    hooksApi
+                    hooks
                 );
             } finally {
-                hooks.endRender(previousIndex);
-                setCurrentHooks(previousHooks);
+                renderContext.endRender(previousIndex);
+                setCurrentContext(previousContext);
             }
 
             renderTemplate(context, rootContext, result, namespace, childKeys, childRefs, renderContext);
 
             renderContext.end = context.children[currentRender.cursor - 1];
             // the effects run once the fragment is in the document, and may render again
-            hooks.runEffects();
+            renderContext.runEffects();
             return;
         }
 
@@ -1303,11 +1804,9 @@ const renderTemplate = (
         // generated by this same render out of a compatible tag
         let templateContext: Context | undefined;
         const currentContext = context.children[currentRender.cursor];
-        const fitsTemplate = (candidate: Context) =>
-            isVTag(template) &&
-            candidate.kind === ContextKind.VNODE &&
-            candidate.type === template.type &&
-            candidate.properties?.is === properties?.is;
+        // a template that carries a node instance names one node and one only: nothing already
+        // in this position can stand for it, and it is looked up among the refs instead
+        const type = isVTag(template) ? template.type : null;
         if (key != null) {
             const pass = currentRender.pass;
             // the node is where the previous render left it, which is what an update that
@@ -1317,8 +1816,9 @@ const renderTemplate = (
             if (
                 currentContext &&
                 currentContext.key === key &&
-                currentContext._claimed !== pass &&
-                fitsTemplate(currentContext)
+                currentContext.claimed !== pass &&
+                type !== null &&
+                fitsTemplate(currentContext, type, properties.is)
             ) {
                 templateContext = currentContext;
             } else {
@@ -1327,18 +1827,22 @@ const renderTemplate = (
                 // declares now: the marker of a function component that shares the key, or an
                 // element of another tag. One that does not fit is left where it is — for a
                 // sibling that shares the key and does fit — and this element gets one of its own
-                if (keyed && keyed._claimed !== pass && fitsTemplate(keyed)) {
+                if (keyed && keyed.claimed !== pass && type !== null && fitsTemplate(keyed, type, properties.is)) {
                     templateContext = keyed;
                 }
             }
             if (templateContext) {
                 // claimed: a second declaration of the same key gets a context of its own
-                templateContext._claimed = pass;
+                templateContext.claimed = pass;
             }
-        } else if (currentContext && currentContext.key == null && currentContext.owner === rootContext) {
-            if (fitsTemplate(currentContext)) {
-                templateContext = currentContext;
-            }
+        } else if (
+            currentContext &&
+            currentContext.key == null &&
+            currentContext.owner === rootContext &&
+            type !== null &&
+            fitsTemplate(currentContext, type, properties.is)
+        ) {
+            templateContext = currentContext;
         }
 
         // a node rendered inside a component belongs to its realm, which has to adopt it
@@ -1348,7 +1852,7 @@ const renderTemplate = (
                 // the template carries a node instance: it keeps the context it was given the
                 // first time, so that what has been rendered into it is not rendered again
                 const node = template.type;
-                templateContext = refs?.get(node) || createContext(ContextKind.REF, null, node, false, rootContext);
+                templateContext = refs?.get(node) || new Context(ContextKind.REF, null, node, false, rootContext);
                 fragment.refs = (fragment.refs || new Map()).set(node, templateContext);
                 if (
                     // whether the render is a shadow one is a flag of the context, and is read
@@ -1376,14 +1880,7 @@ const renderTemplate = (
                       namespaceURI === HTML_NAMESPACE
                       ? document.createElement(template.type)
                       : document.createElementNS(namespaceURI, template.type);
-                templateContext = createContext(
-                    ContextKind.VNODE,
-                    template.type,
-                    node,
-                    false,
-                    rootContext,
-                    rootContext
-                );
+                templateContext = new Context(ContextKind.VNODE, template.type, node, false, rootContext, rootContext);
                 // the element comes out of the document with no attribute of its own: what the
                 // template declares can be written straight away, without asking the node what
                 // it holds and without removing what it never had
@@ -1424,7 +1921,17 @@ const renderTemplate = (
             // so that a property that replaces another one does not find a stale value in place
             if (oldProperties) {
                 for (const propertyKey in oldProperties) {
-                    if (!(propertyKey in properties) && !shouldIgnoreProperty(node, propertyKey)) {
+                    // a value says the property is declared again without having to ask whether
+                    // it is: `in` is the question this walk exists to ask, and it is asked of a
+                    // different shape of object for every kind of node a template holds — the
+                    // lookup never settles on one and is resolved the slow way every time, for
+                    // every property of every node. A read settles on the values instead, and
+                    // only a property that holds nothing is worth the question
+                    if (
+                        properties[propertyKey as keyof typeof properties] === undefined &&
+                        !(propertyKey in properties) &&
+                        !shouldIgnoreProperty(node, propertyKey)
+                    ) {
                         setProperty(
                             node,
                             propertyKey as keyof Node,
@@ -1437,7 +1944,10 @@ const renderTemplate = (
             }
 
             for (const propertyKey in properties) {
-                if (!shouldIgnoreProperty(node, propertyKey)) {
+                // whatever a template nests is declared as `children` as well, so the key is on
+                // every element that holds anything and is the one the walk always steps over:
+                // it is let go here rather than through the call that answers for the rest
+                if (propertyKey !== 'children' && !shouldIgnoreProperty(node, propertyKey)) {
                     setProperty(
                         node,
                         propertyKey as keyof Node,
@@ -1457,14 +1967,21 @@ const renderTemplate = (
         insertNode(context, templateContext, rootContext);
 
         // a node this render owns is rendered again even when it has no children, so that
-        // whatever it used to contain is removed
-        if (children?.length || templateContext.root === rootContext) {
+        // whatever it used to contain is removed. A leaf on both sides is the exception: the
+        // template declares nothing and the context holds nothing, so the render would walk an
+        // empty list against an empty template and settle it — and most of the nodes of a list
+        // have a leaf under them, rendered again for nothing on every pass
+        const declaresChildren = children != null && (!isArray(children) || children.length > 0);
+        if (
+            (children?.length || templateContext.root === rootContext) &&
+            (declaresChildren || templateContext.children?.length)
+        ) {
             internalRender(templateContext, children, rootContext, namespaceURI, undefined);
         }
         return;
     }
 
-    if (template instanceof Node) {
+    if (isObject && template instanceof Node) {
         // the list is searched with a plain loop, so that looking for the node does not allocate
         // the closure that would capture it
         let nodeContext: Context | undefined;
@@ -1476,13 +1993,12 @@ const renderTemplate = (
         }
         insertNode(
             context,
-            nodeContext || createContext(ContextKind.REF, null, template, false, rootContext),
+            nodeContext || new Context(ContextKind.REF, null, template, false, rootContext),
             rootContext
         );
         return;
     }
 
-    /* ----- text ----- */
     // the content of a style element rendered by a component is scoped to its definition
     const normalizedTemplate =
         rootContext.shadow && isComponent(rootContext.node) && (context.node as HTMLElement).tagName === 'STYLE'
@@ -1503,7 +2019,7 @@ const renderTemplate = (
     // convert non-Node template into Text
     insertNode(
         context,
-        createContext(
+        new Context(
             ContextKind.LITERAL,
             normalizedTemplate,
             (context.node.ownerDocument as Document).createTextNode(normalizedTemplate),
@@ -1514,10 +2030,6 @@ const renderTemplate = (
         rootContext
     );
 };
-
-/* -------------------------------------------------------------------------------------------------
- * Entry points
- * ---------------------------------------------------------------------------------------------- */
 
 /**
  * Render a set of nodes into the render root, with some checks for Nodes in order to avoid
@@ -1573,7 +2085,7 @@ export const internalRender = (
             const endContext = fragment.end as Context | undefined;
             // the range of a fragment never begins before its own marker, so the search for
             // its end can start from there instead of walking the whole list of siblings
-            const endHint = endContext?._index ?? -1;
+            const endHint = endContext?.index ?? -1;
             const endIndex = !endContext
                 ? -1
                 : context.children[endHint] === endContext

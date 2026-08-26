@@ -2973,6 +2973,11 @@ describe(
              * true of the render and not of the nodes it visits, and a field for each of those on
              * every context is a slot held empty thousands of times over. This says which fields
              * a context carries, so that adding one is a decision and not an accident.
+             *
+             * Four of them are the state of the hooks, which a context holds since it became the
+             * one object a fragment is: only the marker of a function component ever fills them,
+             * and the rest of the nodes carry them empty — the price of not allocating a second
+             * object, and a pointer each way, for every fragment that renders.
              */
             describe('what a context carries', () => {
                 it('should hold no field belonging to the render', () => {
@@ -3000,7 +3005,7 @@ describe(
                     for (const field of ['contexts', '_cursor', '_shift', '_detached', '_depth', '_releasing']) {
                         expect(fields).not.toContain(field);
                     }
-                    expect(fields).toHaveLength(17);
+                    expect(fields).toHaveLength(21);
                 });
             });
 

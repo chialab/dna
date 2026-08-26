@@ -88,17 +88,6 @@ export {
     listen,
     undelegateEventListener,
 } from './events';
-export type { Effect, Ref, StateAction } from './Hooks';
-export {
-    useCallback,
-    useEffect,
-    useElement,
-    useId,
-    useMemo,
-    useRef,
-    useRenderContext,
-    useState,
-} from './Hooks';
 export { isHydrating } from './hydration';
 export type {
     Attrs,
@@ -124,5 +113,18 @@ export {
     property,
     state,
 } from './property';
-export type { Context } from './render';
-export { render } from './render';
+export {
+    type Context,
+    type Effect,
+    type Ref,
+    render,
+    type Setter as StateAction,
+    useCallback,
+    useEffect,
+    useElement,
+    useId,
+    useMemo,
+    useRef,
+    useRenderContext,
+    useState,
+} from './render';

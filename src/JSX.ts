@@ -1,9 +1,8 @@
 import htm from 'htm';
 import type { ElementAttributes, HTMLAttributes, IntrinsicElementAttributes } from './Attributes';
 import type { HTMLTagNameMap, SVGTagNameMap } from './Elements';
-import type { Effect, Ref, StateAction } from './Hooks';
 import type { HTML } from './HTML';
-import type { Context } from './render';
+import type { Context, Effect, Ref, Setter } from './render';
 
 /**
  * Identify virtual dom objects.
@@ -175,7 +174,7 @@ type RenderAttributes<T extends HTMLElement | string = HTMLElement> = Omit<Attrs
  * a component that destructures it always gets the same methods.
  */
 export type FunctionComponentHooks = {
-    useState: <T = unknown>(initialValue: T) => [T, (value: StateAction<T>, requestUpdate?: boolean) => boolean];
+    useState: <T = unknown>(initialValue: T) => [T, (value: Setter<T>, requestUpdate?: boolean) => boolean];
     useRef: {
         <T>(initialValue: T): Ref<T>;
         <T = undefined>(): Ref<T | undefined>;
