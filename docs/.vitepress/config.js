@@ -7,6 +7,7 @@ export default defineConfig({
     description: 'Progressive Web Components',
     base: '/dna/',
     outDir: '../public',
+    appearance: 'force-auto',
 
     vite: {
         plugins: [llmstxt()]
