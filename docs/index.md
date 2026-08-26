@@ -8,9 +8,6 @@ titleTemplate: Progressive Web Components
 hero:
     name: 'DNA'
     text: 'Progressive Web Components'
-    image:
-        src: /logo.svg
-        alt: DNA logo
     tagline: 'Unleash the power of Custom Elements through declarative API, customized built-in elements and shadow-free composition.'
     actions:
         - theme: brand

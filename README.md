@@ -1,16 +1,8 @@
-<p align="center">
-    <a href="https://chialab.github.io/dna/">
-        <img alt="DNA logo" width="144" height="144" src="https://raw.githack.com/chialab/dna/main/logo.svg" />
-    </a>
-</p>
+# DNA
 
-<p align="center">
-    <strong>DNA</strong> • Progressive Web Components
-</p>
+Progressive Web Components
 
-<p align="center">
-    <a href="https://www.npmjs.com/package/@chialab/dna"><img alt="NPM" src="https://img.shields.io/npm/v/@chialab/dna.svg"></a>
-</p>
+[![NPM](https://img.shields.io/npm/v/@chialab/dna.svg)](https://www.npmjs.com/package/@chialab/dna)
 
 ## Features
 
