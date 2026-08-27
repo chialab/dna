@@ -99,9 +99,9 @@ yarn build
 
 This will generate the bundles in the `dist` folder, as well as the declaration files.
 
-### Test the project
+### Testing
 
-[![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=REPLACE_WITH_BROWSERSTACK_BADGE_KEY)](https://automate.browserstack.com/public-build/REPLACE_WITH_BROWSERSTACK_BADGE_KEY)
+[![BrowserStack Status](https://api-automation.browserstack.com/ext/v1/badge.svg?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)](https://api-automation.browserstack.com/ext/v1/badge/build?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)
 
 This project is tested with BrowserStack.
 

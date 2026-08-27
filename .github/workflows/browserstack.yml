@@ -1,16 +1,8 @@
-name: Pull Request
+name: BrowserStack
 on:
-  pull_request:
-    types: [opened, synchronize]
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:
 
 jobs:
-  lint-build-test:
-    uses: ./.github/workflows/lint_build_test.yml
-    secrets: inherit
-
   test-browserstack:
     name: Test Browserstack
     runs-on: ubuntu-latest
@@ -18,15 +10,18 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v6
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: latest
           cache: yarn
+
       - name: Install project dependencies
         run: yarn install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+
       - name: Run tests
         run: yarn test:browserstack
         env:

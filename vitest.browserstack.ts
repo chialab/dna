@@ -1,22 +1,30 @@
 import { createBrowserStackProvider } from '@chialab/vitest-provider-browserstack';
 import { defineConfig, type UserConfig } from 'vite';
 import { mergeConfig } from 'vitest/config';
-import vitestConfig from './vitest.browser.ts';
+import { vitestBrowserConfig } from './vitest.browser.ts';
 
-const browserstack = createBrowserStackProvider();
+const browserstack = createBrowserStackProvider({
+    buildName: 'CI',
+    projectName: 'DNA',
+});
 
 export default mergeConfig(
-    vitestConfig as UserConfig,
+    vitestBrowserConfig as UserConfig,
     defineConfig({
+        oxc: {
+            target: 'es2020',
+        },
         test: {
             // Cannot use element locator in browserstack, so we exclude tools
-            exclude: ['./tools/*.tsx'],
+            // Also, exclude frameworks because we wont to test their compatibility
+            exclude: ['./tools/**/*', './frameworks/**/*'],
             typecheck: {
                 enabled: false,
             },
             browser: {
                 enabled: true,
                 provider: browserstack(),
+                ui: false,
                 api: {
                     host: '0.0.0.0',
                     port: 5176,
@@ -28,6 +36,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Chrome',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest',
                                 },
                             },
@@ -39,6 +49,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Chrome',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest-1',
                                 },
                             },
@@ -50,6 +62,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Chrome',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest-2',
                                 },
                             },
@@ -57,12 +71,14 @@ export default mergeConfig(
                     },
                     {
                         // oldest chrome supported by vitest
-                        browser: 'browserstack:chrome-87',
+                        browser: 'browserstack:chrome-93',
                         provider: browserstack({
                             capabilities: {
                                 browserName: 'Chrome',
                                 'bstack:options': {
-                                    browserVersion: '87',
+                                    os: 'Windows',
+                                    osVersion: '10',
+                                    browserVersion: '93',
                                 },
                             },
                         }),
@@ -73,6 +89,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Firefox',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest',
                                 },
                             },
@@ -84,6 +102,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Firefox',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest-1',
                                 },
                             },
@@ -95,6 +115,8 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Firefox',
                                 'bstack:options': {
+                                    os: 'Windows',
+                                    osVersion: '10',
                                     browserVersion: 'latest-2',
                                 },
                             },
@@ -102,12 +124,14 @@ export default mergeConfig(
                     },
                     {
                         // oldest firefox supported by vitest
-                        browser: 'browserstack:firefox-90',
+                        browser: 'browserstack:firefox-92',
                         provider: browserstack({
                             capabilities: {
                                 browserName: 'Firefox',
                                 'bstack:options': {
-                                    browserVersion: '90',
+                                    os: 'Windows',
+                                    osVersion: '10',
+                                    browserVersion: '92',
                                 },
                             },
                         }),
@@ -118,9 +142,7 @@ export default mergeConfig(
                             capabilities: {
                                 browserName: 'Safari',
                                 'bstack:options': {
-                                    // Safari 26 is not fully supported by vitest provider yet
-                                    // browserVersion: 'latest',
-                                    browserVersion: '18.4',
+                                    browserVersion: 'latest',
                                 },
                             },
                         }),

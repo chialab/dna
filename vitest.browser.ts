@@ -7,7 +7,7 @@ import type { UserConfig } from 'vite';
 import { defineConfig, mergeConfig } from 'vitest/config';
 import vitestConfig from './vite.config.ts';
 
-export default mergeConfig(
+export const vitestBrowserConfig = mergeConfig(
     vitestConfig as UserConfig,
     defineConfig({
         plugins: [
@@ -39,9 +39,19 @@ export default mergeConfig(
             exclude: ['./node.spec.ts'],
             browser: {
                 enabled: true,
-                provider: playwright(),
                 headless: true,
                 fileParallelism: false,
+            },
+        },
+    }) as UserConfig
+);
+
+export default mergeConfig(
+    vitestBrowserConfig as UserConfig,
+    defineConfig({
+        test: {
+            browser: {
+                provider: playwright(),
                 instances: [
                     {
                         browser: 'chromium',
