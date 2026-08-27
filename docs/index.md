@@ -6,7 +6,6 @@ title: DNA
 titleTemplate: Progressive Web Components
 
 hero:
-    name: 'DNA'
     text: 'Progressive Web Components'
     tagline: 'Unleash the power of Custom Elements through declarative API, customized built-in elements and shadow-free composition.'
     actions:

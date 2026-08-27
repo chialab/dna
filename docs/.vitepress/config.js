@@ -10,12 +10,15 @@ export default defineConfig({
     appearance: 'force-auto',
 
     vite: {
-        plugins: [llmstxt()]
+        plugins: [llmstxt()],
     },
 
     head: [
         ['link', { rel: 'icon', href: '/dna/favicon.png' }],
-        ['script', {}, `var _paq = window._paq = window._paq || [];
+        [
+            'script',
+            {},
+            `var _paq = window._paq = window._paq || [];
     /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
     _paq.push(["setDomains", ["*.chialab.github.io/dna","*.chialab.github.io/loock","*.chialab.github.io/rna"]]);
     _paq.push(["disableCookies"]);
@@ -27,7 +30,8 @@ export default defineConfig({
         _paq.push(['setSiteId', '2']);
         var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
         g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-    })();`]
+    })();`,
+        ],
     ],
 
     themeConfig: {
@@ -62,8 +66,8 @@ export default defineConfig({
                 items: [
                     { text: 'Loock', link: 'https://chialab.github.io/loock/' },
                     { text: 'RNA', link: 'https://chialab.github.io/rna/' },
-                    { text: 'Catalog', link: 'https://catalog.chialab.io/' },
                     { text: 'Synapse', link: 'https://github.com/chialab/synapse/' },
+                    { text: 'Catalog', link: 'https://catalog.chialab.io/' },
                 ],
             },
             {
@@ -125,8 +129,9 @@ export default defineConfig({
         ],
 
         footer: {
-            message: 'Released under the MIT License.',
-            copyright: 'Copyright © 2017-present Chialab',
+            message:
+                'Unleash the power of Custom Elements through declarative API, customized built-in elements and shadow-free composition.',
+            copyright: '© 2026 Chia Lab Srl. MIT license.',
         },
     },
     lastUpdated: true,

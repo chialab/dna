@@ -133,106 +133,32 @@ input {
 </script>
 
 <template>
-    <div class="container">
-        <div class="content">
-            <div
-                class="window-frame">
-                <div class="window-controls">
-                    <div class="window-buttons">
-                        <span class="close"></span>
-                        <span class="minimise"></span>
-                        <span class="maximise"></span>
-                    </div>
-                    <span class="window-title">Playground</span>
-                </div>
-                <ClientOnly>
-                    <Sandpack
-                        template="vanilla-ts"
-                        :files="files"
-                        :custom-setup="customSetup"
-                        :theme="isDark ? monokaiPro : githubLight"
-                        :options="{
-                            editorHeight: 512,
-                            editorWidthPercentage: 50,
-                            showLineNumbers: true,
-                            showTabs: false,
-                            wrapContent: true,
-                            showNavigator: false,
-                            showRestartButton: false,
-                            showRefreshButton: false,
-                            showOpenInCodeSandbox: false,
-                        }" />
-                    <template #fallback>
-                        <pre class="code-placeholder"><code>{{ component }}</code></pre>
-                    </template>
-                </ClientOnly>
-            </div>
-        </div>
+    <div class="code-sandbox">
+        <ClientOnly>
+            <Sandpack
+                template="vanilla-ts"
+                :files="files"
+                :custom-setup="customSetup"
+                :theme="isDark ? monokaiPro : githubLight"
+                :options="{
+                    editorHeight: 512,
+                    editorWidthPercentage: 50,
+                    showLineNumbers: true,
+                    showTabs: false,
+                    wrapContent: true,
+                    showNavigator: false,
+                    showRestartButton: false,
+                    showRefreshButton: false,
+                    showOpenInCodeSandbox: false,
+                }" />
+            <template #fallback>
+                <pre class="code-placeholder"><code>{{ component }}</code></pre>
+            </template>
+        </ClientOnly>
     </div>
 </template>
 
 <style scoped>
-    .container {
-        padding: 0 16px;
-    }
-
-    .content {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        margin: 16px auto 0;
-        max-width: 1152px;
-    }
-
-    .window-frame {
-        width: 100%;
-        border-radius: 12px;
-        border: 1px solid var(--vp-c-gray-3);
-        overflow: hidden;
-    }
-
-    .window-controls {
-        position: relative;
-        display: flex;
-        align-items: center;
-        padding: 12px 24px;
-        color: var(--vp-c-text-2);
-        background: var(--vp-c-gray-3);
-    }
-
-    .window-buttons {
-        position: absolute;
-        top: 16px;
-        left: 12px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .window-buttons span {
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        border-radius: 50px;
-    }
-
-    .window-buttons span.close {
-        background: #ff8585;
-    }
-
-    .window-buttons span.minimise {
-        background: #ffd071;
-    }
-
-    .window-buttons span.maximise {
-        background: #74ed94;
-    }
-
-    .window-title {
-        flex: 1 auto;
-        text-align: center;
-    }
-
     .code-placeholder {
         margin: 0;
         padding: 16px 24px;
@@ -245,7 +171,7 @@ input {
         line-height: 1.6;
     }
 
-    .window-frame :deep(.sp-wrapper) {
+    .code-sandbox :deep(.sp-wrapper) {
         --sp-space-1: 4px;
         --sp-colors-disabled: var(--vp-c-text-2);
         --sp-colors-surface1: transparent;
@@ -256,42 +182,42 @@ input {
         --scrollbar-thumb-hover: color-mix(in srgb, var(--vp-c-text-1) 32%, transparent);
         --scrollbar-thumb-active: color-mix(in srgb, var(--vp-c-brand-1) 70%, transparent);
 
-        background: var(--vp-c-bg-soft);
+        background: var(--vp-c-bg);
     }
 
-    .window-frame :deep(.sp-layout) {
+    .code-sandbox :deep(.sp-layout) {
         border: 0;
         border-radius: 0;
     }
 
-    .window-frame :deep(.cm-gutter.cm-lineNumbers) {
+    .code-sandbox :deep(.cm-gutter.cm-lineNumbers) {
         font-size: 0.875em;
     }
 
-    .window-frame :deep(.sp-preview-container) {
+    .code-sandbox :deep(.sp-preview-container) {
         background: var(--vp-c-bg);
     }
 
-    .window-frame :deep(.sp-preview-actions) {
+    .code-sandbox :deep(.sp-preview-actions) {
         display: none;
     }
 
-    .window-frame :deep(.sp-stack:hover) {
+    .code-sandbox :deep(.sp-stack:hover) {
         --scrollbar-thumb: var(--scrollbar-thumb-hover);
     }
 
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar {
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar {
         width: var(--scrollbar-size);
         height: var(--scrollbar-size);
         background: transparent;
     }
 
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar-track,
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar-corner {
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar-track,
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar-corner {
         background: transparent;
     }
 
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar-thumb {
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar-thumb {
         min-width: 32px;
         min-height: 32px;
         border: solid var(--scrollbar-inset) transparent;
@@ -301,16 +227,16 @@ input {
         transition: background-color 0.2s ease;
     }
 
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar-thumb:hover {
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar-thumb:hover {
         background-color: var(--scrollbar-thumb-hover);
     }
 
-    .window-frame :deep(.sp-wrapper *)::-webkit-scrollbar-thumb:active {
+    .code-sandbox :deep(.sp-wrapper *)::-webkit-scrollbar-thumb:active {
         background-color: var(--scrollbar-thumb-active);
     }
 
     @supports not selector(::-webkit-scrollbar) {
-        .window-frame :deep(.sp-wrapper *) {
+        .code-sandbox :deep(.sp-wrapper *) {
             scrollbar-width: thin;
             scrollbar-color: var(--scrollbar-thumb) transparent;
         }
