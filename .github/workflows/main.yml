@@ -49,6 +49,15 @@ jobs:
       - name: Update NPM to latest version
         run: npm install -g npm@latest
 
+      - name: DEBUG pnpm info
+        run: |
+          echo "--- pnpm info @chialab/dna --json ---"
+          pnpm info @chialab/dna --json || true
+          echo "--- pnpm info @chialab/dna@4.6.0 --json ---"
+          pnpm info @chialab/dna@4.6.0 --json || true
+          echo "--- pnpm --version ---"
+          pnpm --version
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v2
