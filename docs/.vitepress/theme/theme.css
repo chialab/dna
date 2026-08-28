@@ -54,6 +54,7 @@
 
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: linear-gradient(to bottom right, #ffac52 0%, #f07c00 100%);
+    --vp-sidebar-bg-color: transparent;
 }
 
 html.dark {
@@ -117,6 +118,38 @@ html.dark {
         color: inherit;
     }
 
+    .VPNavBar {
+        background: color-mix(in oklab, var(--vp-nav-bg-color) 95%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--vp-c-border);
+
+        .divider {
+            display: none;
+        }
+
+        &.has-sidebar {
+            .title {
+                position: static;
+                width: auto;
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            .content {
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            .content-body {
+                margin-right: 0;
+                margin-left: 0;
+                padding-right: 0;
+                padding-left: 0;
+                background: transparent;
+            }
+        }
+    }
+
     .VPNavBarTitle {
         &.has-sidebar {
             .title {
@@ -127,6 +160,10 @@ html.dark {
 
     .menu {
         padding: 0;
+    }
+
+    .curtain {
+        display: none;
     }
 
     .VPLocalNav {
