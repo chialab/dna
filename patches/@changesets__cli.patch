@@ -1,0 +1,15 @@
+diff --git a/dist/getPublishPlan.mjs b/dist/getPublishPlan.mjs
+index a7a560d793840af0fb93a24ab053bca637f01208..fc7b4e3e03688de5f2e3e90b79a96025fe42e8e5 100644
+--- a/dist/getPublishPlan.mjs
++++ b/dist/getPublishPlan.mjs
+@@ -292,7 +292,9 @@ function getPnpmError(stderr, stdout) {
+ const name$1 = "pnpm";
+ function parseInfoResult({ exitCode, stdout, stderr }) {
+ 	if (exitCode !== 0) return { error: getPnpmError(stderr, stdout) };
+-	return stdout ? { info: JSON.parse(stdout) } : void 0;
++	if (!stdout) return void 0;
++	const parsed = JSON.parse(stdout);
++	return { info: Array.isArray(parsed) ? parsed[0] : parsed };
+ }
+ const info$1 = async ({ cwd, pkg }) => {
+ 	const { packageJson } = pkg;

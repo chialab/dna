@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@changesets/cli':
+    hash: 9f710afb73ab4296c758d57957e567c3bd0e2d9279abbdfef0375599339a9aaa
+    path: patches/@changesets__cli.patch
+
 importers:
 
   .:
@@ -31,7 +36,7 @@ importers:
         version: 2.5.11
       '@changesets/cli':
         specifier: ^3.0.1
-        version: 3.0.1
+        version: 3.0.1(patch_hash=9f710afb73ab4296c758d57957e567c3bd0e2d9279abbdfef0375599339a9aaa)
       '@chialab/vitest-provider-browserstack':
         specifier: ^4.1.0
         version: 4.1.0(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)
@@ -3705,7 +3710,7 @@ snapshots:
     dependencies:
       '@changesets/types': 7.0.0
 
-  '@changesets/cli@3.0.1':
+  '@changesets/cli@3.0.1(patch_hash=9f710afb73ab4296c758d57957e567c3bd0e2d9279abbdfef0375599339a9aaa)':
     dependencies:
       '@changesets/apply-release-plan': 8.0.0
       '@changesets/assemble-release-plan': 7.0.0
