@@ -269,9 +269,9 @@ html.dark {
 
         .VPSidebarItem {
             a {
-                padding: 0 0.5rem;
-                margin: 0 0 0 -0.5rem;
-                border-radius: 0.5rem;
+                padding: 0.25rem 0.5rem;
+                margin: 0.125rem 0 0.125rem -0.5rem;
+                border-radius: calc(0.5rem - 2px);
 
                 &:hover {
                     background: oklch(98.5% 0 none);
@@ -282,6 +282,15 @@ html.dark {
                 a {
                     background: oklch(87.1% 0.006 286.286);
                 }
+            }
+
+            .text {
+                padding: 0;
+                line-height: 1.25rem;
+            }
+
+            .indicator {
+                display: none;
             }
         }
     }
