@@ -49,6 +49,25 @@ jobs:
       - name: Update NPM to latest version
         run: npm install -g npm@latest
 
+      - name: DEBUG environment comparison
+        run: |
+          echo "--- pnpm config list ---"
+          pnpm config list
+          echo "--- npm config list ---"
+          npm config list
+          echo "--- env proxy vars ---"
+          env | grep -i -E "proxy|npm_config|no_proxy" || true
+          echo "--- raw curl registry response (first 300 chars) ---"
+          curl -s https://registry.npmjs.org/@chialab%2Fdna | head -c 300
+          echo
+          echo "--- pnpm info with explicit --registry ---"
+          pnpm info @chialab/dna --json --registry https://registry.npmjs.org/ | head -c 200
+          echo
+          echo "--- pnpm info via node fetch directly (bypass pnpm CLI parsing) ---"
+          node -e "fetch('https://registry.npmjs.org/@chialab%2Fdna').then(r=>r.text()).then(t=>console.log(t.slice(0,300)))"
+          echo "--- whoami / pwd / node version ---"
+          whoami; pwd; node --version; pnpm --version
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v2
