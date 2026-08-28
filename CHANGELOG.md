@@ -1,5 +1,74 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.6.0
+
+### Minor Changes
+
+- 8f6ecd2: The hooks can be imported.
+
+  `useState`, `useRef`, `useMemo`, `useCallback`, `useEffect`, `useElement`, `useId` and `useRenderContext` are exported from the package and called like the functions they are. A hook is called from inside a function component, so the fragment it belongs to is the one the renderer is walking: there is nothing to hand over.
+
+  ```tsx
+  import { render, useEffect, useState } from "@chialab/dna";
+
+  const Counter = () => {
+    const [count, setCount] = useState(0);
+    useEffect(() => (document.title = `${count}`), [count]);
+
+    return (
+      <button type="button" onclick={() => setCount(count + 1)}>
+        {count}
+      </button>
+    );
+  };
+  ```
+
+  The second argument a function component receives still holds them all, and goes on working unchanged — it is one object for the whole page now rather than one built for each fragment, so destructuring it gives the same functions every render. A hook called with no function component rendering throws instead of writing into whatever rendered last.
+
+- b9a8974: Introducing the `useRef` and `useCallback` hooks.
+- b9a8974: Support functional updates in the `useState` setter.
+- b9a8974: Export the `Effect`, `Ref` and `StateAction` hook types.
+- cc0ec5e: Introducing the `useElement` hook.
+
+### Patch Changes
+
+- 36e9c5c: Keep the state of a function component displaced by a keyed sibling.
+
+  A keyed node moving up to the cursor exchanges places with whatever sits there, which costs one copy instead of one per sibling in between. A function component cannot take part in that exchange: its marker and the nodes it rendered are one contiguous range, and sending the marker to the slot the keyed node came from split the range in two. The walk no longer recognised the fragment and built a marker and a set of hooks of its own, so `useState` started over and `useEffect` ran again as if it had just been mounted. The range moves whole in that case, and only nodes that occupy a single slot are exchanged.
+
+- 36e9c5c: Fix the lifecycle of keyed nodes dropped or moved while reordering.
+
+  A keyed node detached to make room for another one skipped the cleanup pass: when it was really gone its `useEffect` cleanups never ran and its state was orphaned, and when it was re-attached at another position a new render context was created for it, dropping the hooks state that the key is meant to preserve. Detached contexts are now released once the render has settled, and a keyed function component keeps its own context across a reorder.
+
+- 36e9c5c: Reflect and observe the value a property setter returned.
+
+  A property declaring a `setter` handed the assigned value to `propertyChangedCallback` and `stateChangedCallback` while handing the transformed one to its observers, so the attribute reflected the value before the transformation.
+
+- 36e9c5c: Stop emptying the subtree of a node the render removes.
+- 36e9c5c: Leave nothing behind when a property is no longer declared.
+
+  A property the previous render had set and this one does not was written the value it no longer has, which a property that holds a string shows as it is: dropping `title` left `title="undefined"` on the node, and dropping the `value` of a form field left the field holding the word rather than nothing. The property is emptied and the attribute removed, so the node is left as it would have been had the property never been declared. An attribute a template declares `false` is unaffected: for `draggable` that is one of the values it takes, not the absence of it.
+
+- 8f6ecd2: Keep the state of a render out of the contexts it walks.
+
+  How deep a render is, where it is among the children of a parent, how much it moved, what it detached, which pass is running and the registry of the nodes it placed are all true of the render rather than of the nodes it visits. They lived on the render root, so every other context declared a field for each of them and left it empty — thousands of times over for a list of a thousand rows. They belong to the render now, and a context carries six fields fewer.
+
+  `Context`, which `useRenderContext` returns, no longer declares `contexts`, `_cursor`, `_shift`, `_detached`, `_depth` or `_releasing`. It is the bookkeeping of the renderer and is marked internal: nothing outside it should read those.
+
+- 36e9c5c: Make rendering a long list linear again.
+- 36e9c5c: Render with fewer allocations and fewer reads of the DOM.
+
+  A render no longer pays for what it does not use: the children list of a context, the node registry of a render root, the queue of the effects of a fragment and the list of the contexts a render detached are all created the moment something is put in them, the empty result of a `class` or a `style` conversion is shared instead of being allocated at each call, and the indexes a reorder works on are held in typed arrays. An element the render has just created is written straight away, without first asking the DOM what it already holds, and a plain tag is created without going through the custom elements registry or a namespace it does not need. Where a context sits among its siblings is remembered on the context itself, so a reorder no longer scans the list for each of them, and a subtree that holds nothing to release is dropped in a single step instead of being walked node by node.
+
+  The hooks of a function component are built once and belong to the fragment, so the `useState` setter now keeps its identity across renders: a `useCallback` or a `useEffect` that lists it among its dependencies is no longer invalidated by every render.
+
+  The state a render keeps while it walks — how deep it is, the contexts it detached — belongs to the root it started from rather than being shared by every render root of the page.
+
+- 36e9c5c: Reorder keyed children with the minimum number of moves.
+- 36e9c5c: Fix the identity of keyed children when a function component re-renders alone.
+
+  The keys of the children of a function component were registered in the parent context, while a fragment-scoped re-render looks them up in the context of the function component itself. So every update driven from inside a function component — a `useState` setter — found an empty registry and re-created all of its keyed children instead of moving them. The children of a function component are now a key scope of their own, consistent between a render of the whole tree and a render of the single fragment.
+
 ## 4.5.2
 
 ### Patch Changes
