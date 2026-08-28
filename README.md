@@ -84,6 +84,7 @@ Then use the element in your HTML:
 
 [![Build status](https://github.com/chialab/dna/workflows/Main/badge.svg)](https://github.com/chialab/dna/actions?query=workflow%3AMain)
 [![codecov](https://codecov.io/gh/chialab/dna/branch/main/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
+[![BrowserStack Status](https://api-automation.browserstack.com/ext/v1/badge.svg?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)](https://api-automation.browserstack.com/ext/v1/badge/build?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)
 
 ### Build the project
 
@@ -101,10 +102,6 @@ This will generate the bundles in the `dist` folder, as well as the declaration 
 
 ### Testing
 
-[![BrowserStack Status](https://api-automation.browserstack.com/ext/v1/badge.svg?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)](https://api-automation.browserstack.com/ext/v1/badge/build?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)
-
-This project is tested with BrowserStack.
-
 Run the `test` script:
 
 ```
@@ -114,6 +111,8 @@ yarn test
 Cross-browser tests run on real devices and browsers thanks to [BrowserStack](https://www.browserstack.com/). To run them locally:
 
 ```
+export BROWSERSTACK_USERNAME=<your-username>
+export BROWSERSTACK_ACCESS_KEY=<your-access-key>
 yarn test:browserstack
 ```
 
