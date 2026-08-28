@@ -49,24 +49,23 @@ jobs:
       - name: Update NPM to latest version
         run: npm install -g npm@latest
 
-      - name: DEBUG environment comparison
+      - name: DEBUG store cache theory
         run: |
-          echo "--- pnpm config list ---"
-          pnpm config list
-          echo "--- npm config list ---"
-          npm config list
-          echo "--- env proxy vars ---"
-          env | grep -i -E "proxy|npm_config|no_proxy" || true
-          echo "--- raw curl registry response (first 300 chars) ---"
-          curl -s https://registry.npmjs.org/@chialab%2Fdna | head -c 300
+          echo "--- current pnpm store path ---"
+          pnpm store path
+          echo "--- pnpm info BEFORE clearing store (first 60 chars) ---"
+          pnpm info @chialab/dna --json | head -c 60
           echo
-          echo "--- pnpm info with explicit --registry ---"
-          pnpm info @chialab/dna --json --registry https://registry.npmjs.org/ | head -c 200
+          echo "--- pnpm store prune ---"
+          pnpm store prune
+          echo "--- pnpm info AFTER store prune (first 60 chars) ---"
+          pnpm info @chialab/dna --json | head -c 60
           echo
-          echo "--- pnpm info via node fetch directly (bypass pnpm CLI parsing) ---"
-          node -e "fetch('https://registry.npmjs.org/@chialab%2Fdna').then(r=>r.text()).then(t=>console.log(t.slice(0,300)))"
-          echo "--- whoami / pwd / node version ---"
-          whoami; pwd; node --version; pnpm --version
+          echo "--- pnpm info with a totally fresh store-dir (first 60 chars) ---"
+          pnpm info @chialab/dna --json --store-dir /tmp/fresh-pnpm-store-$RANDOM | head -c 60
+          echo
+          echo "--- ls of default store dir metadata (if any) ---"
+          find "$(pnpm store path)/../.." -maxdepth 4 -iname "*chialab*" 2>/dev/null || true
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
