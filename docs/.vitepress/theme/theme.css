@@ -49,12 +49,11 @@
     --vp-code-color: #343434;
 
     --vp-layout-max-width: 80rem;
-    --vp-sidebar-width: 14rem;
+    --vp-sidebar-width: 16rem;
     --vp-z-index-footer: 40;
-
+    --vp-sidebar-bg-color: #fff;
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: linear-gradient(to bottom right, #ffac52 0%, #f07c00 100%);
-    --vp-sidebar-bg-color: transparent;
 }
 
 html.dark {
@@ -95,26 +94,40 @@ html.dark {
 }
 
 #app {
+    --layout-padding: 48px;
+
+    @media (max-width: 40rem) {
+        --layout-padding: 24px;
+    }
+
     .wrapper {
         padding: 0;
     }
 
-    div.container {
+    .container {
         max-width: var(--vp-layout-max-width);
-        padding-left: 32px;
-        padding-right: 32px;
+        padding-left: var(--layout-padding);
+        padding-right: var(--layout-padding);
+    }
 
-        @media (max-width: 768px) {
-            padding-left: 24px;
-            padding-right: 24px;
-        }
+    button .container {
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .box {
         background: transparent;
     }
 
-    .custom-block:is(.info, .warning, .danger) :is(a, code) {
+    .menu {
+        padding: 0;
+    }
+
+    .curtain {
+        display: none;
+    }
+
+    :is(.info, .warning, .danger) :is(a, code) {
         color: inherit;
     }
 
@@ -133,6 +146,7 @@ html.dark {
                 width: auto;
                 padding-right: 0;
                 padding-left: 0;
+                border: 0;
             }
 
             .content {
@@ -150,32 +164,12 @@ html.dark {
         }
     }
 
-    .VPNavBarTitle {
-        &.has-sidebar {
-            .title {
-                border: 0;
-            }
-        }
-    }
-
-    .menu {
-        padding: 0;
-    }
-
-    .curtain {
-        display: none;
-    }
-
     .VPLocalNav {
         padding: 0.5rem 0;
 
-        @media (min-width: 960px) {
-            display: none;
+        .VPLocalNavOutlineDropdown > button {
+            padding: 0;
         }
-    }
-
-    .VPLocalNavOutlineDropdown > button {
-        padding: 0;
     }
 
     .VPButton {
@@ -189,7 +183,24 @@ html.dark {
     }
 
     .VPDoc {
-        padding: 3rem 0;
+        padding: 1rem 0;
+
+        .content-container {
+            width: 100%;
+            max-width: var(--vp-layout-max-width);
+        }
+
+        @media (min-width: 60rem) {
+            &.has-sidebar {
+                .container {
+                    padding-left: 0;
+                }
+            }
+        }
+
+        @media (min-width: 80rem) {
+            padding: 2rem 0;
+        }
     }
 
     .VPHome {
@@ -227,5 +238,63 @@ html.dark {
 
     .VPFooter {
         display: none;
+    }
+
+    .VPSidebar {
+        @media (min-width: 60rem) {
+            --vp-sidebar-bg-color: transparent;
+
+            padding-top: calc(var(--vp-nav-height) + 2.5rem);
+            padding-right: 0;
+            padding-left: max(
+                var(--layout-padding),
+                calc((100% - (var(--vp-layout-max-width) - var(--layout-padding) * 2)) / 2)
+            );
+        }
+
+        @media (min-width: 80rem) {
+            padding-top: calc(var(--vp-nav-height) + 1rem);
+            width: calc(
+                (100% - (var(--vp-layout-max-width) - var(--layout-padding) * 2)) /
+                2 +
+                (var(--vp-sidebar-width) - var(--layout-padding))
+            );
+        }
+
+        h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .VPSidebarItem {
+            a {
+                padding: 0 0.5rem;
+                margin: 0 0 0 -0.5rem;
+                border-radius: 0.5rem;
+
+                &:hover {
+                    background: oklch(98.5% 0 none);
+                }
+            }
+
+            &.is-active {
+                a {
+                    background: oklch(87.1% 0.006 286.286);
+                }
+            }
+        }
+    }
+
+    .VPContent {
+        @media (min-width: 64rem) {
+            &.has-sidebar {
+                padding-right: calc((100% - var(--vp-layout-max-width)) / 2);
+                padding-left: max(
+                    var(--vp-sidebar-width),
+                    calc((100% - var(--vp-layout-max-width)) / 2 + var(--vp-sidebar-width))
+                );
+            }
+        }
     }
 }
