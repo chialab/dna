@@ -29,6 +29,12 @@ jobs:
         run: pnpm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+      - name: Download BrowserStack Local binary
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/BrowserStackLocal.zip" https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
+          unzip -o "$RUNNER_TEMP/BrowserStackLocal.zip" -d "$RUNNER_TEMP/browserstack-local"
+          chmod +x "$RUNNER_TEMP/browserstack-local/BrowserStackLocal"
+          echo "BROWSERSTACK_LOCAL_BINARY_PATH=$RUNNER_TEMP/browserstack-local/BrowserStackLocal" >> "$GITHUB_ENV"
       - name: Run tests
         run: pnpm test:browserstack
         env:
