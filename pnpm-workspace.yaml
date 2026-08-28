@@ -1,2 +1,3 @@
-patchedDependencies:
-  '@changesets/cli': patches/@changesets__cli.patch
+allowBuilds:
+  edgedriver: false
+  geckodriver: false
