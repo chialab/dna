@@ -41,7 +41,7 @@ npm i @chialab/dna
 ```
 
 ```
-yarn add @chialab/dna
+pnpm add @chialab/dna
 ```
 
 ## Define a Component
@@ -91,11 +91,11 @@ Then use the element in your HTML:
 Install the dependencies and run the `build` script:
 
 ```
-yarn install
+pnpm install
 ```
 
 ```
-yarn build
+pnpm build
 ```
 
 This will generate the bundles in the `dist` folder, as well as the declaration files.
@@ -105,7 +105,7 @@ This will generate the bundles in the `dist` folder, as well as the declaration 
 Run the `test` script:
 
 ```
-yarn test
+pnpm test
 ```
 
 Cross-browser tests run on real devices and browsers thanks to [BrowserStack](https://www.browserstack.com/). To run them locally:
@@ -113,7 +113,7 @@ Cross-browser tests run on real devices and browsers thanks to [BrowserStack](ht
 ```
 export BROWSERSTACK_USERNAME=<your-username>
 export BROWSERSTACK_ACCESS_KEY=<your-access-key>
-yarn test:browserstack
+pnpm test:browserstack
 ```
 
 ---

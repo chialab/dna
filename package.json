@@ -43,7 +43,7 @@
   "author": "Chialab <dev@chialab.it> (https://www.chialab.it)",
   "scripts": {
     "build": "vite build",
-    "test": "yarn test:typings && yarn test:browser && yarn test:node",
+    "test": "pnpm test:typings && pnpm test:browser && pnpm test:node",
     "test:typings": "tsc && svelte-check --workspace test/frameworks/svelte",
     "test:browser": "vitest run --config vitest.browser.ts",
     "test:browserstack": "vitest run --config vitest.browserstack.ts",
@@ -62,7 +62,7 @@
     "@angular/router": "^21.0.0",
     "@babel/runtime": "^7.14.0",
     "@biomejs/biome": "^2.1.0",
-    "@changesets/cli": "^2.22.0",
+    "@changesets/cli": "^3.0.0",
     "@chialab/vitest-provider-browserstack": "^4.0.0",
     "@codesandbox/sandpack-themes": "^2.0.21",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
@@ -105,5 +105,5 @@
     "vue": "^3.5.14",
     "zone.js": "^0.16.0"
   },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

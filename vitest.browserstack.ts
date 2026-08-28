@@ -3,10 +3,17 @@ import { defineConfig, type UserConfig } from 'vite';
 import { mergeConfig } from 'vitest/config';
 import { vitestBrowserConfig } from './vitest.browser.ts';
 
-const browserstack = createBrowserStackProvider({
-    buildName: 'CI',
-    projectName: 'DNA',
-});
+const browserstack = createBrowserStackProvider(
+    {
+        buildName: 'CI',
+        projectName: 'DNA',
+    },
+    {
+        // Pre-downloaded by CI (see .github/workflows/*.yml) to avoid a race between
+        // browserstack-local's own binary download and its first spawn attempt.
+        binarypath: process.env.BROWSERSTACK_LOCAL_BINARY_PATH,
+    }
+);
 
 export default mergeConfig(
     vitestBrowserConfig as UserConfig,

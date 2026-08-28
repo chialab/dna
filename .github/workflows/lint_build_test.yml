@@ -11,19 +11,22 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: latest
-          cache: yarn
+          cache: pnpm
 
       - name: Install project dependencies
-        run: yarn install
+        run: pnpm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
   build:
     name: Build
@@ -32,19 +35,22 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: latest
-          cache: yarn
+          cache: pnpm
 
       - name: Install project dependencies
-        run: yarn install
+        run: pnpm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run build script
-        run: yarn build
+        run: pnpm build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6
@@ -59,22 +65,25 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: latest
-          cache: yarn
+          cache: pnpm
 
       - name: Install project dependencies
-        run: yarn install
+        run: pnpm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Install browsers
-        run: yarn playwright install --with-deps --only-shell
+        run: pnpm playwright install --with-deps --only-shell
 
       - name: Run tests
-        run: yarn test:browser --coverage
+        run: pnpm test:browser --coverage
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v6
@@ -90,19 +99,22 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: latest
-          cache: yarn
+          cache: pnpm
 
       - name: Install project dependencies
-        run: yarn install
+        run: pnpm install
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Run tests
-        run: yarn test:node --coverage
+        run: pnpm test:node --coverage
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v6
