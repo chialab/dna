@@ -9,40 +9,40 @@ importers:
   .:
     devDependencies:
       '@angular/common':
-        specifier: ^21.0.0
+        specifier: ^21.2.22
         version: 21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2)
       '@angular/compiler':
-        specifier: ^21.0.0
+        specifier: ^21.2.22
         version: 21.2.22
       '@angular/core':
-        specifier: ^21.0.0
+        specifier: ^21.2.22
         version: 21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2)
       '@angular/platform-browser':
-        specifier: ^21.0.0
+        specifier: ^21.2.22
         version: 21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))
       '@angular/router':
-        specifier: ^21.0.0
+        specifier: ^21.2.22
         version: 21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(@angular/platform-browser@21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2)))(rxjs@7.8.2)
       '@babel/runtime':
-        specifier: ^7.14.0
+        specifier: ^7.29.7
         version: 7.29.7
       '@biomejs/biome':
-        specifier: ^2.1.0
+        specifier: ^2.5.11
         version: 2.5.11
       '@changesets/cli':
-        specifier: ^3.0.0
+        specifier: ^3.0.1
         version: 3.0.1
       '@chialab/vitest-provider-browserstack':
-        specifier: ^4.0.0
+        specifier: ^4.1.0
         version: 4.1.0(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)
       '@codesandbox/sandpack-themes':
         specifier: ^2.0.21
         version: 2.0.21
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.0.0
+        specifier: ^7.3.0
         version: 7.3.0(svelte@5.56.10)(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))
       '@testing-library/angular':
-        specifier: ^19.0.0
+        specifier: ^19.4.2
         version: 19.4.2(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(@angular/platform-browser@21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2)))(@angular/router@21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(@angular/platform-browser@21.2.22(@angular/common@21.2.22(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2))(rxjs@7.8.2))(@angular/core@21.2.22(@angular/compiler@21.2.22)(rxjs@7.8.2)(zone.js@0.16.2)))(rxjs@7.8.2))(@testing-library/dom@10.4.1)
       '@testing-library/dom':
         specifier: ^10.4.1
@@ -51,10 +51,10 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(preact@11.0.0-beta.2)
       '@testing-library/react':
-        specifier: ^16.3.0
+        specifier: ^16.3.3
         version: 16.3.3(@testing-library/dom@10.4.1)(@types/react-dom@19.2.5(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.1.9(react@19.1.9))(react@19.1.9)
       '@testing-library/svelte':
-        specifier: ^5.2.8
+        specifier: ^5.4.2
         version: 5.4.2(svelte@5.56.10)(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)
       '@testing-library/vue':
         specifier: ^8.1.0
@@ -63,52 +63,52 @@ importers:
         specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.1.7
+        specifier: ^19.2.5
         version: 19.2.5(@types/react@19.2.14)
       '@vitejs/plugin-vue':
-        specifier: ^6.0.0
+        specifier: ^6.0.8
         version: 6.0.8(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vue@3.5.42(typescript@6.0.3))
       '@vitest/browser':
-        specifier: ^4.0.0
+        specifier: ^4.1.11
         version: 4.1.11(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)
       '@vitest/browser-playwright':
-        specifier: ^4.0.0
+        specifier: ^4.1.11
         version: 4.1.11(playwright@1.62.1)(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)
       '@vitest/browser-webdriverio':
-        specifier: ^4.0.17
+        specifier: ^4.1.11
         version: 4.1.11(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))(vitest@4.1.11)(webdriverio@9.31.4)
       '@vitest/coverage-istanbul':
-        specifier: ^4.0.0
+        specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       '@vitest/ui':
-        specifier: ^4.0.0
+        specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       axe-core:
-        specifier: ^4.10.3
+        specifier: ^4.13.0
         version: 4.13.0
       htm:
-        specifier: ^3.0.3
+        specifier: ^3.1.1
         version: 3.1.1
       ivya:
-        specifier: ^1.6.0
+        specifier: ^1.8.2
         version: 1.8.2
       lit:
-        specifier: ^3.3.0
+        specifier: ^3.3.3
         version: 3.3.3
       playwright:
-        specifier: ^1.50.0
+        specifier: ^1.62.1
         version: 1.62.1
       preact:
         specifier: beta
         version: 11.0.0-beta.2
       publint:
-        specifier: ^0.3.0
+        specifier: ^0.3.24
         version: 0.3.24
       react:
-        specifier: ~19.1.0
+        specifier: ~19.1.9
         version: 19.1.9
       react-dom:
-        specifier: ~19.1.0
+        specifier: ~19.1.9
         version: 19.1.9(react@19.1.9)
       rxjs:
         specifier: ^7.8.2
@@ -117,16 +117,16 @@ importers:
         specifier: ^3.1.12
         version: 3.1.12(vue@3.5.42(typescript@6.0.3))
       svelte:
-        specifier: ^5.33.1
+        specifier: ^5.56.10
         version: 5.56.10
       svelte-check:
-        specifier: ^4.3.1
+        specifier: ^4.7.6
         version: 4.7.6(picomatch@4.0.7)(svelte@5.56.10)(typescript@6.0.3)
       tslib:
-        specifier: ^2.6.2
+        specifier: ^2.8.1
         version: 2.8.1
       typescript:
-        specifier: ^6.0.0
+        specifier: ^6.0.3
         version: 6.0.3
       uhtml:
         specifier: ^4.7.1
@@ -135,25 +135,25 @@ importers:
         specifier: ^0.16.0
         version: 0.16.0(rolldown@1.2.6)(typescript@6.0.3)(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))
       vite:
-        specifier: ^8.0.0
+        specifier: ^8.2.2
         version: 8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0)
       vite-plugin-static-copy:
-        specifier: ^3.1.2
+        specifier: ^3.4.0
         version: 3.4.0(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))
       vitepress:
-        specifier: ^2.0.0-alpha.0
+        specifier: 2.0.0-alpha.19
         version: 2.0.0-alpha.19(@types/node@20.19.43)(jiti@2.7.0)(postcss@8.5.26)(typescript@6.0.3)(yaml@2.9.0)
       vitepress-plugin-llms:
-        specifier: ^1.10.0
+        specifier: ^1.13.5
         version: 1.13.5
       vitest:
-        specifier: ^4.0.0
+        specifier: ^4.1.11
         version: 4.1.11(@types/node@20.19.43)(@vitest/browser-playwright@4.1.11)(@vitest/browser-webdriverio@4.1.11)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(vite@8.2.2(@types/node@20.19.43)(jiti@2.7.0)(yaml@2.9.0))
       vue:
-        specifier: ^3.5.14
+        specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
       zone.js:
-        specifier: ^0.16.0
+        specifier: ^0.16.2
         version: 0.16.2
 
 packages:

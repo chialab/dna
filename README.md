@@ -41,6 +41,10 @@ npm i @chialab/dna
 ```
 
 ```
+yarn add @chialab/dna
+```
+
+```
 pnpm add @chialab/dna
 ```
 
