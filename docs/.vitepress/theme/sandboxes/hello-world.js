@@ -1,4 +1,6 @@
-const component = `import {
+export const files = {
+    '/HelloWorld.tsx': {
+        code: `import {
     Component,
     customElement,
     listen,
@@ -29,10 +31,9 @@ export class HelloWorld extends Component {
         this.name = target.value;
     }
 }
-`;
-
-export const files = {
-    '/HelloWorld.tsx': { code: component, active: true },
+`,
+        active: true,
+    },
     '/index.ts': {
         code: `import { render } from '@chialab/dna';
 import { HelloWorld } from './HelloWorld';
@@ -73,6 +74,7 @@ input {
 @media (prefers-color-scheme: dark) {
     html {
         color: #dfdfd6;
+        background-color: #202127;
     }
 
     input {
@@ -107,12 +109,6 @@ input {
         <script type="module" src="/index.ts"></script>
     </body>
 </html>`,
-        hidden: true,
-    },
-    '/sandbox.config.json': {
-        code: JSON.stringify({
-            hardReloadOnChange: true,
-        }),
         hidden: true,
     },
 };
