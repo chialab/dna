@@ -1,7 +1,7 @@
 <script setup>
     import { useData } from 'vitepress';
-    import { computed, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue';
-    import { SANDPACK_THEMES_CDN_URL, SANDPACK_VUE3_CDN_URL, VUE_CDN_URL } from '../cdn.js';
+    import { computed, defineAsyncComponent, defineComponent, h } from 'vue';
+    import { SANDPACK_THEMES_CDN_URL, SANDPACK_VUE3_CDN_URL } from '../cdn.js';
 
     const props = defineProps({
         template: {
@@ -23,67 +23,68 @@
     });
 
     const { isDark } = useData();
-    const mount = shallowRef(null);
-    const ready = shallowRef(false);
     const fallback = computed(() => {
         const entries = Object.values(props.files);
         const active = entries.find((file) => file?.active);
         return (active ?? entries[0])?.code ?? '';
     });
 
-    let sandboxApp;
-
-    async function renderSandbox() {
-        const [{ createApp, h }, { Sandpack }, { githubLight, monokaiPro }] = await Promise.all([
-            import(/* @vite-ignore */ VUE_CDN_URL),
-            import(/* @vite-ignore */ SANDPACK_VUE3_CDN_URL),
-            import(/* @vite-ignore */ SANDPACK_THEMES_CDN_URL),
-        ]);
-
-        sandboxApp?.unmount();
-        sandboxApp = createApp({
-            render: () =>
-                h(Sandpack, {
-                    template: props.template,
-                    files: props.files,
-                    customSetup: props.customSetup,
-                    theme: isDark.value ? monokaiPro : githubLight,
-                    options: {
-                        editorHeight: 512,
-                        editorWidthPercentage: 50,
-                        showLineNumbers: true,
-                        showTabs: false,
-                        wrapContent: true,
-                        showNavigator: false,
-                        showRestartButton: false,
-                        showRefreshButton: false,
-                        showOpenInCodeSandbox: false,
-                        ...props.options,
-                    },
-                }),
-        });
-        sandboxApp.mount(mount.value);
-        ready.value = true;
-    }
-
-    onMounted(() => {
-        renderSandbox().catch((error) => console.error('Failed to load the sandbox', error));
+    const CodePlaceholder = defineComponent({
+        name: 'SandpackPlaceholder',
+        setup() {
+            return () => h('pre', { class: 'code-placeholder' }, h('code', null, fallback.value));
+        },
     });
-    watch(isDark, () => {
-        renderSandbox().catch((error) => console.error('Failed to load the sandbox', error));
+
+    const AsyncSandpack = defineAsyncComponent({
+        loader: async () => {
+            const [{ Sandpack }, { githubLight, monokaiPro }] = await Promise.all([
+                import(/* @vite-ignore */ SANDPACK_VUE3_CDN_URL),
+                import(/* @vite-ignore */ SANDPACK_THEMES_CDN_URL),
+            ]);
+
+            return defineComponent({
+                name: 'Sandpack',
+                setup() {
+                    return () =>
+                        h(Sandpack, {
+                            template: props.template,
+                            files: props.files,
+                            customSetup: props.customSetup,
+                            theme: isDark.value ? monokaiPro : githubLight,
+                            options: {
+                                editorHeight: 512,
+                                editorWidthPercentage: 50,
+                                showLineNumbers: true,
+                                showTabs: false,
+                                wrapContent: true,
+                                showNavigator: false,
+                                showRestartButton: false,
+                                showRefreshButton: false,
+                                showOpenInCodeSandbox: false,
+                                ...props.options,
+                            },
+                        });
+                },
+            });
+        },
+        loadingComponent: CodePlaceholder,
+        errorComponent: CodePlaceholder,
+        onError(error, retry, fail) {
+            console.error('Failed to load the sandbox from the CDN', error);
+            fail();
+        },
     });
-    onBeforeUnmount(() => sandboxApp?.unmount());
 </script>
 
 <template>
     <div class="code-sandbox">
-        <div
-            v-show="ready"
-            ref="mount"
-            class="code-sandbox-mount" />
-        <pre
-            v-if="!ready"
-            class="code-placeholder"><code>{{ fallback }}</code></pre>
+        <ClientOnly>
+            <AsyncSandpack />
+            <template #fallback>
+                <CodePlaceholder />
+            </template>
+        </ClientOnly>
     </div>
 </template>
 

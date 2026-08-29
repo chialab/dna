@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress';
 import llmstxt from 'vitepress-plugin-llms';
-import { VUE_CDN_URL } from './theme/cdn.js';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -16,18 +15,6 @@ export default defineConfig({
 
     head: [
         ['link', { rel: 'icon', href: '/dna/favicon.png' }],
-        [
-            // Pins the `vue` bare specifier so the CDN-loaded sandpack-vue3
-            // (see theme/components/Sandbox.vue) shares a single Vue
-            // instance instead of bundling its own duplicate copy.
-            'script',
-            { type: 'importmap' },
-            JSON.stringify({
-                imports: {
-                    vue: VUE_CDN_URL,
-                },
-            }),
-        ],
         [
             'script',
             {},
