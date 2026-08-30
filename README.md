@@ -90,7 +90,7 @@ Then use the element in your HTML:
 [![codecov](https://codecov.io/gh/chialab/dna/branch/main/graph/badge.svg)](https://codecov.io/gh/chialab/dna)
 [![BrowserStack Status](https://api-automation.browserstack.com/ext/v1/badge.svg?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)](https://api-automation.browserstack.com/ext/v1/badge/build?badge_key=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyMzIwNTUwIiwiZ3JvdXBJZCI6Ijc3NDUwNzQiLCJwcm9qZWN0TmFtZSI6IkROQSIsImJ1aWxkTmFtZSI6IkNJIiwicGxhblR5cGUiOiJwYWlkIiwiaWF0IjoxNzg3ODQ0NzEwLCJqdGkiOiJjY2FlMTRlNC0xOGVjLTRjMDEtYjUzMS1hZDFmY2FiY2VlZGMifQ.PgDwok_IOgMyMhqx74DhVrCX-04_XKzpeK2_IOSFdp0)
 
-### Build the project
+### Build
 
 Install the dependencies and run the `build` script:
 
@@ -104,7 +104,7 @@ pnpm build
 
 This will generate the bundles in the `dist` folder, as well as the declaration files.
 
-### Testing
+### Test
 
 Run the `test` script:
 
