@@ -439,6 +439,25 @@
         background: #fff;
     }
 
+    @media (max-width: 40rem) {
+        .sandbox-layout {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .sandbox-editor {
+            flex: none;
+            height: 280px;
+            border-right: none;
+            border-bottom: 1px solid var(--vp-c-divider);
+        }
+
+        .sandbox-preview {
+            flex: none;
+            height: 280px;
+        }
+    }
+
     .sandbox-editor-view :deep(*)::-webkit-scrollbar {
         width: 12px;
         height: 12px;
