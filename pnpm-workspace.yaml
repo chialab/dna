@@ -1,3 +1,4 @@
 allowBuilds:
   edgedriver: false
   geckodriver: false
+  pnpm: true
