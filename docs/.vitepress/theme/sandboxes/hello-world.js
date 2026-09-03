@@ -1,5 +1,5 @@
 export const files = {
-    '/HelloWorld.tsx': {
+    'HelloWorld.tsx': {
         code: `import {
     Component,
     customElement,
@@ -34,15 +34,13 @@ export class HelloWorld extends Component {
 `,
         active: true,
     },
-    '/index.ts': {
-        code: `import { render } from '@chialab/dna';
-import { HelloWorld } from './HelloWorld';
+    'index.ts': {
+        code: `import './HelloWorld';
 import './styles.css';
-
-document.getElementById('app').append(new HelloWorld());`,
-        readOnly: true,
+`,
+        hidden: true,
     },
-    '/styles.css': {
+    'styles.css': {
         code: `
 html {
     color-scheme: light dark;
@@ -84,19 +82,23 @@ input {
 }`,
         hidden: true,
     },
-    '/tsconfig.json': {
-        code: JSON.stringify({
-            compilerOptions: {
-                moduleResolution: 'bundler',
-                experimentalDecorators: true,
-                useDefineForClassFields: false,
-                jsx: 'react-jsx',
-                jsxImportSource: '@chialab/dna',
+    'tsconfig.json': {
+        code: JSON.stringify(
+            {
+                compilerOptions: {
+                    moduleResolution: 'bundler',
+                    experimentalDecorators: true,
+                    useDefineForClassFields: false,
+                    jsx: 'react-jsx',
+                    jsxImportSource: '@chialab/dna',
+                },
             },
-        }),
-        hidden: true,
+            null,
+            4
+        ),
+        readOnly: true,
     },
-    '/index.html': {
+    'index.html': {
         code: `<!doctype html>
 <html lang="en">
     <head>
@@ -105,16 +107,16 @@ input {
         <title>DNA sandbox</title>
     </head>
     <body>
-        <div id="app"></div>
-        <script type="module" src="/index.ts"></script>
+        <hello-world></hello-world>
+        <script type="module" src="./index.ts"></script>
     </body>
 </html>`,
-        hidden: true,
+        readOnly: true,
     },
 };
 
 export const customSetup = {
-    entry: '/index.ts',
+    entry: 'index.ts',
     dependencies: {
         '@chialab/dna': '^4.0.0',
     },

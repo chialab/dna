@@ -1,27 +1,10 @@
 <script>
     const ESBUILD_WASM_VERSION = '0.28.2';
-    const CODEMIRROR_VERSION = '6.0.2';
-    const CODEMIRROR_STATE_VERSION = '6.7.1';
-    const CODEMIRROR_VIEW_VERSION = '6.43.9';
-    const CODEMIRROR_LANGUAGE_VERSION = '6.12.4';
-    const CODEMIRROR_LANG_JAVASCRIPT_VERSION = '6.2.5';
-    const CODEMIRROR_LANG_CSS_VERSION = '6.3.1';
-    const CODEMIRROR_LANG_HTML_VERSION = '6.4.12';
-    const LEZER_HIGHLIGHT_VERSION = '1.2.3';
-
     const ESBUILD_WASM_CDN_URL = `https://esm.sh/esbuild-wasm@${ESBUILD_WASM_VERSION}`;
     const ESBUILD_WASM_BINARY_URL = `https://esm.sh/esbuild-wasm@${ESBUILD_WASM_VERSION}/esbuild.wasm`;
-    const CODEMIRROR_CDN_URL = `https://esm.sh/codemirror@${CODEMIRROR_VERSION}`;
-    const CODEMIRROR_STATE_CDN_URL = `https://esm.sh/@codemirror/state@${CODEMIRROR_STATE_VERSION}`;
-    const CODEMIRROR_VIEW_CDN_URL = `https://esm.sh/@codemirror/view@${CODEMIRROR_VIEW_VERSION}`;
-    const CODEMIRROR_LANGUAGE_CDN_URL = `https://esm.sh/@codemirror/language@${CODEMIRROR_LANGUAGE_VERSION}`;
-    const CODEMIRROR_LANG_JAVASCRIPT_CDN_URL = `https://esm.sh/@codemirror/lang-javascript@${CODEMIRROR_LANG_JAVASCRIPT_VERSION}`;
-    const CODEMIRROR_LANG_CSS_CDN_URL = `https://esm.sh/@codemirror/lang-css@${CODEMIRROR_LANG_CSS_VERSION}`;
-    const CODEMIRROR_LANG_HTML_CDN_URL = `https://esm.sh/@codemirror/lang-html@${CODEMIRROR_LANG_HTML_VERSION}`;
-    const LEZER_HIGHLIGHT_CDN_URL = `https://esm.sh/@lezer/highlight@${LEZER_HIGHLIGHT_VERSION}`;
 
     function languageForPath(path, { javascript, css, html }) {
-        if (/\.(tsx?|jsx?|mjs|cjs)$/.test(path)) {
+        if (/\.(tsx?|jsx?|mjs|cjs|json)$/.test(path)) {
             return javascript({ jsx: true, typescript: /\.tsx?$/.test(path) });
         }
         if (/\.css$/.test(path)) {
@@ -31,20 +14,6 @@
             return html();
         }
         return [];
-    }
-
-    function buildHighlightStyle({ HighlightStyle, tags }) {
-        return HighlightStyle.define([
-            { tag: tags.keyword, color: 'var(--cm-keyword)' },
-            { tag: [tags.atom, tags.number, tags.bool], color: 'var(--cm-static)' },
-            { tag: tags.variableName, color: 'var(--cm-plain)' },
-            { tag: [tags.function(tags.variableName), tags.definition(tags.function(tags.variableName))], color: 'var(--cm-definition)' },
-            { tag: tags.tagName, color: 'var(--cm-tag)' },
-            { tag: tags.propertyName, color: 'var(--cm-property)' },
-            { tag: [tags.literal, tags.inserted, tags.string], color: 'var(--cm-string)' },
-            { tag: tags.punctuation, color: 'var(--cm-punctuation)' },
-            { tag: [tags.comment, tags.quote], color: 'var(--cm-comment)', fontStyle: 'italic' },
-        ]);
     }
 
     let esbuildPromise = null;
@@ -76,7 +45,7 @@
     });
 
     function findDefaultPath() {
-        const entries = Object.entries(props.files);
+        const entries = Object.entries(props.files).filter(([, file]) => !file?.hidden);
         return (entries.find(([, file]) => file?.active) ?? entries[0])?.[0] ?? '';
     }
 
@@ -87,12 +56,12 @@
     const ready = ref(false);
     const editorContainer = ref(null);
     const previewFrame = ref(null);
+    const editorStates = new Map();
 
     let editorView = null;
     let esbuild = null;
     let updateTimer = null;
     let cm = null;
-    const editorStates = new Map();
 
     function createVirtualFsPlugin(files) {
         return {
@@ -103,7 +72,7 @@
                         return { path: args.path, namespace: 'sandbox' };
                     }
                     if (args.path.startsWith('.')) {
-                        const base = new URL(args.path, `file://${args.importer}`).pathname;
+                        const base = new URL(args.path, `file://${args.importer}`).pathname.replace(/^\//, '');
                         const candidate = ['', '.tsx', '.ts', '.jsx', '.js', '.css'].map((ext) => base + ext).find((path) => files[path]);
                         if (candidate) {
                             return { path: candidate, namespace: 'sandbox' };
@@ -139,10 +108,11 @@
 
     function buildPreviewHtml({ indexHtml, importMap, css, entry, js }) {
         const head = `<script type="importmap">${JSON.stringify(importMap)}<\/script>${css ? `<style>${css}</style>` : ''}`;
-        let html = indexHtml.replace('<head>', `<head>${head}`);
-        const entryScriptPattern = new RegExp(`<script[^>]*\\ssrc=["']${escapeRegExp(entry)}["'][^>]*><\\/script>`);
-        html = html.replace(entryScriptPattern, `<script type="module">${js}<\/script>`);
-        return html;
+        const entryScriptPattern = new RegExp(`<script[^>]*\\ssrc=["'](?:\.\/|\/)?${escapeRegExp(entry)}["'][^>]*><\\/script>`);
+
+        return indexHtml
+            .replace('<head>', `<head>${head}`)
+            .replace(entryScriptPattern, `<script type="module">${js}<\/script>`);
     }
 
     function buildErrorHtml(error) {
@@ -163,12 +133,12 @@
                 format: 'esm',
                 outdir: '/out',
                 target: 'es2022',
-                tsconfigRaw: props.files['/tsconfig.json']?.code,
+                tsconfigRaw: props.files['tsconfig.json']?.code,
                 plugins: [createVirtualFsPlugin(files)],
             });
             const js = result.outputFiles.find((file) => file.path.endsWith('.js'))?.text ?? '';
             const css = result.outputFiles.find((file) => file.path.endsWith('.css'))?.text ?? '';
-            const indexHtml = files['/index.html']?.code ?? '<!doctype html><html><head></head><body></body></html>';
+            const indexHtml = files['index.html']?.code ?? '<!doctype html><html><head></head><body></body></html>';
             previewFrame.value.srcdoc = buildPreviewHtml({
                 indexHtml,
                 importMap: buildImportMap(props.customSetup.dependencies),
@@ -222,24 +192,22 @@
 
     onMounted(async () => {
         const [
-            { basicSetup },
+            { basicSetup, EditorView },
             { EditorState },
-            { EditorView },
+            { syntaxHighlighting, HighlightStyle },
             { javascript },
             { css },
             { html },
-            languageModule,
             { tags },
             esbuildInstance,
         ] = await Promise.all([
-            import(/* @vite-ignore */ CODEMIRROR_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_STATE_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_VIEW_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_LANG_JAVASCRIPT_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_LANG_CSS_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_LANG_HTML_CDN_URL),
-            import(/* @vite-ignore */ CODEMIRROR_LANGUAGE_CDN_URL),
-            import(/* @vite-ignore */ LEZER_HIGHLIGHT_CDN_URL),
+            import(/* @vite-ignore */ 'https://esm.sh/codemirror'),
+            import(/* @vite-ignore */ 'https://esm.sh/@codemirror/state'),
+            import(/* @vite-ignore */ 'https://esm.sh/@codemirror/language'),
+            import(/* @vite-ignore */ 'https://esm.sh/@codemirror/lang-javascript'),
+            import(/* @vite-ignore */ 'https://esm.sh/@codemirror/lang-css'),
+            import(/* @vite-ignore */ 'https://esm.sh/@codemirror/lang-html'),
+            import(/* @vite-ignore */ 'https://esm.sh/@lezer/highlight'),
             loadEsbuild(),
         ]).catch((error) => {
             console.error('Failed to load the sandbox from the CDN', error);
@@ -256,8 +224,18 @@
             EditorView,
             basicSetup,
             langModule: { javascript, css, html },
-            syntaxHighlighting: languageModule.syntaxHighlighting,
-            highlightStyle: buildHighlightStyle({ HighlightStyle: languageModule.HighlightStyle, tags }),
+            syntaxHighlighting: syntaxHighlighting,
+            highlightStyle: HighlightStyle.define([
+                { tag: tags.keyword, color: 'var(--cm-keyword)' },
+                { tag: [tags.atom, tags.number, tags.bool], color: 'var(--cm-static)' },
+                { tag: tags.variableName, color: 'var(--cm-plain)' },
+                { tag: [tags.function(tags.variableName), tags.definition(tags.function(tags.variableName))], color: 'var(--cm-definition)' },
+                { tag: tags.tagName, color: 'var(--cm-tag)' },
+                { tag: tags.propertyName, color: 'var(--cm-property)' },
+                { tag: [tags.literal, tags.inserted, tags.string], color: 'var(--cm-string)' },
+                { tag: tags.punctuation, color: 'var(--cm-punctuation)' },
+                { tag: [tags.comment, tags.quote], color: 'var(--cm-comment)', fontStyle: 'italic' },
+            ]),
             chromeTheme: EditorView.theme({
                 '&': { height: '100%', fontSize: '13px' },
                 '.cm-content': { fontFamily: 'var(--vp-font-family-mono)', caretColor: 'var(--vp-c-brand-1)' },
