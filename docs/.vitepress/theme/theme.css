@@ -69,7 +69,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --vp-c-bg: oklch(21% 0.006 285.885);
-        --vp-c-bg-alt: oklch(0.2 0 0);
+        --vp-c-bg-alt: oklch(27.4% 0.006 286.033);
         --vp-c-bg-elv: oklch(0.12 0 0);
         --vp-c-bg-soft: oklch(27.4% 0.006 286.033);
 
@@ -192,6 +192,20 @@
 
         .VPLocalNavOutlineDropdown > button {
             padding: 0;
+        }
+    }
+
+    .VPNavScreen {
+        padding: 0;
+    }
+
+    .VPMenu {
+        min-width: 0;
+    }
+
+    .VPLink {
+        &::after {
+            border: 0;
         }
     }
 

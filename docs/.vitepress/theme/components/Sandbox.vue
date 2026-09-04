@@ -436,18 +436,22 @@
         }
     }
 
-    .sandbox-editor-view :deep(*)::-webkit-scrollbar {
+    .sandbox-editor-view :deep(*)::-webkit-scrollbar,
+    .sandbox-tabs::-webkit-scrollbar {
         width: 12px;
         height: 12px;
         background: transparent;
     }
 
     .sandbox-editor-view :deep(*)::-webkit-scrollbar-track,
-    .sandbox-editor-view :deep(*)::-webkit-scrollbar-corner {
+    .sandbox-editor-view :deep(*)::-webkit-scrollbar-corner,
+    .sandbox-tabs::-webkit-scrollbar-track,
+    .sandbox-tabs::-webkit-scrollbar-corner {
         background: transparent;
     }
 
-    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb {
+    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb,
+    .sandbox-tabs::-webkit-scrollbar-thumb {
         min-width: 32px;
         min-height: 32px;
         border: solid 3px transparent;
@@ -457,16 +461,19 @@
         transition: background-color 0.2s ease;
     }
 
-    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb:hover {
+    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb:hover,
+    .sandbox-tabs::-webkit-scrollbar-thumb:hover {
         background-color: color-mix(in srgb, var(--vp-c-text-1) 32%, transparent);
     }
 
-    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb:active {
+    .sandbox-editor-view :deep(*)::-webkit-scrollbar-thumb:active,
+    .sandbox-tabs::-webkit-scrollbar-thumb:active {
         background-color: color-mix(in srgb, var(--vp-c-brand-1) 70%, transparent);
     }
 
     @supports not selector(::-webkit-scrollbar) {
-        .sandbox-editor-view :deep(*) {
+        .sandbox-editor-view :deep(*),
+        .sandbox-tabs {
             scrollbar-width: thin;
             scrollbar-color: color-mix(in srgb, var(--vp-c-text-1) 18%, transparent) transparent;
         }

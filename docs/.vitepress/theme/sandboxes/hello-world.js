@@ -45,7 +45,7 @@ import './styles.css';
 html {
     color-scheme: light dark;
     background: transparent;
-    color: #3c3c43;
+    color: #3f3f46;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -61,9 +61,9 @@ h1 {
 
 input {
     padding: 0.5em 0.75em;
-    border: solid 1px #c2c2c4;
+    border: solid 1px #d4d4d8;
     border-radius: 6px;
-    background-color: #ffffff;
+    background-color: #fafafa;
     color: inherit;
     font-size: inherit;
     font-family: inherit;
@@ -71,13 +71,13 @@ input {
 
 @media (prefers-color-scheme: dark) {
     html {
-        color: #dfdfd6;
-        background-color: #202127;
+        color: #e4e4e7;
+        background-color: #18181b;
     }
 
     input {
-        border-color: #3c3f44;
-        background-color: #202127;
+        border-color: #3f3f46;
+        background-color: #27272a;
     }
 }`,
         hidden: true,
