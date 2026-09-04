@@ -14,7 +14,6 @@ jobs:
       - name: Setup Node
         uses: pnpm/setup@v2
         with:
-          runtime: node@latest
           cache: true
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
@@ -32,7 +31,6 @@ jobs:
       - name: Setup Node
         uses: pnpm/setup@v2
         with:
-          runtime: node@latest
           cache: true
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
@@ -56,7 +54,6 @@ jobs:
       - name: Setup Node
         uses: pnpm/setup@v2
         with:
-          runtime: node@latest
           cache: true
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
@@ -84,7 +81,6 @@ jobs:
       - name: Setup Node
         uses: pnpm/setup@v2
         with:
-          runtime: node@latest
           cache: true
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
