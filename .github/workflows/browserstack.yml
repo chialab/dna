@@ -11,7 +11,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
+      - name: Setup Node
         uses: pnpm/setup@v2
         with:
           runtime: node@latest
