@@ -14,23 +14,17 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: pnpm/setup@v2
         with:
-          node-version: latest
-          cache: pnpm
+          runtime: node@latest
+          cache: true
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-
-      - name: Install project dependencies
-        run: pnpm install
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
 
       - name: Build Documentation
         run: pnpm docs:build
