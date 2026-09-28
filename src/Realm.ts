@@ -402,6 +402,12 @@ export class Realm {
      * @param referenceNode The reference node to insert before.
      */
     protected insertNodesBefore(nodes: Node[], referenceNode: Node | null): void {
+        for (const node of nodes) {
+            const io = this.childNodes.indexOf(node);
+            if (io !== -1) {
+                this.childNodes.splice(io, 1);
+            }
+        }
         const io = referenceNode ? this.childNodes.indexOf(referenceNode) : -1;
         if (io === -1) {
             this.childNodes.push(...nodes);
