@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.6.1
+
+### Patch Changes
+
+- 318f8f3: Correctly move children across the realm.
+
 ## 4.6.0
 
 ### Minor Changes
