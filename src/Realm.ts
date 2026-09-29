@@ -388,7 +388,9 @@ export class Realm {
                     this.adoptNode(node);
                 } else if (parentRealm === this) {
                     const io = this.childNodes.indexOf(node);
-                    this.childNodes.splice(io, 1);
+                    if (io !== -1) {
+                        this.childNodes.splice(io, 1);
+                    }
                 }
             } else {
                 this.adoptNode(node);
@@ -402,6 +404,7 @@ export class Realm {
      * @param referenceNode The reference node to insert before.
      */
     protected insertNodesBefore(nodes: Node[], referenceNode: Node | null): void {
+        nodes = Array.from(new Set(nodes));
         for (const node of nodes) {
             const io = this.childNodes.indexOf(node);
             if (io !== -1) {

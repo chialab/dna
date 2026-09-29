@@ -1792,6 +1792,28 @@ describe(
                 expect(inner.slotChildNodes).toEqual([child2, child1]);
             });
 
+            it('should not drop slot children when appending strings or duplicated nodes', () => {
+                const TestElement = DNA.define('test-component-regression-strings', class extends DNA.Component {});
+                const element = new TestElement();
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+                const child3 = document.createElement('span');
+
+                wrapper.appendChild(element);
+                element.append(child1, child2, child3);
+                element.append('text');
+                expect(element.slotChildNodes).toHaveLength(4);
+                expect(element.slotChildNodes.slice(0, 3)).toEqual([child1, child2, child3]);
+                expect(element.slotChildNodes[3]).toHaveProperty('textContent', 'text');
+                element.prepend('start');
+                expect(element.slotChildNodes).toHaveLength(5);
+                expect(element.slotChildNodes.slice(1, 4)).toEqual([child1, child2, child3]);
+                // the same node passed twice is inserted once
+                element.append(child1, child1);
+                expect(element.slotChildNodes).toHaveLength(5);
+                expect(element.slotChildNodes[4]).toBe(child1);
+            });
+
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
