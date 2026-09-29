@@ -1,5 +1,11 @@
 ## [3.17.1](https://github.com/chialab/dna/compare/v3.17.0...v3.17.1) (2022-05-24)
 
+## 4.6.2
+
+### Patch Changes
+
+- 619aa31: Fix slotted children being dropped when appending strings or duplicated nodes.
+
 ## 4.6.1
 
 ### Patch Changes
