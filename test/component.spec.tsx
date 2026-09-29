@@ -1758,6 +1758,40 @@ describe(
                 expect(element.childNodes[2]).toBe(child2);
             });
 
+            it('should move slotted children across nested realms without duplicates', () => {
+                const Outer = DNA.define(
+                    'test-component-regression-outer',
+                    class extends DNA.Component {
+                        render() {
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
+                        }
+                    }
+                );
+                const Inner = DNA.define('test-component-regression-inner', class extends DNA.Component {});
+                const outer = new Outer();
+                const inner = new Inner();
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+
+                wrapper.appendChild(outer);
+                outer.append(inner, child1, child2);
+                // move a node from the outer realm to the inner one
+                inner.appendChild(child1);
+                inner.appendChild(child2);
+                expect(inner.slotChildNodes).toEqual([child1, child2]);
+                // move it again inside the inner realm
+                inner.appendChild(child1);
+                expect(inner.slotChildNodes).toEqual([child2, child1]);
+                inner.insertBefore(child1, child2);
+                expect(inner.slotChildNodes).toEqual([child1, child2]);
+                inner.prepend(child2);
+                expect(inner.slotChildNodes).toEqual([child2, child1]);
+            });
+
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
