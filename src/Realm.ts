@@ -388,7 +388,9 @@ export class Realm {
                     this.adoptNode(node);
                 } else if (parentRealm === this) {
                     const io = this.childNodes.indexOf(node);
-                    this.childNodes.splice(io, 1);
+                    if (io !== -1) {
+                        this.childNodes.splice(io, 1);
+                    }
                 }
             } else {
                 this.adoptNode(node);
@@ -402,7 +404,8 @@ export class Realm {
      * @param referenceNode The reference node to insert before.
      */
     protected insertNodesBefore(nodes: Node[], referenceNode: Node | null): void {
-        for (const node of nodes) {
+        const uniqueNodes = Array.from(new Set(nodes));
+        for (const node of uniqueNodes) {
             const io = this.childNodes.indexOf(node);
             if (io !== -1) {
                 this.childNodes.splice(io, 1);
@@ -410,10 +413,10 @@ export class Realm {
         }
         const io = referenceNode ? this.childNodes.indexOf(referenceNode) : -1;
         if (io === -1) {
-            this.childNodes.push(...nodes);
+            this.childNodes.push(...uniqueNodes);
             return;
         }
-        this.childNodes.splice(io, 0, ...nodes);
+        this.childNodes.splice(io, 0, ...uniqueNodes);
     }
 
     /**

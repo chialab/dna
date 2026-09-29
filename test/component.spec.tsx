@@ -1758,6 +1758,62 @@ describe(
                 expect(element.childNodes[2]).toBe(child2);
             });
 
+            it('should move slotted children across nested realms without duplicates', () => {
+                const Outer = DNA.define(
+                    'test-component-regression-outer',
+                    class extends DNA.Component {
+                        render() {
+                            return (
+                                <div>
+                                    <slot />
+                                </div>
+                            );
+                        }
+                    }
+                );
+                const Inner = DNA.define('test-component-regression-inner', class extends DNA.Component {});
+                const outer = new Outer();
+                const inner = new Inner();
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+
+                wrapper.appendChild(outer);
+                outer.append(inner, child1, child2);
+                // move a node from the outer realm to the inner one
+                inner.appendChild(child1);
+                inner.appendChild(child2);
+                expect(inner.slotChildNodes).toEqual([child1, child2]);
+                // move it again inside the inner realm
+                inner.appendChild(child1);
+                expect(inner.slotChildNodes).toEqual([child2, child1]);
+                inner.insertBefore(child1, child2);
+                expect(inner.slotChildNodes).toEqual([child1, child2]);
+                inner.prepend(child2);
+                expect(inner.slotChildNodes).toEqual([child2, child1]);
+            });
+
+            it('should not drop slot children when appending strings or duplicated nodes', () => {
+                const TestElement = DNA.define('test-component-regression-strings', class extends DNA.Component {});
+                const element = new TestElement();
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+                const child3 = document.createElement('span');
+
+                wrapper.appendChild(element);
+                element.append(child1, child2, child3);
+                element.append('text');
+                expect(element.slotChildNodes).toHaveLength(4);
+                expect(element.slotChildNodes.slice(0, 3)).toEqual([child1, child2, child3]);
+                expect(element.slotChildNodes[3]).toHaveProperty('textContent', 'text');
+                element.prepend('start');
+                expect(element.slotChildNodes).toHaveLength(5);
+                expect(element.slotChildNodes.slice(1, 4)).toEqual([child1, child2, child3]);
+                // the same node passed twice is inserted once
+                element.append(child1, child1);
+                expect(element.slotChildNodes).toHaveLength(5);
+                expect(element.slotChildNodes[4]).toBe(child1);
+            });
+
             it('should insert and connect a child (and remove it from the previous parent) before another', () => {
                 const connectedCallback = vi.fn();
                 const disconnectedCallback = vi.fn();
